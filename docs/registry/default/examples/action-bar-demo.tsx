@@ -18,6 +18,7 @@ interface Task {
 }
 
 export default function ActionBarDemo() {
+  const listRef = React.useRef<HTMLDivElement>(null);
   const [tasks, setTasks] = React.useState<Task[]>([
     { id: 1, name: "Weekly Status Report" },
     { id: 2, name: "Client Invoice Review" },
@@ -66,9 +67,19 @@ export default function ActionBarDemo() {
     setSelectedTaskIds(new Set());
   }, [tasks, selectedTaskIds]);
 
+  const onInteractOutside = React.useCallback((event: Event) => {
+    const target = event.target as Node | null;
+    if (listRef.current?.contains(target)) {
+      event.preventDefault();
+    }
+  }, []);
+
   return (
     <div className="relative flex w-full flex-col">
-      <div className="flex max-h-[340px] flex-col gap-1.5 overflow-y-auto">
+      <div
+        ref={listRef}
+        className="flex max-h-[340px] flex-col gap-1.5 overflow-y-auto"
+      >
         {tasks.map((task) => (
           <label
             key={task.id}
@@ -88,7 +99,11 @@ export default function ActionBarDemo() {
         ))}
       </div>
 
-      <ActionBar open={open} onOpenChange={onOpenChange}>
+      <ActionBar
+        open={open}
+        onOpenChange={onOpenChange}
+        onInteractOutside={onInteractOutside}
+      >
         <ActionBarSelection>
           {selectedTaskIds.size} selected
           <ActionBarClose>
