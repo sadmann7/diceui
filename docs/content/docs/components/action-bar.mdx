@@ -40,28 +40,20 @@ npx shadcn@latest add "https://diceui.com/r/action-bar"
 ## Layout
 
 ```tsx
-import {
-  ActionBar,
-  ActionBarClose,
-  ActionBarItem,
-  ActionBarSelection,
-  ActionBarSeparator,
-} from "@/components/ui/action-bar";
+import * as ActionBar from "@/components/ui/action-bar";
 
-<ActionBar open={open} onOpenChange={setOpen}>
-  <ActionBarSelection>
-    {count} selected
-    <ActionBarClose />
-  </ActionBarSelection>
-  <ActionBarSeparator />
-  <ActionBarItem>Action 1</ActionBarItem>
-  <ActionBarItem>Action 2</ActionBarItem>
-</ActionBar>
+<ActionBar.Root open={open} onOpenChange={setOpen}>
+  <ActionBar.Selection>
+    <ActionBar.Close />
+  </ActionBar.Selection>
+  <ActionBar.Separator />
+  <ActionBar.Item />
+</ActionBar.Root>
 ```
 
 ## API Reference
 
-### ActionBar
+### Root
 
 The root component that controls the visibility and position of the action bar.
 
@@ -87,7 +79,7 @@ The root component that controls the visibility and position of the action bar.
   ]}
 />
 
-### ActionBarItem
+### Item
 
 An interactive button item within the action bar.
 
@@ -96,7 +88,7 @@ An interactive button item within the action bar.
   name="ItemProps"
 />
 
-### ActionBarSelection
+### Selection
 
 Displays selection information, typically used to show how many items are selected.
 
@@ -105,7 +97,7 @@ Displays selection information, typically used to show how many items are select
   name="SelectionProps"
 />
 
-### ActionBarClose
+### Close
 
 A button that closes the action bar by calling the `onOpenChange` callback with `false`.
 
@@ -114,7 +106,7 @@ A button that closes the action bar by calling the `onOpenChange` callback with 
   name="CloseProps"
 />
 
-### ActionBarSeparator
+### Separator
 
 A visual separator between action bar items.
 
@@ -122,21 +114,3 @@ A visual separator between action bar items.
   path="./types/docs/action-bar.ts"
   name="SeparatorProps"
 />
-
-## Accessibility
-
-The action bar follows WAI-ARIA patterns for dialog components:
-
-- Uses proper `role="separator"` for separators
-- Interactive items are keyboard accessible
-- Focus management is handled automatically
-- Supports both controlled and uncontrolled states
-
-## Notes
-
-- The action bar is rendered in a portal to ensure proper stacking context
-- Animations can be disabled by setting `animated={false}`
-- Position can be customized using the `side`, `align`, and `sideOffset` props
-- The component automatically handles positioning based on viewport alignment
-
-

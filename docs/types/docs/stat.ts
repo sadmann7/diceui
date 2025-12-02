@@ -1,9 +1,9 @@
 import type { Separator } from "@radix-ui/react-separator";
-import type { CompositionProps, EmptyProps } from "@/types";
+import type { EmptyProps } from "@/types";
 
-export interface StatProps extends EmptyProps<"div">, CompositionProps {}
+export interface StatProps extends EmptyProps<"div"> {}
 
-export interface StatLabelProps extends EmptyProps<"div">, CompositionProps {}
+export interface StatLabelProps extends EmptyProps<"div"> {}
 
 export interface StatIndicatorProps extends Omit<EmptyProps<"div">, "color"> {
   /**
