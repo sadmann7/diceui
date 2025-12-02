@@ -699,7 +699,7 @@ export const Index: Record<string, any> = {
       name: "action-bar-position-demo",
       description: "",
       type: "registry:example",
-      registryDependencies: ["action-bar","label","select"],
+      registryDependencies: ["action-bar","label","select","switch"],
       files: [{
         path: "registry/default/examples/action-bar-position-demo.tsx",
         type: "registry:example",
