@@ -29,12 +29,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * @default 16
    */
   sideOffset?: number;
-
-  /**
-   * Whether to show an animation when opening/closing.
-   * @default true
-   */
-  animated?: boolean;
 }
 
 export interface ItemProps extends EmptyProps<"button">, CompositionProps {

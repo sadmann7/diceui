@@ -12,7 +12,6 @@ interface ActionBarContextValue {
   side: "top" | "bottom";
   align: "start" | "center" | "end";
   sideOffset: number;
-  animated: boolean;
 }
 
 const ActionBarContext = React.createContext<ActionBarContextValue | null>(
@@ -33,27 +32,8 @@ interface ActionBarRootProps extends React.ComponentProps<"div"> {
   side?: "top" | "bottom";
   align?: "start" | "center" | "end";
   sideOffset?: number;
-  animated?: boolean;
   asChild?: boolean;
 }
-
-const actionBarRootVariants = cva(
-  [
-    "fixed z-50",
-    "flex items-center gap-1 rounded-lg border bg-card px-2 py-1.5 shadow-lg",
-    "data-[state=open]:fade-in-0 data-[state=open]:animate-in data-[state=open]:duration-200",
-    "data-[side=bottom]:data-[state=open]:slide-in-from-bottom-2",
-    "data-[side=top]:data-[state=open]:slide-in-from-top-2",
-  ],
-  {
-    variants: {
-      animated: {
-        true: "",
-        false: "data-[state=open]:animate-none",
-      },
-    },
-  },
-);
 
 function ActionBarRoot(props: ActionBarRootProps) {
   const {
@@ -62,7 +42,6 @@ function ActionBarRoot(props: ActionBarRootProps) {
     side = "bottom",
     align = "center",
     sideOffset = 16,
-    animated = true,
     asChild,
     className,
     style,
@@ -76,9 +55,8 @@ function ActionBarRoot(props: ActionBarRootProps) {
       side,
       align,
       sideOffset,
-      animated,
     }),
-    [open, onOpenChange, side, align, sideOffset, animated],
+    [open, onOpenChange, side, align, sideOffset],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -92,7 +70,13 @@ function ActionBarRoot(props: ActionBarRootProps) {
           data-side={side}
           data-align={align}
           {...rootProps}
-          className={cn(actionBarRootVariants({ animated, className }))}
+          className={cn(
+            "fixed z-50 flex items-center gap-1 rounded-lg border bg-card px-2 py-1.5 shadow-lg",
+            "motion-safe:data-[state=open]:fade-in-0 motion-safe:data-[state=open]:animate-in motion-safe:data-[state=open]:duration-200",
+            "motion-safe:data-[side=bottom]:data-[state=open]:slide-in-from-bottom-2",
+            "motion-safe:data-[side=top]:data-[state=open]:slide-in-from-top-2",
+            className,
+          )}
           style={{
             [side]: `${sideOffset}px`,
             ...(align === "center" && {
