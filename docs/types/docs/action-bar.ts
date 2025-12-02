@@ -4,7 +4,6 @@ import type { CompositionProps, EmptyProps } from "@/types";
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Whether the action bar is open/visible.
-   *
    * @default false
    */
   open?: boolean;
@@ -22,7 +21,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The side of the viewport to align the action bar.
-   *
    * @default "bottom"
    */
   side?: "top" | "bottom";
@@ -36,14 +34,12 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The alignment of the action bar along the viewport side.
-   *
    * @default "center"
    */
   align?: "start" | "center" | "end";
 
   /**
    * Distance from the aligned edge (in pixels). Only applies when `align` is "start" or "end".
-   *
    * @default 0
    */
   alignOffset?: number;
@@ -73,13 +69,19 @@ export interface SelectionProps extends EmptyProps<"div">, CompositionProps {}
 export interface ItemProps
   extends Omit<
       React.ComponentProps<typeof Button>,
-      keyof React.ComponentProps<"button"> | "onSelect"
+      keyof React.ComponentProps<"button">
     >,
     CompositionProps {
   /**
    * Event handler called when the item is selected.
    * When provided, the action bar will automatically close after selection
    * unless `event.preventDefault()` is called.
+   *
+   * ```ts
+   * onSelect={(event) => {
+   *   console.log("Item selected!")
+   * }}
+   * ```
    */
   onSelect?: (event: Event) => void;
 }
