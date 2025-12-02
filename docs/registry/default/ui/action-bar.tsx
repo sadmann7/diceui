@@ -6,17 +6,11 @@ import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
-import { Portal } from "@/registry/default/components/portal";
 
 const ROOT_NAME = "ActionBar";
 const ITEM_NAME = "ActionBarItem";
 const CLOSE_NAME = "ActionBarClose";
 const ITEM_SELECT = "actionbar.itemSelect";
-const POINTER_DOWN_OUTSIDE = "actionbar.pointerDownOutside";
-const FOCUS_OUTSIDE = "actionbar.focusOutside";
-
-type PointerDownOutsideEvent = CustomEvent<{ originalEvent: PointerEvent }>;
-type FocusOutsideEvent = CustomEvent<{ originalEvent: FocusEvent }>;
 
 type RootElement = React.ComponentRef<typeof ActionBarRoot>;
 type ItemElement = React.ComponentRef<typeof ActionBarItem>;
@@ -35,32 +29,6 @@ function useAsRef<T>(props: T) {
   return ref;
 }
 
-function dispatchCustomEvent<E extends CustomEvent>(
-  name: string,
-  handler: ((event: E) => void) | undefined,
-  detail: E["detail"],
-  discrete: boolean,
-) {
-  const target = detail.originalEvent.target as HTMLElement;
-  const event = new CustomEvent(name, {
-    bubbles: false,
-    cancelable: true,
-    detail,
-  });
-
-  if (handler) {
-    target.addEventListener(name, handler as EventListener, { once: true });
-  }
-
-  if (discrete) {
-    ReactDOM.flushSync(() => target.dispatchEvent(event));
-  } else {
-    target.dispatchEvent(event);
-  }
-
-  return event;
-}
-
 type OnOpenChange = ((open: boolean) => void) | undefined;
 
 const ActionBarContext = React.createContext<OnOpenChange>(undefined);
@@ -76,55 +44,42 @@ function useActionBarContext(consumerName: string) {
 interface ActionBarRootProps extends React.ComponentProps<"div"> {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-  side?: "top" | "bottom";
-  align?: "start" | "center" | "end";
-  sideOffset?: number;
-  asChild?: boolean;
-  dismissible?: boolean;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
-  onFocusOutside?: (event: FocusOutsideEvent) => void;
-  onInteractOutside?: (
-    event: PointerDownOutsideEvent | FocusOutsideEvent,
-  ) => void;
+  align?: "start" | "center" | "end";
+  side?: "top" | "bottom";
+  sideOffset?: number;
+  portalContainer?: Element | DocumentFragment | null;
+  asChild?: boolean;
 }
 
 function ActionBarRoot(props: ActionBarRootProps) {
   const {
     open = false,
     onOpenChange,
-    side = "bottom",
-    align = "center",
-    sideOffset = 16,
     onEscapeKeyDown,
-    onPointerDownOutside,
-    onFocusOutside,
-    onInteractOutside,
-    onPointerDownCapture,
-    onFocusCapture,
-    onBlurCapture,
+    align = "center",
+    side = "bottom",
+    sideOffset = 16,
+    portalContainer: portalContainerProp,
     className,
     style,
     ref,
     asChild,
-    dismissible = false,
     ...rootProps
   } = props;
 
+  const [mounted, setMounted] = React.useState(false);
   const rootRef = React.useRef<RootElement>(null);
-  const isPointerInsideRef = React.useRef(false);
-  const isFocusInsideRef = React.useRef(false);
-  const onClickRef = React.useRef(() => {});
-
   const composedRef = useComposedRefs(ref, rootRef);
 
   const propsRef = useAsRef({
     onEscapeKeyDown,
-    onPointerDownOutside,
-    onFocusOutside,
-    onInteractOutside,
     onOpenChange,
   });
+
+  React.useLayoutEffect(() => {
+    setMounted(true);
+  }, []);
 
   React.useEffect(() => {
     if (!open) return;
@@ -144,134 +99,16 @@ function ActionBarRoot(props: ActionBarRootProps) {
     return () => ownerDocument.removeEventListener("keydown", onKeyDown);
   }, [open, propsRef]);
 
-  React.useEffect(() => {
-    if (!open || !dismissible) return;
+  const portalContainer =
+    portalContainerProp ?? (mounted ? globalThis.document?.body : null);
 
-    const ownerDocument = rootRef.current?.ownerDocument ?? document;
-
-    function onPointerDown(event: PointerEvent) {
-      const target = event.target as Node | null;
-
-      if (target && !isPointerInsideRef.current) {
-        const root = rootRef.current;
-        if (root && !root.contains(target)) {
-          function onPointerDownOutside() {
-            const pointerEvent = dispatchCustomEvent(
-              POINTER_DOWN_OUTSIDE,
-              propsRef.current.onPointerDownOutside,
-              { originalEvent: event },
-              true,
-            );
-
-            const interactEvent = dispatchCustomEvent(
-              POINTER_DOWN_OUTSIDE,
-              propsRef.current.onInteractOutside,
-              { originalEvent: event },
-              true,
-            );
-
-            if (
-              !pointerEvent.defaultPrevented &&
-              !interactEvent.defaultPrevented
-            ) {
-              propsRef.current.onOpenChange?.(false);
-            }
-          }
-
-          if (event.pointerType === "touch") {
-            ownerDocument.removeEventListener("click", onClickRef.current);
-            onClickRef.current = onPointerDownOutside;
-            ownerDocument.addEventListener("click", onClickRef.current, {
-              once: true,
-            });
-          } else {
-            onPointerDownOutside();
-          }
-        }
-      } else {
-        ownerDocument.removeEventListener("click", onClickRef.current);
-      }
-
-      isPointerInsideRef.current = false;
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      ownerDocument.addEventListener("pointerdown", onPointerDown);
-    }, 0);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-      ownerDocument.removeEventListener("pointerdown", onPointerDown);
-      ownerDocument.removeEventListener("click", onClickRef.current);
-    };
-  }, [open, dismissible, propsRef]);
-
-  React.useEffect(() => {
-    if (!open || !dismissible) return;
-
-    const ownerDocument = rootRef.current?.ownerDocument ?? document;
-
-    function onFocusIn(event: FocusEvent) {
-      const target = event.target as Node | null;
-      if (!target) return;
-
-      const root = rootRef.current;
-      if (!root || root.contains(target) || isFocusInsideRef.current) return;
-
-      const focusEvent = dispatchCustomEvent(
-        FOCUS_OUTSIDE,
-        propsRef.current.onFocusOutside,
-        { originalEvent: event },
-        false,
-      );
-
-      const interactEvent = dispatchCustomEvent(
-        FOCUS_OUTSIDE,
-        propsRef.current.onInteractOutside,
-        { originalEvent: event },
-        false,
-      );
-
-      if (!focusEvent.defaultPrevented && !interactEvent.defaultPrevented) {
-        propsRef.current.onOpenChange?.(false);
-      }
-    }
-
-    ownerDocument.addEventListener("focusin", onFocusIn);
-    return () => ownerDocument.removeEventListener("focusin", onFocusIn);
-  }, [open, dismissible, propsRef]);
-
-  const onRootPointerDownCapture = React.useCallback(
-    (event: React.PointerEvent<RootElement>) => {
-      onPointerDownCapture?.(event);
-      isPointerInsideRef.current = true;
-    },
-    [onPointerDownCapture],
-  );
-
-  const onRootFocusCapture = React.useCallback(
-    (event: React.FocusEvent<RootElement>) => {
-      onFocusCapture?.(event);
-      isFocusInsideRef.current = true;
-    },
-    [onFocusCapture],
-  );
-
-  const onRootBlurCapture = React.useCallback(
-    (event: React.FocusEvent<RootElement>) => {
-      onBlurCapture?.(event);
-      isFocusInsideRef.current = false;
-    },
-    [onBlurCapture],
-  );
-
-  if (!open) return null;
+  if (!open || !portalContainer) return null;
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <ActionBarContext.Provider value={onOpenChange}>
-      <Portal>
+      {ReactDOM.createPortal(
         <RootPrimitive
           data-slot="action-bar"
           data-state={open ? "open" : "closed"}
@@ -279,9 +116,6 @@ function ActionBarRoot(props: ActionBarRootProps) {
           data-align={align}
           {...rootProps}
           ref={composedRef}
-          onPointerDownCapture={onRootPointerDownCapture}
-          onFocusCapture={onRootFocusCapture}
-          onBlurCapture={onRootBlurCapture}
           className={cn(
             "fixed z-50 flex items-center gap-1 rounded-lg border bg-card px-2 py-1.5 shadow-lg",
             "data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:animate-in data-[state=open]:duration-250",
@@ -302,8 +136,9 @@ function ActionBarRoot(props: ActionBarRootProps) {
             animationTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
             ...style,
           }}
-        />
-      </Portal>
+        />,
+        portalContainer,
+      )}
     </ActionBarContext.Provider>
   );
 }
