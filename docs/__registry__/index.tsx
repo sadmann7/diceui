@@ -32,6 +32,10 @@ export const Index: Record<string, any> = {
         path: "registry/default/ui/action-bar.tsx",
         type: "registry:ui",
         target: ""
+      },{
+        path: "registry/default/components/portal.tsx",
+        type: "registry:component",
+        target: ""
       }],
       component: React.lazy(() => import("@/registry/default/ui/action-bar.tsx")),
       source: "",

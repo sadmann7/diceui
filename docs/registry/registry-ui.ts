@@ -11,6 +11,10 @@ export const ui: Registry["items"] = [
         path: "ui/action-bar.tsx",
         type: "registry:ui",
       },
+      {
+        path: "components/portal.tsx",
+        type: "registry:component",
+      },
     ],
   },
   {

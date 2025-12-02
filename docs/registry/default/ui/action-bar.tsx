@@ -3,6 +3,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
 import * as React from "react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Portal } from "@/registry/default/components/portal";
 
@@ -59,6 +60,8 @@ function ActionBarRoot(props: ActionBarRootProps) {
     [open, onOpenChange, side, align, sideOffset],
   );
 
+  if (!open) return null;
+
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
@@ -72,66 +75,27 @@ function ActionBarRoot(props: ActionBarRootProps) {
           {...rootProps}
           className={cn(
             "fixed z-50 flex items-center gap-1 rounded-lg border bg-card px-2 py-1.5 shadow-lg",
-            "motion-safe:data-[state=open]:fade-in-0 motion-safe:data-[state=open]:animate-in motion-safe:data-[state=open]:duration-200",
-            "motion-safe:data-[side=bottom]:data-[state=open]:slide-in-from-bottom-2",
-            "motion-safe:data-[side=top]:data-[state=open]:slide-in-from-top-2",
+            "data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:animate-in data-[state=open]:duration-250",
+            "data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:animate-out data-[state=closed]:duration-200",
+            "data-[side=bottom]:data-[state=open]:slide-in-from-bottom-4 data-[side=bottom]:data-[state=closed]:slide-out-to-bottom-4",
+            "data-[side=top]:data-[state=open]:slide-in-from-top-4 data-[side=top]:data-[state=closed]:slide-out-to-top-4",
+            "motion-reduce:animate-none motion-reduce:transition-none",
             className,
           )}
           style={{
             [side]: `${sideOffset}px`,
             ...(align === "center" && {
               left: "50%",
-              transform: "translateX(-50%)",
+              translate: "-50% 0",
             }),
             ...(align === "start" && { left: `${sideOffset}px` }),
             ...(align === "end" && { right: `${sideOffset}px` }),
+            animationTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
             ...style,
           }}
         />
       </Portal>
     </ActionBarContext.Provider>
-  );
-}
-
-const actionBarItemVariants = cva(
-  [
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm",
-    "transition-colors duration-150",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-    "disabled:pointer-events-none disabled:opacity-50",
-    "hover:bg-accent hover:text-accent-foreground",
-    "h-9 px-3",
-  ],
-  {
-    variants: {
-      variant: {
-        default: "bg-transparent",
-        destructive:
-          "text-destructive hover:bg-destructive hover:text-destructive-foreground",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  },
-);
-
-interface ActionBarItemProps extends React.ComponentProps<"button"> {
-  asChild?: boolean;
-  variant?: "default" | "destructive";
-}
-
-function ActionBarItem(props: ActionBarItemProps) {
-  const { asChild, className, variant, ...itemProps } = props;
-
-  const ItemPrimitive = asChild ? Slot : "button";
-
-  return (
-    <ItemPrimitive
-      data-slot="action-bar-item"
-      {...itemProps}
-      className={cn(actionBarItemVariants({ variant, className }))}
-    />
   );
 }
 
@@ -152,6 +116,19 @@ function ActionBarSelection(props: ActionBarSelectionProps) {
         "flex items-center gap-2 rounded-sm border border-dotted px-2 py-1 font-medium text-sm",
         className,
       )}
+    />
+  );
+}
+
+function ActionBarItem(props: React.ComponentProps<typeof Button>) {
+  const { ...itemProps } = props;
+
+  return (
+    <Button
+      data-slot="action-bar-item"
+      {...itemProps}
+      variant="secondary"
+      size="sm"
     />
   );
 }
@@ -202,9 +179,9 @@ function ActionBarSeparator(props: ActionBarSeparatorProps) {
 
   return (
     <SeparatorPrimitive
-      data-slot="action-bar-separator"
       role="separator"
       aria-orientation="vertical"
+      data-slot="action-bar-separator"
       {...separatorProps}
       className={cn("mx-1 h-6 w-px bg-border", className)}
     />
@@ -213,14 +190,14 @@ function ActionBarSeparator(props: ActionBarSeparatorProps) {
 
 export {
   ActionBarRoot as Root,
-  ActionBarItem as Item,
   ActionBarSelection as Selection,
+  ActionBarItem as Item,
   ActionBarClose as Close,
   ActionBarSeparator as Separator,
   //
   ActionBarRoot as ActionBar,
-  ActionBarItem,
   ActionBarSelection,
+  ActionBarItem,
   ActionBarClose,
   ActionBarSeparator,
 };

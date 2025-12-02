@@ -1,3 +1,4 @@
+import type { Button } from "@/components/ui/button";
 import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
@@ -31,15 +32,14 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   sideOffset?: number;
 }
 
-export interface ItemProps extends EmptyProps<"button">, CompositionProps {
-  /**
-   * Whether the item is disabled.
-   * @default false
-   */
-  disabled?: boolean;
-}
-
 export interface SelectionProps extends EmptyProps<"div">, CompositionProps {}
+
+export interface ItemProps
+  extends Omit<
+      React.ComponentProps<typeof Button>,
+      keyof React.ComponentProps<"button">
+    >,
+    CompositionProps {}
 
 export interface CloseProps extends EmptyProps<"button">, CompositionProps {}
 
