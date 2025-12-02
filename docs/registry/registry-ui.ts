@@ -2,6 +2,18 @@ import type { Registry } from "shadcn/schema";
 
 export const ui: Registry["items"] = [
   {
+    name: "action-bar",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "ui/action-bar.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "angle-slider",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],

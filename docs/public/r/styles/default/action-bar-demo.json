@@ -1,0 +1,19 @@
+{
+  "name": "action-bar-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "action-bar",
+    "checkbox"
+  ],
+  "files": [
+    {
+      "path": "examples/action-bar-demo.tsx",
+      "content": "\"use client\";\n\nimport { Copy, MoreHorizontal, Trash2, X } from \"lucide-react\";\nimport * as React from \"react\";\nimport { Checkbox } from \"@/components/ui/checkbox\";\nimport { cn } from \"@/lib/utils\";\nimport {\n  ActionBar,\n  ActionBarClose,\n  ActionBarItem,\n  ActionBarSelection,\n  ActionBarSeparator,\n} from \"@/registry/default/ui/action-bar\";\n\nconst items = [\n  { id: 1, name: \"Task 1\", status: \"Todo\" },\n  { id: 2, name: \"Task 2\", status: \"In Progress\" },\n  { id: 3, name: \"Task 3\", status: \"Done\" },\n  { id: 4, name: \"Task 4\", status: \"Todo\" },\n];\n\nexport default function ActionBarDemo() {\n  const [selectedItems, setSelectedItems] = React.useState<Set<number>>(\n    new Set(),\n  );\n\n  const open = selectedItems.size > 0;\n\n  const onOpenChange = React.useCallback((open: boolean) => {\n    if (!open) {\n      setSelectedItems(new Set());\n    }\n  }, []);\n\n  const onItemSelect = React.useCallback(\n    (id: number, checked: boolean) => {\n      const newSelected = new Set(selectedItems);\n      if (checked) {\n        newSelected.add(id);\n      } else {\n        newSelected.delete(id);\n      }\n      setSelectedItems(newSelected);\n    },\n    [selectedItems],\n  );\n\n  const onDuplicate = React.useCallback(() => {\n    console.log({ action: \"duplicate\", items: Array.from(selectedItems) });\n  }, [selectedItems]);\n\n  const onDelete = React.useCallback(() => {\n    console.log({ action: \"delete\", items: Array.from(selectedItems) });\n    setSelectedItems(new Set());\n  }, [selectedItems]);\n\n  return (\n    <div className=\"relative flex min-h-[400px] w-full flex-col\">\n      <div className=\"flex flex-1 flex-col gap-2\">\n        {items.map((item) => (\n          <label\n            key={item.id}\n            className={cn(\n              \"flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-4 transition-colors\",\n              selectedItems.has(item.id) && \"border-primary bg-accent\",\n            )}\n          >\n            <Checkbox\n              checked={selectedItems.has(item.id)}\n              onCheckedChange={(checked) =>\n                onItemSelect(item.id, checked === true)\n              }\n            />\n            <div className=\"flex-1\">\n              <div className=\"font-medium\">{item.name}</div>\n              <div className=\"text-muted-foreground text-sm\">{item.status}</div>\n            </div>\n          </label>\n        ))}\n      </div>\n\n      <ActionBar open={open} onOpenChange={onOpenChange}>\n        <ActionBarSelection>\n          {selectedItems.size} selected\n          <ActionBarClose>\n            <X />\n          </ActionBarClose>\n        </ActionBarSelection>\n        <ActionBarSeparator />\n        <ActionBarItem onClick={onDuplicate}>\n          <Copy className=\"size-4\" />\n          Duplicate\n        </ActionBarItem>\n        <ActionBarItem>\n          <MoreHorizontal className=\"size-4\" />\n          More\n        </ActionBarItem>\n        <ActionBarSeparator />\n        <ActionBarItem variant=\"destructive\" onClick={onDelete}>\n          <Trash2 className=\"size-4\" />\n          Delete\n        </ActionBarItem>\n      </ActionBar>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

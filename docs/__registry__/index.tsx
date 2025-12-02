@@ -23,6 +23,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["button"],
+      files: [{
+        path: "registry/default/ui/action-bar.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/action-bar.tsx")),
+      source: "",
+      chunks: []
+    },
     "angle-slider": {
       name: "angle-slider",
       description: "",
@@ -656,6 +670,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/hooks/use-mobile.ts")),
+      source: "",
+      chunks: []
+    },
+    "action-bar-demo": {
+      name: "action-bar-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["action-bar","checkbox"],
+      files: [{
+        path: "registry/default/examples/action-bar-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/action-bar-demo.tsx")),
       source: "",
       chunks: []
     },

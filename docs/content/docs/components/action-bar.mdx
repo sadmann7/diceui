@@ -1,0 +1,142 @@
+---
+title: Action Bar
+description: A floating action bar that appears at the bottom or top of the viewport to display contextual actions for selected items.
+preview: true
+links:
+ api: /docs/components/action-bar#api-reference
+---
+
+<ComponentTabs name="action-bar-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "https://diceui.com/r/action-bar"
+
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @radix-ui/react-slot class-variance-authority
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="action-bar" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
+  </Step>
+</Steps>
+
+## Layout
+
+```tsx
+import {
+  ActionBar,
+  ActionBarClose,
+  ActionBarItem,
+  ActionBarSelection,
+  ActionBarSeparator,
+} from "@/components/ui/action-bar";
+
+<ActionBar open={open} onOpenChange={setOpen}>
+  <ActionBarSelection>
+    {count} selected
+    <ActionBarClose />
+  </ActionBarSelection>
+  <ActionBarSeparator />
+  <ActionBarItem>Action 1</ActionBarItem>
+  <ActionBarItem>Action 2</ActionBarItem>
+</ActionBar>
+```
+
+## API Reference
+
+### ActionBar
+
+The root component that controls the visibility and position of the action bar.
+
+<AutoTypeTable
+  path="./types/docs/action-bar.ts"
+  name="RootProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+    {
+      title: "[data-side]",
+      value: ["top", "bottom"],
+    },
+    {
+      title: "[data-align]",
+      value: ["start", "center", "end"],
+    },
+  ]}
+/>
+
+### ActionBarItem
+
+An interactive button item within the action bar.
+
+<AutoTypeTable
+  path="./types/docs/action-bar.ts"
+  name="ItemProps"
+/>
+
+### ActionBarSelection
+
+Displays selection information, typically used to show how many items are selected.
+
+<AutoTypeTable
+  path="./types/docs/action-bar.ts"
+  name="SelectionProps"
+/>
+
+### ActionBarClose
+
+A button that closes the action bar by calling the `onOpenChange` callback with `false`.
+
+<AutoTypeTable
+  path="./types/docs/action-bar.ts"
+  name="CloseProps"
+/>
+
+### ActionBarSeparator
+
+A visual separator between action bar items.
+
+<AutoTypeTable
+  path="./types/docs/action-bar.ts"
+  name="SeparatorProps"
+/>
+
+## Accessibility
+
+The action bar follows WAI-ARIA patterns for dialog components:
+
+- Uses proper `role="separator"` for separators
+- Interactive items are keyboard accessible
+- Focus management is handled automatically
+- Supports both controlled and uncontrolled states
+
+## Notes
+
+- The action bar is rendered in a portal to ensure proper stacking context
+- Animations can be disabled by setting `animated={false}`
+- Position can be customized using the `side`, `align`, and `sideOffset` props
+- The component automatically handles positioning based on viewport alignment
+
+
