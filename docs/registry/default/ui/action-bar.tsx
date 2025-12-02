@@ -3,11 +3,11 @@
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
-import { useCallbackRef } from "@/hooks/use-callback-ref";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { Portal } from "@/registry/default/components/portal";
 
+const ROOT_NAME = "ActionBar";
 const ITEM_NAME = "ActionBarItem";
 const CLOSE_NAME = "ActionBarClose";
 const ITEM_SELECT = "actionbar.itemSelect";
@@ -28,24 +28,29 @@ type RootElement = React.ComponentRef<typeof ActionBarRoot>;
 type ItemElement = React.ComponentRef<typeof ActionBarItem>; // eslint-disable-line @typescript-eslint/no-unused-vars
 type CloseElement = React.ComponentRef<typeof ActionBarClose>;
 
-interface ActionBarContextValue {
-  open: boolean;
-  onOpenChange?: (open: boolean) => void;
-  side: "top" | "bottom";
-  align: "start" | "center" | "end";
-  sideOffset: number;
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
+
+function useAsRef<T>(props: T) {
+  const ref = React.useRef<T>(props);
+
+  useIsomorphicLayoutEffect(() => {
+    ref.current = props;
+  });
+
+  return ref;
 }
 
-const ActionBarContext = React.createContext<ActionBarContextValue | null>(
-  null,
-);
+type OnOpenChange = ((open: boolean) => void) | undefined;
+
+const ActionBarContext = React.createContext<OnOpenChange>(undefined);
 
 function useActionBarContext(consumerName: string) {
-  const context = React.useContext(ActionBarContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`ActionBar\``);
+  const onOpenChange = React.useContext(ActionBarContext);
+  if (onOpenChange === undefined) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
-  return context;
+  return onOpenChange;
 }
 
 interface ActionBarRootProps extends React.ComponentProps<"div"> {
@@ -85,22 +90,26 @@ function ActionBarRoot(props: ActionBarRootProps) {
   } = props;
 
   const rootRef = React.useRef<RootElement>(null);
-  const composedRef = useComposedRefs(ref, rootRef);
   const isPointerInsideRef = React.useRef(false);
   const isFocusInsideRef = React.useRef(false);
   const onClickRef = React.useRef(() => {});
 
-  const onEscapeKeyDownCallback = useCallbackRef(onEscapeKeyDown);
-  const onPointerDownOutsideCallback = useCallbackRef(onPointerDownOutside);
-  const onFocusOutsideCallback = useCallbackRef(onFocusOutside);
-  const onInteractOutsideCallback = useCallbackRef(onInteractOutside);
+  const composedRef = useComposedRefs(ref, rootRef);
+
+  const propsRef = useAsRef({
+    onEscapeKeyDown,
+    onPointerDownOutside,
+    onFocusOutside,
+    onInteractOutside,
+    onOpenChange,
+  });
 
   React.useEffect(() => {
     if (!open) return;
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        onEscapeKeyDownCallback?.(event);
+        propsRef.current.onEscapeKeyDown?.(event);
         if (!event.defaultPrevented) {
           onOpenChange?.(false);
         }
@@ -109,7 +118,7 @@ function ActionBarRoot(props: ActionBarRootProps) {
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, onEscapeKeyDownCallback, onOpenChange]);
+  }, [open, onOpenChange, propsRef]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -130,9 +139,9 @@ function ActionBarRoot(props: ActionBarRootProps) {
             },
           };
 
-          function handlePointerDownOutside() {
-            onPointerDownOutsideCallback?.(outsideEvent);
-            onInteractOutsideCallback?.(outsideEvent);
+          function onPointerDownOutside() {
+            propsRef.current.onPointerDownOutside?.(outsideEvent);
+            propsRef.current.onInteractOutside?.(outsideEvent);
 
             if (!outsideEvent.defaultPrevented) {
               onOpenChange?.(false);
@@ -141,12 +150,12 @@ function ActionBarRoot(props: ActionBarRootProps) {
 
           if (event.pointerType === "touch") {
             ownerDocument.removeEventListener("click", onClickRef.current);
-            onClickRef.current = handlePointerDownOutside;
+            onClickRef.current = onPointerDownOutside;
             ownerDocument.addEventListener("click", onClickRef.current, {
               once: true,
             });
           } else {
-            handlePointerDownOutside();
+            onPointerDownOutside();
           }
         }
       } else {
@@ -165,12 +174,7 @@ function ActionBarRoot(props: ActionBarRootProps) {
       ownerDocument.removeEventListener("pointerdown", onPointerDown);
       ownerDocument.removeEventListener("click", onClickRef.current);
     };
-  }, [
-    open,
-    onPointerDownOutsideCallback,
-    onInteractOutsideCallback,
-    onOpenChange,
-  ]);
+  }, [open, propsRef, onOpenChange]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -190,8 +194,8 @@ function ActionBarRoot(props: ActionBarRootProps) {
         },
       };
 
-      onFocusOutsideCallback?.(outsideEvent);
-      onInteractOutsideCallback?.(outsideEvent);
+      propsRef.current.onFocusOutside?.(outsideEvent);
+      propsRef.current.onInteractOutside?.(outsideEvent);
 
       if (!outsideEvent.defaultPrevented) {
         onOpenChange?.(false);
@@ -200,7 +204,7 @@ function ActionBarRoot(props: ActionBarRootProps) {
 
     document.addEventListener("focusin", onFocusIn);
     return () => document.removeEventListener("focusin", onFocusIn);
-  }, [open, onFocusOutsideCallback, onInteractOutsideCallback, onOpenChange]);
+  }, [open, onOpenChange, propsRef]);
 
   const onRootPointerDownCapture = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
@@ -226,23 +230,12 @@ function ActionBarRoot(props: ActionBarRootProps) {
     [onBlurCapture],
   );
 
-  const contextValue = React.useMemo<ActionBarContextValue>(
-    () => ({
-      open,
-      onOpenChange,
-      side,
-      align,
-      sideOffset,
-    }),
-    [open, onOpenChange, side, align, sideOffset],
-  );
-
   if (!open) return null;
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <ActionBarContext.Provider value={contextValue}>
+    <ActionBarContext.Provider value={onOpenChange}>
       <Portal>
         <RootPrimitive
           data-slot="action-bar"
@@ -312,7 +305,7 @@ function ActionBarItem(props: ActionBarItemProps) {
   const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
 
-  const { onOpenChange } = useActionBarContext(ITEM_NAME);
+  const onOpenChange = useActionBarContext(ITEM_NAME);
 
   const onItemSelect = React.useCallback(() => {
     const item = itemRef.current;
@@ -366,7 +359,7 @@ interface ActionBarCloseProps extends React.ComponentProps<"button"> {
 function ActionBarClose(props: ActionBarCloseProps) {
   const { asChild, className, onClick, ...closeProps } = props;
 
-  const { onOpenChange } = useActionBarContext(CLOSE_NAME);
+  const onOpenChange = useActionBarContext(CLOSE_NAME);
 
   const onCloseClick = React.useCallback(
     (event: React.MouseEvent<CloseElement>) => {
@@ -427,5 +420,3 @@ export {
   ActionBarClose,
   ActionBarSeparator,
 };
-
-export type { PointerDownOutsideEvent, FocusOutsideEvent };
