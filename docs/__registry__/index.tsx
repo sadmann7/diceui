@@ -695,6 +695,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "action-bar-position-demo": {
+      name: "action-bar-position-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["action-bar","label","select"],
+      files: [{
+        path: "registry/default/examples/action-bar-position-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/action-bar-position-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "angle-slider-demo": {
       name: "angle-slider-demo",
       description: "",

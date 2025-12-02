@@ -29,16 +29,20 @@ function useAsRef<T>(props: T) {
   return ref;
 }
 
-type OnOpenChange = ((open: boolean) => void) | undefined;
+interface ActionBarContextValue {
+  onOpenChange?: (open: boolean) => void;
+}
 
-const ActionBarContext = React.createContext<OnOpenChange>(undefined);
+const ActionBarContext = React.createContext<ActionBarContextValue | null>(
+  null,
+);
 
 function useActionBarContext(consumerName: string) {
-  const onOpenChange = React.useContext(ActionBarContext);
-  if (onOpenChange === undefined) {
+  const context = React.useContext(ActionBarContext);
+  if (!context) {
     throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
-  return onOpenChange;
+  return context;
 }
 
 interface ActionBarRootProps extends React.ComponentProps<"div"> {
@@ -46,6 +50,7 @@ interface ActionBarRootProps extends React.ComponentProps<"div"> {
   onOpenChange?: (open: boolean) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   align?: "start" | "center" | "end";
+  alignOffset?: number;
   side?: "top" | "bottom";
   sideOffset?: number;
   portalContainer?: Element | DocumentFragment | null;
@@ -57,8 +62,9 @@ function ActionBarRoot(props: ActionBarRootProps) {
     open = false,
     onOpenChange,
     onEscapeKeyDown,
-    align = "center",
     side = "bottom",
+    alignOffset = 0,
+    align = "center",
     sideOffset = 16,
     portalContainer: portalContainerProp,
     className,
@@ -69,6 +75,7 @@ function ActionBarRoot(props: ActionBarRootProps) {
   } = props;
 
   const [mounted, setMounted] = React.useState(false);
+
   const rootRef = React.useRef<RootElement>(null);
   const composedRef = useComposedRefs(ref, rootRef);
 
@@ -99,6 +106,13 @@ function ActionBarRoot(props: ActionBarRootProps) {
     return () => ownerDocument.removeEventListener("keydown", onKeyDown);
   }, [open, propsRef]);
 
+  const contextValue = React.useMemo<ActionBarContextValue>(
+    () => ({
+      onOpenChange,
+    }),
+    [onOpenChange],
+  );
+
   const portalContainer =
     portalContainerProp ?? (mounted ? globalThis.document?.body : null);
 
@@ -107,7 +121,7 @@ function ActionBarRoot(props: ActionBarRootProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <ActionBarContext.Provider value={onOpenChange}>
+    <ActionBarContext.Provider value={contextValue}>
       {ReactDOM.createPortal(
         <RootPrimitive
           data-slot="action-bar"
@@ -131,8 +145,8 @@ function ActionBarRoot(props: ActionBarRootProps) {
               left: "50%",
               translate: "-50% 0",
             }),
-            ...(align === "start" && { left: `${sideOffset}px` }),
-            ...(align === "end" && { right: `${sideOffset}px` }),
+            ...(align === "start" && { left: `${alignOffset}px` }),
+            ...(align === "end" && { right: `${alignOffset}px` }),
             animationTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
             ...style,
           }}
@@ -175,7 +189,7 @@ function ActionBarItem(props: ActionBarItemProps) {
   const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
 
-  const onOpenChange = useActionBarContext(ITEM_NAME);
+  const { onOpenChange } = useActionBarContext(ITEM_NAME);
 
   const onItemSelect = React.useCallback(() => {
     const item = itemRef.current;
@@ -229,7 +243,7 @@ interface ActionBarCloseProps extends React.ComponentProps<"button"> {
 function ActionBarClose(props: ActionBarCloseProps) {
   const { asChild, className, onClick, ...closeProps } = props;
 
-  const onOpenChange = useActionBarContext(CLOSE_NAME);
+  const { onOpenChange } = useActionBarContext(CLOSE_NAME);
 
   const onCloseClick = React.useCallback(
     (event: React.MouseEvent<CloseElement>) => {

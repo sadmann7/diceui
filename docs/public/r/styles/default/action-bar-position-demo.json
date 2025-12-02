@@ -1,0 +1,20 @@
+{
+  "name": "action-bar-position-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "action-bar",
+    "label",
+    "select"
+  ],
+  "files": [
+    {
+      "path": "examples/action-bar-position-demo.tsx",
+      "content": "\"use client\";\n\nimport { Archive, Star, X } from \"lucide-react\";\nimport * as React from \"react\";\nimport { Label } from \"@/components/ui/label\";\nimport {\n  Select,\n  SelectContent,\n  SelectItem,\n  SelectTrigger,\n  SelectValue,\n} from \"@/components/ui/select\";\nimport {\n  ActionBar,\n  ActionBarClose,\n  ActionBarItem,\n  ActionBarSelection,\n  ActionBarSeparator,\n} from \"@/registry/default/ui/action-bar\";\n\nexport default function ActionBarPositionDemo() {\n  const [open, setOpen] = React.useState(true);\n  const [side, setSide] = React.useState<\"top\" | \"bottom\">(\"bottom\");\n  const [align, setAlign] = React.useState<\"start\" | \"center\" | \"end\">(\n    \"center\",\n  );\n\n  return (\n    <div className=\"flex flex-col gap-6\">\n      <div className=\"flex flex-wrap items-center gap-4\">\n        <div className=\"flex items-center gap-2\">\n          <Label htmlFor=\"side\">Side</Label>\n          <Select\n            value={side}\n            onValueChange={(value) => setSide(value as \"top\" | \"bottom\")}\n          >\n            <SelectTrigger id=\"side\" className=\"w-28\">\n              <SelectValue />\n            </SelectTrigger>\n            <SelectContent>\n              <SelectItem value=\"top\">Top</SelectItem>\n              <SelectItem value=\"bottom\">Bottom</SelectItem>\n            </SelectContent>\n          </Select>\n        </div>\n        <div className=\"flex items-center gap-2\">\n          <Label htmlFor=\"align\">Align</Label>\n          <Select\n            value={align}\n            onValueChange={(value) =>\n              setAlign(value as \"start\" | \"center\" | \"end\")\n            }\n          >\n            <SelectTrigger id=\"align\" className=\"w-28\">\n              <SelectValue />\n            </SelectTrigger>\n            <SelectContent>\n              <SelectItem value=\"start\">Start</SelectItem>\n              <SelectItem value=\"center\">Center</SelectItem>\n              <SelectItem value=\"end\">End</SelectItem>\n            </SelectContent>\n          </Select>\n        </div>\n      </div>\n\n      <ActionBar open={open} onOpenChange={setOpen} side={side} align={align}>\n        <ActionBarSelection>\n          3 selected\n          <ActionBarClose>\n            <X />\n          </ActionBarClose>\n        </ActionBarSelection>\n        <ActionBarSeparator />\n        <ActionBarItem onSelect={() => setOpen(true)}>\n          <Star />\n          Favorite\n        </ActionBarItem>\n        <ActionBarSeparator />\n        <ActionBarItem onSelect={() => setOpen(true)}>\n          <Archive />\n          Archive\n        </ActionBarItem>\n      </ActionBar>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}

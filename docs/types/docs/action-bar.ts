@@ -28,6 +28,13 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   side?: "top" | "bottom";
 
   /**
+   * Distance from the side of the viewport (in pixels).
+   *
+   * @default 16
+   */
+  sideOffset?: number;
+
+  /**
    * The alignment of the action bar along the viewport side.
    *
    * @default "center"
@@ -35,11 +42,11 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   align?: "start" | "center" | "end";
 
   /**
-   * Distance from the side of the viewport (in pixels).
+   * Distance from the aligned edge (in pixels). Only applies when `align` is "start" or "end".
    *
-   * @default 16
+   * @default 0
    */
-  sideOffset?: number;
+  alignOffset?: number;
 
   /**
    * The container to mount the portal into.

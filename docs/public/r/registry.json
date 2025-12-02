@@ -4,6 +4,23 @@
   "homepage": "https://diceui.com",
   "items": [
     {
+      "name": "action-bar",
+      "type": "registry:component",
+      "title": "Action Bar",
+      "description": "A floating action bar that appears at the bottom or top of the viewport to display contextual actions for selected items.",
+      "dependencies": ["@radix-ui/react-slot"],
+      "files": [
+        {
+          "path": "registry/default/ui/action-bar.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "registry/default/lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
       "name": "angle-slider",
       "type": "registry:component",
       "title": "Angle Slider",
@@ -531,6 +548,30 @@
         {
           "path": "registry/default/lib/compose-refs.ts",
           "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "action-bar-demo",
+      "type": "registry:component",
+      "title": "Action Bar Demo",
+      "description": "Example showing how to use the action bar component with a selectable task list.",
+      "files": [
+        {
+          "path": "registry/default/examples/action-bar-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "action-bar-position-demo",
+      "type": "registry:component",
+      "title": "Action Bar Position Demo",
+      "description": "Example showing action bar positioning with side and align options.",
+      "files": [
+        {
+          "path": "registry/default/examples/action-bar-position-demo.tsx",
+          "type": "registry:example"
         }
       ]
     },

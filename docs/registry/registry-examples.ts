@@ -14,6 +14,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "action-bar-position-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["action-bar", "label", "select"],
+    files: [
+      {
+        path: "examples/action-bar-position-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "angle-slider-demo",
     type: "registry:example",
     registryDependencies: ["angle-slider"],
