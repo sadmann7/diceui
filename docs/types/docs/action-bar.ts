@@ -37,9 +37,16 @@ export interface SelectionProps extends EmptyProps<"div">, CompositionProps {}
 export interface ItemProps
   extends Omit<
       React.ComponentProps<typeof Button>,
-      keyof React.ComponentProps<"button">
+      keyof React.ComponentProps<"button"> | "onSelect"
     >,
-    CompositionProps {}
+    CompositionProps {
+  /**
+   * Event handler called when the item is selected.
+   * When provided, the action bar will automatically close after selection
+   * unless `event.preventDefault()` is called.
+   */
+  onSelect?: (event: Event) => void;
+}
 
 export interface CloseProps extends EmptyProps<"button">, CompositionProps {}
 

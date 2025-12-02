@@ -1,11 +1,18 @@
 "use client";
 
 import { Slot } from "@radix-ui/react-slot";
-import { cva } from "class-variance-authority";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { Portal } from "@/registry/default/components/portal";
+
+const ITEM_NAME = "ActionBarItem";
+const CLOSE_NAME = "ActionBarClose";
+const ITEM_SELECT = "actionbar.itemSelect";
+
+type ItemElement = React.ComponentRef<typeof ActionBarItem>; // eslint-disable-line @typescript-eslint/no-unused-vars
+type CloseElement = React.ComponentRef<typeof ActionBarClose>;
 
 interface ActionBarContextValue {
   open: boolean;
@@ -120,15 +127,59 @@ function ActionBarSelection(props: ActionBarSelectionProps) {
   );
 }
 
-function ActionBarItem(props: React.ComponentProps<typeof Button>) {
-  const { ...itemProps } = props;
+interface ActionBarItemProps
+  extends Omit<React.ComponentProps<typeof Button>, "onSelect"> {
+  onSelect?: (event: Event) => void;
+}
+
+function ActionBarItem(props: ActionBarItemProps) {
+  const { onSelect, onClick, ref, ...itemProps } = props;
+
+  const itemRef = React.useRef<ItemElement>(null);
+  const composedRef = useComposedRefs(ref, itemRef);
+
+  const { onOpenChange } = useActionBarContext(ITEM_NAME);
+
+  const onItemSelect = React.useCallback(() => {
+    const item = itemRef.current;
+    if (!item) return;
+
+    const itemSelectEvent = new CustomEvent(ITEM_SELECT, {
+      bubbles: true,
+      cancelable: true,
+    });
+
+    item.addEventListener(ITEM_SELECT, (event) => onSelect?.(event), {
+      once: true,
+    });
+
+    item.dispatchEvent(itemSelectEvent);
+
+    if (!itemSelectEvent.defaultPrevented) {
+      onOpenChange?.(false);
+    }
+  }, [onOpenChange, onSelect]);
+
+  const onItemClick = React.useCallback(
+    (event: React.MouseEvent<ItemElement>) => {
+      onClick?.(event);
+      if (event.defaultPrevented) return;
+
+      if (onSelect) {
+        onItemSelect();
+      }
+    },
+    [onClick, onSelect, onItemSelect],
+  );
 
   return (
     <Button
       data-slot="action-bar-item"
       {...itemProps}
+      ref={composedRef}
       variant="secondary"
       size="sm"
+      onClick={onItemClick}
     />
   );
 }
@@ -140,10 +191,10 @@ interface ActionBarCloseProps extends React.ComponentProps<"button"> {
 function ActionBarClose(props: ActionBarCloseProps) {
   const { asChild, className, onClick, ...closeProps } = props;
 
-  const { onOpenChange } = useActionBarContext("ActionBarClose");
+  const { onOpenChange } = useActionBarContext(CLOSE_NAME);
 
   const onCloseClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+    (event: React.MouseEvent<CloseElement>) => {
       onClick?.(event);
       if (event.defaultPrevented) return;
 

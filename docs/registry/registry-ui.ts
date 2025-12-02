@@ -15,6 +15,10 @@ export const ui: Registry["items"] = [
         path: "components/portal.tsx",
         type: "registry:component",
       },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
     ],
   },
   {

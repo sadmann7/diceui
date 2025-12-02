@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, MoreHorizontal, Trash2, X } from "lucide-react";
+import { Copy, Trash2, X } from "lucide-react";
 import * as React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
@@ -12,68 +12,80 @@ import {
   ActionBarSeparator,
 } from "@/registry/default/ui/action-bar";
 
-const items = [
+interface Item {
+  id: number;
+  name: string;
+  status: string;
+}
+
+const initialItems: Item[] = [
   { id: 1, name: "Task 1", status: "Todo" },
   { id: 2, name: "Task 2", status: "In Progress" },
   { id: 3, name: "Task 3", status: "Done" },
-  { id: 4, name: "Task 4", status: "Todo" },
 ];
 
 export default function ActionBarDemo() {
-  const [selectedItems, setSelectedItems] = React.useState<Set<number>>(
-    new Set(),
-  );
+  const [items, setItems] = React.useState(initialItems);
+  const [selectedIds, setSelectedIds] = React.useState<Set<number>>(new Set());
+  const nextIdRef = React.useRef(4);
 
-  const open = selectedItems.size > 0;
+  const open = selectedIds.size > 0;
 
   const onOpenChange = React.useCallback((open: boolean) => {
     if (!open) {
-      setSelectedItems(new Set());
+      setSelectedIds(new Set());
     }
   }, []);
 
   const onItemSelect = React.useCallback(
     (id: number, checked: boolean) => {
-      const newSelected = new Set(selectedItems);
+      const newSelected = new Set(selectedIds);
       if (checked) {
         newSelected.add(id);
       } else {
         newSelected.delete(id);
       }
-      setSelectedItems(newSelected);
+      setSelectedIds(newSelected);
     },
-    [selectedItems],
+    [selectedIds],
   );
 
   const onDuplicate = React.useCallback(() => {
-    console.log({ action: "duplicate", items: Array.from(selectedItems) });
-  }, [selectedItems]);
+    const selectedItems = items.filter((item) => selectedIds.has(item.id));
+    const duplicates = selectedItems.map((item) => ({
+      ...item,
+      id: nextIdRef.current++,
+      name: `${item.name} (copy)`,
+    }));
+    setItems([...items, ...duplicates]);
+    setSelectedIds(new Set());
+  }, [items, selectedIds]);
 
   const onDelete = React.useCallback(() => {
-    console.log({ action: "delete", items: Array.from(selectedItems) });
-    setSelectedItems(new Set());
-  }, [selectedItems]);
+    setItems(items.filter((item) => !selectedIds.has(item.id)));
+    setSelectedIds(new Set());
+  }, [items, selectedIds]);
 
   return (
-    <div className="relative flex min-h-[400px] w-full flex-col">
-      <div className="flex flex-1 flex-col gap-2">
+    <div className="relative flex w-full flex-col">
+      <div className="flex max-h-[340px] flex-col gap-1.5 overflow-y-auto">
         {items.map((item) => (
           <label
             key={item.id}
             className={cn(
-              "flex cursor-pointer items-center gap-3 rounded-lg border bg-card p-4 transition-colors",
-              selectedItems.has(item.id) && "border-primary bg-accent",
+              "flex cursor-pointer items-center gap-2.5 rounded-md border bg-card px-3 py-2.5 transition-colors",
+              selectedIds.has(item.id) && "border-primary bg-accent",
             )}
           >
             <Checkbox
-              checked={selectedItems.has(item.id)}
+              checked={selectedIds.has(item.id)}
               onCheckedChange={(checked) =>
                 onItemSelect(item.id, checked === true)
               }
             />
-            <div className="flex-1">
-              <div className="font-medium">{item.name}</div>
-              <div className="text-muted-foreground text-sm">{item.status}</div>
+            <div className="min-w-0 flex-1">
+              <div className="truncate font-medium text-sm">{item.name}</div>
+              <div className="text-muted-foreground text-xs">{item.status}</div>
             </div>
           </label>
         ))}
@@ -81,22 +93,18 @@ export default function ActionBarDemo() {
 
       <ActionBar open={open} onOpenChange={onOpenChange}>
         <ActionBarSelection>
-          {selectedItems.size} selected
+          {selectedIds.size} selected
           <ActionBarClose>
             <X />
           </ActionBarClose>
         </ActionBarSelection>
         <ActionBarSeparator />
-        <ActionBarItem onClick={onDuplicate}>
+        <ActionBarItem onSelect={onDuplicate}>
           <Copy className="size-4" />
           Duplicate
         </ActionBarItem>
-        <ActionBarItem>
-          <MoreHorizontal className="size-4" />
-          More
-        </ActionBarItem>
         <ActionBarSeparator />
-        <ActionBarItem variant="destructive" onClick={onDelete}>
+        <ActionBarItem variant="destructive" onSelect={onDelete}>
           <Trash2 className="size-4" />
           Delete
         </ActionBarItem>
