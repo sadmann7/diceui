@@ -3,6 +3,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { useCallbackRef } from "@/hooks/use-callback-ref";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { Portal } from "@/registry/default/components/portal";
@@ -11,6 +12,19 @@ const ITEM_NAME = "ActionBarItem";
 const CLOSE_NAME = "ActionBarClose";
 const ITEM_SELECT = "actionbar.itemSelect";
 
+interface PointerDownOutsideEvent {
+  target: Node;
+  preventDefault: () => void;
+  defaultPrevented: boolean;
+}
+
+interface FocusOutsideEvent {
+  target: Node;
+  preventDefault: () => void;
+  defaultPrevented: boolean;
+}
+
+type RootElement = React.ComponentRef<typeof ActionBarRoot>;
 type ItemElement = React.ComponentRef<typeof ActionBarItem>; // eslint-disable-line @typescript-eslint/no-unused-vars
 type CloseElement = React.ComponentRef<typeof ActionBarClose>;
 
@@ -41,6 +55,12 @@ interface ActionBarRootProps extends React.ComponentProps<"div"> {
   align?: "start" | "center" | "end";
   sideOffset?: number;
   asChild?: boolean;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
+  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
+  onFocusOutside?: (event: FocusOutsideEvent) => void;
+  onInteractOutside?: (
+    event: PointerDownOutsideEvent | FocusOutsideEvent,
+  ) => void;
 }
 
 function ActionBarRoot(props: ActionBarRootProps) {
@@ -51,10 +71,160 @@ function ActionBarRoot(props: ActionBarRootProps) {
     align = "center",
     sideOffset = 16,
     asChild,
+    onEscapeKeyDown,
+    onPointerDownOutside,
+    onFocusOutside,
+    onInteractOutside,
     className,
     style,
+    onPointerDownCapture,
+    onFocusCapture,
+    onBlurCapture,
+    ref,
     ...rootProps
   } = props;
+
+  const rootRef = React.useRef<RootElement>(null);
+  const composedRef = useComposedRefs(ref, rootRef);
+  const isPointerInsideRef = React.useRef(false);
+  const isFocusInsideRef = React.useRef(false);
+  const onClickRef = React.useRef(() => {});
+
+  const onEscapeKeyDownCallback = useCallbackRef(onEscapeKeyDown);
+  const onPointerDownOutsideCallback = useCallbackRef(onPointerDownOutside);
+  const onFocusOutsideCallback = useCallbackRef(onFocusOutside);
+  const onInteractOutsideCallback = useCallbackRef(onInteractOutside);
+
+  React.useEffect(() => {
+    if (!open) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        onEscapeKeyDownCallback?.(event);
+        if (!event.defaultPrevented) {
+          onOpenChange?.(false);
+        }
+      }
+    }
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, onEscapeKeyDownCallback, onOpenChange]);
+
+  React.useEffect(() => {
+    if (!open) return;
+
+    const ownerDocument = rootRef.current?.ownerDocument ?? document;
+
+    function onPointerDown(event: PointerEvent) {
+      const target = event.target as Node | null;
+
+      if (target && !isPointerInsideRef.current) {
+        const root = rootRef.current;
+        if (root && !root.contains(target)) {
+          const outsideEvent: PointerDownOutsideEvent = {
+            target,
+            defaultPrevented: false,
+            preventDefault: () => {
+              outsideEvent.defaultPrevented = true;
+            },
+          };
+
+          function handlePointerDownOutside() {
+            onPointerDownOutsideCallback?.(outsideEvent);
+            onInteractOutsideCallback?.(outsideEvent);
+
+            if (!outsideEvent.defaultPrevented) {
+              onOpenChange?.(false);
+            }
+          }
+
+          if (event.pointerType === "touch") {
+            ownerDocument.removeEventListener("click", onClickRef.current);
+            onClickRef.current = handlePointerDownOutside;
+            ownerDocument.addEventListener("click", onClickRef.current, {
+              once: true,
+            });
+          } else {
+            handlePointerDownOutside();
+          }
+        }
+      } else {
+        ownerDocument.removeEventListener("click", onClickRef.current);
+      }
+
+      isPointerInsideRef.current = false;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      ownerDocument.addEventListener("pointerdown", onPointerDown);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+      ownerDocument.removeEventListener("pointerdown", onPointerDown);
+      ownerDocument.removeEventListener("click", onClickRef.current);
+    };
+  }, [
+    open,
+    onPointerDownOutsideCallback,
+    onInteractOutsideCallback,
+    onOpenChange,
+  ]);
+
+  React.useEffect(() => {
+    if (!open) return;
+
+    function onFocusIn(event: FocusEvent) {
+      const target = event.target as Node | null;
+      if (!target) return;
+
+      const root = rootRef.current;
+      if (!root || root.contains(target) || isFocusInsideRef.current) return;
+
+      const outsideEvent: FocusOutsideEvent = {
+        target,
+        defaultPrevented: false,
+        preventDefault: () => {
+          outsideEvent.defaultPrevented = true;
+        },
+      };
+
+      onFocusOutsideCallback?.(outsideEvent);
+      onInteractOutsideCallback?.(outsideEvent);
+
+      if (!outsideEvent.defaultPrevented) {
+        onOpenChange?.(false);
+      }
+    }
+
+    document.addEventListener("focusin", onFocusIn);
+    return () => document.removeEventListener("focusin", onFocusIn);
+  }, [open, onFocusOutsideCallback, onInteractOutsideCallback, onOpenChange]);
+
+  const onRootPointerDownCapture = React.useCallback(
+    (event: React.PointerEvent<RootElement>) => {
+      onPointerDownCapture?.(event);
+      isPointerInsideRef.current = true;
+    },
+    [onPointerDownCapture],
+  );
+
+  const onRootFocusCapture = React.useCallback(
+    (event: React.FocusEvent<RootElement>) => {
+      onFocusCapture?.(event);
+      isFocusInsideRef.current = true;
+    },
+    [onFocusCapture],
+  );
+
+  const onRootBlurCapture = React.useCallback(
+    (event: React.FocusEvent<RootElement>) => {
+      onBlurCapture?.(event);
+      isFocusInsideRef.current = false;
+    },
+    [onBlurCapture],
+  );
 
   const contextValue = React.useMemo<ActionBarContextValue>(
     () => ({
@@ -80,6 +250,10 @@ function ActionBarRoot(props: ActionBarRootProps) {
           data-side={side}
           data-align={align}
           {...rootProps}
+          ref={composedRef}
+          onPointerDownCapture={onRootPointerDownCapture}
+          onFocusCapture={onRootFocusCapture}
+          onBlurCapture={onRootBlurCapture}
           className={cn(
             "fixed z-50 flex items-center gap-1 rounded-lg border bg-card px-2 py-1.5 shadow-lg",
             "data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:animate-in data-[state=open]:duration-250",
@@ -253,3 +427,5 @@ export {
   ActionBarClose,
   ActionBarSeparator,
 };
+
+export type { PointerDownOutsideEvent, FocusOutsideEvent };
