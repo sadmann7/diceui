@@ -174,11 +174,12 @@ function ActionBarItem(props: ActionBarItemProps) {
 
   return (
     <Button
+      type="button"
       data-slot="action-bar-item"
-      {...itemProps}
-      ref={composedRef}
       variant="secondary"
       size="sm"
+      {...itemProps}
+      ref={composedRef}
       onClick={onItemClick}
     />
   );
@@ -211,7 +212,7 @@ function ActionBarClose(props: ActionBarCloseProps) {
       data-slot="action-bar-close"
       {...closeProps}
       className={cn(
-        "[&_svg:not([class*='size-'])]:size-3.5 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "rounded-xs opacity-70 outline-none hover:opacity-100 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className,
       )}
       onClick={onCloseClick}
