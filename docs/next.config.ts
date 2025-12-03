@@ -23,14 +23,6 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
-        source: "/r/:component(data-table.*|data-grid.*)",
-        destination: "https://tablecn.com/r/:component.json",
-        permanent: true,
-      },
-      /**
-       * @see https://github.com/magicuidesign/magicui/blob/main/next.config.mjs
-       */
-      {
         source: "/r/index",
         destination: "/r/index.json",
         permanent: true,
@@ -43,6 +35,11 @@ const nextConfig: NextConfig = {
       {
         source: "/r/:name((?!index|registry|styles/).+)\\.json",
         destination: "/r/styles/default/:name.json",
+        permanent: true,
+      },
+      {
+        source: "/r/:component(data-table.*|data-grid.*)",
+        destination: "https://tablecn.com/r/:component.json",
         permanent: true,
       },
       {
