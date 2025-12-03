@@ -5,11 +5,13 @@ import { Shell } from "@/components/shell";
 import ActionBarDemo from "@/registry/default/examples/action-bar-demo";
 import ActionBarPositionDemo from "@/registry/default/examples/action-bar-position-demo";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
+import DataGridDemo from "@/registry/default/examples/data-grid-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
+        <DataGridDemo />
         <ActionBarDemo />
         <ActionBarPositionDemo />
         <ColorPickerDemo />

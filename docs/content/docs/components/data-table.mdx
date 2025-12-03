@@ -16,7 +16,7 @@ links:
     Install the main component and dependencies:
 
     ```package-install
-    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table"
+    npx shadcn@latest add "@diceui/data-table"
     ```
   </Step>
   <Step>
@@ -34,29 +34,83 @@ links:
     Install the [`DataTableSortList`](#datatablesortlist) (optional):
 
     ```package-install
-    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-sort-list"
+    npx shadcn@latest add "@diceui/data-table-sort-list"
     ```
   </Step>
   <Step>
     Install the [`DataTableFilterList`](#datatablefilterlist) (optional):
 
     ```package-install
-    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-filter-list"
+    npx shadcn@latest add "@diceui/data-table-filter-list"
     ```
   </Step>
   <Step>
     Install the [`DataTableFilterMenu`](#datatablefiltermenu) (optional):
 
     ```package-install
-    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-filter-menu"
+    npx shadcn@latest add "@diceui/data-table-filter-menu"
     ```
   </Step>
   <Step>
     Install the [`DataTableActionBar`](#datatableactionbar) (optional):
 
     ```package-install
-    npx shadcn@2.4.0-canary.12 add "https://diceui.com/r/data-table-action-bar"
+    npx shadcn@latest add "@diceui/data-table-action-bar"
     ```
+  </Step>
+  <Step>
+    Update import paths for custom components:
+
+    The shadcn CLI doesn't handle custom component paths properly ([see issue](https://github.com/shadcn-ui/ui/issues/8308)). You'll need to update these imports manually:
+
+    **In `components/data-table/data-table.tsx`:**
+
+    ```tsx title="components/data-table/data-table.tsx"
+    // [!code --]
+    import { getCommonPinningStyles } from "@/components/data-table/data-table";
+    // [!code ++]
+    import { getCommonPinningStyles } from "@/lib/data-table";
+    ```
+
+    **In `lib/data-table.ts`:**
+
+    ```tsx title="lib/data-table.ts"
+    // [!code --]
+    import { dataTableConfig } from "@/components/data-table/data-table";
+    import type {
+      ExtendedColumnFilter,
+      FilterOperator,
+      FilterVariant,
+    } from "@/components/data-table/data-table";
+    // [!code ++]
+    import { dataTableConfig } from "@/config/data-table";
+    import type {
+      ExtendedColumnFilter,
+      FilterOperator,
+      FilterVariant,
+    } from "@/types/data-table";
+    ```
+
+    **In `lib/parsers.ts`:**
+
+    ```tsx title="lib/parsers.ts"
+    // [!code --]
+    import { dataTableConfig } from "@/components/data-table/data-table";
+
+    import type {
+      ExtendedColumnFilter,
+      ExtendedColumnSort,
+    } from "@/components/data-table/data-table";
+    // [!code ++]
+    import { dataTableConfig } from "@/config/data-table";
+
+    import type {
+      ExtendedColumnFilter,
+      ExtendedColumnSort,
+    } from "@/types/data-table";
+    ```
+
+    Update imports to use `@/lib/data-table` for utility functions, `@/config/data-table` for config, and `@/types/data-table` for types instead of importing from `@/components/data-table/data-table`.
   </Step>
 </Steps>
 
@@ -539,6 +593,19 @@ Pagination controls for the data table.
     },
   ]}
 />
+
+## Features
+
+- **Advanced Filtering** - Multiple filter types (text, number, date, select, multi-select) with customizable operators
+- **URL State Management** - Sync table state with URL search params using [nuqs](https://nuqs.47ng.com)
+- **Sorting** - Multi-column sorting with persistent state
+- **Pagination** - Server-side or client-side pagination with customizable page sizes
+- **Column Visibility** - Toggle column visibility with view options menu
+- **Row Selection** - Single or multi-row selection with action bar
+- **Column Pinning** - Pin columns to left or right for better UX
+- **Keyboard Navigation** - Full keyboard support with shortcuts for filter and sort menus
+- **Responsive** - Mobile-first design with overflow handling
+- **Customizable** - Flexible API for custom filters, columns, and actions
 
 ## Credits
 

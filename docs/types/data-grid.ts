@@ -1,13 +1,17 @@
-import type { RowData } from "@tanstack/react-table";
+import type { Cell, RowData, TableMeta } from "@tanstack/react-table";
+
+export type Direction = "ltr" | "rtl";
 
 export type RowHeightValue = "short" | "medium" | "tall" | "extra-tall";
 
 export interface CellSelectOption {
   label: string;
   value: string;
+  icon?: React.FC<React.SVGProps<SVGSVGElement>>;
+  count?: number;
 }
 
-export type Cell =
+export type CellOpts =
   | {
       variant: "short-text";
     }
@@ -33,6 +37,16 @@ export type Cell =
     }
   | {
       variant: "date";
+    }
+  | {
+      variant: "url";
+    }
+  | {
+      variant: "file";
+      maxFileSize?: number;
+      maxFiles?: number;
+      accept?: string;
+      multiple?: boolean;
     };
 
 export interface UpdateCell {
@@ -45,21 +59,29 @@ declare module "@tanstack/react-table" {
   // biome-ignore lint/correctness/noUnusedVariables: TData and TValue are used in the ColumnMeta interface
   interface ColumnMeta<TData extends RowData, TValue> {
     label?: string;
-    cell?: Cell;
+    cell?: CellOpts;
   }
 
   // biome-ignore lint/correctness/noUnusedVariables: TData is used in the TableMeta interface
   interface TableMeta<TData extends RowData> {
     dataGridRef?: React.RefObject<HTMLElement | null>;
+    cellMapRef?: React.RefObject<Map<string, HTMLDivElement>>;
     focusedCell?: CellPosition | null;
     editingCell?: CellPosition | null;
     selectionState?: SelectionState;
     searchOpen?: boolean;
-    isScrolling?: boolean;
+    readOnly?: boolean;
     getIsCellSelected?: (rowIndex: number, columnId: string) => boolean;
     getIsSearchMatch?: (rowIndex: number, columnId: string) => boolean;
     getIsActiveSearchMatch?: (rowIndex: number, columnId: string) => boolean;
-    onDataUpdate?: (props: UpdateCell | Array<UpdateCell>) => void;
+    rowHeight?: RowHeightValue;
+    onRowHeightChange?: (value: RowHeightValue) => void;
+    onRowSelect?: (
+      rowIndex: number,
+      checked: boolean,
+      shiftKey: boolean,
+    ) => void;
+    onDataUpdate?: (params: UpdateCell | Array<UpdateCell>) => void;
     onRowsDelete?: (rowIndices: number[]) => void | Promise<void>;
     onColumnClick?: (columnId: string) => void;
     onCellClick?: (
@@ -89,15 +111,24 @@ declare module "@tanstack/react-table" {
       direction?: NavigationDirection;
       moveToNextRow?: boolean;
     }) => void;
+    onCellsCopy?: () => void;
+    onCellsCut?: () => void;
+    onFilesUpload?: (params: {
+      files: File[];
+      rowIndex: number;
+      columnId: string;
+    }) => Promise<FileCellData[]>;
+    onFilesDelete?: (params: {
+      fileIds: string[];
+      rowIndex: number;
+      columnId: string;
+    }) => void | Promise<void>;
     contextMenu?: ContextMenuState;
     onContextMenuOpenChange?: (open: boolean) => void;
-    rowHeight?: RowHeightValue;
-    onRowHeightChange?: (value: RowHeightValue) => void;
-    onRowSelect?: (
-      rowIndex: number,
-      checked: boolean,
-      shiftKey: boolean,
-    ) => void;
+    pasteDialog?: PasteDialogState;
+    onPasteDialogOpenChange?: (open: boolean) => void;
+    onPasteWithExpansion?: () => void;
+    onPasteWithoutExpansion?: () => void;
   }
 }
 
@@ -123,6 +154,12 @@ export interface ContextMenuState {
   y: number;
 }
 
+export interface PasteDialogState {
+  open: boolean;
+  rowsNeeded: number;
+  clipboardText: string;
+}
+
 export type NavigationDirection =
   | "up"
   | "down"
@@ -130,10 +167,14 @@ export type NavigationDirection =
   | "right"
   | "home"
   | "end"
+  | "ctrl+up"
+  | "ctrl+down"
   | "ctrl+home"
   | "ctrl+end"
   | "pageup"
-  | "pagedown";
+  | "pagedown"
+  | "pageleft"
+  | "pageright";
 
 export interface SearchState {
   searchMatches: CellPosition[];
@@ -145,4 +186,78 @@ export interface SearchState {
   onSearch: (query: string) => void;
   onNavigateToNextMatch: () => void;
   onNavigateToPrevMatch: () => void;
+}
+
+export interface CellVariantProps<TData> {
+  cell: Cell<TData, unknown>;
+  tableMeta: TableMeta<TData>;
+  rowIndex: number;
+  columnId: string;
+  isEditing: boolean;
+  isFocused: boolean;
+  isSelected: boolean;
+  readOnly: boolean;
+}
+
+export interface FileCellData {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  url?: string;
+}
+
+export type TextFilterOperator =
+  | "contains"
+  | "notContains"
+  | "equals"
+  | "notEquals"
+  | "startsWith"
+  | "endsWith"
+  | "isEmpty"
+  | "isNotEmpty";
+
+export type NumberFilterOperator =
+  | "equals"
+  | "notEquals"
+  | "lessThan"
+  | "lessThanOrEqual"
+  | "greaterThan"
+  | "greaterThanOrEqual"
+  | "between"
+  | "isEmpty"
+  | "isNotEmpty";
+
+export type DateFilterOperator =
+  | "equals"
+  | "notEquals"
+  | "before"
+  | "after"
+  | "onOrBefore"
+  | "onOrAfter"
+  | "between"
+  | "isEmpty"
+  | "isNotEmpty";
+
+export type SelectFilterOperator =
+  | "is"
+  | "isNot"
+  | "isAnyOf"
+  | "isNoneOf"
+  | "isEmpty"
+  | "isNotEmpty";
+
+export type BooleanFilterOperator = "isTrue" | "isFalse";
+
+export type FilterOperator =
+  | TextFilterOperator
+  | NumberFilterOperator
+  | DateFilterOperator
+  | SelectFilterOperator
+  | BooleanFilterOperator;
+
+export interface FilterValue {
+  operator: FilterOperator;
+  value?: string | number | string[];
+  endValue?: string | number;
 }

@@ -192,10 +192,8 @@ function generateTrickData(): SkateTrick[] {
   });
 }
 
-const initialData: SkateTrick[] = generateTrickData();
-
 export default function DataGridDemo() {
-  const [data, setData] = React.useState<SkateTrick[]>(initialData);
+  const [data, setData] = React.useState<SkateTrick[]>(generateTrickData());
 
   const columns = React.useMemo<ColumnDef<SkateTrick>[]>(
     () => [
@@ -335,7 +333,14 @@ export default function DataGridDemo() {
     data,
     onDataChange: setData,
     onRowAdd,
+    getRowId: (row) => row.id,
+    initialState: {
+      columnPinning: {
+        left: ["select"],
+      },
+    },
     enableSearch: true,
+    enablePaste: true,
   });
 
   return (

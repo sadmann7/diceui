@@ -102,7 +102,7 @@ export default function FileUploadFormDemo() {
                     to upload
                   </FileUploadDropzone>
                   <FileUploadList>
-                    {field.value.map((file, index) => (
+                    {field.value?.map((file, index) => (
                       <FileUploadItem key={index} value={file}>
                         <FileUploadItemPreview />
                         <FileUploadItemMetadata />

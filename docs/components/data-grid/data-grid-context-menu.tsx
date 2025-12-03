@@ -1,7 +1,7 @@
 "use client";
 
-import type { Table, TableMeta } from "@tanstack/react-table";
-import { CopyIcon, EraserIcon, Trash2Icon } from "lucide-react";
+import type { ColumnDef, TableMeta } from "@tanstack/react-table";
+import { CopyIcon, EraserIcon, ScissorsIcon, Trash2Icon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 import {
@@ -12,34 +12,41 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { parseCellKey } from "@/lib/data-grid";
-import type { UpdateCell } from "@/types/data-grid";
+import type { ContextMenuState, UpdateCell } from "@/types/data-grid";
 
 interface DataGridContextMenuProps<TData> {
-  table: Table<TData>;
+  tableMeta: TableMeta<TData>;
+  columns: Array<ColumnDef<TData>>;
+  contextMenu: ContextMenuState;
 }
 
 export function DataGridContextMenu<TData>({
-  table,
+  tableMeta,
+  columns,
+  contextMenu,
 }: DataGridContextMenuProps<TData>) {
-  const meta = table.options.meta;
-  const contextMenu = meta?.contextMenu;
-  const onContextMenuOpenChange = meta?.onContextMenuOpenChange;
-  const selectionState = meta?.selectionState;
-  const dataGridRef = meta?.dataGridRef;
-  const onDataUpdate = meta?.onDataUpdate;
-  const onRowsDelete = meta?.onRowsDelete;
+  const onContextMenuOpenChange = tableMeta?.onContextMenuOpenChange;
+  const selectionState = tableMeta?.selectionState;
+  const dataGridRef = tableMeta?.dataGridRef;
+  const onDataUpdate = tableMeta?.onDataUpdate;
+  const onRowsDelete = tableMeta?.onRowsDelete;
+  const onCellsCopy = tableMeta?.onCellsCopy;
+  const onCellsCut = tableMeta?.onCellsCut;
 
-  if (!contextMenu) return null;
+  if (!contextMenu.open) return null;
 
   return (
     <ContextMenu
-      table={table}
+      tableMeta={tableMeta}
+      columns={columns}
       dataGridRef={dataGridRef}
       contextMenu={contextMenu}
       onContextMenuOpenChange={onContextMenuOpenChange}
       selectionState={selectionState}
       onDataUpdate={onDataUpdate}
       onRowsDelete={onRowsDelete}
+      onCellsCopy={onCellsCopy}
+      onCellsCut={onCellsCut}
     />
   );
 }
@@ -52,9 +59,13 @@ interface ContextMenuProps<TData>
       | "selectionState"
       | "onDataUpdate"
       | "onRowsDelete"
+      | "onCellsCopy"
+      | "onCellsCut"
+      | "readOnly"
     >,
     Required<Pick<TableMeta<TData>, "contextMenu">> {
-  table: Table<TData>;
+  tableMeta: TableMeta<TData>;
+  columns: Array<ColumnDef<TData>>;
 }
 
 const ContextMenu = React.memo(ContextMenuImpl, (prev, next) => {
@@ -71,13 +82,16 @@ const ContextMenu = React.memo(ContextMenuImpl, (prev, next) => {
 }) as typeof ContextMenuImpl;
 
 function ContextMenuImpl<TData>({
-  table,
+  tableMeta,
+  columns,
   dataGridRef,
   contextMenu,
   onContextMenuOpenChange,
   selectionState,
   onDataUpdate,
   onRowsDelete,
+  onCellsCopy,
+  onCellsCut,
 }: ContextMenuProps<TData>) {
   const triggerStyle = React.useMemo<React.CSSProperties>(
     () => ({
@@ -107,70 +121,12 @@ function ContextMenuImpl<TData>({
   );
 
   const onCopy = React.useCallback(() => {
-    if (
-      !selectionState?.selectedCells ||
-      selectionState.selectedCells.size === 0
-    )
-      return;
+    onCellsCopy?.();
+  }, [onCellsCopy]);
 
-    const rows = table.getRowModel().rows;
-    const columnIds: string[] = [];
-
-    const selectedCellsArray = Array.from(selectionState.selectedCells);
-    for (const cellKey of selectedCellsArray) {
-      const { columnId } = parseCellKey(cellKey);
-      if (columnId && !columnIds.includes(columnId)) {
-        columnIds.push(columnId);
-      }
-    }
-
-    const cellData = new Map<string, string>();
-    for (const cellKey of selectedCellsArray) {
-      const { rowIndex, columnId } = parseCellKey(cellKey);
-      const row = rows[rowIndex];
-      if (row) {
-        const cell = row
-          .getVisibleCells()
-          .find((c) => c.column.id === columnId);
-        if (cell) {
-          const value = cell.getValue();
-          cellData.set(cellKey, String(value ?? ""));
-        }
-      }
-    }
-
-    const rowIndices = new Set<number>();
-    const colIndices = new Set<number>();
-
-    for (const cellKey of selectedCellsArray) {
-      const { rowIndex, columnId } = parseCellKey(cellKey);
-      rowIndices.add(rowIndex);
-      const colIndex = columnIds.indexOf(columnId);
-      if (colIndex >= 0) {
-        colIndices.add(colIndex);
-      }
-    }
-
-    const sortedRowIndices = Array.from(rowIndices).sort((a, b) => a - b);
-    const sortedColIndices = Array.from(colIndices).sort((a, b) => a - b);
-    const sortedColumnIds = sortedColIndices.map((i) => columnIds[i]);
-
-    const tsvData = sortedRowIndices
-      .map((rowIndex) =>
-        sortedColumnIds
-          .map((columnId) => {
-            const cellKey = `${rowIndex}:${columnId}`;
-            return cellData.get(cellKey) ?? "";
-          })
-          .join("\t"),
-      )
-      .join("\n");
-
-    navigator.clipboard.writeText(tsvData);
-    toast.success(
-      `${selectionState.selectedCells.size} cell${selectionState.selectedCells.size !== 1 ? "s" : ""} copied`,
-    );
-  }, [table, selectionState]);
+  const onCut = React.useCallback(() => {
+    onCellsCut?.();
+  }, [onCellsCut]);
 
   const onClear = React.useCallback(() => {
     if (
@@ -183,7 +139,25 @@ function ContextMenuImpl<TData>({
 
     for (const cellKey of selectionState.selectedCells) {
       const { rowIndex, columnId } = parseCellKey(cellKey);
-      updates.push({ rowIndex, columnId, value: "" });
+
+      // Get column from columns array
+      const column = columns.find((col) => {
+        if (col.id) return col.id === columnId;
+        if ("accessorKey" in col) return col.accessorKey === columnId;
+        return false;
+      });
+      const cellVariant = column?.meta?.cell?.variant;
+
+      let emptyValue: unknown = "";
+      if (cellVariant === "multi-select" || cellVariant === "file") {
+        emptyValue = [];
+      } else if (cellVariant === "number" || cellVariant === "date") {
+        emptyValue = null;
+      } else if (cellVariant === "checkbox") {
+        emptyValue = false;
+      }
+
+      updates.push({ rowIndex, columnId, value: emptyValue });
     }
 
     onDataUpdate?.(updates);
@@ -191,7 +165,7 @@ function ContextMenuImpl<TData>({
     toast.success(
       `${updates.length} cell${updates.length !== 1 ? "s" : ""} cleared`,
     );
-  }, [onDataUpdate, selectionState]);
+  }, [onDataUpdate, selectionState, columns]);
 
   const onDelete = React.useCallback(async () => {
     if (
@@ -230,7 +204,11 @@ function ContextMenuImpl<TData>({
           <CopyIcon />
           Copy
         </DropdownMenuItem>
-        <DropdownMenuItem onSelect={onClear}>
+        <DropdownMenuItem onSelect={onCut} disabled={tableMeta?.readOnly}>
+          <ScissorsIcon />
+          Cut
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={onClear} disabled={tableMeta?.readOnly}>
           <EraserIcon />
           Clear
         </DropdownMenuItem>
