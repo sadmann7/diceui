@@ -27,12 +27,12 @@ npx shadcn@latest add @diceui/key-value
      ```
   </Step>
   <Step>
-    Copy the refs composition utilities into your `lib/compose-refs.ts` file.
+    Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.
 
     <ComponentSource name="compose-refs" />
   </Step>
   <Step>
-    Copy the visually hidden input component into your `components/visually-hidden-input.tsx` file.
+    Copy and paste the visually hidden input component into your `components/visually-hidden-input.tsx` file.
 
     <ComponentSource name="visually-hidden-input" />
   </Step>
@@ -100,16 +100,16 @@ The main container component that manages the key-value items state.
 <DataAttributesTable
   data={[
     {
-      attribute: "[data-disabled]",
-      values: "Present when disabled",
+      title: "[data-disabled]",
+      value: "Present when disabled",
     },
     {
-      attribute: "[data-invalid]",
-      values: "Present when any item has validation errors",
+      title: "[data-invalid]",
+      value: "Present when any item has validation errors",
     },
     {
-      attribute: "[data-readonly]",
-      values: "Present when read-only",
+      title: "[data-readonly]",
+      value: "Present when read-only",
     },
   ]}
 />
@@ -126,8 +126,8 @@ Container for rendering the list of key-value items.
 <DataAttributesTable
   data={[
     {
-      attribute: "[data-orientation]",
-      values: "vertical | horizontal",
+      title: "[data-orientation]",
+      value: "vertical | horizontal",
     },
   ]}
 />
@@ -144,8 +144,8 @@ Individual key-value pair item container.
 <DataAttributesTable
   data={[
     {
-      attribute: "[data-highlighted]",
-      values: "Present when item is highlighted/focused",
+      title: "[data-highlighted]",
+      value: "Present when item is highlighted/focused",
     },
   ]}
 />

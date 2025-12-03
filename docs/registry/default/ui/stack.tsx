@@ -33,10 +33,10 @@ interface StackContextValue {
 
 const StackContext = React.createContext<StackContextValue | null>(null);
 
-function useStackContext() {
+function useStackContext(consumerName: string) {
   const context = React.useContext(StackContext);
   if (!context) {
-    throw new Error("Stack components must be used within Stack.Root");
+    throw new Error(`\`${consumerName}\` must be used within \`Stack\``);
   }
   return context;
 }
@@ -251,7 +251,7 @@ function StackItemWrapper(props: StackItemWrapperProps) {
     isExpanded,
     dimensions,
     setDimensions,
-  } = useStackContext();
+  } = useStackContext("StackItemWrapper");
 
   const itemRef = React.useRef<StackItemWrapperElement>(null);
 
