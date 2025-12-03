@@ -11,6 +11,7 @@
     "clean": "rimraf --glob **/node_modules **/dist **/.source **/.turbo **/.next **/pnpm-lock.yaml **/.tsbuildinfo",
     "build": "turbo run build",
     "build:registry": "pnpm --filter=docs build:registry --loglevel silent",
+    "validate:registry": "pnpm --filter=docs validate:registry --loglevel silent",
     "cleanup:registry": "pnpm --filter=docs cleanup:registry --loglevel silent",
     "build:packages": "pnpm --filter \"@diceui/*\" build",
     "dev": "turbo run dev",
