@@ -3,18 +3,16 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
 import { rimraf } from "rimraf";
-import { Project, ScriptKind, SyntaxKind } from "ts-morph";
-import type { z } from "zod";
-
-import { registry } from "../registry";
-import { styles } from "../registry/registry-styles";
 import {
   type Registry,
-  type RegistryItem,
   registryItemSchema,
   type registryItemTypeSchema,
   registrySchema,
-} from "../registry/schema";
+} from "shadcn/schema";
+import { Project, ScriptKind, SyntaxKind } from "ts-morph";
+import type { z } from "zod";
+import { registry } from "../registry";
+import { styles } from "../registry/registry-styles";
 import { fixImport } from "./fix-imports.mts";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
