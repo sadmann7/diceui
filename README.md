@@ -1,6 +1,6 @@
-# `Dice UI`
+# [Dice UI](https://diceui.com/docs)
 
-Unstyled ui component library.
+Accessible shadcn/ui components built with React, TypeScript, and Tailwind CSS. Copy-paste ready, and customizable.
 
 ## Documentation
 

@@ -1,540 +1,791 @@
 {
-  "$schema": "https://ui.shadcn.com/schema/registry.json",
-  "name": "diceui",
+  "name": "diceui/ui",
   "homepage": "https://diceui.com",
   "items": [
     {
+      "name": "style",
+      "type": "registry:style",
+      "dependencies": [
+        "tailwindcss-animate",
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "utils"
+      ],
+      "files": [],
+      "tailwind": {
+        "config": {
+          "plugins": [
+            "require(\"tailwindcss-animate\")"
+          ]
+        }
+      },
+      "cssVars": {}
+    },
+    {
       "name": "action-bar",
-      "type": "registry:component",
-      "title": "Action Bar",
-      "description": "A floating action bar that appears at the bottom or top of the viewport to display contextual actions for selected items.",
-      "dependencies": ["@radix-ui/react-slot"],
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/action-bar.tsx",
+          "path": "ui/action-bar.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "components/portal.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "angle-slider",
-      "type": "registry:component",
-      "title": "Angle Slider",
-      "description": "An interactive circular slider for selecting angles with support for single values and ranges.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/angle-slider.tsx",
+          "path": "ui/angle-slider.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/components/visually-hidden-input.tsx",
+          "path": "components/visually-hidden-input.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "files": [
+        {
+          "path": "ui/avatar-group.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "badge-overflow",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "files": [
+        {
+          "path": "ui/badge-overflow.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "checkbox-group",
-      "type": "registry:component",
-      "title": "Checkbox Group",
-      "description": "A group of checkboxes with support for controlled and uncontrolled state.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@diceui/checkbox-group"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/checkbox-group.tsx",
+          "path": "ui/checkbox-group.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
       "name": "circular-progress",
-      "type": "registry:component",
-      "title": "Circular Progress",
-      "description": "A circular progress indicator with support for determinate and indeterminate states.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/circular-progress.tsx",
+          "path": "ui/circular-progress.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "cssVars": {
+        "theme": {
+          "--animate-spin-around": "spin-around 0.8s linear infinite"
+        }
+      },
+      "css": {
+        "@keyframes spin-around": {
+          "0%": {
+            "transform": "rotate(-90deg)"
+          },
+          "100%": {
+            "transform": "rotate(270deg)"
+          }
+        }
+      }
     },
     {
       "name": "color-picker",
-      "type": "registry:component",
-      "title": "Color Picker",
-      "description": "A color picker component with HSL, RGB, and hex input support.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slider",
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction",
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "popover",
+        "select"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/color-picker.tsx",
+          "path": "ui/color-picker.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/components/visually-hidden-input.tsx",
+          "path": "components/visually-hidden-input.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "color-swatch",
-      "type": "registry:component",
-      "title": "Color Swatch",
-      "description": "A color swatch component for displaying colors with various sizes and transparency support.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/color-swatch.tsx",
+          "path": "ui/color-swatch.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
-      "name": "cropper",
-      "type": "registry:component",
-      "title": "Cropper",
-      "description": "A powerful image and video cropper with zoom, rotation, and customizable crop areas.",
+      "name": "compare-slider",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "lucide-react"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/cropper.tsx",
+          "path": "ui/compare-slider.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "cropper",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "files": [
+        {
+          "path": "ui/cropper.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "combobox",
-      "type": "registry:component",
-      "title": "Combobox",
-      "description": "A combobox component with search, filtering, and selection capabilities.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@diceui/combobox",
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "@radix-ui/react-slot"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/combobox.tsx",
+          "path": "ui/combobox.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
       "name": "editable",
-      "type": "registry:component",
-      "title": "Editable",
-      "description": "An editable text component with inline editing capabilities.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/editable.tsx",
+          "path": "ui/editable.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/components/visually-hidden-input.tsx",
+          "path": "components/visually-hidden-input.tsx",
           "type": "registry:component"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "file-upload",
-      "type": "registry:component",
-      "title": "File Upload",
-      "description": "A file upload component with drag and drop support and progress tracking.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction",
+        "lucide-react"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/file-upload.tsx",
+          "path": "ui/file-upload.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "fps",
+      "type": "registry:ui",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "files": [
+        {
+          "path": "ui/fps.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
       "name": "segmented-input",
-      "type": "registry:component",
-      "title": "Segmented Input",
-      "description": "A group of connected input fields that appear as a single segmented visual unit.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction",
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "input"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/segmented-input.tsx",
+          "path": "ui/segmented-input.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
       "name": "kanban",
-      "type": "registry:component",
-      "title": "Kanban",
-      "description": "A kanban board component with drag and drop functionality.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "@radix-ui/react-slot"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/kanban.tsx",
+          "path": "ui/kanban.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "key-value",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "textarea"
+      ],
+      "files": [
+        {
+          "path": "ui/key-value.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "listbox",
-      "type": "registry:component",
-      "title": "Listbox",
-      "description": "A listbox component for selecting items from a list with keyboard navigation.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@diceui/listbox",
+        "lucide-react"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/listbox.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "masonry",
-      "type": "registry:component",
-      "title": "Masonry",
-      "description": "A masonry layout component for creating Pinterest-style grids.",
-      "files": [
-        {
-          "path": "registry/default/ui/masonry.tsx",
-          "type": "registry:ui"
-        },
-        {
-          "path": "registry/default/lib/compose-refs.ts",
-          "type": "registry:lib"
-        }
-      ]
-    },
-    {
-      "name": "mask-input",
-      "type": "registry:component",
-      "title": "Mask Input",
-      "description": "An input component with customizable input masking and validation patterns.",
-      "files": [
-        {
-          "path": "registry/default/ui/mask-input.tsx",
+          "path": "ui/listbox.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
       "name": "marquee",
-      "type": "registry:component",
-      "title": "Marquee",
-      "description": "An animated scrolling component that continuously moves content horizontally or vertically.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction",
+        "class-variance-authority"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/marquee.tsx",
+          "path": "ui/marquee.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "cssVars": {
+        "theme": {
+          "--animate-marquee-left": "marquee-left var(--marquee-duration) linear var(--marquee-loop-count)",
+          "--animate-marquee-right": "marquee-right var(--marquee-duration) linear var(--marquee-loop-count)",
+          "--animate-marquee-left-rtl": "marquee-left-rtl var(--marquee-duration) linear var(--marquee-loop-count)",
+          "--animate-marquee-right-rtl": "marquee-right-rtl var(--marquee-duration) linear var(--marquee-loop-count)",
+          "--animate-marquee-up": "marquee-up var(--marquee-duration) linear var(--marquee-loop-count)",
+          "--animate-marquee-down": "marquee-down var(--marquee-duration) linear var(--marquee-loop-count)"
+        }
+      },
+      "css": {
+        "@keyframes marquee-left": {
+          "0%": {
+            "transform": "translateX(0%)"
+          },
+          "100%": {
+            "transform": "translateX(calc(-100% - var(--marquee-gap)))"
+          }
+        },
+        "@keyframes marquee-right": {
+          "0%": {
+            "transform": "translateX(calc(-100% - var(--marquee-gap)))"
+          },
+          "100%": {
+            "transform": "translateX(0%)"
+          }
+        },
+        "@keyframes marquee-up": {
+          "0%": {
+            "transform": "translateY(0%)"
+          },
+          "100%": {
+            "transform": "translateY(calc(-100% - var(--marquee-gap)))"
+          }
+        },
+        "@keyframes marquee-down": {
+          "0%": {
+            "transform": "translateY(calc(-100% - var(--marquee-gap)))"
+          },
+          "100%": {
+            "transform": "translateY(0%)"
+          }
+        },
+        "@keyframes marquee-left-rtl": {
+          "0%": {
+            "transform": "translateX(0%)"
+          },
+          "100%": {
+            "transform": "translateX(calc(100% + var(--marquee-gap)))"
+          }
+        },
+        "@keyframes marquee-right-rtl": {
+          "0%": {
+            "transform": "translateX(calc(100% + var(--marquee-gap)))"
+          },
+          "100%": {
+            "transform": "translateX(0%)"
+          }
+        }
+      }
+    },
+    {
+      "name": "mask-input",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "files": [
+        {
+          "path": "ui/mask-input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "masonry",
+      "type": "registry:ui",
+      "dependencies": [
+        "@diceui/masonry",
+        "@radix-ui/react-slot"
+      ],
+      "files": [
+        {
+          "path": "ui/masonry.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "media-player",
-      "type": "registry:component",
-      "title": "Media Player",
-      "description": "A media player component with controls for audio and video playback.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction",
+        "lucide-react",
+        "media-chrome"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "select",
+        "slider",
+        "tooltip",
+        "dropdown-menu"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/media-player.tsx",
+          "path": "ui/media-player.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "mention",
-      "type": "registry:component",
-      "title": "Mention",
-      "description": "A mention component for @mentions in text input with autocomplete.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@diceui/mention",
+        "lucide-react"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/mention.tsx",
+          "path": "ui/mention.tsx",
           "type": "registry:ui"
-        }
-      ]
-    },
-    {
-      "name": "rating",
-      "type": "registry:component",
-      "title": "Rating",
-      "description": "An accessible rating component that allows users to provide star ratings with support for half values, keyboard navigation, and form integration.",
-      "files": [
-        {
-          "path": "registry/default/ui/rating.tsx",
-          "type": "registry:ui"
-        },
-        {
-          "path": "registry/default/components/visually-hidden-input.tsx",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/lib/compose-refs.ts",
-          "type": "registry:lib"
         }
       ]
     },
     {
       "name": "relative-time-card",
-      "type": "registry:component",
-      "title": "Relative Time Card",
-      "description": "A card component that displays relative time with hover details.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "hover-card"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/relative-time-card.tsx",
+          "path": "ui/relative-time-card.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
       "name": "scroller",
-      "type": "registry:component",
-      "title": "Scroller",
-      "description": "A custom scrollbar component with smooth scrolling and navigation indicators.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/scroller.tsx",
+          "path": "ui/scroller.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "scroll-spy",
-      "type": "registry:component",
-      "title": "Scroll Spy",
-      "description": "A scroll spy component that highlights navigation links based on scroll position with smooth scrolling.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/scroll-spy.tsx",
+          "path": "ui/scroll-spy.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "sortable",
-      "type": "registry:component",
-      "title": "Sortable",
-      "description": "A sortable list component with drag and drop reordering.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "@radix-ui/react-slot"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/sortable.tsx",
+          "path": "ui/sortable.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
-          "type": "registry:lib"
-        }
-      ]
-    },
-    {
-      "name": "stepper",
-      "type": "registry:component",
-      "title": "Stepper",
-      "description": "A stepper component for multi-step forms and workflows.",
-      "files": [
-        {
-          "path": "registry/default/ui/stepper.tsx",
-          "type": "registry:ui"
-        },
-        {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "stack",
-      "type": "registry:component",
-      "title": "Stack",
-      "description": "A stack component for displaying overlapping elements with various orientations and directions.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/stack.tsx",
+          "path": "ui/stack.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
-      "name": "qr-code",
-      "type": "registry:component",
-      "title": "QR Code",
-      "description": "A QR code component with support for different formats (canvas, SVG, image) and download functionality.",
+      "name": "stat",
+      "type": "registry:ui",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "separator"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/qr-code.tsx",
+          "path": "ui/stat.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "stepper",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction",
+        "class-variance-authority",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "ui/stepper.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "qr-code",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "qrcode"
+      ],
+      "devDependencies": [
+        "@types/qrcode"
+      ],
+      "files": [
+        {
+          "path": "ui/qr-code.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "rating",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "ui/rating.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
       "name": "tags-input",
-      "type": "registry:component",
-      "title": "Tags Input",
-      "description": "A tags input component for adding and removing tags with keyboard support.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@diceui/tags-input",
+        "lucide-react"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/tags-input.tsx",
+          "path": "ui/tags-input.tsx",
           "type": "registry:ui"
         }
       ]
     },
     {
       "name": "timeline",
-      "type": "registry:component",
-      "title": "Timeline",
-      "description": "A flexible timeline component for displaying chronological events with support for different orientations, RTL layouts, and visual states.",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-direction",
+        "class-variance-authority"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/timeline.tsx",
+          "path": "ui/timeline.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
+      "name": "time-picker",
+      "type": "registry:ui",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "popover"
+      ],
+      "files": [
+        {
+          "path": "ui/time-picker.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "css": {
+        "@utility scrollbar-none": {
+          "scrollbar-width": "none",
+          "&::-webkit-scrollbar": {
+            "display": "none"
+          }
+        }
+      }
+    },
+    {
       "name": "tour",
-      "type": "registry:component",
-      "title": "Tour",
-      "description": "A guided tour component that highlights elements and provides step-by-step instructions to help users learn about your application.",
+      "type": "registry:ui",
       "dependencies": [
         "@floating-ui/react-dom",
         "@radix-ui/react-slot",
+        "@radix-ui/react-direction",
         "lucide-react"
       ],
       "files": [
         {
-          "path": "registry/default/ui/tour.tsx",
+          "path": "ui/tour.tsx",
           "type": "registry:ui"
         },
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
-        }
-      ]
-    },
-    {
-      "name": "client-only",
-      "type": "registry:component",
-      "title": "Client Only",
-      "description": "A utility component that only renders its children on the client side.",
-      "files": [
-        {
-          "path": "registry/default/components/client-only.tsx",
-          "type": "registry:component"
-        }
-      ]
-    },
-    {
-      "name": "direction-provider",
-      "type": "registry:component",
-      "title": "Direction Provider",
-      "description": "A provider component for managing text direction (LTR/RTL) context.",
-      "files": [
-        {
-          "path": "registry/default/components/direction-provider.tsx",
-          "type": "registry:component"
-        }
-      ]
-    },
-    {
-      "name": "hitbox",
-      "type": "registry:component",
-      "title": "Hitbox",
-      "description": "A utility component that extends the clickable area of interactive elements for better accessibility and user experience.",
-      "dependencies": ["@radix-ui/react-slot", "class-variance-authority"],
-      "files": [
-        {
-          "path": "registry/default/components/hitbox.tsx",
-          "type": "registry:component"
-        }
-      ]
-    },
-    {
-      "name": "portal",
-      "type": "registry:component",
-      "title": "Portal",
-      "description": "A utility component for rendering content in a different part of the DOM tree.",
-      "files": [
-        {
-          "path": "registry/default/components/portal.tsx",
-          "type": "registry:component"
-        }
-      ]
-    },
-    {
-      "name": "presence",
-      "type": "registry:component",
-      "title": "Presence",
-      "description": "A utility component for managing enter/exit animations and presence states.",
-      "files": [
-        {
-          "path": "registry/default/components/presence.tsx",
-          "type": "registry:component"
-        }
-      ]
-    },
-    {
-      "name": "visually-hidden",
-      "type": "registry:component",
-      "title": "Visually Hidden",
-      "description": "A utility component that hides content visually while keeping it accessible to screen readers.",
-      "dependencies": ["@radix-ui/react-slot"],
-      "files": [
-        {
-          "path": "registry/default/components/visually-hidden.tsx",
-          "type": "registry:component"
-        }
-      ]
-    },
-    {
-      "name": "visually-hidden-input",
-      "type": "registry:component",
-      "title": "Visually Hidden Input",
-      "description": "A utility component for creating accessible hidden input elements.",
-      "files": [
-        {
-          "path": "registry/default/components/visually-hidden-input.tsx",
-          "type": "registry:component"
         }
       ]
     },
     {
       "name": "utils",
       "type": "registry:lib",
-      "title": "Utils",
-      "description": "Utility functions for class name composition and other common tasks.",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ],
       "files": [
         {
-          "path": "registry/default/lib/utils.ts",
+          "path": "lib/utils.ts",
           "type": "registry:lib"
         }
       ]
@@ -542,1024 +793,2486 @@
     {
       "name": "compose-refs",
       "type": "registry:lib",
-      "title": "Compose Refs",
-      "description": "Utility for composing multiple React refs into a single ref.",
       "files": [
         {
-          "path": "registry/default/lib/compose-refs.ts",
+          "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
       ]
     },
     {
-      "name": "action-bar-demo",
-      "type": "registry:component",
-      "title": "Action Bar Demo",
-      "description": "Example showing how to use the action bar component with a selectable task list.",
+      "name": "use-mobile",
+      "type": "registry:hook",
       "files": [
         {
-          "path": "registry/default/examples/action-bar-demo.tsx",
+          "path": "hooks/use-mobile.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "action-bar-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "action-bar",
+        "checkbox"
+      ],
+      "files": [
+        {
+          "path": "examples/action-bar-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "action-bar-position-demo",
-      "type": "registry:component",
-      "title": "Action Bar Position Demo",
-      "description": "Example showing action bar positioning with side and align options.",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "action-bar",
+        "label",
+        "select",
+        "switch"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/action-bar-position-demo.tsx",
+          "path": "examples/action-bar-position-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "angle-slider-demo",
-      "type": "registry:component",
-      "title": "Angle Slider Demo",
-      "description": "Example showing how to use the angle slider component.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "angle-slider"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/angle-slider-demo.tsx",
+          "path": "examples/angle-slider-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "angle-slider-controlled-demo",
-      "type": "registry:component",
-      "title": "Angle Slider Controlled Demo",
-      "description": "Example showing controlled angle slider with reset and randomize buttons.",
+      "type": "registry:example",
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "angle-slider",
+        "button"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/angle-slider-controlled-demo.tsx",
+          "path": "examples/angle-slider-controlled-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "angle-slider-range-demo",
-      "type": "registry:component",
-      "title": "Angle Slider Range Demo",
-      "description": "Example showing angle slider with range selection using multiple thumbs.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "angle-slider"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/angle-slider-range-demo.tsx",
+          "path": "examples/angle-slider-range-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "angle-slider-themes-demo",
-      "type": "registry:component",
-      "title": "Angle Slider Themes Demo",
-      "description": "Example showing angle slider with different themes.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "angle-slider"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/angle-slider-themes-demo.tsx",
+          "path": "examples/angle-slider-themes-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "angle-slider-form-demo",
-      "type": "registry:component",
-      "title": "Angle Slider Form Demo",
-      "description": "Example showing angle slider integration with React Hook Form.",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers",
+        "react-hook-form",
+        "zod",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "angle-slider",
+        "button",
+        "form"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/angle-slider-form-demo.tsx",
+          "path": "examples/angle-slider-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "avatar",
+        "avatar-group"
+      ],
+      "files": [
+        {
+          "path": "examples/avatar-group-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group-truncation-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "avatar",
+        "avatar-group"
+      ],
+      "files": [
+        {
+          "path": "examples/avatar-group-truncation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group-rtl-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "avatar",
+        "avatar-group"
+      ],
+      "files": [
+        {
+          "path": "examples/avatar-group-rtl-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group-icons-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "avatar-group"
+      ],
+      "files": [
+        {
+          "path": "examples/avatar-group-icons-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group-custom-overflow-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "avatar",
+        "avatar-group"
+      ],
+      "files": [
+        {
+          "path": "examples/avatar-group-custom-overflow-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "badge-overflow-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "badge",
+        "badge-overflow"
+      ],
+      "files": [
+        {
+          "path": "examples/badge-overflow-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "badge-overflow-multiline-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "badge",
+        "badge-overflow"
+      ],
+      "files": [
+        {
+          "path": "examples/badge-overflow-multiline-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "badge-overflow-interactive-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "badge",
+        "badge-overflow",
+        "button",
+        "input"
+      ],
+      "files": [
+        {
+          "path": "examples/badge-overflow-interactive-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "checkbox-group-demo",
-      "type": "registry:component",
-      "title": "Checkbox Group Demo",
-      "description": "Example showing how to use the checkbox group component.",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/checkbox-group",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "checkbox-group"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/checkbox-group-demo.tsx",
+          "path": "examples/checkbox-group-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "checkbox-group-animated-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/checkbox-group",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "checkbox-group"
+      ],
+      "files": [
+        {
+          "path": "examples/checkbox-group-animated-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "checkbox-group-horizontal-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/checkbox-group",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "checkbox-group"
+      ],
+      "files": [
+        {
+          "path": "examples/checkbox-group-horizontal-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "checkbox-group-multi-selection-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/checkbox-group",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "checkbox-group"
+      ],
+      "files": [
+        {
+          "path": "examples/checkbox-group-multi-selection-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "checkbox-group-validation-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/checkbox-group",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "checkbox-group"
+      ],
+      "files": [
+        {
+          "path": "examples/checkbox-group-validation-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "circular-progress-demo",
-      "type": "registry:component",
-      "title": "Circular Progress Demo",
-      "description": "Example showing how to use the circular progress component.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "circular-progress"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/circular-progress-demo.tsx",
+          "path": "examples/circular-progress-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "circular-progress-interactive-demo",
-      "type": "registry:component",
-      "title": "Circular Progress Interactive Demo",
-      "description": "Example showing interactive circular progress with controls and simulated upload progress.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "circular-progress"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/circular-progress-interactive-demo.tsx",
+          "path": "examples/circular-progress-interactive-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "circular-progress-themes-demo",
-      "type": "registry:component",
-      "title": "Circular Progress Themes Demo",
-      "description": "Example showing circular progress with different color themes.",
+      "type": "registry:example",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "circular-progress"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/circular-progress-themes-demo.tsx",
+          "path": "examples/circular-progress-themes-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "color-picker-demo",
-      "type": "registry:component",
-      "title": "Color Picker Demo",
-      "description": "Example showing how to use the color picker component.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-picker"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/color-picker-demo.tsx",
+          "path": "examples/color-picker-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "cropper-demo",
-      "type": "registry:component",
-      "title": "Cropper Demo",
-      "description": "Basic example showing how to use the cropper component.",
+      "name": "color-picker-controlled-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-picker",
+        "button"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/cropper-demo.tsx",
+          "path": "examples/color-picker-controlled-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "cropper-file-upload-demo",
-      "type": "registry:component",
-      "title": "Cropper File Upload Demo",
-      "description": "Example showing how to integrate the cropper in a file upload component.",
+      "name": "color-picker-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers/zod",
+        "react-hook-form",
+        "zod"
+      ],
+      "registryDependencies": [
+        "color-picker",
+        "button",
+        "form"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/cropper-file-upload-demo.tsx",
+          "path": "examples/color-picker-form-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "cropper-shapes-demo",
-      "type": "registry:component",
-      "title": "Cropper Shapes Demo",
-      "description": "Example showing different cropper shapes and configuration options.",
+      "name": "color-picker-inline-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-picker"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/cropper-shapes-demo.tsx",
+          "path": "examples/color-picker-inline-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "cropper-video-demo",
-      "type": "registry:component",
-      "title": "Cropper Video Demo",
-      "description": "Example showing how to use the cropper with video content.",
+      "name": "color-swatch-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-swatch"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/cropper-video-demo.tsx",
+          "path": "examples/color-swatch-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "color-swatch-sizes-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-swatch"
+      ],
+      "files": [
+        {
+          "path": "examples/color-swatch-sizes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "color-swatch-transparency-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-swatch"
+      ],
+      "files": [
+        {
+          "path": "examples/color-swatch-transparency-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "combobox-demo",
-      "type": "registry:component",
-      "title": "Combobox Demo",
-      "description": "Example showing how to use the combobox component.",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "combobox"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/combobox-demo.tsx",
+          "path": "examples/combobox-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "combobox-custom-filter-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "combobox"
+      ],
+      "files": [
+        {
+          "path": "examples/combobox-custom-filter-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "combobox-debounced-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "combobox"
+      ],
+      "files": [
+        {
+          "path": "examples/combobox-debounced-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "combobox-groups-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "combobox"
+      ],
+      "files": [
+        {
+          "path": "examples/combobox-groups-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "combobox-multiple-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "combobox"
+      ],
+      "files": [
+        {
+          "path": "examples/combobox-multiple-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "combobox-tags-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "combobox",
+        "tags-input"
+      ],
+      "files": [
+        {
+          "path": "examples/combobox-tags-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "combobox-virtualized-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@tanstack/react-virtual",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "combobox"
+      ],
+      "files": [
+        {
+          "path": "examples/combobox-virtualized-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "compare-slider-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "compare-slider"
+      ],
+      "files": [
+        {
+          "path": "examples/compare-slider-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "compare-slider-controlled-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "compare-slider",
+        "button",
+        "label",
+        "slider"
+      ],
+      "files": [
+        {
+          "path": "examples/compare-slider-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "compare-slider-customization-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "compare-slider"
+      ],
+      "files": [
+        {
+          "path": "examples/compare-slider-customization-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "compare-slider-vertical-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "compare-slider"
+      ],
+      "files": [
+        {
+          "path": "examples/compare-slider-vertical-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "cropper"
+      ],
+      "files": [
+        {
+          "path": "examples/cropper-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-controlled-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "cropper",
+        "button",
+        "label",
+        "slider"
+      ],
+      "files": [
+        {
+          "path": "examples/cropper-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-file-upload-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "class-variance-authority",
+        "@hookform/resolvers",
+        "react-hook-form",
+        "zod"
+      ],
+      "registryDependencies": [
+        "cropper",
+        "button",
+        "dialog",
+        "label",
+        "slider"
+      ],
+      "files": [
+        {
+          "path": "examples/cropper-file-upload-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-shapes-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "cropper",
+        "label",
+        "select",
+        "switch"
+      ],
+      "files": [
+        {
+          "path": "examples/cropper-shapes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-video-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "cropper",
+        "button",
+        "label",
+        "select"
+      ],
+      "files": [
+        {
+          "path": "examples/cropper-video-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "data-grid-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@tanstack/react-table",
+        "@tanstack/react-virtual",
+        "lucide-react",
+        "sonner"
+      ],
+      "devDependencies": [
+        "@faker-js/faker"
+      ],
+      "registryDependencies": [
+        "data-grid"
+      ],
+      "files": [
+        {
+          "path": "examples/data-grid-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "data-table-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "data-table"
+      ],
+      "files": [
+        {
+          "path": "examples/data-table-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "editable-demo",
-      "type": "registry:component",
-      "title": "Editable Demo",
-      "description": "Example showing how to use the editable component.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "editable"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/editable-demo.tsx",
+          "path": "examples/editable-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "editable-autosize-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "editable"
+      ],
+      "files": [
+        {
+          "path": "examples/editable-autosize-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "editable-double-click-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "editable"
+      ],
+      "files": [
+        {
+          "path": "examples/editable-double-click-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "editable-form-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "editable",
+        "form"
+      ],
+      "files": [
+        {
+          "path": "examples/editable-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "editable-todo-list-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "checkbox",
+        "editable"
+      ],
+      "files": [
+        {
+          "path": "examples/editable-todo-list-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "file-upload-demo",
-      "type": "registry:component",
-      "title": "File Upload Demo",
-      "description": "Example showing how to use the file upload component.",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/file-upload-demo.tsx",
+          "path": "examples/file-upload-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "segmented-input-demo",
-      "type": "registry:component",
-      "title": "Segmented Input Demo",
-      "description": "Example showing how to use the segmented input component.",
+      "name": "file-upload-chat-input-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "sonner",
+        "uploadthing",
+        "@uploadthing/react"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload",
+        "textarea"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/segmented-input-demo.tsx",
+          "path": "examples/file-upload-chat-input-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "kanban-demo",
-      "type": "registry:component",
-      "title": "Kanban Demo",
-      "description": "Example showing how to use the kanban component.",
+      "name": "file-upload-circular-progress-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/kanban-demo.tsx",
+          "path": "examples/file-upload-circular-progress-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "listbox-demo",
-      "type": "registry:component",
-      "title": "Listbox Demo",
-      "description": "Example showing how to use the listbox component.",
+      "name": "file-upload-direct-upload-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/listbox-demo.tsx",
+          "path": "examples/file-upload-direct-upload-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "masonry-demo",
-      "type": "registry:component",
-      "title": "Masonry Demo",
-      "description": "Example showing how to use the masonry component.",
+      "name": "file-upload-fill-progress-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/masonry-demo.tsx",
+          "path": "examples/file-upload-fill-progress-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "mask-input-demo",
-      "type": "registry:component",
-      "title": "Mask Input Demo",
-      "description": "Example showing how to use the mask input component.",
+      "name": "file-upload-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "@hookform/resolvers/zod",
+        "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload",
+        "form"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/mask-input-demo.tsx",
+          "path": "examples/file-upload-form-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "mask-input-custom-pattern-demo",
-      "type": "registry:component",
-      "title": "Mask Input Custom Demo",
-      "description": "Example showing how to use the mask input component with custom patterns.",
+      "name": "file-upload-uploadthing-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "uploadthing",
+        "@uploadthing/react"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/mask-input-custom-demo.tsx",
+          "path": "examples/file-upload-uploadthing-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "mask-input-validation-modes-demo",
-      "type": "registry:component",
-      "title": "Mask Input Validation Modes Demo",
-      "description": "Example showing different validation modes for the mask input component.",
+      "name": "file-upload-validation-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/mask-input-validation-modes-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "mask-input-card-information-demo",
-      "type": "registry:component",
-      "title": "Mask Input Card Information Demo",
-      "description": "Example showing how to use the mask input component with card information.",
-      "files": [
-        {
-          "path": "registry/default/examples/mask-input-card-information-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "mask-input-form-demo",
-      "type": "registry:component",
-      "title": "Mask Input Form Demo",
-      "description": "Example showing how to use the mask input component in forms.",
-      "files": [
-        {
-          "path": "registry/default/examples/mask-input-form-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "marquee-demo",
-      "type": "registry:component",
-      "title": "Marquee Demo",
-      "description": "Example showing how to use the marquee component.",
-      "files": [
-        {
-          "path": "registry/default/examples/marquee-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "marquee-logo-demo",
-      "type": "registry:component",
-      "title": "Marquee Logo Demo",
-      "description": "Example showing marquee with logo showcase.",
-      "files": [
-        {
-          "path": "registry/default/examples/marquee-logo-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "marquee-vertical-demo",
-      "type": "registry:component",
-      "title": "Marquee Vertical Demo",
-      "description": "Example showing vertical marquee with testimonials.",
-      "files": [
-        {
-          "path": "registry/default/examples/marquee-vertical-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "marquee-rtl-demo",
-      "type": "registry:component",
-      "title": "Marquee RTL Demo",
-      "description": "Example showing marquee with RTL (right-to-left) support.",
-      "files": [
-        {
-          "path": "registry/default/examples/marquee-rtl-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "media-player-demo",
-      "type": "registry:component",
-      "title": "Media Player Demo",
-      "description": "Example showing how to use the media player component.",
-      "files": [
-        {
-          "path": "registry/default/examples/media-player-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "mention-demo",
-      "type": "registry:component",
-      "title": "Mention Demo",
-      "description": "Example showing how to use the mention component.",
-      "files": [
-        {
-          "path": "registry/default/examples/mention-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "rating-demo",
-      "type": "registry:component",
-      "title": "Rating Demo",
-      "description": "Example showing how to use the rating component.",
-      "files": [
-        {
-          "path": "registry/default/examples/rating-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "rating-themes-demo",
-      "type": "registry:component",
-      "title": "Rating Themes Demo",
-      "description": "Example showing rating component with different color themes and custom icons.",
-      "files": [
-        {
-          "path": "registry/default/examples/rating-themes-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "rating-controlled-demo",
-      "type": "registry:component",
-      "title": "Rating Controlled Demo",
-      "description": "Example showing controlled rating with state management.",
-      "files": [
-        {
-          "path": "registry/default/examples/rating-controlled-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "rating-form-demo",
-      "type": "registry:component",
-      "title": "Rating Form Demo",
-      "description": "Example showing rating component integration with React Hook Form.",
-      "files": [
-        {
-          "path": "registry/default/examples/rating-form-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "relative-time-card-demo",
-      "type": "registry:component",
-      "title": "Relative Time Card Demo",
-      "description": "Example showing how to use the relative time card component.",
-      "files": [
-        {
-          "path": "registry/default/examples/relative-time-card-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "scroller-demo",
-      "type": "registry:component",
-      "title": "Scroller Demo",
-      "description": "Example showing how to use the scroller component.",
-      "files": [
-        {
-          "path": "registry/default/examples/scroller-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "scroll-spy-demo",
-      "type": "registry:component",
-      "title": "Scroll Spy Demo",
-      "description": "Example showing how to use the scroll spy component.",
-      "files": [
-        {
-          "path": "registry/default/examples/scroll-spy-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "scroll-spy-controlled-demo",
-      "type": "registry:component",
-      "title": "Scroll Spy Controlled Demo",
-      "description": "Example showing controlled scroll spy with navigation buttons.",
-      "files": [
-        {
-          "path": "registry/default/examples/scroll-spy-controlled-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "scroll-spy-vertical-demo",
-      "type": "registry:component",
-      "title": "Scroll Spy Vertical Demo",
-      "description": "Example showing scroll spy with vertical orientation.",
-      "files": [
-        {
-          "path": "registry/default/examples/scroll-spy-vertical-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "sortable-demo",
-      "type": "registry:component",
-      "title": "Sortable Demo",
-      "description": "Example showing how to use the sortable component.",
-      "files": [
-        {
-          "path": "registry/default/examples/sortable-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "stepper-demo",
-      "type": "registry:component",
-      "title": "Stepper Demo",
-      "description": "Example showing how to use the stepper component.",
-      "files": [
-        {
-          "path": "registry/default/examples/stepper-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "stack-demo",
-      "type": "registry:component",
-      "title": "Stack Demo",
-      "description": "Example showing how to use the stack component.",
-      "files": [
-        {
-          "path": "registry/default/examples/stack-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "stack-icons-demo",
-      "type": "registry:component",
-      "title": "Stack Icons Demo",
-      "description": "Example showing how to use the stack component with icons.",
-      "files": [
-        {
-          "path": "registry/default/examples/stack-icons-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "stack-rtl-demo",
-      "type": "registry:component",
-      "title": "Stack RTL Demo",
-      "description": "Example showing how to use the stack component with RTL direction.",
-      "files": [
-        {
-          "path": "registry/default/examples/stack-rtl-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "stack-truncation-demo",
-      "type": "registry:component",
-      "title": "Stack Truncation Demo",
-      "description": "Example showing how to use the stack component with truncation.",
-      "files": [
-        {
-          "path": "registry/default/examples/stack-truncation-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "qr-code-demo",
-      "type": "registry:component",
-      "title": "QR Code Demo",
-      "description": "Example showing how to use the QR code component.",
-      "files": [
-        {
-          "path": "registry/default/examples/qr-code-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "qr-code-customization-demo",
-      "type": "registry:component",
-      "title": "QR Code Customization Demo",
-      "description": "Example showing QR code with custom colors and error correction levels.",
-      "files": [
-        {
-          "path": "registry/default/examples/qr-code-customization-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "qr-code-formats-demo",
-      "type": "registry:component",
-      "title": "QR Code Formats Demo",
-      "description": "Example showing QR code rendered in different formats (canvas, SVG, image) with download functionality.",
-      "files": [
-        {
-          "path": "registry/default/examples/qr-code-formats-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "tour-demo",
-      "type": "registry:component",
-      "title": "Tour Demo",
-      "description": "Example showing how to use the tour component.",
-      "files": [
-        {
-          "path": "registry/default/examples/tour-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "tour-controlled-demo",
-      "type": "registry:component",
-      "title": "Tour Controlled Demo",
-      "description": "Example showing controlled tour usage with external state management.",
-      "files": [
-        {
-          "path": "registry/default/examples/tour-controlled-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "tags-input-demo",
-      "type": "registry:component",
-      "title": "Tags Input Demo",
-      "description": "Example showing how to use the tags input component.",
-      "files": [
-        {
-          "path": "registry/default/examples/tags-input-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "timeline-demo",
-      "type": "registry:component",
-      "title": "Timeline Demo",
-      "description": "Example showing how to use the timeline component.",
-      "files": [
-        {
-          "path": "registry/default/examples/timeline-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "timeline-horizontal-demo",
-      "type": "registry:component",
-      "title": "Timeline Horizontal Demo",
-      "description": "Example showing timeline with horizontal orientation.",
-      "files": [
-        {
-          "path": "registry/default/examples/timeline-horizontal-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "timeline-rtl-demo",
-      "type": "registry:component",
-      "title": "Timeline RTL Demo",
-      "description": "Example showing timeline with right-to-left layout support.",
-      "files": [
-        {
-          "path": "registry/default/examples/timeline-rtl-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "timeline-alternate-demo",
-      "type": "registry:component",
-      "title": "Timeline Alternate Demo",
-      "description": "Example showing timeline with alternating content pattern.",
-      "files": [
-        {
-          "path": "registry/default/examples/timeline-alternate-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "timeline-horizontal-alternate-demo",
-      "type": "registry:component",
-      "title": "Timeline Horizontal Alternate Demo",
-      "description": "Example showing horizontal timeline with alternating content above and below.",
-      "files": [
-        {
-          "path": "registry/default/examples/timeline-horizontal-alternate-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "timeline-custom-dot-demo",
-      "type": "registry:component",
-      "title": "Timeline Custom Dot Demo",
-      "description": "Example showing timeline with custom dot sizes and icons.",
-      "files": [
-        {
-          "path": "registry/default/examples/timeline-custom-dot-demo.tsx",
+          "path": "examples/file-upload-validation-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "fps-demo",
-      "type": "registry:component",
-      "title": "FPS Demo",
-      "description": "Example showing how to use the FPS counter component.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "fps"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/fps-demo.tsx",
+          "path": "examples/fps-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "fps-strategy-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "fps"
+      ],
+      "files": [
+        {
+          "path": "examples/fps-strategy-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "hitbox-demo",
-      "type": "registry:component",
-      "title": "Hitbox Demo",
-      "description": "Example showing how to use the hitbox component.",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "checkbox",
+        "hitbox"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/hitbox-demo.tsx",
+          "path": "examples/hitbox-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "hitbox-sizes-demo",
-      "type": "registry:component",
-      "title": "Hitbox Sizes Demo",
-      "description": "Example showing different sizes for the hitbox component.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "checkbox",
+        "hitbox"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/hitbox-sizes-demo.tsx",
+          "path": "examples/hitbox-sizes-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "hitbox-positions-demo",
-      "type": "registry:component",
-      "title": "Hitbox Positions Demo",
-      "description": "Example showing different positions for the hitbox component.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "checkbox",
+        "hitbox"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/hitbox-positions-demo.tsx",
+          "path": "examples/hitbox-positions-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "hitbox-radii-demo",
-      "type": "registry:component",
-      "title": "Hitbox Radii Demo",
-      "description": "Example showing different border radius options for the hitbox component.",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "checkbox",
+        "hitbox"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/hitbox-radii-demo.tsx",
+          "path": "examples/hitbox-radii-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "hitbox-debug-demo",
-      "type": "registry:component",
-      "title": "Hitbox Debug Demo",
-      "description": "Example showing the debug mode for visualizing hitbox areas.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "hitbox"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/hitbox-debug-demo.tsx",
+          "path": "examples/hitbox-debug-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "time-picker",
-      "type": "registry:component",
-      "title": "Time Picker",
-      "description": "A time picker component with input fields and column selectors for hours, minutes, seconds, and AM/PM.",
+      "name": "segmented-input-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "segmented-input"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/time-picker.tsx",
-          "type": "registry:ui"
-        },
-        {
-          "path": "registry/default/components/visually-hidden-input.tsx",
-          "type": "registry:component"
-        },
-        {
-          "path": "registry/default/lib/compose-refs.ts",
-          "type": "registry:lib"
-        }
-      ]
-    },
-    {
-      "name": "time-picker-demo",
-      "type": "registry:component",
-      "title": "Time Picker Demo",
-      "description": "Example showing how to use the time picker component.",
-      "files": [
-        {
-          "path": "registry/default/examples/time-picker-demo.tsx",
+          "path": "examples/segmented-input-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "time-picker-controlled-demo",
-      "type": "registry:component",
-      "title": "Time Picker Controlled Demo",
-      "description": "Example showing controlled time picker with state management.",
+      "name": "segmented-input-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "button",
+        "segmented-input"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/time-picker-controlled-demo.tsx",
+          "path": "examples/segmented-input-form-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "time-picker-seconds-demo",
-      "type": "registry:component",
-      "title": "Time Picker Seconds Demo",
-      "description": "Example showing time picker with seconds support.",
+      "name": "segmented-input-rgb-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "segmented-input"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/time-picker-seconds-demo.tsx",
+          "path": "examples/segmented-input-rgb-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "time-picker-step-demo",
-      "type": "registry:component",
-      "title": "Time Picker Step Demo",
-      "description": "Example showing time picker with custom step increments.",
+      "name": "segmented-input-vertical-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "class-variance-authority"
+      ],
+      "registryDependencies": [
+        "segmented-input"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/time-picker-step-demo.tsx",
+          "path": "examples/segmented-input-vertical-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "time-picker-placeholder-demo",
-      "type": "registry:component",
-      "title": "Time Picker Placeholder Demo",
-      "description": "Example showing time picker with custom segment placeholders.",
+      "name": "marquee-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "marquee"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/time-picker-placeholder-demo.tsx",
+          "path": "examples/marquee-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "time-picker-form-demo",
-      "type": "registry:component",
-      "title": "Time Picker Form Demo",
-      "description": "Example showing time picker integration with React Hook Form.",
+      "name": "marquee-logo-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "marquee"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/time-picker-form-demo.tsx",
+          "path": "examples/marquee-logo-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "key-value",
-      "type": "registry:component",
-      "title": "Key Value",
-      "description": "A key-value pair input component with support for adding, removing, and validating entries.",
+      "name": "marquee-vertical-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "marquee"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/key-value.tsx",
-          "type": "registry:ui"
-        },
+          "path": "examples/marquee-vertical-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "marquee-rtl-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "marquee"
+      ],
+      "files": [
         {
-          "path": "registry/default/components/visually-hidden-input.tsx",
-          "type": "registry:component"
-        },
+          "path": "examples/marquee-rtl-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mask-input-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "mask-input"
+      ],
+      "files": [
         {
-          "path": "registry/default/lib/compose-refs.ts",
-          "type": "registry:lib"
+          "path": "examples/mask-input-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mask-input-custom-pattern-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "label",
+        "mask-input"
+      ],
+      "files": [
+        {
+          "path": "examples/mask-input-custom-pattern-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mask-input-validation-modes-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "badge",
+        "card",
+        "label",
+        "mask-input"
+      ],
+      "files": [
+        {
+          "path": "examples/mask-input-validation-modes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mask-input-card-information-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "card",
+        "label",
+        "mask-input"
+      ],
+      "files": [
+        {
+          "path": "examples/mask-input-card-information-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mask-input-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers/zod",
+        "react-hook-form",
+        "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "form",
+        "mask-input"
+      ],
+      "files": [
+        {
+          "path": "examples/mask-input-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "kanban-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "kanban"
+      ],
+      "files": [
+        {
+          "path": "examples/kanban-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "kanban-dynamic-overlay-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "kanban"
+      ],
+      "files": [
+        {
+          "path": "examples/kanban-dynamic-overlay-demo.tsx",
+          "type": "registry:example"
         }
       ]
     },
     {
       "name": "key-value-demo",
-      "type": "registry:component",
-      "title": "Key Value Demo",
-      "description": "Example showing how to use the key-value component.",
+      "type": "registry:example",
+      "registryDependencies": [
+        "key-value"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/key-value-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "key-value-validation-demo",
-      "type": "registry:component",
-      "title": "Key Value Validation Demo",
-      "description": "Example showing key-value component with custom validation.",
-      "files": [
-        {
-          "path": "registry/default/examples/key-value-validation-demo.tsx",
-          "type": "registry:example"
-        }
-      ]
-    },
-    {
-      "name": "key-value-paste-demo",
-      "type": "registry:component",
-      "title": "Key Value Paste Demo",
-      "description": "Example showing key-value component with paste support for bulk entry.",
-      "files": [
-        {
-          "path": "registry/default/examples/key-value-paste-demo.tsx",
+          "path": "examples/key-value-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "key-value-form-demo",
-      "type": "registry:component",
-      "title": "Key Value Form Demo",
-      "description": "Example showing key-value component integration with React Hook Form.",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers",
+        "react-hook-form",
+        "zod",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "key-value",
+        "button",
+        "form",
+        "input"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/key-value-form-demo.tsx",
+          "path": "examples/key-value-form-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
-      "name": "stat",
-      "type": "registry:component",
-      "title": "Stat",
-      "description": "A flexible component for displaying key metrics and statistics with support for trends, indicators, and descriptions.",
+      "name": "key-value-validation-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "key-value"
+      ],
       "files": [
         {
-          "path": "registry/default/ui/stat.tsx",
-          "type": "registry:ui"
+          "path": "examples/key-value-validation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "key-value-paste-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "key-value"
+      ],
+      "files": [
+        {
+          "path": "examples/key-value-paste-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "listbox-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "listbox"
+      ],
+      "files": [
+        {
+          "path": "examples/listbox-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "listbox-grid-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "listbox"
+      ],
+      "files": [
+        {
+          "path": "examples/listbox-grid-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "listbox-group-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "listbox"
+      ],
+      "files": [
+        {
+          "path": "examples/listbox-group-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "listbox-horizontal-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "listbox"
+      ],
+      "files": [
+        {
+          "path": "examples/listbox-horizontal-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "masonry-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "masonry"
+      ],
+      "files": [
+        {
+          "path": "examples/masonry-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "masonry-linear-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "masonry",
+        "skeleton"
+      ],
+      "files": [
+        {
+          "path": "examples/masonry-linear-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "masonry-ssr-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "masonry",
+        "skeleton"
+      ],
+      "files": [
+        {
+          "path": "examples/masonry-ssr-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "media-player-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "media-chrome"
+      ],
+      "registryDependencies": [
+        "button",
+        "media-player",
+        "select",
+        "slider",
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "examples/media-player-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "media-player-audio-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "media-chrome"
+      ],
+      "registryDependencies": [
+        "button",
+        "media-player",
+        "select",
+        "slider",
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "examples/media-player-audio-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "media-player-error-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "media-chrome"
+      ],
+      "registryDependencies": [
+        "button",
+        "media-player",
+        "slider",
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "examples/media-player-error-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "media-player-hls-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "media-chrome",
+        "@mux/mux-video-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "media-player",
+        "select",
+        "slider",
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "examples/media-player-hls-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "media-player-playlist-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "media-chrome"
+      ],
+      "registryDependencies": [
+        "button",
+        "media-player",
+        "scroll-area"
+      ],
+      "files": [
+        {
+          "path": "examples/media-player-playlist-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "media-player-settings-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "media-chrome"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "dropdown-menu",
+        "media-player",
+        "select",
+        "slider",
+        "tooltip"
+      ],
+      "files": [
+        {
+          "path": "examples/media-player-settings-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mention-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/mention",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/mention-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mention-custom-filter-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/mention",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/mention-custom-filter-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "mention-custom-trigger-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/mention",
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/mention-custom-trigger-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "qr-code-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "qr-code"
+      ],
+      "files": [
+        {
+          "path": "examples/qr-code-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "qr-code-customization-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "qr-code"
+      ],
+      "files": [
+        {
+          "path": "examples/qr-code-customization-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "qr-code-formats-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "qr-code"
+      ],
+      "files": [
+        {
+          "path": "examples/qr-code-formats-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "qr-code-overlay-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "qr-code"
+      ],
+      "files": [
+        {
+          "path": "examples/qr-code-overlay-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "rating-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "rating"
+      ],
+      "files": [
+        {
+          "path": "examples/rating-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "rating-themes-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "rating"
+      ],
+      "files": [
+        {
+          "path": "examples/rating-themes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "rating-controlled-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "rating",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "examples/rating-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "rating-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers/zod",
+        "react-hook-form",
+        "zod",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "rating",
+        "button",
+        "form"
+      ],
+      "files": [
+        {
+          "path": "examples/rating-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "relative-time-card-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "hover-card"
+      ],
+      "files": [
+        {
+          "path": "examples/relative-time-card-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "relative-time-card-timezones-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "hover-card",
+        "relative-time-card"
+      ],
+      "files": [
+        {
+          "path": "examples/relative-time-card-timezones-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "relative-time-card-variants-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "hover-card"
+      ],
+      "files": [
+        {
+          "path": "examples/relative-time-card-variants-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroller-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroller"
+      ],
+      "files": [
+        {
+          "path": "examples/scroller-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroller-hidden-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroller"
+      ],
+      "files": [
+        {
+          "path": "examples/scroller-hidden-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroller-horizontal-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroller"
+      ],
+      "files": [
+        {
+          "path": "examples/scroller-horizontal-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroller-navigation-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroller"
+      ],
+      "files": [
+        {
+          "path": "examples/scroller-navigation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroll-spy-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroll-spy"
+      ],
+      "files": [
+        {
+          "path": "examples/scroll-spy-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroll-spy-controlled-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroll-spy",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "examples/scroll-spy-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroll-spy-vertical-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroll-spy"
+      ],
+      "files": [
+        {
+          "path": "examples/scroll-spy-vertical-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "sortable-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "sortable"
+      ],
+      "files": [
+        {
+          "path": "examples/sortable-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "sortable-dynamic-overlay-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "sortable"
+      ],
+      "files": [
+        {
+          "path": "examples/sortable-dynamic-overlay-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "sortable-handle-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "sortable",
+        "table"
+      ],
+      "files": [
+        {
+          "path": "examples/sortable-handle-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "sortable-primitive-values-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "sortable"
+      ],
+      "files": [
+        {
+          "path": "examples/sortable-primitive-values-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stack-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "stack"
+      ],
+      "files": [
+        {
+          "path": "examples/stack-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stack-no-expand-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "stack"
+      ],
+      "files": [
+        {
+          "path": "examples/stack-no-expand-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stack-side-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "stack"
+      ],
+      "files": [
+        {
+          "path": "examples/stack-side-demo.tsx",
+          "type": "registry:example"
         }
       ]
     },
     {
       "name": "stat-demo",
-      "type": "registry:component",
-      "title": "Stat Demo",
-      "description": "Example showing how to use the stat component with various indicators and trends.",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "stat",
+        "dropdown-menu"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/stat-demo.tsx",
+          "path": "examples/stat-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "stat-variants-demo",
-      "type": "registry:component",
-      "title": "Stat Variants Demo",
-      "description": "Example showing different indicator variants and color themes for the stat component.",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "stat"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/stat-variants-demo.tsx",
+          "path": "examples/stat-variants-demo.tsx",
           "type": "registry:example"
         }
       ]
     },
     {
       "name": "stat-layout-demo",
-      "type": "registry:component",
-      "title": "Stat Layout Demo",
-      "description": "Example showing layout options with separators and descriptions for the stat component.",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "stat"
+      ],
       "files": [
         {
-          "path": "registry/default/examples/stat-layout-demo.tsx",
+          "path": "examples/stat-layout-demo.tsx",
           "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stepper-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "stepper"
+      ],
+      "files": [
+        {
+          "path": "examples/stepper-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stepper-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers/zod",
+        "react-hook-form",
+        "zod"
+      ],
+      "registryDependencies": [
+        "stepper",
+        "button",
+        "form",
+        "input",
+        "textarea"
+      ],
+      "files": [
+        {
+          "path": "examples/stepper-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stepper-validation-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers",
+        "react-hook-form",
+        "sonner",
+        "zod"
+      ],
+      "registryDependencies": [
+        "stepper",
+        "form"
+      ],
+      "files": [
+        {
+          "path": "examples/stepper-validation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stepper-vertical-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "stepper"
+      ],
+      "files": [
+        {
+          "path": "examples/stepper-vertical-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tags-input-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/tags-input",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "tags-input"
+      ],
+      "files": [
+        {
+          "path": "examples/tags-input-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tags-input-editable-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/tags-input",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "tags-input"
+      ],
+      "files": [
+        {
+          "path": "examples/tags-input-editable-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tags-input-sortable-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/tags-input",
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "tags-input"
+      ],
+      "files": [
+        {
+          "path": "examples/tags-input-sortable-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tags-input-validation-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/tags-input",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "tags-input"
+      ],
+      "files": [
+        {
+          "path": "examples/tags-input-validation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-demo",
+      "type": "registry:example",
+      "files": [
+        {
+          "path": "examples/time-picker-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-step-demo",
+      "type": "registry:example",
+      "files": [
+        {
+          "path": "examples/time-picker-step-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-seconds-demo",
+      "type": "registry:example",
+      "files": [
+        {
+          "path": "examples/time-picker-seconds-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-controlled-demo",
+      "type": "registry:example",
+      "files": [
+        {
+          "path": "examples/time-picker-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-form-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "form",
+        "sonner"
+      ],
+      "files": [
+        {
+          "path": "examples/time-picker-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "time-picker-placeholder-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "time-picker"
+      ],
+      "files": [
+        {
+          "path": "examples/time-picker-placeholder-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-demo",
+      "type": "registry:example",
+      "files": [
+        {
+          "path": "examples/timeline-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-horizontal-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "timeline"
+      ],
+      "files": [
+        {
+          "path": "examples/timeline-horizontal-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-rtl-demo",
+      "type": "registry:example",
+      "files": [
+        {
+          "path": "examples/timeline-rtl-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-alternate-demo",
+      "type": "registry:example",
+      "files": [
+        {
+          "path": "examples/timeline-alternate-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-horizontal-alternate-demo",
+      "type": "registry:example",
+      "files": [
+        {
+          "path": "examples/timeline-horizontal-alternate-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "timeline-custom-dot-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/timeline-custom-dot-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tour-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "tour"
+      ],
+      "files": [
+        {
+          "path": "examples/tour-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tour-controlled-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "tour"
+      ],
+      "files": [
+        {
+          "path": "examples/tour-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "client-only",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "components/client-only.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "direction-provider",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "components/direction-provider.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "hitbox",
+      "type": "registry:component",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "class-variance-authority"
+      ],
+      "files": [
+        {
+          "path": "components/hitbox.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "portal",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "components/portal.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "presence",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "components/presence.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "visually-hidden",
+      "type": "registry:component",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "files": [
+        {
+          "path": "components/visually-hidden.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "visually-hidden-input",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "components/visually-hidden-input.tsx",
+          "type": "registry:component"
         }
       ]
     }

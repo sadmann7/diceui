@@ -5,7 +5,6 @@ import { examples } from "@/registry/registry-examples";
 import { hooks } from "@/registry/registry-hooks";
 import { internal } from "@/registry/registry-internal";
 import { lib } from "@/registry/registry-lib";
-import { themes } from "@/registry/registry-themes";
 import { ui } from "@/registry/registry-ui";
 
 export const registry = {
@@ -50,7 +49,6 @@ export const registry = {
     ...blocks,
     ...lib,
     ...hooks,
-    ...themes,
     ...examples,
     ...components,
 

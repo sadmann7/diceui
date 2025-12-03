@@ -6,15 +6,11 @@ import { rimraf } from "rimraf";
 import { registry } from "../registry";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const REGISTRY_PATH = path.resolve(__dirname, "../public/r/styles/default");
+const REGISTRY_PATH = path.resolve(__dirname, "../public/r");
 
 // Reserved registry item names that should never be removed
 const RESERVED_NAMES = new Set(["index", "style"]);
 
-/**
- * Cleanup orphaned JSON files from the registry that are no longer referenced
- * in the registry TypeScript files (registry-ui.ts, registry-examples.ts, etc.)
- */
 async function cleanupRegistry() {
   console.log("🧹 Starting registry cleanup...");
 
