@@ -467,16 +467,8 @@ async function buildStyles(registry: Registry) {
       });
 
       if (payload.success) {
-        // Write to styles subdirectory (existing behavior)
         await fs.writeFile(
           path.join(targetPath, `${item.name}.json`),
-          JSON.stringify(payload.data, null, 2),
-          "utf8",
-        );
-
-        // Write to root registry path: public/r/{item-name}.json
-        await fs.writeFile(
-          path.join(REGISTRY_PATH, `${item.name}.json`),
           JSON.stringify(payload.data, null, 2),
           "utf8",
         );
