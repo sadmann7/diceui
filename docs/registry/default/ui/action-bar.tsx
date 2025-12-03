@@ -119,40 +119,39 @@ function ActionBarRoot(props: ActionBarRootProps) {
   const portalContainer =
     portalContainerProp ?? (mounted ? globalThis.document?.body : null);
 
-  if (!portalContainer) return null;
+  if (!portalContainer || !open) return null;
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <ActionBarContext.Provider value={contextValue}>
-      {open &&
-        ReactDOM.createPortal(
-          <RootPrimitive
-            data-slot="action-bar"
-            data-side={side}
-            data-align={align}
-            {...rootProps}
-            ref={composedRef}
-            className={cn(
-              "fixed z-50 flex items-center gap-2 rounded-lg border bg-card px-2 py-1.5 shadow-lg",
-              "fade-in-0 zoom-in-95 animate-in duration-250 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
-              "data-[side=bottom]:slide-in-from-bottom-4 data-[side=top]:slide-in-from-top-4",
-              "motion-reduce:animate-none motion-reduce:transition-none",
-              className,
-            )}
-            style={{
-              [side]: `${sideOffset}px`,
-              ...(align === "center" && {
-                left: "50%",
-                translate: "-50% 0",
-              }),
-              ...(align === "start" && { left: `${alignOffset}px` }),
-              ...(align === "end" && { right: `${alignOffset}px` }),
-              ...style,
-            }}
-          />,
-          portalContainer,
-        )}
+      {ReactDOM.createPortal(
+        <RootPrimitive
+          data-slot="action-bar"
+          data-side={side}
+          data-align={align}
+          {...rootProps}
+          ref={composedRef}
+          className={cn(
+            "fixed z-50 flex items-center gap-2 rounded-lg border bg-card px-2 py-1.5 shadow-lg",
+            "fade-in-0 zoom-in-95 animate-in duration-250 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
+            "data-[side=bottom]:slide-in-from-bottom-4 data-[side=top]:slide-in-from-top-4",
+            "motion-reduce:animate-none motion-reduce:transition-none",
+            className,
+          )}
+          style={{
+            [side]: `${sideOffset}px`,
+            ...(align === "center" && {
+              left: "50%",
+              translate: "-50% 0",
+            }),
+            ...(align === "start" && { left: `${alignOffset}px` }),
+            ...(align === "end" && { right: `${alignOffset}px` }),
+            ...style,
+          }}
+        />,
+        portalContainer,
+      )}
     </ActionBarContext.Provider>
   );
 }
