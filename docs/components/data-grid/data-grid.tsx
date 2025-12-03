@@ -1,20 +1,23 @@
 "use client";
 
-import { flexRender } from "@tanstack/react-table";
 import { Plus } from "lucide-react";
 import * as React from "react";
 import { DataGridColumnHeader } from "@/components/data-grid/data-grid-column-header";
 import { DataGridContextMenu } from "@/components/data-grid/data-grid-context-menu";
+import { DataGridPasteDialog } from "@/components/data-grid/data-grid-paste-dialog";
 import { DataGridRow } from "@/components/data-grid/data-grid-row";
 import { DataGridSearch } from "@/components/data-grid/data-grid-search";
 import type { useDataGrid } from "@/hooks/use-data-grid";
-import { getCommonPinningStyles } from "@/lib/data-table";
+import { flexRender, getCommonPinningStyles } from "@/lib/data-grid";
 import { cn } from "@/lib/utils";
+import type { Direction } from "@/types/data-grid";
 
 interface DataGridProps<TData>
-  extends ReturnType<typeof useDataGrid<TData>>,
-    React.ComponentProps<"div"> {
+  extends Omit<ReturnType<typeof useDataGrid<TData>>, "dir">,
+    Omit<React.ComponentProps<"div">, "contextMenu"> {
+  dir?: Direction;
   height?: number;
+  stretchColumns?: boolean;
 }
 
 export function DataGrid<TData>({
@@ -22,21 +25,29 @@ export function DataGrid<TData>({
   headerRef,
   rowMapRef,
   footerRef,
+  dir = "ltr",
   table,
+  tableMeta,
   rowVirtualizer,
-  height = 600,
+  columns,
   searchState,
   columnSizeVars,
+  cellSelectionMap,
+  focusedCell,
+  editingCell,
+  rowHeight,
+  contextMenu,
+  pasteDialog,
   onRowAdd,
+  height = 600,
+  stretchColumns = false,
   className,
   ...props
 }: DataGridProps<TData>) {
   const rows = table.getRowModel().rows;
-  const columns = table.getAllColumns();
-
-  const meta = table.options.meta;
-  const rowHeight = meta?.rowHeight ?? "short";
-  const focusedCell = meta?.focusedCell ?? null;
+  const readOnly = tableMeta?.readOnly ?? false;
+  const columnVisibility = table.getState().columnVisibility;
+  const columnPinning = table.getState().columnPinning;
 
   const onGridContextMenu = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -60,11 +71,17 @@ export function DataGrid<TData>({
   return (
     <div
       data-slot="grid-wrapper"
-      className={cn("relative flex w-full flex-col", className)}
+      dir={dir}
       {...props}
+      className={cn("relative flex w-full flex-col", className)}
     >
       {searchState && <DataGridSearch {...searchState} />}
-      <DataGridContextMenu table={table} />
+      <DataGridContextMenu
+        tableMeta={tableMeta}
+        columns={columns}
+        contextMenu={contextMenu}
+      />
+      <DataGridPasteDialog tableMeta={tableMeta} pasteDialog={pasteDialog} />
       <div
         role="grid"
         aria-label="Data grid"
@@ -76,7 +93,7 @@ export function DataGrid<TData>({
         className="relative grid select-none overflow-auto rounded-md border focus:outline-none"
         style={{
           ...columnSizeVars,
-          height: `${height}px`,
+          maxHeight: `${height}px`,
         }}
         onContextMenu={onGridContextMenu}
       >
@@ -119,10 +136,11 @@ export function DataGrid<TData>({
                     data-slot="grid-header-cell"
                     tabIndex={-1}
                     className={cn("relative", {
-                      "border-r": header.column.id !== "select",
+                      grow: stretchColumns && header.column.id !== "select",
+                      "border-e": header.column.id !== "select",
                     })}
                     style={{
-                      ...getCommonPinningStyles({ column: header.column }),
+                      ...getCommonPinningStyles({ column: header.column, dir }),
                       width: `calc(var(--header-${header.id}-size) * 1px)`,
                     }}
                   >
@@ -149,21 +167,33 @@ export function DataGrid<TData>({
           className="relative grid"
           style={{
             height: `${rowVirtualizer.getTotalSize()}px`,
+            contain: "strict",
           }}
         >
-          {rowVirtualizer.getVirtualIndexes().map((virtualRowIndex) => {
-            const row = rows[virtualRowIndex];
+          {rowVirtualizer.getVirtualItems().map((virtualItem) => {
+            const row = rows[virtualItem.index];
             if (!row) return null;
+
+            const cellSelectionKeys =
+              cellSelectionMap?.get(virtualItem.index) ?? new Set<string>();
 
             return (
               <DataGridRow
                 key={row.id}
                 row={row}
+                tableMeta={tableMeta}
                 rowMapRef={rowMapRef}
-                virtualRowIndex={virtualRowIndex}
+                virtualItem={virtualItem}
                 rowVirtualizer={rowVirtualizer}
                 rowHeight={rowHeight}
                 focusedCell={focusedCell}
+                editingCell={editingCell}
+                cellSelectionKeys={cellSelectionKeys}
+                columnVisibility={columnVisibility}
+                columnPinning={columnPinning}
+                dir={dir}
+                readOnly={readOnly}
+                stretchColumns={stretchColumns}
               />
             );
           })}
@@ -193,7 +223,7 @@ export function DataGrid<TData>({
                 onClick={onRowAdd}
                 onKeyDown={onAddRowKeyDown}
               >
-                <div className="sticky left-0 flex items-center gap-2 px-3 text-muted-foreground">
+                <div className="sticky start-0 flex items-center gap-2 px-3 text-muted-foreground">
                   <Plus className="size-3.5" />
                   <span className="text-sm">Add row</span>
                 </div>

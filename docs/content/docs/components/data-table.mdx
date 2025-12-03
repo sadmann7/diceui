@@ -109,6 +109,8 @@ links:
       ExtendedColumnSort,
     } from "@/types/data-table";
     ```
+
+    Update imports to use `@/lib/data-table` for utility functions, `@/config/data-table` for config, and `@/types/data-table` for types instead of importing from `@/components/data-table/data-table`.
   </Step>
 </Steps>
 
@@ -591,6 +593,19 @@ Pagination controls for the data table.
     },
   ]}
 />
+
+## Features
+
+- **Advanced Filtering** - Multiple filter types (text, number, date, select, multi-select) with customizable operators
+- **URL State Management** - Sync table state with URL search params using [nuqs](https://nuqs.47ng.com)
+- **Sorting** - Multi-column sorting with persistent state
+- **Pagination** - Server-side or client-side pagination with customizable page sizes
+- **Column Visibility** - Toggle column visibility with view options menu
+- **Row Selection** - Single or multi-row selection with action bar
+- **Column Pinning** - Pin columns to left or right for better UX
+- **Keyboard Navigation** - Full keyboard support with shortcuts for filter and sort menus
+- **Responsive** - Mobile-first design with overflow handling
+- **Customizable** - Flexible API for custom filters, columns, and actions
 
 ## Credits
 

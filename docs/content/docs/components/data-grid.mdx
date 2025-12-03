@@ -47,6 +47,85 @@ links:
     npx shadcn@latest add "@diceui/data-grid-keyboard-shortcuts"
     ```
   </Step>
+  <Step>
+    Update import paths for custom components:
+
+    The shadcn CLI doesn't handle custom component paths properly ([see issue](https://github.com/shadcn-ui/ui/issues/8308)). You'll need to update these imports manually:
+
+    **In `lib/data-grid.ts`:**
+
+    ```tsx title="lib/data-grid.ts"
+    // [!code --]
+    import type {
+      CellPosition,
+      Direction,
+      FileCellData,
+      RowHeightValue,
+    } from "@/components/data-grid/data-grid";
+    // [!code ++]
+    import type {
+      CellPosition,
+      Direction,
+      FileCellData,
+      RowHeightValue,
+    } from "@/types/data-grid";
+    ```
+
+    **In `hooks/use-data-grid.ts`:**
+
+    ```tsx title="hooks/use-data-grid.ts"
+    // [!code --]
+    import {
+      getCellKey,
+      getIsFileCellData,
+      getIsInPopover,
+      getRowHeightValue,
+      getScrollDirection,
+      matchSelectOption,
+      parseCellKey,
+      scrollCellIntoView,
+    } from "@/components/data-grid/data-grid";
+    import type {
+      CellPosition,
+      ContextMenuState,
+      Direction,
+      FileCellData,
+      NavigationDirection,
+      PasteDialogState,
+      RowHeightValue,
+      SearchState,
+      SelectionState,
+      UpdateCell,
+    } from "@/components/data-grid/data-grid";
+    // [!code ++]
+    import {
+      getCellKey,
+      getIsFileCellData,
+      getIsInPopover,
+      getRowHeightValue,
+      getScrollDirection,
+      matchSelectOption,
+      parseCellKey,
+      scrollCellIntoView,
+    } from "@/lib/data-grid";
+    import type {
+      CellPosition,
+      ContextMenuState,
+      Direction,
+      FileCellData,
+      NavigationDirection,
+      PasteDialogState,
+      RowHeightValue,
+      SearchState,
+      SelectionState,
+      UpdateCell,
+    } from "@/types/data-grid";
+    ```
+
+    **In all `components/data-grid/*.tsx` files:**
+
+    Update imports to use `@/lib/data-grid` for utility functions and `@/types/data-grid` for types instead of importing from `@/components/data-grid/data-grid`.
+  </Step>
 </Steps>
 
 ## Layout

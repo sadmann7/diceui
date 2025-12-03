@@ -14,7 +14,9 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   EyeOffIcon,
+  FileIcon,
   HashIcon,
+  LinkIcon,
   ListChecksIcon,
   ListIcon,
   PinIcon,
@@ -38,9 +40,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import type { Cell } from "@/types/data-grid";
+import type { CellOpts } from "@/types/data-grid";
 
-function getColumnVariant(variant?: Cell["variant"]): {
+function getColumnVariant(variant?: CellOpts["variant"]): {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
 } | null {
@@ -51,14 +53,18 @@ function getColumnVariant(variant?: Cell["variant"]): {
       return { icon: TextInitialIcon, label: "Long text" };
     case "number":
       return { icon: HashIcon, label: "Number" };
+    case "url":
+      return { icon: LinkIcon, label: "URL" };
+    case "checkbox":
+      return { icon: CheckSquareIcon, label: "Checkbox" };
     case "select":
       return { icon: ListIcon, label: "Select" };
     case "multi-select":
       return { icon: ListChecksIcon, label: "Multi-select" };
-    case "checkbox":
-      return { icon: CheckSquareIcon, label: "Checkbox" };
     case "date":
       return { icon: CalendarIcon, label: "Date" };
+    case "file":
+      return { icon: FileIcon, label: "File" };
     default:
       return null;
   }
@@ -179,7 +185,7 @@ export function DataGridColumnHeader<TData, TValue>({
           {column.getCanSort() && (
             <>
               <DropdownMenuCheckboxItem
-                className="relative pr-8 pl-2 [&>span:first-child]:right-2 [&>span:first-child]:left-auto [&_svg]:text-muted-foreground"
+                className="relative ltr:pr-8 ltr:pl-2 rtl:pr-2 rtl:pl-8 [&>span:first-child]:ltr:right-2 [&>span:first-child]:ltr:left-auto [&>span:first-child]:rtl:right-auto [&>span:first-child]:rtl:left-2 [&_svg]:text-muted-foreground"
                 checked={column.getIsSorted() === "asc"}
                 onClick={() => onSortingChange("asc")}
               >
@@ -187,7 +193,7 @@ export function DataGridColumnHeader<TData, TValue>({
                 Sort asc
               </DropdownMenuCheckboxItem>
               <DropdownMenuCheckboxItem
-                className="relative pr-8 pl-2 [&>span:first-child]:right-2 [&>span:first-child]:left-auto [&_svg]:text-muted-foreground"
+                className="relative ltr:pr-8 ltr:pl-2 rtl:pr-2 rtl:pl-8 [&>span:first-child]:ltr:right-2 [&>span:first-child]:ltr:left-auto [&>span:first-child]:rtl:right-auto [&>span:first-child]:rtl:left-2 [&_svg]:text-muted-foreground"
                 checked={column.getIsSorted() === "desc"}
                 onClick={() => onSortingChange("desc")}
               >
@@ -245,14 +251,13 @@ export function DataGridColumnHeader<TData, TValue>({
           {column.getCanHide() && (
             <>
               <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem
-                className="relative pr-8 pl-2 [&>span:first-child]:right-2 [&>span:first-child]:left-auto [&_svg]:text-muted-foreground"
-                checked={!column.getIsVisible()}
+              <DropdownMenuItem
+                className="[&_svg]:text-muted-foreground"
                 onClick={() => column.toggleVisibility(false)}
               >
                 <EyeOffIcon />
                 Hide column
-              </DropdownMenuCheckboxItem>
+              </DropdownMenuItem>
             </>
           )}
         </DropdownMenuContent>
@@ -309,7 +314,7 @@ function DataGridColumnResizerImpl<TData, TValue>({
       aria-valuemax={defaultColumnDef.maxSize}
       tabIndex={0}
       className={cn(
-        "after:-translate-x-1/2 -right-px absolute top-0 z-50 h-full w-0.5 cursor-ew-resize touch-none select-none bg-border transition-opacity after:absolute after:inset-y-0 after:left-1/2 after:h-full after:w-[18px] after:content-[''] hover:bg-primary focus:bg-primary focus:outline-none",
+        "after:-translate-x-1/2 -end-px absolute top-0 z-50 h-full w-0.5 cursor-ew-resize touch-none select-none bg-border transition-opacity after:absolute after:inset-y-0 after:start-1/2 after:h-full after:w-[18px] after:content-[''] hover:bg-primary focus:bg-primary focus:outline-none",
         header.column.getIsResizing()
           ? "bg-primary"
           : "opacity-0 hover:opacity-100",
