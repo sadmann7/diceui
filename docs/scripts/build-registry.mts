@@ -61,7 +61,7 @@ export const Index: Record<string, any> = {
         (file) =>
           `registry/${style.name}/${
             typeof file === "string" ? file : file.path
-          }`,
+          }`
       );
       if (!resolveFiles) {
         continue;
@@ -165,7 +165,7 @@ export const Index: Record<string, any> = {
             containerAttr?.remove();
 
             const parentJsxElement = component.getParentIfKindOrThrow(
-              SyntaxKind.JsxElement,
+              SyntaxKind.JsxElement
             );
 
             // Find all opening tags on component.
@@ -179,7 +179,7 @@ export const Index: Record<string, any> = {
                   .getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement)
                   .map((node) => {
                     return node.getTagNameNode().getText();
-                  }),
+                  })
               );
 
             const componentImports = new Map<
@@ -197,13 +197,13 @@ export const Index: Record<string, any> = {
 
                 componentImports.set(
                   importLine.module,
-                  importLine?.isDefault ? newImports : Array.from(newImports),
+                  importLine?.isDefault ? newImports : Array.from(newImports)
                 );
               }
             }
 
             const componnetImportLines = Array.from(
-              componentImports.keys(),
+              componentImports.keys()
             ).map((key) => {
               const values = componentImports.get(key);
               const specifier = Array.isArray(values)
@@ -225,7 +225,7 @@ export const Index: Record<string, any> = {
             const targetFile = file.replace(item.name, `${chunkName}`);
             const targetFilePath = path.join(
               cwd(),
-              `registry/${style.name}/${type}/${chunkName}.tsx`,
+              `registry/${style.name}/${type}/${chunkName}.tsx`
             );
 
             // Write component file.
@@ -241,7 +241,7 @@ export const Index: Record<string, any> = {
                 className: containerClassName,
               },
             };
-          }),
+          })
         );
 
         // // Write the source file for blocks only.
@@ -251,7 +251,7 @@ export const Index: Record<string, any> = {
           const files = item.files.map((file) =>
             typeof file === "string"
               ? { type: "registry:page", path: file }
-              : file,
+              : file
           );
           if (files?.length) {
             sourceFilename = `__registry__/${style.name}/${files[0].path}`;
@@ -273,7 +273,7 @@ export const Index: Record<string, any> = {
         const files = item.files.map((file) =>
           typeof file === "string"
             ? { type: "registry:page", path: file }
-            : file,
+            : file
         );
         if (files?.length) {
           componentPath = `@/registry/${style.name}/${files[0].path}`;
@@ -320,7 +320,7 @@ export const Index: Record<string, any> = {
         container: {
           className: "${chunk.container.className}"
         }
-      }`,
+      }`
       )}]
     },`;
     }
@@ -334,9 +334,9 @@ export const Index: Record<string, any> = {
 `;
 
   // ----------------------------------------------------------------------------
-  // Build registry/registry.json.
+  // Build registry/index.json (UI components only).
   // ----------------------------------------------------------------------------
-  const items = registry.items
+  const uiItems = registry.items
     .filter((item) => ["registry:ui"].includes(item.type))
     .map((item) => {
       return {
@@ -354,12 +354,43 @@ export const Index: Record<string, any> = {
         }),
       };
     });
-  const registryJson = JSON.stringify(items, null, 2);
+  const indexJson = JSON.stringify(uiItems, null, 2);
+  rimraf.sync(path.join(REGISTRY_PATH, "index.json"));
+  await fs.writeFile(path.join(REGISTRY_PATH, "index.json"), indexJson, "utf8");
+
+  // ----------------------------------------------------------------------------
+  // Build registry/registry.json (full registry object).
+  // ----------------------------------------------------------------------------
+  const allItems = registry.items
+    .filter((item) => REGISTRY_INDEX_WHITELIST.includes(item.type))
+    .filter((item) => item.name !== "index") // Skip index item
+    .map((item) => {
+      return {
+        ...item,
+        files: item.files?.map((_file) => {
+          const file =
+            typeof _file === "string"
+              ? {
+                  path: _file,
+                  type: item.type,
+                }
+              : _file;
+
+          return file;
+        }),
+      };
+    });
+  const fullRegistry = {
+    name: registry.name,
+    homepage: registry.homepage,
+    items: allItems,
+  };
+  const registryJson = JSON.stringify(fullRegistry, null, 2);
   rimraf.sync(path.join(REGISTRY_PATH, "registry.json"));
   await fs.writeFile(
     path.join(REGISTRY_PATH, "registry.json"),
     registryJson,
-    "utf8",
+    "utf8"
   );
 
   // Write style index.
@@ -374,6 +405,11 @@ async function buildStyles(registry: Registry) {
   for (const style of styles) {
     for (const item of registry.items) {
       if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) {
+        continue;
+      }
+
+      // Skip "index" item to avoid overwriting the UI component listing
+      if (item.name === "index") {
         continue;
       }
 
@@ -396,7 +432,7 @@ async function buildStyles(registry: Registry) {
             try {
               content = await fs.readFile(
                 path.join(process.cwd(), "registry", style.name, file.path),
-                "utf8",
+                "utf8"
               );
 
               // Only fix imports for v0- blocks.
@@ -447,7 +483,7 @@ async function buildStyles(registry: Registry) {
               content: sourceFile.getText(),
               target,
             };
-          }),
+          })
         );
       }
 
@@ -461,7 +497,7 @@ async function buildStyles(registry: Registry) {
         await fs.writeFile(
           path.join(REGISTRY_PATH, `${item.name}.json`),
           JSON.stringify(payload.data, null, 2),
-          "utf8",
+          "utf8"
         );
       }
     }
