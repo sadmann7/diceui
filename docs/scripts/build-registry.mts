@@ -3,18 +3,16 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
 import { rimraf } from "rimraf";
-import { Project, ScriptKind, SyntaxKind } from "ts-morph";
-import type { z } from "zod";
-
-import { registry } from "../registry";
-import { styles } from "../registry/registry-styles";
 import {
   type Registry,
-  type RegistryItem,
   registryItemSchema,
   type registryItemTypeSchema,
   registrySchema,
-} from "../registry/schema";
+} from "shadcn/schema";
+import { Project, ScriptKind, SyntaxKind } from "ts-morph";
+import type { z } from "zod";
+import { registry } from "../registry";
+import { styles } from "../registry/registry-styles";
 import { fixImport } from "./fix-imports.mts";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
@@ -334,9 +332,9 @@ export const Index: Record<string, any> = {
 `;
 
   // ----------------------------------------------------------------------------
-  // Build registry/index.json.
+  // Build registry/index.json (UI components only).
   // ----------------------------------------------------------------------------
-  const items = registry.items
+  const uiItems = registry.items
     .filter((item) => ["registry:ui"].includes(item.type))
     .map((item) => {
       return {
@@ -354,10 +352,41 @@ export const Index: Record<string, any> = {
         }),
       };
     });
-  const registryJson = JSON.stringify(items, null, 2);
+  const indexJson = JSON.stringify(uiItems, null, 2);
   rimraf.sync(path.join(REGISTRY_PATH, "index.json"));
+  await fs.writeFile(path.join(REGISTRY_PATH, "index.json"), indexJson, "utf8");
+
+  // ----------------------------------------------------------------------------
+  // Build registry/registry.json (full registry object).
+  // ----------------------------------------------------------------------------
+  const allItems = registry.items
+    .filter((item) => REGISTRY_INDEX_WHITELIST.includes(item.type))
+    .filter((item) => item.name !== "index") // Skip index item
+    .map((item) => {
+      return {
+        ...item,
+        files: item.files?.map((_file) => {
+          const file =
+            typeof _file === "string"
+              ? {
+                  path: _file,
+                  type: item.type,
+                }
+              : _file;
+
+          return file;
+        }),
+      };
+    });
+  const fullRegistry = {
+    name: registry.name,
+    homepage: registry.homepage,
+    items: allItems,
+  };
+  const registryJson = JSON.stringify(fullRegistry, null, 2);
+  rimraf.sync(path.join(REGISTRY_PATH, "registry.json"));
   await fs.writeFile(
-    path.join(REGISTRY_PATH, "index.json"),
+    path.join(REGISTRY_PATH, "registry.json"),
     registryJson,
     "utf8",
   );
@@ -374,6 +403,11 @@ async function buildStyles(registry: Registry) {
   for (const style of styles) {
     for (const item of registry.items) {
       if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) {
+        continue;
+      }
+
+      // Skip "index" item to avoid overwriting the UI component listing
+      if (item.name === "index") {
         continue;
       }
 
