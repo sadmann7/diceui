@@ -371,17 +371,10 @@ export const Index: Record<string, any> = {
 }
 
 // ----------------------------------------------------------------------------
-// Build registry/styles/[style]/[name].json.
+// Build registry/[name].json.
 // ----------------------------------------------------------------------------
 async function buildStyles(registry: Registry) {
   for (const style of styles) {
-    const targetPath = path.join(REGISTRY_PATH, "styles", style.name);
-
-    // Create directory if it doesn't exist.
-    if (!existsSync(targetPath)) {
-      await fs.mkdir(targetPath, { recursive: true });
-    }
-
     for (const item of registry.items) {
       if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) {
         continue;
@@ -467,63 +460,14 @@ async function buildStyles(registry: Registry) {
       });
 
       if (payload.success) {
+        // Write directly to public/r/{name}.json
         await fs.writeFile(
-          path.join(targetPath, `${item.name}.json`),
+          path.join(REGISTRY_PATH, `${item.name}.json`),
           JSON.stringify(payload.data, null, 2),
           "utf8",
         );
       }
     }
-  }
-
-  // ----------------------------------------------------------------------------
-  // Build registry/styles/index.json.
-  // ----------------------------------------------------------------------------
-  const stylesJson = JSON.stringify(styles, null, 2);
-  await fs.writeFile(
-    path.join(REGISTRY_PATH, "styles/index.json"),
-    stylesJson,
-    "utf8",
-  );
-}
-
-// ----------------------------------------------------------------------------
-// Build registry/styles/[name]/index.json.
-// ----------------------------------------------------------------------------
-async function buildStylesIndex() {
-  for (const style of styles) {
-    const targetPath = path.join(REGISTRY_PATH, "styles", style.name);
-
-    const dependencies = [
-      "tailwindcss-animate",
-      "class-variance-authority",
-      "lucide-react",
-    ];
-
-    // TODO: Remove this when we migrate to lucide-react.
-    // if (style.name === "new-york") {
-    //   dependencies.push("@radix-ui/react-icons")
-    // }
-
-    const payload: RegistryItem = {
-      name: style.name,
-      type: "registry:style",
-      dependencies,
-      registryDependencies: ["utils"],
-      tailwind: {
-        config: {
-          plugins: [`require("tailwindcss-animate")`],
-        },
-      },
-      cssVars: {},
-      files: [],
-    };
-
-    await fs.writeFile(
-      path.join(targetPath, "index.json"),
-      JSON.stringify(payload, null, 2),
-      "utf8",
-    );
   }
 }
 
@@ -842,7 +786,6 @@ try {
 
   await buildRegistry(result.data);
   await buildStyles(result.data);
-  await buildStylesIndex();
   await buildThemes();
 
   console.log("✅ Done!");
