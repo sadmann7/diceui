@@ -192,10 +192,20 @@ function generateTrickData(): SkateTrick[] {
   });
 }
 
-const initialData: SkateTrick[] = generateTrickData();
-
 export default function DataGridDemo() {
-  const [data, setData] = React.useState<SkateTrick[]>(initialData);
+  const [mounted, setMounted] = React.useState(false);
+  const [data, setData] = React.useState<SkateTrick[]>([]);
+
+  React.useEffect(() => {
+    setData(generateTrickData());
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="h-[340px] w-full animate-pulse rounded-md bg-muted" />
+    );
+  }
 
   const columns = React.useMemo<ColumnDef<SkateTrick>[]>(
     () => [
