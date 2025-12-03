@@ -7,8 +7,6 @@ import { Project, ScriptKind, SyntaxKind } from "ts-morph";
 import type { z } from "zod";
 
 import { registry } from "../registry";
-import { baseColors } from "../registry/registry-base-colors";
-import { colorMapping, colors } from "../registry/registry-colors";
 import { styles } from "../registry/registry-styles";
 import {
   type Registry,
@@ -17,7 +15,6 @@ import {
   type registryItemTypeSchema,
   registrySchema,
 } from "../registry/schema";
-import { createTemplate } from "./create-template.mts";
 import { fixImport } from "./fix-imports.mts";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
@@ -371,17 +368,10 @@ export const Index: Record<string, any> = {
 }
 
 // ----------------------------------------------------------------------------
-// Build registry/styles/[style]/[name].json.
+// Build registry/[name].json.
 // ----------------------------------------------------------------------------
 async function buildStyles(registry: Registry) {
   for (const style of styles) {
-    const targetPath = path.join(REGISTRY_PATH, "styles", style.name);
-
-    // Create directory if it doesn't exist.
-    if (!existsSync(targetPath)) {
-      await fs.mkdir(targetPath, { recursive: true });
-    }
-
     for (const item of registry.items) {
       if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) {
         continue;
@@ -467,375 +457,13 @@ async function buildStyles(registry: Registry) {
       });
 
       if (payload.success) {
-        // Write to styles subdirectory (existing behavior)
-        await fs.writeFile(
-          path.join(targetPath, `${item.name}.json`),
-          JSON.stringify(payload.data, null, 2),
-          "utf8",
-        );
-
-        // Write to root registry path: public/r/{item-name}.json
+        // Write directly to public/r/{name}.json
         await fs.writeFile(
           path.join(REGISTRY_PATH, `${item.name}.json`),
           JSON.stringify(payload.data, null, 2),
           "utf8",
         );
       }
-    }
-  }
-
-  // ----------------------------------------------------------------------------
-  // Build registry/styles/index.json.
-  // ----------------------------------------------------------------------------
-  const stylesJson = JSON.stringify(styles, null, 2);
-  await fs.writeFile(
-    path.join(REGISTRY_PATH, "styles/index.json"),
-    stylesJson,
-    "utf8",
-  );
-}
-
-// ----------------------------------------------------------------------------
-// Build registry/styles/[name]/index.json.
-// ----------------------------------------------------------------------------
-async function buildStylesIndex() {
-  for (const style of styles) {
-    const targetPath = path.join(REGISTRY_PATH, "styles", style.name);
-
-    const dependencies = [
-      "tailwindcss-animate",
-      "class-variance-authority",
-      "lucide-react",
-    ];
-
-    // TODO: Remove this when we migrate to lucide-react.
-    // if (style.name === "new-york") {
-    //   dependencies.push("@radix-ui/react-icons")
-    // }
-
-    const payload: RegistryItem = {
-      name: style.name,
-      type: "registry:style",
-      dependencies,
-      registryDependencies: ["utils"],
-      tailwind: {
-        config: {
-          plugins: [`require("tailwindcss-animate")`],
-        },
-      },
-      cssVars: {},
-      files: [],
-    };
-
-    await fs.writeFile(
-      path.join(targetPath, "index.json"),
-      JSON.stringify(payload, null, 2),
-      "utf8",
-    );
-  }
-}
-
-// ----------------------------------------------------------------------------
-// Build registry/colors/index.json.
-// ----------------------------------------------------------------------------
-async function buildThemes() {
-  const colorsTargetPath = path.join(REGISTRY_PATH, "colors");
-  rimraf.sync(colorsTargetPath);
-  if (!existsSync(colorsTargetPath)) {
-    await fs.mkdir(colorsTargetPath, { recursive: true });
-  }
-
-  // biome-ignore lint/suspicious/noExplicitAny: color data structure varies by color type
-  const colorsData: Record<string, any> = {};
-  for (const [color, value] of Object.entries(colors)) {
-    if (typeof value === "string") {
-      colorsData[color] = value;
-      continue;
-    }
-
-    if (Array.isArray(value)) {
-      colorsData[color] = value.map((item) => ({
-        ...item,
-        rgbChannel: item.rgb.replace(/^rgb\((\d+),(\d+),(\d+)\)$/, "$1 $2 $3"),
-        hslChannel: item.hsl.replace(
-          /^hsl\(([\d.]+),([\d.]+%),([\d.]+%)\)$/,
-          "$1 $2 $3",
-        ),
-      }));
-      continue;
-    }
-
-    if (typeof value === "object") {
-      colorsData[color] = {
-        ...value,
-        rgbChannel: value.rgb.replace(/^rgb\((\d+),(\d+),(\d+)\)$/, "$1 $2 $3"),
-        hslChannel: value.hsl.replace(
-          /^hsl\(([\d.]+),([\d.]+%),([\d.]+%)\)$/,
-          "$1 $2 $3",
-        ),
-      };
-    }
-  }
-
-  await fs.writeFile(
-    path.join(colorsTargetPath, "index.json"),
-    JSON.stringify(colorsData, null, 2),
-    "utf8",
-  );
-
-  // ----------------------------------------------------------------------------
-  // Build registry/colors/[base].json.
-  // ----------------------------------------------------------------------------
-  const BASE_STYLES = `@tailwind base;
-@tailwind components;
-@tailwind utilities;
-  `;
-
-  const BASE_STYLES_WITH_VARIABLES = `@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  :root {
-    --background: <%- colors.light["background"] %>;
-    --foreground: <%- colors.light["foreground"] %>;
-    --card: <%- colors.light["card"] %>;
-    --card-foreground: <%- colors.light["card-foreground"] %>;
-    --popover: <%- colors.light["popover"] %>;
-    --popover-foreground: <%- colors.light["popover-foreground"] %>;
-    --primary: <%- colors.light["primary"] %>;
-    --primary-foreground: <%- colors.light["primary-foreground"] %>;
-    --secondary: <%- colors.light["secondary"] %>;
-    --secondary-foreground: <%- colors.light["secondary-foreground"] %>;
-    --muted: <%- colors.light["muted"] %>;
-    --muted-foreground: <%- colors.light["muted-foreground"] %>;
-    --accent: <%- colors.light["accent"] %>;
-    --accent-foreground: <%- colors.light["accent-foreground"] %>;
-    --destructive: <%- colors.light["destructive"] %>;
-    --destructive-foreground: <%- colors.light["destructive-foreground"] %>;
-    --border: <%- colors.light["border"] %>;
-    --input: <%- colors.light["input"] %>;
-    --ring: <%- colors.light["ring"] %>;
-    --radius: 0.5rem;
-    --chart-1: <%- colors.light["chart-1"] %>;
-    --chart-2: <%- colors.light["chart-2"] %>;
-    --chart-3: <%- colors.light["chart-3"] %>;
-    --chart-4: <%- colors.light["chart-4"] %>;
-    --chart-5: <%- colors.light["chart-5"] %>;
-  }
-
-  .dark {
-    --background: <%- colors.dark["background"] %>;
-    --foreground: <%- colors.dark["foreground"] %>;
-    --card: <%- colors.dark["card"] %>;
-    --card-foreground: <%- colors.dark["card-foreground"] %>;
-    --popover: <%- colors.dark["popover"] %>;
-    --popover-foreground: <%- colors.dark["popover-foreground"] %>;
-    --primary: <%- colors.dark["primary"] %>;
-    --primary-foreground: <%- colors.dark["primary-foreground"] %>;
-    --secondary: <%- colors.dark["secondary"] %>;
-    --secondary-foreground: <%- colors.dark["secondary-foreground"] %>;
-    --muted: <%- colors.dark["muted"] %>;
-    --muted-foreground: <%- colors.dark["muted-foreground"] %>;
-    --accent: <%- colors.dark["accent"] %>;
-    --accent-foreground: <%- colors.dark["accent-foreground"] %>;
-    --destructive: <%- colors.dark["destructive"] %>;
-    --destructive-foreground: <%- colors.dark["destructive-foreground"] %>;
-    --border: <%- colors.dark["border"] %>;
-    --input: <%- colors.dark["input"] %>;
-    --ring: <%- colors.dark["ring"] %>;
-    --chart-1: <%- colors.dark["chart-1"] %>;
-    --chart-2: <%- colors.dark["chart-2"] %>;
-    --chart-3: <%- colors.dark["chart-3"] %>;
-    --chart-4: <%- colors.dark["chart-4"] %>;
-    --chart-5: <%- colors.dark["chart-5"] %>;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}`;
-
-  for (const baseColor of ["slate", "gray", "zinc", "neutral", "stone"]) {
-    // biome-ignore lint/suspicious/noExplicitAny: color data structure varies by color type
-    const base: Record<string, any> = {
-      inlineColors: {},
-      cssVars: {},
-    };
-    for (const [mode, values] of Object.entries(colorMapping)) {
-      base.inlineColors[mode] = {};
-      base.cssVars[mode] = {};
-      for (const [key, value] of Object.entries(values)) {
-        if (typeof value === "string") {
-          // Chart colors do not have a 1-to-1 mapping with tailwind colors.
-          if (key.startsWith("chart-")) {
-            base.cssVars[mode][key] = value;
-            continue;
-          }
-
-          const resolvedColor = value.replace(/{{base}}-/g, `${baseColor}-`);
-          base.inlineColors[mode][key] = resolvedColor;
-
-          const [resolvedBase, scale] = resolvedColor.split("-");
-          const color = scale
-            ? colorsData[resolvedBase].find(
-                // biome-ignore lint/suspicious/noExplicitAny: color items have dynamic structure
-                (item: any) => item.scale === Number.parseInt(scale, 10),
-              )
-            : colorsData[resolvedBase];
-          if (color) {
-            base.cssVars[mode][key] = color.hslChannel;
-          }
-        }
-      }
-    }
-
-    // Build css vars.
-    base.inlineColorsTemplate = createTemplate(BASE_STYLES)({});
-    base.cssVarsTemplate = createTemplate(BASE_STYLES_WITH_VARIABLES)({
-      colors: base.cssVars,
-    });
-
-    await fs.writeFile(
-      path.join(REGISTRY_PATH, `colors/${baseColor}.json`),
-      JSON.stringify(base, null, 2),
-      "utf8",
-    );
-
-    // ----------------------------------------------------------------------------
-    // Build registry/themes.css
-    // ----------------------------------------------------------------------------
-    const THEME_STYLES_WITH_VARIABLES = `
-.theme-<%- theme %> {
-  --background: <%- colors.light["background"] %>;
-  --foreground: <%- colors.light["foreground"] %>;
-
-  --muted: <%- colors.light["muted"] %>;
-  --muted-foreground: <%- colors.light["muted-foreground"] %>;
-
-  --popover: <%- colors.light["popover"] %>;
-  --popover-foreground: <%- colors.light["popover-foreground"] %>;
-
-  --card: <%- colors.light["card"] %>;
-  --card-foreground: <%- colors.light["card-foreground"] %>;
-
-  --border: <%- colors.light["border"] %>;
-  --input: <%- colors.light["input"] %>;
-
-  --primary: <%- colors.light["primary"] %>;
-  --primary-foreground: <%- colors.light["primary-foreground"] %>;
-
-  --secondary: <%- colors.light["secondary"] %>;
-  --secondary-foreground: <%- colors.light["secondary-foreground"] %>;
-
-  --accent: <%- colors.light["accent"] %>;
-  --accent-foreground: <%- colors.light["accent-foreground"] %>;
-
-  --destructive: <%- colors.light["destructive"] %>;
-  --destructive-foreground: <%- colors.light["destructive-foreground"] %>;
-
-  --ring: <%- colors.light["ring"] %>;
-
-  --radius: <%- colors.light["radius"] %>;
-}
-
-.dark .theme-<%- theme %> {
-  --background: <%- colors.dark["background"] %>;
-  --foreground: <%- colors.dark["foreground"] %>;
-
-  --muted: <%- colors.dark["muted"] %>;
-  --muted-foreground: <%- colors.dark["muted-foreground"] %>;
-
-  --popover: <%- colors.dark["popover"] %>;
-  --popover-foreground: <%- colors.dark["popover-foreground"] %>;
-
-  --card: <%- colors.dark["card"] %>;
-  --card-foreground: <%- colors.dark["card-foreground"] %>;
-
-  --border: <%- colors.dark["border"] %>;
-  --input: <%- colors.dark["input"] %>;
-
-  --primary: <%- colors.dark["primary"] %>;
-  --primary-foreground: <%- colors.dark["primary-foreground"] %>;
-
-  --secondary: <%- colors.dark["secondary"] %>;
-  --secondary-foreground: <%- colors.dark["secondary-foreground"] %>;
-
-  --accent: <%- colors.dark["accent"] %>;
-  --accent-foreground: <%- colors.dark["accent-foreground"] %>;
-
-  --destructive: <%- colors.dark["destructive"] %>;
-  --destructive-foreground: <%- colors.dark["destructive-foreground"] %>;
-
-  --ring: <%- colors.dark["ring"] %>;
-}`;
-
-    const themeCSS = [];
-    for (const theme of baseColors) {
-      themeCSS.push(
-        // @ts-expect-error
-        createTemplate(THEME_STYLES_WITH_VARIABLES)({
-          colors: theme.cssVars,
-          theme: theme.name,
-        }),
-      );
-    }
-
-    await fs.writeFile(
-      path.join(REGISTRY_PATH, "themes.css"),
-      themeCSS.join("\n"),
-      "utf8",
-    );
-
-    // ----------------------------------------------------------------------------
-    // Build registry/themes/[theme].json
-    // ----------------------------------------------------------------------------
-    rimraf.sync(path.join(REGISTRY_PATH, "themes"));
-    for (const baseColor of ["slate", "gray", "zinc", "neutral", "stone"]) {
-      // biome-ignore lint/suspicious/noExplicitAny: theme payload structure varies by theme type
-      const payload: Record<string, any> = {
-        name: baseColor,
-        label: baseColor.charAt(0).toUpperCase() + baseColor.slice(1),
-        cssVars: {},
-      };
-      for (const [mode, values] of Object.entries(colorMapping)) {
-        payload.cssVars[mode] = {};
-        for (const [key, value] of Object.entries(values)) {
-          if (typeof value === "string") {
-            const resolvedColor = value.replace(/{{base}}-/g, `${baseColor}-`);
-            payload.cssVars[mode][key] = resolvedColor;
-
-            const [resolvedBase, scale] = resolvedColor.split("-");
-            const color = scale
-              ? colorsData[resolvedBase].find(
-                  // biome-ignore lint/suspicious/noExplicitAny: color items have dynamic structure
-                  (item: any) => item.scale === Number.parseInt(scale, 10),
-                )
-              : colorsData[resolvedBase];
-            if (color) {
-              payload.cssVars[mode][key] = color.hslChannel;
-            }
-          }
-        }
-      }
-
-      const targetPath = path.join(REGISTRY_PATH, "themes");
-
-      // Create directory if it doesn't exist.
-      if (!existsSync(targetPath)) {
-        await fs.mkdir(targetPath, { recursive: true });
-      }
-
-      await fs.writeFile(
-        path.join(targetPath, `${payload.name}.json`),
-        JSON.stringify(payload, null, 2),
-        "utf8",
-      );
     }
   }
 }
@@ -850,8 +478,6 @@ try {
 
   await buildRegistry(result.data);
   await buildStyles(result.data);
-  await buildStylesIndex();
-  await buildThemes();
 
   console.log("✅ Done!");
 } catch (error) {
