@@ -334,7 +334,7 @@ export const Index: Record<string, any> = {
 `;
 
   // ----------------------------------------------------------------------------
-  // Build registry/index.json.
+  // Build registry/registry.json.
   // ----------------------------------------------------------------------------
   const items = registry.items
     .filter((item) => ["registry:ui"].includes(item.type))
@@ -355,9 +355,9 @@ export const Index: Record<string, any> = {
       };
     });
   const registryJson = JSON.stringify(items, null, 2);
-  rimraf.sync(path.join(REGISTRY_PATH, "index.json"));
+  rimraf.sync(path.join(REGISTRY_PATH, "registry.json"));
   await fs.writeFile(
-    path.join(REGISTRY_PATH, "index.json"),
+    path.join(REGISTRY_PATH, "registry.json"),
     registryJson,
     "utf8",
   );

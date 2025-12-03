@@ -33,8 +33,8 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/r/registry:ext(|\\.json)",
-        destination: "/r/index.json",
+        source: "/r/registry",
+        destination: "/r/registry.json",
         permanent: true,
       },
       {
