@@ -9,7 +9,7 @@ import type {
 
 export function flexRender<TProps extends object>(
   Comp: ((props: TProps) => React.ReactNode) | string | undefined,
-  props: TProps
+  props: TProps,
 ): React.ReactNode {
   if (typeof Comp === "string") {
     return Comp;
@@ -30,13 +30,13 @@ export function getIsFileCellData(item: unknown): item is FileCellData {
 
 export function matchSelectOption(
   value: string,
-  options: { value: string; label: string }[]
+  options: { value: string; label: string }[],
 ): string | undefined {
   return options.find(
     (o) =>
       o.value === value ||
       o.value.toLowerCase() === value.toLowerCase() ||
-      o.label.toLowerCase() === value.toLowerCase()
+      o.label.toLowerCase() === value.toLowerCase(),
   )?.value;
 }
 
@@ -106,10 +106,10 @@ export function getCommonPinningStyles<TData>(params: {
           ? "4px 0 4px -4px var(--border) inset"
           : "-4px 0 4px -4px var(--border) inset"
         : isFirstRightPinnedColumn
-        ? isRtl
-          ? "-4px 0 4px -4px var(--border) inset"
-          : "4px 0 4px -4px var(--border) inset"
-        : undefined
+          ? isRtl
+            ? "-4px 0 4px -4px var(--border) inset"
+            : "4px 0 4px -4px var(--border) inset"
+          : undefined
       : undefined,
     left: isRtl ? rightPosition : leftPosition,
     right: isRtl ? leftPosition : rightPosition,
@@ -122,7 +122,7 @@ export function getCommonPinningStyles<TData>(params: {
 }
 
 export function getScrollDirection(
-  direction: string
+  direction: string,
 ): "left" | "right" | "home" | "end" | undefined {
   if (
     direction === "left" ||
@@ -160,11 +160,11 @@ export function scrollCellIntoView<TData>(params: {
 
   const leftPinnedWidth = leftPinnedColumns.reduce(
     (sum, c) => sum + c.getSize(),
-    0
+    0,
   );
   const rightPinnedWidth = rightPinnedColumns.reduce(
     (sum, c) => sum + c.getSize(),
-    0
+    0,
   );
 
   const viewportLeft = isActuallyRtl
