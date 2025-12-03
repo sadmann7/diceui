@@ -193,19 +193,7 @@ function generateTrickData(): SkateTrick[] {
 }
 
 export default function DataGridDemo() {
-  const [mounted, setMounted] = React.useState(false);
-  const [data, setData] = React.useState<SkateTrick[]>([]);
-
-  React.useEffect(() => {
-    setData(generateTrickData());
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <div className="h-[340px] w-full animate-pulse rounded-md bg-muted" />
-    );
-  }
+  const [data, setData] = React.useState<SkateTrick[]>(generateTrickData());
 
   const columns = React.useMemo<ColumnDef<SkateTrick>[]>(
     () => [
@@ -345,13 +333,25 @@ export default function DataGridDemo() {
     data,
     onDataChange: setData,
     onRowAdd,
+    getRowId: (row) => row.id,
+    initialState: {
+      columnPinning: {
+        left: ["select"],
+      },
+    },
     enableSearch: true,
+    enablePaste: true,
   });
 
   return (
     <>
       <DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} />
-      <DataGrid {...dataGridProps} table={table} height={340} />
+      <DataGrid
+        {...dataGridProps}
+        columns={table.getAllColumns()}
+        table={table}
+        height={340}
+      />
     </>
   );
 }
