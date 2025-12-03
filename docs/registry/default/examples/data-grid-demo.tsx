@@ -346,12 +346,7 @@ export default function DataGridDemo() {
   return (
     <>
       <DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} />
-      <DataGrid
-        {...dataGridProps}
-        columns={table.getAllColumns()}
-        table={table}
-        height={340}
-      />
+      <DataGrid {...dataGridProps} table={table} height={340} />
     </>
   );
 }
