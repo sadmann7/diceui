@@ -1,4 +1,4 @@
-import { existsSync, promises as fs, readFileSync } from "node:fs";
+import { existsSync, promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
@@ -467,8 +467,16 @@ async function buildStyles(registry: Registry) {
       });
 
       if (payload.success) {
+        // Write to styles subdirectory (existing behavior)
         await fs.writeFile(
           path.join(targetPath, `${item.name}.json`),
+          JSON.stringify(payload.data, null, 2),
+          "utf8",
+        );
+
+        // Write to root registry path: public/r/{item-name}.json
+        await fs.writeFile(
+          path.join(REGISTRY_PATH, `${item.name}.json`),
           JSON.stringify(payload.data, null, 2),
           "utf8",
         );
