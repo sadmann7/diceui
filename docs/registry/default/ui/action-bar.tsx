@@ -119,42 +119,40 @@ function ActionBarRoot(props: ActionBarRootProps) {
   const portalContainer =
     portalContainerProp ?? (mounted ? globalThis.document?.body : null);
 
-  if (!open || !portalContainer) return null;
+  if (!portalContainer) return null;
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <ActionBarContext.Provider value={contextValue}>
-      {ReactDOM.createPortal(
-        <RootPrimitive
-          data-slot="action-bar"
-          data-state={open ? "open" : "closed"}
-          data-side={side}
-          data-align={align}
-          {...rootProps}
-          ref={composedRef}
-          className={cn(
-            "fixed z-50 flex items-center gap-1 rounded-lg border bg-card px-2 py-1.5 shadow-lg",
-            "data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)] data-[state=open]:animate-in data-[state=open]:duration-250",
-            "data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:animate-out data-[state=closed]:duration-200",
-            "data-[side=bottom]:data-[state=open]:slide-in-from-bottom-4 data-[side=bottom]:data-[state=closed]:slide-out-to-bottom-4",
-            "data-[side=top]:data-[state=open]:slide-in-from-top-4 data-[side=top]:data-[state=closed]:slide-out-to-top-4",
-            "motion-reduce:animate-none motion-reduce:transition-none",
-            className,
-          )}
-          style={{
-            [side]: `${sideOffset}px`,
-            ...(align === "center" && {
-              left: "50%",
-              translate: "-50% 0",
-            }),
-            ...(align === "start" && { left: `${alignOffset}px` }),
-            ...(align === "end" && { right: `${alignOffset}px` }),
-            ...style,
-          }}
-        />,
-        portalContainer,
-      )}
+      {open &&
+        ReactDOM.createPortal(
+          <RootPrimitive
+            data-slot="action-bar"
+            data-side={side}
+            data-align={align}
+            {...rootProps}
+            ref={composedRef}
+            className={cn(
+              "fixed z-50 flex items-center gap-2 rounded-lg border bg-card px-2 py-1.5 shadow-lg",
+              "fade-in-0 zoom-in-95 animate-in duration-250 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
+              "data-[side=bottom]:slide-in-from-bottom-4 data-[side=top]:slide-in-from-top-4",
+              "motion-reduce:animate-none motion-reduce:transition-none",
+              className,
+            )}
+            style={{
+              [side]: `${sideOffset}px`,
+              ...(align === "center" && {
+                left: "50%",
+                translate: "-50% 0",
+              }),
+              ...(align === "start" && { left: `${alignOffset}px` }),
+              ...(align === "end" && { right: `${alignOffset}px` }),
+              ...style,
+            }}
+          />,
+          portalContainer,
+        )}
     </ActionBarContext.Provider>
   );
 }
@@ -169,7 +167,7 @@ function ActionBarSelection(props: DivProps) {
       data-slot="action-bar-selection"
       {...selectionProps}
       className={cn(
-        "flex items-center gap-2 rounded-sm border border-dotted px-2 py-1 font-medium text-sm",
+        "flex items-center gap-1 rounded-sm border px-2 py-1 font-medium text-sm",
         className,
       )}
     />
@@ -280,7 +278,10 @@ function ActionBarSeparator(props: DivProps) {
       aria-orientation="vertical"
       data-slot="action-bar-separator"
       {...separatorProps}
-      className={cn("mx-1 h-6 w-px bg-border", className)}
+      className={cn(
+        "in-data-[slot=action-bar-selection]:ml-0.5 h-6 in-data-[slot=action-bar-selection]:h-4 w-px bg-border",
+        className,
+      )}
     />
   );
 }

@@ -73,11 +73,11 @@ export default function ActionBarPositionDemo() {
       <ActionBar open={open} onOpenChange={setOpen} side={side} align={align}>
         <ActionBarSelection>
           3 selected
+          <ActionBarSeparator />
           <ActionBarClose>
             <X />
           </ActionBarClose>
         </ActionBarSelection>
-        <ActionBarSeparator />
         <ActionBarItem>
           <Star />
           Favorite

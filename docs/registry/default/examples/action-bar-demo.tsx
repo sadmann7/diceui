@@ -92,6 +92,7 @@ export default function ActionBarDemo() {
       <ActionBar open={open} onOpenChange={onOpenChange}>
         <ActionBarSelection>
           {selectedTaskIds.size} selected
+          <ActionBarSeparator />
           <ActionBarClose>
             <X />
           </ActionBarClose>
@@ -101,7 +102,6 @@ export default function ActionBarDemo() {
           <Copy />
           Duplicate
         </ActionBarItem>
-        <ActionBarSeparator />
         <ActionBarItem variant="destructive" onSelect={onDelete}>
           <Trash2 />
           Delete
