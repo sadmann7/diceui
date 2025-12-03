@@ -7,7 +7,7 @@
   "files": [
     {
       "path": "examples/key-value-demo.tsx",
-      "content": "import {\r\n  KeyValue,\r\n  KeyValueAdd,\r\n  KeyValueItem,\r\n  KeyValueKeyInput,\r\n  KeyValueList,\r\n  KeyValueRemove,\r\n  KeyValueValueInput,\r\n} from \"@/registry/default/ui/key-value\";\r\n\r\nexport default function KeyValueDemo() {\r\n  return (\r\n    <KeyValue>\r\n      <KeyValueList>\r\n        <KeyValueItem>\r\n          <KeyValueKeyInput />\r\n          <KeyValueValueInput />\r\n          <KeyValueRemove />\r\n        </KeyValueItem>\r\n      </KeyValueList>\r\n      <KeyValueAdd />\r\n    </KeyValue>\r\n  );\r\n}\r\n",
+      "content": "import {\n  KeyValue,\n  KeyValueAdd,\n  KeyValueItem,\n  KeyValueKeyInput,\n  KeyValueList,\n  KeyValueRemove,\n  KeyValueValueInput,\n} from \"@/registry/default/ui/key-value\";\n\nexport default function KeyValueDemo() {\n  return (\n    <KeyValue>\n      <KeyValueList>\n        <KeyValueItem>\n          <KeyValueKeyInput />\n          <KeyValueValueInput />\n          <KeyValueRemove />\n        </KeyValueItem>\n      </KeyValueList>\n      <KeyValueAdd />\n    </KeyValue>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
     }
