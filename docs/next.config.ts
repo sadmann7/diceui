@@ -41,16 +41,9 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/r/:name((?!index\\.json|registry\\.json|styles/).*)",
+        source: "/r/:name((?!index|registry|styles/).+)\\.json",
         destination: "/r/styles/default/:name.json",
         permanent: true,
-        missing: [
-          {
-            type: "query",
-            key: "_redirected",
-            value: undefined,
-          },
-        ],
       },
       {
         source: "/docs/:path*.mdx",

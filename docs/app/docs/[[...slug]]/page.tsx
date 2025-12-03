@@ -48,7 +48,11 @@ export default async function DocPage(props: DocPageParams) {
   const apiLink = page.data.links?.api;
 
   return (
-    <DocsPage toc={page.data.toc} tableOfContent={{style: "clerk"}} full={page.data.full}>
+    <DocsPage
+      toc={page.data.toc}
+      tableOfContent={{ style: "clerk" }}
+      full={page.data.full}
+    >
       <div className="flex flex-col gap-2">
         <DocsTitle>{page.data.title}</DocsTitle>
         <DocsDescription className="mb-2.5">
