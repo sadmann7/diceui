@@ -28,9 +28,26 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onValueChange?: (value: string) => void;
 
   /**
+   * Whether the popover is open in controlled mode.
+   */
+  open?: boolean;
+
+  /**
+   * The default open state for uncontrolled usage.
+   * @default false
+   */
+  defaultOpen?: boolean;
+
+  /**
    * Callback fired when the open state changes.
    */
   onOpenChange?: (open: boolean) => void;
+
+  /**
+   * Whether to open the popover when an input is focused.
+   * @default false
+   */
+  openOnFocus?: boolean;
 
   /**
    * The name of the time picker for form submission.
@@ -149,7 +166,7 @@ export interface ContentProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The distance in pixels from the trigger.
-   * @default 4
+   * @default 6
    */
   sideOffset?: number;
 }

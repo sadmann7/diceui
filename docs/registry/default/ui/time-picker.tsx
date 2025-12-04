@@ -18,6 +18,7 @@ const LABEL_NAME = "TimePickerLabel";
 const INPUT_GROUP_NAME = "TimePickerInputGroup";
 const INPUT_NAME = "TimePickerInput";
 const TRIGGER_NAME = "TimePickerTrigger";
+const CONTENT_NAME = "TimePickerContent";
 const COLUMN_NAME = "TimePickerColumn";
 const COLUMN_ITEM_NAME = "TimePickerColumnItem";
 const HOUR_NAME = "TimePickerHour";
@@ -211,6 +212,7 @@ function clamp(value: number, min: number, max: number) {
 interface StoreState {
   value: string;
   open: boolean;
+  openedViaFocus: boolean;
 }
 
 interface Store {
@@ -264,6 +266,7 @@ interface TimePickerContextValue {
   minuteStep: number;
   secondStep: number;
   hourStep: number;
+  openOnFocus: boolean;
   segmentPlaceholder: {
     hour: string;
     minute: string;
@@ -293,6 +296,7 @@ interface TimePickerRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  openOnFocus?: boolean;
   min?: string;
   max?: string;
   hourStep?: number;
@@ -323,6 +327,7 @@ function TimePickerRoot(props: TimePickerRootProps) {
   const stateRef = useLazyRef<StoreState>(() => ({
     value: value ?? defaultValue ?? "",
     open: open ?? defaultOpen ?? false,
+    openedViaFocus: false,
   }));
   const propsRef = useAsRef({ onValueChange, onOpenChange });
 
@@ -342,6 +347,9 @@ function TimePickerRoot(props: TimePickerRootProps) {
         } else if (key === "open" && typeof value === "boolean") {
           stateRef.current.open = value;
           propsRef.current.onOpenChange?.(value);
+          if (!value) {
+            stateRef.current.openedViaFocus = false;
+          }
         } else {
           stateRef.current[key] = value;
         }
@@ -373,6 +381,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
   const {
     value: valueProp,
     open: openProp,
+    openOnFocus = false,
     min,
     max,
     hourStep = DEFAULT_STEP,
@@ -464,6 +473,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
       minuteStep,
       secondStep,
       hourStep,
+      openOnFocus,
       segmentPlaceholder: normalizedPlaceholder,
       min,
       max,
@@ -482,6 +492,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
       minuteStep,
       secondStep,
       hourStep,
+      openOnFocus,
       normalizedPlaceholder,
       min,
       max,
@@ -680,8 +691,14 @@ function TimePickerInput(props: TimePickerInputProps) {
     ...inputProps
   } = props;
 
-  const { is12Hour, showSeconds, disabled, readOnly, segmentPlaceholder } =
-    useTimePickerContext(INPUT_NAME);
+  const {
+    is12Hour,
+    showSeconds,
+    disabled,
+    readOnly,
+    segmentPlaceholder,
+    openOnFocus,
+  } = useTimePickerContext(INPUT_NAME);
   const store = useStoreContext(INPUT_NAME);
   const inputGroupContext = useTimePickerInputGroupContext(INPUT_NAME);
 
@@ -1033,9 +1050,15 @@ function TimePickerInput(props: TimePickerInputProps) {
 
       setIsEditing(true);
       setPendingDigit(null);
+
+      if (openOnFocus && !store.getState().open) {
+        store.setState("openedViaFocus", true);
+        store.setState("open", true);
+      }
+
       queueMicrotask(() => event.target.select());
     },
-    [onFocusProp],
+    [onFocusProp, openOnFocus, store],
   );
 
   const onKeyDown = React.useCallback(
@@ -1359,13 +1382,14 @@ function TimePickerContent(props: TimePickerContentProps) {
   const {
     side = "bottom",
     align = "start",
-    sideOffset = 4,
+    sideOffset = 6,
     className,
     onOpenAutoFocus: onOpenAutoFocusProp,
     children,
     ...contentProps
   } = props;
 
+  const store = useStoreContext(CONTENT_NAME);
   const columnsRef = React.useRef<Map<string, Omit<ColumnData, "id">>>(
     new Map(),
   );
@@ -1407,6 +1431,14 @@ function TimePickerContent(props: TimePickerContentProps) {
       if (event.defaultPrevented) return;
 
       event.preventDefault();
+
+      const { openedViaFocus } = store.getState();
+
+      if (openedViaFocus) {
+        store.setState("openedViaFocus", false);
+        return;
+      }
+
       const columns = getColumns();
       const firstColumn = columns[0];
 
@@ -1421,7 +1453,7 @@ function TimePickerContent(props: TimePickerContentProps) {
 
       focusFirst(candidateRefs, false);
     },
-    [onOpenAutoFocusProp, getColumns],
+    [onOpenAutoFocusProp, getColumns, store],
   );
 
   return (
@@ -1992,9 +2024,7 @@ function TimePickerSeparator(props: TimePickerSeparatorProps) {
   );
 }
 
-interface TimePickerClearProps extends ButtonProps {}
-
-function TimePickerClear(props: TimePickerClearProps) {
+function TimePickerClear(props: ButtonProps) {
   const {
     asChild,
     className,
