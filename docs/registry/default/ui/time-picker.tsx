@@ -1234,6 +1234,9 @@ function TimePickerInput(props: TimePickerInputProps) {
           const formattedValue = defaultValue.toString().padStart(2, "0");
           setEditValue(formattedValue);
           updateTimeValue(formattedValue, true);
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
           return;
         }
         const currentValue = Number.parseInt(editValue, 10);
@@ -1257,6 +1260,9 @@ function TimePickerInput(props: TimePickerInputProps) {
           const formattedValue = newValue.toString().padStart(2, "0");
           setEditValue(formattedValue);
           updateTimeValue(formattedValue, true);
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
         }
       }
 
@@ -1270,6 +1276,9 @@ function TimePickerInput(props: TimePickerInputProps) {
           const formattedValue = defaultValue.toString().padStart(2, "0");
           setEditValue(formattedValue);
           updateTimeValue(formattedValue, true);
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
           return;
         }
         const currentValue = Number.parseInt(editValue, 10);
@@ -1293,6 +1302,9 @@ function TimePickerInput(props: TimePickerInputProps) {
           const formattedValue = newValue.toString().padStart(2, "0");
           setEditValue(formattedValue);
           updateTimeValue(formattedValue, true);
+          queueMicrotask(() => {
+            inputRef.current?.select();
+          });
         }
       }
     },
