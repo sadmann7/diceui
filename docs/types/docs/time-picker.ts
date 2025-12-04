@@ -64,7 +64,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onOpenChange?: (open: boolean) => void;
 
   /**
-   * Whether to open the popover when an input is focused.
+   * Whether to open the popover when the input is focused.
    * @default false
    */
   openOnFocus?: boolean;
