@@ -52,12 +52,11 @@ npx shadcn@latest add "https://diceui.com/r/action-bar"
 ```tsx
 import * as ActionBar from "@/components/ui/action-bar";
 
-<ActionBar.Root open={open} onOpenChange={setOpen}>
-  <ActionBar.Selection>
-    <ActionBar.Close />
-  </ActionBar.Selection>
+<ActionBar.Root>
+  <ActionBar.Selection />
   <ActionBar.Separator />
   <ActionBar.Item />
+  <ActionBar.Close />
 </ActionBar.Root>
 ```
 

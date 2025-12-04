@@ -11,26 +11,63 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * The default value for uncontrolled usage.
    * Format: "HH:mm" or "HH:mm:ss"
    * @default ""
-   * @example "14:30" or "14:30:45"
+   *
+   * ```ts
+   * defaultValue="14:30"
+   * ```
    */
   defaultValue?: string;
 
   /**
    * The controlled value of the time picker component.
    * Format: "HH:mm" or "HH:mm:ss"
-   * @example "14:30" or "14:30:45"
+   *
+   * ```ts
+   * value="14:30"
+   * ```
    */
   value?: string;
 
   /**
-   * Callback fired when the value changes.
+   * Event handler called when the value changes.
+   *
+   * ```ts
+   * onValueChange={(value) => {
+   *   console.log("Time value:", value)
+   * }}
+   * ```
    */
   onValueChange?: (value: string) => void;
 
   /**
-   * Callback fired when the open state changes.
+   * The controlled open state of the time picker.
+   * Must be used in conjunction with `onOpenChange`.
+   */
+  open?: boolean;
+
+  /**
+   * The default open state for uncontrolled usage.
+   * Use when you do not need to control its open state.
+   * @default false
+   */
+  defaultOpen?: boolean;
+
+  /**
+   * Event handler called when the open state changes.
+   *
+   * ```ts
+   * onOpenChange={(open) => {
+   *   console.log("Time picker open:", open)
+   * }}
+   * ```
    */
   onOpenChange?: (open: boolean) => void;
+
+  /**
+   * Whether to open the popover when the input is focused.
+   * @default false
+   */
+  openOnFocus?: boolean;
 
   /**
    * The name of the time picker for form submission.
@@ -64,14 +101,20 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The minimum time value allowed.
    * Format: "HH:mm" or "HH:mm:ss"
-   * @example "09:00"
+   *
+   * ```ts
+   * min="09:00"
+   * ```
    */
   min?: string;
 
   /**
    * The maximum time value allowed.
    * Format: "HH:mm" or "HH:mm:ss"
-   * @example "17:00"
+   *
+   * ```ts
+   * max="17:00"
+   * ```
    */
   max?: string;
 
@@ -86,28 +129,46 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * If not provided, uses the browser's default locale.
    * The value is always stored in 24-hour format (HH:mm or HH:mm:ss).
    * Display format is auto-detected from locale settings.
-   * @example "en-US" // 12-hour format with AM/PM
-   * @example "en-GB" // 24-hour format
-   * @example "de-DE" // 24-hour format
+   *
+   * ```ts
+   * // 12-hour format with AM/PM
+   * locale="en-US"
+   * ```
+   *
+   * ```ts
+   * // 24-hour format
+   * locale="en-GB"
+   * ```
    */
   locale?: string;
 
   /**
    * The interval for minute selection (in minutes).
    * @default 1
-   * @example 15 // for 15-minute intervals
+   *
+   * ```ts
+   * minuteStep={15} // for 15-minute intervals
+   * ```
    */
   minuteStep?: number;
 
   /**
    * The interval for second selection (in seconds).
    * @default 1
+   *
+   * ```ts
+   * secondStep={10} // for 10-second intervals
+   * ```
    */
   secondStep?: number;
 
   /**
    * The interval for hour selection (in hours).
    * @default 1
+   *
+   * ```ts
+   * hourStep={2} // for 2-hour intervals
+   * ```
    */
   hourStep?: number;
 
@@ -115,8 +176,16 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * Placeholder text for empty time segments.
    * Can be a string to apply to all segments, or an object to set per-segment placeholders.
    * @default "--"
-   * @example "--"
-   * @example { hour: "hh", minute: "mm", second: "ss", period: "aa" }
+   *
+   * ```ts
+   * // All segments use the same placeholder
+   * segmentPlaceholder="--"
+   * ```
+   *
+   * ```ts
+   * // Each segment with its own placeholder
+   * segmentPlaceholder={{ hour: "hh", minute: "mm", second: "ss", period: "aa" }}
+   * ```
    */
   segmentPlaceholder?:
     | string
@@ -149,7 +218,7 @@ export interface ContentProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The distance in pixels from the trigger.
-   * @default 4
+   * @default 6
    */
   sideOffset?: number;
 }
@@ -186,8 +255,15 @@ export interface ClearProps extends EmptyProps<"button">, CompositionProps {}
 
 export interface InputProps extends EmptyProps<"input">, CompositionProps {
   /**
-   * The time segment to edit.
-   * @required
+   * The time segment for the input.
+   * - `hour`: The hour segment
+   * - `minute`: The minute segment
+   * - `second`: The second segment
+   * - `period`: The period segment
+   *
+   * ```ts
+   * segment="hour"
+   * ```
    */
-  segment?: "hour" | "minute" | "second" | "period";
+  segment: "hour" | "minute" | "second" | "period";
 }

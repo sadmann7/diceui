@@ -33,6 +33,12 @@ export interface RootProps
 
   /**
    * Event handler called when the color value changes.
+   *
+   * ```ts
+   * onValueChange={(value) => {
+   *   console.log("Color value:", value)
+   * }}
+   * ```
    */
   onValueChange?: (value: string) => void;
 
@@ -57,6 +63,12 @@ export interface RootProps
 
   /**
    * Event handler called when the color format changes.
+   *
+   * ```ts
+   * onFormatChange={(format) => {
+   *   console.log("Color format:", format)
+   * }}
+   * ```
    */
   onFormatChange?: (format: ColorFormat) => void;
 
@@ -108,6 +120,12 @@ export interface RootProps
 
   /**
    * Event handler called when the open state of the color picker changes.
+   *
+   * ```ts
+   * onOpenChange={(open) => {
+   *   console.log("Color picker open:", open)
+   * }}
+   * ```
    */
   onOpenChange?: (open: boolean) => void;
 

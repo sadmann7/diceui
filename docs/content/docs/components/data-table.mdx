@@ -66,48 +66,42 @@ links:
     **In `components/data-table/data-table.tsx`:**
 
     ```tsx title="components/data-table/data-table.tsx"
-    // [!code --]
-    import { getCommonPinningStyles } from "@/components/data-table/data-table";
-    // [!code ++]
-    import { getCommonPinningStyles } from "@/lib/data-table";
+    import { getCommonPinningStyles } from "@/components/data-table/data-table"; // [!code --]
+    import { getCommonPinningStyles } from "@/lib/data-table"; // [!code ++]
     ```
 
     **In `lib/data-table.ts`:**
 
     ```tsx title="lib/data-table.ts"
-    // [!code --]
-    import { dataTableConfig } from "@/components/data-table/data-table";
-    import type {
-      ExtendedColumnFilter,
-      FilterOperator,
-      FilterVariant,
-    } from "@/components/data-table/data-table";
-    // [!code ++]
-    import { dataTableConfig } from "@/config/data-table";
-    import type {
-      ExtendedColumnFilter,
-      FilterOperator,
-      FilterVariant,
-    } from "@/types/data-table";
+    import { dataTableConfig } from "@/components/data-table/data-table"; // [!code --]
+    import type { // [!code --]
+      ExtendedColumnFilter, // [!code --]
+      FilterOperator, // [!code --]
+      FilterVariant, // [!code --]
+    } from "@/components/data-table/data-table"; // [!code --]
+    import { dataTableConfig } from "@/config/data-table"; // [!code ++]
+    import type { // [!code ++]
+      ExtendedColumnFilter, // [!code ++]
+      FilterOperator, // [!code ++]
+      FilterVariant, // [!code ++]
+    } from "@/types/data-table"; // [!code ++]
     ```
 
     **In `lib/parsers.ts`:**
 
     ```tsx title="lib/parsers.ts"
+    import { dataTableConfig } from "@/components/data-table/data-table"; // [!code --]
     // [!code --]
-    import { dataTableConfig } from "@/components/data-table/data-table";
-
-    import type {
-      ExtendedColumnFilter,
-      ExtendedColumnSort,
-    } from "@/components/data-table/data-table";
+    import type { // [!code --]
+      ExtendedColumnFilter, // [!code --]
+      ExtendedColumnSort, // [!code --]
+    } from "@/components/data-table/data-table"; // [!code --]
+    import { dataTableConfig } from "@/config/data-table"; // [!code ++]
     // [!code ++]
-    import { dataTableConfig } from "@/config/data-table";
-
-    import type {
-      ExtendedColumnFilter,
-      ExtendedColumnSort,
-    } from "@/types/data-table";
+    import type { // [!code ++]
+      ExtendedColumnFilter, // [!code ++]
+      ExtendedColumnSort, // [!code ++]
+    } from "@/types/data-table"; // [!code ++]
     ```
 
     Update imports to use `@/lib/data-table` for utility functions, `@/config/data-table` for config, and `@/types/data-table` for types instead of importing from `@/components/data-table/data-table`.
