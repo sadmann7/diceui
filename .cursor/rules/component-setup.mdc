@@ -99,15 +99,21 @@ Create comprehensive documentation including:
 
 ## Example Usage
 
-When user types: `@setup-component file-upload`
+When user types: `@setup-component [component-name]`
 
 You should:
 
-1. Create `/docs/types/docs/file-upload.ts` with proper interfaces
-2. Create example files like `file-upload-demo.tsx`, `file-upload-form-demo.tsx`
-3. Update `registry-ui.ts` with the component entry
-4. Update `registry-examples.ts` with example entries
-5. Create `file-upload.mdx` documentation file
+1. Create `docs/registry/default/ui/[component-name].tsx` with the component
+2. Create `/docs/types/docs/[component-name].ts` with proper interfaces
+3. Create example files like `[component-name]-demo.tsx`, `[component-name]-form-demo.tsx`
+4. Update `registry-ui.ts` with the component entry
+5. Update `registry-examples.ts` with example entries
+6. Create `[component-name].mdx` documentation
+
+And when user types: `@setup-only [component-name]`
+
+1. Create `docs/registry/default/ui/[component-name].tsx` with the component
+2. Create `docs/registry/default/examples/[component-name]-demo.tsx` with the demo
 
 ## Code Style
 
