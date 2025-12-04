@@ -9,7 +9,10 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <TimePickerDemo />
+        <div className="flex flex-col gap-4">
+          <input type="time" />
+          <TimePickerDemo />
+        </div>
         <ColorPickerDemo />
       </Demo>
     </Shell>
