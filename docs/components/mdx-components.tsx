@@ -1,5 +1,4 @@
-import type { Page } from "fumadocs-core/source";
-import type { DocOut } from "fumadocs-mdx/runtime/next";
+import type { InferPageType } from "fumadocs-core/source";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { Heading } from "fumadocs-ui/components/heading";
 import { Step, Steps } from "fumadocs-ui/components/steps";
@@ -12,6 +11,7 @@ import type * as React from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Kbd } from "@/components/ui/kbd";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
+import type { source } from "@/lib/source";
 import { cn } from "@/lib/utils";
 
 const ComponentSource = dynamic(() =>
@@ -116,7 +116,7 @@ export function useMdxComponents(
 }
 
 interface MdxProps {
-  page: Page<DocOut>;
+  page: InferPageType<typeof source>;
   components?: Partial<MDXComponents>;
 }
 

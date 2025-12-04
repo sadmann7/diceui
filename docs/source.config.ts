@@ -14,7 +14,6 @@ import { z } from "zod";
 import { rehypeComponent } from "@/lib/rehype-component";
 
 export default defineConfig({
-  lastModifiedTime: "git",
   mdxOptions: {
     rehypePlugins: [
       rehypeCode,
