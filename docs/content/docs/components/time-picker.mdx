@@ -45,28 +45,21 @@ npx shadcn@latest add @diceui/time-picker
 
 ## Layout
 
-Import the parts, and compose them together. Like the native HTML time picker, the inputs are always visible and the trigger opens a dropdown for easier selection.
+Import the parts, and compose them together.
 
 ```tsx
-import { Clock } from "lucide-react";
 import * as TimePicker from "@/components/ui/time-picker";
 
 return (
   <TimePicker.Root>
     <TimePicker.Label />
-    {/* Inline inputs - always visible, like native time picker */}
-    <div className="relative flex items-center">
-      <div className="flex h-10 w-full items-center gap-1 rounded-md border border-input bg-background px-3 py-2 pr-10">
-        <TimePicker.Input segment="hour" />
-        <TimePicker.Separator />
-        <TimePicker.Input segment="minute" />
-      </div>
-      {/* Trigger opens the dropdown */}
-      <TimePicker.Trigger className="absolute right-0 flex h-full items-center px-3 hover:bg-accent">
-        <Clock className="size-4" />
-      </TimePicker.Trigger>
-    </div>
-    {/* Dropdown content */}
+    <TimePicker.InputGroup>
+      <TimePicker.Input segment="hour" />
+      <TimePicker.Separator />
+      <TimePicker.Input segment="minute" />
+      <TimePicker.Input segment="period" />
+      <TimePicker.Trigger />
+    </TimePicker.InputGroup>
     <TimePicker.Content>
       <TimePicker.Hour />
       <TimePicker.Minute />
@@ -98,7 +91,7 @@ Customize empty segment placeholders for different display formats.
 
 ### Open on Focus
 
-Automatically open the dropdown when any input is focused with the `openOnFocus` prop.
+Use the `openOnFocus` prop to open the content when the input is focused.
 
 <ComponentTabs name="time-picker-open-on-focus-demo" />
 
@@ -202,7 +195,7 @@ Must use style prop to override the css variables of the input segment, because 
 
 ### Trigger
 
-Button to open the time picker dropdown.
+Button to open the time picker content.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
@@ -344,102 +337,59 @@ Inline editable input field for time segments (hour, minute, second, period).
 
 ### Keyboard Interactions
 
-#### Input Navigation
-
-<KeyboardShortcutsTable
-  data={[
-    {
-      keys: ["Tab"],
-      description: "Moves focus to the next segment (hour → minute → second → period)",
-    },
-    {
-      keys: ["Shift", "Tab"],
-      description: "Moves focus to the previous segment",
-    },
-    {
-      keys: ["ArrowLeft"],
-      description: "Moves focus to the previous segment",
-    },
-    {
-      keys: ["ArrowRight"],
-      description: "Moves focus to the next segment",
-    },
-  ]}
-/>
-
-#### Value Editing
-
 <KeyboardShortcutsTable
   data={[
     {
       keys: ["0-9"],
-      description: "Type digits to enter time values. Auto-pads single digits (1 → 01) and auto-advances after two digits",
+      description: "Type digits to enter time values in input segments. Auto-pads single digits (1 → 01) and auto-advances to next segment after two digits or when first digit exceeds maximum",
     },
-    {
-      keys: ["ArrowUp"],
-      description: "Increments the focused segment value (wraps around at max)",
-    },
-    {
-      keys: ["ArrowDown"],
-      description: "Decrements the focused segment value (wraps around at min)",
-    },
-    {
-      keys: ["Backspace", "Delete"],
-      description: "Clears the focused segment back to placeholder (--)",
-    },
-    {
-      keys: ["Enter"],
-      description: "Confirms input and removes focus",
-    },
-    {
-      keys: ["Escape"],
-      description: "Cancels editing and restores previous value",
-    },
-  ]}
-/>
-
-#### Period (AM/PM) Shortcuts
-
-<KeyboardShortcutsTable
-  data={[
     {
       keys: ["A", "1"],
-      description: "Sets period to AM",
+      description: "Sets period to AM when period input is focused",
     },
     {
       keys: ["P", "2"],
-      description: "Sets period to PM",
+      description: "Sets period to PM when period input is focused",
     },
     {
-      keys: ["ArrowUp", "ArrowDown"],
-      description: "Toggles between AM and PM",
-    },
-  ]}
-/>
-
-#### Dropdown Interactions
-
-<KeyboardShortcutsTable
-  data={[
-    {
-      keys: ["Space"],
-      description: "Opens/closes the dropdown when trigger is focused",
+      keys: ["Tab"],
+      description: "When the input is focused, moves to next segment (hour → minute → second → period). When the content is open, moves to next column with wrapping",
     },
     {
-      keys: ["Enter"],
-      description: "Selects highlighted option in dropdown",
+      keys: ["Shift", "Tab"],
+      description: "When the input is focused, moves to previous segment. When the content is open, moves to previous column with wrapping",
     },
     {
-      keys: ["Escape"],
-      description: "Closes the dropdown",
+      keys: ["ArrowRight"],
+      description: "When the input is focused, moves to next segment. When the content is open, moves to next column with wrapping",
+    },
+    {
+      keys: ["ArrowLeft"],
+      description: "When the input is focused, moves to previous segment. When the content is open, moves to previous column with wrapping",
     },
     {
       keys: ["ArrowUp"],
-      description: "Navigates to previous option in dropdown list",
+      description: "When the input is focused, increments value with wrapping, selection preserved. When the content is open, navigates to previous value in column",
     },
     {
       keys: ["ArrowDown"],
-      description: "Navigates to next option in dropdown list",
+      description: "When the input is focused, decrements value with wrapping, selection preserved. When the content is open, navigates to next value in column",
+    },
+    {
+      keys: ["Enter"],
+      description: "When the input is focused, confirms and removes focus. When the content is open, selects highlighted value. When the trigger is focused, opens/closes the content",
+    },
+    {
+      keys: ["Escape"],
+      description: "When the input is focused, cancels editing and restores previous value. When the content is open, closes without changing value",
+    },
+    {
+      keys: ["Space"],
+      description: "When the trigger is focused, opens/closes the content",
+    },
+    {
+      keys: ["Backspace", "Delete"],
+      description: "Clears focused segment back to placeholder (--) when entire segment is selected",
     },
   ]}
 />
@@ -453,8 +403,8 @@ Inline editable input field for time segments (hour, minute, second, period).
   - Smart auto-advance after two digits or when digit exceeds maximum first digit
   - Partial time values supported (e.g., "10:--" instead of "10:00")
   - Selection preserved after actions for seamless typing
-- **Inline editing**: All time segments are always visible and editable, no need to open the dropdown
-- **Dropdown for convenience**: The clock icon trigger opens a dropdown for easier selection with mouse/touch
+- **Inline editing**: All time segments are always visible and editable, no need to open the content
+- **Content for convenience**: The clock icon trigger opens the content for easier selection with mouse/touch
 - **Keyboard-first design**: Full keyboard navigation between segments using arrow keys or tab
 - **Clear segments**: Press Backspace or Delete on a selected segment to clear it back to "--"
 
@@ -464,16 +414,3 @@ Inline editable input field for time segments (hour, minute, second, period).
 - **Consistent value format**: The time value is always stored in 24-hour format ("HH:mm" or "HH:mm:ss"), regardless of display format
 - **Locale override**: Use the `locale` prop to explicitly set a locale (e.g., "en-US" for 12-hour, "en-GB" for 24-hour)
 - **Period shortcuts**: In 12-hour format, use A/P or 1/2 keys to quickly set AM/PM
-
-### Customization
-
-- The `minuteStep`, `hourStep`, and `secondStep` props allow customization of selection intervals
-- Use the `min` and `max` props to restrict the selectable time range
-- The `showSeconds` prop enables/disables second selection
-- Use the `segmentPlaceholder` prop to customize empty segment display:
-  - String format: `segmentPlaceholder="--"` applies the same placeholder to all segments
-  - Object format: `segmentPlaceholder={{ hour: "hh", minute: "mm", second: "ss", period: "aa" }}` for per-segment control
-- CSS variables are automatically set on `InputGroup` based on placeholder length for proper input sizing
-- Override CSS variables for custom widths:
-  - On `InputGroup`: `<TimePickerInputGroup className="[--time-picker-hour-input-width:4ch]">`
-  - On individual `Input`: `<TimePickerInput segment="hour" className="[--time-picker-hour-input-width:4ch]" />`
