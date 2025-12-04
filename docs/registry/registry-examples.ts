@@ -1753,6 +1753,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "time-picker-open-on-focus-demo",
+    type: "registry:example",
+    registryDependencies: ["time-picker"],
+    files: [
+      {
+        path: "examples/time-picker-open-on-focus-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "timeline-demo",
     type: "registry:example",
     files: [

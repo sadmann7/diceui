@@ -51,11 +51,7 @@ Add example entries for each demo file created:
 - Dependencies and registry dependencies
 - File paths
 
-### 4. Update `registry.json`
-
-Add the new component and examples to the `registry.json` file.
-
-### 5. Create Documentation (@docs/content/docs/components/[component-name].mdx)
+### 4. Create Documentation (@docs/content/docs/components/[component-name].mdx)
 
 Create comprehensive documentation including:
 
@@ -111,8 +107,7 @@ You should:
 2. Create example files like `file-upload-demo.tsx`, `file-upload-form-demo.tsx`
 3. Update `registry-ui.ts` with the component entry
 4. Update `registry-examples.ts` with example entries
-5. Update `registry.json` with the new component and examples
-6. Create `file-upload.mdx` documentation file
+5. Create `file-upload.mdx` documentation file
 
 ## Code Style
 

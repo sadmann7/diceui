@@ -1,0 +1,15 @@
+{
+  "name": "time-picker-open-on-focus-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "time-picker"
+  ],
+  "files": [
+    {
+      "path": "examples/time-picker-open-on-focus-demo.tsx",
+      "content": "import {\r\n  TimePicker,\r\n  TimePickerContent,\r\n  TimePickerHour,\r\n  TimePickerInput,\r\n  TimePickerInputGroup,\r\n  TimePickerLabel,\r\n  TimePickerMinute,\r\n  TimePickerPeriod,\r\n  TimePickerSeparator,\r\n  TimePickerTrigger,\r\n} from \"@/registry/default/ui/time-picker\";\r\n\r\nexport default function TimePickerOpenOnFocusDemo() {\r\n  return (\r\n    <TimePicker className=\"w-[280px]\" openOnFocus>\r\n      <TimePickerLabel>Meeting Time</TimePickerLabel>\r\n      <TimePickerInputGroup>\r\n        <TimePickerInput segment=\"hour\" />\r\n        <TimePickerSeparator />\r\n        <TimePickerInput segment=\"minute\" />\r\n        <TimePickerInput segment=\"period\" />\r\n        <TimePickerTrigger />\r\n      </TimePickerInputGroup>\r\n      <TimePickerContent>\r\n        <TimePickerHour />\r\n        <TimePickerMinute />\r\n        <TimePickerPeriod />\r\n      </TimePickerContent>\r\n    </TimePicker>\r\n  );\r\n}\r\n\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ]
+}
