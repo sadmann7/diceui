@@ -55,71 +55,67 @@ links:
     **In `lib/data-grid.ts`:**
 
     ```tsx title="lib/data-grid.ts"
-    // [!code --]
-    import type {
-      CellPosition,
-      Direction,
-      FileCellData,
-      RowHeightValue,
-    } from "@/components/data-grid/data-grid";
-    // [!code ++]
-    import type {
-      CellPosition,
-      Direction,
-      FileCellData,
-      RowHeightValue,
-    } from "@/types/data-grid";
+    import type { // [!code --]
+      CellPosition, // [!code --]
+      Direction, // [!code --]
+      FileCellData, // [!code --]
+      RowHeightValue, // [!code --]
+    } from "@/components/data-grid/data-grid"; // [!code --]
+    import type { // [!code ++]
+      CellPosition, // [!code ++]
+      Direction, // [!code ++]
+      FileCellData, // [!code ++]
+      RowHeightValue, // [!code ++]
+    } from "@/types/data-grid"; // [!code ++]
     ```
 
     **In `hooks/use-data-grid.ts`:**
 
     ```tsx title="hooks/use-data-grid.ts"
-    // [!code --]
-    import {
-      getCellKey,
-      getIsFileCellData,
-      getIsInPopover,
-      getRowHeightValue,
-      getScrollDirection,
-      matchSelectOption,
-      parseCellKey,
-      scrollCellIntoView,
-    } from "@/components/data-grid/data-grid";
-    import type {
-      CellPosition,
-      ContextMenuState,
-      Direction,
-      FileCellData,
-      NavigationDirection,
-      PasteDialogState,
-      RowHeightValue,
-      SearchState,
-      SelectionState,
-      UpdateCell,
-    } from "@/components/data-grid/data-grid";
-    // [!code ++]
-    import {
-      getCellKey,
-      getIsFileCellData,
-      getIsInPopover,
-      getRowHeightValue,
-      getScrollDirection,
-      matchSelectOption,
-      parseCellKey,
-      scrollCellIntoView,
-    } from "@/lib/data-grid";
-    import type {
-      CellPosition,
-      ContextMenuState,
-      Direction,
-      FileCellData,
-      NavigationDirection,
-      PasteDialogState,
-      RowHeightValue,
-      SearchState,
-      SelectionState,
-      UpdateCell,
-    } from "@/types/data-grid";
+    import { // [!code --]
+      getCellKey, // [!code --]
+      getIsFileCellData, // [!code --]
+      getIsInPopover, // [!code --]
+      getRowHeightValue, // [!code --]
+      getScrollDirection, // [!code --]
+      matchSelectOption, // [!code --]
+      parseCellKey, // [!code --]
+      scrollCellIntoView, // [!code --]
+    } from "@/components/data-grid/data-grid"; // [!code --]
+    import type { // [!code --]
+      CellPosition, // [!code --]
+      ContextMenuState, // [!code --]
+      Direction, // [!code --]
+      FileCellData, // [!code --]
+      NavigationDirection, // [!code --]
+      PasteDialogState, // [!code --]
+      RowHeightValue, // [!code --]
+      SearchState, // [!code --]
+      SelectionState, // [!code --]
+      UpdateCell, // [!code --]
+    } from "@/components/data-grid/data-grid"; // [!code --]
+    import { // [!code ++]
+      getCellKey, // [!code ++]
+      getIsFileCellData, // [!code ++]
+      getIsInPopover, // [!code ++]
+      getRowHeightValue, // [!code ++]
+      getScrollDirection, // [!code ++]
+      matchSelectOption, // [!code ++]
+      parseCellKey, // [!code ++]
+      scrollCellIntoView, // [!code ++]
+    } from "@/lib/data-grid"; // [!code ++]
+    import type { // [!code ++]
+      CellPosition, // [!code ++]
+      ContextMenuState, // [!code ++]
+      Direction, // [!code ++]
+      FileCellData, // [!code ++]
+      NavigationDirection, // [!code ++]
+      PasteDialogState, // [!code ++]
+      RowHeightValue, // [!code ++]
+      SearchState, // [!code ++]
+      SelectionState, // [!code ++]
+      UpdateCell, // [!code ++]
+    } from "@/types/data-grid"; // [!code ++]
     ```
 
     **In all `components/data-grid/*.tsx` files:**
