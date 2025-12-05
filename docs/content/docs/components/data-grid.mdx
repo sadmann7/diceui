@@ -20,9 +20,22 @@ links:
     ```
   </Step>
   <Step>
-    Install the [`DataGridKeyboardShortcuts`](#datagridkeyboardshortcuts) (optional):
+    Install optional menu components:
 
     ```package-install
+    # Sort menu with drag-and-drop reordering
+    npx shadcn@latest add "@diceui/data-grid-sort-menu"
+    
+    # Filter menu with advanced filtering
+    npx shadcn@latest add "@diceui/data-grid-filter-menu"
+    
+    # Row height adjustment menu
+    npx shadcn@latest add "@diceui/data-grid-row-height-menu"
+    
+    # Column visibility menu
+    npx shadcn@latest add "@diceui/data-grid-view-menu"
+    
+    # Keyboard shortcuts dialog
     npx shadcn@latest add "@diceui/data-grid-keyboard-shortcuts"
     ```
   </Step>
@@ -145,6 +158,43 @@ export default function MyDataGrid() {
 }
 ```
 
+### With Toolbar Menus
+
+Add sort, filter, row height, and view menus:
+
+```tsx
+import { DataGrid } from "@/components/data-grid/data-grid";
+import { DataGridFilterMenu } from "@/components/data-grid/data-grid-filter-menu";
+import { DataGridKeyboardShortcuts } from "@/components/data-grid/data-grid-keyboard-shortcuts";
+import { DataGridRowHeightMenu } from "@/components/data-grid/data-grid-row-height-menu";
+import { DataGridSortMenu } from "@/components/data-grid/data-grid-sort-menu";
+import { DataGridViewMenu } from "@/components/data-grid/data-grid-view-menu";
+import { useDataGrid } from "@/hooks/use-data-grid";
+
+export default function MyDataGrid() {
+  const { table, ...dataGridProps } = useDataGrid({
+    data,
+    columns,
+    onDataChange: setData,
+  });
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Toolbar */}
+      <div className="flex items-center gap-2 self-end">
+        <DataGridFilterMenu table={table} />
+        <DataGridSortMenu table={table} />
+        <DataGridRowHeightMenu table={table} />
+        <DataGridViewMenu table={table} />
+      </div>
+      
+      <DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} />
+      <DataGrid table={table} {...dataGridProps} />
+    </div>
+  );
+}
+```
+
 ### With Row Management
 
 Add and delete rows with callbacks:
@@ -220,6 +270,45 @@ const { table, ...dataGridProps } = useDataGrid({
   columns,
   readOnly: true, // Disable all editing
 });
+```
+
+### RTL Support
+
+The data grid supports right-to-left languages:
+
+```tsx
+import { DirectionProvider } from "@radix-ui/react-direction";
+
+<DirectionProvider dir="rtl">
+  <DataGrid table={table} {...dataGridProps} dir="rtl" />
+</DirectionProvider>
+```
+
+### Auto Focus
+
+Automatically focus a specific cell on mount:
+
+```tsx
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  autoFocus: true, // Focus first navigable cell
+  // Or focus a specific cell:
+  // autoFocus: { rowIndex: 0, columnId: "name" },
+});
+```
+
+### Custom Height and Stretch Columns
+
+Control the grid height and column stretching:
+
+```tsx
+<DataGrid 
+  table={table} 
+  {...dataGridProps} 
+  height={800} // Custom height in pixels (default: 600)
+  stretchColumns={true} // Stretch columns to fill available width
+/>
 ```
 
 ## Cell Variants
@@ -437,6 +526,58 @@ const { table, ...dataGridProps } = useDataGrid({
 });
 ```
 
+## Row Selection
+
+Add a selection column to enable row selection with shift-click support:
+
+```tsx
+import { Checkbox } from "@/components/ui/checkbox";
+
+const columns = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+      />
+    ),
+    cell: ({ row, table }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => {
+          const onRowSelect = table.options.meta?.onRowSelect;
+          if (onRowSelect) {
+            onRowSelect(row.index, !!value, false);
+          } else {
+            row.toggleSelected(!!value);
+          }
+        }}
+        onClick={(event) => {
+          if (event.shiftKey) {
+            event.preventDefault();
+            const onRowSelect = table.options.meta?.onRowSelect;
+            if (onRowSelect) {
+              onRowSelect(row.index, !row.getIsSelected(), true);
+            }
+          }
+        }}
+      />
+    ),
+    size: 40,
+    enableSorting: false,
+    enableHiding: false,
+    enableResizing: false,
+  },
+  // ... other columns
+];
+```
+
+The shift-click functionality is handled automatically by the `useDataGrid` hook when you include the `onRowSelect` logic.
+
 ## Cell Architecture
 
 The Data Grid uses a three-layer cell composition pattern:
@@ -496,6 +637,78 @@ export function CustomCell<TData>({
       {/* Your custom cell content */}
     </DataGridCellWrapper>
   );
+}
+```
+
+## Column Configuration
+
+### Enabling Filtering and Sorting
+
+To enable filtering and sorting on columns, use the `filterFn` from the data grid library:
+
+```tsx
+import { getFilterFn } from "@/lib/data-grid-filters";
+
+const columns = React.useMemo(() => {
+  const filterFn = getFilterFn<YourDataType>();
+  
+  return [
+    {
+      id: "name",
+      accessorKey: "name",
+      header: "Name",
+      filterFn, // Enable filtering
+      // Sorting is enabled by default
+      meta: {
+        label: "Name", // Label shown in filter/sort menus
+        cell: {
+          variant: "short-text",
+        },
+      },
+    },
+    // ... other columns
+  ];
+}, []);
+```
+
+### Column Pinning
+
+Pin columns to the left or right:
+
+```tsx
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  initialState: {
+    columnPinning: {
+      left: ["select", "name"], // Pin to left side
+      right: ["actions"], // Pin to right side
+    },
+  },
+});
+```
+
+You can also pin/unpin columns dynamically via the column header dropdown menu.
+
+### Column Resizing
+
+Column resizing is enabled by default. Users can:
+- Drag the column resize handle
+- Double-click the resize handle to auto-fit the column width
+
+Set minimum column size using `minSize`:
+
+```tsx
+{
+  id: "name",
+  accessorKey: "name",
+  header: "Name",
+  minSize: 180, // Minimum width in pixels
+  meta: {
+    cell: {
+      variant: "short-text",
+    },
+  },
 }
 ```
 
@@ -696,6 +909,14 @@ Right-click on cells to access context menu options:
       description: "Close search (when search is open)",
     },
     {
+      keys: ["Ctrl + Shift + F", "Cmd + Shift + F"],
+      description: "Toggle filter menu",
+    },
+    {
+      keys: ["Ctrl + Shift + S", "Cmd + Shift + S"],
+      description: "Toggle sort menu",
+    },
+    {
       keys: ["Ctrl + /", "Cmd + /"],
       description: "Show keyboard shortcuts",
     },
@@ -787,7 +1008,43 @@ Search menu with keyboard shortcuts for finding and navigating between matching 
   name="DataGridSearchProps"
 />
 
-### DataGridContextMenu
+### DataGridFilterMenu
+
+Filter menu with drag-and-drop reordering and advanced filtering operators for text, number, date, select, and boolean fields.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridFilterMenuProps"
+/>
+
+### DataGridSortMenu
+
+Sort menu with drag-and-drop reordering for multi-column sorting with ascending/descending controls.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridSortMenuProps"
+/>
+
+### DataGridRowHeightMenu
+
+Row height menu for adjusting row sizes between short, medium, tall, and extra-tall options.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridRowHeightMenuProps"
+/>
+
+### DataGridViewMenu
+
+View menu for controlling column visibility with search functionality.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridViewMenuProps"
+/>
+
+### DataGridKeyboardShortcuts
 
 Right-click context menu for quick access to common cell and row actions like copy, cut, clear, and delete.
 
@@ -827,8 +1084,10 @@ The Data Grid component provides a comprehensive spreadsheet-like experience wit
 - **Copy/Cut/Paste**: Full clipboard support including paste from Excel/Google Sheets
 - **Context Menu**: Right-click actions for cells and rows
 - **Search**: Find and navigate to matching cells (Ctrl/Cmd+F)
+- **Filtering**: Advanced filtering with multiple operators and drag-and-drop reordering
+- **Sorting**: Multi-column sorting with drag-and-drop reordering
 - **Row Management**: Add and delete rows with callbacks
-- **Column Features**: Resizing, pinning (left/right), hiding, and sorting
+- **Column Features**: Resizing, pinning (left/right), hiding, and reordering
 
 ### Cell Variants
 
