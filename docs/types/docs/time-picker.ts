@@ -70,6 +70,24 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   openOnFocus?: boolean;
 
   /**
+   * Defines the action when clicking on empty space in the input group.
+   * - `"focus"`: Focuses the first input for inline editing (default)
+   * - `"open"`: Opens the time picker popover
+   * @default "focus"
+   *
+   * ```ts
+   * // Focus first input when clicking empty space (default)
+   * inputGroupClickAction="focus"
+   * ```
+   *
+   * ```ts
+   * // Open popover when clicking empty space
+   * inputGroupClickAction="open"
+   * ```
+   */
+  inputGroupClickAction?: "focus" | "open";
+
+  /**
    * The name of the time picker for form submission.
    */
   name?: string;

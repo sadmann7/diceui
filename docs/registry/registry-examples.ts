@@ -1721,27 +1721,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "time-picker-controlled-demo",
-    type: "registry:example",
-    files: [
-      {
-        path: "examples/time-picker-controlled-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "time-picker-form-demo",
-    type: "registry:example",
-    registryDependencies: ["button", "form", "sonner"],
-    files: [
-      {
-        path: "examples/time-picker-form-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "time-picker-placeholder-demo",
     type: "registry:example",
     registryDependencies: ["time-picker"],
@@ -1759,6 +1738,38 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/time-picker-open-on-focus-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-input-group-click-action-demo",
+    type: "registry:example",
+    registryDependencies: ["time-picker"],
+    files: [
+      {
+        path: "examples/time-picker-input-group-click-action-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-controlled-demo",
+    type: "registry:example",
+    files: [
+      {
+        path: "examples/time-picker-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-form-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "form", "sonner"],
+    files: [
+      {
+        path: "examples/time-picker-form-demo.tsx",
         type: "registry:example",
       },
     ],
