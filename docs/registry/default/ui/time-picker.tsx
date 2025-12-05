@@ -30,6 +30,7 @@ const CLEAR_NAME = "TimePickerClear";
 const DEFAULT_STEP = 1;
 const DEFAULT_SEGMENT_PLACEHOLDER = "--";
 const DEFAULT_LOCALE = undefined;
+const SEGMENTS: Segment[] = ["hour", "minute", "second", "period"];
 const PERIODS = ["AM", "PM"] as const;
 
 type Segment = "hour" | "minute" | "second" | "period";
@@ -49,6 +50,7 @@ type PopoverContentProps = React.ComponentProps<typeof PopoverContent>;
 type RootElement = React.ComponentRef<typeof TimePickerRoot>;
 type InputGroupElement = React.ComponentRef<typeof TimePickerInputGroup>;
 type InputElement = React.ComponentRef<typeof TimePickerInput>;
+type TriggerElement = React.ComponentRef<typeof TimePickerTrigger>;
 type ColumnElement = React.ComponentRef<typeof TimePickerColumn>;
 type ColumnItemElement = React.ComponentRef<typeof TimePickerColumnItem>;
 
@@ -261,7 +263,9 @@ interface TimePickerContextValue {
   labelId: string;
   triggerId: string;
   inputGroupRef: React.RefObject<InputGroupElement | null>;
+  triggerRef: React.RefObject<TriggerElement | null>;
   openOnFocus: boolean;
+  inputGroupClickAction: "focus" | "open";
   disabled: boolean;
   readOnly: boolean;
   required: boolean;
@@ -301,6 +305,7 @@ interface TimePickerRootProps extends DivProps {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   openOnFocus?: boolean;
+  inputGroupClickAction?: "focus" | "open";
   min?: string;
   max?: string;
   hourStep?: number;
@@ -386,6 +391,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
     value: valueProp,
     open: openProp,
     openOnFocus = false,
+    inputGroupClickAction = "focus",
     min,
     max,
     hourStep = DEFAULT_STEP,
@@ -430,6 +436,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
   const triggerId = React.useId();
 
   const inputGroupRef = React.useRef<InputGroupElement>(null);
+  const triggerRef = React.useRef<TriggerElement>(null);
 
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
@@ -471,7 +478,9 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
       labelId,
       triggerId,
       inputGroupRef,
+      triggerRef,
       openOnFocus,
+      inputGroupClickAction,
       disabled,
       readOnly,
       required,
@@ -491,6 +500,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
       labelId,
       triggerId,
       openOnFocus,
+      inputGroupClickAction,
       disabled,
       readOnly,
       required,
@@ -588,16 +598,29 @@ function useTimePickerInputGroupContext(consumerName: string) {
 }
 
 function TimePickerInputGroup(props: DivProps) {
-  const { asChild, className, style, ref, ...inputGroupProps } = props;
+  const {
+    onPointerDown: onPointerDownProp,
+    onClick: onClickProp,
+    asChild,
+    className,
+    style,
+    ref,
+    ...inputGroupProps
+  } = props;
 
   const {
     inputGroupId,
     labelId,
     disabled,
+    readOnly,
     invalid,
     segmentPlaceholder,
     inputGroupRef,
+    triggerRef,
+    inputGroupClickAction,
   } = useTimePickerContext(INPUT_GROUP_NAME);
+
+  const store = useStoreContext(INPUT_GROUP_NAME);
 
   const composedRef = useComposedRefs(ref, inputGroupRef);
 
@@ -640,6 +663,73 @@ function TimePickerInputGroup(props: DivProps) {
     [],
   );
 
+  const onPointerDown = React.useCallback(
+    (event: React.PointerEvent<InputGroupElement>) => {
+      onPointerDownProp?.(event);
+      if (disabled || readOnly || event.defaultPrevented) return;
+
+      const target = event.target as HTMLElement;
+
+      if (target.tagName === "INPUT" || target.closest("input")) {
+        return;
+      }
+
+      if (triggerRef.current?.contains(target)) {
+        return;
+      }
+
+      event.preventDefault();
+    },
+    [onPointerDownProp, disabled, readOnly, triggerRef],
+  );
+
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<InputGroupElement>) => {
+      onClickProp?.(event);
+      if (disabled || readOnly || event.defaultPrevented) return;
+
+      const target = event.target as HTMLElement;
+
+      if (target.tagName === "INPUT" || target.closest("input")) {
+        return;
+      }
+
+      if (triggerRef.current?.contains(target)) {
+        return;
+      }
+
+      if (inputGroupClickAction === "open") {
+        store.setState("open", true);
+      } else {
+        const activeElement = document.activeElement;
+        const isInputAlreadyFocused =
+          activeElement &&
+          activeElement.tagName === "INPUT" &&
+          inputGroupRef.current?.contains(activeElement);
+
+        if (!isInputAlreadyFocused) {
+          for (const segment of SEGMENTS) {
+            const inputRef = inputRefsMap.current.get(segment);
+            if (inputRef?.current) {
+              inputRef.current.focus();
+              inputRef.current.select();
+              break;
+            }
+          }
+        }
+      }
+    },
+    [
+      onClickProp,
+      disabled,
+      readOnly,
+      inputGroupClickAction,
+      store,
+      triggerRef,
+      inputGroupRef,
+    ],
+  );
+
   const inputGroupContextValue =
     React.useMemo<TimePickerInputGroupContextValue>(
       () => ({
@@ -662,10 +752,9 @@ function TimePickerInputGroup(props: DivProps) {
           data-slot="time-picker-input-group"
           data-disabled={disabled ? "" : undefined}
           data-invalid={invalid ? "" : undefined}
-          ref={composedRef}
           {...inputGroupProps}
           className={cn(
-            "flex h-10 w-full items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
+            "flex h-10 w-full cursor-text items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
             "has-[input:focus]:border-ring has-[input:focus]:ring-[3px] has-[input:focus]:ring-ring/50",
             invalid && "border-destructive ring-destructive/20",
             disabled && "cursor-not-allowed opacity-50",
@@ -680,6 +769,9 @@ function TimePickerInputGroup(props: DivProps) {
               ...style,
             } as React.CSSProperties
           }
+          ref={composedRef}
+          onPointerDown={onPointerDown}
+          onClick={onClick}
         />
       </PopoverAnchor>
     </TimePickerInputGroupContext.Provider>
@@ -694,16 +786,16 @@ interface TimePickerInputProps
 function TimePickerInput(props: TimePickerInputProps) {
   const {
     segment,
-    disabled: disabledProp,
-    readOnly: readOnlyProp,
-    className,
-    style,
-    ref,
     onBlur: onBlurProp,
     onChange: onChangeProp,
     onClick: onClickProp,
     onFocus: onFocusProp,
     onKeyDown: onKeyDownProp,
+    disabled: disabledProp,
+    readOnly: readOnlyProp,
+    className,
+    style,
+    ref,
     ...inputProps
   } = props;
 
@@ -1361,12 +1453,16 @@ function TimePickerTrigger(props: ButtonProps) {
     className,
     children,
     disabled: disabledProp,
+    ref,
     ...triggerProps
   } = props;
 
-  const { triggerId, disabled } = useTimePickerContext(TRIGGER_NAME);
+  const { triggerId, disabled, triggerRef } =
+    useTimePickerContext(TRIGGER_NAME);
 
   const isDisabled = disabledProp || disabled;
+
+  const composedRef = useComposedRefs(ref, triggerRef);
 
   return (
     <PopoverTrigger
@@ -1374,6 +1470,7 @@ function TimePickerTrigger(props: ButtonProps) {
       id={triggerId}
       data-slot="time-picker-trigger"
       disabled={isDisabled}
+      ref={composedRef}
       {...triggerProps}
       className={cn(
         "ml-auto flex items-center text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none [&>svg:not([class*='size-'])]:size-4",
