@@ -597,7 +597,15 @@ function useTimePickerInputGroupContext(consumerName: string) {
 }
 
 function TimePickerInputGroup(props: DivProps) {
-  const { asChild, className, style, ref, onClick, ...inputGroupProps } = props;
+  const {
+    onClick: onClickProp,
+    onPointerDown: onPointerDownProp,
+    asChild,
+    className,
+    style,
+    ref,
+    ...inputGroupProps
+  } = props;
 
   const {
     inputGroupId,
@@ -653,19 +661,30 @@ function TimePickerInputGroup(props: DivProps) {
     [],
   );
 
-  const inputGroupContextValue =
-    React.useMemo<TimePickerInputGroupContextValue>(
-      () => ({
-        onInputRegister,
-        onInputUnregister,
-        getNextInput,
-      }),
-      [onInputRegister, onInputUnregister, getNextInput],
-    );
+  const onPointerDown = React.useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      onPointerDownProp?.(event);
+      if (event.defaultPrevented) return;
+      if (disabled) return;
 
-  const onInputGroupClick = React.useCallback(
+      const target = event.target as HTMLElement;
+
+      if (target.tagName === "INPUT" || target.closest("input")) {
+        return;
+      }
+
+      if (triggerRef.current?.contains(target)) {
+        return;
+      }
+
+      event.preventDefault();
+    },
+    [onPointerDownProp, disabled, triggerRef],
+  );
+
+  const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      onClick?.(event);
+      onClickProp?.(event);
       if (event.defaultPrevented) return;
       if (disabled) return;
 
@@ -682,18 +701,43 @@ function TimePickerInputGroup(props: DivProps) {
       if (inputGroupClickAction === "open") {
         store.setState("open", true);
       } else {
-        for (const segment of SEGMENTS) {
-          const inputRef = inputRefsMap.current.get(segment);
-          if (inputRef?.current) {
-            inputRef.current.focus();
-            inputRef.current.select();
-            break;
+        const activeElement = document.activeElement;
+        const isInputAlreadyFocused =
+          activeElement &&
+          activeElement.tagName === "INPUT" &&
+          inputGroupRef.current?.contains(activeElement);
+
+        if (!isInputAlreadyFocused) {
+          for (const segment of SEGMENTS) {
+            const inputRef = inputRefsMap.current.get(segment);
+            if (inputRef?.current) {
+              inputRef.current.focus();
+              inputRef.current.select();
+              break;
+            }
           }
         }
       }
     },
-    [onClick, disabled, inputGroupClickAction, store, triggerRef],
+    [
+      onClickProp,
+      disabled,
+      inputGroupClickAction,
+      store,
+      triggerRef,
+      inputGroupRef,
+    ],
   );
+
+  const inputGroupContextValue =
+    React.useMemo<TimePickerInputGroupContextValue>(
+      () => ({
+        onInputRegister,
+        onInputUnregister,
+        getNextInput,
+      }),
+      [onInputRegister, onInputUnregister, getNextInput],
+    );
 
   const InputGroupPrimitive = asChild ? Slot : "div";
 
@@ -707,8 +751,6 @@ function TimePickerInputGroup(props: DivProps) {
           data-slot="time-picker-input-group"
           data-disabled={disabled ? "" : undefined}
           data-invalid={invalid ? "" : undefined}
-          ref={composedRef}
-          onClick={onInputGroupClick}
           {...inputGroupProps}
           className={cn(
             "flex h-10 w-full cursor-text items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
@@ -726,6 +768,9 @@ function TimePickerInputGroup(props: DivProps) {
               ...style,
             } as React.CSSProperties
           }
+          ref={composedRef}
+          onPointerDown={onPointerDown}
+          onClick={onClick}
         />
       </PopoverAnchor>
     </TimePickerInputGroupContext.Provider>
@@ -740,16 +785,16 @@ interface TimePickerInputProps
 function TimePickerInput(props: TimePickerInputProps) {
   const {
     segment,
-    disabled: disabledProp,
-    readOnly: readOnlyProp,
-    className,
-    style,
-    ref,
     onBlur: onBlurProp,
     onChange: onChangeProp,
     onClick: onClickProp,
     onFocus: onFocusProp,
     onKeyDown: onKeyDownProp,
+    disabled: disabledProp,
+    readOnly: readOnlyProp,
+    className,
+    style,
+    ref,
     ...inputProps
   } = props;
 
