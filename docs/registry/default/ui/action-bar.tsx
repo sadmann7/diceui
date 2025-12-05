@@ -71,7 +71,7 @@ function getDirectionAwareKey(key: string, dir?: Direction) {
 
 interface ItemData {
   id: string;
-  ref: React.RefObject<HTMLElement | null>;
+  ref: React.RefObject<ItemElement | null>;
   disabled: boolean;
 }
 
