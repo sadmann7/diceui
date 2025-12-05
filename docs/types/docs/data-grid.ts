@@ -250,7 +250,7 @@ export interface DataGridCellWrapperProps<TData> {
   isSelected: boolean;
 }
 
-export interface DataGridCellVariantProps<TData> {
+export interface CellVariantProps<TData> {
   /**
    * The cell instance from TanStack Table.
    * Contains the cell value, column, and row information.
