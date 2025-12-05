@@ -734,6 +734,164 @@ Right-click on cells to access context menu options:
 - **Clear** (Delete/Backspace): Clear content from selected cells
 - **Delete rows** (Ctrl/Cmd+Backspace): Remove selected rows (only available when `onRowsDelete` is provided)
 
+## API Reference
+
+### useDataGrid
+
+Hook for initializing the data grid with state management and editing capabilities.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="UseDataGridProps"
+/>
+
+### DataGrid
+
+Main data grid component with virtualization and editing capabilities.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridProps"
+/>
+
+### DataGridColumnHeader
+
+Column header with sorting controls and visual indicators for sort direction.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridColumnHeaderProps"
+/>
+
+### DataGridCell
+
+Routes to the appropriate cell variant based on the column's `meta.cell.variant` property.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridCellProps"
+/>
+
+### DataGridCellWrapper
+
+Base wrapper providing common functionality for all cell variants including focus management, selection state, search highlighting, and keyboard interactions.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridCellWrapperProps"
+/>
+
+### DataGridCellVariants
+
+Individual cell variants for different data variants. Each variant implements the `CellVariantProps` interface and wraps its content in `DataGridCellWrapper`.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="CellVariantProps"
+/>
+
+Available cell variants:
+- **ShortTextCell**: Single-line text input with inline contentEditable
+- **LongTextCell**: Multi-line textarea displayed in a popover dialog with auto-save
+- **NumberCell**: Numeric input with optional min, max, and step constraints
+- **UrlCell**: URL input with validation and clickable links
+- **SelectCell**: Single-select dropdown with predefined options
+- **MultiSelectCell**: Multi-select input with badge display and command palette
+- **CheckboxCell**: Boolean checkbox for true/false values
+- **DateCell**: Date picker with calendar popover
+- **FileCell**: File upload with support for multiple files and file management
+
+### DataGridRow
+
+Individual row component with virtualization support for large datasets.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridRowProps"
+/>
+
+### DataGridSearch
+
+Search menu with keyboard shortcuts for finding and navigating between matching cells in the grid.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridSearchProps"
+/>
+
+### DataGridFilterMenu
+
+Filter menu with drag-and-drop reordering and advanced filtering operators for text, number, date, select, and boolean fields.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridFilterMenuProps"
+/>
+
+### DataGridSortMenu
+
+Sort menu with drag-and-drop reordering for multi-column sorting with ascending/descending controls.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridSortMenuProps"
+/>
+
+### DataGridRowHeightMenu
+
+Row height menu for adjusting row sizes between short, medium, tall, and extra-tall options.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridRowHeightMenuProps"
+/>
+
+### DataGridViewMenu
+
+View menu for controlling column visibility with search functionality.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridViewMenuProps"
+/>
+
+### DataGridKeyboardShortcuts
+
+Right-click context menu for quick access to common cell and row actions like copy, cut, clear, and delete.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridContextMenuProps"
+/>
+
+### DataGridPasteDialog
+
+Dialog for handling paste operations that require adding new rows to the grid.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridPasteDialogProps"
+/>
+
+### DataGridKeyboardShortcuts
+
+Searchable reference dialog for all available keyboard shortcuts for navigating and interacting with the data grid.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridKeyboardShortcutsProps"
+/>
+
+## Accessibility
+
+The Data Grid follows WAI-ARIA guidelines for grid widgets:
+
+- Full keyboard navigation support
+- Proper ARIA labels, roles, and properties
+- Focus management with visible focus indicators
+- Keyboard shortcuts for all actions
+- Screen reader friendly cell updates
+
 ## Keyboard Interactions
 
 ### Navigation
@@ -936,154 +1094,6 @@ Right-click on cells to access context menu options:
   ]}
 />
 
-## API Reference
-
-### useDataGrid
-
-Hook for initializing the data grid with state management and editing capabilities.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="UseDataGridProps"
-/>
-
-### DataGrid
-
-Main data grid component with virtualization and editing capabilities.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridProps"
-/>
-
-### DataGridColumnHeader
-
-Column header with sorting controls and visual indicators for sort direction.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridColumnHeaderProps"
-/>
-
-### DataGridCell
-
-Routes to the appropriate cell variant based on the column's `meta.cell.variant` property.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridCellProps"
-/>
-
-### DataGridCellWrapper
-
-Base wrapper providing common functionality for all cell variants including focus management, selection state, search highlighting, and keyboard interactions.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridCellWrapperProps"
-/>
-
-### DataGridCellVariants
-
-Individual cell variants for different data variants. Each variant implements the `CellVariantProps` interface and wraps its content in `DataGridCellWrapper`.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="CellVariantProps"
-/>
-
-Available cell variants:
-- **ShortTextCell**: Single-line text input with inline contentEditable
-- **LongTextCell**: Multi-line textarea displayed in a popover dialog with auto-save
-- **NumberCell**: Numeric input with optional min, max, and step constraints
-- **UrlCell**: URL input with validation and clickable links
-- **SelectCell**: Single-select dropdown with predefined options
-- **MultiSelectCell**: Multi-select input with badge display and command palette
-- **CheckboxCell**: Boolean checkbox for true/false values
-- **DateCell**: Date picker with calendar popover
-- **FileCell**: File upload with support for multiple files and file management
-
-### DataGridRow
-
-Individual row component with virtualization support for large datasets.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridRowProps"
-/>
-
-### DataGridSearch
-
-Search menu with keyboard shortcuts for finding and navigating between matching cells in the grid.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridSearchProps"
-/>
-
-### DataGridFilterMenu
-
-Filter menu with drag-and-drop reordering and advanced filtering operators for text, number, date, select, and boolean fields.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridFilterMenuProps"
-/>
-
-### DataGridSortMenu
-
-Sort menu with drag-and-drop reordering for multi-column sorting with ascending/descending controls.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridSortMenuProps"
-/>
-
-### DataGridRowHeightMenu
-
-Row height menu for adjusting row sizes between short, medium, tall, and extra-tall options.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridRowHeightMenuProps"
-/>
-
-### DataGridViewMenu
-
-View menu for controlling column visibility with search functionality.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridViewMenuProps"
-/>
-
-### DataGridKeyboardShortcuts
-
-Right-click context menu for quick access to common cell and row actions like copy, cut, clear, and delete.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridContextMenuProps"
-/>
-
-### DataGridPasteDialog
-
-Dialog for handling paste operations that require adding new rows to the grid.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridPasteDialogProps"
-/>
-
-### DataGridKeyboardShortcuts
-
-Searchable reference dialog for all available keyboard shortcuts for navigating and interacting with the data grid.
-
-<AutoTypeTable
-  path="./types/docs/data-grid.ts"
-  name="DataGridKeyboardShortcutsProps"
-/>
-
 ## Features
 
 The Data Grid component provides a comprehensive spreadsheet-like experience with:
@@ -1121,16 +1131,6 @@ The Data Grid component provides a comprehensive spreadsheet-like experience wit
 - **Read-Only Mode**: Lock the grid to prevent editing
 - **Auto-Focus**: Focus specific cell on mount
 - **Accessibility**: Full ARIA support and keyboard navigation
-
-## Accessibility
-
-The Data Grid follows WAI-ARIA guidelines for grid widgets:
-
-- Full keyboard navigation support
-- Proper ARIA labels, roles, and properties
-- Focus management with visible focus indicators
-- Keyboard shortcuts for all actions
-- Screen reader friendly cell updates
 
 ## Credits
 
