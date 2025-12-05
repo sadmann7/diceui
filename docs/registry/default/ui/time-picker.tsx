@@ -50,6 +50,7 @@ type PopoverContentProps = React.ComponentProps<typeof PopoverContent>;
 type RootElement = React.ComponentRef<typeof TimePickerRoot>;
 type InputGroupElement = React.ComponentRef<typeof TimePickerInputGroup>;
 type InputElement = React.ComponentRef<typeof TimePickerInput>;
+type TriggerElement = React.ComponentRef<typeof TimePickerTrigger>;
 type ColumnElement = React.ComponentRef<typeof TimePickerColumn>;
 type ColumnItemElement = React.ComponentRef<typeof TimePickerColumnItem>;
 
@@ -262,7 +263,7 @@ interface TimePickerContextValue {
   labelId: string;
   triggerId: string;
   inputGroupRef: React.RefObject<InputGroupElement | null>;
-  triggerRef: React.RefObject<HTMLButtonElement | null>;
+  triggerRef: React.RefObject<TriggerElement | null>;
   openOnFocus: boolean;
   inputGroupClickAction: "focus" | "open";
   disabled: boolean;
@@ -435,7 +436,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
   const triggerId = React.useId();
 
   const inputGroupRef = React.useRef<InputGroupElement>(null);
-  const triggerRef = React.useRef<HTMLButtonElement>(null);
+  const triggerRef = React.useRef<TriggerElement>(null);
 
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
@@ -663,7 +664,7 @@ function TimePickerInputGroup(props: DivProps) {
   );
 
   const onPointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
+    (event: React.PointerEvent<InputGroupElement>) => {
       onPointerDownProp?.(event);
       if (disabled || readOnly || event.defaultPrevented) return;
 
@@ -683,7 +684,7 @@ function TimePickerInputGroup(props: DivProps) {
   );
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
+    (event: React.MouseEvent<InputGroupElement>) => {
       onClickProp?.(event);
       if (disabled || readOnly || event.defaultPrevented) return;
 
