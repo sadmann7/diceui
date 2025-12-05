@@ -9,6 +9,7 @@ import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "ActionBar";
+const GROUP_NAME = "ActionBarGroup";
 const ITEM_NAME = "ActionBarItem";
 const CLOSE_NAME = "ActionBarClose";
 const ITEM_SELECT = "actionbar.itemSelect";
@@ -215,10 +216,13 @@ function ActionBarRoot(props: ActionBarRootProps) {
           {...rootProps}
           ref={composedRef}
           className={cn(
-            "fixed z-50 flex items-center gap-2 rounded-lg border bg-card px-2 py-1.5 shadow-lg outline-none",
+            "fixed z-50 rounded-lg border bg-card shadow-lg outline-none",
             "fade-in-0 zoom-in-95 animate-in duration-250 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
             "data-[side=bottom]:slide-in-from-bottom-4 data-[side=top]:slide-in-from-top-4",
             "motion-reduce:animate-none motion-reduce:transition-none",
+            orientation === "horizontal"
+              ? "flex flex-row items-center gap-2 px-2 py-1.5"
+              : "flex flex-col items-start gap-2 px-1.5 py-2",
             className,
           )}
           style={{
@@ -255,18 +259,14 @@ function ActionBarSelection(props: DivProps) {
   );
 }
 
-interface ActionBarGroupProps extends DivProps {
-  asChild?: boolean;
-}
-
-function ActionBarGroup(props: ActionBarGroupProps) {
+function ActionBarGroup(props: DivProps) {
   const {
-    className,
-    asChild,
-    ref,
     onBlur: onBlurProp,
     onFocus: onFocusProp,
     onMouseDown: onMouseDownProp,
+    className,
+    asChild,
+    ref,
     ...groupProps
   } = props;
 
@@ -279,8 +279,7 @@ function ActionBarGroup(props: ActionBarGroupProps) {
   const isClickFocusRef = React.useRef(false);
   const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
 
-  const context = useActionBarContext("ActionBarGroup");
-  const { dir, orientation } = context;
+  const { dir, orientation } = useActionBarContext(GROUP_NAME);
 
   const onItemFocus = React.useCallback((tabStopId: string) => {
     setTabStopId(tabStopId);
@@ -411,7 +410,13 @@ function ActionBarGroup(props: ActionBarGroupProps) {
         tabIndex={isTabbingBackOut || focusableItemCount === 0 ? -1 : 0}
         {...groupProps}
         ref={composedRef}
-        className={cn("flex items-center gap-2 outline-none", className)}
+        className={cn(
+          "flex gap-2 outline-none",
+          orientation === "horizontal"
+            ? "items-center"
+            : "flex-col items-start",
+          className,
+        )}
         onBlur={onBlur}
         onFocus={onFocus}
         onMouseDown={onMouseDown}
@@ -514,6 +519,11 @@ function ActionBarItem(props: ActionBarItemProps) {
     (event: React.KeyboardEvent<ItemElement>) => {
       onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
+
+      if (event.key === "Tab" && event.shiftKey) {
+        focusContext.onItemShiftTab();
+        return;
+      }
 
       if (event.target !== event.currentTarget) return;
 

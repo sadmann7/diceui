@@ -111,13 +111,7 @@ Displays selection information, typically used to show how many items are select
 
 ### Group
 
-A container for action items that implements roving focus management. Items within a group can be navigated using arrow keys, forming a single tab stop. Has `role="group"` for accessibility.
-
-**Keyboard Navigation:**
-- `ArrowLeft` / `ArrowRight` (horizontal) or `ArrowUp` / `ArrowDown` (vertical): Navigate between items
-- `Home`: Focus first item in group
-- `End`: Focus last item in group
-- `Tab`: Exit the group and move to next focusable element
+A container for action items that implements roving focus management. Items within a group can be navigated using arrow keys, forming a single tab stop. See [Keyboard Interactions](#keyboard-interactions) for full details.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
@@ -158,4 +152,44 @@ A visual separator between action bar items.
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
   name="SeparatorProps"
+/>
+
+
+## Accessibility
+
+### Keyboard Interactions
+
+The action bar follows the [WAI-ARIA Toolbar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/) for keyboard navigation.
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Tab"],
+      description: "Moves focus to the next focusable element (Action Group or Close button).",
+    },
+    {
+      keys: ["Shift", "Tab"],
+      description: "Moves focus to the previous focusable element.",
+    },
+    {
+      keys: ["Escape"],
+      description: "Closes the action bar and calls onOpenChange(false).",
+    },
+    {
+      keys: ["ArrowLeft", "ArrowUp"],
+      description: "Moves focus to the previous item in the group.",
+    },
+    {
+      keys: ["ArrowRight", "ArrowDown"],
+      description: "Moves focus to the next item in the group.",
+    },
+    {
+      keys: ["Home"],
+      description: "Moves focus to the first item in the group.",
+    },
+    {
+      keys: ["End"],
+      description: "Moves focus to the last item in the group.",
+    },
+  ]}
 />
