@@ -171,7 +171,7 @@ import { DataGridSortMenu } from "@/components/data-grid/data-grid-sort-menu";
 import { DataGridViewMenu } from "@/components/data-grid/data-grid-view-menu";
 import { useDataGrid } from "@/hooks/use-data-grid";
 
-export default function MyDataGrid() {
+export default function DataGridToolbarDemo() {
   const { table, ...dataGridProps } = useDataGrid({
     data,
     columns,
@@ -181,7 +181,7 @@ export default function MyDataGrid() {
   return (
     <div className="flex flex-col gap-4">
       {/* Toolbar */}
-      <div className="flex items-center gap-2 self-end">
+      <div role="toolbar" aria-orientation="horizontal" className="flex items-center gap-2 self-end">
         <DataGridFilterMenu table={table} />
         <DataGridSortMenu table={table} />
         <DataGridRowHeightMenu table={table} />
@@ -274,19 +274,32 @@ const { table, ...dataGridProps } = useDataGrid({
 
 ### RTL Support
 
-The data grid supports right-to-left languages:
+Wrap the grid in a `DirectionProvider` and the language direction will be automatically detected.
 
 ```tsx
 import { DirectionProvider } from "@radix-ui/react-direction";
 
-<DirectionProvider dir="rtl">
-  <DataGrid table={table} {...dataGridProps} dir="rtl" />
-</DirectionProvider>
+return (
+  <DirectionProvider dir="rtl">
+    <DataGridImpl />
+  </DirectionProvider>
+)
+
+function DataGridImpl() {
+  const { table, ...dataGridProps } = useDataGrid({
+    data,
+    columns,
+  });
+
+  return (
+    <DataGrid table={table} {...dataGridProps} />
+  )
+}
 ```
 
 ### Auto Focus
 
-Automatically focus a specific cell on mount:
+Use the `autoFocus` prop to automatically focus any navigable cell on mount:
 
 ```tsx
 const { table, ...dataGridProps } = useDataGrid({
@@ -1114,10 +1127,10 @@ The Data Grid component provides a comprehensive spreadsheet-like experience wit
 The Data Grid follows WAI-ARIA guidelines for grid widgets:
 
 - Full keyboard navigation support
-- Screen reader announcements for cell changes
-- Focus management during editing
-- Proper ARIA labels and roles
-- High contrast mode support
+- Proper ARIA labels, roles, and properties
+- Focus management with visible focus indicators
+- Keyboard shortcuts for all actions
+- Screen reader friendly cell updates
 
 ## Credits
 
