@@ -2,6 +2,14 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import { source } from "@/lib/source";
+
+const firstComponentUrl =
+  source
+    .getPages()
+    .filter((page) => page.url.startsWith("/docs/components/"))
+    .sort((a, b) => a.url.localeCompare(b.url))[0]?.url ??
+  "/docs/components/action-bar";
 
 export default function IndexPage() {
   return (
@@ -24,7 +32,7 @@ export default function IndexPage() {
           style={{ animationDelay: "0.40s", animationFillMode: "forwards" }}
         >
           <Button asChild>
-            <Link href="/docs/components/angle-slider">View Components</Link>
+            <Link href={firstComponentUrl}>View Components</Link>
           </Button>
           <Button variant="outline" asChild>
             <Link
