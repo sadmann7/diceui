@@ -598,8 +598,8 @@ function useTimePickerInputGroupContext(consumerName: string) {
 
 function TimePickerInputGroup(props: DivProps) {
   const {
-    onClick: onClickProp,
     onPointerDown: onPointerDownProp,
+    onClick: onClickProp,
     asChild,
     className,
     style,
@@ -664,8 +664,7 @@ function TimePickerInputGroup(props: DivProps) {
   const onPointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       onPointerDownProp?.(event);
-      if (event.defaultPrevented) return;
-      if (disabled) return;
+      if (disabled || event.defaultPrevented) return;
 
       const target = event.target as HTMLElement;
 
@@ -685,8 +684,7 @@ function TimePickerInputGroup(props: DivProps) {
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       onClickProp?.(event);
-      if (event.defaultPrevented) return;
-      if (disabled) return;
+      if (disabled || event.defaultPrevented) return;
 
       const target = event.target as HTMLElement;
 
