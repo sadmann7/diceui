@@ -611,6 +611,7 @@ function TimePickerInputGroup(props: DivProps) {
     inputGroupId,
     labelId,
     disabled,
+    readOnly,
     invalid,
     segmentPlaceholder,
     inputGroupRef,
@@ -664,7 +665,7 @@ function TimePickerInputGroup(props: DivProps) {
   const onPointerDown = React.useCallback(
     (event: React.PointerEvent<HTMLDivElement>) => {
       onPointerDownProp?.(event);
-      if (disabled || event.defaultPrevented) return;
+      if (disabled || readOnly || event.defaultPrevented) return;
 
       const target = event.target as HTMLElement;
 
@@ -678,13 +679,13 @@ function TimePickerInputGroup(props: DivProps) {
 
       event.preventDefault();
     },
-    [onPointerDownProp, disabled, triggerRef],
+    [onPointerDownProp, disabled, readOnly, triggerRef],
   );
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       onClickProp?.(event);
-      if (disabled || event.defaultPrevented) return;
+      if (disabled || readOnly || event.defaultPrevented) return;
 
       const target = event.target as HTMLElement;
 
@@ -720,6 +721,7 @@ function TimePickerInputGroup(props: DivProps) {
     [
       onClickProp,
       disabled,
+      readOnly,
       inputGroupClickAction,
       store,
       triggerRef,
