@@ -652,15 +652,15 @@ function ActionBarSeparator(props: ActionBarSeparatorProps) {
     ...separatorProps
   } = props;
 
-  const { orientation } = useActionBarContext(SEPARATOR_NAME);
-  const resolvedOrientation = orientationProp ?? orientation;
+  const context = useActionBarContext(SEPARATOR_NAME);
+  const orientation = orientationProp ?? context.orientation;
 
   const SeparatorPrimitive = asChild ? Slot : "div";
 
   return (
     <SeparatorPrimitive
       role="separator"
-      aria-orientation={resolvedOrientation}
+      aria-orientation={orientation}
       aria-hidden="true"
       data-slot="action-bar-separator"
       {...separatorProps}
