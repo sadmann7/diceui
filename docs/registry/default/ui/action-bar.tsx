@@ -12,6 +12,7 @@ const ROOT_NAME = "ActionBar";
 const GROUP_NAME = "ActionBarGroup";
 const ITEM_NAME = "ActionBarItem";
 const CLOSE_NAME = "ActionBarClose";
+const SEPARATOR_NAME = "ActionBarSeparator";
 const ITEM_SELECT = "actionbar.itemSelect";
 const ENTRY_FOCUS = "actionbarFocusGroup.onEntryFocus";
 const EVENT_OPTIONS = { bubbles: false, cancelable: true };
@@ -414,7 +415,7 @@ function ActionBarGroup(props: DivProps) {
           "flex gap-2 outline-none",
           orientation === "horizontal"
             ? "items-center"
-            : "flex-col items-start",
+            : "w-full flex-col items-start",
           className,
         )}
         onBlur={onBlur}
@@ -433,12 +434,13 @@ interface ActionBarItemProps
 function ActionBarItem(props: ActionBarItemProps) {
   const {
     onSelect,
-    onClick,
-    disabled,
-    ref,
+    onClick: onClickProp,
     onFocus: onFocusProp,
     onKeyDown: onKeyDownProp,
     onMouseDown: onMouseDownProp,
+    className,
+    disabled,
+    ref,
     ...itemProps
   } = props;
 
@@ -446,9 +448,9 @@ function ActionBarItem(props: ActionBarItemProps) {
   const composedRef = useComposedRefs(ref, itemRef);
   const isMouseClickRef = React.useRef(false);
 
-  const context = useActionBarContext(ITEM_NAME);
+  const { onOpenChange, dir, orientation, loop } =
+    useActionBarContext(ITEM_NAME);
   const focusContext = useFocusContext(ITEM_NAME);
-  const { onOpenChange, dir, orientation, loop } = context;
 
   const itemId = React.useId();
   const isTabStop = focusContext.tabStopId === itemId;
@@ -492,16 +494,16 @@ function ActionBarItem(props: ActionBarItemProps) {
     }
   }, [onOpenChange, onSelect]);
 
-  const onItemClick = React.useCallback(
+  const onClick = React.useCallback(
     (event: React.MouseEvent<ItemElement>) => {
-      onClick?.(event);
+      onClickProp?.(event);
       if (event.defaultPrevented) return;
 
       if (onSelect) {
         onItemSelect();
       }
     },
-    [onClick, onSelect, onItemSelect],
+    [onClickProp, onSelect, onItemSelect],
   );
 
   const onFocus = React.useCallback(
@@ -593,8 +595,9 @@ function ActionBarItem(props: ActionBarItemProps) {
       disabled={disabled}
       tabIndex={isTabStop ? 0 : -1}
       {...itemProps}
+      className={cn(orientation === "vertical" && "w-full", className)}
       ref={composedRef}
-      onClick={onItemClick}
+      onClick={onClick}
       onFocus={onFocus}
       onKeyDown={onKeyDown}
       onMouseDown={onMouseDown}
@@ -637,19 +640,33 @@ function ActionBarClose(props: ActionBarCloseProps) {
   );
 }
 
-function ActionBarSeparator(props: DivProps) {
-  const { asChild, className, ...separatorProps } = props;
+interface ActionBarSeparatorProps extends DivProps {
+  orientation?: Orientation;
+}
+
+function ActionBarSeparator(props: ActionBarSeparatorProps) {
+  const {
+    orientation: orientationProp,
+    asChild,
+    className,
+    ...separatorProps
+  } = props;
+
+  const { orientation } = useActionBarContext(SEPARATOR_NAME);
+  const resolvedOrientation = orientationProp ?? orientation;
 
   const SeparatorPrimitive = asChild ? Slot : "div";
 
   return (
     <SeparatorPrimitive
       role="separator"
-      aria-orientation="vertical"
+      aria-orientation={resolvedOrientation}
+      aria-hidden="true"
       data-slot="action-bar-separator"
       {...separatorProps}
       className={cn(
-        "in-data-[slot=action-bar-selection]:ml-0.5 h-6 in-data-[slot=action-bar-selection]:h-4 w-px bg-border",
+        "in-data-[slot=action-bar-selection]:ml-0.5 in-data-[slot=action-bar-selection]:h-4 in-data-[slot=action-bar-selection]:w-px bg-border",
+        orientation === "horizontal" ? "h-6 w-px" : "h-px w-full",
         className,
       )}
     />
