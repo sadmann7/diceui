@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   ActionBar,
   ActionBarClose,
+  ActionBarGroup,
   ActionBarItem,
   ActionBarSelection,
   ActionBarSeparator,
@@ -78,15 +79,17 @@ export default function ActionBarPositionDemo() {
             <X />
           </ActionBarClose>
         </ActionBarSelection>
-        <ActionBarItem>
-          <Star />
-          Favorite
-        </ActionBarItem>
         <ActionBarSeparator />
-        <ActionBarItem>
-          <Archive />
-          Archive
-        </ActionBarItem>
+        <ActionBarGroup>
+          <ActionBarItem>
+            <Star />
+            Favorite
+          </ActionBarItem>
+          <ActionBarItem>
+            <Archive />
+            Archive
+          </ActionBarItem>
+        </ActionBarGroup>
       </ActionBar>
     </div>
   );

@@ -24,7 +24,7 @@ npx shadcn@latest add "https://diceui.com/r/action-bar"
      Install the following dependencies:
 
      ```package-install
-     @radix-ui/react-slot
+     @radix-ui/react-slot @radix-ui/react-direction
      ```
   </Step>
   <Step>
@@ -55,7 +55,11 @@ import * as ActionBar from "@/components/ui/action-bar";
 <ActionBar.Root>
   <ActionBar.Selection />
   <ActionBar.Separator />
-  <ActionBar.Item />
+  <ActionBar.Group>
+    <ActionBar.Item />
+    <ActionBar.Item />
+  </ActionBar.Group>
+  <ActionBar.Separator />
   <ActionBar.Close />
 </ActionBar.Root>
 ```
@@ -72,7 +76,7 @@ Use the `side` and `align` props to control where the action bar appears.
 
 ### Root
 
-The root component that controls the visibility and position of the action bar.
+The root component that controls the visibility and position of the action bar. Has `role="toolbar"` for accessibility.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
@@ -89,6 +93,10 @@ The root component that controls the visibility and position of the action bar.
       title: "[data-align]",
       value: ["start", "center", "end"],
     },
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
   ]}
 />
 
@@ -101,9 +109,33 @@ Displays selection information, typically used to show how many items are select
   name="SelectionProps"
 />
 
+### Group
+
+A container for action items that implements roving focus management. Items within a group can be navigated using arrow keys, forming a single tab stop. Has `role="group"` for accessibility.
+
+**Keyboard Navigation:**
+- `ArrowLeft` / `ArrowRight` (horizontal) or `ArrowUp` / `ArrowDown` (vertical): Navigate between items
+- `Home`: Focus first item in group
+- `End`: Focus last item in group
+- `Tab`: Exit the group and move to next focusable element
+
+<AutoTypeTable
+  path="./types/docs/action-bar.ts"
+  name="GroupProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
+/>
+
 ### Item
 
-An interactive button item within the action bar.
+An interactive button item within the action bar. When used inside a `Group`, participates in roving focus navigation.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
@@ -112,7 +144,7 @@ An interactive button item within the action bar.
 
 ### Close
 
-A button that closes the action bar by calling the `onOpenChange` callback with `false`.
+A button that closes the action bar by calling the `onOpenChange` callback with `false`. The close button has its own tab stop, separate from the group's roving focus.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"

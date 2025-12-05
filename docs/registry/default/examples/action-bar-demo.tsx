@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import {
   ActionBar,
   ActionBarClose,
+  ActionBarGroup,
   ActionBarItem,
   ActionBarSelection,
   ActionBarSeparator,
@@ -98,14 +99,16 @@ export default function ActionBarDemo() {
           </ActionBarClose>
         </ActionBarSelection>
         <ActionBarSeparator />
-        <ActionBarItem onSelect={onDuplicate}>
-          <Copy />
-          Duplicate
-        </ActionBarItem>
-        <ActionBarItem variant="destructive" onSelect={onDelete}>
-          <Trash2 />
-          Delete
-        </ActionBarItem>
+        <ActionBarGroup>
+          <ActionBarItem onSelect={onDuplicate}>
+            <Copy />
+            Duplicate
+          </ActionBarItem>
+          <ActionBarItem variant="destructive" onSelect={onDelete}>
+            <Trash2 />
+            Delete
+          </ActionBarItem>
+        </ActionBarGroup>
       </ActionBar>
     </div>
   );

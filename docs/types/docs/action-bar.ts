@@ -62,9 +62,29 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
+
+  /**
+   * The reading direction of the toolbar.
+   * @default "ltr"
+   */
+  dir?: "ltr" | "rtl";
+
+  /**
+   * The orientation of the toolbar.
+   * @default "horizontal"
+   */
+  orientation?: "horizontal" | "vertical";
+
+  /**
+   * Whether keyboard navigation should loop from last item to first item and vice versa.
+   * @default true
+   */
+  loop?: boolean;
 }
 
 export interface SelectionProps extends EmptyProps<"div">, CompositionProps {}
+
+export interface GroupProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface ItemProps
   extends Omit<
