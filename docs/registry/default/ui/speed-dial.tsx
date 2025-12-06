@@ -8,6 +8,7 @@ import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "SpeedDial";
+const ROOT_IMPL_NAME = "SpeedDialImpl";
 const TRIGGER_NAME = "SpeedDialTrigger";
 const CONTENT_NAME = "SpeedDialContent";
 const ITEM_NAME = "SpeedDialItem";
@@ -220,19 +221,19 @@ function SpeedDial(props: SpeedDialProps) {
 
 function SpeedDialImpl(props: SpeedDialProps) {
   const {
-    asChild,
-    className,
     onPointerDownCapture: onPointerDownCaptureProp,
     onEscapeKeyDown,
     onInteractOutside,
+    asChild,
+    className,
     ref,
     ...rootProps
   } = props;
 
   const rootRef = React.useRef<RootElement>(null);
   const composedRefs = useComposedRefs(ref, rootRef);
-  const store = useStoreContext("SpeedDialImpl");
-  const { getNodes } = useSpeedDialContext("SpeedDialImpl");
+  const store = useStoreContext(ROOT_IMPL_NAME);
+  const { getNodes } = useSpeedDialContext(ROOT_IMPL_NAME);
   const open = useStore((state) => state.open);
   const propsRef = useAsRef({
     onEscapeKeyDown,
@@ -313,9 +314,8 @@ function SpeedDialImpl(props: SpeedDialProps) {
 
             propsRef.current?.onInteractOutside?.(interactEvent);
 
-            if (!interactEvent.defaultPrevented) {
-              store.setState("open", false);
-            }
+            if (interactEvent.defaultPrevented) return;
+            store.setState("open", false);
           }
 
           if (event.pointerType === "touch") {
