@@ -12,6 +12,8 @@ const CONTENT_NAME = "SpeedDialContent";
 const ITEM_NAME = "SpeedDialItem";
 const ACTION_NAME = "SpeedDialAction";
 const LABEL_NAME = "SpeedDialLabel";
+const ACTION_SELECT = "speeddial.actionSelect";
+const EVENT_OPTIONS = { bubbles: true, cancelable: true };
 
 type Side = "top" | "right" | "bottom" | "left";
 
@@ -176,7 +178,7 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
   const { onClick: onClickProp, className, ...triggerProps } = props;
 
   const store = useStoreContext(TRIGGER_NAME);
-  const speedDialContext = useSpeedDialContext(TRIGGER_NAME);
+  const { contentId } = useSpeedDialContext(TRIGGER_NAME);
   const open = useStore((state) => state.open);
 
   const onClick = React.useCallback(
@@ -195,7 +197,7 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
       role="button"
       aria-haspopup="menu"
       aria-expanded={open}
-      aria-controls={speedDialContext.contentId}
+      aria-controls={contentId}
       data-slot="speed-dial-trigger"
       data-state={open ? "open" : "closed"}
       size="icon"
@@ -362,20 +364,45 @@ function SpeedDialItem(props: DivProps) {
   );
 }
 
-function SpeedDialAction(props: React.ComponentProps<typeof Button>) {
-  const { onClick: onClickProp, className, ...actionProps } = props;
+interface SpeedDialActionProps
+  extends Omit<React.ComponentProps<typeof Button>, "onSelect"> {
+  onSelect?: (event: Event) => void;
+}
+
+function SpeedDialAction(props: SpeedDialActionProps) {
+  const { onSelect, onClick: onClickProp, className, ...actionProps } = props;
 
   const store = useStoreContext(ACTION_NAME);
   const labelId = useSpeedDialItemContext(ACTION_NAME);
+  const actionRef = React.useRef<ActionElement>(null);
+
+  const onActionSelect = React.useCallback(() => {
+    const action = actionRef.current;
+    if (!action) return;
+
+    const actionSelectEvent = new CustomEvent(ACTION_SELECT, EVENT_OPTIONS);
+
+    action.addEventListener(ACTION_SELECT, (event) => onSelect?.(event), {
+      once: true,
+    });
+
+    action.dispatchEvent(actionSelectEvent);
+
+    if (!actionSelectEvent.defaultPrevented) {
+      store.setState("open", false);
+    }
+  }, [onSelect, store]);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ActionElement>) => {
       onClickProp?.(event);
       if (event.defaultPrevented) return;
 
-      store.setState("open", false);
+      if (onSelect) {
+        onActionSelect();
+      }
     },
-    [onClickProp, store],
+    [onClickProp, onSelect, onActionSelect],
   );
 
   return (
@@ -386,6 +413,7 @@ function SpeedDialAction(props: React.ComponentProps<typeof Button>) {
       data-slot="speed-dial-action"
       variant="outline"
       size="icon"
+      ref={actionRef}
       {...actionProps}
       className={cn("size-11 shrink-0 rounded-full shadow-md", className)}
       onClick={onClick}

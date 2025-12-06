@@ -19,19 +19,19 @@ export default function SpeedDialDemo() {
       <SpeedDialContent>
         <SpeedDialItem>
           <SpeedDialLabel>Share</SpeedDialLabel>
-          <SpeedDialAction onClick={() => console.log({ action: "share" })}>
+          <SpeedDialAction onSelect={() => console.log({ action: "share" })}>
             <Share2 />
           </SpeedDialAction>
         </SpeedDialItem>
         <SpeedDialItem>
           <SpeedDialLabel>Copy</SpeedDialLabel>
-          <SpeedDialAction onClick={() => console.log({ action: "copy" })}>
+          <SpeedDialAction onSelect={() => console.log({ action: "copy" })}>
             <Copy />
           </SpeedDialAction>
         </SpeedDialItem>
         <SpeedDialItem>
           <SpeedDialLabel>Like</SpeedDialLabel>
-          <SpeedDialAction onClick={() => console.log({ action: "like" })}>
+          <SpeedDialAction onSelect={() => console.log({ action: "like" })}>
             <Heart />
           </SpeedDialAction>
         </SpeedDialItem>
