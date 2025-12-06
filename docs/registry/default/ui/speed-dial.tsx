@@ -11,7 +11,7 @@ const ROOT_NAME = "SpeedDial";
 const TRIGGER_NAME = "SpeedDialTrigger";
 const ACTION_NAME = "SpeedDialAction";
 
-type Side = "up" | "down" | "left" | "right";
+type Side = "top" | "right" | "bottom" | "left";
 
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
@@ -88,7 +88,7 @@ function SpeedDial(props: SpeedDialProps) {
     open: openProp,
     defaultOpen,
     onOpenChange,
-    side = "up",
+    side = "top",
     asChild,
     className,
     ...rootProps
@@ -99,7 +99,7 @@ function SpeedDial(props: SpeedDialProps) {
     open: openProp ?? defaultOpen ?? false,
     side,
   }));
-  const propsRef = useAsRef({ onOpenChange });
+  const onOpenChangeRef = useAsRef(onOpenChange);
 
   const store = React.useMemo<Store>(() => {
     return {
@@ -113,7 +113,7 @@ function SpeedDial(props: SpeedDialProps) {
 
         if (key === "open" && typeof value === "boolean") {
           stateRef.current.open = value;
-          propsRef.current.onOpenChange?.(value);
+          onOpenChangeRef.current?.(value);
         } else {
           stateRef.current[key] = value;
         }
@@ -126,7 +126,7 @@ function SpeedDial(props: SpeedDialProps) {
         }
       },
     };
-  }, [listenersRef, stateRef, propsRef]);
+  }, [listenersRef, stateRef, onOpenChangeRef]);
 
   useIsomorphicLayoutEffect(() => {
     if (openProp !== undefined) {
@@ -143,6 +143,7 @@ function SpeedDial(props: SpeedDialProps) {
   return (
     <StoreContext.Provider value={store}>
       <RootPrimitive
+        data-slot="speed-dial"
         className={cn("relative flex flex-col items-end", className)}
         {...rootProps}
       />
@@ -182,6 +183,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
     <Button
       type="button"
       aria-expanded={open}
+      data-slot="speed-dial-trigger"
       size="icon"
       {...triggerProps}
       className={cn(
@@ -216,35 +218,35 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
   );
 }
 
-const speedDialContentVariants = cva("absolute flex", {
-  variants: {
-    side: {
-      up: "bottom-full mb-4 flex-col-reverse",
-      down: "top-full mt-4 flex-col",
-      left: "right-full mr-4 flex-row-reverse",
-      right: "left-full ml-4 flex-row",
+const SpeedDialItemContext = React.createContext<number | null>(null);
+
+function useSpeedDialItemContext() {
+  return React.useContext(SpeedDialItemContext);
+}
+
+const speedDialContentVariants = cva(
+  "absolute flex gap-[var(--speed-dial-gap)]",
+  {
+    variants: {
+      side: {
+        top: "bottom-full mb-[var(--speed-dial-offset)] flex-col-reverse",
+        bottom: "top-full mt-[var(--speed-dial-offset)] flex-col",
+        left: "right-full mr-[var(--speed-dial-offset)] flex-row-reverse",
+        right: "left-full ml-[var(--speed-dial-offset)] flex-row",
+      },
+    },
+    defaultVariants: {
+      side: "top",
     },
   },
-  defaultVariants: {
-    side: "up",
-  },
-});
+);
 
 interface SpeedDialContentProps
   extends DivProps,
-    VariantProps<typeof speedDialContentVariants> {
-  gap?: number;
-}
+    VariantProps<typeof speedDialContentVariants> {}
 
 function SpeedDialContent(props: SpeedDialContentProps) {
-  const {
-    gap = 8,
-    asChild,
-    className,
-    style,
-    children,
-    ...contentProps
-  } = props;
+  const { asChild, className, style, children, ...contentProps } = props;
 
   const open = useStore((state) => state.open);
   const side = useStore((state) => state.side);
@@ -253,10 +255,16 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
   return (
     <ContentPrimitive
-      className={cn(speedDialContentVariants({ side }), className)}
-      style={{ gap: `${gap}px`, ...style }}
-      aria-hidden={!open}
+      data-slot="speed-dial-content"
       {...contentProps}
+      className={cn(speedDialContentVariants({ side, className }))}
+      style={
+        {
+          "--speed-dial-gap": "0.5rem",
+          "--speed-dial-offset": "0.5rem",
+          ...style,
+        } as React.CSSProperties
+      }
     >
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return child;
@@ -265,22 +273,22 @@ function SpeedDialContent(props: SpeedDialContentProps) {
         const delay = open ? index * 50 : (totalChildren - index - 1) * 30;
 
         return (
-          <SpeedDialActionWrapper side={side} open={open} delay={delay}>
+          <SpeedDialItemContext.Provider value={delay}>
             {child}
-          </SpeedDialActionWrapper>
+          </SpeedDialItemContext.Provider>
         );
       })}
     </ContentPrimitive>
   );
 }
 
-const speedDialActionWrapperVariants = cva(
-  "transition-all duration-200 [transition-delay:var(--speed-dial-delay)]",
+const speedDialItemVariants = cva(
+  "flex items-center justify-end gap-2 transition-all duration-200 [transition-delay:var(--speed-dial-delay)]",
   {
     variants: {
       side: {
-        up: "",
-        down: "",
+        top: "",
+        bottom: "",
         left: "",
         right: "",
       },
@@ -291,12 +299,12 @@ const speedDialActionWrapperVariants = cva(
     },
     compoundVariants: [
       {
-        side: "up",
+        side: "top",
         open: false,
         className: "translate-y-4 scale-0 opacity-0",
       },
       {
-        side: "down",
+        side: "bottom",
         open: false,
         className: "-translate-y-4 scale-0 opacity-0",
       },
@@ -312,55 +320,38 @@ const speedDialActionWrapperVariants = cva(
       },
     ],
     defaultVariants: {
-      side: "up",
+      side: "top",
       open: false,
     },
   },
 );
 
-interface SpeedDialActionWrapperProps extends React.ComponentProps<"div"> {
-  side: Side;
-  open: boolean;
-  delay: number;
-}
+function SpeedDialItem(props: DivProps) {
+  const { asChild, className, style, ...itemProps } = props;
 
-function SpeedDialActionWrapper({
-  side,
-  open,
-  delay,
-  style,
-  ...props
-}: SpeedDialActionWrapperProps) {
+  const open = useStore((state) => state.open);
+  const side = useStore((state) => state.side);
+  const delay = useSpeedDialItemContext();
+
+  const ItemPrimitive = asChild ? Slot : "div";
+
   return (
-    <div
-      className={speedDialActionWrapperVariants({ side, open })}
+    <ItemPrimitive
+      data-slot="speed-dial-item"
+      {...itemProps}
+      className={cn(speedDialItemVariants({ side, open, className }))}
       style={
         {
           "--speed-dial-delay": `${delay}ms`,
           ...style,
         } as React.CSSProperties
       }
-      {...props}
     />
   );
 }
 
-interface SpeedDialActionProps extends React.ComponentProps<typeof Button> {
-  icon?: React.ReactNode;
-  label?: string;
-  showLabel?: boolean;
-}
-
-function SpeedDialAction(props: SpeedDialActionProps) {
-  const {
-    icon,
-    label,
-    showLabel = false,
-    onClick: onClickProp,
-    children,
-    className,
-    ...actionProps
-  } = props;
+function SpeedDialAction(props: React.ComponentProps<typeof Button>) {
+  const { onClick: onClickProp, className, ...actionProps } = props;
 
   const store = useStoreContext(ACTION_NAME);
 
@@ -375,25 +366,36 @@ function SpeedDialAction(props: SpeedDialActionProps) {
   );
 
   return (
-    <div className="flex items-center justify-end gap-2">
-      {showLabel && label && (
-        <span className="pointer-events-none whitespace-nowrap rounded-md bg-popover px-2 py-1 text-popover-foreground text-sm shadow-md">
-          {label}
-        </span>
-      )}
-      <Button
-        type="button"
-        aria-label={label}
-        size="icon"
-        variant="outline"
-        {...actionProps}
-        className={cn("size-12 shrink-0 rounded-full shadow-md", className)}
-        onClick={onClick}
-      >
-        {icon || children}
-      </Button>
-    </div>
+    <Button
+      type="button"
+      data-slot="speed-dial-action"
+      variant="outline"
+      size="icon"
+      {...actionProps}
+      className={cn("size-12 shrink-0 rounded-full shadow-md", className)}
+      onClick={onClick}
+    />
   );
 }
 
-export { SpeedDial, SpeedDialTrigger, SpeedDialContent, SpeedDialAction };
+function SpeedDialLabel({ className, ...props }: React.ComponentProps<"span">) {
+  return (
+    <span
+      data-slot="speed-dial-label"
+      className={cn(
+        "pointer-events-none whitespace-nowrap rounded-md bg-popover px-2 py-1 text-popover-foreground text-sm shadow-md",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export {
+  SpeedDial,
+  SpeedDialTrigger,
+  SpeedDialContent,
+  SpeedDialItem,
+  SpeedDialAction,
+  SpeedDialLabel,
+};

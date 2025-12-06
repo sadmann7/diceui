@@ -5,32 +5,36 @@ import {
   SpeedDial,
   SpeedDialAction,
   SpeedDialContent,
+  SpeedDialItem,
+  SpeedDialLabel,
   SpeedDialTrigger,
 } from "@/registry/default/ui/speed-dial";
 
 export default function SpeedDialDemo() {
   return (
     <SpeedDial>
-      <SpeedDialTrigger icon={<Plus className="size-6" />} />
+      <SpeedDialTrigger>
+        <Plus />
+      </SpeedDialTrigger>
       <SpeedDialContent>
-        <SpeedDialAction
-          icon={<Share2 className="size-4" />}
-          label="Share"
-          showLabel
-          onClick={() => console.log({ action: "share" })}
-        />
-        <SpeedDialAction
-          icon={<Copy className="size-4" />}
-          label="Copy"
-          showLabel
-          onClick={() => console.log({ action: "copy" })}
-        />
-        <SpeedDialAction
-          icon={<Heart className="size-4" />}
-          label="Like"
-          showLabel
-          onClick={() => console.log({ action: "like" })}
-        />
+        <SpeedDialItem>
+          <SpeedDialLabel>Share</SpeedDialLabel>
+          <SpeedDialAction onClick={() => console.log({ action: "share" })}>
+            <Share2 />
+          </SpeedDialAction>
+        </SpeedDialItem>
+        <SpeedDialItem>
+          <SpeedDialLabel>Copy</SpeedDialLabel>
+          <SpeedDialAction onClick={() => console.log({ action: "copy" })}>
+            <Copy />
+          </SpeedDialAction>
+        </SpeedDialItem>
+        <SpeedDialItem>
+          <SpeedDialLabel>Like</SpeedDialLabel>
+          <SpeedDialAction onClick={() => console.log({ action: "like" })}>
+            <Heart />
+          </SpeedDialAction>
+        </SpeedDialItem>
       </SpeedDialContent>
     </SpeedDial>
   );
