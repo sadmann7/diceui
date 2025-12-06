@@ -13,9 +13,14 @@ const CONTENT_NAME = "SpeedDialContent";
 const ITEM_NAME = "SpeedDialItem";
 const ACTION_NAME = "SpeedDialAction";
 const LABEL_NAME = "SpeedDialLabel";
+
 const ACTION_SELECT = "speeddial.actionSelect";
 const INTERACT_OUTSIDE = "speeddial.interactOutside";
 const EVENT_OPTIONS = { bubbles: true, cancelable: true };
+
+const DEFAULT_GAP = "0.5rem";
+const DEFAULT_OFFSET = "0.5rem";
+const DEFAULT_ITEM_DELAY = 50;
 
 type Side = "top" | "right" | "bottom" | "left";
 
@@ -82,9 +87,18 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
+interface NodeData {
+  id: string;
+  ref: React.RefObject<HTMLElement | null>;
+  disabled: boolean;
+}
+
 interface SpeedDialContextValue {
   contentId: string;
   side: Side;
+  onNodeRegister: (node: NodeData) => void;
+  onNodeUnregister: (id: string) => void;
+  getNodes: () => NodeData[];
 }
 
 const SpeedDialContext = React.createContext<SpeedDialContextValue | null>(
@@ -124,11 +138,38 @@ function SpeedDial(props: SpeedDialProps) {
   } = props;
 
   const contentId = React.useId();
+  const nodesRef = React.useRef<Map<string, NodeData>>(new Map());
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     open: openProp ?? defaultOpen ?? false,
   }));
   const onOpenChangeRef = useAsRef(onOpenChange);
+
+  const onNodeRegister = React.useCallback((node: NodeData) => {
+    nodesRef.current.set(node.id, node);
+  }, []);
+
+  const onNodeUnregister = React.useCallback((id: string) => {
+    nodesRef.current.delete(id);
+  }, []);
+
+  const getNodes = React.useCallback(() => {
+    return Array.from(nodesRef.current.values())
+      .filter((node) => node.ref.current)
+      .sort((a, b) => {
+        const elementA = a.ref.current;
+        const elementB = b.ref.current;
+        if (!elementA || !elementB) return 0;
+        const position = elementA.compareDocumentPosition(elementB);
+        if (position & Node.DOCUMENT_POSITION_FOLLOWING) {
+          return -1;
+        }
+        if (position & Node.DOCUMENT_POSITION_PRECEDING) {
+          return 1;
+        }
+        return 0;
+      });
+  }, []);
 
   const store = React.useMemo<Store>(() => {
     return {
@@ -164,8 +205,8 @@ function SpeedDial(props: SpeedDialProps) {
   }, [openProp, store]);
 
   const contextValue = React.useMemo<SpeedDialContextValue>(
-    () => ({ contentId, side }),
-    [contentId, side],
+    () => ({ contentId, side, onNodeRegister, onNodeUnregister, getNodes }),
+    [contentId, side, onNodeRegister, onNodeUnregister, getNodes],
   );
 
   return (
@@ -191,6 +232,7 @@ function SpeedDialImpl(props: SpeedDialProps) {
   const rootRef = React.useRef<RootElement>(null);
   const composedRefs = useComposedRefs(ref, rootRef);
   const store = useStoreContext("SpeedDialImpl");
+  const { getNodes } = useSpeedDialContext("SpeedDialImpl");
   const open = useStore((state) => state.open);
   const propsRef = useAsRef({
     onEscapeKeyDown,
@@ -222,18 +264,39 @@ function SpeedDialImpl(props: SpeedDialProps) {
           store.setState("open", false);
         }
       }
+
+      if (event.key === "Tab") {
+        const focusableElements = getNodes()
+          .filter((node) => !node.disabled)
+          .map((node) => node.ref.current);
+
+        if (focusableElements.length === 0) return;
+
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+        const activeElement = ownerDocument.activeElement as HTMLElement;
+
+        if (event.shiftKey) {
+          if (activeElement === firstElement) {
+            store.setState("open", false);
+          }
+        } else {
+          if (activeElement === lastElement) {
+            store.setState("open", false);
+          }
+        }
+      }
     };
 
     ownerDocument.addEventListener("keydown", onKeyDown);
     return () => ownerDocument.removeEventListener("keydown", onKeyDown);
-  }, [open, propsRef, ownerDocument, store]);
+  }, [open, propsRef, ownerDocument, store, getNodes]);
 
   const onClickRef = React.useRef<() => void>(() => {});
 
   React.useEffect(() => {
     if (!open) return;
 
-    // Reset the ref when effect runs to avoid stale state from the opening click
     isPointerInsideReactTreeRef.current = false;
 
     const onPointerDown = (event: PointerEvent) => {
@@ -296,11 +359,36 @@ function SpeedDialImpl(props: SpeedDialProps) {
 }
 
 function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
-  const { onClick: onClickProp, className, ...triggerProps } = props;
+  const {
+    onClick: onClickProp,
+    className,
+    disabled,
+    id,
+    ref,
+    ...triggerProps
+  } = props;
 
   const store = useStoreContext(TRIGGER_NAME);
-  const { contentId } = useSpeedDialContext(TRIGGER_NAME);
+  const { onNodeRegister, onNodeUnregister, contentId } =
+    useSpeedDialContext(TRIGGER_NAME);
   const open = useStore((state) => state.open);
+
+  const instanceId = React.useId();
+  const triggerId = id ?? instanceId;
+  const triggerRef = React.useRef<TriggerElement>(null);
+  const composedRef = useComposedRefs(ref, triggerRef);
+
+  useIsomorphicLayoutEffect(() => {
+    onNodeRegister({
+      id: triggerId,
+      ref: triggerRef,
+      disabled: !!disabled,
+    });
+
+    return () => {
+      onNodeUnregister(triggerId);
+    };
+  }, [onNodeRegister, onNodeUnregister, triggerId, disabled]);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<TriggerElement>) => {
@@ -316,13 +404,16 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
     <Button
       type="button"
       role="button"
+      id={triggerId}
       aria-haspopup="menu"
       aria-expanded={open}
       aria-controls={contentId}
       data-slot="speed-dial-trigger"
       data-state={open ? "open" : "closed"}
       size="icon"
+      disabled={disabled}
       {...triggerProps}
+      ref={composedRef}
       className={cn("size-11 rounded-full", className)}
       onClick={onClick}
     />
@@ -377,8 +468,8 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       className={cn(speedDialContentVariants({ side, className }))}
       style={
         {
-          "--speed-dial-gap": "0.5rem",
-          "--speed-dial-offset": "0.5rem",
+          "--speed-dial-gap": DEFAULT_GAP,
+          "--speed-dial-offset": DEFAULT_OFFSET,
           ...style,
         } as React.CSSProperties
       }
@@ -387,7 +478,9 @@ function SpeedDialContent(props: SpeedDialContentProps) {
         if (!React.isValidElement(child)) return child;
 
         const totalChildren = React.Children.count(children);
-        const delay = open ? index * 50 : (totalChildren - index - 1) * 30;
+        const delay = open
+          ? index * DEFAULT_ITEM_DELAY
+          : (totalChildren - index - 1) * DEFAULT_ITEM_DELAY;
 
         return (
           <SpeedDialItemImplContext.Provider value={delay}>
@@ -495,14 +588,32 @@ function SpeedDialAction(props: SpeedDialActionProps) {
     onSelect,
     onClick: onClickProp,
     className,
+    disabled,
+    id,
     ref,
     ...actionProps
   } = props;
 
   const store = useStoreContext(ACTION_NAME);
+  const { onNodeRegister, onNodeUnregister } = useSpeedDialContext(ACTION_NAME);
   const labelId = useSpeedDialItemContext(ACTION_NAME);
+
+  const instanceId = React.useId();
+  const actionId = id ?? instanceId;
   const actionRef = React.useRef<ActionElement>(null);
   const composedRefs = useComposedRefs(ref, actionRef);
+
+  useIsomorphicLayoutEffect(() => {
+    onNodeRegister({
+      id: actionId,
+      ref: actionRef,
+      disabled: !!disabled,
+    });
+
+    return () => {
+      onNodeUnregister(actionId);
+    };
+  }, [onNodeRegister, onNodeUnregister, actionId, disabled]);
 
   const onActionSelect = React.useCallback(() => {
     const action = actionRef.current;
@@ -537,10 +648,12 @@ function SpeedDialAction(props: SpeedDialActionProps) {
     <Button
       type="button"
       role="menuitem"
+      id={actionId}
       aria-labelledby={labelId}
       data-slot="speed-dial-action"
       variant="outline"
       size="icon"
+      disabled={disabled}
       ref={composedRefs}
       {...actionProps}
       className={cn("size-11 shrink-0 rounded-full shadow-md", className)}

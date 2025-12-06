@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy, Heart, Plus, Share2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   SpeedDial,
   SpeedDialAction,
@@ -18,20 +19,20 @@ export default function SpeedDialDemo() {
       </SpeedDialTrigger>
       <SpeedDialContent>
         <SpeedDialItem>
-          <SpeedDialLabel>Share</SpeedDialLabel>
-          <SpeedDialAction onSelect={() => console.log({ action: "share" })}>
+          <SpeedDialLabel className="sr-only">Share</SpeedDialLabel>
+          <SpeedDialAction onSelect={() => toast.success("Shared")}>
             <Share2 />
           </SpeedDialAction>
         </SpeedDialItem>
         <SpeedDialItem>
-          <SpeedDialLabel>Copy</SpeedDialLabel>
-          <SpeedDialAction onSelect={() => console.log({ action: "copy" })}>
+          <SpeedDialLabel className="sr-only">Copy</SpeedDialLabel>
+          <SpeedDialAction onSelect={() => toast.success("Copied")}>
             <Copy />
           </SpeedDialAction>
         </SpeedDialItem>
         <SpeedDialItem>
-          <SpeedDialLabel>Like</SpeedDialLabel>
-          <SpeedDialAction onSelect={() => console.log({ action: "like" })}>
+          <SpeedDialLabel className="sr-only">Like</SpeedDialLabel>
+          <SpeedDialAction onSelect={() => toast.success("Liked")}>
             <Heart />
           </SpeedDialAction>
         </SpeedDialItem>
