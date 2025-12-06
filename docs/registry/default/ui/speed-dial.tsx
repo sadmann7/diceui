@@ -151,20 +151,13 @@ function SpeedDial(props: SpeedDialProps) {
   );
 }
 
-interface SpeedDialTriggerProps extends React.ComponentProps<typeof Button> {
-  icon?: React.ReactNode;
-  closeIcon?: React.ReactNode;
+interface SpeedDialTriggerProps
+  extends Omit<React.ComponentProps<typeof Button>, "children"> {
+  children?: React.ReactNode | ((props: { open: boolean }) => React.ReactNode);
 }
 
 function SpeedDialTrigger(props: SpeedDialTriggerProps) {
-  const {
-    icon,
-    closeIcon = <X className="size-4" />,
-    onClick: onClickProp,
-    children,
-    className,
-    ...triggerProps
-  } = props;
+  const { onClick: onClickProp, className, children, ...triggerProps } = props;
 
   const store = useStoreContext(TRIGGER_NAME);
   const open = useStore((state) => state.open);
@@ -184,36 +177,16 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
       type="button"
       aria-expanded={open}
       data-slot="speed-dial-trigger"
+      data-state={open ? "open" : "closed"}
       size="icon"
       {...triggerProps}
       className={cn(
-        "size-12 rounded-full shadow-lg transition-all hover:scale-110",
+        "size-11 rounded-full shadow-lg [&_svg:not([class*='size-'])]:size-5",
         className,
       )}
       onClick={onClick}
     >
-      <span className="relative flex size-full items-center justify-center">
-        <span
-          className={cn(
-            "absolute transition-all duration-200",
-            open
-              ? "rotate-90 scale-0 opacity-0"
-              : "rotate-0 scale-100 opacity-100",
-          )}
-        >
-          {icon || children}
-        </span>
-        <span
-          className={cn(
-            "absolute transition-all duration-200",
-            open
-              ? "rotate-0 scale-100 opacity-100"
-              : "-rotate-90 scale-0 opacity-0",
-          )}
-        >
-          {closeIcon}
-        </span>
-      </span>
+      {typeof children === "function" ? children({ open }) : children}
     </Button>
   );
 }
@@ -372,7 +345,7 @@ function SpeedDialAction(props: React.ComponentProps<typeof Button>) {
       variant="outline"
       size="icon"
       {...actionProps}
-      className={cn("size-12 shrink-0 rounded-full shadow-md", className)}
+      className={cn("size-11 shrink-0 rounded-full shadow-md", className)}
       onClick={onClick}
     />
   );

@@ -13,7 +13,7 @@ import {
 export default function SpeedDialDemo() {
   return (
     <SpeedDial>
-      <SpeedDialTrigger>
+      <SpeedDialTrigger className="transition-transform duration-200 ease-out data-[state=closed]:rotate-0 data-[state=open]:rotate-135">
         <Plus />
       </SpeedDialTrigger>
       <SpeedDialContent>
