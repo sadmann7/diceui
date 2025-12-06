@@ -2,14 +2,16 @@
 
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { X } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "SpeedDial";
 const TRIGGER_NAME = "SpeedDialTrigger";
+const CONTENT_NAME = "SpeedDialContent";
+const ITEM_NAME = "SpeedDialItem";
 const ACTION_NAME = "SpeedDialAction";
+const LABEL_NAME = "SpeedDialLabel";
 
 type Side = "top" | "right" | "bottom" | "left";
 
@@ -45,7 +47,6 @@ function useLazyRef<T>(fn: () => T) {
 
 interface StoreState {
   open: boolean;
-  side: Side;
 }
 
 interface Store {
@@ -76,6 +77,23 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
+interface SpeedDialContextValue {
+  contentId: string;
+  side: Side;
+}
+
+const SpeedDialContext = React.createContext<SpeedDialContextValue | null>(
+  null,
+);
+
+function useSpeedDialContext(consumerName: string) {
+  const context = React.useContext(SpeedDialContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
+
 interface SpeedDialProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
@@ -94,10 +112,10 @@ function SpeedDial(props: SpeedDialProps) {
     ...rootProps
   } = props;
 
+  const contentId = React.useId();
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     open: openProp ?? defaultOpen ?? false,
-    side,
   }));
   const onOpenChangeRef = useAsRef(onOpenChange);
 
@@ -134,32 +152,31 @@ function SpeedDial(props: SpeedDialProps) {
     }
   }, [openProp, store]);
 
-  useIsomorphicLayoutEffect(() => {
-    store.setState("side", side);
-  }, [side]);
+  const contextValue = React.useMemo<SpeedDialContextValue>(
+    () => ({ contentId, side }),
+    [contentId, side],
+  );
 
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
-      <RootPrimitive
-        data-slot="speed-dial"
-        className={cn("relative flex flex-col items-end", className)}
-        {...rootProps}
-      />
+      <SpeedDialContext.Provider value={contextValue}>
+        <RootPrimitive
+          data-slot="speed-dial"
+          className={cn("relative flex flex-col items-end", className)}
+          {...rootProps}
+        />
+      </SpeedDialContext.Provider>
     </StoreContext.Provider>
   );
 }
 
-interface SpeedDialTriggerProps
-  extends Omit<React.ComponentProps<typeof Button>, "children"> {
-  children?: React.ReactNode | ((props: { open: boolean }) => React.ReactNode);
-}
-
-function SpeedDialTrigger(props: SpeedDialTriggerProps) {
-  const { onClick: onClickProp, className, children, ...triggerProps } = props;
+function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
+  const { onClick: onClickProp, className, ...triggerProps } = props;
 
   const store = useStoreContext(TRIGGER_NAME);
+  const speedDialContext = useSpeedDialContext(TRIGGER_NAME);
   const open = useStore((state) => state.open);
 
   const onClick = React.useCallback(
@@ -175,26 +192,24 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
   return (
     <Button
       type="button"
+      role="button"
+      aria-haspopup="menu"
       aria-expanded={open}
+      aria-controls={speedDialContext.contentId}
       data-slot="speed-dial-trigger"
       data-state={open ? "open" : "closed"}
       size="icon"
       {...triggerProps}
-      className={cn(
-        "size-11 rounded-full shadow-lg [&_svg:not([class*='size-'])]:size-5",
-        className,
-      )}
+      className={cn("size-11 rounded-full", className)}
       onClick={onClick}
-    >
-      {typeof children === "function" ? children({ open }) : children}
-    </Button>
+    />
   );
 }
 
-const SpeedDialItemContext = React.createContext<number | null>(null);
+const SpeedDialItemImplContext = React.createContext<number | null>(null);
 
-function useSpeedDialItemContext() {
-  return React.useContext(SpeedDialItemContext);
+function useSpeedDialItemImplContext() {
+  return React.useContext(SpeedDialItemImplContext);
 }
 
 const speedDialContentVariants = cva(
@@ -222,12 +237,18 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   const { asChild, className, style, children, ...contentProps } = props;
 
   const open = useStore((state) => state.open);
-  const side = useStore((state) => state.side);
+  const speedDialContext = useSpeedDialContext(CONTENT_NAME);
+  const side = speedDialContext.side;
 
   const ContentPrimitive = asChild ? Slot : "div";
 
   return (
     <ContentPrimitive
+      id={speedDialContext.contentId}
+      role="menu"
+      aria-orientation={
+        side === "top" || side === "bottom" ? "vertical" : "horizontal"
+      }
       data-slot="speed-dial-content"
       {...contentProps}
       className={cn(speedDialContentVariants({ side, className }))}
@@ -246,9 +267,9 @@ function SpeedDialContent(props: SpeedDialContentProps) {
         const delay = open ? index * 50 : (totalChildren - index - 1) * 30;
 
         return (
-          <SpeedDialItemContext.Provider value={delay}>
+          <SpeedDialItemImplContext.Provider value={delay}>
             {child}
-          </SpeedDialItemContext.Provider>
+          </SpeedDialItemImplContext.Provider>
         );
       })}
     </ContentPrimitive>
@@ -299,27 +320,45 @@ const speedDialItemVariants = cva(
   },
 );
 
+const SpeedDialItemContext = React.createContext<string | null>(null);
+
+function useSpeedDialItemContext(consumerName: string) {
+  const context = React.useContext(SpeedDialItemContext);
+  if (!context) {
+    throw new Error(
+      `\`${consumerName}\` must be used within \`SpeedDialItem\``,
+    );
+  }
+  return context;
+}
+
 function SpeedDialItem(props: DivProps) {
-  const { asChild, className, style, ...itemProps } = props;
+  const { asChild, className, style, children, ...itemProps } = props;
 
   const open = useStore((state) => state.open);
-  const side = useStore((state) => state.side);
-  const delay = useSpeedDialItemContext();
+  const { side } = useSpeedDialContext(ITEM_NAME);
+  const delay = useSpeedDialItemImplContext() ?? 0;
+  const labelId = React.useId();
 
   const ItemPrimitive = asChild ? Slot : "div";
 
   return (
-    <ItemPrimitive
-      data-slot="speed-dial-item"
-      {...itemProps}
-      className={cn(speedDialItemVariants({ side, open, className }))}
-      style={
-        {
-          "--speed-dial-delay": `${delay}ms`,
-          ...style,
-        } as React.CSSProperties
-      }
-    />
+    <SpeedDialItemContext.Provider value={labelId}>
+      <ItemPrimitive
+        role="none"
+        data-slot="speed-dial-item"
+        {...itemProps}
+        className={cn(speedDialItemVariants({ side, open, className }))}
+        style={
+          {
+            "--speed-dial-delay": `${delay}ms`,
+            ...style,
+          } as React.CSSProperties
+        }
+      >
+        {children}
+      </ItemPrimitive>
+    </SpeedDialItemContext.Provider>
   );
 }
 
@@ -327,6 +366,7 @@ function SpeedDialAction(props: React.ComponentProps<typeof Button>) {
   const { onClick: onClickProp, className, ...actionProps } = props;
 
   const store = useStoreContext(ACTION_NAME);
+  const labelId = useSpeedDialItemContext(ACTION_NAME);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ActionElement>) => {
@@ -341,6 +381,8 @@ function SpeedDialAction(props: React.ComponentProps<typeof Button>) {
   return (
     <Button
       type="button"
+      role="menuitem"
+      aria-labelledby={labelId}
       data-slot="speed-dial-action"
       variant="outline"
       size="icon"
@@ -352,8 +394,11 @@ function SpeedDialAction(props: React.ComponentProps<typeof Button>) {
 }
 
 function SpeedDialLabel({ className, ...props }: React.ComponentProps<"span">) {
+  const labelId = useSpeedDialItemContext(LABEL_NAME);
+
   return (
     <span
+      id={labelId}
       data-slot="speed-dial-label"
       className={cn(
         "pointer-events-none whitespace-nowrap rounded-md bg-popover px-2 py-1 text-popover-foreground text-sm shadow-md",
