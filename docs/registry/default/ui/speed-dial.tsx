@@ -4,6 +4,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "SpeedDial";
@@ -13,6 +14,7 @@ const ITEM_NAME = "SpeedDialItem";
 const ACTION_NAME = "SpeedDialAction";
 const LABEL_NAME = "SpeedDialLabel";
 const ACTION_SELECT = "speeddial.actionSelect";
+const INTERACT_OUTSIDE = "speeddial.interactOutside";
 const EVENT_OPTIONS = { bubbles: true, cancelable: true };
 
 type Side = "top" | "right" | "bottom" | "left";
@@ -21,6 +23,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
+type RootElement = React.ComponentRef<typeof SpeedDial>;
 type TriggerElement = React.ComponentRef<typeof SpeedDialTrigger>;
 type ActionElement = React.ComponentRef<typeof SpeedDialAction>;
 
@@ -96,11 +99,19 @@ function useSpeedDialContext(consumerName: string) {
   return context;
 }
 
+interface SpeedDialInteractOutsideEvent extends CustomEvent {
+  detail: {
+    originalEvent: PointerEvent;
+  };
+}
+
 interface SpeedDialProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   side?: Side;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
+  onInteractOutside?: (event: SpeedDialInteractOutsideEvent) => void;
 }
 
 function SpeedDial(props: SpeedDialProps) {
@@ -109,8 +120,6 @@ function SpeedDial(props: SpeedDialProps) {
     defaultOpen,
     onOpenChange,
     side = "top",
-    asChild,
-    className,
     ...rootProps
   } = props;
 
@@ -159,18 +168,130 @@ function SpeedDial(props: SpeedDialProps) {
     [contentId, side],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
-
   return (
     <StoreContext.Provider value={store}>
       <SpeedDialContext.Provider value={contextValue}>
-        <RootPrimitive
-          data-slot="speed-dial"
-          className={cn("relative flex flex-col items-end", className)}
-          {...rootProps}
-        />
+        <SpeedDialImpl {...rootProps} />
       </SpeedDialContext.Provider>
     </StoreContext.Provider>
+  );
+}
+
+function SpeedDialImpl(props: SpeedDialProps) {
+  const {
+    asChild,
+    className,
+    onPointerDownCapture: onPointerDownCaptureProp,
+    onEscapeKeyDown,
+    onInteractOutside,
+    ref,
+    ...rootProps
+  } = props;
+
+  const rootRef = React.useRef<RootElement>(null);
+  const composedRefs = useComposedRefs(ref, rootRef);
+  const store = useStoreContext("SpeedDialImpl");
+  const open = useStore((state) => state.open);
+  const propsRef = useAsRef({
+    onEscapeKeyDown,
+    onInteractOutside,
+  });
+
+  const ownerDocument = rootRef.current?.ownerDocument ?? globalThis?.document;
+
+  const isPointerInsideReactTreeRef = React.useRef(false);
+
+  const onPointerDownCapture = React.useCallback(
+    (event: React.PointerEvent<RootElement>) => {
+      onPointerDownCaptureProp?.(event);
+      if (event.defaultPrevented) return;
+
+      isPointerInsideReactTreeRef.current = true;
+    },
+    [onPointerDownCaptureProp],
+  );
+
+  React.useEffect(() => {
+    if (!open) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        propsRef.current?.onEscapeKeyDown?.(event);
+
+        if (!event.defaultPrevented) {
+          store.setState("open", false);
+        }
+      }
+    };
+
+    ownerDocument.addEventListener("keydown", onKeyDown);
+    return () => ownerDocument.removeEventListener("keydown", onKeyDown);
+  }, [open, propsRef, ownerDocument, store]);
+
+  const onClickRef = React.useRef<() => void>(() => {});
+
+  React.useEffect(() => {
+    if (!open) return;
+
+    // Reset the ref when effect runs to avoid stale state from the opening click
+    isPointerInsideReactTreeRef.current = false;
+
+    const onPointerDown = (event: PointerEvent) => {
+      if (event.target && !isPointerInsideReactTreeRef.current) {
+        const target = event.target as HTMLElement;
+        const isOutside = !rootRef.current?.contains(target);
+
+        if (isOutside) {
+          function onOutsideEventDispatch() {
+            const interactEvent = new CustomEvent(INTERACT_OUTSIDE, {
+              ...EVENT_OPTIONS,
+              detail: { originalEvent: event },
+            }) as SpeedDialInteractOutsideEvent;
+
+            propsRef.current?.onInteractOutside?.(interactEvent);
+
+            if (!interactEvent.defaultPrevented) {
+              store.setState("open", false);
+            }
+          }
+
+          if (event.pointerType === "touch") {
+            ownerDocument.removeEventListener("click", onClickRef.current);
+            onClickRef.current = onOutsideEventDispatch;
+            ownerDocument.addEventListener("click", onClickRef.current, {
+              once: true,
+            });
+          } else {
+            onOutsideEventDispatch();
+          }
+        }
+      } else {
+        ownerDocument.removeEventListener("click", onClickRef.current);
+      }
+      isPointerInsideReactTreeRef.current = false;
+    };
+
+    const timerId = window.setTimeout(() => {
+      ownerDocument.addEventListener("pointerdown", onPointerDown);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(timerId);
+      ownerDocument.removeEventListener("pointerdown", onPointerDown);
+      ownerDocument.removeEventListener("click", onClickRef.current);
+    };
+  }, [open, propsRef, ownerDocument, store]);
+
+  const RootPrimitive = asChild ? Slot : "div";
+
+  return (
+    <RootPrimitive
+      data-slot="speed-dial"
+      {...rootProps}
+      ref={composedRefs}
+      className={cn("relative flex flex-col items-end", className)}
+      onPointerDownCapture={onPointerDownCapture}
+    />
   );
 }
 
@@ -370,11 +491,18 @@ interface SpeedDialActionProps
 }
 
 function SpeedDialAction(props: SpeedDialActionProps) {
-  const { onSelect, onClick: onClickProp, className, ...actionProps } = props;
+  const {
+    onSelect,
+    onClick: onClickProp,
+    className,
+    ref,
+    ...actionProps
+  } = props;
 
   const store = useStoreContext(ACTION_NAME);
   const labelId = useSpeedDialItemContext(ACTION_NAME);
   const actionRef = React.useRef<ActionElement>(null);
+  const composedRefs = useComposedRefs(ref, actionRef);
 
   const onActionSelect = React.useCallback(() => {
     const action = actionRef.current;
@@ -413,7 +541,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
       data-slot="speed-dial-action"
       variant="outline"
       size="icon"
-      ref={actionRef}
+      ref={composedRefs}
       {...actionProps}
       className={cn("size-11 shrink-0 rounded-full shadow-md", className)}
       onClick={onClick}
