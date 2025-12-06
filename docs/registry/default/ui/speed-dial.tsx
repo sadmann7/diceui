@@ -1,5 +1,6 @@
 "use client";
 
+import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
 import * as React from "react";
@@ -11,6 +12,13 @@ const TRIGGER_NAME = "SpeedDialTrigger";
 const ACTION_NAME = "SpeedDialAction";
 
 type Side = "up" | "down" | "left" | "right";
+
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+type TriggerElement = React.ComponentRef<typeof SpeedDialTrigger>;
+type ActionElement = React.ComponentRef<typeof SpeedDialAction>;
 
 const useIsomorphicLayoutEffect =
   typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
@@ -68,21 +76,24 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-interface SpeedDialProps extends React.ComponentProps<"div"> {
+interface SpeedDialProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   side?: Side;
 }
 
-function SpeedDial({
-  open: openProp,
-  defaultOpen,
-  onOpenChange,
-  side = "up",
-  className,
-  ...props
-}: SpeedDialProps) {
+function SpeedDial(props: SpeedDialProps) {
+  const {
+    open: openProp,
+    defaultOpen,
+    onOpenChange,
+    side = "up",
+    asChild,
+    className,
+    ...rootProps
+  } = props;
+
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     open: openProp ?? defaultOpen ?? false,
@@ -127,9 +138,14 @@ function SpeedDial({
     store.setState("side", side);
   }, [side]);
 
+  const RootPrimitive = asChild ? Slot : "div";
+
   return (
     <StoreContext.Provider value={store}>
-      <div className={cn("relative", className)} {...props} />
+      <RootPrimitive
+        className={cn("relative flex flex-col items-end", className)}
+        {...rootProps}
+      />
     </StoreContext.Provider>
   );
 }
@@ -139,37 +155,40 @@ interface SpeedDialTriggerProps extends React.ComponentProps<typeof Button> {
   closeIcon?: React.ReactNode;
 }
 
-function SpeedDialTrigger({
-  icon,
-  closeIcon = <X className="size-4" />,
-  onClick,
-  children,
-  className,
-  ...props
-}: SpeedDialTriggerProps) {
+function SpeedDialTrigger(props: SpeedDialTriggerProps) {
+  const {
+    icon,
+    closeIcon = <X className="size-4" />,
+    onClick: onClickProp,
+    children,
+    className,
+    ...triggerProps
+  } = props;
+
   const store = useStoreContext(TRIGGER_NAME);
   const open = useStore((state) => state.open);
 
-  const handleClick = React.useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      onClick?.(e);
-      if (!e.defaultPrevented) {
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<TriggerElement>) => {
+      onClickProp?.(event);
+      if (!event.defaultPrevented) {
         store.setState("open", !open);
       }
     },
-    [onClick, store, open],
+    [onClickProp, store, open],
   );
 
   return (
     <Button
+      type="button"
+      aria-expanded={open}
       size="icon"
+      {...triggerProps}
       className={cn(
-        "size-14 rounded-full shadow-lg transition-all hover:scale-110",
+        "size-12 rounded-full shadow-lg transition-all hover:scale-110",
         className,
       )}
-      onClick={handleClick}
-      aria-expanded={open}
-      {...props}
+      onClick={onClick}
     >
       <span className="relative flex size-full items-center justify-center">
         <span
@@ -211,7 +230,51 @@ const speedDialContentVariants = cva("absolute flex", {
   },
 });
 
-const speedDialItemVariants = cva(
+interface SpeedDialContentProps
+  extends DivProps,
+    VariantProps<typeof speedDialContentVariants> {
+  gap?: number;
+}
+
+function SpeedDialContent(props: SpeedDialContentProps) {
+  const {
+    gap = 8,
+    asChild,
+    className,
+    style,
+    children,
+    ...contentProps
+  } = props;
+
+  const open = useStore((state) => state.open);
+  const side = useStore((state) => state.side);
+
+  const ContentPrimitive = asChild ? Slot : "div";
+
+  return (
+    <ContentPrimitive
+      className={cn(speedDialContentVariants({ side }), className)}
+      style={{ gap: `${gap}px`, ...style }}
+      aria-hidden={!open}
+      {...contentProps}
+    >
+      {React.Children.map(children, (child, index) => {
+        if (!React.isValidElement(child)) return child;
+
+        const totalChildren = React.Children.count(children);
+        const delay = open ? index * 50 : (totalChildren - index - 1) * 30;
+
+        return (
+          <SpeedDialActionWrapper side={side} open={open} delay={delay}>
+            {child}
+          </SpeedDialActionWrapper>
+        );
+      })}
+    </ContentPrimitive>
+  );
+}
+
+const speedDialActionWrapperVariants = cva(
   "transition-all duration-200 [transition-delay:var(--speed-dial-delay)]",
   {
     variants: {
@@ -255,22 +318,22 @@ const speedDialItemVariants = cva(
   },
 );
 
-interface SpeedDialItemProps extends React.ComponentProps<"div"> {
+interface SpeedDialActionWrapperProps extends React.ComponentProps<"div"> {
   side: Side;
   open: boolean;
   delay: number;
 }
 
-function SpeedDialItem({
+function SpeedDialActionWrapper({
   side,
   open,
   delay,
   style,
   ...props
-}: SpeedDialItemProps) {
+}: SpeedDialActionWrapperProps) {
   return (
     <div
-      className={speedDialItemVariants({ side, open })}
+      className={speedDialActionWrapperVariants({ side, open })}
       style={
         {
           "--speed-dial-delay": `${delay}ms`,
@@ -282,86 +345,50 @@ function SpeedDialItem({
   );
 }
 
-interface SpeedDialContentProps
-  extends React.ComponentProps<"div">,
-    VariantProps<typeof speedDialContentVariants> {
-  gap?: number;
-}
-
-function SpeedDialContent({
-  gap = 8,
-  className,
-  style,
-  children,
-  ...props
-}: SpeedDialContentProps) {
-  const open = useStore((state) => state.open);
-  const side = useStore((state) => state.side);
-
-  return (
-    <div
-      className={cn(speedDialContentVariants({ side }), className)}
-      style={{ gap: `${gap}px`, ...style }}
-      aria-hidden={!open}
-      {...props}
-    >
-      {React.Children.map(children, (child, index) => {
-        if (!React.isValidElement(child)) return child;
-
-        const totalChildren = React.Children.count(children);
-        const delay = open ? index * 50 : (totalChildren - index - 1) * 30;
-
-        return (
-          <SpeedDialItem side={side} open={open} delay={delay}>
-            {child}
-          </SpeedDialItem>
-        );
-      })}
-    </div>
-  );
-}
-
 interface SpeedDialActionProps extends React.ComponentProps<typeof Button> {
   icon?: React.ReactNode;
   label?: string;
   showLabel?: boolean;
 }
 
-function SpeedDialAction({
-  icon,
-  label,
-  showLabel = false,
-  onClick,
-  children,
-  className,
-  ...props
-}: SpeedDialActionProps) {
+function SpeedDialAction(props: SpeedDialActionProps) {
+  const {
+    icon,
+    label,
+    showLabel = false,
+    onClick: onClickProp,
+    children,
+    className,
+    ...actionProps
+  } = props;
+
   const store = useStoreContext(ACTION_NAME);
 
-  const handleClick = React.useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      onClick?.(e);
-      if (!e.defaultPrevented) {
-        store.setState("open", false);
-      }
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<ActionElement>) => {
+      onClickProp?.(event);
+      if (event.defaultPrevented) return;
+
+      store.setState("open", false);
     },
-    [onClick, store],
+    [onClickProp, store],
   );
 
   return (
-    <div className="relative flex items-center gap-2">
+    <div className="flex items-center justify-end gap-2">
       {showLabel && label && (
         <span className="pointer-events-none whitespace-nowrap rounded-md bg-popover px-2 py-1 text-popover-foreground text-sm shadow-md">
           {label}
         </span>
       )}
       <Button
+        type="button"
+        aria-label={label}
         size="icon"
         variant="outline"
-        className={cn("size-12 rounded-full shadow-md", className)}
-        onClick={handleClick}
-        aria-label={label}
-        {...props}
+        {...actionProps}
+        className={cn("size-12 shrink-0 rounded-full shadow-md", className)}
+        onClick={onClick}
       >
         {icon || children}
       </Button>
