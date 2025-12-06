@@ -124,9 +124,9 @@ interface SpeedDialRootProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
-  side?: Side;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   onInteractOutside?: (event: SpeedDialInteractOutsideEvent) => void;
+  side?: Side;
 }
 
 function SpeedDialRoot(props: SpeedDialRootProps) {
