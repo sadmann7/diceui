@@ -19,11 +19,11 @@ async function cleanupRegistry() {
     const registryItemNames = new Set(
       registry.items
         .filter((item) => !RESERVED_NAMES.has(item.name))
-        .map((item) => item.name)
+        .map((item) => item.name),
     );
 
     console.log(
-      `📋 Found ${registryItemNames.size} items in registry TypeScript files`
+      `📋 Found ${registryItemNames.size} items in registry TypeScript files`,
     );
 
     // Get all JSON files in the registry directory
@@ -31,7 +31,7 @@ async function cleanupRegistry() {
     const jsonFiles = registryFiles.filter((file) => file.endsWith(".json"));
 
     console.log(
-      `📁 Found ${jsonFiles.length} JSON files in registry directory`
+      `📁 Found ${jsonFiles.length} JSON files in registry directory`,
     );
 
     // Find orphaned files (JSON files without corresponding registry items)
@@ -84,7 +84,7 @@ async function cleanupRegistry() {
     }
 
     console.log(
-      `\n🎉 Cleanup completed! Removed ${removedCount} orphaned files.`
+      `\n🎉 Cleanup completed! Removed ${removedCount} orphaned files.`,
     );
 
     // Summary
