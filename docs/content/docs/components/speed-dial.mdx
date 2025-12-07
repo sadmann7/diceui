@@ -23,13 +23,28 @@ npx shadcn@latest add @diceui/speed-dial
      Install the following dependencies:
 
      ```package-install
-     @radix-ui/react-slot class-variance-authority
+     @radix-ui/react-slot
      ```
+  </Step>
+  <Step>
+    Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.
+
+    <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
+    Copy and paste the following hooks into your `hooks` directory.
+
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-lazy-ref" />
+    <ComponentSource name="use-as-ref" />
   </Step>
   <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="speed-dial" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
