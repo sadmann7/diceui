@@ -173,8 +173,8 @@ function SpeedDialRoot(props: SpeedDialRootProps) {
   const stateRef = useLazyRef<StoreState>(() => ({
     open: openProp ?? defaultOpen ?? false,
   }));
-  const onOpenChangeRef = useAsRef(onOpenChange);
   const propsRef = useAsRef({
+    onOpenChange,
     onEscapeKeyDown,
     onInteractOutside,
   });
@@ -217,7 +217,7 @@ function SpeedDialRoot(props: SpeedDialRootProps) {
 
         if (key === "open" && typeof value === "boolean") {
           stateRef.current.open = value;
-          onOpenChangeRef.current?.(value);
+          propsRef.current?.onOpenChange?.(value);
         } else {
           stateRef.current[key] = value;
         }
@@ -230,7 +230,7 @@ function SpeedDialRoot(props: SpeedDialRootProps) {
         }
       },
     };
-  }, [listenersRef, stateRef, onOpenChangeRef]);
+  }, [listenersRef, stateRef, propsRef]);
 
   const open = useStore((state) => state.open, store);
 
@@ -280,7 +280,7 @@ function SpeedDialRoot(props: SpeedDialRootProps) {
 
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
-        const activeElement = ownerDocument.activeElement as HTMLElement;
+        const activeElement = ownerDocument.activeElement;
 
         if (event.shiftKey) {
           if (activeElement === firstElement) {
