@@ -46,19 +46,6 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 
 export interface TriggerProps extends React.ComponentProps<typeof Button> {}
 
-export interface PortalProps {
-  /**
-   * The children to render inside the portal.
-   */
-  children?: React.ReactNode;
-
-  /**
-   * The container to mount the portal into.
-   * @default document.body
-   */
-  container?: Element | DocumentFragment | null;
-}
-
 export interface ContentProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface ItemProps extends EmptyProps<"div">, CompositionProps {}

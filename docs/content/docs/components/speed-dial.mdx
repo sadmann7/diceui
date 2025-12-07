@@ -43,14 +43,12 @@ import * as SpeedDial from "@/components/ui/speed-dial";
 return (
   <SpeedDial.Root>
     <SpeedDial.Trigger />
-    <SpeedDial.Portal>
-      <SpeedDial.Content>
-        <SpeedDial.Item>
-          <SpeedDial.Label />
-          <SpeedDial.Action />
-        </SpeedDial.Item>
-      </SpeedDial.Content>
-    </SpeedDial.Portal>
+    <SpeedDial.Content>
+      <SpeedDial.Item>
+        <SpeedDial.Label />
+        <SpeedDial.Action />
+      </SpeedDial.Item>
+    </SpeedDial.Content>
   </SpeedDial.Root>
 )
 ```
@@ -113,15 +111,6 @@ The button that toggles the speed dial open/closed state.
   ]}
 />
 
-### Portal
-
-A portal to render the content outside of the DOM hierarchy. Use this when the speed dial content is being clipped by parent overflow or z-index stacking contexts.
-
-<AutoTypeTable
-  path="./types/docs/speed-dial.ts"
-  name="PortalProps"
-/>
-
 ### Content
 
 The container for the action items that appears when the speed dial is open.
@@ -131,6 +120,36 @@ The container for the action items that appears when the speed dial is open.
   name="ContentProps"
 />
 
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+    {
+      title: "[data-side]",
+      value: ["top", "right", "bottom", "left"],
+    },
+  ]}
+/>
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--speed-dial-gap",
+      description: "Gap between action items. Defaults to 0.5rem.",
+    },
+    {
+      title: "--speed-dial-offset",
+      description: "Offset distance from the trigger. Defaults to 0.5rem.",
+    },
+    {
+      title: "--speed-dial-transform-origin",
+      description: "Transform origin for animations based on the side.",
+    },
+  ]}
+/>
+
 ### Item
 
 A wrapper for each action and its associated label.
@@ -138,6 +157,28 @@ A wrapper for each action and its associated label.
 <AutoTypeTable
   path="./types/docs/speed-dial.ts"
   name="ItemProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+  ]}
+/>
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--speed-dial-delay",
+      description: "Animation delay for staggered item appearance.",
+    },
+    {
+      title: "--speed-dial-transform-origin",
+      description: "Transform origin for item animations.",
+    },
+  ]}
 />
 
 ### Action
