@@ -1,6 +1,4 @@
-import type { VariantProps } from "class-variance-authority";
-import type { Button } from "@/components/ui/button";
-import type { CompositionProps, EmptyProps, Side } from "@/types";
+import type { ButtonProps, CompositionProps, EmptyProps, Side } from "@/types";
 
 interface InteractOutsideEvent extends CustomEvent {
   detail: {
@@ -64,14 +62,15 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   side?: Side;
 }
 
-export interface TriggerProps extends React.ComponentProps<typeof Button> {}
+export interface TriggerProps
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">> {}
 
 export interface ContentProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface ItemProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface ActionProps
-  extends Omit<React.ComponentProps<typeof Button>, "onSelect"> {
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">> {
   /**
    * Callback fired when the action is selected.
    * The speed dial will close after the action is selected unless the event is prevented.
