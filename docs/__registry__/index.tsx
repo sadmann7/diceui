@@ -685,6 +685,48 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["use-isomorphic-layout-effect"],
+      files: [{
+        path: "registry/default/hooks/use-as-ref.ts",
+        type: "registry:hook",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/hooks/use-as-ref.ts")),
+      source: "",
+      chunks: []
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/hooks/use-isomorphic-layout-effect.ts",
+        type: "registry:hook",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/hooks/use-isomorphic-layout-effect.ts")),
+      source: "",
+      chunks: []
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/hooks/use-lazy-ref.ts",
+        type: "registry:hook",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/hooks/use-lazy-ref.ts")),
+      source: "",
+      chunks: []
+    },
     "use-mobile": {
       name: "use-mobile",
       description: "",
