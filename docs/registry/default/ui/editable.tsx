@@ -6,6 +6,8 @@ import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "Editable";
 const LABEL_NAME = "EditableLabel";
@@ -18,16 +20,6 @@ const CANCEL_NAME = "EditableCancel";
 const SUBMIT_NAME = "EditableSubmit";
 
 type Direction = "ltr" | "rtl";
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
 
 interface StoreState {
   value: string;
@@ -503,9 +495,6 @@ function EditablePreview(props: EditablePreviewProps) {
     </PreviewPrimitive>
   );
 }
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
 type InputElement = React.ComponentRef<typeof EditableInput>;
 

@@ -3,6 +3,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
 
 const NODE_COLOR = {
   RED: 0,
@@ -1184,9 +1185,6 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
   }
   return context;
 }
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
 interface MasonryRootProps extends DivProps {
   columnWidth?: number;

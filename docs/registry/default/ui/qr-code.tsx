@@ -4,6 +4,7 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "QRCode";
 const CANVAS_NAME = "QRCodeCanvas";
@@ -26,16 +27,6 @@ interface QRCodeCanvasOpts {
   rendererOpts?: {
     quality?: number;
   };
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
 }
 
 interface StoreState {

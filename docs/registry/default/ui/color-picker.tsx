@@ -23,6 +23,9 @@ import {
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 /**
  * @see https://gist.github.com/bkrmendy/f4582173f50fab209ddfef1377ab31e3
@@ -384,29 +387,6 @@ function parseColorString(value: string): ColorValue | null {
 }
 
 type Direction = "ltr" | "rtl";
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
 
 interface ColorPickerStoreState {
   color: ColorValue;

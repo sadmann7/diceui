@@ -7,6 +7,8 @@ import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
 
 const ROOT_NAME = "ActionBar";
 const GROUP_NAME = "ActionBarGroup";
@@ -27,19 +29,6 @@ interface DivProps extends React.ComponentProps<"div"> {
 type RootElement = React.ComponentRef<typeof ActionBarRoot>;
 type ItemElement = React.ComponentRef<typeof ActionBarItem>;
 type CloseElement = React.ComponentRef<typeof ActionBarClose>;
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
 
 function focusFirst(
   candidates: React.RefObject<HTMLElement | null>[],

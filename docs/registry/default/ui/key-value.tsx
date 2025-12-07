@@ -9,6 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "KeyValue";
 const LIST_NAME = "KeyValueList";
@@ -30,29 +33,6 @@ type RootElement = React.ComponentRef<typeof KeyValueRoot>;
 type KeyInputElement = React.ComponentRef<typeof KeyValueKeyInput>;
 type RemoveElement = React.ComponentRef<typeof KeyValueRemove>;
 type AddElement = React.ComponentRef<typeof KeyValueAdd>;
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
 
 function getErrorId(rootId: string, itemId: string, field: Field) {
   return `${rootId}-${itemId}-${field}-error`;

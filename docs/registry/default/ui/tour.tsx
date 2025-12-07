@@ -20,6 +20,9 @@ import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "Tour";
 const PORTAL_NAME = "TourPortal";
@@ -77,29 +80,6 @@ const OPPOSITE_SIDE: Record<Side, Side> = {
   bottom: "top",
   left: "right",
 };
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
 
 /**
  * @see https://github.com/radix-ui/primitives/blob/main/packages/react/focus-guards/src/focus-guards.tsx

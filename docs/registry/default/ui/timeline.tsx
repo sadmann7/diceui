@@ -6,6 +6,8 @@ import { cva } from "class-variance-authority";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 type Direction = "ltr" | "rtl";
 type Orientation = "vertical" | "horizontal";
@@ -23,19 +25,6 @@ const ITEM_NAME = "TimelineItem";
 const DOT_NAME = "TimelineDot";
 const CONNECTOR_NAME = "TimelineConnector";
 const CONTENT_NAME = "TimelineContent";
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
 
 function getItemStatus(itemIndex: number, activeIndex?: number): Status {
   if (activeIndex === undefined) return "pending";
