@@ -1521,6 +1521,54 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "speed-dial-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "sonner"],
+    registryDependencies: ["speed-dial"],
+    files: [
+      {
+        path: "examples/speed-dial-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "speed-dial-controlled-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "sonner"],
+    registryDependencies: ["button", "speed-dial"],
+    files: [
+      {
+        path: "examples/speed-dial-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "speed-dial-side-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "sonner"],
+    registryDependencies: ["speed-dial"],
+    files: [
+      {
+        path: "examples/speed-dial-side-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "speed-dial-labels-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "sonner"],
+    registryDependencies: ["speed-dial"],
+    files: [
+      {
+        path: "examples/speed-dial-labels-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "stack-demo",
     type: "registry:example",
     registryDependencies: ["stack"],

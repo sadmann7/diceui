@@ -519,6 +519,22 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "speed-dial",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "ui/speed-dial.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "stack",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
