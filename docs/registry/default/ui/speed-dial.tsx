@@ -173,6 +173,7 @@ function SpeedDialRoot(props: SpeedDialRootProps) {
   const rootRef = React.useRef<RootElement>(null);
   const composedRefs = useComposedRefs(ref, rootRef);
   const nodesRef = React.useRef<Map<string, NodeData>>(new Map());
+
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     open: openProp ?? defaultOpen ?? false,
