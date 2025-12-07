@@ -1307,7 +1307,23 @@ function TimePickerInput(props: TimePickerInputProps) {
 
       if (event.key === "Enter") {
         event.preventDefault();
-        inputRef.current?.blur();
+        const placeholder = segment
+          ? segmentPlaceholder[segment]
+          : DEFAULT_SEGMENT_PLACEHOLDER;
+        if (editValue && editValue.length > 0 && editValue !== placeholder) {
+          if (editValue.length === 2) {
+            updateTimeValue(editValue, true);
+          } else if (editValue.length === 1) {
+            const numValue = Number.parseInt(editValue, 10);
+            if (!Number.isNaN(numValue)) {
+              const paddedValue = numValue.toString().padStart(2, "0");
+              updateTimeValue(paddedValue, true);
+            }
+          }
+        }
+        queueMicrotask(() => {
+          inputRef.current?.select();
+        });
       }
 
       if (event.key === "Escape") {

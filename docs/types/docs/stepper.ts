@@ -1,13 +1,12 @@
 import type * as React from "react";
 import type { Button } from "@/components/ui/button";
 import type {
+  ButtonProps,
   CompositionProps,
   Direction,
   EmptyProps,
   Orientation,
 } from "@/types";
-
-type ButtonProps = React.ComponentProps<typeof Button>;
 
 export interface RootProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -65,7 +64,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    */
   onValidate?: (
     value: string,
-    direction: "next" | "prev",
+    direction: "next" | "prev"
   ) => boolean | Promise<boolean>;
 
   /**
