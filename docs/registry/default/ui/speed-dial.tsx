@@ -8,7 +8,6 @@ import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "SpeedDial";
-const ROOT_IMPL_NAME = "SpeedDialImpl";
 const TRIGGER_NAME = "SpeedDialTrigger";
 const CONTENT_NAME = "SpeedDialContent";
 const ITEM_NAME = "SpeedDialItem";
@@ -96,8 +95,17 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
+function useStore<T>(
+  selector: (state: StoreState) => T,
+  ogStore?: Store | null,
+): T {
+  const contextStore = React.useContext(StoreContext);
+
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -143,15 +151,33 @@ interface SpeedDialRootProps extends DivProps {
 }
 
 function SpeedDialRoot(props: SpeedDialRootProps) {
-  const { open, defaultOpen, onOpenChange, side = "top", ...rootProps } = props;
+  const {
+    open: openProp,
+    defaultOpen,
+    onOpenChange,
+    onPointerDownCapture: onPointerDownCaptureProp,
+    onEscapeKeyDown,
+    onInteractOutside,
+    side = "top",
+    asChild,
+    className,
+    ref,
+    ...rootProps
+  } = props;
 
   const contentId = React.useId();
+  const rootRef = React.useRef<RootElement>(null);
+  const composedRefs = useComposedRefs(ref, rootRef);
   const nodesRef = React.useRef<Map<string, NodeData>>(new Map());
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
-    open: open ?? defaultOpen ?? false,
+    open: openProp ?? defaultOpen ?? false,
   }));
   const onOpenChangeRef = useAsRef(onOpenChange);
+  const propsRef = useAsRef({
+    onEscapeKeyDown,
+    onInteractOutside,
+  });
 
   const onNodeRegister = React.useCallback((node: NodeData) => {
     nodesRef.current.set(node.id, node);
@@ -206,54 +232,13 @@ function SpeedDialRoot(props: SpeedDialRootProps) {
     };
   }, [listenersRef, stateRef, onOpenChangeRef]);
 
+  const open = useStore((state) => state.open, store);
+
   useIsomorphicLayoutEffect(() => {
-    if (open !== undefined) {
-      store.setState("open", open);
+    if (openProp !== undefined) {
+      store.setState("open", openProp);
     }
-  }, [open, store]);
-
-  const contextValue = React.useMemo<SpeedDialContextValue>(
-    () => ({
-      contentId,
-      side,
-      onNodeRegister,
-      onNodeUnregister,
-      getNodes,
-    }),
-    [contentId, side, onNodeRegister, onNodeUnregister, getNodes],
-  );
-
-  return (
-    <StoreContext.Provider value={store}>
-      <SpeedDialContext.Provider value={contextValue}>
-        <SpeedDialRootImpl {...rootProps} open={open} />
-      </SpeedDialContext.Provider>
-    </StoreContext.Provider>
-  );
-}
-
-function SpeedDialRootImpl(
-  props: Omit<SpeedDialRootProps, "defaultOpen" | "onOpenChange">,
-) {
-  const {
-    onPointerDownCapture: onPointerDownCaptureProp,
-    onEscapeKeyDown,
-    onInteractOutside,
-    asChild,
-    className,
-    ref,
-    ...rootProps
-  } = props;
-
-  const rootRef = React.useRef<RootElement>(null);
-  const composedRefs = useComposedRefs(ref, rootRef);
-  const store = useStoreContext(ROOT_IMPL_NAME);
-  const { getNodes } = useSpeedDialContext(ROOT_IMPL_NAME);
-  const open = useStore((state) => state.open);
-  const propsRef = useAsRef({
-    onEscapeKeyDown,
-    onInteractOutside,
-  });
+  }, [openProp, store]);
 
   const ownerDocument = rootRef.current?.ownerDocument ?? globalThis?.document;
 
@@ -365,16 +350,31 @@ function SpeedDialRootImpl(
     };
   }, [open, propsRef, ownerDocument, store]);
 
+  const contextValue = React.useMemo<SpeedDialContextValue>(
+    () => ({
+      contentId,
+      side,
+      onNodeRegister,
+      onNodeUnregister,
+      getNodes,
+    }),
+    [contentId, side, onNodeRegister, onNodeUnregister, getNodes],
+  );
+
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <RootPrimitive
-      data-slot="speed-dial"
-      {...rootProps}
-      ref={composedRefs}
-      className={cn("relative flex flex-col items-end", className)}
-      onPointerDownCapture={onPointerDownCapture}
-    />
+    <StoreContext.Provider value={store}>
+      <SpeedDialContext.Provider value={contextValue}>
+        <RootPrimitive
+          data-slot="speed-dial"
+          {...rootProps}
+          ref={composedRefs}
+          className={cn("relative flex flex-col items-end", className)}
+          onPointerDownCapture={onPointerDownCapture}
+        />
+      </SpeedDialContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
@@ -474,16 +474,18 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   const open = useStore((state) => state.open);
   const { contentId, side } = useSpeedDialContext(CONTENT_NAME);
 
+  const orientation =
+    side === "top" || side === "bottom" ? "vertical" : "horizontal";
+
   const ContentPrimitive = asChild ? Slot : "div";
 
   return (
     <ContentPrimitive
       id={contentId}
       role="menu"
-      aria-orientation={
-        side === "top" || side === "bottom" ? "vertical" : "horizontal"
-      }
+      aria-orientation={orientation}
       data-slot="speed-dial-content"
+      data-orientation={orientation}
       data-side={side}
       {...contentProps}
       className={cn(speedDialContentVariants({ side, className }))}
