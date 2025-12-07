@@ -3,6 +3,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,7 @@ import { cn } from "@/lib/utils";
 const ROOT_NAME = "SpeedDial";
 const ROOT_IMPL_NAME = "SpeedDialImpl";
 const TRIGGER_NAME = "SpeedDialTrigger";
+const PORTAL_NAME = "SpeedDialPortal";
 const CONTENT_NAME = "SpeedDialContent";
 const ITEM_NAME = "SpeedDialItem";
 const ACTION_NAME = "SpeedDialAction";
@@ -415,6 +417,30 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
   );
 }
 
+interface SpeedDialPortalProps {
+  children?: React.ReactNode;
+  container?: Element | DocumentFragment | null;
+}
+
+function SpeedDialPortal(props: SpeedDialPortalProps) {
+  const { container: containerProp, children } = props;
+
+  const [mounted, setMounted] = React.useState(false);
+
+  useIsomorphicLayoutEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const container =
+    containerProp ?? (mounted ? globalThis.document?.body : null);
+
+  if (!container) return null;
+
+  return ReactDOM.createPortal(children, container);
+}
+
+SpeedDialPortal.displayName = PORTAL_NAME;
+
 const SpeedDialItemImplContext = React.createContext<number | null>(null);
 
 function useSpeedDialItemImplContext() {
@@ -677,6 +703,7 @@ function SpeedDialLabel({ asChild, className, ...props }: DivProps) {
 export {
   SpeedDialRoot as Root,
   SpeedDialTrigger as Trigger,
+  SpeedDialPortal as Portal,
   SpeedDialContent as Content,
   SpeedDialItem as Item,
   SpeedDialAction as Action,
@@ -685,6 +712,7 @@ export {
   SpeedDialRoot as SpeedDial,
   SpeedDialTrigger,
   SpeedDialContent,
+  SpeedDialPortal,
   SpeedDialItem,
   SpeedDialAction,
   SpeedDialLabel,

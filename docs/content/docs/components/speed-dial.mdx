@@ -43,12 +43,14 @@ import * as SpeedDial from "@/components/ui/speed-dial";
 return (
   <SpeedDial.Root>
     <SpeedDial.Trigger />
-    <SpeedDial.Content>
-      <SpeedDial.Item>
-        <SpeedDial.Label />
-        <SpeedDial.Action />
-      </SpeedDial.Item>
-    </SpeedDial.Content>
+    <SpeedDial.Portal>
+      <SpeedDial.Content>
+        <SpeedDial.Item>
+          <SpeedDial.Label />
+          <SpeedDial.Action />
+        </SpeedDial.Item>
+      </SpeedDial.Content>
+    </SpeedDial.Portal>
   </SpeedDial.Root>
 )
 ```
@@ -109,6 +111,15 @@ The button that toggles the speed dial open/closed state.
       value: ["open", "closed"],
     },
   ]}
+/>
+
+### Portal
+
+A portal to render the content outside of the DOM hierarchy. Use this when the speed dial content is being clipped by parent overflow or z-index stacking contexts.
+
+<AutoTypeTable
+  path="./types/docs/speed-dial.ts"
+  name="PortalProps"
 />
 
 ### Content
