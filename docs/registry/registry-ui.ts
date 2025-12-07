@@ -5,7 +5,11 @@ export const ui: Registry["items"] = [
     name: "action-bar",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["button", "use-as-ref", "use-isomorphic-layout-effect"],
+    registryDependencies: [
+      "button",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+    ],
     files: [
       {
         path: "ui/action-bar.tsx",
@@ -44,7 +48,7 @@ export const ui: Registry["items"] = [
   {
     name: "avatar-group",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: ["@radix-ui/react-slot"],
     files: [
       {
         path: "ui/avatar-group.tsx",
@@ -111,7 +115,6 @@ export const ui: Registry["items"] = [
       "@radix-ui/react-slider",
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
-      "class-variance-authority",
       "lucide-react",
     ],
     registryDependencies: [
@@ -141,7 +144,7 @@ export const ui: Registry["items"] = [
   {
     name: "color-swatch",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: ["@radix-ui/react-slot"],
     files: [
       {
         path: "ui/color-swatch.tsx",
@@ -172,7 +175,7 @@ export const ui: Registry["items"] = [
   {
     name: "cropper",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: ["@radix-ui/react-slot"],
     registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
     files: [
       {
@@ -242,7 +245,7 @@ export const ui: Registry["items"] = [
   {
     name: "fps",
     type: "registry:ui",
-    dependencies: ["class-variance-authority"],
+    dependencies: [],
     files: [
       {
         path: "ui/fps.tsx",
@@ -253,11 +256,7 @@ export const ui: Registry["items"] = [
   {
     name: "segmented-input",
     type: "registry:ui",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "class-variance-authority",
-    ],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     registryDependencies: ["input"],
     files: [
       {
@@ -328,11 +327,7 @@ export const ui: Registry["items"] = [
   {
     name: "marquee",
     type: "registry:ui",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "class-variance-authority",
-    ],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     cssVars: {
       theme: {
         "--animate-marquee-left":
@@ -552,7 +547,7 @@ export const ui: Registry["items"] = [
   {
     name: "speed-dial",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: ["@radix-ui/react-slot"],
     registryDependencies: [
       "button",
       "use-as-ref",
@@ -573,7 +568,7 @@ export const ui: Registry["items"] = [
   {
     name: "stack",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: ["@radix-ui/react-slot"],
     files: [
       {
         path: "ui/stack.tsx",
@@ -584,7 +579,7 @@ export const ui: Registry["items"] = [
   {
     name: "stat",
     type: "registry:ui",
-    dependencies: ["class-variance-authority"],
+    dependencies: [],
     registryDependencies: ["separator"],
     files: [
       {
@@ -599,7 +594,6 @@ export const ui: Registry["items"] = [
     dependencies: [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
-      "class-variance-authority",
       "lucide-react",
     ],
     registryDependencies: [
@@ -674,11 +668,7 @@ export const ui: Registry["items"] = [
   {
     name: "timeline",
     type: "registry:ui",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "class-variance-authority",
-    ],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
     files: [
       {
