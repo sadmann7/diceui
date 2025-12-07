@@ -264,9 +264,15 @@ function SpeedDialRootImpl(
       onPointerDownCaptureProp?.(event);
       if (event.defaultPrevented) return;
 
-      isPointerInsideReactTreeRef.current = true;
+      const target = event.target as HTMLElement;
+      const nodes = getNodes();
+      const isInteractiveElement = nodes.some((node) =>
+        node.ref.current?.contains(target),
+      );
+
+      isPointerInsideReactTreeRef.current = isInteractiveElement;
     },
-    [onPointerDownCaptureProp],
+    [onPointerDownCaptureProp, getNodes],
   );
 
   React.useEffect(() => {
@@ -319,8 +325,8 @@ function SpeedDialRootImpl(
         const target = event.target as HTMLElement;
         const isOutside = !rootRef.current?.contains(target);
 
-        if (isOutside) {
-          function onOutsideEventDispatch() {
+        function onDismiss() {
+          if (isOutside) {
             const interactEvent = new CustomEvent(INTERACT_OUTSIDE, {
               ...EVENT_OPTIONS,
               detail: { originalEvent: event },
@@ -328,19 +334,19 @@ function SpeedDialRootImpl(
 
             propsRef.current?.onInteractOutside?.(interactEvent);
             if (interactEvent.defaultPrevented) return;
-
-            store.setState("open", false);
           }
 
-          if (event.pointerType === "touch") {
-            ownerDocument.removeEventListener("click", onClickRef.current);
-            onClickRef.current = onOutsideEventDispatch;
-            ownerDocument.addEventListener("click", onClickRef.current, {
-              once: true,
-            });
-          } else {
-            onOutsideEventDispatch();
-          }
+          store.setState("open", false);
+        }
+
+        if (event.pointerType === "touch") {
+          ownerDocument.removeEventListener("click", onClickRef.current);
+          onClickRef.current = onDismiss;
+          ownerDocument.addEventListener("click", onClickRef.current, {
+            once: true,
+          });
+        } else {
+          onDismiss();
         }
       } else {
         ownerDocument.removeEventListener("click", onClickRef.current);
