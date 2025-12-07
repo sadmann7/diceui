@@ -8,7 +8,6 @@ import {
   SpeedDialContent,
   SpeedDialItem,
   SpeedDialLabel,
-  SpeedDialPortal,
   SpeedDialTrigger,
 } from "@/registry/default/ui/speed-dial";
 
@@ -18,28 +17,26 @@ export default function SpeedDialDemo() {
       <SpeedDialTrigger className="transition-transform duration-200 ease-out data-[state=closed]:rotate-0 data-[state=open]:rotate-135">
         <Plus />
       </SpeedDialTrigger>
-      <SpeedDialPortal>
-        <SpeedDialContent>
-          <SpeedDialItem>
-            <SpeedDialLabel className="sr-only">Share</SpeedDialLabel>
-            <SpeedDialAction onSelect={() => toast.success("Shared")}>
-              <Share2 />
-            </SpeedDialAction>
-          </SpeedDialItem>
-          <SpeedDialItem>
-            <SpeedDialLabel className="sr-only">Copy</SpeedDialLabel>
-            <SpeedDialAction onSelect={() => toast.success("Copied")}>
-              <Copy />
-            </SpeedDialAction>
-          </SpeedDialItem>
-          <SpeedDialItem>
-            <SpeedDialLabel className="sr-only">Like</SpeedDialLabel>
-            <SpeedDialAction onSelect={() => toast.success("Liked")}>
-              <Heart />
-            </SpeedDialAction>
-          </SpeedDialItem>
-        </SpeedDialContent>
-      </SpeedDialPortal>
+      <SpeedDialContent>
+        <SpeedDialItem>
+          <SpeedDialLabel className="sr-only">Share</SpeedDialLabel>
+          <SpeedDialAction onSelect={() => toast.success("Shared")}>
+            <Share2 />
+          </SpeedDialAction>
+        </SpeedDialItem>
+        <SpeedDialItem>
+          <SpeedDialLabel className="sr-only">Copy</SpeedDialLabel>
+          <SpeedDialAction onSelect={() => toast.success("Copied")}>
+            <Copy />
+          </SpeedDialAction>
+        </SpeedDialItem>
+        <SpeedDialItem>
+          <SpeedDialLabel className="sr-only">Like</SpeedDialLabel>
+          <SpeedDialAction onSelect={() => toast.success("Liked")}>
+            <Heart />
+          </SpeedDialAction>
+        </SpeedDialItem>
+      </SpeedDialContent>
     </SpeedDial>
   );
 }

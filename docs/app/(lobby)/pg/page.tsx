@@ -12,8 +12,8 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <SpeedDialDemo />
-        <SpeedDialLabelsDemo />
-        <SpeedDialSideDemo />
+        {/* <SpeedDialLabelsDemo />
+        <SpeedDialSideDemo /> */}
         <ColorPickerDemo />
       </Demo>
     </Shell>

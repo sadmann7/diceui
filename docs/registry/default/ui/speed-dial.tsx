@@ -3,7 +3,6 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -11,7 +10,6 @@ import { cn } from "@/lib/utils";
 const ROOT_NAME = "SpeedDial";
 const ROOT_IMPL_NAME = "SpeedDialImpl";
 const TRIGGER_NAME = "SpeedDialTrigger";
-const PORTAL_NAME = "SpeedDialPortal";
 const CONTENT_NAME = "SpeedDialContent";
 const ITEM_NAME = "SpeedDialItem";
 const ACTION_NAME = "SpeedDialAction";
@@ -62,6 +60,19 @@ function useLazyRef<T>(fn: () => T) {
   }
 
   return ref as React.RefObject<T>;
+}
+
+function getTransformOrigin(side: Side): string {
+  switch (side) {
+    case "top":
+      return "bottom center";
+    case "bottom":
+      return "top center";
+    case "left":
+      return "right center";
+    case "right":
+      return "left center";
+  }
 }
 
 interface StoreState {
@@ -202,7 +213,13 @@ function SpeedDialRoot(props: SpeedDialRootProps) {
   }, [open, store]);
 
   const contextValue = React.useMemo<SpeedDialContextValue>(
-    () => ({ contentId, side, onNodeRegister, onNodeUnregister, getNodes }),
+    () => ({
+      contentId,
+      side,
+      onNodeRegister,
+      onNodeUnregister,
+      getNodes,
+    }),
     [contentId, side, onNodeRegister, onNodeUnregister, getNodes],
   );
 
@@ -417,30 +434,6 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
   );
 }
 
-interface SpeedDialPortalProps {
-  children?: React.ReactNode;
-  container?: Element | DocumentFragment | null;
-}
-
-function SpeedDialPortal(props: SpeedDialPortalProps) {
-  const { container: containerProp, children } = props;
-
-  const [mounted, setMounted] = React.useState(false);
-
-  useIsomorphicLayoutEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const container =
-    containerProp ?? (mounted ? globalThis.document?.body : null);
-
-  if (!container) return null;
-
-  return ReactDOM.createPortal(children, container);
-}
-
-SpeedDialPortal.displayName = PORTAL_NAME;
-
 const SpeedDialItemImplContext = React.createContext<number | null>(null);
 
 function useSpeedDialItemImplContext() {
@@ -448,14 +441,15 @@ function useSpeedDialItemImplContext() {
 }
 
 const speedDialContentVariants = cva(
-  "absolute flex gap-[var(--speed-dial-gap)]",
+  "absolute z-50 flex gap-[var(--speed-dial-gap)]",
   {
     variants: {
       side: {
-        top: "bottom-full mb-[var(--speed-dial-offset)] flex-col-reverse",
-        bottom: "top-full mt-[var(--speed-dial-offset)] flex-col",
-        left: "right-full mr-[var(--speed-dial-offset)] flex-row-reverse",
-        right: "left-full ml-[var(--speed-dial-offset)] flex-row",
+        top: "right-0 bottom-full mb-[var(--speed-dial-offset)] flex-col-reverse items-end",
+        bottom:
+          "top-full right-0 mt-[var(--speed-dial-offset)] flex-col items-end",
+        left: "right-full mr-[var(--speed-dial-offset)] flex-row-reverse items-center",
+        right: "left-full ml-[var(--speed-dial-offset)] flex-row items-center",
       },
     },
     defaultVariants: {
@@ -472,25 +466,26 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   const { asChild, className, style, children, ...contentProps } = props;
 
   const open = useStore((state) => state.open);
-  const speedDialContext = useSpeedDialContext(CONTENT_NAME);
-  const side = speedDialContext.side;
+  const { contentId, side } = useSpeedDialContext(CONTENT_NAME);
 
   const ContentPrimitive = asChild ? Slot : "div";
 
   return (
     <ContentPrimitive
-      id={speedDialContext.contentId}
+      id={contentId}
       role="menu"
       aria-orientation={
         side === "top" || side === "bottom" ? "vertical" : "horizontal"
       }
       data-slot="speed-dial-content"
+      data-side={side}
       {...contentProps}
       className={cn(speedDialContentVariants({ side, className }))}
       style={
         {
           "--speed-dial-gap": DEFAULT_GAP,
           "--speed-dial-offset": DEFAULT_OFFSET,
+          "--speed-dial-transform-origin": getTransformOrigin(side),
           ...style,
         } as React.CSSProperties
       }
@@ -514,14 +509,14 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 }
 
 const speedDialItemVariants = cva(
-  "flex items-center justify-end gap-2 transition-all duration-200 [transition-delay:var(--speed-dial-delay)]",
+  "flex items-center gap-2 transition-all duration-200 [transform-origin:var(--speed-dial-transform-origin)] [transition-delay:var(--speed-dial-delay)]",
   {
     variants: {
       side: {
-        top: "",
-        bottom: "",
-        left: "",
-        right: "",
+        top: "justify-end",
+        bottom: "justify-end",
+        left: "flex-row-reverse justify-start",
+        right: "justify-start",
       },
       open: {
         true: "translate-x-0 translate-y-0 scale-100 opacity-100",
@@ -562,9 +557,7 @@ const SpeedDialItemContext = React.createContext<string | null>(null);
 function useSpeedDialItemContext(consumerName: string) {
   const context = React.useContext(SpeedDialItemContext);
   if (!context) {
-    throw new Error(
-      `\`${consumerName}\` must be used within \`SpeedDialItem\``,
-    );
+    throw new Error(`\`${consumerName}\` must be used within \`${ITEM_NAME}\``);
   }
   return context;
 }
@@ -584,11 +577,13 @@ function SpeedDialItem(props: DivProps) {
       <ItemPrimitive
         role="none"
         data-slot="speed-dial-item"
+        data-state={open ? "open" : "closed"}
         {...itemProps}
         className={cn(speedDialItemVariants({ side, open, className }))}
         style={
           {
             "--speed-dial-delay": `${delay}ms`,
+            "--speed-dial-transform-origin": getTransformOrigin(side),
             ...style,
           } as React.CSSProperties
         }
@@ -703,7 +698,6 @@ function SpeedDialLabel({ asChild, className, ...props }: DivProps) {
 export {
   SpeedDialRoot as Root,
   SpeedDialTrigger as Trigger,
-  SpeedDialPortal as Portal,
   SpeedDialContent as Content,
   SpeedDialItem as Item,
   SpeedDialAction as Action,
@@ -712,7 +706,6 @@ export {
   SpeedDialRoot as SpeedDial,
   SpeedDialTrigger,
   SpeedDialContent,
-  SpeedDialPortal,
   SpeedDialItem,
   SpeedDialAction,
   SpeedDialLabel,
