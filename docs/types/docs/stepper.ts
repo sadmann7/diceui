@@ -64,7 +64,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
    */
   onValidate?: (
     value: string,
-    direction: "next" | "prev"
+    direction: "next" | "prev",
   ) => boolean | Promise<boolean>;
 
   /**
