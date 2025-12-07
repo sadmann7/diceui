@@ -44,37 +44,58 @@ npx shadcn@latest add @diceui/combobox
 Import the parts, and compose them together.
 
 ```tsx
-import * as Combobox from "@diceui/combobox";
+import {
+  Combobox,
+  ComboboxLabel,
+  ComboboxAnchor,
+  ComboboxBadgeList,
+  ComboboxBadgeItem,
+  ComboboxBadgeItemDelete,
+  ComboboxInput,
+  ComboboxTrigger,
+  ComboboxCancel,
+  ComboboxPortal,
+  ComboboxContent,
+  ComboboxArrow,
+  ComboboxLoading,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxGroupLabel,
+  ComboboxItem,
+  ComboboxItemText,
+  ComboboxItemIndicator,
+  ComboboxSeparator,
+} from "@diceui/combobox";
 
 return (
-  <Combobox.Root>
-    <Combobox.Label />
-    <Combobox.Anchor>
-      <Combobox.BadgeList>
-        <Combobox.BadgeItem>
-          <Combobox.BadgeItemDelete />
-        </Combobox.BadgeItem>
-      </Combobox.BadgeList>
-      <Combobox.Input />
-      <Combobox.Trigger />
-      <Combobox.Cancel />
-    </Combobox.Anchor>
-    <Combobox.Portal>
-      <Combobox.Content>
-        <Combobox.Arrow />
-        <Combobox.Loading />
-        <Combobox.Empty />
-        <Combobox.Group>
-          <Combobox.GroupLabel />
-          <Combobox.Item>
-            <Combobox.ItemText />
-            <Combobox.ItemIndicator />
-          </Combobox.Item>
-        </Combobox.Group>
-        <Combobox.Separator />
-      </Combobox.Content>
-    </Combobox.Portal>
-  </Combobox.Root>
+  <Combobox>
+    <ComboboxLabel />
+    <ComboboxAnchor>
+      <ComboboxBadgeList>
+        <ComboboxBadgeItem>
+          <ComboboxBadgeItemDelete />
+        </ComboboxBadgeItem>
+      </ComboboxBadgeList>
+      <ComboboxInput />
+      <ComboboxTrigger />
+      <ComboboxCancel />
+    </ComboboxAnchor>
+    <ComboboxPortal>
+      <ComboboxContent>
+        <ComboboxArrow />
+        <ComboboxLoading />
+        <ComboboxEmpty />
+        <ComboboxGroup>
+          <ComboboxGroupLabel />
+          <ComboboxItem>
+            <ComboboxItemText />
+            <ComboboxItemIndicator />
+          </ComboboxItem>
+        </ComboboxGroup>
+        <ComboboxSeparator />
+      </ComboboxContent>
+    </ComboboxPortal>
+  </Combobox>
 )
 ```
 
@@ -112,7 +133,7 @@ The container for all combobox parts.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="RootProps"
+  name="ComboboxRootProps"
 />
 
 <DataAttributesTable
@@ -134,7 +155,7 @@ An accessible label that describes the combobox. Associates with the input eleme
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="LabelProps"
+  name="ComboboxLabelProps"
 />
 
 ### Anchor
@@ -143,7 +164,7 @@ A wrapper element that positions the combobox popover relative to the input and 
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="AnchorProps"
+  name="ComboboxAnchorProps"
 />
 
 <DataAttributesTable
@@ -173,7 +194,7 @@ A button that toggles the combobox popover. Handles focus management and keyboar
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="TriggerProps"
+  name="ComboboxTriggerProps"
 />
 
 <DataAttributesTable
@@ -195,7 +216,7 @@ The text input field that users can type into to filter options.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="InputProps"
+  name="ComboboxInputProps"
 />
 
 ### BadgeList
@@ -204,7 +225,7 @@ A container for displaying selected items as badges in a multi-select combobox.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="BadgeListProps"
+  name="ComboboxBadgeListProps"
 />
 
 <DataAttributesTable
@@ -222,7 +243,7 @@ An individual badge representing a selected item in a multi-select combobox.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="BadgeItemProps"
+  name="ComboboxBadgeItemProps"
 />
 
 <DataAttributesTable
@@ -248,7 +269,7 @@ A button to remove a selected item from the multi-select combobox.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="BadgeItemDeleteProps"
+  name="ComboboxBadgeItemDeleteProps"
 />
 
 <DataAttributesTable
@@ -271,7 +292,7 @@ A button that clears the input value and resets the filter.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="CancelProps"
+  name="ComboboxCancelProps"
 />
 
 <DataAttributesTable
@@ -289,7 +310,7 @@ A portal for rendering the combobox content outside of its DOM hierarchy.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="PortalProps"
+  name="ComboboxPortalProps"
 />
 
 
@@ -300,7 +321,7 @@ The popover container for combobox items. Positions the combobox popover relativ
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="ContentProps"
+  name="ComboboxContentProps"
 />
 
 <DataAttributesTable
@@ -351,7 +372,7 @@ A visual arrow element that points to the anchor.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="ArrowProps"
+  name="ComboboxArrowProps"
 />
 
 ### Loading
@@ -360,7 +381,7 @@ A loading indicator for asynchronous filtering operations.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="LoadingProps"
+  name="ComboboxLoadingProps"
 />
 
 ### Empty
@@ -369,7 +390,7 @@ A placeholder component displayed when no options match the current filter.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="EmptyProps"
+  name="ComboboxEmptyProps"
 />
 
 ### Group
@@ -378,7 +399,7 @@ A container for logically grouping related options.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="GroupProps"
+  name="ComboboxGroupProps"
 />
 
 ### GroupLabel
@@ -387,7 +408,7 @@ A label that describes a group of options.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="GroupLabelProps"
+  name="ComboboxGroupLabelProps"
 />
 
 ### Item
@@ -396,7 +417,7 @@ An interactive item in the combobox list.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="ItemProps"
+  name="ComboboxItemProps"
 />
 
 <DataAttributesTable
@@ -422,7 +443,7 @@ The textual content of an item.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="ItemTextProps"
+  name="ComboboxItemTextProps"
 />
 
 ### ItemIndicator
@@ -431,7 +452,7 @@ A visual indicator for selected options.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="ItemIndicatorProps"
+  name="ComboboxItemIndicatorProps"
 />
 
 ### Separator
@@ -440,7 +461,7 @@ A visual divider for separating options or groups.
 
 <AutoTypeTable
   path="./types/docs/combobox.ts"
-  name="SeparatorProps"
+  name="ComboboxSeparatorProps"
 />
 
 ## Accessibility

@@ -5,7 +5,7 @@ import type {
   Orientation,
 } from "@/types";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface ScrollSpyProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The currently active section ID.
    * Use for controlled behavior.
@@ -121,9 +121,11 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   scrollContainer?: HTMLElement | null;
 }
 
-export interface NavProps extends EmptyProps<"nav">, CompositionProps {}
+export interface ScrollSpyNavProps
+  extends EmptyProps<"nav">,
+    CompositionProps {}
 
-export interface LinkProps extends EmptyProps<"a">, CompositionProps {
+export interface ScrollSpyLinkProps extends EmptyProps<"a">, CompositionProps {
   /**
    * The unique value that links the link with the section.
    *
@@ -134,9 +136,13 @@ export interface LinkProps extends EmptyProps<"a">, CompositionProps {
   value: string;
 }
 
-export interface ViewportProps extends EmptyProps<"div">, CompositionProps {}
+export interface ScrollSpyViewportProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface SectionProps extends EmptyProps<"div">, CompositionProps {
+export interface ScrollSpySectionProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The unique value that links the section with the link.
    *

@@ -44,18 +44,25 @@ npx shadcn@latest add @diceui/mention
 Import the parts, and compose them together.
 
 ```tsx
-import * as Mention from "@diceui/mention";
+import {
+  Mention,
+  MentionLabel,
+  MentionInput,
+  MentionPortal,
+  MentionContent,
+  MentionItem,
+} from "@diceui/mention";
 
 return (
-  <Mention.Root>
-    <Mention.Label />
-    <Mention.Input />
-    <Mention.Portal>
-      <Mention.Content>
-        <Mention.Item />
-      </Mention.Content>
-    </Mention.Portal>
-  </Mention.Root>
+  <Mention>
+    <MentionLabel />
+    <MentionInput />
+    <MentionPortal>
+      <MentionContent>
+        <MentionItem />
+      </MentionContent>
+    </MentionPortal>
+  </Mention>
 )
 ```
 
@@ -77,7 +84,7 @@ The container for all mention parts. Mention tags can be styled using the `data-
 
 <AutoTypeTable
   path="./types/docs/mention.ts"
-  name="RootProps"
+  name="MentionRootProps"
 />
 
 <DataAttributesTable
@@ -99,7 +106,7 @@ An accessible label that describes the mention input. Associates with the input 
 
 <AutoTypeTable
   path="./types/docs/mention.ts"
-  name="LabelProps"
+  name="MentionLabelProps"
 />
 
 ### Input
@@ -108,7 +115,7 @@ The text input field that users can type into to trigger mentions.
 
 <AutoTypeTable
   path="./types/docs/mention.ts"
-  name="InputProps"
+  name="MentionInputProps"
 />
 
 ### Portal
@@ -117,7 +124,7 @@ A portal for rendering the mention content outside of its DOM hierarchy.
 
 <AutoTypeTable
   path="./types/docs/mention.ts"
-  name="PortalProps"
+  name="MentionPortalProps"
 />
 
 ### Content
@@ -126,7 +133,7 @@ The popover container for mention items. Positions the mention popover relative 
 
 <AutoTypeTable
   path="./types/docs/mention.ts"
-  name="ContentProps"
+  name="MentionContentProps"
 />
 
 <DataAttributesTable
@@ -169,7 +176,7 @@ An interactive option in the mention list.
 
 <AutoTypeTable
   path="./types/docs/mention.ts"
-  name="ItemProps"
+  name="MentionItemProps"
 />
 
 <DataAttributesTable

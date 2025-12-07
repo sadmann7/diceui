@@ -48,7 +48,7 @@ Import the parts, and compose them together.
 import * as Kanban from "@/components/ui/kanban";
 
 return (
-  <Kanban.Root>
+  <Kanban.Kanban>
     <Kanban.Board>
       <Kanban.Column>
         <Kanban.ColumnHandle />
@@ -58,7 +58,7 @@ return (
       </Kanban.Column>
     </Kanban.Board>
     <Kanban.Overlay />
-  </Kanban.Root>
+  </Kanban.Kanban>
 )
 ```
 
@@ -74,7 +74,7 @@ const [columns, setColumns] = React.useState({
   done: ["Task 3"],
 });
 
-<Kanban.Root value={columns} onValueChange={setColumns}>
+<Kanban.Kanban value={columns} onValueChange={setColumns}>
   <Kanban.Board>
     {Object.entries(columns).map(([columnId, items]) => (
       <Kanban.Column key={columnId} value={columnId}>
@@ -86,7 +86,7 @@ const [columns, setColumns] = React.useState({
       </Kanban.Column>
     ))}
   </Kanban.Board>
-</Kanban.Root>
+</Kanban.Kanban>
 ```
 
 ### With Object Arrays
@@ -104,7 +104,7 @@ const [columns, setColumns] = React.useState({
   ],
 });
 
-<Kanban.Root
+<Kanban.Kanban
   value={columns}
   onValueChange={setColumns}
   getItemValue={(item) => item.id}
@@ -120,7 +120,7 @@ const [columns, setColumns] = React.useState({
       </Kanban.Column>
     ))}
   </Kanban.Board>
-</Kanban.Root>
+</Kanban.Kanban>
 ```
 
 ## Examples
@@ -139,7 +139,7 @@ The main container component for kanban board functionality.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="RootProps"
+  name="KanbanProps"
 />
 
 ### Board
@@ -148,7 +148,7 @@ Container for kanban columns.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="BoardProps"
+  name="KanbanBoardProps"
 />
 
 ### Column
@@ -157,7 +157,7 @@ Individual kanban column component.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="ColumnProps"
+  name="KanbanColumnProps"
 />
 
 <DataAttributesTable
@@ -179,7 +179,7 @@ A button component that acts as a drag handle for kanban columns.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="ColumnHandleProps"
+  name="KanbanColumnHandleProps"
 />
 
 <DataAttributesTable
@@ -201,7 +201,7 @@ Individual kanban item component.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="ItemProps"
+  name="KanbanItemProps"
 />
 
 <DataAttributesTable
@@ -223,7 +223,7 @@ A button component that acts as a drag handle for kanban items.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="ItemHandleProps"
+  name="KanbanItemHandleProps"
 />
 
 <DataAttributesTable
@@ -245,7 +245,7 @@ The overlay component that appears when an item or column is being dragged.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="OverlayProps"
+  name="KanbanOverlayProps"
 />
 
 ## Accessibility

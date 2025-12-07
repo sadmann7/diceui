@@ -515,7 +515,7 @@ type InteractOutsideEvent = CustomEvent<{
 type OpenAutoFocusEvent = CustomEvent<Record<string, never>>;
 type CloseAutoFocusEvent = CustomEvent<Record<string, never>>;
 
-interface TourRootProps extends DivProps {
+interface TourProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -541,7 +541,7 @@ interface TourRootProps extends DivProps {
   stepFooter?: React.ReactElement;
 }
 
-function TourRoot(props: TourRootProps) {
+function Tour(props: TourProps) {
   const {
     open: openProp,
     defaultOpen = false,
@@ -696,14 +696,14 @@ function TourRoot(props: TourRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <TourRootImpl {...rootProps} />
+      <TourImpl {...rootProps} />
     </StoreContext.Provider>
   );
 }
 
-interface TourRootImplProps
+interface TourImplProps
   extends Omit<
-    TourRootProps,
+    TourProps,
     | "open"
     | "defaultOpen"
     | "onOpenChange"
@@ -717,7 +717,7 @@ interface TourRootImplProps
     | "scrollOffset"
   > {}
 
-function TourRootImpl(props: TourRootImplProps) {
+function TourImpl(props: TourImplProps) {
   const {
     onEscapeKeyDown,
     onPointerDownOutside,
@@ -735,7 +735,7 @@ function TourRootImpl(props: TourRootImplProps) {
     ...rootImplProps
   } = props;
 
-  const store = useStoreContext("TourRootImpl");
+  const store = useStoreContext("TourImpl");
   const dir = useDirection(dirProp);
 
   const [portal, setPortal] = React.useState<HTMLElement | null>(null);
@@ -1699,23 +1699,7 @@ function TourFooter(props: DivProps) {
 }
 
 export {
-  TourRoot as Root,
-  TourPortal as Portal,
-  TourSpotlight as Spotlight,
-  TourSpotlightRing as SpotlightRing,
-  TourStep as Step,
-  TourArrow as Arrow,
-  TourHeader as Header,
-  TourTitle as Title,
-  TourDescription as Description,
-  TourClose as Close,
-  TourPrev as Prev,
-  TourNext as Next,
-  TourSkip as Skip,
-  TourStepCounter as StepCounter,
-  TourFooter as Footer,
-  //
-  TourRoot as Tour,
+  Tour,
   TourPortal,
   TourSpotlight,
   TourSpotlightRing,
@@ -1731,5 +1715,5 @@ export {
   TourStepCounter,
   TourFooter,
   //
-  type TourRootProps as TourProps,
+  type TourProps,
 };

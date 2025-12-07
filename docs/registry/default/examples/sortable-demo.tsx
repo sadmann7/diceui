@@ -1,7 +1,12 @@
 "use client";
 
 import * as React from "react";
-import * as Sortable from "@/registry/default/ui/sortable";
+import {
+  Sortable,
+  SortableContent,
+  SortableItem,
+  SortableOverlay,
+} from "@/registry/default/ui/sortable";
 
 export default function SortableDemo() {
   const [tricks, setTricks] = React.useState([
@@ -40,15 +45,15 @@ export default function SortableDemo() {
   ]);
 
   return (
-    <Sortable.Root
+    <Sortable
       value={tricks}
       onValueChange={setTricks}
       getItemValue={(item) => item.id}
       orientation="mixed"
     >
-      <Sortable.Content className="grid auto-rows-fr grid-cols-3 gap-2.5">
+      <SortableContent className="grid auto-rows-fr grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
-          <Sortable.Item key={trick.id} value={trick.id} asChild asHandle>
+          <SortableItem key={trick.id} value={trick.id} asChild asHandle>
             <div className="flex size-full flex-col gap-1 rounded-md border bg-zinc-100 p-4 text-foreground shadow-sm dark:bg-zinc-900">
               <div className="font-medium text-sm leading-tight sm:text-base">
                 {trick.title}
@@ -57,12 +62,12 @@ export default function SortableDemo() {
                 {trick.description}
               </span>
             </div>
-          </Sortable.Item>
+          </SortableItem>
         ))}
-      </Sortable.Content>
-      <Sortable.Overlay>
+      </SortableContent>
+      <SortableOverlay>
         <div className="size-full rounded-md bg-primary/10" />
-      </Sortable.Overlay>
-    </Sortable.Root>
+      </SortableOverlay>
+    </Sortable>
   );
 }

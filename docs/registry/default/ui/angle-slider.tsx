@@ -21,7 +21,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootElement = React.ComponentRef<typeof AngleSliderRoot>;
+type RootElement = React.ComponentRef<typeof AngleSlider>;
 type ThumbElement = React.ComponentRef<typeof AngleSliderThumb>;
 
 function clamp(value: number, [min, max]: [number, number]) {
@@ -301,7 +301,7 @@ function useSliderContext(consumerName: string) {
   return context;
 }
 
-interface AngleSliderRootProps extends Omit<DivProps, "defaultValue"> {
+interface AngleSliderProps extends Omit<DivProps, "defaultValue"> {
   value?: number[];
   defaultValue?: number[];
   onValueChange?: (value: number[]) => void;
@@ -321,7 +321,7 @@ interface AngleSliderRootProps extends Omit<DivProps, "defaultValue"> {
   inverted?: boolean;
 }
 
-function AngleSliderRoot(props: AngleSliderRootProps) {
+function AngleSlider(props: AngleSliderProps) {
   const {
     value,
     defaultValue = [0],
@@ -920,13 +920,7 @@ function AngleSliderValue(props: AngleSliderValueProps) {
 }
 
 export {
-  AngleSliderRoot as Root,
-  AngleSliderTrack as Track,
-  AngleSliderRange as Range,
-  AngleSliderThumb as Thumb,
-  AngleSliderValue as Value,
-  //
-  AngleSliderRoot as AngleSlider,
+  AngleSlider,
   AngleSliderTrack,
   AngleSliderRange,
   AngleSliderThumb,
@@ -934,5 +928,5 @@ export {
   //
   useStore as useAngleSlider,
   //
-  type AngleSliderRootProps as AngleSliderProps,
+  type AngleSliderProps,
 };

@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import * as Masonry from "@/registry/default/ui/masonry";
+import { Masonry, MasonryItem } from "@/registry/default/ui/masonry";
 
 const DEFAULT_ITEMS_PER_PAGE = 100;
 const DEFAULT_MAX_ITEM_COUNT = 5000;
@@ -146,23 +146,23 @@ export default function MasonryPage() {
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="flex flex-col gap-8">
-        <Masonry.Root
+        <Masonry
           gap={10}
           overscan={6}
           linear={linear}
           fallback={<Skeleton className="h-dvh w-full" />}
         >
           {items.map((item) => (
-            <Masonry.Item key={item.id} asChild>
+            <MasonryItem key={item.id} asChild>
               <div
                 className="flex items-center justify-center rounded-md bg-accent p-4"
                 style={{ height: item.height }}
               >
                 {item.id + 1}
               </div>
-            </Masonry.Item>
+            </MasonryItem>
           ))}
-        </Masonry.Root>
+        </Masonry>
         {hasMore && (
           <div
             ref={loaderRef}

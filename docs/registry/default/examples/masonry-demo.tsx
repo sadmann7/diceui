@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import * as Masonry from "@/registry/default/ui/masonry";
+import { Masonry, MasonryItem } from "@/registry/default/ui/masonry";
 
 const items = [
   {
@@ -42,13 +42,13 @@ const items = [
 
 export default function MasonryDemo() {
   return (
-    <Masonry.Root
+    <Masonry
       columnCount={3}
       gap={12}
       fallback={<Skeleton className="h-72 w-full" />}
     >
       {items.map((item) => (
-        <Masonry.Item key={item.id} asChild>
+        <MasonryItem key={item.id} asChild>
           <div className="flex flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-xs">
             <div className="font-medium text-sm leading-tight sm:text-base">
               {item.title}
@@ -57,8 +57,8 @@ export default function MasonryDemo() {
               {item.description}
             </span>
           </div>
-        </Masonry.Item>
+        </MasonryItem>
       ))}
-    </Masonry.Root>
+    </Masonry>
   );
 }

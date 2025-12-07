@@ -270,7 +270,7 @@ function useFileUploadContext(consumerName: string) {
   return context;
 }
 
-interface FileUploadRootProps
+interface FileUploadProps
   extends Omit<React.ComponentProps<"div">, "defaultValue" | "onChange"> {
   value?: File[];
   defaultValue?: File[];
@@ -300,7 +300,7 @@ interface FileUploadRootProps
   required?: boolean;
 }
 
-function FileUploadRoot(props: FileUploadRootProps) {
+function FileUpload(props: FileUploadProps) {
   const {
     value,
     defaultValue,
@@ -1392,7 +1392,7 @@ function FileUploadClear(props: FileUploadClearProps) {
 }
 
 export {
-  FileUploadRoot as FileUpload,
+  FileUpload,
   FileUploadDropzone,
   FileUploadTrigger,
   FileUploadList,
@@ -1403,18 +1403,7 @@ export {
   FileUploadItemDelete,
   FileUploadClear,
   //
-  FileUploadRoot as Root,
-  FileUploadDropzone as Dropzone,
-  FileUploadTrigger as Trigger,
-  FileUploadList as List,
-  FileUploadItem as Item,
-  FileUploadItemPreview as ItemPreview,
-  FileUploadItemMetadata as ItemMetadata,
-  FileUploadItemProgress as ItemProgress,
-  FileUploadItemDelete as ItemDelete,
-  FileUploadClear as Clear,
-  //
   useStore as useFileUpload,
   //
-  type FileUploadRootProps as FileUploadProps,
+  type FileUploadProps,
 };

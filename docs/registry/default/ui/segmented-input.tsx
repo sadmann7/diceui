@@ -35,7 +35,7 @@ function useSegmentedInputContext(consumerName: string) {
   return context;
 }
 
-interface SegmentedInputRootProps extends React.ComponentProps<"div"> {
+interface SegmentedInputProps extends React.ComponentProps<"div"> {
   dir?: Direction;
   orientation?: Orientation;
   size?: Size;
@@ -45,7 +45,7 @@ interface SegmentedInputRootProps extends React.ComponentProps<"div"> {
   required?: boolean;
 }
 
-function SegmentedInputRoot(props: SegmentedInputRootProps) {
+function SegmentedInput(props: SegmentedInputProps) {
   const {
     size = "default",
     dir: dirProp,
@@ -207,9 +207,8 @@ function SegmentedInputItem(props: SegmentedInputItemProps) {
 }
 
 export {
-  SegmentedInputRoot as Root,
-  SegmentedInputItem as Item,
-  //
-  SegmentedInputRoot as SegmentedInput,
+  SegmentedInput,
   SegmentedInputItem,
+  //
+  type SegmentedInputProps,
 };

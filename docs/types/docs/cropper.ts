@@ -32,7 +32,7 @@ export type ObjectFit =
   | "horizontal-cover"
   | "vertical-cover";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface CropperProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The current crop position.
    *
@@ -177,7 +177,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onWheelZoom?: (event: WheelEvent) => void;
 }
 
-export interface ImageProps extends EmptyProps<"img">, CompositionProps {
+export interface CropperImageProps extends EmptyProps<"img">, CompositionProps {
   /**
    * How the image should fit within the container.
    * Overrides the root objectFit prop if provided.
@@ -192,7 +192,9 @@ export interface ImageProps extends EmptyProps<"img">, CompositionProps {
   snapPixels?: boolean;
 }
 
-export interface VideoProps extends EmptyProps<"video">, CompositionProps {
+export interface CropperVideoProps
+  extends EmptyProps<"video">,
+    CompositionProps {
   /**
    * How the video should fit within the container.
    * Overrides the root objectFit prop if provided.
@@ -207,7 +209,7 @@ export interface VideoProps extends EmptyProps<"video">, CompositionProps {
   snapPixels?: boolean;
 }
 
-export interface AreaProps extends EmptyProps<"div">, CompositionProps {
+export interface CropperAreaProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The shape of the crop area.
    * Overrides the root shape prop if provided.

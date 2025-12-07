@@ -7,7 +7,7 @@ import type {
   Orientation,
 } from "@/types";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface StepperProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The current active step value.
    *
@@ -135,9 +135,9 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   nonInteractive?: boolean;
 }
 
-export interface ListProps extends EmptyProps<"div">, CompositionProps {}
+export interface StepperListProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface ItemProps extends EmptyProps<"div">, CompositionProps {
+export interface StepperItemProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique value that links the item with the content.
    *
@@ -162,11 +162,13 @@ export interface ItemProps extends EmptyProps<"div">, CompositionProps {
   disabled?: boolean;
 }
 
-export interface TriggerProps
+export interface StepperTriggerProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
-export interface IndicatorProps extends EmptyProps<"div">, CompositionProps {
+export interface StepperIndicatorProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The display content for the indicator (e.g., step number).
    *
@@ -182,15 +184,21 @@ export interface IndicatorProps extends EmptyProps<"div">, CompositionProps {
     | ((dataState: "inactive" | "active" | "completed") => React.ReactNode);
 }
 
-export interface SeparatorProps extends EmptyProps<"div">, CompositionProps {}
+export interface StepperSeparatorProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface TitleProps extends EmptyProps<"span">, CompositionProps {}
-
-export interface DescriptionProps
+export interface StepperTitleProps
   extends EmptyProps<"span">,
     CompositionProps {}
 
-export interface ContentProps extends EmptyProps<"div">, CompositionProps {
+export interface StepperDescriptionProps
+  extends EmptyProps<"span">,
+    CompositionProps {}
+
+export interface StepperContentProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The unique value that links the content with the item.
    *
@@ -209,6 +217,10 @@ export interface ContentProps extends EmptyProps<"div">, CompositionProps {
   forceMount?: boolean;
 }
 
-export interface PrevProps extends EmptyProps<"button">, CompositionProps {}
+export interface StepperPrevProps
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
-export interface NextProps extends EmptyProps<"button">, CompositionProps {}
+export interface StepperNextProps
+  extends EmptyProps<"button">,
+    CompositionProps {}

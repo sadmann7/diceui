@@ -1,20 +1,22 @@
 import type { Slider } from "@radix-ui/react-slider";
 import type * as React from "react";
-import type { Button } from "@/components/ui/button";
 import type { Input } from "@/components/ui/input";
 import type { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { Select, SelectTrigger } from "@/components/ui/select";
-import type { CompositionProps, ControlledProps, Direction } from "@/types";
+import type {
+  ButtonProps,
+  CompositionProps,
+  ControlledProps,
+  Direction,
+} from "@/types";
 
 type ColorFormat = "hex" | "rgb" | "hsl" | "hsb";
-
-type ButtonProps = React.ComponentProps<typeof Button>;
 
 type SelectTriggerProps = React.ComponentProps<typeof SelectTrigger>;
 
 type SliderProps = React.ComponentProps<typeof Slider>;
 
-export interface RootProps
+export interface ColorPickerProps
   extends Omit<React.ComponentProps<"div">, keyof ControlledProps<"div">>,
     CompositionProps {
   /**
@@ -138,37 +140,37 @@ export interface RootProps
   modal?: boolean;
 }
 
-export interface TriggerProps
+export interface ColorPickerTriggerProps
   extends Omit<
       React.ComponentProps<typeof PopoverTrigger>,
       keyof React.ComponentProps<"button">
     >,
     CompositionProps {}
 
-export interface ContentProps
+export interface ColorPickerContentProps
   extends Omit<
       React.ComponentProps<typeof PopoverContent>,
       keyof React.ComponentProps<"div">
     >,
     CompositionProps {}
 
-export interface AreaProps
+export interface ColorPickerAreaProps
   extends Omit<React.ComponentProps<"div">, keyof React.ComponentProps<"div">>,
     CompositionProps {}
 
-export interface HueSliderProps
+export interface ColorPickerHueSliderProps
   extends Omit<SliderProps, keyof React.ComponentProps<"span">>,
     CompositionProps {}
 
-export interface AlphaSliderProps
+export interface ColorPickerAlphaSliderProps
   extends Omit<SliderProps, keyof React.ComponentProps<"span">>,
     CompositionProps {}
 
-export interface SwatchProps
+export interface ColorPickerSwatchProps
   extends Omit<React.ComponentProps<"div">, keyof React.ComponentProps<"div">>,
     CompositionProps {}
 
-export interface EyeDropperProps
+export interface ColorPickerEyeDropperProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
@@ -186,7 +188,7 @@ export interface EyeDropperProps
   size?: ButtonProps["size"];
 }
 
-export interface FormatSelectProps
+export interface ColorPickerFormatSelectProps
   extends Omit<React.ComponentProps<typeof Select>, "value" | "onValueChange">,
     Pick<SelectTriggerProps, "className">,
     CompositionProps {
@@ -198,7 +200,7 @@ export interface FormatSelectProps
   size?: SelectTriggerProps["size"];
 }
 
-export interface InputProps
+export interface ColorPickerInputProps
   extends Omit<
       React.ComponentProps<typeof Input>,
       "value" | "onChange" | "color" | keyof React.ComponentProps<"input">

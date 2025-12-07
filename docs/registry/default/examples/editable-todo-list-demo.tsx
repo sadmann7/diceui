@@ -5,7 +5,13 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import * as Editable from "@/registry/default/ui/editable";
+import {
+  Editable,
+  EditableArea,
+  EditableInput,
+  EditablePreview,
+  EditableTrigger,
+} from "@/registry/default/ui/editable";
 
 interface Todo {
   id: string;
@@ -51,26 +57,26 @@ export default function EditableTodoListDemo() {
             checked={todo.completed}
             onCheckedChange={() => onToggleTodo(todo.id)}
           />
-          <Editable.Root
+          <Editable
             key={todo.id}
             defaultValue={todo.text}
             onSubmit={(value) => onUpdateTodo(todo.id, value)}
             className="flex flex-1 flex-row items-center gap-1.5"
           >
-            <Editable.Area className="flex-1">
-              <Editable.Preview
+            <EditableArea className="flex-1">
+              <EditablePreview
                 className={cn("w-full rounded-md px-1.5 py-1", {
                   "text-muted-foreground line-through": todo.completed,
                 })}
               />
-              <Editable.Input className="px-1.5 py-1" />
-            </Editable.Area>
-            <Editable.Trigger asChild>
+              <EditableInput className="px-1.5 py-1" />
+            </EditableArea>
+            <EditableTrigger asChild>
               <Button variant="ghost" size="icon" className="size-7">
                 <Edit />
               </Button>
-            </Editable.Trigger>
-          </Editable.Root>
+            </EditableTrigger>
+          </Editable>
           <Button
             variant="ghost"
             size="icon"

@@ -1,6 +1,6 @@
 import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface QRCodeProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The data to encode in the QR code.
    * @example "https://example.com"
@@ -66,7 +66,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   onGenerated?: () => void;
 }
 
-export interface ImageProps extends EmptyProps<"img">, CompositionProps {
+export interface QRCodeImageProps extends EmptyProps<"img">, CompositionProps {
   /**
    * Alternative text for the QR code image.
    *
@@ -79,15 +79,23 @@ export interface ImageProps extends EmptyProps<"img">, CompositionProps {
   alt?: string;
 }
 
-export interface CanvasProps extends EmptyProps<"canvas">, CompositionProps {}
+export interface QRCodeCanvasProps
+  extends EmptyProps<"canvas">,
+    CompositionProps {}
 
-export interface SvgProps extends EmptyProps<"div">, CompositionProps {}
+export interface QRCodeSvgProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface OverlayProps extends EmptyProps<"div">, CompositionProps {}
+export interface QRCodeOverlayProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface SkeletonProps extends EmptyProps<"div">, CompositionProps {}
+export interface QRCodeSkeletonProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface DownloadProps extends EmptyProps<"button">, CompositionProps {
+export interface QRCodeDownloadProps
+  extends EmptyProps<"button">,
+    CompositionProps {
   /**
    * The filename for the downloaded QR code.
    *

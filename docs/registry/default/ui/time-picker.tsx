@@ -50,7 +50,7 @@ interface ButtonProps extends React.ComponentProps<"button"> {
 
 type PopoverContentProps = React.ComponentProps<typeof PopoverContent>;
 
-type RootElement = React.ComponentRef<typeof TimePickerRoot>;
+type RootElement = React.ComponentRef<typeof TimePicker>;
 type InputGroupElement = React.ComponentRef<typeof TimePickerInputGroup>;
 type InputElement = React.ComponentRef<typeof TimePickerInput>;
 type TriggerElement = React.ComponentRef<typeof TimePickerTrigger>;
@@ -277,7 +277,7 @@ function useTimePickerContext(consumerName: string) {
   return context;
 }
 
-interface TimePickerRootProps extends DivProps {
+interface TimePickerProps extends DivProps {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -301,7 +301,7 @@ interface TimePickerRootProps extends DivProps {
   showSeconds?: boolean;
 }
 
-function TimePickerRoot(props: TimePickerRootProps) {
+function TimePicker(props: TimePickerProps) {
   const {
     value,
     defaultValue,
@@ -355,18 +355,18 @@ function TimePickerRoot(props: TimePickerRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <TimePickerRootImpl {...rootProps} value={value} open={open} />
+      <TimePickerImpl {...rootProps} value={value} open={open} />
     </StoreContext.Provider>
   );
 }
 
-interface TimePickerRootImplProps
+interface TimePickerImplProps
   extends Omit<
-    TimePickerRootProps,
+    TimePickerProps,
     "defaultValue" | "defaultOpen" | "onValueChange" | "onOpenChange"
   > {}
 
-function TimePickerRootImpl(props: TimePickerRootImplProps) {
+function TimePickerImpl(props: TimePickerImplProps) {
   const {
     value: valueProp,
     open: openProp,
@@ -393,7 +393,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
     ...rootProps
   } = props;
 
-  const store = useStoreContext("TimePickerRootImpl");
+  const store = useStoreContext("TimePickerImpl");
 
   const value = useStore((state) => state.value);
 
@@ -2209,21 +2209,7 @@ function TimePickerClear(props: ButtonProps) {
 }
 
 export {
-  TimePickerRoot as Root,
-  TimePickerLabel as Label,
-  TimePickerInputGroup as InputGroup,
-  TimePickerInput as Input,
-  TimePickerTrigger as Trigger,
-  TimePickerContent as Content,
-  TimePickerHour as Hour,
-  TimePickerMinute as Minute,
-  TimePickerSecond as Second,
-  TimePickerPeriod as Period,
-  TimePickerSeparator as Separator,
-  TimePickerClear as Clear,
-  //
-  TimePickerRoot as TimePicker,
-  TimePickerRoot,
+  TimePicker,
   TimePickerLabel,
   TimePickerInputGroup,
   TimePickerInput,
@@ -2238,5 +2224,5 @@ export {
   //
   useStore as useTimePicker,
   //
-  type TimePickerRootProps as TimePickerProps,
+  type TimePickerProps,
 };

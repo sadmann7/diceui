@@ -132,10 +132,9 @@ function useEditableContext(consumerName: string) {
   return context;
 }
 
-type RootElement = React.ComponentRef<typeof EditableRoot>;
+type RootElement = React.ComponentRef<typeof Editable>;
 
-interface EditableRootProps
-  extends Omit<React.ComponentProps<"div">, "onSubmit"> {
+interface EditableProps extends Omit<React.ComponentProps<"div">, "onSubmit"> {
   id?: string;
   defaultValue?: string;
   value?: string;
@@ -161,7 +160,7 @@ interface EditableRootProps
   invalid?: boolean;
 }
 
-function EditableRoot(props: EditableRootProps) {
+function Editable(props: EditableProps) {
   const {
     value,
     defaultValue,
@@ -185,7 +184,7 @@ function EditableRoot(props: EditableRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <EditableRootImpl
+      <EditableImpl
         value={value}
         defaultValue={defaultValue}
         editing={editing}
@@ -195,8 +194,8 @@ function EditableRoot(props: EditableRootProps) {
   );
 }
 
-function EditableRootImpl(
-  props: Omit<EditableRootProps, "onValueChange" | "onEditingChange">,
+function EditableImpl(
+  props: Omit<EditableProps, "onValueChange" | "onEditingChange">,
 ) {
   const {
     defaultValue = "",
@@ -803,7 +802,7 @@ function EditableSubmit(props: EditableSubmitProps) {
 }
 
 export {
-  EditableRoot as Editable,
+  Editable,
   EditableLabel,
   EditableArea,
   EditablePreview,
@@ -813,17 +812,7 @@ export {
   EditableCancel,
   EditableSubmit,
   //
-  EditableRoot as Root,
-  EditableLabel as Label,
-  EditableArea as Area,
-  EditablePreview as Preview,
-  EditableInput as Input,
-  EditableTrigger as Trigger,
-  EditableToolbar as Toolbar,
-  EditableCancel as Cancel,
-  EditableSubmit as Submit,
-  //
   useStore as useEditable,
   //
-  type EditableRootProps as EditableProps,
+  type EditableProps,
 };

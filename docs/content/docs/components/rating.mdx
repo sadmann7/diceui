@@ -58,12 +58,12 @@ npx shadcn@latest add @diceui/rating
 Import the parts, and compose them together.
 
 ```tsx
-import * as Rating from "@/components/ui/rating";
+import { Rating, RatingItem } from "@/components/ui/rating";
 
 return (
-  <Rating.Root>
-    <Rating.Item />
-  </Rating.Root>
+  <Rating>
+    <RatingItem />
+  </Rating>
 )
 ```
 
@@ -95,7 +95,7 @@ The main container component for the rating.
 
 <AutoTypeTable
   path="./types/docs/rating.ts"
-  name="RootProps"
+  name="RatingProps"
 />
 
 <DataAttributesTable
@@ -121,7 +121,7 @@ Individual rating item (star) component.
 
 <AutoTypeTable
   path="./types/docs/rating.ts"
-  name="ItemProps"
+  name="RatingItemProps"
 />
 
 <DataAttributesTable

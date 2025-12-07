@@ -31,7 +31,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootElement = React.ComponentRef<typeof SpeedDialRoot>;
+type RootElement = React.ComponentRef<typeof SpeedDial>;
 type TriggerElement = React.ComponentRef<typeof SpeedDialTrigger>;
 type ActionElement = React.ComponentRef<typeof SpeedDialAction>;
 
@@ -125,7 +125,7 @@ function useSpeedDialContext(consumerName: string) {
   return context;
 }
 
-interface SpeedDialRootProps extends DivProps {
+interface SpeedDialProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -134,7 +134,7 @@ interface SpeedDialRootProps extends DivProps {
   side?: Side;
 }
 
-function SpeedDialRoot(props: SpeedDialRootProps) {
+function SpeedDial(props: SpeedDialProps) {
   const {
     open: openProp,
     defaultOpen,
@@ -683,17 +683,12 @@ function SpeedDialLabel({ asChild, className, ...props }: DivProps) {
 }
 
 export {
-  SpeedDialRoot as Root,
-  SpeedDialTrigger as Trigger,
-  SpeedDialContent as Content,
-  SpeedDialItem as Item,
-  SpeedDialAction as Action,
-  SpeedDialLabel as Label,
-  //
-  SpeedDialRoot as SpeedDial,
+  SpeedDial,
   SpeedDialTrigger,
   SpeedDialContent,
   SpeedDialItem,
   SpeedDialAction,
   SpeedDialLabel,
+  //
+  type SpeedDialProps,
 };

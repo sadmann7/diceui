@@ -1,6 +1,6 @@
 import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface FileUploadProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The array of files currently being managed.
    * Use this prop to control the component.
@@ -271,11 +271,17 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   required?: boolean;
 }
 
-export interface DropzoneProps extends EmptyProps<"div">, CompositionProps {}
+export interface FileUploadDropzoneProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface TriggerProps extends EmptyProps<"button">, CompositionProps {}
+export interface FileUploadTriggerProps
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
-export interface ListProps extends EmptyProps<"div">, CompositionProps {
+export interface FileUploadListProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The orientation of the file list.
    *
@@ -311,7 +317,9 @@ export interface ListProps extends EmptyProps<"div">, CompositionProps {
   forceMount?: boolean;
 }
 
-export interface ItemProps extends EmptyProps<"div">, CompositionProps {
+export interface FileUploadItemProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The file to display in the item.
    *
@@ -326,7 +334,9 @@ export interface ItemProps extends EmptyProps<"div">, CompositionProps {
   value: File;
 }
 
-export interface ItemPreviewProps extends EmptyProps<"div">, CompositionProps {
+export interface FileUploadItemPreviewProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The render function for the preview.
    * Override the default preview with access to fallback behavior.
@@ -363,7 +373,9 @@ export interface ItemPreviewProps extends EmptyProps<"div">, CompositionProps {
   render?: (file: File, fallback: () => React.ReactNode) => React.ReactNode;
 }
 
-export interface ItemMetadataProps extends EmptyProps<"div">, CompositionProps {
+export interface FileUploadItemMetadataProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The visual density of the displayed file metadata (name and size).
    *
@@ -375,7 +387,9 @@ export interface ItemMetadataProps extends EmptyProps<"div">, CompositionProps {
   size?: "default" | "sm";
 }
 
-export interface ItemProgressProps extends EmptyProps<"div">, CompositionProps {
+export interface FileUploadItemProgressProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The visual style of the progress indicator.
    *
@@ -423,11 +437,13 @@ export interface ItemProgressProps extends EmptyProps<"div">, CompositionProps {
   forceMount?: boolean;
 }
 
-export interface ItemDeleteProps
+export interface FileUploadItemDeleteProps
   extends EmptyProps<"button">,
     CompositionProps {}
 
-export interface ClearProps extends EmptyProps<"button">, CompositionProps {
+export interface FileUploadClearProps
+  extends EmptyProps<"button">,
+    CompositionProps {
   /**
    * Whether to force mount the clear button even if there are no files.
    * Useful for animating the clear button with animation libraries.

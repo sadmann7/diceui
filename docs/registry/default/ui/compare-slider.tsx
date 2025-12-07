@@ -30,7 +30,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootImplElement = React.ComponentRef<typeof CompareSliderRootImpl>;
+type RootImplElement = React.ComponentRef<typeof CompareSliderImpl>;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -85,7 +85,7 @@ function useCompareSliderContext(consumerName: string) {
   return context;
 }
 
-interface CompareSliderRootProps extends DivProps {
+interface CompareSliderProps extends DivProps {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
@@ -94,7 +94,7 @@ interface CompareSliderRootProps extends DivProps {
   orientation?: Orientation;
 }
 
-function CompareSliderRoot(props: CompareSliderRootProps) {
+function CompareSlider(props: CompareSliderProps) {
   const { value, defaultValue = 50, onValueChange, ...rootProps } = props;
 
   const stateRef = useLazyRef<StoreState>(() => ({
@@ -137,16 +137,13 @@ function CompareSliderRoot(props: CompareSliderRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <CompareSliderRootImpl {...rootProps} />
+      <CompareSliderImpl {...rootProps} />
     </StoreContext.Provider>
   );
 }
 
-function CompareSliderRootImpl(
-  props: Omit<
-    CompareSliderRootProps,
-    "value" | "defaultValue" | "onValueChange"
-  >,
+function CompareSliderImpl(
+  props: Omit<CompareSliderProps, "value" | "defaultValue" | "onValueChange">,
 ) {
   const {
     step = 1,
@@ -497,15 +494,10 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
 }
 
 export {
-  CompareSliderRoot as Root,
-  CompareSliderAfter as After,
-  CompareSliderBefore as Before,
-  CompareSliderHandle as Handle,
-  CompareSliderLabel as Label,
-  //
-  CompareSliderRoot as CompareSlider,
+  CompareSlider,
   CompareSliderAfter,
   CompareSliderBefore,
   CompareSliderHandle,
   CompareSliderLabel,
+  type CompareSliderProps,
 };

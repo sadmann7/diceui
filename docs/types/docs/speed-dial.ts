@@ -6,7 +6,7 @@ interface InteractOutsideEvent extends CustomEvent {
   };
 }
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface SpeedDialProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The controlled open state of the speed dial.
    */
@@ -62,15 +62,19 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   side?: Side;
 }
 
-export interface TriggerProps
+export interface SpeedDialTriggerProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
-export interface ContentProps extends EmptyProps<"div">, CompositionProps {}
+export interface SpeedDialContentProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface ItemProps extends EmptyProps<"div">, CompositionProps {}
+export interface SpeedDialItemProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface ActionProps
+export interface SpeedDialActionProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
@@ -87,4 +91,6 @@ export interface ActionProps
   onSelect?: (event: Event) => void;
 }
 
-export interface LabelProps extends EmptyProps<"div">, CompositionProps {}
+export interface SpeedDialLabelProps
+  extends EmptyProps<"div">,
+    CompositionProps {}

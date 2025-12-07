@@ -189,7 +189,7 @@ interface GetItemValue<T> {
   getItemValue: (item: T) => UniqueIdentifier;
 }
 
-type KanbanRootProps<T> = Omit<DndContextProps, "collisionDetection"> &
+type KanbanProps<T> = Omit<DndContextProps, "collisionDetection"> &
   (T extends object ? GetItemValue<T> : Partial<GetItemValue<T>>) & {
     value: Record<UniqueIdentifier, T[]>;
     onValueChange?: (columns: Record<UniqueIdentifier, T[]>) => void;
@@ -201,7 +201,7 @@ type KanbanRootProps<T> = Omit<DndContextProps, "collisionDetection"> &
     flatCursor?: boolean;
   };
 
-function KanbanRoot<T>(props: KanbanRootProps<T>) {
+function Kanban<T>(props: KanbanProps<T>) {
   const {
     value,
     onValueChange,
@@ -1094,7 +1094,7 @@ function KanbanOverlay(props: KanbanOverlayProps) {
 }
 
 export {
-  KanbanRoot as Kanban,
+  Kanban,
   KanbanBoard,
   KanbanColumn,
   KanbanColumnHandle,
@@ -1102,11 +1102,5 @@ export {
   KanbanItemHandle,
   KanbanOverlay,
   //
-  KanbanRoot as Root,
-  KanbanBoard as Board,
-  KanbanColumn as Column,
-  KanbanColumnHandle as ColumnHandle,
-  KanbanItem as Item,
-  KanbanItemHandle as ItemHandle,
-  KanbanOverlay as Overlay,
+  type KanbanProps,
 };

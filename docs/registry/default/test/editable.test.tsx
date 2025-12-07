@@ -8,7 +8,17 @@ import {
 } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
 
-import * as Editable from "@/registry/default/ui/editable";
+import {
+  Editable,
+  EditableArea,
+  EditableCancel,
+  EditableInput,
+  EditableLabel,
+  EditablePreview,
+  EditableSubmit,
+  EditableToolbar,
+  EditableTrigger,
+} from "@/registry/default/ui/editable";
 
 // Mock ResizeObserver
 class ResizeObserver {
@@ -33,20 +43,20 @@ Element.prototype.scrollIntoView = vi.fn();
 
 describe("Editable", () => {
   function renderEditable(
-    props: Partial<React.ComponentProps<typeof Editable.Root>> = {},
+    props: Partial<React.ComponentProps<typeof Editable>> = {},
   ) {
     return render(
-      <Editable.Root {...props}>
-        <Editable.Label>Title</Editable.Label>
-        <Editable.Area>
-          <Editable.Preview />
-          <Editable.Input />
-          <Editable.Toolbar>
-            <Editable.Cancel data-testid="cancel">Cancel</Editable.Cancel>
-            <Editable.Submit data-testid="submit">Save</Editable.Submit>
-          </Editable.Toolbar>
-        </Editable.Area>
-      </Editable.Root>,
+      <Editable {...props}>
+        <EditableLabel>Title</EditableLabel>
+        <EditableArea>
+          <EditablePreview />
+          <EditableInput />
+          <EditableToolbar>
+            <EditableCancel data-testid="cancel">Cancel</EditableCancel>
+            <EditableSubmit data-testid="submit">Save</EditableSubmit>
+          </EditableToolbar>
+        </EditableArea>
+      </Editable>,
     );
   }
 
@@ -307,14 +317,14 @@ describe("Editable", () => {
 
     // Create a wrapper component that provides the Editable context
     render(
-      <Editable.Root onEdit={onEdit}>
-        <Editable.Label>Title</Editable.Label>
-        <Editable.Area>
-          <Editable.Preview />
-          <Editable.Input />
-        </Editable.Area>
-        <Editable.Trigger data-testid="external-trigger">Edit</Editable.Trigger>
-      </Editable.Root>,
+      <Editable onEdit={onEdit}>
+        <EditableLabel>Title</EditableLabel>
+        <EditableArea>
+          <EditablePreview />
+          <EditableInput />
+        </EditableArea>
+        <EditableTrigger data-testid="external-trigger">Edit</EditableTrigger>
+      </Editable>,
     );
 
     const externalTrigger = screen.getByTestId("external-trigger");
@@ -351,13 +361,13 @@ describe("Editable", () => {
           onSubmit(e);
         }}
       >
-        <Editable.Root name="title" defaultValue="Form Value">
-          <Editable.Label>Form Title</Editable.Label>
-          <Editable.Area>
-            <Editable.Preview />
-            <Editable.Input />
-          </Editable.Area>
-        </Editable.Root>
+        <Editable name="title" defaultValue="Form Value">
+          <EditableLabel>Form Title</EditableLabel>
+          <EditableArea>
+            <EditablePreview />
+            <EditableInput />
+          </EditableArea>
+        </Editable>
         <button type="submit" data-testid="form-submit">
           Submit Form
         </button>

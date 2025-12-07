@@ -505,7 +505,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-type RootElement = React.ComponentRef<typeof CropperRootImpl>;
+type RootElement = React.ComponentRef<typeof CropperImpl>;
 
 interface CropperContextValue {
   aspectRatio: number;
@@ -531,7 +531,7 @@ function useCropperContext(consumerName: string) {
   return context;
 }
 
-interface CropperRootProps extends DivProps {
+interface CropperProps extends DivProps {
   crop?: Point;
   zoom?: number;
   minZoom?: number;
@@ -557,7 +557,7 @@ interface CropperRootProps extends DivProps {
   onWheelZoom?: (event: WheelEvent) => void;
 }
 
-function CropperRoot(props: CropperRootProps) {
+function Cropper(props: CropperProps) {
   const {
     crop = { x: 0, y: 0 },
     zoom = 1,
@@ -729,18 +729,18 @@ function CropperRoot(props: CropperRootProps) {
           data-slot="cropper-wrapper"
           className={cn("relative size-full overflow-hidden", className)}
         >
-          <CropperRootImpl {...rootProps} />
+          <CropperImpl {...rootProps} />
         </div>
       </CropperContext.Provider>
     </StoreContext.Provider>
   );
 }
 
-interface CropperRootImplProps extends CropperRootProps {
+interface CropperImplProps extends CropperProps {
   onWheelZoom?: (event: WheelEvent) => void;
 }
 
-function CropperRootImpl(props: CropperRootImplProps) {
+function CropperImpl(props: CropperImplProps) {
   const { className, asChild, ref, ...contentProps } = props;
 
   const context = useCropperContext(CONTENT_NAME);
@@ -1799,19 +1799,14 @@ function CropperArea(props: CropperAreaProps) {
 }
 
 export {
-  CropperRoot as Root,
-  CropperImage as Image,
-  CropperVideo as Video,
-  CropperArea as Area,
-  //
-  CropperRoot as Cropper,
+  Cropper,
   CropperImage,
   CropperVideo,
   CropperArea,
   //
   useStore as useCropper,
   //
-  type CropperRootProps as CropperProps,
+  type CropperProps,
   type Point as CropperPoint,
   type Size as CropperSize,
   type Area as CropperAreaData,

@@ -1160,7 +1160,7 @@ const MASONRY_ERROR = {
 
 interface DivProps extends React.ComponentProps<"div"> {}
 
-type RootElement = React.ComponentRef<typeof MasonryRoot>;
+type RootElement = React.ComponentRef<typeof Masonry>;
 type ItemElement = React.ComponentRef<typeof MasonryItem>;
 
 interface MasonryContextValue {
@@ -1186,7 +1186,7 @@ function useMasonryContext(name: keyof typeof MASONRY_ERROR) {
   return context;
 }
 
-interface MasonryRootProps extends DivProps {
+interface MasonryProps extends DivProps {
   columnWidth?: number;
   columnCount?: number;
   maxColumnCount?: number;
@@ -1201,7 +1201,7 @@ interface MasonryRootProps extends DivProps {
   asChild?: boolean;
 }
 
-function MasonryRoot(props: MasonryRootProps) {
+function Masonry(props: MasonryProps) {
   const {
     columnWidth = COLUMN_WIDTH,
     columnCount,
@@ -1362,7 +1362,7 @@ function MasonryViewport(props: DivProps) {
   const validChildren = React.Children.toArray(children).filter(
     (child): child is React.ReactElement<MasonryItemPropsWithRef> =>
       React.isValidElement(child) &&
-      (child.type === MasonryItem || child.type === Item),
+      (child.type === MasonryItem || child.type === MasonryItem),
   );
   const itemCount = validChildren.length;
 
@@ -1533,13 +1533,9 @@ function MasonryItem(props: MasonryItemProps) {
   return <ItemPrimitive data-slot="masonry-item" {...itemProps} ref={ref} />;
 }
 
-const Root = MasonryRoot;
-const Item = MasonryItem;
-
 export {
-  MasonryRoot,
+  Masonry,
   MasonryItem,
   //
-  Root,
-  Item,
+  type MasonryProps,
 };

@@ -81,7 +81,7 @@ function useQRCodeContext(consumerName: string) {
   return context;
 }
 
-interface QRCodeRootProps extends Omit<React.ComponentProps<"div">, "onError"> {
+interface QRCodeProps extends Omit<React.ComponentProps<"div">, "onError"> {
   value: string;
   size?: number;
   level?: QRCodeLevel;
@@ -94,7 +94,7 @@ interface QRCodeRootProps extends Omit<React.ComponentProps<"div">, "onError"> {
   asChild?: boolean;
 }
 
-function QRCodeRoot(props: QRCodeRootProps) {
+function QRCode(props: QRCodeProps) {
   const {
     value,
     size = 200,
@@ -500,15 +500,7 @@ function QRCodeSkeleton(props: QRCodeSkeletonProps) {
 }
 
 export {
-  QRCodeRoot as Root,
-  QRCodeCanvas as Canvas,
-  QRCodeSvg as Svg,
-  QRCodeImage as Image,
-  QRCodeOverlay as Overlay,
-  QRCodeSkeleton as Skeleton,
-  QRCodeDownload as Download,
-  //
-  QRCodeRoot as QRCode,
+  QRCode,
   QRCodeCanvas,
   QRCodeSvg,
   QRCodeImage,
@@ -518,5 +510,5 @@ export {
   //
   useStore as useQRCode,
   //
-  type QRCodeRootProps as QRCodeProps,
+  type QRCodeProps,
 };

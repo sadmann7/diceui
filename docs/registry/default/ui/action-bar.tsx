@@ -26,7 +26,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootElement = React.ComponentRef<typeof ActionBarRoot>;
+type RootElement = React.ComponentRef<typeof ActionBar>;
 type ItemElement = React.ComponentRef<typeof ActionBarItem>;
 type CloseElement = React.ComponentRef<typeof ActionBarClose>;
 
@@ -107,7 +107,7 @@ function useFocusContext(consumerName: string) {
   return context;
 }
 
-interface ActionBarRootProps extends DivProps {
+interface ActionBarProps extends DivProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
@@ -121,7 +121,7 @@ interface ActionBarRootProps extends DivProps {
   loop?: boolean;
 }
 
-function ActionBarRoot(props: ActionBarRootProps) {
+function ActionBar(props: ActionBarProps) {
   const {
     open = false,
     onOpenChange,
@@ -657,17 +657,11 @@ function ActionBarSeparator(props: ActionBarSeparatorProps) {
 }
 
 export {
-  ActionBarRoot as Root,
-  ActionBarSelection as Selection,
-  ActionBarGroup as Group,
-  ActionBarItem as Item,
-  ActionBarClose as Close,
-  ActionBarSeparator as Separator,
-  //
-  ActionBarRoot as ActionBar,
+  ActionBar,
   ActionBarSelection,
   ActionBarGroup,
   ActionBarItem,
   ActionBarClose,
   ActionBarSeparator,
+  type ActionBarProps,
 };

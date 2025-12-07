@@ -3,7 +3,7 @@ import type { CompositionProps, EmptyProps } from "@/types";
 /**
  * Props for the Stack root component.
  */
-export interface StackRootProps extends EmptyProps<"div">, CompositionProps {
+export interface StackProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Direction from which items stack.
    * - "top": Items stack upward from the top

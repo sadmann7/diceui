@@ -147,14 +147,14 @@ const timelineVariants = cva(
   },
 );
 
-interface TimelineRootProps extends DivProps {
+interface TimelineProps extends DivProps {
   dir?: Direction;
   orientation?: Orientation;
   variant?: Variant;
   activeIndex?: number;
 }
 
-function TimelineRoot(props: TimelineRootProps) {
+function Timeline(props: TimelineProps) {
   const {
     orientation = "vertical",
     variant = "default",
@@ -697,17 +697,7 @@ function TimelineTime(props: TimelineTimeProps) {
 }
 
 export {
-  TimelineRoot as Root,
-  TimelineItem as Item,
-  TimelineDot as Dot,
-  TimelineConnector as Connector,
-  TimelineContent as Content,
-  TimelineHeader as Header,
-  TimelineTitle as Title,
-  TimelineDescription as Description,
-  TimelineTime as Time,
-  //
-  TimelineRoot as Timeline,
+  Timeline,
   TimelineItem,
   TimelineDot,
   TimelineConnector,
@@ -716,4 +706,6 @@ export {
   TimelineTitle,
   TimelineDescription,
   TimelineTime,
+  //
+  type TimelineProps,
 };

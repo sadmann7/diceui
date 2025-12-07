@@ -49,7 +49,7 @@ Import the parts, and compose them together.
 import * as FileUpload from "@/components/ui/file-upload";
 
 return (
-  <FileUpload.Root>
+  <FileUpload.FileUpload>
     <FileUpload.Dropzone />
     <FileUpload.Trigger />
     <FileUpload.List>
@@ -61,7 +61,7 @@ return (
       </FileUpload.Item>
     </FileUpload.List>
     <FileUpload.Clear />
-  </FileUpload.Root>
+  </FileUpload.FileUpload>
 )
 ```
 
@@ -117,7 +117,7 @@ The main container component for the file upload functionality.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="RootProps"
+  name="FileUploadProps"
 />
 
 ### Dropzone
@@ -126,7 +126,7 @@ A container for drag and drop functionality.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="DropzoneProps"
+  name="FileUploadDropzoneProps"
 />
 
 <DataAttributesTable
@@ -152,7 +152,7 @@ A button that opens the file selection dialog.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="TriggerProps"
+  name="FileUploadTriggerProps"
 />
 
 <DataAttributesTable
@@ -170,7 +170,7 @@ A container for displaying uploaded files.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ListProps"
+  name="FileUploadListProps"
 />
 
 <DataAttributesTable
@@ -192,7 +192,7 @@ Individual file item component.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ItemProps"
+  name="FileUploadItemProps"
 />
 
 ### ItemPreview
@@ -201,7 +201,7 @@ Displays a preview of the file, showing an image for image files or an appropria
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ItemPreviewProps"
+  name="FileUploadItemPreviewProps"
 />
 
 ### ItemMetadata
@@ -210,7 +210,7 @@ Displays file information such as name, size, and error messages.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ItemMetadataProps"
+  name="FileUploadItemMetadataProps"
 />
 
 ### ItemProgress
@@ -219,7 +219,7 @@ Shows the upload progress for a file.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ItemProgressProps"
+  name="FileUploadItemProgressProps"
 />
 
 ### ItemDelete
@@ -228,7 +228,7 @@ A button to remove a file from the list.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ItemDeleteProps"
+  name="FileUploadItemDeleteProps"
 />
 
 ### Clear
@@ -237,7 +237,7 @@ A button to clear all files from the list.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ClearProps"
+  name="FileUploadClearProps"
 />
 
 <DataAttributesTable

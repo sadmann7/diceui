@@ -56,18 +56,25 @@ npx shadcn@latest add "https://diceui.com/r/action-bar"
 ## Layout
 
 ```tsx
-import * as ActionBar from "@/components/ui/action-bar";
+import {
+  ActionBar,
+  ActionBarSelection,
+  ActionBarSeparator,
+  ActionBarGroup,
+  ActionBarItem,
+  ActionBarClose,
+} from "@/components/ui/action-bar";
 
-<ActionBar.Root>
-  <ActionBar.Selection />
-  <ActionBar.Separator />
-  <ActionBar.Group>
-    <ActionBar.Item />
-    <ActionBar.Item />
-  </ActionBar.Group>
-  <ActionBar.Separator />
-  <ActionBar.Close />
-</ActionBar.Root>
+<ActionBar>
+  <ActionBarSelection />
+  <ActionBarSeparator />
+  <ActionBarGroup>
+    <ActionBarItem />
+    <ActionBarItem />
+  </ActionBarGroup>
+  <ActionBarSeparator />
+  <ActionBarClose />
+</ActionBar>
 ```
 
 ## Examples
@@ -86,7 +93,7 @@ The root component that controls the visibility and position of the action bar. 
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="RootProps"
+  name="ActionBarProps"
 />
 
 <DataAttributesTable
@@ -112,7 +119,7 @@ Displays selection information, typically used to show how many items are select
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="SelectionProps"
+  name="ActionBarSelectionProps"
 />
 
 ### Group
@@ -121,7 +128,7 @@ A container for action items that implements roving focus management. Items with
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="GroupProps"
+  name="ActionBarGroupProps"
 />
 
 <DataAttributesTable
@@ -139,7 +146,7 @@ An interactive button item within the action bar. When used inside a `Group`, pa
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="ItemProps"
+  name="ActionBarItemProps"
 />
 
 ### Close
@@ -148,7 +155,7 @@ A button that closes the action bar by calling the `onOpenChange` callback with 
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="CloseProps"
+  name="ActionBarCloseProps"
 />
 
 ### Separator
@@ -157,7 +164,7 @@ A visual separator between action bar items.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="SeparatorProps"
+  name="ActionBarSeparatorProps"
 />
 
 

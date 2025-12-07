@@ -1,7 +1,12 @@
 "use client";
 
 import * as React from "react";
-import * as Sortable from "@/registry/default/ui/sortable";
+import {
+  Sortable,
+  SortableContent,
+  SortableItem,
+  SortableOverlay,
+} from "@/registry/default/ui/sortable";
 
 export default function SortablePrimitiveValuesDemo() {
   const [tricks, setTricks] = React.useState([
@@ -14,29 +19,29 @@ export default function SortablePrimitiveValuesDemo() {
   ]);
 
   return (
-    <Sortable.Root value={tricks} onValueChange={setTricks} orientation="mixed">
-      <Sortable.Content className="grid grid-cols-3 gap-2.5">
+    <Sortable value={tricks} onValueChange={setTricks} orientation="mixed">
+      <SortableContent className="grid grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
-          <Sortable.Item key={trick} value={trick} asChild asHandle>
+          <SortableItem key={trick} value={trick} asChild asHandle>
             <div className="flex size-full flex-col items-center justify-center rounded-md border border-zinc-200 bg-zinc-100 p-8 text-center shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
               <div className="font-medium text-sm leading-tight sm:text-base">
                 {trick}
               </div>
             </div>
-          </Sortable.Item>
+          </SortableItem>
         ))}
-      </Sortable.Content>
-      <Sortable.Overlay>
+      </SortableContent>
+      <SortableOverlay>
         {(activeItem) => (
-          <Sortable.Item value={activeItem.value} asChild>
+          <SortableItem value={activeItem.value} asChild>
             <div className="flex size-full flex-col items-center justify-center rounded-md border border-zinc-200 bg-zinc-100 p-8 text-center shadow-xs dark:border-zinc-800 dark:bg-zinc-900">
               <div className="font-medium text-sm leading-tight sm:text-base">
                 {activeItem.value}
               </div>
             </div>
-          </Sortable.Item>
+          </SortableItem>
         )}
-      </Sortable.Overlay>
-    </Sortable.Root>
+      </SortableOverlay>
+    </Sortable>
   );
 }

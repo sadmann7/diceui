@@ -453,7 +453,7 @@ function useColorPickerContext(consumerName: string) {
   return context;
 }
 
-interface ColorPickerRootProps
+interface ColorPickerProps
   extends Omit<React.ComponentProps<"div">, "onValueChange">,
     Pick<
       React.ComponentProps<typeof Popover>,
@@ -474,7 +474,7 @@ interface ColorPickerRootProps
   required?: boolean;
 }
 
-function ColorPickerRoot(props: ColorPickerRootProps) {
+function ColorPicker(props: ColorPickerProps) {
   const {
     value: valueProp,
     defaultValue = "#000000",
@@ -577,7 +577,7 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
 
   return (
     <ColorPickerStoreContext.Provider value={store}>
-      <ColorPickerRootImpl
+      <ColorPickerImpl
         {...rootProps}
         value={valueProp}
         defaultOpen={defaultOpen}
@@ -592,9 +592,9 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
   );
 }
 
-interface ColorPickerRootImplProps
+interface ColorPickerImplProps
   extends Omit<
-    ColorPickerRootProps,
+    ColorPickerProps,
     | "defaultValue"
     | "onValueChange"
     | "onOpenChange"
@@ -603,7 +603,7 @@ interface ColorPickerRootImplProps
     | "onFormatChange"
   > {}
 
-function ColorPickerRootImpl(props: ColorPickerRootImplProps) {
+function ColorPickerImpl(props: ColorPickerImplProps) {
   const {
     value: valueProp,
     dir: dirProp,
@@ -620,7 +620,7 @@ function ColorPickerRootImpl(props: ColorPickerRootImplProps) {
     ...rootProps
   } = props;
 
-  const store = useColorPickerStoreContext("ColorPickerRootImpl");
+  const store = useColorPickerStoreContext("ColorPickerImpl");
 
   const dir = useDirection(dirProp);
 
@@ -1625,7 +1625,7 @@ function HsbInput(props: HsbInputProps) {
 }
 
 export {
-  ColorPickerRoot as ColorPicker,
+  ColorPicker,
   ColorPickerTrigger,
   ColorPickerContent,
   ColorPickerArea,
@@ -1636,16 +1636,7 @@ export {
   ColorPickerFormatSelect,
   ColorPickerInput,
   //
-  ColorPickerRoot as Root,
-  ColorPickerTrigger as Trigger,
-  ColorPickerContent as Content,
-  ColorPickerArea as Area,
-  ColorPickerHueSlider as HueSlider,
-  ColorPickerAlphaSlider as AlphaSlider,
-  ColorPickerSwatch as Swatch,
-  ColorPickerEyeDropper as EyeDropper,
-  ColorPickerFormatSelect as FormatSelect,
-  ColorPickerInput as Input,
-  //
   useColorPickerStore as useColorPicker,
+  //
+  type ColorPickerProps,
 };

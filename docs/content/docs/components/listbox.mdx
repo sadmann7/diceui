@@ -44,17 +44,23 @@ npx shadcn@latest add @diceui/listbox
 Import the parts, and compose them together.
 
 ```tsx
-import * as Listbox from "@diceui/listbox"
+import {
+  ListboxRoot,
+  ListboxGroup,
+  ListboxGroupLabel,
+  ListboxItem,
+  ListboxItemIndicator,
+} from "@diceui/listbox"
 
 return (
-  <Listbox.Root>
-    <Listbox.Group>
-      <Listbox.GroupLabel/>
-      <Listbox.Item >
-        <Listbox.ItemIndicator />
-      </Listbox.Item>
-    </Listbox.Group>
-  </Listbox.Root>
+  <ListboxRoot>
+    <ListboxGroup>
+      <ListboxGroupLabel/>
+      <ListboxItem >
+        <ListboxItemIndicator />
+      </ListboxItem>
+    </ListboxGroup>
+  </ListboxRoot>
 )
 ```
 
@@ -91,7 +97,7 @@ The root component for creating listboxes.
 
 <AutoTypeTable
   path="./types/docs/listbox.ts"
-  name="RootProps"
+  name="ListboxRootProps"
 />
 
 ### Group
@@ -100,7 +106,7 @@ A group of items inside the selectable list.
 
 <AutoTypeTable
   path="./types/docs/listbox.ts"
-  name="GroupProps"
+  name="ListboxGroupProps"
 />
 
 ### GroupLabel
@@ -109,7 +115,7 @@ A label for the group of items.
 
 <AutoTypeTable
   path="./types/docs/listbox.ts"
-  name="GroupLabelProps"
+  name="ListboxGroupLabelProps"
 />
 
 ### Item
@@ -118,7 +124,7 @@ An item inside the selectable list.
 
 <AutoTypeTable
   path="./types/docs/listbox.ts"
-  name="ItemProps"
+  name="ListboxItemProps"
 />
 
 ### ItemIndicator
@@ -127,7 +133,7 @@ A visual indicator that shows when the item is selected.
 
 <AutoTypeTable
   path="./types/docs/listbox.ts"
-  name="ItemIndicatorProps"
+  name="ListboxItemIndicatorProps"
 />
 
 ## Accessibility

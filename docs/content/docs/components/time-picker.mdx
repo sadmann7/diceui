@@ -58,24 +58,35 @@ npx shadcn@latest add @diceui/time-picker
 Import the parts, and compose them together.
 
 ```tsx
-import * as TimePicker from "@/components/ui/time-picker";
+import {
+  TimePicker,
+  TimePickerLabel,
+  TimePickerInputGroup,
+  TimePickerInput,
+  TimePickerSeparator,
+  TimePickerTrigger,
+  TimePickerContent,
+  TimePickerHour,
+  TimePickerMinute,
+  TimePickerClear,
+} from "@/components/ui/time-picker";
 
 return (
-  <TimePicker.Root>
-    <TimePicker.Label />
-    <TimePicker.InputGroup>
-      <TimePicker.Input segment="hour" />
-      <TimePicker.Separator />
-      <TimePicker.Input segment="minute" />
-      <TimePicker.Input segment="period" />
-      <TimePicker.Trigger />
-    </TimePicker.InputGroup>
-    <TimePicker.Content>
-      <TimePicker.Hour />
-      <TimePicker.Minute />
-      <TimePicker.Clear />
-    </TimePicker.Content>
-  </TimePicker.Root>
+  <TimePicker>
+    <TimePickerLabel />
+    <TimePickerInputGroup>
+      <TimePickerInput segment="hour" />
+      <TimePickerSeparator />
+      <TimePickerInput segment="minute" />
+      <TimePickerInput segment="period" />
+      <TimePickerTrigger />
+    </TimePickerInputGroup>
+    <TimePickerContent>
+      <TimePickerHour />
+      <TimePickerMinute />
+      <TimePickerClear />
+    </TimePickerContent>
+  </TimePicker>
 )
 ```
 
@@ -131,7 +142,7 @@ The main container component for time picker functionality.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="RootProps"
+  name="TimePickerProps"
 />
 
 <DataAttributesTable
@@ -157,7 +168,7 @@ The label component for the time picker field.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="LabelProps"
+  name="TimePickerLabelProps"
 />
 
 ### InputGroup
@@ -166,7 +177,7 @@ The container for input segments that sets up CSS variables for dynamic segment 
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="InputGroupProps"
+  name="TimePickerInputGroupProps"
 />
 
 <DataAttributesTable
@@ -215,7 +226,7 @@ Button to open the time picker content.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="TriggerProps"
+  name="TimePickerTriggerProps"
 />
 
 <DataAttributesTable
@@ -245,7 +256,7 @@ Container for the time selection interface.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="ContentProps"
+  name="TimePickerContentProps"
 />
 
 <DataAttributesTable
@@ -271,7 +282,7 @@ Component for selecting hours.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="HourProps"
+  name="TimePickerHourProps"
 />
 
 ### Minute
@@ -280,7 +291,7 @@ Component for selecting minutes.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="MinuteProps"
+  name="TimePickerMinuteProps"
 />
 
 ### Second
@@ -289,7 +300,7 @@ Component for selecting seconds.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="SecondProps"
+  name="TimePickerSecondProps"
 />
 
 ### Period
@@ -298,7 +309,7 @@ Component for selecting AM/PM in 12-hour format.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="PeriodProps"
+  name="TimePickerPeriodProps"
 />
 
 ### Separator
@@ -307,7 +318,7 @@ Visual separator between time units.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="SeparatorProps"
+  name="TimePickerSeparatorProps"
 />
 
 ### Clear
@@ -316,7 +327,7 @@ Button to clear the selected time.
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="ClearProps"
+  name="TimePickerClearProps"
 />
 
 ### Input
@@ -325,7 +336,7 @@ Inline editable input field for time segments (hour, minute, second, period).
 
 <AutoTypeTable
   path="./types/docs/time-picker.ts"
-  name="InputProps"
+  name="TimePickerInputProps"
 />
 
 <CSSVariablesTable

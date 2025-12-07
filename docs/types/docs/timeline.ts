@@ -5,7 +5,7 @@ import type {
   Orientation,
 } from "@/types";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface TimelineProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The orientation of the timeline.
    *
@@ -45,17 +45,29 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   activeIndex?: number;
 }
 
-export interface ItemProps extends EmptyProps<"div">, CompositionProps {}
+export interface TimelineItemProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface HeaderProps extends EmptyProps<"div">, CompositionProps {}
+export interface TimelineHeaderProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface TitleProps extends EmptyProps<"div">, CompositionProps {}
+export interface TimelineTitleProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface DescriptionProps extends EmptyProps<"div">, CompositionProps {}
+export interface TimelineDescriptionProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface ContentProps extends EmptyProps<"div">, CompositionProps {}
+export interface TimelineContentProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface TimeProps extends EmptyProps<"time">, CompositionProps {
+export interface TimelineTimeProps
+  extends EmptyProps<"time">,
+    CompositionProps {
   /**
    * The datetime attribute for the time element.
    *
@@ -66,9 +78,11 @@ export interface TimeProps extends EmptyProps<"time">, CompositionProps {
   dateTime?: string;
 }
 
-export interface DotProps extends EmptyProps<"div">, CompositionProps {}
+export interface TimelineDotProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface ConnectorProps extends EmptyProps<"div">, CompositionProps {
+export interface TimelineConnectorProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * When `true`, forces the connector to be rendered even if it's the last item.
    * Useful for controlling animations with external animation libraries.

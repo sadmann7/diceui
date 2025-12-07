@@ -61,7 +61,7 @@ Import the parts, and compose them together.
 import * as KeyValue from "@/components/ui/key-value";
 
 return (
-  <KeyValue.Root>
+  <KeyValue.KeyValue>
     <KeyValue.List>
       <KeyValue.Item>
         <KeyValue.KeyInput />
@@ -72,7 +72,7 @@ return (
       </KeyValue.Item>
     </KeyValue.List>
     <KeyValue.Add />
-  </KeyValue.Root>
+  </KeyValue.KeyValue>
 )
 ```
 
@@ -104,7 +104,7 @@ The main container component that manages the key-value items state.
 
 <AutoTypeTable
   path="types/docs/key-value.ts"
-  name="RootProps"
+  name="KeyValueProps"
 />
 
 <DataAttributesTable
@@ -130,7 +130,7 @@ Container for rendering the list of key-value items.
 
 <AutoTypeTable
   path="types/docs/key-value.ts"
-  name="ListProps"
+  name="KeyValueListProps"
 />
 
 <DataAttributesTable
@@ -148,7 +148,7 @@ Individual key-value pair item container.
 
 <AutoTypeTable
   path="types/docs/key-value.ts"
-  name="ItemProps"
+  name="KeyValueItemProps"
 />
 
 <DataAttributesTable
@@ -166,7 +166,7 @@ Input field for the key part of the item.
 
 <AutoTypeTable
   path="types/docs/key-value.ts"
-  name="KeyInputProps"
+  name="KeyValueKeyInputProps"
 />
 
 ### ValueInput
@@ -175,7 +175,7 @@ Input field for the value part of the item.
 
 <AutoTypeTable
   path="types/docs/key-value.ts"
-  name="ValueInputProps"
+  name="KeyValueValueInputProps"
 />
 
 ### Remove
@@ -184,7 +184,7 @@ Button to remove a key-value item.
 
 <AutoTypeTable
   path="types/docs/key-value.ts"
-  name="RemoveProps"
+  name="KeyValueRemoveProps"
 />
 
 ### Add
@@ -193,7 +193,7 @@ Button to add a new key-value item.
 
 <AutoTypeTable
   path="types/docs/key-value.ts"
-  name="AddProps"
+  name="KeyValueAddProps"
 />
 
 ### Error
@@ -202,7 +202,7 @@ Error message display for validation errors.
 
 <AutoTypeTable
   path="types/docs/key-value.ts"
-  name="ErrorProps"
+  name="KeyValueErrorProps"
 />
 
 ## Accessibility

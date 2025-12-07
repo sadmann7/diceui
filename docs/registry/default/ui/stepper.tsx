@@ -205,7 +205,7 @@ function useStepperContext(consumerName: string) {
   return context;
 }
 
-interface StepperRootProps extends DivProps {
+interface StepperProps extends DivProps {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -224,7 +224,7 @@ interface StepperRootProps extends DivProps {
   nonInteractive?: boolean;
 }
 
-function StepperRoot(props: StepperRootProps) {
+function Stepper(props: StepperProps) {
   const {
     value,
     defaultValue,
@@ -1217,19 +1217,7 @@ function StepperNext(props: ButtonProps) {
 }
 
 export {
-  StepperRoot as Root,
-  StepperList as List,
-  StepperItem as Item,
-  StepperTrigger as Trigger,
-  StepperIndicator as Indicator,
-  StepperSeparator as Separator,
-  StepperTitle as Title,
-  StepperDescription as Description,
-  StepperContent as Content,
-  StepperPrev as Prev,
-  StepperNext as Next,
-  //
-  StepperRoot as Stepper,
+  Stepper,
   StepperList,
   StepperItem,
   StepperTrigger,
@@ -1243,5 +1231,5 @@ export {
   //
   useStore as useStepper,
   //
-  type StepperRootProps as StepperProps,
+  type StepperProps,
 };

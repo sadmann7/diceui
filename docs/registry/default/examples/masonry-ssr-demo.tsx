@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import * as Masonry from "@/registry/default/ui/masonry";
+import { Masonry, MasonryItem } from "@/registry/default/ui/masonry";
 
 interface SkateboardTrick {
   id: string;
@@ -76,7 +76,7 @@ export default function MasonrySSRDemo() {
   );
 
   return (
-    <Masonry.Root
+    <Masonry
       columnCount={3}
       gap={{ column: 8, row: 8 }}
       className="w-full"
@@ -89,13 +89,13 @@ export default function MasonrySSRDemo() {
       }
     >
       {tricks.map((trick) => (
-        <Masonry.Item
+        <MasonryItem
           key={trick.id}
           className="relative overflow-hidden transition-all duration-300 hover:scale-[1.02]"
         >
           <TrickCard trick={trick} />
-        </Masonry.Item>
+        </MasonryItem>
       ))}
-    </Masonry.Root>
+    </Masonry>
   );
 }

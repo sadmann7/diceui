@@ -167,7 +167,7 @@ function useFocusContext(consumerName: string) {
   return context;
 }
 
-interface RatingRootProps extends React.ComponentProps<"div"> {
+interface RatingProps extends React.ComponentProps<"div"> {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
@@ -186,7 +186,7 @@ interface RatingRootProps extends React.ComponentProps<"div"> {
   name?: string;
 }
 
-function RatingRoot(props: RatingRootProps) {
+function Rating(props: RatingProps) {
   const {
     value,
     defaultValue = 0,
@@ -237,15 +237,15 @@ function RatingRoot(props: RatingRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <RatingRootImpl {...rootProps} value={value} />
+      <RatingImpl {...rootProps} value={value} />
     </StoreContext.Provider>
   );
 }
 
-interface RatingRootImplProps
-  extends Omit<RatingRootProps, "defaultValue" | "onValueChange" | "onHover"> {}
+interface RatingImplProps
+  extends Omit<RatingProps, "defaultValue" | "onValueChange" | "onHover"> {}
 
-function RatingRootImpl(props: RatingRootImplProps) {
+function RatingImpl(props: RatingImplProps) {
   const {
     value,
     id: idProp,
@@ -266,7 +266,7 @@ function RatingRootImpl(props: RatingRootImplProps) {
     ...rootProps
   } = props;
 
-  const store = useStoreContext("RatingRootImpl");
+  const store = useStoreContext("RatingImpl");
 
   useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
@@ -919,12 +919,4 @@ function RatingItem(props: RatingItemProps) {
   );
 }
 
-export {
-  RatingRoot as Root,
-  RatingItem as Item,
-  //
-  RatingRoot as Rating,
-  RatingItem,
-  //
-  useStore as useRating,
-};
+export { Rating, RatingItem, useStore as useRating, type RatingProps };
