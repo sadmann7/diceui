@@ -3,8 +3,7 @@
   "type": "registry:ui",
   "dependencies": [
     "@radix-ui/react-slot",
-    "@radix-ui/react-direction",
-    "class-variance-authority"
+    "@radix-ui/react-direction"
   ],
   "files": [
     {

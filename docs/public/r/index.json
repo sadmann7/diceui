@@ -6,7 +6,9 @@
       "@radix-ui/react-slot"
     ],
     "registryDependencies": [
-      "button"
+      "button",
+      "use-as-ref",
+      "use-isomorphic-layout-effect"
     ],
     "files": [
       {
@@ -30,6 +32,10 @@
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
     ],
+    "registryDependencies": [
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
+    ],
     "files": [
       {
         "path": "ui/angle-slider.tsx",
@@ -49,8 +55,7 @@
     "name": "avatar-group",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "class-variance-authority"
+      "@radix-ui/react-slot"
     ],
     "files": [
       {
@@ -124,14 +129,16 @@
       "@radix-ui/react-slider",
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
-      "class-variance-authority",
       "lucide-react"
     ],
     "registryDependencies": [
       "button",
       "input",
       "popover",
-      "select"
+      "select",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
     ],
     "files": [
       {
@@ -152,8 +159,7 @@
     "name": "color-swatch",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "class-variance-authority"
+      "@radix-ui/react-slot"
     ],
     "files": [
       {
@@ -168,6 +174,11 @@
     "dependencies": [
       "@radix-ui/react-slot",
       "lucide-react"
+    ],
+    "registryDependencies": [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
     ],
     "files": [
       {
@@ -184,8 +195,11 @@
     "name": "cropper",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "class-variance-authority"
+      "@radix-ui/react-slot"
+    ],
+    "registryDependencies": [
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
     ],
     "files": [
       {
@@ -223,6 +237,10 @@
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
     ],
+    "registryDependencies": [
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
+    ],
     "files": [
       {
         "path": "ui/editable.tsx",
@@ -246,6 +264,9 @@
       "@radix-ui/react-direction",
       "lucide-react"
     ],
+    "registryDependencies": [
+      "use-lazy-ref"
+    ],
     "files": [
       {
         "path": "ui/file-upload.tsx",
@@ -256,9 +277,7 @@
   {
     "name": "fps",
     "type": "registry:ui",
-    "dependencies": [
-      "class-variance-authority"
-    ],
+    "dependencies": [],
     "files": [
       {
         "path": "ui/fps.tsx",
@@ -271,8 +290,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "class-variance-authority"
+      "@radix-ui/react-direction"
     ],
     "registryDependencies": [
       "input"
@@ -315,7 +333,10 @@
     "registryDependencies": [
       "button",
       "input",
-      "textarea"
+      "textarea",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
     ],
     "files": [
       {
@@ -351,8 +372,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "class-variance-authority"
+      "@radix-ui/react-direction"
     ],
     "files": [
       {
@@ -449,6 +469,9 @@
       "@diceui/masonry",
       "@radix-ui/react-slot"
     ],
+    "registryDependencies": [
+      "use-isomorphic-layout-effect"
+    ],
     "files": [
       {
         "path": "ui/masonry.tsx",
@@ -475,7 +498,8 @@
       "select",
       "slider",
       "tooltip",
-      "dropdown-menu"
+      "dropdown-menu",
+      "use-lazy-ref"
     ],
     "files": [
       {
@@ -542,6 +566,11 @@
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
     ],
+    "registryDependencies": [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
+    ],
     "files": [
       {
         "path": "ui/scroll-spy.tsx",
@@ -578,11 +607,13 @@
     "name": "speed-dial",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "class-variance-authority"
+      "@radix-ui/react-slot"
     ],
     "registryDependencies": [
-      "button"
+      "button",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
     ],
     "files": [
       {
@@ -599,8 +630,7 @@
     "name": "stack",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "class-variance-authority"
+      "@radix-ui/react-slot"
     ],
     "files": [
       {
@@ -612,9 +642,7 @@
   {
     "name": "stat",
     "type": "registry:ui",
-    "dependencies": [
-      "class-variance-authority"
-    ],
+    "dependencies": [],
     "registryDependencies": [
       "separator"
     ],
@@ -631,11 +659,13 @@
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
-      "class-variance-authority",
       "lucide-react"
     ],
     "registryDependencies": [
-      "button"
+      "button",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
     ],
     "files": [
       {
@@ -658,6 +688,9 @@
     "devDependencies": [
       "@types/qrcode"
     ],
+    "registryDependencies": [
+      "use-lazy-ref"
+    ],
     "files": [
       {
         "path": "ui/qr-code.tsx",
@@ -672,6 +705,11 @@
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
       "lucide-react"
+    ],
+    "registryDependencies": [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
     ],
     "files": [
       {
@@ -707,8 +745,11 @@
     "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "class-variance-authority"
+      "@radix-ui/react-direction"
+    ],
+    "registryDependencies": [
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
     ],
     "files": [
       {
@@ -728,7 +769,10 @@
       "@radix-ui/react-slot"
     ],
     "registryDependencies": [
-      "popover"
+      "popover",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
     ],
     "files": [
       {
@@ -761,6 +805,11 @@
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
       "lucide-react"
+    ],
+    "registryDependencies": [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref"
     ],
     "files": [
       {

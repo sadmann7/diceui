@@ -1,9 +1,7 @@
 {
   "name": "stat",
   "type": "registry:ui",
-  "dependencies": [
-    "class-variance-authority"
-  ],
+  "dependencies": [],
   "registryDependencies": [
     "separator"
   ],
