@@ -474,36 +474,30 @@ function ActionBarItem(props: ActionBarItemProps) {
     };
   }, [focusContext, itemId, disabled]);
 
-  const onItemSelect = React.useCallback(() => {
-    const item = itemRef.current;
-    if (!item) return;
-
-    const itemSelectEvent = new CustomEvent(ITEM_SELECT, {
-      bubbles: true,
-      cancelable: true,
-    });
-
-    item.addEventListener(ITEM_SELECT, (event) => onSelect?.(event), {
-      once: true,
-    });
-
-    item.dispatchEvent(itemSelectEvent);
-
-    if (!itemSelectEvent.defaultPrevented) {
-      onOpenChange?.(false);
-    }
-  }, [onOpenChange, onSelect]);
-
   const onClick = React.useCallback(
     (event: React.MouseEvent<ItemElement>) => {
       onClickProp?.(event);
       if (event.defaultPrevented) return;
 
-      if (onSelect) {
-        onItemSelect();
+      const item = itemRef.current;
+      if (!item) return;
+
+      const itemSelectEvent = new CustomEvent(ITEM_SELECT, {
+        bubbles: true,
+        cancelable: true,
+      });
+
+      item.addEventListener(ITEM_SELECT, (event) => onSelect?.(event), {
+        once: true,
+      });
+
+      item.dispatchEvent(itemSelectEvent);
+
+      if (!itemSelectEvent.defaultPrevented) {
+        onOpenChange?.(false);
       }
     },
-    [onClickProp, onSelect, onItemSelect],
+    [onClickProp, onOpenChange, onSelect],
   );
 
   const onFocus = React.useCallback(

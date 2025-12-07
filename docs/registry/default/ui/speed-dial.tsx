@@ -61,6 +61,10 @@ function useLazyRef<T>(fn: () => T) {
   return ref as React.RefObject<T>;
 }
 
+function getDataState(open: boolean): string {
+  return open ? "open" : "closed";
+}
+
 function getTransformOrigin(side: Side): string {
   switch (side) {
     case "top":
@@ -429,7 +433,7 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
       aria-expanded={open}
       aria-controls={contentId}
       data-slot="speed-dial-trigger"
-      data-state={open ? "open" : "closed"}
+      data-state={getDataState(open)}
       size="icon"
       disabled={disabled}
       {...triggerProps}
@@ -585,7 +589,7 @@ function SpeedDialItem(props: DivProps) {
       <ItemPrimitive
         role="none"
         data-slot="speed-dial-item"
-        data-state={open ? "open" : "closed"}
+        data-state={getDataState(open)}
         {...itemProps}
         className={cn(speedDialItemVariants({ side, open, className }))}
         style={
@@ -639,32 +643,26 @@ function SpeedDialAction(props: SpeedDialActionProps) {
     };
   }, [onNodeRegister, onNodeUnregister, actionId, disabled]);
 
-  const onActionSelect = React.useCallback(() => {
-    const action = actionRef.current;
-    if (!action) return;
-
-    const actionSelectEvent = new CustomEvent(ACTION_SELECT, EVENT_OPTIONS);
-
-    action.addEventListener(ACTION_SELECT, (event) => onSelect?.(event), {
-      once: true,
-    });
-
-    action.dispatchEvent(actionSelectEvent);
-    if (actionSelectEvent.defaultPrevented) return;
-
-    store.setState("open", false);
-  }, [onSelect, store]);
-
   const onClick = React.useCallback(
     (event: React.MouseEvent<ActionElement>) => {
       onClickProp?.(event);
       if (event.defaultPrevented) return;
 
-      if (onSelect) {
-        onActionSelect();
-      }
+      const action = actionRef.current;
+      if (!action) return;
+
+      const actionSelectEvent = new CustomEvent(ACTION_SELECT, EVENT_OPTIONS);
+
+      action.addEventListener(ACTION_SELECT, (event) => onSelect?.(event), {
+        once: true,
+      });
+
+      action.dispatchEvent(actionSelectEvent);
+      if (actionSelectEvent.defaultPrevented) return;
+
+      store.setState("open", false);
     },
-    [onClickProp, onSelect, onActionSelect],
+    [onClickProp, onSelect, store],
   );
 
   return (
