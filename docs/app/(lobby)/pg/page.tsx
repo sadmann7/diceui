@@ -6,11 +6,13 @@ import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import SpeedDialDemo from "@/registry/default/examples/speed-dial-demo";
 import SpeedDialLabelsDemo from "@/registry/default/examples/speed-dial-labels-demo";
 import SpeedDialSideDemo from "@/registry/default/examples/speed-dial-side-demo";
+import TimePickerDemo from "@/registry/default/examples/time-picker-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
+        <TimePickerDemo />
         <SpeedDialDemo />
         <SpeedDialLabelsDemo />
         <SpeedDialSideDemo />
