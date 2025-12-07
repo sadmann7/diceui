@@ -63,14 +63,16 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface TriggerProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button">> {}
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {}
 
 export interface ContentProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface ItemProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface ActionProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button">> {
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {
   /**
    * Callback fired when the action is selected.
    * The speed dial will close after the action is selected unless the event is prevented.

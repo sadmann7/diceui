@@ -1,5 +1,4 @@
 import type * as React from "react";
-import type { Button } from "@/components/ui/button";
 import type {
   ButtonProps,
   CompositionProps,
