@@ -33,7 +33,7 @@ type RootElement = React.ComponentRef<typeof SpeedDialRoot>;
 type TriggerElement = React.ComponentRef<typeof SpeedDialTrigger>;
 type ActionElement = React.ComponentRef<typeof SpeedDialAction>;
 
-interface SpeedDialInteractOutsideEvent extends CustomEvent {
+interface InteractOutsideEvent extends CustomEvent {
   detail: {
     originalEvent: PointerEvent;
   };
@@ -138,7 +138,7 @@ interface SpeedDialRootProps extends DivProps {
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  onInteractOutside?: (event: SpeedDialInteractOutsideEvent) => void;
+  onInteractOutside?: (event: InteractOutsideEvent) => void;
   side?: Side;
 }
 
@@ -330,7 +330,7 @@ function SpeedDialRootImpl(
             const interactEvent = new CustomEvent(INTERACT_OUTSIDE, {
               ...EVENT_OPTIONS,
               detail: { originalEvent: event },
-            }) as SpeedDialInteractOutsideEvent;
+            }) as InteractOutsideEvent;
 
             propsRef.current?.onInteractOutside?.(interactEvent);
             if (interactEvent.defaultPrevented) return;
