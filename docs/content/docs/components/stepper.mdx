@@ -54,24 +54,36 @@ npx shadcn@latest add @diceui/stepper
 Import the parts, and compose them together.
 
 ```tsx
-import * as Stepper from "@/components/ui/stepper";
+import {
+  Stepper,
+  StepperList,
+  StepperItem,
+  StepperTrigger,
+  StepperIndicator,
+  StepperTitle,
+  StepperDescription,
+  StepperSeparator,
+  StepperContent,
+  StepperPrev,
+  StepperNext,
+} from "@/components/ui/stepper";
 
 return (
-  <Stepper.Root>
-    <Stepper.List>
-      <Stepper.Item >
-        <Stepper.Trigger>
-          <Stepper.Indicator />
-          <Stepper.Title />
-          <Stepper.Description />
-        </Stepper.Trigger>
-        <Stepper.Separator />
-      </Stepper.Item>
-    </Stepper.List>
-    <Stepper.Content />
-    <Stepper.PrevTrigger />
-    <Stepper.NextTrigger />
-  </Stepper.Root>
+  <Stepper>
+    <StepperList>
+      <StepperItem>
+        <StepperTrigger>
+          <StepperIndicator />
+          <StepperTitle />
+          <StepperDescription />
+        </StepperTrigger>
+        <StepperSeparator />
+      </StepperItem>
+    </StepperList>
+    <StepperContent />
+    <StepperPrev /> 
+    <StepperNext />
+  </Stepper>
 )
 ```
 
@@ -97,7 +109,7 @@ A stepper integrated with form validation, showing step-by-step form completion.
 
 ## API Reference
 
-### Root
+### Stepper
 
 The main container component for the stepper.
 
@@ -115,7 +127,7 @@ The main container component for the stepper.
   ]}
 />
 
-### List
+### StepperList
 
 The container for stepper items, typically an ordered list.
 
@@ -133,7 +145,7 @@ The container for stepper items, typically an ordered list.
   ]}
 />
 
-### Item
+### StepperItem
 
 A single step item in the stepper.
 
@@ -155,7 +167,7 @@ A single step item in the stepper.
   ]}
 />
 
-### Trigger
+### StepperTrigger
 
 The clickable trigger for each step, typically wrapping the indicator.
 
@@ -177,7 +189,7 @@ The clickable trigger for each step, typically wrapping the indicator.
   ]}
 />
 
-### Indicator
+### StepperIndicator
 
 The visual indicator showing the step number or completion status.
 
@@ -195,7 +207,7 @@ The visual indicator showing the step number or completion status.
   ]}
 />
 
-### Separator
+### StepperSeparator
 
 The line connecting steps, showing progress between them.
 
@@ -217,7 +229,7 @@ The line connecting steps, showing progress between them.
   ]}
 />
 
-### Title
+### StepperTitle
 
 The title text for each step.
 
@@ -226,7 +238,7 @@ The title text for each step.
   name="StepperTitleProps"
 />
 
-### Description
+### StepperDescription
 
 The description text for each step.
 
@@ -235,7 +247,7 @@ The description text for each step.
   name="StepperDescriptionProps"
 />
 
-### Content
+### StepperContent
 
 The content area that displays for the active step.
 
@@ -244,7 +256,7 @@ The content area that displays for the active step.
   name="StepperContentProps"
 />
 
-### Prev
+### StepperPrev
 
 A navigation button that moves to the previous step. Automatically disabled on the first step and skips validation when navigating backwards.
 
@@ -253,7 +265,7 @@ A navigation button that moves to the previous step. Automatically disabled on t
   name="StepperPrevProps"
 />
 
-### Next
+### StepperNext
 
 A navigation button that moves to the next step. Automatically disabled on the last step and respects validation rules when navigating forwards.
 

@@ -53,18 +53,25 @@ npx shadcn@latest add @diceui/speed-dial
 Import the parts, and compose them together.
 
 ```tsx
-import * as SpeedDial from "@/components/ui/speed-dial";
+import {
+  SpeedDial,
+  SpeedDialTrigger,
+  SpeedDialContent,
+  SpeedDialItem,
+  SpeedDialLabel,
+  SpeedDialAction,
+} from "@/components/ui/speed-dial";
 
 return (
-  <SpeedDial.Root>
-    <SpeedDial.Trigger />
-    <SpeedDial.Content>
-      <SpeedDial.Item>
-        <SpeedDial.Label />
-        <SpeedDial.Action />
-      </SpeedDial.Item>
-    </SpeedDial.Content>
-  </SpeedDial.Root>
+  <SpeedDial>
+    <SpeedDialTrigger />
+    <SpeedDialContent>
+      <SpeedDialItem>
+        <SpeedDialLabel />
+        <SpeedDialAction />
+      </SpeedDialItem>
+    </SpeedDialContent>
+  </SpeedDial>
 )
 ```
 
@@ -90,7 +97,7 @@ The speed dial can expand in different directions using the `side` prop.
 
 ## API Reference
 
-### Root
+### SpeedDial
 
 The main container component for the speed dial.
 
@@ -108,7 +115,7 @@ The main container component for the speed dial.
   ]}
 />
 
-### Trigger
+### SpeedDialTrigger
 
 The button that toggles the speed dial open/closed state.
 
@@ -126,7 +133,7 @@ The button that toggles the speed dial open/closed state.
   ]}
 />
 
-### Content
+### SpeedDialContent
 
 The container for the action items that appears when the speed dial is open.
 
@@ -169,7 +176,7 @@ The container for the action items that appears when the speed dial is open.
   ]}
 />
 
-### Item
+### SpeedDialItem
 
 A wrapper for each action and its associated label.
 
@@ -200,7 +207,7 @@ A wrapper for each action and its associated label.
   ]}
 />
 
-### Action
+### SpeedDialAction
 
 An interactive button within the speed dial that triggers an action.
 
@@ -209,7 +216,7 @@ An interactive button within the speed dial that triggers an action.
   name="SpeedDialActionProps"
 />
 
-### Label
+### SpeedDialLabel
 
 A text label that describes the associated action.
 

@@ -80,17 +80,11 @@ return (
     </ColorPickerTrigger>
     <ColorPickerContent>
       <ColorPickerArea />
-      <div className="flex items-center gap-2">
-        <ColorPickerEyeDropper />
-        <div className="flex flex-1 flex-col gap-2">
-          <ColorPickerHueSlider />
-          <ColorPickerAlphaSlider />
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <ColorPickerFormatSelect />
-        <ColorPickerInput />
-      </div>
+      <ColorPickerEyeDropper />
+      <ColorPickerHueSlider />
+      <ColorPickerAlphaSlider />
+      <ColorPickerFormatSelect />
+      <ColorPickerInput />
     </ColorPickerContent>
   </ColorPicker>
 )
@@ -118,7 +112,7 @@ A color picker with form integration.
 
 ## API Reference
 
-### Root
+### ColorPicker
 
 The main container component for the color picker.
 
@@ -127,7 +121,7 @@ The main container component for the color picker.
   name="ColorPickerProps"
 />
 
-### Trigger
+### ColorPickerTrigger
 
 The trigger button that opens the color picker popover.
 
@@ -136,7 +130,7 @@ The trigger button that opens the color picker popover.
   name="ColorPickerTriggerProps"
 />
 
-### Content
+### ColorPickerContent
 
 The content container for the color picker components.
 
@@ -145,7 +139,7 @@ The content container for the color picker components.
   name="ColorPickerContentProps"
 />
 
-### Area
+### ColorPickerArea
 
 The 2D color area for selecting hue and saturation.
 
@@ -154,7 +148,7 @@ The 2D color area for selecting hue and saturation.
   name="ColorPickerAreaProps"
 />
 
-### Swatch
+### ColorPickerSwatch
 
 A color swatch that displays the current color.
 
@@ -163,7 +157,7 @@ A color swatch that displays the current color.
   name="ColorPickerSwatchProps"
 />
 
-### HueSlider
+### ColorPickerHueSlider
 
 A slider for adjusting the hue value of the color.
 
@@ -172,7 +166,7 @@ A slider for adjusting the hue value of the color.
   name="ColorPickerHueSliderProps"
 />
 
-### AlphaSlider
+### ColorPickerAlphaSlider
 
 A slider for adjusting the alpha (transparency) value of the color.
 
@@ -181,7 +175,7 @@ A slider for adjusting the alpha (transparency) value of the color.
   name="ColorPickerAlphaSliderProps"
 />
 
-### EyeDropper
+### ColorPickerEyeDropper
 
 A button that activates the browser's native eye dropper tool to pick colors from the screen.
 
@@ -201,7 +195,7 @@ A button that activates the browser's native eye dropper tool to pick colors fro
 
 **Note:** The EyeDropper component only renders when the browser supports the native EyeDropper API. It will return `null` in unsupported browsers.
 
-### FormatSelect
+### ColorPickerFormatSelect
 
 A select dropdown for choosing the color format (hex, rgb, hsl, hsb).
 
@@ -210,7 +204,7 @@ A select dropdown for choosing the color format (hex, rgb, hsl, hsb).
   name="ColorPickerFormatSelectProps"
 />
 
-### Input
+### ColorPickerInput
 
 An input field that displays and allows editing of the color value in the selected format.
 

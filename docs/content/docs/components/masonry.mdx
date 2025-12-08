@@ -51,12 +51,15 @@ npx shadcn@latest add @diceui/masonry
 Import the parts, and compose them together.
 
 ```tsx
-import * as Masonry from "@/components/ui/masonry";
+import {
+  Masonry,
+  MasonryItem,
+} from "@/components/ui/masonry";
 
 return (
-  <Masonry.Root>
-    <Masonry.Item />
-  </Masonry.Root>
+  <Masonry>
+    <MasonryItem />
+  </Masonry>
 )
 ```
 
@@ -76,7 +79,7 @@ Use `defaultWidth` and `defaultHeight`, and item `fallback` to render items on t
 
 ## API Reference
 
-### Root
+### Masonry
 
 The main container component for the masonry layout.
 
@@ -85,7 +88,7 @@ The main container component for the masonry layout.
   name="MasonryProps"
 />
 
-### Item
+### MasonryItem
 
 Individual item component within the masonry layout.
 

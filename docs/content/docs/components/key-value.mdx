@@ -58,21 +58,30 @@ npx shadcn@latest add @diceui/key-value
 Import the parts, and compose them together.
 
 ```tsx
-import * as KeyValue from "@/components/ui/key-value";
+import {
+  KeyValue,
+  KeyValueList,
+  KeyValueItem,
+  KeyValueKeyInput,
+  KeyValueValueInput,
+  KeyValueRemove,
+  KeyValueError,
+  KeyValueAdd,
+} from "@/components/ui/key-value";
 
 return (
-  <KeyValue.KeyValue>
-    <KeyValue.List>
-      <KeyValue.Item>
-        <KeyValue.KeyInput />
-        <KeyValue.ValueInput />
-        <KeyValue.Remove />
-        <KeyValue.Error field="key" />
-        <KeyValue.Error field="value" />
-      </KeyValue.Item>
-    </KeyValue.List>
-    <KeyValue.Add />
-  </KeyValue.KeyValue>
+  <KeyValue>
+    <KeyValueList>
+      <KeyValueItem>
+        <KeyValueKeyInput />
+        <KeyValueValueInput />
+        <KeyValueRemove />
+        <KeyValueError field="key" />
+        <KeyValueError field="value" />
+      </KeyValueItem>
+    </KeyValueList>
+    <KeyValueAdd />
+  </KeyValue>
 )
 ```
 
@@ -98,7 +107,7 @@ Integrate with React Hook Form for form validation.
 
 ## API Reference
 
-### Root
+### KeyValue
 
 The main container component that manages the key-value items state.
 
@@ -124,7 +133,7 @@ The main container component that manages the key-value items state.
   ]}
 />
 
-### List
+### KeyValueList
 
 Container for rendering the list of key-value items.
 
@@ -142,7 +151,7 @@ Container for rendering the list of key-value items.
   ]}
 />
 
-### Item
+### KeyValueItem
 
 Individual key-value pair item container.
 
@@ -178,7 +187,7 @@ Input field for the value part of the item.
   name="KeyValueValueInputProps"
 />
 
-### Remove
+### KeyValueRemove
 
 Button to remove a key-value item.
 
@@ -187,7 +196,7 @@ Button to remove a key-value item.
   name="KeyValueRemoveProps"
 />
 
-### Add
+### KeyValueAdd
 
 Button to add a new key-value item.
 
@@ -196,7 +205,7 @@ Button to add a new key-value item.
   name="KeyValueAddProps"
 />
 
-### Error
+### KeyValueError
 
 Error message display for validation errors.
 

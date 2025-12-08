@@ -56,16 +56,22 @@ npx shadcn@latest add @diceui/circular-progress
 Import the parts and compose them together.
 
 ```tsx
-import * as CircularProgress from "@/components/ui/circular-progress";
+import {
+  CircularProgress,
+  CircularProgressIndicator,
+  CircularProgressTrack,
+  CircularProgressRange,
+  CircularProgressValueText,
+} from "@/components/ui/circular-progress";
 
 return (
-  <CircularProgress.CircularProgress>
-    <CircularProgress.Indicator>
-      <CircularProgress.Track />
-      <CircularProgress.Range />
-    </CircularProgress.Indicator>
-    <CircularProgress.ValueText />
-  </CircularProgress.CircularProgress>
+  <CircularProgress>
+    <CircularProgressIndicator>
+      <CircularProgressTrack />
+      <CircularProgressRange />
+    </CircularProgressIndicator>
+    <CircularProgressValueText />
+  </CircularProgress>
 )
 ```
 
@@ -119,7 +125,7 @@ You can also use Tailwind's stroke utilities directly:
 
 ## API Reference
 
-### Root
+### CircularProgress
 
 The main container component for the circular progress.
 
@@ -153,7 +159,7 @@ The main container component for the circular progress.
   ]}
 />
 
-### Indicator
+### CircularProgressIndicator
 
 The SVG container that holds the circular progress tracks and ranges.
 
@@ -187,7 +193,7 @@ The SVG container that holds the circular progress tracks and ranges.
   ]}
 />
 
-### Track
+### CircularProgressTrack
 
 The background circle that represents the full range of possible values.
 
@@ -205,7 +211,7 @@ The background circle that represents the full range of possible values.
   ]}
 />
 
-### Range
+### CircularProgressRange
 
 The portion of the circle that represents the current progress value.
 
@@ -235,7 +241,7 @@ The portion of the circle that represents the current progress value.
   ]}
 />
 
-### ValueText
+### CircularProgressValueText
 
 The text element that displays the current progress value or custom content.
 
@@ -254,7 +260,7 @@ The text element that displays the current progress value or custom content.
 />
 
 
-### Combined
+### CircularProgressCombined
 
 The combined component that includes all the parts.
 

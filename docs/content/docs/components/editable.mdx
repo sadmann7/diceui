@@ -57,22 +57,32 @@ npx shadcn@latest add @diceui/editable
 Import the parts, and compose them together.
 
 ```tsx
-import * as Editable from "@/components/ui/editable";
+import {
+  Editable,
+  EditableLabel,
+  EditableArea,
+  EditablePreview,
+  EditableInput,
+  EditableTrigger,
+  EditableToolbar,
+  EditableSubmit,
+  EditableCancel,
+} from "@/components/ui/editable";
 
 return (
-  <Editable.Editable>
-    <Editable.Label />
-    <Editable.Area>
-      <Editable.Preview />
-      <Editable.Input />
-      <Editable.Trigger />
-    </Editable.Area>
-    <Editable.Trigger />
-    <Editable.Toolbar>
-      <Editable.Submit />
-      <Editable.Cancel />
-    </Editable.Toolbar>
-  </Editable.Editable>
+  <Editable>
+    <EditableLabel />
+    <EditableArea>
+      <EditablePreview />
+      <EditableInput />
+      <EditableTrigger />
+    </EditableArea>
+    <EditableTrigger />
+    <EditableToolbar>
+      <EditableSubmit />
+      <EditableCancel />
+    </EditableToolbar>
+  </Editable>
 )
 ```
 
@@ -102,7 +112,7 @@ Control the editable component in a form.
 
 ## API Reference
 
-### Root
+### Editable
 
 The main container component for editable functionality.
 
@@ -111,7 +121,7 @@ The main container component for editable functionality.
   name="EditableProps"
 />
 
-### Label
+### EditableLabel
 
 The label component for the editable field.
 
@@ -137,7 +147,7 @@ The label component for the editable field.
   ]}
 />
 
-### Area
+### EditableArea
 
 Container for the preview and input components.
 
@@ -159,7 +169,7 @@ Container for the preview and input components.
   ]}
 />
 
-### Preview
+### EditablePreview
 
 The preview component that displays the current value.
 
@@ -185,7 +195,7 @@ The preview component that displays the current value.
   ]}
 />
 
-### Input
+### EditableInput
 
 The input component for editing the value.
 
@@ -194,7 +204,7 @@ The input component for editing the value.
   name="EditableInputProps"
 />
 
-### Trigger
+### EditableTrigger
 
 Button to trigger edit mode.
 
@@ -216,7 +226,7 @@ Button to trigger edit mode.
   ]}
 />
 
-### Toolbar
+### EditableToolbar
 
 Container for action buttons.
 
@@ -225,7 +235,7 @@ Container for action buttons.
   name="EditableToolbarProps"
 />
 
-### Submit
+### EditableSubmit
 
 Button to submit changes.
 
@@ -234,7 +244,7 @@ Button to submit changes.
   name="EditableSubmitProps"
 />
 
-### Cancel
+### EditableCancel
 
 Button to cancel changes.
 

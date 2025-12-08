@@ -58,17 +58,25 @@ npx shadcn@latest add @diceui/qr-code
 Import the parts, and compose them together.
 
 ```tsx
-import * as QRCode from "@/components/ui/qr-code";
+import {
+  QRCode,
+  QRCodeCanvas,
+  QRCodeSvg,
+  QRCodeImage,
+  QRCodeOverlay,
+  QRCodeSkeleton,
+  QRCodeDownload,
+} from "@/components/ui/qr-code";
 
 return (
-  <QRCode.Root>
-    <QRCode.Canvas />
-    <QRCode.Svg />
-    <QRCode.Image />
-    <QRCode.Overlay />
-    <QRCode.Skeleton />
-    <QRCode.Download />
-  </QRCode.Root>
+  <QRCode>
+    <QRCodeCanvas />
+    <QRCodeSvg />
+    <QRCodeImage />
+    <QRCodeOverlay />
+    <QRCodeSkeleton />
+    <QRCodeDownload />
+  </QRCode>
 )
 ```
 Swap `Canvas` with `Svg` or `Image` to render the qr code in svg and image formats respectively.
@@ -95,7 +103,7 @@ Add logos, icons, or custom elements to the center of QR codes.
 
 ## API Reference
 
-### Root
+### QRCode
 
 The main container component that provides context for QR code generation.
 

@@ -51,21 +51,31 @@ npx shadcn@latest add @diceui/timeline
 ## Layout
 
 ```tsx
-import * as Timeline from "@/components/ui/timeline";
+import {
+  Timeline,
+  TimelineItem,
+  TimelineDot,
+  TimelineConnector,
+  TimelineContent,
+  TimelineHeader,
+  TimelineTitle,
+  TimelineTime,
+  TimelineDescription,
+} from "@/components/ui/timeline";
 
-<Timeline.Root>
-  <Timeline.Item>
-    <Timeline.Dot />
-    <Timeline.Connector />
-    <Timeline.Content>
-      <Timeline.Header>
-        <Timeline.Title />
-        <Timeline.Time />
-      </Timeline.Header>
-      <Timeline.Description />
-    </Timeline.Content>
-  </Timeline.Item>
-</Timeline.Root>
+<Timeline>
+  <TimelineItem>
+    <TimelineDot />
+    <TimelineConnector />
+    <TimelineContent>
+      <TimelineHeader>
+        <TimelineTitle />
+        <TimelineTime />
+      </TimelineHeader>
+      <TimelineDescription />
+    </TimelineContent>
+  </TimelineItem>
+</Timeline>
 ```
 
 ## Examples
@@ -102,7 +112,7 @@ Add custom icons or content to the timeline dots using CSS variables.
 
 ## API Reference
 
-### Root
+### Timeline
 
 The root container for timeline items.
 
@@ -139,7 +149,7 @@ The root container for timeline items.
   ]}
 />
 
-### Item
+### TimelineItem
 
 A single timeline item containing content, marker, and connector.
 
@@ -165,7 +175,7 @@ A single timeline item containing content, marker, and connector.
   ]}
 />
 
-### Dot
+### TimelineDot
 
 The visual marker/dot for a timeline item.
 
@@ -197,7 +207,7 @@ The visual marker/dot for a timeline item.
   ]}
 />
 
-### Connector
+### TimelineConnector
 
 The line connecting timeline items.
 
@@ -233,7 +243,7 @@ The line connecting timeline items.
   ]}
 />
 
-### Header
+### TimelineHeader
 
 Container for the title and time of a timeline item.
 
@@ -242,7 +252,7 @@ Container for the title and time of a timeline item.
   name="TimelineHeaderProps"
 />
 
-### Title
+### TimelineTitle
 
 The title/heading of a timeline item.
 
@@ -251,7 +261,7 @@ The title/heading of a timeline item.
   name="TimelineTitleProps"
 />
 
-### Description
+### TimelineDescription
 
 The description/body text of a timeline item.
 
@@ -260,7 +270,7 @@ The description/body text of a timeline item.
   name="TimelineDescriptionProps"
 />
 
-### Content
+### TimelineContent
 
 Container for the timeline item's content (header, description, etc.).
 
@@ -278,7 +288,7 @@ Container for the timeline item's content (header, description, etc.).
   ]}
 />
 
-### Time
+### TimelineTime
 
 A semantic time element for displaying dates/times.
 

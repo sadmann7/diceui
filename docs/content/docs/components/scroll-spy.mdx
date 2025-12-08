@@ -53,17 +53,23 @@ npx shadcn@latest add @diceui/scroll-spy
 Import the parts, and compose them together.
 
 ```tsx
-import * as ScrollSpy from "@/components/ui/scroll-spy"
+import {
+  ScrollSpy,
+  ScrollSpyNav,
+  ScrollSpyLink,
+  ScrollSpyViewport,
+  ScrollSpySection,
+} from "@/components/ui/scroll-spy";
 
 return (
-  <ScrollSpy.Root>
-    <ScrollSpy.Nav>
-      <ScrollSpy.Link />
-    </ScrollSpy.Nav>
-    <ScrollSpy.Viewport>
-      <ScrollSpy.Section />
-    </ScrollSpy.Viewport>
-  </ScrollSpy.Root>
+  <ScrollSpy>
+    <ScrollSpyNav>
+      <ScrollSpyLink />
+    </ScrollSpyNav>
+    <ScrollSpyViewport>
+      <ScrollSpySection />
+    </ScrollSpyViewport>
+  </ScrollSpy>
 )
 ```
 
@@ -114,7 +120,7 @@ The key is to apply `sticky top-[offset]` to the `ScrollSpyNav` to keep the navi
 
 ## API Reference
 
-### Root
+### ScrollSpy
 
 The root component that manages scroll tracking and contains all ScrollSpy parts.
 

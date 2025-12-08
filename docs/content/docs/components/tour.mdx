@@ -54,29 +54,45 @@ npx shadcn@latest add @diceui/tour
 Import the parts, and compose them together.
 
 ```tsx
-import * as Tour from "@/components/ui/tour";
+import {
+  Tour,
+  TourPortal,
+  TourSpotlight,
+  TourSpotlightRing,
+  TourStep,
+  TourArrow,
+  TourClose,
+  TourHeader,
+  TourTitle,
+  TourDescription,
+  TourFooter,
+  TourStepCounter,
+  TourPrev,
+  TourNext,
+  TourSkip,
+} from "@/components/ui/tour";
 
 return (
-  <Tour.Root>
-    <Tour.Portal>
-      <Tour.Spotlight />
-      <Tour.SpotlightRing />
-      <Tour.Step>
-        <Tour.Arrow />
-        <Tour.Close />
-        <Tour.Header>
-          <Tour.Title />
-          <Tour.Description />
-        </Tour.Header>
-        <Tour.Footer>
-          <Tour.StepCounter />
-          <Tour.Prev />
-          <Tour.Next />
-          <Tour.Skip />
-        </Tour.Footer>
-      </Tour.Step>
-    </Tour.Portal>
-  </Tour.Root>
+  <Tour>
+    <TourPortal>
+      <TourSpotlight />
+      <TourSpotlightRing />
+      <TourStep>
+        <TourArrow />
+        <TourClose />
+        <TourHeader>
+          <TourTitle />
+          <TourDescription />
+        </TourHeader>
+        <TourFooter>
+          <TourStepCounter />
+          <TourPrev />
+          <TourNext />
+          <TourSkip />
+        </TourFooter>
+      </TourStep>
+    </TourPortal>
+  </Tour>
 )
 ```
 
@@ -143,7 +159,7 @@ Set default spacing for all steps and override per step:
 
 ## API Reference
 
-### Root
+### Tour
 
 The main container component for the tour that manages state and provides context.
 
@@ -153,7 +169,7 @@ The main container component for the tour that manages state and provides contex
 />
 
 
-### Spotlight
+### TourSpotlight
 
 The spotlight backdrop that dims the page and highlights the target element with a cutout effect.
 
@@ -171,7 +187,7 @@ The spotlight backdrop that dims the page and highlights the target element with
   ]}
 />
 
-### SpotlightRing
+### TourSpotlightRing
 
 A visual ring/border element that wraps around the spotlighted target element. Use this to add custom styling like borders, shadows, or animations to the highlighted area.
 
@@ -189,7 +205,7 @@ A visual ring/border element that wraps around the spotlighted target element. U
   ]}
 />
 
-### Step
+### TourStep
 
 A single step in the tour that targets a specific element on the page.
 
@@ -211,7 +227,7 @@ A single step in the tour that targets a specific element on the page.
   ]}
 />
 
-### Close
+### TourClose
 
 Button to close the entire tour.
 
@@ -220,7 +236,7 @@ Button to close the entire tour.
   name="TourCloseProps"
 />
 
-### Header
+### TourHeader
 
 Container for the tour step's title and description.
 
@@ -229,7 +245,7 @@ Container for the tour step's title and description.
   name="TourHeaderProps"
 />
 
-### Title
+### TourTitle
 
 The title of the current tour step.
 
@@ -238,7 +254,7 @@ The title of the current tour step.
   name="TourTitleProps"
 />
 
-### Description
+### TourDescription
 
 The description text for the current tour step.
 
@@ -247,7 +263,7 @@ The description text for the current tour step.
   name="TourDescriptionProps"
 />
 
-### Footer
+### TourFooter
 
 Container for tour navigation controls and step counter.
 
@@ -256,7 +272,7 @@ Container for tour navigation controls and step counter.
   name="TourFooterProps"
 />
 
-### StepCounter
+### TourStepCounter
 
 Displays the current step number and total steps.
 
@@ -265,7 +281,7 @@ Displays the current step number and total steps.
   name="TourStepCounterProps"
 />
 
-### Prev
+### TourPrev
 
 Button to navigate to the previous step.
 
@@ -274,7 +290,7 @@ Button to navigate to the previous step.
   name="TourPrevProps"
 />
 
-### Next
+### TourNext
 
 Button to navigate to the next step or complete the tour.
 
@@ -283,7 +299,7 @@ Button to navigate to the next step or complete the tour.
   name="TourNextProps"
 />
 
-### Skip
+### TourSkip
 
 Button to skip the entire tour.
 
@@ -292,7 +308,7 @@ Button to skip the entire tour.
   name="TourSkipProps"
 />
 
-### Arrow
+### TourArrow
 
 An optional arrow element that points to the target element.
 
