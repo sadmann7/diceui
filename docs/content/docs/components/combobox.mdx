@@ -44,37 +44,58 @@ npx shadcn@latest add @diceui/combobox
 Import the parts, and compose them together.
 
 ```tsx
-import * as Combobox from "@diceui/combobox";
+import {
+  Combobox,
+  ComboboxLabel,
+  ComboboxAnchor,
+  ComboboxBadgeList,
+  ComboboxBadgeItem,
+  ComboboxBadgeItemDelete,
+  ComboboxInput,
+  ComboboxTrigger,
+  ComboboxCancel,
+  ComboboxPortal,
+  ComboboxContent,
+  ComboboxArrow,
+  ComboboxLoading,
+  ComboboxEmpty,
+  ComboboxGroup,
+  ComboboxGroupLabel,
+  ComboboxItem,
+  ComboboxItemText,
+  ComboboxItemIndicator,
+  ComboboxSeparator,
+} from "@diceui/combobox";
 
 return (
-  <Combobox.Root>
-    <Combobox.Label />
-    <Combobox.Anchor>
-      <Combobox.BadgeList>
-        <Combobox.BadgeItem>
-          <Combobox.BadgeItemDelete />
-        </Combobox.BadgeItem>
-      </Combobox.BadgeList>
-      <Combobox.Input />
-      <Combobox.Trigger />
-      <Combobox.Cancel />
-    </Combobox.Anchor>
-    <Combobox.Portal>
-      <Combobox.Content>
-        <Combobox.Arrow />
-        <Combobox.Loading />
-        <Combobox.Empty />
-        <Combobox.Group>
-          <Combobox.GroupLabel />
-          <Combobox.Item>
-            <Combobox.ItemText />
-            <Combobox.ItemIndicator />
-          </Combobox.Item>
-        </Combobox.Group>
-        <Combobox.Separator />
-      </Combobox.Content>
-    </Combobox.Portal>
-  </Combobox.Root>
+  <Combobox>
+    <ComboboxLabel />
+    <ComboboxAnchor>
+      <ComboboxBadgeList>
+        <ComboboxBadgeItem>
+          <ComboboxBadgeItemDelete />
+        </ComboboxBadgeItem>
+      </ComboboxBadgeList>
+      <ComboboxInput />
+      <ComboboxTrigger />
+      <ComboboxCancel />
+    </ComboboxAnchor>
+    <ComboboxPortal>
+      <ComboboxContent>
+        <ComboboxArrow />
+        <ComboboxLoading />
+        <ComboboxEmpty />
+        <ComboboxGroup>
+          <ComboboxGroupLabel />
+          <ComboboxItem>
+            <ComboboxItemText />
+            <ComboboxItemIndicator />
+          </ComboboxItem>
+        </ComboboxGroup>
+        <ComboboxSeparator />
+      </ComboboxContent>
+    </ComboboxPortal>
+  </Combobox>
 )
 ```
 
@@ -106,7 +127,7 @@ return (
 
 ## API Reference
 
-### Root
+### Combobox
 
 The container for all combobox parts.
 
@@ -128,7 +149,7 @@ The container for all combobox parts.
   ]}
 />
 
-### Label
+### ComboboxLabel
 
 An accessible label that describes the combobox. Associates with the input element for screen readers.
 
@@ -137,7 +158,7 @@ An accessible label that describes the combobox. Associates with the input eleme
   name="LabelProps"
 />
 
-### Anchor
+### ComboboxAnchor
 
 A wrapper element that positions the combobox popover relative to the input and trigger. Provides the reference point for popover positioning.
 
@@ -167,7 +188,7 @@ A wrapper element that positions the combobox popover relative to the input and 
   ]}
 />
 
-### Trigger
+### ComboboxTrigger
 
 A button that toggles the combobox popover. Handles focus management and keyboard interactions for opening/closing the popover.
 
@@ -189,7 +210,7 @@ A button that toggles the combobox popover. Handles focus management and keyboar
   ]}
 />
 
-### Input
+### ComboboxInput
 
 The text input field that users can type into to filter options.
 
@@ -198,7 +219,7 @@ The text input field that users can type into to filter options.
   name="InputProps"
 />
 
-### BadgeList
+### ComboboxBadgeList
 
 A container for displaying selected items as badges in a multi-select combobox.
 
@@ -216,7 +237,7 @@ A container for displaying selected items as badges in a multi-select combobox.
   ]}
 />
 
-### BadgeItem
+### ComboboxBadgeItem
 
 An individual badge representing a selected item in a multi-select combobox.
 
@@ -242,7 +263,7 @@ An individual badge representing a selected item in a multi-select combobox.
   ]}
 />
 
-### BadgeItemDelete
+### ComboboxBadgeItemDelete
 
 A button to remove a selected item from the multi-select combobox.
 
@@ -265,7 +286,7 @@ A button to remove a selected item from the multi-select combobox.
 />
 
 
-### Cancel
+### ComboboxCancel
 
 A button that clears the input value and resets the filter.
 
@@ -283,7 +304,7 @@ A button that clears the input value and resets the filter.
   ]}
 />
 
-### Portal
+### ComboboxPortal
 
 A portal for rendering the combobox content outside of its DOM hierarchy.
 
@@ -294,7 +315,7 @@ A portal for rendering the combobox content outside of its DOM hierarchy.
 
 
 
-### Content
+### ComboboxContent
 
 The popover container for combobox items. Positions the combobox popover relative to the anchor.
 
@@ -345,7 +366,7 @@ The popover container for combobox items. Positions the combobox popover relativ
   ]}
 />
 
-### Arrow
+### ComboboxArrow
 
 A visual arrow element that points to the anchor.
 
@@ -354,7 +375,7 @@ A visual arrow element that points to the anchor.
   name="ArrowProps"
 />
 
-### Loading
+### ComboboxLoading
 
 A loading indicator for asynchronous filtering operations.
 
@@ -363,7 +384,7 @@ A loading indicator for asynchronous filtering operations.
   name="LoadingProps"
 />
 
-### Empty
+### ComboboxEmpty
 
 A placeholder component displayed when no options match the current filter.
 
@@ -372,7 +393,7 @@ A placeholder component displayed when no options match the current filter.
   name="EmptyProps"
 />
 
-### Group
+### ComboboxGroup
 
 A container for logically grouping related options.
 
@@ -381,7 +402,7 @@ A container for logically grouping related options.
   name="GroupProps"
 />
 
-### GroupLabel
+### ComboboxGroupLabel
 
 A label that describes a group of options.
 
@@ -390,7 +411,7 @@ A label that describes a group of options.
   name="GroupLabelProps"
 />
 
-### Item
+### ComboboxItem
 
 An interactive item in the combobox list.
 
@@ -416,7 +437,7 @@ An interactive item in the combobox list.
   ]}
 />
 
-### ItemText
+### ComboboxItemText
 
 The textual content of an item.
 
@@ -425,7 +446,7 @@ The textual content of an item.
   name="ItemTextProps"
 />
 
-### ItemIndicator
+### ComboboxItemIndicator
 
 A visual indicator for selected options.
 
@@ -434,7 +455,7 @@ A visual indicator for selected options.
   name="ItemIndicatorProps"
 />
 
-### Separator
+### ComboboxSeparator
 
 A visual divider for separating options or groups.
 

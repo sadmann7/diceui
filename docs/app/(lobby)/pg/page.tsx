@@ -3,9 +3,6 @@
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import SpeedDialDemo from "@/registry/default/examples/speed-dial-demo";
-import SpeedDialLabelsDemo from "@/registry/default/examples/speed-dial-labels-demo";
-import SpeedDialSideDemo from "@/registry/default/examples/speed-dial-side-demo";
 import TimePickerDemo from "@/registry/default/examples/time-picker-demo";
 
 export default function PlaygroundPage() {
@@ -13,9 +10,6 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <TimePickerDemo />
-        <SpeedDialDemo />
-        <SpeedDialLabelsDemo />
-        <SpeedDialSideDemo />
         <ColorPickerDemo />
       </Demo>
     </Shell>

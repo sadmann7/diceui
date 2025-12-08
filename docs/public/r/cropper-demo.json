@@ -1,9 +1,6 @@
 {
   "name": "cropper-demo",
   "type": "registry:example",
-  "dependencies": [
-    "class-variance-authority"
-  ],
   "registryDependencies": [
     "cropper"
   ],

@@ -56,16 +56,22 @@ npx shadcn@latest add @diceui/circular-progress
 Import the parts and compose them together.
 
 ```tsx
-import * as CircularProgress from "@/components/ui/circular-progress";
+import {
+  CircularProgress,
+  CircularProgressIndicator,
+  CircularProgressTrack,
+  CircularProgressRange,
+  CircularProgressValueText,
+} from "@/components/ui/circular-progress";
 
 return (
-  <CircularProgress.Root>
-    <CircularProgress.Indicator>
-      <CircularProgress.Track />
-      <CircularProgress.Range />
-    </CircularProgress.Indicator>
-    <CircularProgress.ValueText />
-  </CircularProgress.Root>
+  <CircularProgress>
+    <CircularProgressIndicator>
+      <CircularProgressTrack />
+      <CircularProgressRange />
+    </CircularProgressIndicator>
+    <CircularProgressValueText />
+  </CircularProgress>
 )
 ```
 
@@ -119,13 +125,13 @@ You can also use Tailwind's stroke utilities directly:
 
 ## API Reference
 
-### Root
+### CircularProgress
 
 The main container component for the circular progress.
 
 <AutoTypeTable
   path="./types/docs/circular-progress.ts"
-  name="RootProps"
+  name="CircularProgressProps"
 />
 
 <DataAttributesTable
@@ -153,13 +159,13 @@ The main container component for the circular progress.
   ]}
 />
 
-### Indicator
+### CircularProgressIndicator
 
 The SVG container that holds the circular progress tracks and ranges.
 
 <AutoTypeTable
   path="./types/docs/circular-progress.ts"
-  name="IndicatorProps"
+  name="CircularProgressIndicatorProps"
 />
 
 <DataAttributesTable
@@ -187,13 +193,13 @@ The SVG container that holds the circular progress tracks and ranges.
   ]}
 />
 
-### Track
+### CircularProgressTrack
 
 The background circle that represents the full range of possible values.
 
 <AutoTypeTable
   path="./types/docs/circular-progress.ts"
-  name="TrackProps"
+  name="CircularProgressTrackProps"
 />
 
 <DataAttributesTable
@@ -205,13 +211,13 @@ The background circle that represents the full range of possible values.
   ]}
 />
 
-### Range
+### CircularProgressRange
 
 The portion of the circle that represents the current progress value.
 
 <AutoTypeTable
   path="./types/docs/circular-progress.ts"
-  name="RangeProps"
+  name="CircularProgressRangeProps"
 />
 
 <DataAttributesTable
@@ -235,13 +241,13 @@ The portion of the circle that represents the current progress value.
   ]}
 />
 
-### ValueText
+### CircularProgressValueText
 
 The text element that displays the current progress value or custom content.
 
 <AutoTypeTable
   path="./types/docs/circular-progress.ts"
-  name="ValueTextProps"
+  name="CircularProgressValueTextProps"
 />
 
 <DataAttributesTable
@@ -254,13 +260,13 @@ The text element that displays the current progress value or custom content.
 />
 
 
-### Combined
+### CircularProgressCombined
 
 The combined component that includes all the parts.
 
 <AutoTypeTable
   path="./types/docs/circular-progress.ts"
-  name="RootProps"
+  name="CircularProgressProps"
 />
 
 ## Accessibility

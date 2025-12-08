@@ -5,7 +5,11 @@ export const ui: Registry["items"] = [
     name: "action-bar",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["button"],
+    registryDependencies: [
+      "button",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+    ],
     files: [
       {
         path: "ui/action-bar.tsx",
@@ -25,6 +29,7 @@ export const ui: Registry["items"] = [
     name: "angle-slider",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
     files: [
       {
         path: "ui/angle-slider.tsx",
@@ -43,7 +48,7 @@ export const ui: Registry["items"] = [
   {
     name: "avatar-group",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: ["@radix-ui/react-slot"],
     files: [
       {
         path: "ui/avatar-group.tsx",
@@ -110,10 +115,17 @@ export const ui: Registry["items"] = [
       "@radix-ui/react-slider",
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
-      "class-variance-authority",
       "lucide-react",
     ],
-    registryDependencies: ["button", "input", "popover", "select"],
+    registryDependencies: [
+      "button",
+      "input",
+      "popover",
+      "select",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/color-picker.tsx",
@@ -132,7 +144,7 @@ export const ui: Registry["items"] = [
   {
     name: "color-swatch",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: ["@radix-ui/react-slot"],
     files: [
       {
         path: "ui/color-swatch.tsx",
@@ -144,6 +156,11 @@ export const ui: Registry["items"] = [
     name: "compare-slider",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    registryDependencies: [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/compare-slider.tsx",
@@ -158,7 +175,8 @@ export const ui: Registry["items"] = [
   {
     name: "cropper",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
     files: [
       {
         path: "ui/cropper.tsx",
@@ -192,6 +210,7 @@ export const ui: Registry["items"] = [
     name: "editable",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
     files: [
       {
         path: "ui/editable.tsx",
@@ -215,6 +234,7 @@ export const ui: Registry["items"] = [
       "@radix-ui/react-direction",
       "lucide-react",
     ],
+    registryDependencies: ["use-lazy-ref"],
     files: [
       {
         path: "ui/file-upload.tsx",
@@ -225,7 +245,7 @@ export const ui: Registry["items"] = [
   {
     name: "fps",
     type: "registry:ui",
-    dependencies: ["class-variance-authority"],
+    dependencies: [],
     files: [
       {
         path: "ui/fps.tsx",
@@ -236,11 +256,7 @@ export const ui: Registry["items"] = [
   {
     name: "segmented-input",
     type: "registry:ui",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "class-variance-authority",
-    ],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     registryDependencies: ["input"],
     files: [
       {
@@ -274,7 +290,14 @@ export const ui: Registry["items"] = [
     name: "key-value",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "lucide-react"],
-    registryDependencies: ["button", "input", "textarea"],
+    registryDependencies: [
+      "button",
+      "input",
+      "textarea",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/key-value.tsx",
@@ -304,11 +327,7 @@ export const ui: Registry["items"] = [
   {
     name: "marquee",
     type: "registry:ui",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "class-variance-authority",
-    ],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     cssVars: {
       theme: {
         "--animate-marquee-left":
@@ -405,6 +424,7 @@ export const ui: Registry["items"] = [
     name: "masonry",
     type: "registry:ui",
     dependencies: ["@diceui/masonry", "@radix-ui/react-slot"],
+    registryDependencies: ["use-isomorphic-layout-effect"],
     files: [
       {
         path: "ui/masonry.tsx",
@@ -432,6 +452,7 @@ export const ui: Registry["items"] = [
       "slider",
       "tooltip",
       "dropdown-menu",
+      "use-lazy-ref",
     ],
     files: [
       {
@@ -486,6 +507,11 @@ export const ui: Registry["items"] = [
     name: "scroll-spy",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    registryDependencies: [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/scroll-spy.tsx",
@@ -521,8 +547,13 @@ export const ui: Registry["items"] = [
   {
     name: "speed-dial",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
-    registryDependencies: ["button"],
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: [
+      "button",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/speed-dial.tsx",
@@ -537,7 +568,7 @@ export const ui: Registry["items"] = [
   {
     name: "stack",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "class-variance-authority"],
+    dependencies: ["@radix-ui/react-slot"],
     files: [
       {
         path: "ui/stack.tsx",
@@ -548,7 +579,7 @@ export const ui: Registry["items"] = [
   {
     name: "stat",
     type: "registry:ui",
-    dependencies: ["class-variance-authority"],
+    dependencies: [],
     registryDependencies: ["separator"],
     files: [
       {
@@ -563,10 +594,14 @@ export const ui: Registry["items"] = [
     dependencies: [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
-      "class-variance-authority",
       "lucide-react",
     ],
-    registryDependencies: ["button"],
+    registryDependencies: [
+      "button",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/stepper.tsx",
@@ -583,6 +618,7 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "qrcode"],
     devDependencies: ["@types/qrcode"],
+    registryDependencies: ["use-lazy-ref"],
     files: [
       {
         path: "ui/qr-code.tsx",
@@ -597,6 +633,11 @@ export const ui: Registry["items"] = [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
       "lucide-react",
+    ],
+    registryDependencies: [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
     ],
     files: [
       {
@@ -627,11 +668,8 @@ export const ui: Registry["items"] = [
   {
     name: "timeline",
     type: "registry:ui",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "class-variance-authority",
-    ],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
     files: [
       {
         path: "ui/timeline.tsx",
@@ -647,7 +685,12 @@ export const ui: Registry["items"] = [
     name: "time-picker",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["popover"],
+    registryDependencies: [
+      "popover",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     css: {
       "@utility scrollbar-none": {
         "scrollbar-width": "none",
@@ -679,6 +722,11 @@ export const ui: Registry["items"] = [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
       "lucide-react",
+    ],
+    registryDependencies: [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
     ],
     files: [
       {

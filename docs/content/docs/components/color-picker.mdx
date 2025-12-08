@@ -39,9 +39,19 @@ npx shadcn@latest add @diceui/color-picker
     <ComponentSource name="visually-hidden-input" />
   </Step>
   <Step>
+    Copy and paste the following hooks into your `hooks` directory.
+
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-lazy-ref" />
+    <ComponentSource name="use-as-ref" />
+  </Step>
+  <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="color-picker" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -70,17 +80,11 @@ return (
     </ColorPickerTrigger>
     <ColorPickerContent>
       <ColorPickerArea />
-      <div className="flex items-center gap-2">
-        <ColorPickerEyeDropper />
-        <div className="flex flex-1 flex-col gap-2">
-          <ColorPickerHueSlider />
-          <ColorPickerAlphaSlider />
-        </div>
-      </div>
-      <div className="flex items-center gap-2">
-        <ColorPickerFormatSelect />
-        <ColorPickerInput />
-      </div>
+      <ColorPickerEyeDropper />
+      <ColorPickerHueSlider />
+      <ColorPickerAlphaSlider />
+      <ColorPickerFormatSelect />
+      <ColorPickerInput />
     </ColorPickerContent>
   </ColorPicker>
 )
@@ -108,76 +112,76 @@ A color picker with form integration.
 
 ## API Reference
 
-### Root
+### ColorPicker
 
 The main container component for the color picker.
 
 <AutoTypeTable
   path="./types/docs/color-picker.ts"
-  name="RootProps"
+  name="ColorPickerProps"
 />
 
-### Trigger
+### ColorPickerTrigger
 
 The trigger button that opens the color picker popover.
 
 <AutoTypeTable
   path="./types/docs/color-picker.ts"
-  name="TriggerProps"
+  name="ColorPickerTriggerProps"
 />
 
-### Content
+### ColorPickerContent
 
 The content container for the color picker components.
 
 <AutoTypeTable
   path="./types/docs/color-picker.ts"
-  name="ContentProps"
+  name="ColorPickerContentProps"
 />
 
-### Area
+### ColorPickerArea
 
 The 2D color area for selecting hue and saturation.
 
 <AutoTypeTable
   path="./types/docs/color-picker.ts"
-  name="AreaProps"
+  name="ColorPickerAreaProps"
 />
 
-### Swatch
+### ColorPickerSwatch
 
 A color swatch that displays the current color.
 
 <AutoTypeTable
   path="./types/docs/color-picker.ts"
-  name="SwatchProps"
+  name="ColorPickerSwatchProps"
 />
 
-### HueSlider
+### ColorPickerHueSlider
 
 A slider for adjusting the hue value of the color.
 
 <AutoTypeTable
   path="./types/docs/color-picker.ts"
-  name="HueSliderProps"
+  name="ColorPickerHueSliderProps"
 />
 
-### AlphaSlider
+### ColorPickerAlphaSlider
 
 A slider for adjusting the alpha (transparency) value of the color.
 
 <AutoTypeTable
   path="./types/docs/color-picker.ts"
-  name="AlphaSliderProps"
+  name="ColorPickerAlphaSliderProps"
 />
 
-### EyeDropper
+### ColorPickerEyeDropper
 
 A button that activates the browser's native eye dropper tool to pick colors from the screen.
 
 <AutoTypeTable
   path="./types/docs/color-picker.ts"
-  name="EyeDropperProps"
+  name="ColorPickerEyeDropperProps"
 />
 
 <DataAttributesTable
@@ -191,22 +195,22 @@ A button that activates the browser's native eye dropper tool to pick colors fro
 
 **Note:** The EyeDropper component only renders when the browser supports the native EyeDropper API. It will return `null` in unsupported browsers.
 
-### FormatSelect
+### ColorPickerFormatSelect
 
 A select dropdown for choosing the color format (hex, rgb, hsl, hsb).
 
 <AutoTypeTable
   path="./types/docs/color-picker.ts"
-  name="FormatSelectProps"
+  name="ColorPickerFormatSelectProps"
 />
 
-### Input
+### ColorPickerInput
 
 An input field that displays and allows editing of the color value in the selected format.
 
 <AutoTypeTable
   path="./types/docs/color-picker.ts"
-  name="InputProps"
+  name="ColorPickerInputProps"
 />
 
 ## Accessibility

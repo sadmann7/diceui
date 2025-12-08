@@ -5,6 +5,8 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "Cropper";
 const CONTENT_NAME = "CropperContent";
@@ -314,19 +316,6 @@ function getCroppedArea(
   return result;
 }
 
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
 interface StoreState {
   crop: Point;
   zoom: number;
@@ -516,7 +505,7 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-type RootElement = React.ComponentRef<typeof CropperRootImpl>;
+type RootElement = React.ComponentRef<typeof CropperImpl>;
 
 interface CropperContextValue {
   aspectRatio: number;
@@ -542,7 +531,7 @@ function useCropperContext(consumerName: string) {
   return context;
 }
 
-interface CropperRootProps extends DivProps {
+interface CropperProps extends DivProps {
   crop?: Point;
   zoom?: number;
   minZoom?: number;
@@ -568,7 +557,7 @@ interface CropperRootProps extends DivProps {
   onWheelZoom?: (event: WheelEvent) => void;
 }
 
-function CropperRoot(props: CropperRootProps) {
+function Cropper(props: CropperProps) {
   const {
     crop = { x: 0, y: 0 },
     zoom = 1,
@@ -740,18 +729,18 @@ function CropperRoot(props: CropperRootProps) {
           data-slot="cropper-wrapper"
           className={cn("relative size-full overflow-hidden", className)}
         >
-          <CropperRootImpl {...rootProps} />
+          <CropperImpl {...rootProps} />
         </div>
       </CropperContext.Provider>
     </StoreContext.Provider>
   );
 }
 
-interface CropperRootImplProps extends CropperRootProps {
+interface CropperImplProps extends CropperProps {
   onWheelZoom?: (event: WheelEvent) => void;
 }
 
-function CropperRootImpl(props: CropperRootImplProps) {
+function CropperImpl(props: CropperImplProps) {
   const { className, asChild, ref, ...contentProps } = props;
 
   const context = useCropperContext(CONTENT_NAME);
@@ -1810,19 +1799,14 @@ function CropperArea(props: CropperAreaProps) {
 }
 
 export {
-  CropperRoot as Root,
-  CropperImage as Image,
-  CropperVideo as Video,
-  CropperArea as Area,
-  //
-  CropperRoot as Cropper,
+  Cropper,
   CropperImage,
   CropperVideo,
   CropperArea,
   //
   useStore as useCropper,
   //
-  type CropperRootProps as CropperProps,
+  type CropperProps,
   type Point as CropperPoint,
   type Size as CropperSize,
   type Area as CropperAreaData,

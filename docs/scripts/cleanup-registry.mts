@@ -9,7 +9,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const REGISTRY_PATH = path.resolve(__dirname, "../public/r");
 
 // Reserved registry item names that should never be removed
-const RESERVED_NAMES = new Set(["index", "style"]);
+const RESERVED_NAMES = new Set(["index", "style", "registry"]);
 
 async function cleanupRegistry() {
   console.log("🧹 Starting registry cleanup...");

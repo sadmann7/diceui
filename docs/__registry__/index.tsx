@@ -27,7 +27,7 @@ export const Index: Record<string, any> = {
       name: "action-bar",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button"],
+      registryDependencies: ["button","use-as-ref","use-isomorphic-layout-effect"],
       files: [{
         path: "registry/default/ui/action-bar.tsx",
         type: "registry:ui",
@@ -49,7 +49,7 @@ export const Index: Record<string, any> = {
       name: "angle-slider",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/angle-slider.tsx",
         type: "registry:ui",
@@ -131,7 +131,7 @@ export const Index: Record<string, any> = {
       name: "color-picker",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button","input","popover","select"],
+      registryDependencies: ["button","input","popover","select","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/color-picker.tsx",
         type: "registry:ui",
@@ -167,7 +167,7 @@ export const Index: Record<string, any> = {
       name: "compare-slider",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/compare-slider.tsx",
         type: "registry:ui",
@@ -185,7 +185,7 @@ export const Index: Record<string, any> = {
       name: "cropper",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/cropper.tsx",
         type: "registry:ui",
@@ -217,7 +217,7 @@ export const Index: Record<string, any> = {
       name: "editable",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/editable.tsx",
         type: "registry:ui",
@@ -239,7 +239,7 @@ export const Index: Record<string, any> = {
       name: "file-upload",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-lazy-ref"],
       files: [{
         path: "registry/default/ui/file-upload.tsx",
         type: "registry:ui",
@@ -299,7 +299,7 @@ export const Index: Record<string, any> = {
       name: "key-value",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button","input","textarea"],
+      registryDependencies: ["button","input","textarea","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/key-value.tsx",
         type: "registry:ui",
@@ -371,7 +371,7 @@ export const Index: Record<string, any> = {
       name: "masonry",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-isomorphic-layout-effect"],
       files: [{
         path: "registry/default/ui/masonry.tsx",
         type: "registry:ui",
@@ -389,7 +389,7 @@ export const Index: Record<string, any> = {
       name: "media-player",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu"],
+      registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/media-player.tsx",
         type: "registry:ui",
@@ -453,7 +453,7 @@ export const Index: Record<string, any> = {
       name: "scroll-spy",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/scroll-spy.tsx",
         type: "registry:ui",
@@ -489,7 +489,7 @@ export const Index: Record<string, any> = {
       name: "speed-dial",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button"],
+      registryDependencies: ["button","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/speed-dial.tsx",
         type: "registry:ui",
@@ -535,7 +535,7 @@ export const Index: Record<string, any> = {
       name: "stepper",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["button"],
+      registryDependencies: ["button","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/stepper.tsx",
         type: "registry:ui",
@@ -553,7 +553,7 @@ export const Index: Record<string, any> = {
       name: "qr-code",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-lazy-ref"],
       files: [{
         path: "registry/default/ui/qr-code.tsx",
         type: "registry:ui",
@@ -567,7 +567,7 @@ export const Index: Record<string, any> = {
       name: "rating",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/rating.tsx",
         type: "registry:ui",
@@ -603,7 +603,7 @@ export const Index: Record<string, any> = {
       name: "timeline",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/timeline.tsx",
         type: "registry:ui",
@@ -621,7 +621,7 @@ export const Index: Record<string, any> = {
       name: "time-picker",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["popover"],
+      registryDependencies: ["popover","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/time-picker.tsx",
         type: "registry:ui",
@@ -643,7 +643,7 @@ export const Index: Record<string, any> = {
       name: "tour",
       description: "",
       type: "registry:ui",
-      registryDependencies: undefined,
+      registryDependencies: ["use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/tour.tsx",
         type: "registry:ui",
@@ -682,6 +682,48 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/lib/compose-refs.ts")),
+      source: "",
+      chunks: []
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["use-isomorphic-layout-effect"],
+      files: [{
+        path: "registry/default/hooks/use-as-ref.ts",
+        type: "registry:hook",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/hooks/use-as-ref.ts")),
+      source: "",
+      chunks: []
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/hooks/use-isomorphic-layout-effect.ts",
+        type: "registry:hook",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/hooks/use-isomorphic-layout-effect.ts")),
+      source: "",
+      chunks: []
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/hooks/use-lazy-ref.ts",
+        type: "registry:hook",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/hooks/use-lazy-ref.ts")),
       source: "",
       chunks: []
     },

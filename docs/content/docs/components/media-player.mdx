@@ -74,15 +74,22 @@ links:
      ```
   </Step>
   <Step>
-  Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.
+    Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.
 
-  <ComponentSource name="compose-refs" />
+    <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
+    Copy and paste the following hook into your `hooks` directory.
 
+    <ComponentSource name="use-lazy-ref" />
   </Step>
   <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="media-player" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -91,27 +98,48 @@ links:
 Import the parts, and compose them together.
 
 ```tsx
-import * as MediaPlayer from "@/components/ui/media-player";
+import {
+  MediaPlayer,
+  MediaPlayerVideo,
+  MediaPlayerAudio,
+  MediaPlayerLoading,
+  MediaPlayerError,
+  MediaPlayerVolumeIndicator,
+  MediaPlayerControls,
+  MediaPlayerControlsOverlay,
+  MediaPlayerPlay,
+  MediaPlayerSeekBackward,
+  MediaPlayerSeekForward,
+  MediaPlayerVolume,
+  MediaPlayerSeek,
+  MediaPlayerTime,
+  MediaPlayerPlaybackSpeed,
+  MediaPlayerLoop,
+  MediaPlayerCaptions,
+  MediaPlayerFullscreen,
+  MediaPlayerDownload,
+  MediaPlayerSettings,
+} from "@/components/ui/media-player";
 
 return (
-  <MediaPlayer.Root>
-    <MediaPlayer.Video>
+  <MediaPlayer>
+    <MediaPlayerVideo>
       <source src="..." type="video/mp4" />
-    </MediaPlayer.Video>
-    <MediaPlayer.Loading />
-    <MediaPlayer.Error />
-    <MediaPlayer.VolumeIndicator />
-    <MediaPlayer.Controls>
-      <MediaPlayer.ControlsOverlay />
-      <MediaPlayer.Play />
-      <MediaPlayer.SeekBackward />
-      <MediaPlayer.SeekForward />
-      <MediaPlayer.Volume />
-      <MediaPlayer.Seek />
-      <MediaPlayer.Time />
-      <MediaPlayer.PlaybackSpeed />
-      <MediaPlayer.Loop />
-      <MediaPlayer.Captions />
+    </MediaPlayerVideo>
+    <MediaPlayerLoading />
+    <MediaPlayerError />
+    <MediaPlayerVolumeIndicator />
+    <MediaPlayerControls>
+      <MediaPlayerControlsOverlay />
+      <MediaPlayerPlay />
+      <MediaPlayerSeekBackward />
+      <MediaPlayerSeekForward />
+      <MediaPlayerVolume />
+      <MediaPlayerSeek />
+      <MediaPlayerTime />
+      <MediaPlayerPlaybackSpeed />
+      <MediaPlayerLoop />
+      <MediaPlayerCaptions />
       <MediaPlayer.PiP />
       <MediaPlayer.Fullscreen />
       <MediaPlayer.Download />
@@ -156,13 +184,13 @@ A media player example that includes a playlist, similar to music streaming appl
 
 ## API Reference
 
-### Root
+### MediaPlayer
 
 The main container component for the media player.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="RootProps"
+  name="MediaPlayerProps"
 />
 
 <DataAttributesTable
@@ -182,31 +210,31 @@ The main container component for the media player.
   ]}
 />
 
-### Video
+### MediaPlayerVideo
 
 The video element, integrated with the player state.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="VideoProps"
+  name="MediaPlayerVideoProps"
 />
 
-### Audio
+### MediaPlayerAudio
 
 The audio element, integrated with the player state.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="AudioProps"
+  name="MediaPlayerAudioProps"
 />
 
-### Controls
+### MediaPlayerControls
 
 A container for the media player controls.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="ControlsProps"
+  name="MediaPlayerControlsProps"
 />
 
 <DataAttributesTable
@@ -232,7 +260,7 @@ Displays as a subtle backdrop that improves readability for media controls.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="ControlsOverlayProps"
+  name="MediaPlayerControlsOverlayProps"
 />
 
 <DataAttributesTable
@@ -248,22 +276,22 @@ Displays as a subtle backdrop that improves readability for media controls.
   ]}
 />
 
-### Loading
+### MediaPlayerLoading
 
 A loading indicator that appears when media is loading, similar to YouTube/Netflix style.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="LoadingProps"
+  name="MediaPlayerLoadingProps"
 />
 
-### Error
+### MediaPlayerError
 
 An error component that displays when media playback encounters an error, with retry and reload options.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="ErrorProps"
+  name="MediaPlayerErrorProps"
 />
 
 <DataAttributesTable
@@ -281,16 +309,16 @@ A volume indicator that appears when the volume is changed with keyboard interac
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="VolumeIndicatorProps"
+  name="MediaPlayerVolumeIndicatorProps"
 />
 
-### Play
+### MediaPlayerPlay
 
 A button to play or pause the media.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="PlayProps"
+  name="MediaPlayerPlayProps"
 />
 
 <DataAttributesTable
@@ -312,7 +340,7 @@ A button to seek backward in the media.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="SeekBackwardProps"
+  name="MediaPlayerSeekBackwardProps"
 />
 
 <DataAttributesTable
@@ -330,7 +358,7 @@ A button to seek forward in the media.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="SeekForwardProps"
+  name="MediaPlayerSeekForwardProps"
 />
 
 <DataAttributesTable
@@ -342,13 +370,13 @@ A button to seek forward in the media.
   ]}
 />
 
-### Seek
+### MediaPlayerSeek
 
 A slider component to seek through the media playback.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="SeekProps"
+  name="MediaPlayerSeekProps"
 />
 
 <DataAttributesTable
@@ -415,13 +443,13 @@ A slider component to seek through the media playback.
 />
 ```
 
-### Volume
+### MediaPlayerVolume
 
 A slider component to control the media volume.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="VolumeProps"
+  name="MediaPlayerVolumeProps"
 />
 
 <DataAttributesTable
@@ -453,13 +481,13 @@ A slider component to control the media volume.
   ]}
 />
 
-### Time
+### MediaPlayerTime
 
 Displays the current time, duration, or remaining time of the media.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="TimeProps"
+  name="MediaPlayerTimeProps"
 />
 
 ### PlaybackSpeed
@@ -468,7 +496,7 @@ A select dropdown to control the media playback speed.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="PlaybackSpeedProps"
+  name="MediaPlayerPlaybackSpeedProps"
 />
 
 <DataAttributesTable
@@ -480,13 +508,13 @@ A select dropdown to control the media playback speed.
   ]}
 />
 
-### Loop
+### MediaPlayerLoop
 
 A button to toggle loop mode.
 
 <AutoTypeTable
-  path="./types/docs/media-player.ts" 
-  name="LoopProps"
+  path="./types/docs/media-player.ts"
+  name="MediaPlayerLoopProps"
 />
 
 <DataAttributesTable
@@ -502,13 +530,13 @@ A button to toggle loop mode.
   ]}
 />
 
-### Fullscreen
+### MediaPlayerFullscreen
 
 A button to toggle fullscreen mode.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="FullscreenProps"
+  name="MediaPlayerFullscreenProps"
 />
 
 <DataAttributesTable
@@ -530,7 +558,7 @@ A button to toggle picture in picture mode (video only).
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="PiPProps"
+  name="MediaPlayerPiPProps"
 />
 
 <DataAttributesTable
@@ -546,13 +574,13 @@ A button to toggle picture in picture mode (video only).
   ]}
 />
 
-### Captions
+### MediaPlayerCaptions
 
 A button to toggle captions or subtitles (video only).
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="CaptionsProps"
+  name="MediaPlayerCaptionsProps"
 />
 
 <DataAttributesTable
@@ -568,13 +596,13 @@ A button to toggle captions or subtitles (video only).
   ]}
 />
 
-### Download
+### MediaPlayerDownload
 
 A button to download the media file.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="DownloadProps"
+  name="MediaPlayerDownloadProps"
 />
 
 <DataAttributesTable
@@ -586,13 +614,13 @@ A button to download the media file.
   ]}
 />
 
-### Settings
+### MediaPlayerSettings
 
 A dropdown menu with playback speed selector, caption selector, and resolution selector.
 
 <AutoTypeTable
   path="./types/docs/media-player.ts"
-  name="SettingsProps"
+  name="MediaPlayerSettingsProps"
 />
 
 **Features:**

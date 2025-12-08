@@ -6,6 +6,8 @@ import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "AngleSlider";
 const THUMB_NAME = "AngleSliderThumb";
@@ -19,7 +21,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootElement = React.ComponentRef<typeof AngleSliderRoot>;
+type RootElement = React.ComponentRef<typeof AngleSlider>;
 type ThumbElement = React.ComponentRef<typeof AngleSliderThumb>;
 
 function clamp(value: number, [min, max]: [number, number]) {
@@ -71,19 +73,6 @@ function getClosestValueIndex(values: number[], nextValue: number) {
   const closestDistance = Math.min(...distances);
   return distances.indexOf(closestDistance);
 }
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
 
 interface ThumbData {
   id: string;
@@ -312,7 +301,7 @@ function useSliderContext(consumerName: string) {
   return context;
 }
 
-interface AngleSliderRootProps extends Omit<DivProps, "defaultValue"> {
+interface AngleSliderProps extends Omit<DivProps, "defaultValue"> {
   value?: number[];
   defaultValue?: number[];
   onValueChange?: (value: number[]) => void;
@@ -332,7 +321,7 @@ interface AngleSliderRootProps extends Omit<DivProps, "defaultValue"> {
   inverted?: boolean;
 }
 
-function AngleSliderRoot(props: AngleSliderRootProps) {
+function AngleSlider(props: AngleSliderProps) {
   const {
     value,
     defaultValue = [0],
@@ -931,13 +920,7 @@ function AngleSliderValue(props: AngleSliderValueProps) {
 }
 
 export {
-  AngleSliderRoot as Root,
-  AngleSliderTrack as Track,
-  AngleSliderRange as Range,
-  AngleSliderThumb as Thumb,
-  AngleSliderValue as Value,
-  //
-  AngleSliderRoot as AngleSlider,
+  AngleSlider,
   AngleSliderTrack,
   AngleSliderRange,
   AngleSliderThumb,
@@ -945,5 +928,5 @@ export {
   //
   useStore as useAngleSlider,
   //
-  type AngleSliderRootProps as AngleSliderProps,
+  type AngleSliderProps,
 };

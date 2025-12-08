@@ -44,17 +44,23 @@ npx shadcn@latest add @diceui/listbox
 Import the parts, and compose them together.
 
 ```tsx
-import * as Listbox from "@diceui/listbox"
+import {
+  ListboxRoot,
+  ListboxGroup,
+  ListboxGroupLabel,
+  ListboxItem,
+  ListboxItemIndicator,
+} from "@diceui/listbox"
 
 return (
-  <Listbox.Root>
-    <Listbox.Group>
-      <Listbox.GroupLabel/>
-      <Listbox.Item >
-        <Listbox.ItemIndicator />
-      </Listbox.Item>
-    </Listbox.Group>
-  </Listbox.Root>
+  <ListboxRoot>
+    <ListboxGroup>
+      <ListboxGroupLabel/>
+      <ListboxItem >
+        <ListboxItemIndicator />
+      </ListboxItem>
+    </ListboxGroup>
+  </ListboxRoot>
 )
 ```
 
@@ -85,7 +91,7 @@ Group items together to create a list of related options.
 
 ## API Reference
 
-### Root
+### Listbox
 
 The root component for creating listboxes.
 
@@ -94,7 +100,7 @@ The root component for creating listboxes.
   name="RootProps"
 />
 
-### Group
+### ListboxGroup
 
 A group of items inside the selectable list.
 
@@ -103,7 +109,7 @@ A group of items inside the selectable list.
   name="GroupProps"
 />
 
-### GroupLabel
+### ListboxGroupLabel
 
 A label for the group of items.
 
@@ -112,7 +118,7 @@ A label for the group of items.
   name="GroupLabelProps"
 />
 
-### Item
+### ListboxItem
 
 An item inside the selectable list.
 
@@ -121,7 +127,7 @@ An item inside the selectable list.
   name="ItemProps"
 />
 
-### ItemIndicator
+### ListboxItemIndicator
 
 A visual indicator that shows when the item is selected.
 

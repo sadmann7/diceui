@@ -476,7 +476,6 @@ export const examples: Registry["items"] = [
   {
     name: "cropper-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
     registryDependencies: ["cropper"],
     files: [
       {
@@ -488,7 +487,6 @@ export const examples: Registry["items"] = [
   {
     name: "cropper-controlled-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
     registryDependencies: ["cropper", "button", "label", "slider"],
     files: [
       {
@@ -500,12 +498,7 @@ export const examples: Registry["items"] = [
   {
     name: "cropper-file-upload-demo",
     type: "registry:example",
-    dependencies: [
-      "class-variance-authority",
-      "@hookform/resolvers",
-      "react-hook-form",
-      "zod",
-    ],
+    dependencies: ["@hookform/resolvers", "react-hook-form", "zod"],
     registryDependencies: ["cropper", "button", "dialog", "label", "slider"],
     files: [
       {
@@ -517,7 +510,6 @@ export const examples: Registry["items"] = [
   {
     name: "cropper-shapes-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
     registryDependencies: ["cropper", "label", "select", "switch"],
     files: [
       {
@@ -529,7 +521,6 @@ export const examples: Registry["items"] = [
   {
     name: "cropper-video-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
     registryDependencies: ["cropper", "button", "label", "select"],
     files: [
       {
@@ -807,7 +798,6 @@ export const examples: Registry["items"] = [
   {
     name: "segmented-input-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
     registryDependencies: ["segmented-input"],
     files: [
       {
@@ -819,7 +809,6 @@ export const examples: Registry["items"] = [
   {
     name: "segmented-input-form-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
     registryDependencies: ["button", "segmented-input"],
     files: [
       {
@@ -831,7 +820,6 @@ export const examples: Registry["items"] = [
   {
     name: "segmented-input-rgb-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
     registryDependencies: ["segmented-input"],
     files: [
       {
@@ -843,7 +831,6 @@ export const examples: Registry["items"] = [
   {
     name: "segmented-input-vertical-demo",
     type: "registry:example",
-    dependencies: ["class-variance-authority"],
     registryDependencies: ["segmented-input"],
     files: [
       {

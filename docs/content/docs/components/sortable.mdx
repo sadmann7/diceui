@@ -46,18 +46,24 @@ npx shadcn@latest add @diceui/sortable
 Import the parts, and compose them together.
 
 ```tsx
-import * as Sortable from "@/components/ui/sortable";
+import {
+  Sortable,
+  SortableContent,
+  SortableItem,
+  SortableItemHandle,
+  SortableOverlay,
+} from "@/components/ui/sortable";
 
 return (
-  <Sortable.Root>
-    <Sortable.Content>
-      <Sortable.Item >
-        <Sortable.ItemHandle />
-      </Sortable.Item>
-      <Sortable.Item />
-    </Sortable.Content>
-    <Sortable.Overlay />
-  </Sortable.Root>
+  <Sortable>
+    <SortableContent>
+      <SortableItem >
+        <SortableItemHandle />
+      </SortableItem>
+      <SortableItem />
+    </SortableContent>
+    <SortableOverlay />
+  </Sortable>
 )
 ```
 
@@ -70,15 +76,15 @@ When using primitive arrays (strings, numbers), the `getItemValue` prop is optio
 ```tsx
 const [items, setItems] = React.useState(["Item 1", "Item 2", "Item 3"]);
 
-<Sortable.Root value={items} onValueChange={setItems}>
-  <Sortable.Content>
+<Sortable value={items} onValueChange={setItems}>
+  <SortableContent>
     {items.map((item) => (
-      <Sortable.Item key={item} value={item}>
+      <SortableItem key={item} value={item}>
         {item}
-      </Sortable.Item>
+      </SortableItem>
     ))}
-  </Sortable.Content>
-</Sortable.Root>
+  </SortableContent>
+</Sortable>
 ```
 
 ### With Object Arrays
@@ -91,19 +97,19 @@ const [items, setItems] = React.useState([
   { id: 2, name: "Item 2" },
 ]);
 
-<Sortable.Root
+<Sortable
   value={items}
   onValueChange={setItems}
   getItemValue={(item) => item.id}
 >
-  <Sortable.Content>
+  <SortableContent>
     {items.map((item) => (
-      <Sortable.Item key={item.id} value={item.id}>
+      <SortableItem key={item.id} value={item.id}>
         {item.name}
-      </Sortable.Item>
+      </SortableItem>
     ))}
-  </Sortable.Content>
-</Sortable.Root>
+  </SortableContent>
+</Sortable>
 ```
 
 ## Examples
@@ -128,31 +134,31 @@ Use an array of primitives (string or number) instead of objects for sorting.
 
 ## API Reference
 
-### Root
+### Sortable
 
 The main container component for sortable functionality.
 
 <AutoTypeTable
   path="./types/docs/sortable.ts"
-  name="RootProps"
+  name="SortableProps"
 />
 
-### Content
+### SortableContent
 
 Container for sortable items. Multiple `SortableContent` components can be used within a `Sortable` component.
 
 <AutoTypeTable
   path="./types/docs/sortable.ts"
-  name="ContentProps"
+  name="SortableContentProps"
 />
 
-### Item
+### SortableItem
 
 Individual sortable item component.
 
 <AutoTypeTable
   path="./types/docs/sortable.ts"
-  name="ItemProps"
+  name="SortableItemProps"
 />
 
 <DataAttributesTable
@@ -168,13 +174,13 @@ Individual sortable item component.
   ]}
 />
 
-### ItemHandle
+### SortableItemHandle
 
 A button component that acts as a drag handle for sortable items.
 
 <AutoTypeTable
   path="./types/docs/sortable.ts"
-  name="ItemHandleProps"
+  name="SortableItemHandleProps"
 />
 
 <DataAttributesTable
@@ -203,7 +209,7 @@ The overlay component that appears when an item is being dragged.
 
 <AutoTypeTable
   path="./types/docs/sortable.ts"
-  name="OverlayProps"
+  name="SortableOverlayProps"
 />
 
 ## Accessibility

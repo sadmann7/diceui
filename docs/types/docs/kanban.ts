@@ -8,7 +8,7 @@ import type {
 import type { SortableContextProps } from "@dnd-kit/sortable";
 import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface RootProps<T> extends DndContextProps {
+export interface KanbanProps<T> extends DndContextProps {
   /**
    * A record of column IDs to arrays of items for the kanban board.
    *
@@ -148,12 +148,12 @@ export interface RootProps<T> extends DndContextProps {
   flatCursor?: boolean;
 }
 
-export interface BoardProps extends EmptyProps<"div">, CompositionProps {
+export interface KanbanBoardProps extends EmptyProps<"div">, CompositionProps {
   /** The children of the kanban board. */
   children: React.ReactNode;
 }
 
-export interface ColumnProps extends EmptyProps<"div">, CompositionProps {
+export interface KanbanColumnProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique identifier of the column.
    *
@@ -179,11 +179,11 @@ export interface ColumnProps extends EmptyProps<"div">, CompositionProps {
   asHandle?: boolean;
 }
 
-export interface ColumnHandleProps
+export interface KanbanColumnHandleProps
   extends EmptyProps<"button">,
     CompositionProps {}
 
-export interface ItemProps extends EmptyProps<"div">, CompositionProps {
+export interface KanbanItemProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique identifier of the item.
    *
@@ -206,11 +206,11 @@ export interface ItemProps extends EmptyProps<"div">, CompositionProps {
   asHandle?: boolean;
 }
 
-export interface ItemHandleProps
+export interface KanbanItemHandleProps
   extends EmptyProps<"button">,
     CompositionProps {}
 
-export interface OverlayProps
+export interface KanbanOverlayProps
   extends Omit<
     React.ComponentProps<typeof DragOverlay>,
     keyof React.ComponentProps<"div">

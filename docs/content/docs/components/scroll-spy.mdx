@@ -32,9 +32,19 @@ npx shadcn@latest add @diceui/scroll-spy
     <ComponentSource name="compose-refs" />
   </Step>
   <Step>
+    Copy and paste the following hooks into your `hooks` directory.
+
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-lazy-ref" />
+    <ComponentSource name="use-as-ref" />
+  </Step>
+  <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="scroll-spy" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -43,17 +53,23 @@ npx shadcn@latest add @diceui/scroll-spy
 Import the parts, and compose them together.
 
 ```tsx
-import * as ScrollSpy from "@/components/ui/scroll-spy"
+import {
+  ScrollSpy,
+  ScrollSpyNav,
+  ScrollSpyLink,
+  ScrollSpyViewport,
+  ScrollSpySection,
+} from "@/components/ui/scroll-spy";
 
 return (
-  <ScrollSpy.Root>
-    <ScrollSpy.Nav>
-      <ScrollSpy.Link />
-    </ScrollSpy.Nav>
-    <ScrollSpy.Viewport>
-      <ScrollSpy.Section />
-    </ScrollSpy.Viewport>
-  </ScrollSpy.Root>
+  <ScrollSpy>
+    <ScrollSpyNav>
+      <ScrollSpyLink />
+    </ScrollSpyNav>
+    <ScrollSpyViewport>
+      <ScrollSpySection />
+    </ScrollSpyViewport>
+  </ScrollSpy>
 )
 ```
 
@@ -104,13 +120,13 @@ The key is to apply `sticky top-[offset]` to the `ScrollSpyNav` to keep the navi
 
 ## API Reference
 
-### Root
+### ScrollSpy
 
 The root component that manages scroll tracking and contains all ScrollSpy parts.
 
 <AutoTypeTable
   path="./types/docs/scroll-spy.ts"
-  name="RootProps"
+  name="ScrollSpyProps"
 />
 
 <DataAttributesTable
@@ -128,7 +144,7 @@ The navigation container component.
 
 <AutoTypeTable
   path="./types/docs/scroll-spy.ts"
-  name="NavProps"
+  name="ScrollSpyNavProps"
 />
 
 <DataAttributesTable
@@ -146,7 +162,7 @@ Navigation link that scrolls to a section.
 
 <AutoTypeTable
   path="./types/docs/scroll-spy.ts"
-  name="LinkProps"
+  name="ScrollSpyLinkProps"
 />
 
 <DataAttributesTable
@@ -168,7 +184,7 @@ The viewport container component for sections.
 
 <AutoTypeTable
   path="./types/docs/scroll-spy.ts"
-  name="ViewportProps"
+  name="ScrollSpyViewportProps"
 />
 
 <DataAttributesTable
@@ -186,7 +202,7 @@ Content section that gets tracked by the scroll spy.
 
 <AutoTypeTable
   path="./types/docs/scroll-spy.ts"
-  name="SectionProps"
+  name="ScrollSpySectionProps"
 />
 
 <DataAttributesTable

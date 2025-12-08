@@ -13,7 +13,7 @@ links:
 ### CLI
 
 ```package-install
-npx shadcn@latest add "https://diceui.com/r/action-bar"
+npx shadcn@latest add "@diceui/action-bar"
 
 ```
 
@@ -38,6 +38,12 @@ npx shadcn@latest add "https://diceui.com/r/action-bar"
     <ComponentSource name="compose-refs" />
   </Step>
   <Step>
+    Copy and paste the following hooks into your `hooks` directory.
+
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-as-ref" />
+  </Step>
+  <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="action-bar" />
@@ -50,18 +56,25 @@ npx shadcn@latest add "https://diceui.com/r/action-bar"
 ## Layout
 
 ```tsx
-import * as ActionBar from "@/components/ui/action-bar";
+import {
+  ActionBar,
+  ActionBarSelection,
+  ActionBarSeparator,
+  ActionBarGroup,
+  ActionBarItem,
+  ActionBarClose,
+} from "@/components/ui/action-bar";
 
-<ActionBar.Root>
-  <ActionBar.Selection />
-  <ActionBar.Separator />
-  <ActionBar.Group>
-    <ActionBar.Item />
-    <ActionBar.Item />
-  </ActionBar.Group>
-  <ActionBar.Separator />
-  <ActionBar.Close />
-</ActionBar.Root>
+<ActionBar>
+  <ActionBarSelection />
+  <ActionBarSeparator />
+  <ActionBarGroup>
+    <ActionBarItem />
+    <ActionBarItem />
+  </ActionBarGroup>
+  <ActionBarSeparator />
+  <ActionBarClose />
+</ActionBar>
 ```
 
 ## Examples
@@ -74,13 +87,13 @@ Use the `side` and `align` props to control where the action bar appears.
 
 ## API Reference
 
-### Root
+### ActionBar
 
 The root component that controls the visibility and position of the action bar. Has `role="toolbar"` for accessibility.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="RootProps"
+  name="ActionBarProps"
 />
 
 <DataAttributesTable
@@ -100,22 +113,22 @@ The root component that controls the visibility and position of the action bar. 
   ]}
 />
 
-### Selection
+### ActionBarSelection
 
 Displays selection information, typically used to show how many items are selected.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="SelectionProps"
+  name="ActionBarSelectionProps"
 />
 
-### Group
+### ActionBarGroup
 
 A container for action items that implements roving focus management. Items within a group can be navigated using arrow keys, forming a single tab stop. See [Keyboard Interactions](#keyboard-interactions) for full details.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="GroupProps"
+  name="ActionBarGroupProps"
 />
 
 <DataAttributesTable
@@ -127,31 +140,31 @@ A container for action items that implements roving focus management. Items with
   ]}
 />
 
-### Item
+### ActionBarItem
 
 An interactive button item within the action bar. When used inside a `Group`, participates in roving focus navigation.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="ItemProps"
+  name="ActionBarItemProps"
 />
 
-### Close
+### ActionBarClose
 
 A button that closes the action bar by calling the `onOpenChange` callback with `false`. The close button has its own tab stop, separate from the group's roving focus.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="CloseProps"
+  name="ActionBarCloseProps"
 />
 
-### Separator
+### ActionBarSeparator
 
 A visual separator between action bar items.
 
 <AutoTypeTable
   path="./types/docs/action-bar.ts"
-  name="SeparatorProps"
+  name="ActionBarSeparatorProps"
 />
 
 

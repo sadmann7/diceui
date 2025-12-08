@@ -44,18 +44,26 @@ npx shadcn@latest add @diceui/tags-input
 Import the parts, and compose them together.
 
 ```tsx
-import * as TagsInput from "@diceui/tags-input";
+import {
+  TagsInput,
+  TagsInputLabel,
+  TagsInputItem,
+  TagsInputItemText,
+  TagsInputItemDelete,
+  TagsInputInput,
+  TagsInputClear,
+} from "@diceui/tags-input";
 
 return (
-  <TagsInput.Root>
-    <TagsInput.Label/>
-    <TagsInput.Item >
-      <TagsInput.ItemText />
-      <TagsInput.ItemDelete />
-    </TagsInput.Item>
-    <TagsInput.Input />
-    <TagsInput.Clear />
-  </TagsInput.Root>
+  <TagsInput>
+    <TagsInputLabel/>
+    <TagsInputItem >
+      <TagsInputItemText />
+      <TagsInputItemDelete />
+    </TagsInputItem>
+    <TagsInputInput />
+    <TagsInputClear />
+  </TagsInput>
 )
 ```
 
@@ -79,7 +87,7 @@ Validate the input value before adding it to the list. Can be used to prevent du
 
 ## API Reference
 
-### Root
+### TagsInput
 
 Container for the tags input.
 
@@ -105,7 +113,7 @@ Container for the tags input.
   ]}
 />
 
-### Label
+### TagsInputLabel
 
 Label element for the tags input.
 
@@ -123,7 +131,7 @@ Label element for the tags input.
   ]}
 />
 
-### Input
+### TagsInputInput
 
 Text input for adding new tags.
 
@@ -141,7 +149,7 @@ Text input for adding new tags.
   ]}
 />
 
-### Item
+### TagsInputItem
 
 Individual tag item.
 
@@ -176,7 +184,7 @@ Individual tag item.
 />
 
 
-### ItemText
+### TagsInputItemText
 
 Text content of a tag.
 
@@ -186,7 +194,7 @@ Text content of a tag.
 />
 
 
-### ItemDelete
+### TagsInputItemDelete
 
 Button to remove a tag.
 
@@ -209,7 +217,7 @@ Button to remove a tag.
 />
 
 
-### Clear
+### TagsInputClear
 
 Button to clear all tags.
 

@@ -9,6 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "KeyValue";
 const LIST_NAME = "KeyValueList";
@@ -26,33 +29,10 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootElement = React.ComponentRef<typeof KeyValueRoot>;
+type RootElement = React.ComponentRef<typeof KeyValue>;
 type KeyInputElement = React.ComponentRef<typeof KeyValueKeyInput>;
 type RemoveElement = React.ComponentRef<typeof KeyValueRemove>;
 type AddElement = React.ComponentRef<typeof KeyValueAdd>;
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
 
 function getErrorId(rootId: string, itemId: string, field: Field) {
   return `${rootId}-${itemId}-${field}-error`;
@@ -139,7 +119,7 @@ function useKeyValueContext(consumerName: string) {
   return context;
 }
 
-interface KeyValueRootProps extends Omit<DivProps, "onPaste" | "defaultValue"> {
+interface KeyValueProps extends Omit<DivProps, "onPaste" | "defaultValue"> {
   id?: string;
   defaultValue?: KeyValueItemData[];
   value?: KeyValueItemData[];
@@ -170,7 +150,7 @@ interface KeyValueRootProps extends Omit<DivProps, "onPaste" | "defaultValue"> {
   ) => string | undefined;
 }
 
-function KeyValueRoot(props: KeyValueRootProps) {
+function KeyValue(props: KeyValueProps) {
   const { value, defaultValue, onValueChange, ...rootProps } = props;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -211,14 +191,14 @@ function KeyValueRoot(props: KeyValueRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <KeyValueRootImpl {...rootProps} value={value} />
+      <KeyValueImpl {...rootProps} value={value} />
     </StoreContext.Provider>
   );
 }
 
-interface KeyValueRootImplProps
+interface KeyValueImplProps
   extends Omit<
-    KeyValueRootProps,
+    KeyValueProps,
     | "defaultValue"
     | "onValueChange"
     | "onPaste"
@@ -228,7 +208,7 @@ interface KeyValueRootImplProps
     | "onValueValidate"
   > {}
 
-function KeyValueRootImpl(props: KeyValueRootImplProps) {
+function KeyValueImpl(props: KeyValueImplProps) {
   const {
     id,
     value: valueProp,
@@ -250,7 +230,7 @@ function KeyValueRootImpl(props: KeyValueRootImplProps) {
     ...rootProps
   } = props;
 
-  const store = useStoreContext("KeyValueRootImpl");
+  const store = useStoreContext("KeyValueImpl");
 
   const value = useStore((state) => state.value);
   const errors = useStore((state) => state.errors);
@@ -404,7 +384,7 @@ function KeyValueItem(props: KeyValueItemProps) {
 
 interface KeyValueKeyInputProps
   extends Omit<React.ComponentProps<"input">, "onPaste">,
-    Pick<KeyValueRootProps, "onKeyValidate" | "onValueValidate" | "onPaste"> {
+    Pick<KeyValueProps, "onKeyValidate" | "onValueValidate" | "onPaste"> {
   asChild?: boolean;
 }
 
@@ -615,7 +595,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
 
 interface KeyValueValueInputProps
   extends Omit<React.ComponentProps<"textarea">, "rows">,
-    Pick<KeyValueRootProps, "onKeyValidate" | "onValueValidate"> {
+    Pick<KeyValueProps, "onKeyValidate" | "onValueValidate"> {
   maxRows?: number;
   asChild?: boolean;
 }
@@ -748,7 +728,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
 
 interface KeyValueRemoveProps
   extends React.ComponentProps<typeof Button>,
-    Pick<KeyValueRootProps, "onRemove"> {}
+    Pick<KeyValueProps, "onRemove"> {}
 
 function KeyValueRemove(props: KeyValueRemoveProps) {
   const { onClick, onRemove, children, ...removeProps } = props;
@@ -800,7 +780,7 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
 
 interface KeyValueAddProps
   extends React.ComponentProps<typeof Button>,
-    Pick<KeyValueRootProps, "onAdd"> {}
+    Pick<KeyValueProps, "onAdd"> {}
 
 function KeyValueAdd(props: KeyValueAddProps) {
   const { onClick, onAdd, children, ...addProps } = props;
@@ -890,16 +870,7 @@ function KeyValueError(props: KeyValueErrorProps) {
 }
 
 export {
-  KeyValueRoot as Root,
-  KeyValueList as List,
-  KeyValueItem as Item,
-  KeyValueKeyInput as KeyInput,
-  KeyValueValueInput as ValueInput,
-  KeyValueRemove as Remove,
-  KeyValueAdd as Add,
-  KeyValueError as Error,
-  //
-  KeyValueRoot as KeyValue,
+  KeyValue,
   KeyValueList,
   KeyValueItem,
   KeyValueKeyInput,
@@ -911,5 +882,5 @@ export {
   useStore as useKeyValueStore,
   //
   type KeyValueItemData,
-  type KeyValueRootProps as KeyValueProps,
+  type KeyValueProps,
 };

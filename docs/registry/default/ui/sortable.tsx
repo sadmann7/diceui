@@ -96,7 +96,7 @@ interface GetItemValue<T> {
   getItemValue: (item: T) => UniqueIdentifier;
 }
 
-type SortableRootProps<T> = DndContextProps &
+type SortableProps<T> = DndContextProps &
   (T extends object ? GetItemValue<T> : Partial<GetItemValue<T>>) & {
     value: T[];
     onValueChange?: (items: T[]) => void;
@@ -108,7 +108,7 @@ type SortableRootProps<T> = DndContextProps &
     flatCursor?: boolean;
   };
 
-function SortableRoot<T>(props: SortableRootProps<T>) {
+function Sortable<T>(props: SortableProps<T>) {
   const {
     value,
     onValueChange,
@@ -567,15 +567,11 @@ function SortableOverlay(props: SortableOverlayProps) {
 }
 
 export {
-  SortableRoot as Sortable,
+  Sortable,
   SortableContent,
   SortableItem,
   SortableItemHandle,
   SortableOverlay,
   //
-  SortableRoot as Root,
-  SortableContent as Content,
-  SortableItem as Item,
-  SortableItemHandle as ItemHandle,
-  SortableOverlay as Overlay,
+  type SortableProps,
 };

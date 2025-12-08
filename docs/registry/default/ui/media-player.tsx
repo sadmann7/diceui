@@ -56,6 +56,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "MediaPlayer";
 const SEEK_NAME = "MediaPlayerSeek";
@@ -79,16 +80,6 @@ const SPRITE_CONTAINER_WIDTH = 224;
 const SPRITE_CONTAINER_HEIGHT = 128;
 
 type Direction = "ltr" | "rtl";
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
 
 interface StoreState {
   controlsVisible: boolean;
@@ -188,7 +179,7 @@ function useMediaPlayerContext(consumerName: string) {
   return context;
 }
 
-interface MediaPlayerRootProps
+interface MediaPlayerProps
   extends Omit<React.ComponentProps<"div">, "onTimeUpdate" | "onVolumeChange"> {
   onPlay?: () => void;
   onPause?: () => void;
@@ -209,7 +200,7 @@ interface MediaPlayerRootProps
   withoutTooltip?: boolean;
 }
 
-function MediaPlayerRoot(props: MediaPlayerRootProps) {
+function MediaPlayer(props: MediaPlayerProps) {
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
     controlsVisible: true,
@@ -226,13 +217,13 @@ function MediaPlayerRoot(props: MediaPlayerRootProps) {
   return (
     <MediaProvider>
       <StoreContext.Provider value={store}>
-        <MediaPlayerRootImpl {...props} />
+        <MediaPlayerImpl {...props} />
       </StoreContext.Provider>
     </MediaProvider>
   );
 }
 
-function MediaPlayerRootImpl(props: MediaPlayerRootProps) {
+function MediaPlayerImpl(props: MediaPlayerProps) {
   const {
     onPlay,
     onPause,
@@ -3128,7 +3119,7 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
 }
 
 export {
-  MediaPlayerRoot as MediaPlayer,
+  MediaPlayer,
   MediaPlayerVideo,
   MediaPlayerAudio,
   MediaPlayerControls,
@@ -3152,30 +3143,8 @@ export {
   MediaPlayerPortal,
   MediaPlayerTooltip,
   //
-  MediaPlayerRoot as Root,
-  MediaPlayerVideo as Video,
-  MediaPlayerAudio as Audio,
-  MediaPlayerControls as Controls,
-  MediaPlayerControlsOverlay as ControlsOverlay,
-  MediaPlayerLoading as Loading,
-  MediaPlayerVolumeIndicator as VolumeIndicator,
-  MediaPlayerError as Error,
-  MediaPlayerPlay as Play,
-  MediaPlayerSeekBackward as SeekBackward,
-  MediaPlayerSeekForward as SeekForward,
-  MediaPlayerSeek as Seek,
-  MediaPlayerVolume as Volume,
-  MediaPlayerTime as Time,
-  MediaPlayerPlaybackSpeed as PlaybackSpeed,
-  MediaPlayerLoop as Loop,
-  MediaPlayerFullscreen as Fullscreen,
-  MediaPlayerPiP as PiP,
-  MediaPlayerCaptions as Captions,
-  MediaPlayerDownload as Download,
-  MediaPlayerSettings as Settings,
-  MediaPlayerPortal as Portal,
-  MediaPlayerTooltip as Tooltip,
-  //
   useMediaSelector as useMediaPlayer,
   useStoreSelector as useMediaPlayerStore,
+  //
+  type MediaPlayerProps,
 };

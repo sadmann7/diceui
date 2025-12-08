@@ -5,7 +5,7 @@ import type {
   Orientation,
 } from "@/types";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface RatingProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The current rating value.
    *
@@ -125,7 +125,9 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   name?: string;
 }
 
-export interface ItemProps extends EmptyProps<"button">, CompositionProps {
+export interface RatingItemProps
+  extends EmptyProps<"button">,
+    CompositionProps {
   /**
    * The index of this rating item.
    * If not provided, it will be auto-calculated based on position.

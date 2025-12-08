@@ -12,6 +12,9 @@ import {
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "TimePicker";
 const LABEL_NAME = "TimePickerLabel";
@@ -47,7 +50,7 @@ interface ButtonProps extends React.ComponentProps<"button"> {
 
 type PopoverContentProps = React.ComponentProps<typeof PopoverContent>;
 
-type RootElement = React.ComponentRef<typeof TimePickerRoot>;
+type RootElement = React.ComponentRef<typeof TimePicker>;
 type InputGroupElement = React.ComponentRef<typeof TimePickerInputGroup>;
 type InputElement = React.ComponentRef<typeof TimePickerInput>;
 type TriggerElement = React.ComponentRef<typeof TimePickerTrigger>;
@@ -72,29 +75,6 @@ interface ColumnData {
   ref: React.RefObject<ColumnElement | null>;
   getSelectedItemRef: () => React.RefObject<ColumnItemElement | null> | null;
   getItems: () => ItemData[];
-}
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
 }
 
 function focusFirst(
@@ -297,7 +277,7 @@ function useTimePickerContext(consumerName: string) {
   return context;
 }
 
-interface TimePickerRootProps extends DivProps {
+interface TimePickerProps extends DivProps {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -321,7 +301,7 @@ interface TimePickerRootProps extends DivProps {
   showSeconds?: boolean;
 }
 
-function TimePickerRoot(props: TimePickerRootProps) {
+function TimePicker(props: TimePickerProps) {
   const {
     value,
     defaultValue,
@@ -375,18 +355,18 @@ function TimePickerRoot(props: TimePickerRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <TimePickerRootImpl {...rootProps} value={value} open={open} />
+      <TimePickerImpl {...rootProps} value={value} open={open} />
     </StoreContext.Provider>
   );
 }
 
-interface TimePickerRootImplProps
+interface TimePickerImplProps
   extends Omit<
-    TimePickerRootProps,
+    TimePickerProps,
     "defaultValue" | "defaultOpen" | "onValueChange" | "onOpenChange"
   > {}
 
-function TimePickerRootImpl(props: TimePickerRootImplProps) {
+function TimePickerImpl(props: TimePickerImplProps) {
   const {
     value: valueProp,
     open: openProp,
@@ -413,7 +393,7 @@ function TimePickerRootImpl(props: TimePickerRootImplProps) {
     ...rootProps
   } = props;
 
-  const store = useStoreContext("TimePickerRootImpl");
+  const store = useStoreContext("TimePickerImpl");
 
   const value = useStore((state) => state.value);
 
@@ -2229,21 +2209,7 @@ function TimePickerClear(props: ButtonProps) {
 }
 
 export {
-  TimePickerRoot as Root,
-  TimePickerLabel as Label,
-  TimePickerInputGroup as InputGroup,
-  TimePickerInput as Input,
-  TimePickerTrigger as Trigger,
-  TimePickerContent as Content,
-  TimePickerHour as Hour,
-  TimePickerMinute as Minute,
-  TimePickerSecond as Second,
-  TimePickerPeriod as Period,
-  TimePickerSeparator as Separator,
-  TimePickerClear as Clear,
-  //
-  TimePickerRoot as TimePicker,
-  TimePickerRoot,
+  TimePicker,
   TimePickerLabel,
   TimePickerInputGroup,
   TimePickerInput,
@@ -2258,5 +2224,5 @@ export {
   //
   useStore as useTimePicker,
   //
-  type TimePickerRootProps as TimePickerProps,
+  type TimePickerProps,
 };

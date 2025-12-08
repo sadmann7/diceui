@@ -4,6 +4,7 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "QRCode";
 const CANVAS_NAME = "QRCodeCanvas";
@@ -26,16 +27,6 @@ interface QRCodeCanvasOpts {
   rendererOpts?: {
     quality?: number;
   };
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
 }
 
 interface StoreState {
@@ -90,7 +81,7 @@ function useQRCodeContext(consumerName: string) {
   return context;
 }
 
-interface QRCodeRootProps extends Omit<React.ComponentProps<"div">, "onError"> {
+interface QRCodeProps extends Omit<React.ComponentProps<"div">, "onError"> {
   value: string;
   size?: number;
   level?: QRCodeLevel;
@@ -103,7 +94,7 @@ interface QRCodeRootProps extends Omit<React.ComponentProps<"div">, "onError"> {
   asChild?: boolean;
 }
 
-function QRCodeRoot(props: QRCodeRootProps) {
+function QRCode(props: QRCodeProps) {
   const {
     value,
     size = 200,
@@ -509,15 +500,7 @@ function QRCodeSkeleton(props: QRCodeSkeletonProps) {
 }
 
 export {
-  QRCodeRoot as Root,
-  QRCodeCanvas as Canvas,
-  QRCodeSvg as Svg,
-  QRCodeImage as Image,
-  QRCodeOverlay as Overlay,
-  QRCodeSkeleton as Skeleton,
-  QRCodeDownload as Download,
-  //
-  QRCodeRoot as QRCode,
+  QRCode,
   QRCodeCanvas,
   QRCodeSvg,
   QRCodeImage,
@@ -527,5 +510,5 @@ export {
   //
   useStore as useQRCode,
   //
-  type QRCodeRootProps as QRCodeProps,
+  type QRCodeProps,
 };

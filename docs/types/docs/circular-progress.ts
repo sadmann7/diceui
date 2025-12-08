@@ -1,6 +1,8 @@
 import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface CircularProgressProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The current progress value as a number between the min and max values.
    * Set to `null` or `undefined` for indeterminate progress.
@@ -51,10 +53,12 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   thickness?: number;
 }
 
-export interface IndicatorProps extends EmptyProps<"svg"> {}
+export interface CircularProgressIndicatorProps extends EmptyProps<"svg"> {}
 
-export interface TrackProps extends EmptyProps<"circle"> {}
+export interface CircularProgressTrackProps extends EmptyProps<"circle"> {}
 
-export interface RangeProps extends EmptyProps<"circle"> {}
+export interface CircularProgressRangeProps extends EmptyProps<"circle"> {}
 
-export interface ValueTextProps extends EmptyProps<"span">, CompositionProps {}
+export interface CircularProgressValueTextProps
+  extends EmptyProps<"span">,
+    CompositionProps {}

@@ -23,6 +23,9 @@ import {
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 /**
  * @see https://gist.github.com/bkrmendy/f4582173f50fab209ddfef1377ab31e3
@@ -385,29 +388,6 @@ function parseColorString(value: string): ColorValue | null {
 
 type Direction = "ltr" | "rtl";
 
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
-
 interface ColorPickerStoreState {
   color: ColorValue;
   hsv: HSVColorValue;
@@ -473,7 +453,7 @@ function useColorPickerContext(consumerName: string) {
   return context;
 }
 
-interface ColorPickerRootProps
+interface ColorPickerProps
   extends Omit<React.ComponentProps<"div">, "onValueChange">,
     Pick<
       React.ComponentProps<typeof Popover>,
@@ -494,7 +474,7 @@ interface ColorPickerRootProps
   required?: boolean;
 }
 
-function ColorPickerRoot(props: ColorPickerRootProps) {
+function ColorPicker(props: ColorPickerProps) {
   const {
     value: valueProp,
     defaultValue = "#000000",
@@ -597,7 +577,7 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
 
   return (
     <ColorPickerStoreContext.Provider value={store}>
-      <ColorPickerRootImpl
+      <ColorPickerImpl
         {...rootProps}
         value={valueProp}
         defaultOpen={defaultOpen}
@@ -612,9 +592,9 @@ function ColorPickerRoot(props: ColorPickerRootProps) {
   );
 }
 
-interface ColorPickerRootImplProps
+interface ColorPickerImplProps
   extends Omit<
-    ColorPickerRootProps,
+    ColorPickerProps,
     | "defaultValue"
     | "onValueChange"
     | "onOpenChange"
@@ -623,7 +603,7 @@ interface ColorPickerRootImplProps
     | "onFormatChange"
   > {}
 
-function ColorPickerRootImpl(props: ColorPickerRootImplProps) {
+function ColorPickerImpl(props: ColorPickerImplProps) {
   const {
     value: valueProp,
     dir: dirProp,
@@ -640,7 +620,7 @@ function ColorPickerRootImpl(props: ColorPickerRootImplProps) {
     ...rootProps
   } = props;
 
-  const store = useColorPickerStoreContext("ColorPickerRootImpl");
+  const store = useColorPickerStoreContext("ColorPickerImpl");
 
   const dir = useDirection(dirProp);
 
@@ -1645,7 +1625,7 @@ function HsbInput(props: HsbInputProps) {
 }
 
 export {
-  ColorPickerRoot as ColorPicker,
+  ColorPicker,
   ColorPickerTrigger,
   ColorPickerContent,
   ColorPickerArea,
@@ -1656,16 +1636,7 @@ export {
   ColorPickerFormatSelect,
   ColorPickerInput,
   //
-  ColorPickerRoot as Root,
-  ColorPickerTrigger as Trigger,
-  ColorPickerContent as Content,
-  ColorPickerArea as Area,
-  ColorPickerHueSlider as HueSlider,
-  ColorPickerAlphaSlider as AlphaSlider,
-  ColorPickerSwatch as Swatch,
-  ColorPickerEyeDropper as EyeDropper,
-  ColorPickerFormatSelect as FormatSelect,
-  ColorPickerInput as Input,
-  //
   useColorPickerStore as useColorPicker,
+  //
+  type ColorPickerProps,
 };

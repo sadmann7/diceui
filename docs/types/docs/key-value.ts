@@ -9,7 +9,7 @@ interface KeyValueItemData {
 
 type ButtonProps = React.ComponentProps<typeof Button>;
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface KeyValueProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique identifier for the key-value component.
    *
@@ -200,7 +200,7 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   stripQuotes?: boolean;
 }
 
-export interface ListProps extends EmptyProps<"div">, CompositionProps {
+export interface KeyValueListProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The orientation of the list.
    *
@@ -209,9 +209,13 @@ export interface ListProps extends EmptyProps<"div">, CompositionProps {
   orientation?: "vertical" | "horizontal";
 }
 
-export interface ItemProps extends EmptyProps<"div">, CompositionProps {}
+export interface KeyValueItemProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface KeyInputProps extends EmptyProps<"input">, CompositionProps {
+export interface KeyValueKeyInputProps
+  extends EmptyProps<"input">,
+    CompositionProps {
   /**
    * The item data for this input.
    *
@@ -226,7 +230,7 @@ export interface KeyInputProps extends EmptyProps<"input">, CompositionProps {
   item: KeyValueItemData;
 }
 
-export interface ValueInputProps
+export interface KeyValueValueInputProps
   extends EmptyProps<"textarea">,
     CompositionProps {
   /**
@@ -238,7 +242,7 @@ export interface ValueInputProps
   maxRows?: number;
 }
 
-export interface RemoveProps
+export interface KeyValueRemoveProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
@@ -253,7 +257,7 @@ export interface RemoveProps
   onRemove?: (value: KeyValueItemData) => void;
 }
 
-export interface AddProps
+export interface KeyValueAddProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
@@ -268,7 +272,9 @@ export interface AddProps
   onAdd?: (value: KeyValueItemData) => void;
 }
 
-export interface ErrorProps extends EmptyProps<"div">, CompositionProps {
+export interface KeyValueErrorProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The field that has the error.
    *

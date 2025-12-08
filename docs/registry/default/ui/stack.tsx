@@ -41,7 +41,7 @@ function useStackContext(consumerName: string) {
   return context;
 }
 
-interface StackRootProps extends React.ComponentProps<"div"> {
+interface StackProps extends React.ComponentProps<"div"> {
   side?: Side;
   itemCount?: number;
   expandedItemCount?: number;
@@ -52,7 +52,7 @@ interface StackRootProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function StackRoot(props: StackRootProps) {
+function Stack(props: StackProps) {
   const {
     side = "bottom",
     itemCount = 3,
@@ -346,9 +346,8 @@ function StackItem(props: StackItemProps) {
 }
 
 export {
-  StackItem as Item,
-  StackRoot as Root,
-  //
-  StackRoot as Stack,
+  Stack,
   StackItem,
+  //
+  type StackProps,
 };

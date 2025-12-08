@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import * as Masonry from "@/registry/default/ui/masonry";
+import { Masonry, MasonryItem } from "@/registry/default/ui/masonry";
 
 const items = [
   {
@@ -37,21 +37,21 @@ const items = [
 
 export default function MasonryLinearDemo() {
   return (
-    <Masonry.Root
+    <Masonry
       gap={10}
       columnWidth={140}
       linear
       fallback={<Skeleton className="h-72 w-full" />}
     >
       {items.map((item) => (
-        <Masonry.Item
+        <MasonryItem
           key={item.id}
           className="flex items-center justify-center rounded-lg border bg-card text-card-foreground shadow-xs"
           style={{ aspectRatio: item.aspectRatio }}
         >
           <span className="font-medium text-2xl">{item.number}</span>
-        </Masonry.Item>
+        </MasonryItem>
       ))}
-    </Masonry.Root>
+    </Masonry>
   );
 }

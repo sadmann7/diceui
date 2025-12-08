@@ -10,7 +10,7 @@ import type {
 
 interface ButtonProps extends React.ComponentProps<typeof Button> {}
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface TourProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Whether the tour is open.
    *
@@ -255,7 +255,9 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   stepFooter?: React.ReactElement;
 }
 
-export interface SpotlightProps extends EmptyProps<"div">, CompositionProps {
+export interface TourSpotlightProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * Whether to force mount the spotlight even when closed.
    *
@@ -264,7 +266,7 @@ export interface SpotlightProps extends EmptyProps<"div">, CompositionProps {
   forceMount?: boolean;
 }
 
-export interface SpotlightRingProps
+export interface TourSpotlightRingProps
   extends EmptyProps<"div">,
     CompositionProps {
   /**
@@ -275,7 +277,7 @@ export interface SpotlightRingProps
   forceMount?: boolean;
 }
 
-export interface StepProps extends EmptyProps<"div">, CompositionProps {
+export interface TourStepProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The target element selector or element reference for this step.
    *
@@ -405,17 +407,23 @@ export interface StepProps extends EmptyProps<"div">, CompositionProps {
   onStepLeave?: () => void;
 }
 
-export interface CloseProps extends EmptyProps<"button">, CompositionProps {}
+export interface TourCloseProps
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
-export interface HeaderProps extends EmptyProps<"div">, CompositionProps {}
+export interface TourHeaderProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface TitleProps extends EmptyProps<"h2">, CompositionProps {}
+export interface TourTitleProps extends EmptyProps<"h2">, CompositionProps {}
 
-export interface DescriptionProps extends EmptyProps<"p">, CompositionProps {}
+export interface TourDescriptionProps
+  extends EmptyProps<"p">,
+    CompositionProps {}
 
-export interface FooterProps extends EmptyProps<"div">, CompositionProps {}
+export interface TourFooterProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface StepCounterProps extends EmptyProps<"div">, CompositionProps {
+export interface TourStepCounterProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * Custom format function for the step counter.
    *
@@ -428,19 +436,19 @@ export interface StepCounterProps extends EmptyProps<"div">, CompositionProps {
   format?: (current: number, total: number) => string;
 }
 
-export interface PrevProps
+export interface TourPrevProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
-export interface NextProps
+export interface TourNextProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
-export interface SkipProps
+export interface TourSkipProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
-export interface ArrowProps extends EmptyProps<"svg">, CompositionProps {
+export interface TourArrowProps extends EmptyProps<"svg">, CompositionProps {
   /**
    * The width of the arrow.
    *

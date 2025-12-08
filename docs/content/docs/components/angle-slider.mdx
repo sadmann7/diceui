@@ -37,9 +37,18 @@ npx shadcn@latest add @diceui/angle-slider
     <ComponentSource name="visually-hidden-input" />
   </Step>
   <Step>
+    Copy and paste the following hooks into your `hooks` directory.
+
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-lazy-ref" />
+  </Step>
+  <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="angle-slider" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -120,13 +129,13 @@ Use `[&>[data-slot='angle-slider-track-rail']]` to style the background track:
 
 ## API Reference
 
-### Root
+### AngleSlider
 
 The main container component for the angle slider.
 
 <AutoTypeTable
   path="./types/docs/angle-slider.ts"
-  name="RootProps"
+  name="AngleSliderProps"
 />
 
 <DataAttributesTable
@@ -138,13 +147,13 @@ The main container component for the angle slider.
   ]}
 />
 
-### Track
+### AngleSliderTrack
 
 The circular track that represents the full range of possible values.
 
 <AutoTypeTable
   path="./types/docs/angle-slider.ts"
-  name="TrackProps"
+  name="AngleSliderTrackProps"
 />
 
 <DataAttributesTable
@@ -160,13 +169,13 @@ The circular track that represents the full range of possible values.
   ]}
 />
 
-### Range
+### AngleSliderRange
 
 The portion of the track that represents the selected range.
 
 <AutoTypeTable
   path="./types/docs/angle-slider.ts"
-  name="RangeProps"
+  name="AngleSliderRangeProps"
 />
 
 <DataAttributesTable
@@ -178,13 +187,13 @@ The portion of the track that represents the selected range.
   ]}
 />
 
-### Thumb
+### AngleSliderThumb
 
 The draggable handle for selecting values.
 
 <AutoTypeTable
   path="./types/docs/angle-slider.ts"
-  name="ThumbProps"
+  name="AngleSliderThumbProps"
 />
 
 <DataAttributesTable
@@ -196,13 +205,13 @@ The draggable handle for selecting values.
   ]}
 />
 
-### Value
+### AngleSliderValue
 
 Displays the current value(s) with customizable formatting.
 
 <AutoTypeTable
   path="./types/docs/angle-slider.ts"
-  name="ValueProps"
+  name="AngleSliderValueProps"
 />
 
 <DataAttributesTable

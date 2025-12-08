@@ -7,6 +7,9 @@ import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
@@ -75,29 +78,6 @@ function focusFirst(
     candidate.focus({ preventScroll });
     if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
   }
-}
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
 }
 
 interface StoreState {
@@ -187,7 +167,7 @@ function useFocusContext(consumerName: string) {
   return context;
 }
 
-interface RatingRootProps extends React.ComponentProps<"div"> {
+interface RatingProps extends React.ComponentProps<"div"> {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
@@ -206,7 +186,7 @@ interface RatingRootProps extends React.ComponentProps<"div"> {
   name?: string;
 }
 
-function RatingRoot(props: RatingRootProps) {
+function Rating(props: RatingProps) {
   const {
     value,
     defaultValue = 0,
@@ -257,15 +237,15 @@ function RatingRoot(props: RatingRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <RatingRootImpl {...rootProps} value={value} />
+      <RatingImpl {...rootProps} value={value} />
     </StoreContext.Provider>
   );
 }
 
-interface RatingRootImplProps
-  extends Omit<RatingRootProps, "defaultValue" | "onValueChange" | "onHover"> {}
+interface RatingImplProps
+  extends Omit<RatingProps, "defaultValue" | "onValueChange" | "onHover"> {}
 
-function RatingRootImpl(props: RatingRootImplProps) {
+function RatingImpl(props: RatingImplProps) {
   const {
     value,
     id: idProp,
@@ -286,7 +266,7 @@ function RatingRootImpl(props: RatingRootImplProps) {
     ...rootProps
   } = props;
 
-  const store = useStoreContext("RatingRootImpl");
+  const store = useStoreContext("RatingImpl");
 
   useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
@@ -939,12 +919,4 @@ function RatingItem(props: RatingItemProps) {
   );
 }
 
-export {
-  RatingRoot as Root,
-  RatingItem as Item,
-  //
-  RatingRoot as Rating,
-  RatingItem,
-  //
-  useStore as useRating,
-};
+export { Rating, RatingItem, useStore as useRating, type RatingProps };

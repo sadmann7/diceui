@@ -28,9 +28,24 @@ npx shadcn@latest add @diceui/tour
      ```
   </Step>
   <Step>
+    Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.
+
+    <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
+    Copy and paste the following hooks into your `hooks` directory.
+
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-lazy-ref" />
+    <ComponentSource name="use-as-ref" />
+  </Step>
+  <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="tour" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -39,29 +54,45 @@ npx shadcn@latest add @diceui/tour
 Import the parts, and compose them together.
 
 ```tsx
-import * as Tour from "@/components/ui/tour";
+import {
+  Tour,
+  TourPortal,
+  TourSpotlight,
+  TourSpotlightRing,
+  TourStep,
+  TourArrow,
+  TourClose,
+  TourHeader,
+  TourTitle,
+  TourDescription,
+  TourFooter,
+  TourStepCounter,
+  TourPrev,
+  TourNext,
+  TourSkip,
+} from "@/components/ui/tour";
 
 return (
-  <Tour.Root>
-    <Tour.Portal>
-      <Tour.Spotlight />
-      <Tour.SpotlightRing />
-      <Tour.Step>
-        <Tour.Arrow />
-        <Tour.Close />
-        <Tour.Header>
-          <Tour.Title />
-          <Tour.Description />
-        </Tour.Header>
-        <Tour.Footer>
-          <Tour.StepCounter />
-          <Tour.Prev />
-          <Tour.Next />
-          <Tour.Skip />
-        </Tour.Footer>
-      </Tour.Step>
-    </Tour.Portal>
-  </Tour.Root>
+  <Tour>
+    <TourPortal>
+      <TourSpotlight />
+      <TourSpotlightRing />
+      <TourStep>
+        <TourArrow />
+        <TourClose />
+        <TourHeader>
+          <TourTitle />
+          <TourDescription />
+        </TourHeader>
+        <TourFooter>
+          <TourStepCounter />
+          <TourPrev />
+          <TourNext />
+          <TourSkip />
+        </TourFooter>
+      </TourStep>
+    </TourPortal>
+  </Tour>
 )
 ```
 
@@ -128,23 +159,23 @@ Set default spacing for all steps and override per step:
 
 ## API Reference
 
-### Root
+### Tour
 
 The main container component for the tour that manages state and provides context.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="RootProps"
+  name="TourProps"
 />
 
 
-### Spotlight
+### TourSpotlight
 
 The spotlight backdrop that dims the page and highlights the target element with a cutout effect.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="SpotlightProps"
+  name="TourSpotlightProps"
 />
 
 <DataAttributesTable
@@ -156,13 +187,13 @@ The spotlight backdrop that dims the page and highlights the target element with
   ]}
 />
 
-### SpotlightRing
+### TourSpotlightRing
 
 A visual ring/border element that wraps around the spotlighted target element. Use this to add custom styling like borders, shadows, or animations to the highlighted area.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="SpotlightRingProps"
+  name="TourSpotlightRingProps"
 />
 
 <DataAttributesTable
@@ -174,13 +205,13 @@ A visual ring/border element that wraps around the spotlighted target element. U
   ]}
 />
 
-### Step
+### TourStep
 
 A single step in the tour that targets a specific element on the page.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="StepProps"
+  name="TourStepProps"
 />
 
 <DataAttributesTable
@@ -196,94 +227,94 @@ A single step in the tour that targets a specific element on the page.
   ]}
 />
 
-### Close
+### TourClose
 
 Button to close the entire tour.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="CloseProps"
+  name="TourCloseProps"
 />
 
-### Header
+### TourHeader
 
 Container for the tour step's title and description.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="HeaderProps"
+  name="TourHeaderProps"
 />
 
-### Title
+### TourTitle
 
 The title of the current tour step.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="TitleProps"
+  name="TourTitleProps"
 />
 
-### Description
+### TourDescription
 
 The description text for the current tour step.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="DescriptionProps"
+  name="TourDescriptionProps"
 />
 
-### Footer
+### TourFooter
 
 Container for tour navigation controls and step counter.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="FooterProps"
+  name="TourFooterProps"
 />
 
-### StepCounter
+### TourStepCounter
 
 Displays the current step number and total steps.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="StepCounterProps"
+  name="TourStepCounterProps"
 />
 
-### Prev
+### TourPrev
 
 Button to navigate to the previous step.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="PrevProps"
+  name="TourPrevProps"
 />
 
-### Next
+### TourNext
 
 Button to navigate to the next step or complete the tour.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="NextProps"
+  name="TourNextProps"
 />
 
-### Skip
+### TourSkip
 
 Button to skip the entire tour.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="SkipProps"
+  name="TourSkipProps"
 />
 
-### Arrow
+### TourArrow
 
 An optional arrow element that points to the target element.
 
 <AutoTypeTable
   path="./types/docs/tour.ts"
-  name="ArrowProps"
+  name="TourArrowProps"
 />
 
 ## Accessibility

@@ -1,7 +1,12 @@
 "use client";
 
 import * as React from "react";
-import * as Sortable from "@/registry/default/ui/sortable";
+import {
+  Sortable,
+  SortableContent,
+  SortableItem,
+  SortableOverlay,
+} from "@/registry/default/ui/sortable";
 
 interface Trick {
   id: string;
@@ -46,18 +51,18 @@ export default function SortableDynamicOverlayDemo() {
   ]);
 
   return (
-    <Sortable.Root
+    <Sortable
       value={tricks}
       onValueChange={setTricks}
       getItemValue={(item) => item.id}
       orientation="mixed"
     >
-      <Sortable.Content className="grid auto-rows-fr grid-cols-3 gap-2.5">
+      <SortableContent className="grid auto-rows-fr grid-cols-3 gap-2.5">
         {tricks.map((trick) => (
           <TrickCard key={trick.id} trick={trick} asHandle />
         ))}
-      </Sortable.Content>
-      <Sortable.Overlay>
+      </SortableContent>
+      <SortableOverlay>
         {(activeItem) => {
           const trick = tricks.find((trick) => trick.id === activeItem.value);
 
@@ -65,19 +70,19 @@ export default function SortableDynamicOverlayDemo() {
 
           return <TrickCard trick={trick} />;
         }}
-      </Sortable.Overlay>
-    </Sortable.Root>
+      </SortableOverlay>
+    </Sortable>
   );
 }
 
 interface TrickCardProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof Sortable.Item>, "value"> {
+  extends Omit<React.ComponentPropsWithoutRef<typeof SortableItem>, "value"> {
   trick: Trick;
 }
 
 function TrickCard({ trick, ...props }: TrickCardProps) {
   return (
-    <Sortable.Item value={trick.id} asChild {...props}>
+    <SortableItem value={trick.id} asChild {...props}>
       <div className="flex size-full flex-col gap-1 rounded-md border bg-zinc-100 p-4 text-foreground shadow-sm dark:bg-zinc-900">
         <div className="font-medium text-sm leading-tight sm:text-base">
           {trick.title}
@@ -86,6 +91,6 @@ function TrickCard({ trick, ...props }: TrickCardProps) {
           {trick.description}
         </span>
       </div>
-    </Sortable.Item>
+    </SortableItem>
   );
 }

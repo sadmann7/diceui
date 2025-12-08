@@ -1,6 +1,6 @@
 import type { CompositionProps, EmptyProps, Orientation } from "@/types";
 
-export interface RootProps
+export interface CompareSliderProps
   extends EmptyProps<"div", "defaultValue" | "value" | "onValueChange">,
     CompositionProps {
   /**
@@ -41,7 +41,9 @@ export interface RootProps
   step?: number;
 }
 
-export interface BeforeProps extends EmptyProps<"div">, CompositionProps {
+export interface CompareSliderBeforeProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * Label for the "before" side.
    *
@@ -52,7 +54,9 @@ export interface BeforeProps extends EmptyProps<"div">, CompositionProps {
   label?: string;
 }
 
-export interface AfterProps extends EmptyProps<"div">, CompositionProps {
+export interface CompareSliderAfterProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * Label for the "after" side.
    *
@@ -63,9 +67,13 @@ export interface AfterProps extends EmptyProps<"div">, CompositionProps {
   label?: string;
 }
 
-export interface HandleProps extends EmptyProps<"div">, CompositionProps {}
+export interface CompareSliderHandleProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface LabelProps extends EmptyProps<"div">, CompositionProps {
+export interface CompareSliderLabelProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The side this label is for.
    *

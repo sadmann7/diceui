@@ -23,13 +23,28 @@ npx shadcn@latest add @diceui/speed-dial
      Install the following dependencies:
 
      ```package-install
-     @radix-ui/react-slot class-variance-authority
+     @radix-ui/react-slot
      ```
+  </Step>
+  <Step>
+    Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.
+
+    <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
+    Copy and paste the following hooks into your `hooks` directory.
+
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-lazy-ref" />
+    <ComponentSource name="use-as-ref" />
   </Step>
   <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="speed-dial" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -38,18 +53,25 @@ npx shadcn@latest add @diceui/speed-dial
 Import the parts, and compose them together.
 
 ```tsx
-import * as SpeedDial from "@/components/ui/speed-dial";
+import {
+  SpeedDial,
+  SpeedDialTrigger,
+  SpeedDialContent,
+  SpeedDialItem,
+  SpeedDialLabel,
+  SpeedDialAction,
+} from "@/components/ui/speed-dial";
 
 return (
-  <SpeedDial.Root>
-    <SpeedDial.Trigger />
-    <SpeedDial.Content>
-      <SpeedDial.Item>
-        <SpeedDial.Label />
-        <SpeedDial.Action />
-      </SpeedDial.Item>
-    </SpeedDial.Content>
-  </SpeedDial.Root>
+  <SpeedDial>
+    <SpeedDialTrigger />
+    <SpeedDialContent>
+      <SpeedDialItem>
+        <SpeedDialLabel />
+        <SpeedDialAction />
+      </SpeedDialItem>
+    </SpeedDialContent>
+  </SpeedDial>
 )
 ```
 
@@ -75,13 +97,13 @@ The speed dial can expand in different directions using the `side` prop.
 
 ## API Reference
 
-### Root
+### SpeedDial
 
 The main container component for the speed dial.
 
 <AutoTypeTable
   path="./types/docs/speed-dial.ts"
-  name="RootProps"
+  name="SpeedDialProps"
 />
 
 <DataAttributesTable
@@ -93,13 +115,13 @@ The main container component for the speed dial.
   ]}
 />
 
-### Trigger
+### SpeedDialTrigger
 
 The button that toggles the speed dial open/closed state.
 
 <AutoTypeTable
   path="./types/docs/speed-dial.ts"
-  name="TriggerProps"
+  name="SpeedDialTriggerProps"
 />
 
 <DataAttributesTable
@@ -111,13 +133,13 @@ The button that toggles the speed dial open/closed state.
   ]}
 />
 
-### Content
+### SpeedDialContent
 
 The container for the action items that appears when the speed dial is open.
 
 <AutoTypeTable
   path="./types/docs/speed-dial.ts"
-  name="ContentProps"
+  name="SpeedDialContentProps"
 />
 
 <DataAttributesTable
@@ -154,13 +176,13 @@ The container for the action items that appears when the speed dial is open.
   ]}
 />
 
-### Item
+### SpeedDialItem
 
 A wrapper for each action and its associated label.
 
 <AutoTypeTable
   path="./types/docs/speed-dial.ts"
-  name="ItemProps"
+  name="SpeedDialItemProps"
 />
 
 <DataAttributesTable
@@ -185,22 +207,22 @@ A wrapper for each action and its associated label.
   ]}
 />
 
-### Action
+### SpeedDialAction
 
 An interactive button within the speed dial that triggers an action.
 
 <AutoTypeTable
   path="./types/docs/speed-dial.ts"
-  name="ActionProps"
+  name="SpeedDialActionProps"
 />
 
-### Label
+### SpeedDialLabel
 
 A text label that describes the associated action.
 
 <AutoTypeTable
   path="./types/docs/speed-dial.ts"
-  name="LabelProps"
+  name="SpeedDialLabelProps"
 />
 
 ## Accessibility

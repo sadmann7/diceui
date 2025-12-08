@@ -4,7 +4,14 @@ import { GripVertical } from "lucide-react";
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import * as Kanban from "@/registry/default/ui/kanban";
+import {
+  Kanban,
+  KanbanBoard,
+  KanbanColumn,
+  KanbanColumnHandle,
+  KanbanItem,
+  KanbanOverlay,
+} from "@/registry/default/ui/kanban";
 
 interface Task {
   id: string;
@@ -80,14 +87,14 @@ export default function KanbanDemo() {
   });
 
   return (
-    <Kanban.Root
+    <Kanban
       value={columns}
       onValueChange={setColumns}
       getItemValue={(item) => item.id}
     >
-      <Kanban.Board className="grid auto-rows-fr sm:grid-cols-3">
+      <KanbanBoard className="grid auto-rows-fr sm:grid-cols-3">
         {Object.entries(columns).map(([columnValue, tasks]) => (
-          <Kanban.Column key={columnValue} value={columnValue}>
+          <KanbanColumn key={columnValue} value={columnValue}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-sm">
@@ -100,15 +107,15 @@ export default function KanbanDemo() {
                   {tasks.length}
                 </Badge>
               </div>
-              <Kanban.ColumnHandle asChild>
+              <KanbanColumnHandle asChild>
                 <Button variant="ghost" size="icon">
                   <GripVertical className="h-4 w-4" />
                 </Button>
-              </Kanban.ColumnHandle>
+              </KanbanColumnHandle>
             </div>
             <div className="flex flex-col gap-2 p-0.5">
               {tasks.map((task) => (
-                <Kanban.Item key={task.id} value={task.id} asHandle asChild>
+                <KanbanItem key={task.id} value={task.id} asHandle asChild>
                   <div className="rounded-md border bg-card p-3 shadow-xs">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center justify-between gap-2">
@@ -145,15 +152,15 @@ export default function KanbanDemo() {
                       </div>
                     </div>
                   </div>
-                </Kanban.Item>
+                </KanbanItem>
               ))}
             </div>
-          </Kanban.Column>
+          </KanbanColumn>
         ))}
-      </Kanban.Board>
-      <Kanban.Overlay>
+      </KanbanBoard>
+      <KanbanOverlay>
         <div className="size-full rounded-md bg-primary/10" />
-      </Kanban.Overlay>
-    </Kanban.Root>
+      </KanbanOverlay>
+    </Kanban>
   );
 }

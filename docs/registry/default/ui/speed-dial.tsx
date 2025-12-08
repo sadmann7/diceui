@@ -6,6 +6,9 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "SpeedDial";
 const TRIGGER_NAME = "SpeedDialTrigger";
@@ -28,7 +31,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootElement = React.ComponentRef<typeof SpeedDialRoot>;
+type RootElement = React.ComponentRef<typeof SpeedDial>;
 type TriggerElement = React.ComponentRef<typeof SpeedDialTrigger>;
 type ActionElement = React.ComponentRef<typeof SpeedDialAction>;
 
@@ -36,29 +39,6 @@ interface InteractOutsideEvent extends CustomEvent {
   detail: {
     originalEvent: PointerEvent;
   };
-}
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
 }
 
 function getDataState(open: boolean): string {
@@ -145,7 +125,7 @@ function useSpeedDialContext(consumerName: string) {
   return context;
 }
 
-interface SpeedDialRootProps extends DivProps {
+interface SpeedDialProps extends DivProps {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -154,7 +134,7 @@ interface SpeedDialRootProps extends DivProps {
   side?: Side;
 }
 
-function SpeedDialRoot(props: SpeedDialRootProps) {
+function SpeedDial(props: SpeedDialProps) {
   const {
     open: openProp,
     defaultOpen,
@@ -703,17 +683,12 @@ function SpeedDialLabel({ asChild, className, ...props }: DivProps) {
 }
 
 export {
-  SpeedDialRoot as Root,
-  SpeedDialTrigger as Trigger,
-  SpeedDialContent as Content,
-  SpeedDialItem as Item,
-  SpeedDialAction as Action,
-  SpeedDialLabel as Label,
-  //
-  SpeedDialRoot as SpeedDial,
+  SpeedDial,
   SpeedDialTrigger,
   SpeedDialContent,
   SpeedDialItem,
   SpeedDialAction,
   SpeedDialLabel,
+  //
+  type SpeedDialProps,
 };

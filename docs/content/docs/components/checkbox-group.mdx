@@ -44,18 +44,25 @@ npx shadcn@latest add @diceui/checkbox-group
 Import the parts, and compose them together.
 
 ```tsx
-import * as CheckboxGroup from "@diceui/checkbox-group";
+import {
+  CheckboxGroup,
+  CheckboxGroupLabel,
+  CheckboxGroupList,
+  CheckboxGroupItem,
+  CheckboxGroupIndicator,
+  CheckboxGroupDescription,
+} from "@diceui/checkbox-group";
 
 return (
-  <CheckboxGroup.Root>
-    <CheckboxGroup.Label />
-    <CheckboxGroup.List>
-      <CheckboxGroup.Item>
-        <CheckboxGroup.Indicator />
-      </CheckboxGroup.Item>
-    </CheckboxGroup.List>
-    <CheckboxGroup.Description>
-  </CheckboxGroup.Root>
+  <CheckboxGroup>
+    <CheckboxGroupLabel />
+    <CheckboxGroupList>
+      <CheckboxGroupItem>
+        <CheckboxGroupIndicator />
+      </CheckboxGroupItem>
+    </CheckboxGroupList>
+    <CheckboxGroupDescription>
+  </CheckboxGroup>
 )
 ```
 
@@ -84,7 +91,7 @@ return (
     ```
   </Step>
   <Step>
-    Copy and paste the `CheckboxGroup.Indicator` block from the following example into your project.
+    Copy and paste the `CheckboxGroupIndicator` block from the following example into your project.
 
     <ComponentTabs name="checkbox-group-animated-demo" />
   </Step>
@@ -110,7 +117,7 @@ Hold down the `Shift` key to select and deselect multiple checkboxes at once.
 
 ## API Reference
 
-### Root
+### CheckboxGroup
 
 Container for the checkbox group.
 
@@ -136,7 +143,7 @@ Container for the checkbox group.
   ]}
 />
 
-### Label
+### CheckboxGroupLabel
 
 Label for the checkbox group.
 
@@ -154,7 +161,7 @@ Label for the checkbox group.
   ]}
 />
 
-### List
+### CheckboxGroupList
 
 Container for checkbox items.
 
@@ -176,7 +183,7 @@ Container for checkbox items.
   ]}
 />
 
-### Item
+### CheckboxGroupItem
 
 Individual checkbox item.
 
@@ -206,7 +213,7 @@ Individual checkbox item.
   ]}
 />
 
-### Indicator
+### CheckboxGroupIndicator
 
 Visual indicator for the checkbox state.
 
@@ -228,7 +235,7 @@ Visual indicator for the checkbox state.
   ]}
 />
 
-### Description
+### CheckboxGroupDescription
 
 Optional description text for the checkbox group.
 
@@ -250,7 +257,7 @@ Optional description text for the checkbox group.
   ]}
 />
 
-### Message
+### CheckboxGroupMessage
 
 Error or validation message for the checkbox group.
 

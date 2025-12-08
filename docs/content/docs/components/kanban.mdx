@@ -45,20 +45,28 @@ npx shadcn@latest add @diceui/kanban
 Import the parts, and compose them together.
 
 ```tsx
-import * as Kanban from "@/components/ui/kanban";
+import {
+  Kanban,
+  KanbanBoard,
+  KanbanColumn,
+  KanbanColumnHandle,
+  KanbanItem,
+  KanbanItemHandle,
+  KanbanOverlay,
+} from "@/components/ui/kanban";
 
 return (
-  <Kanban.Root>
-    <Kanban.Board>
-      <Kanban.Column>
-        <Kanban.ColumnHandle />
-        <Kanban.Item>
-          <Kanban.ItemHandle />
-        </Kanban.Item>
-      </Kanban.Column>
-    </Kanban.Board>
-    <Kanban.Overlay />
-  </Kanban.Root>
+  <Kanban>
+    <KanbanBoard>
+      <KanbanColumn>
+        <KanbanColumnHandle />
+        <KanbanItem>
+          <KanbanItemHandle />
+        </KanbanItem>
+      </KanbanColumn>
+    </KanbanBoard>
+    <KanbanOverlay />
+  </Kanban>
 )
 ```
 
@@ -74,7 +82,7 @@ const [columns, setColumns] = React.useState({
   done: ["Task 3"],
 });
 
-<Kanban.Root value={columns} onValueChange={setColumns}>
+<Kanban.Kanban value={columns} onValueChange={setColumns}>
   <Kanban.Board>
     {Object.entries(columns).map(([columnId, items]) => (
       <Kanban.Column key={columnId} value={columnId}>
@@ -86,7 +94,7 @@ const [columns, setColumns] = React.useState({
       </Kanban.Column>
     ))}
   </Kanban.Board>
-</Kanban.Root>
+</Kanban.Kanban>
 ```
 
 ### With Object Arrays
@@ -104,7 +112,7 @@ const [columns, setColumns] = React.useState({
   ],
 });
 
-<Kanban.Root
+<Kanban.Kanban
   value={columns}
   onValueChange={setColumns}
   getItemValue={(item) => item.id}
@@ -120,7 +128,7 @@ const [columns, setColumns] = React.useState({
       </Kanban.Column>
     ))}
   </Kanban.Board>
-</Kanban.Root>
+</Kanban.Kanban>
 ```
 
 ## Examples
@@ -133,22 +141,22 @@ Display a dynamic overlay when an item or column is being dragged.
 
 ## API Reference
 
-### Root
+### Kanban
 
 The main container component for kanban board functionality.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="RootProps"
+  name="KanbanProps"
 />
 
-### Board
+### KanbanBoard
 
 Container for kanban columns.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="BoardProps"
+  name="KanbanBoardProps"
 />
 
 ### Column
@@ -157,7 +165,7 @@ Individual kanban column component.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="ColumnProps"
+  name="KanbanColumnProps"
 />
 
 <DataAttributesTable
@@ -179,7 +187,7 @@ A button component that acts as a drag handle for kanban columns.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="ColumnHandleProps"
+  name="KanbanColumnHandleProps"
 />
 
 <DataAttributesTable
@@ -195,13 +203,13 @@ A button component that acts as a drag handle for kanban columns.
   ]}
 />
 
-### Item
+### KanbanItem
 
 Individual kanban item component.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="ItemProps"
+  name="KanbanItemProps"
 />
 
 <DataAttributesTable
@@ -217,13 +225,13 @@ Individual kanban item component.
   ]}
 />
 
-### ItemHandle
+### KanbanItemHandle
 
 A button component that acts as a drag handle for kanban items.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="ItemHandleProps"
+  name="KanbanItemHandleProps"
 />
 
 <DataAttributesTable
@@ -245,7 +253,7 @@ The overlay component that appears when an item or column is being dragged.
 
 <AutoTypeTable
   path="./types/docs/kanban.ts"
-  name="OverlayProps"
+  name="KanbanOverlayProps"
 />
 
 ## Accessibility

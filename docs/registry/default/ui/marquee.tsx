@@ -14,7 +14,7 @@ type Side = "left" | "right" | "top" | "bottom";
 type Orientation = "horizontal" | "vertical";
 type Direction = "ltr" | "rtl";
 
-type RootElement = React.ComponentRef<typeof MarqueeRoot>;
+type RootElement = React.ComponentRef<typeof Marquee>;
 type ContentElement = React.ComponentRef<typeof MarqueeContent>;
 
 interface Dimensions {
@@ -263,7 +263,7 @@ function useMarqueeContext(consumerName: string) {
   return context;
 }
 
-interface MarqueeRootProps extends DivProps {
+interface MarqueeProps extends DivProps {
   side?: Side;
   dir?: Direction;
   speed?: number;
@@ -276,7 +276,7 @@ interface MarqueeRootProps extends DivProps {
   reverse?: boolean;
 }
 
-function MarqueeRoot(props: MarqueeRootProps) {
+function Marquee(props: MarqueeProps) {
   const {
     side = "left",
     dir: dirProp,
@@ -670,13 +670,10 @@ function MarqueeEdge(props: MarqueeEdgeProps) {
 }
 
 export {
-  MarqueeRoot as Root,
-  MarqueeContent as Content,
-  MarqueeItem as Item,
-  MarqueeEdge as Edge,
-  //
-  MarqueeRoot as Marquee,
+  Marquee,
   MarqueeContent,
   MarqueeItem,
   MarqueeEdge,
+  //
+  type MarqueeProps,
 };

@@ -1,6 +1,6 @@
 import type { CompositionProps, Direction, EmptyProps } from "@/types";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface AngleSliderProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The controlled values of the slider.
    */
@@ -100,18 +100,22 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   inverted?: boolean;
 }
 
-export interface TrackProps extends EmptyProps<"div"> {}
+export interface AngleSliderTrackProps extends EmptyProps<"div"> {}
 
-export interface RangeProps extends EmptyProps<"div"> {}
+export interface AngleSliderRangeProps extends EmptyProps<"div"> {}
 
-export interface ThumbProps extends EmptyProps<"div">, CompositionProps {
+export interface AngleSliderThumbProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The index of the thumb.
    */
   index?: number;
 }
 
-export interface ValueProps extends EmptyProps<"div">, CompositionProps {
+export interface AngleSliderValueProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The unit to display after the value(s).
    *

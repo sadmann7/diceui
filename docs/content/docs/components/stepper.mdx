@@ -33,9 +33,19 @@ npx shadcn@latest add @diceui/stepper
     <ComponentSource name="compose-refs" />
   </Step>
   <Step>
+    Copy and paste the following hooks into your `hooks` directory.
+
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-lazy-ref" />
+    <ComponentSource name="use-as-ref" />
+  </Step>
+  <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="stepper" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -44,24 +54,36 @@ npx shadcn@latest add @diceui/stepper
 Import the parts, and compose them together.
 
 ```tsx
-import * as Stepper from "@/components/ui/stepper";
+import {
+  Stepper,
+  StepperList,
+  StepperItem,
+  StepperTrigger,
+  StepperIndicator,
+  StepperTitle,
+  StepperDescription,
+  StepperSeparator,
+  StepperContent,
+  StepperPrev,
+  StepperNext,
+} from "@/components/ui/stepper";
 
 return (
-  <Stepper.Root>
-    <Stepper.List>
-      <Stepper.Item >
-        <Stepper.Trigger>
-          <Stepper.Indicator />
-          <Stepper.Title />
-          <Stepper.Description />
-        </Stepper.Trigger>
-        <Stepper.Separator />
-      </Stepper.Item>
-    </Stepper.List>
-    <Stepper.Content />
-    <Stepper.PrevTrigger />
-    <Stepper.NextTrigger />
-  </Stepper.Root>
+  <Stepper>
+    <StepperList>
+      <StepperItem>
+        <StepperTrigger>
+          <StepperIndicator />
+          <StepperTitle />
+          <StepperDescription />
+        </StepperTrigger>
+        <StepperSeparator />
+      </StepperItem>
+    </StepperList>
+    <StepperContent />
+    <StepperPrev /> 
+    <StepperNext />
+  </Stepper>
 )
 ```
 
@@ -87,13 +109,13 @@ A stepper integrated with form validation, showing step-by-step form completion.
 
 ## API Reference
 
-### Root
+### Stepper
 
 The main container component for the stepper.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="RootProps"
+  name="StepperProps"
 />
 
 <DataAttributesTable
@@ -105,13 +127,13 @@ The main container component for the stepper.
   ]}
 />
 
-### List
+### StepperList
 
 The container for stepper items, typically an ordered list.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="ListProps"
+  name="StepperListProps"
 />
 
 <DataAttributesTable
@@ -123,13 +145,13 @@ The container for stepper items, typically an ordered list.
   ]}
 />
 
-### Item
+### StepperItem
 
 A single step item in the stepper.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="ItemProps"
+  name="StepperItemProps"
 />
 
 <DataAttributesTable
@@ -145,13 +167,13 @@ A single step item in the stepper.
   ]}
 />
 
-### Trigger
+### StepperTrigger
 
 The clickable trigger for each step, typically wrapping the indicator.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="TriggerProps"
+  name="StepperTriggerProps"
 />
 
 <DataAttributesTable
@@ -167,13 +189,13 @@ The clickable trigger for each step, typically wrapping the indicator.
   ]}
 />
 
-### Indicator
+### StepperIndicator
 
 The visual indicator showing the step number or completion status.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="IndicatorProps"
+  name="StepperIndicatorProps"
 />
 
 <DataAttributesTable
@@ -185,13 +207,13 @@ The visual indicator showing the step number or completion status.
   ]}
 />
 
-### Separator
+### StepperSeparator
 
 The line connecting steps, showing progress between them.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="SeparatorProps"
+  name="StepperSeparatorProps"
 />
 
 <DataAttributesTable
@@ -207,49 +229,49 @@ The line connecting steps, showing progress between them.
   ]}
 />
 
-### Title
+### StepperTitle
 
 The title text for each step.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="TitleProps"
+  name="StepperTitleProps"
 />
 
-### Description
+### StepperDescription
 
 The description text for each step.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="DescriptionProps"
+  name="StepperDescriptionProps"
 />
 
-### Content
+### StepperContent
 
 The content area that displays for the active step.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="ContentProps"
+  name="StepperContentProps"
 />
 
-### Prev
+### StepperPrev
 
 A navigation button that moves to the previous step. Automatically disabled on the first step and skips validation when navigating backwards.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="PrevProps"
+  name="StepperPrevProps"
 />
 
-### Next
+### StepperNext
 
 A navigation button that moves to the next step. Automatically disabled on the last step and respects validation rules when navigating forwards.
 
 <AutoTypeTable
   path="./types/docs/stepper.ts"
-  name="NextProps"
+  name="StepperNextProps"
 />
 
 ## Accessibility

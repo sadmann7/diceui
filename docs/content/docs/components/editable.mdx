@@ -37,9 +37,18 @@ npx shadcn@latest add @diceui/editable
     <ComponentSource name="visually-hidden-input" />
   </Step>
   <Step>
+    Copy and paste the following hooks into your `hooks` directory.
+
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-lazy-ref" />
+  </Step>
+  <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="editable" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -48,22 +57,32 @@ npx shadcn@latest add @diceui/editable
 Import the parts, and compose them together.
 
 ```tsx
-import * as Editable from "@/components/ui/editable";
+import {
+  Editable,
+  EditableLabel,
+  EditableArea,
+  EditablePreview,
+  EditableInput,
+  EditableTrigger,
+  EditableToolbar,
+  EditableSubmit,
+  EditableCancel,
+} from "@/components/ui/editable";
 
 return (
-  <Editable.Root>
-    <Editable.Label />
-    <Editable.Area>
-      <Editable.Preview />
-      <Editable.Input />
-      <Editable.Trigger />
-    </Editable.Area>
-    <Editable.Trigger />
-    <Editable.Toolbar>
-      <Editable.Submit />
-      <Editable.Cancel />
-    </Editable.Toolbar>
-  </Editable.Root>
+  <Editable>
+    <EditableLabel />
+    <EditableArea>
+      <EditablePreview />
+      <EditableInput />
+      <EditableTrigger />
+    </EditableArea>
+    <EditableTrigger />
+    <EditableToolbar>
+      <EditableSubmit />
+      <EditableCancel />
+    </EditableToolbar>
+  </Editable>
 )
 ```
 
@@ -93,22 +112,22 @@ Control the editable component in a form.
 
 ## API Reference
 
-### Root
+### Editable
 
 The main container component for editable functionality.
 
 <AutoTypeTable
   path="./types/docs/editable.ts"
-  name="RootProps"
+  name="EditableProps"
 />
 
-### Label
+### EditableLabel
 
 The label component for the editable field.
 
 <AutoTypeTable
   path="./types/docs/editable.ts"
-  name="LabelProps"
+  name="EditableLabelProps"
 />
 
 <DataAttributesTable
@@ -128,13 +147,13 @@ The label component for the editable field.
   ]}
 />
 
-### Area
+### EditableArea
 
 Container for the preview and input components.
 
 <AutoTypeTable
   path="./types/docs/editable.ts"
-  name="AreaProps"
+  name="EditableAreaProps"
 />
 
 <DataAttributesTable
@@ -150,13 +169,13 @@ Container for the preview and input components.
   ]}
 />
 
-### Preview
+### EditablePreview
 
 The preview component that displays the current value.
 
 <AutoTypeTable
   path="./types/docs/editable.ts"
-  name="PreviewProps"
+  name="EditablePreviewProps"
 />
 
 <DataAttributesTable
@@ -176,22 +195,22 @@ The preview component that displays the current value.
   ]}
 />
 
-### Input
+### EditableInput
 
 The input component for editing the value.
 
 <AutoTypeTable
   path="./types/docs/editable.ts"
-  name="InputProps"
+  name="EditableInputProps"
 />
 
-### Trigger
+### EditableTrigger
 
 Button to trigger edit mode.
 
 <AutoTypeTable
   path="./types/docs/editable.ts"
-  name="TriggerProps"
+  name="EditableTriggerProps"
 />
 
 <DataAttributesTable
@@ -207,31 +226,31 @@ Button to trigger edit mode.
   ]}
 />
 
-### Toolbar
+### EditableToolbar
 
 Container for action buttons.
 
 <AutoTypeTable
   path="./types/docs/editable.ts"
-  name="ToolbarProps"
+  name="EditableToolbarProps"
 />
 
-### Submit
+### EditableSubmit
 
 Button to submit changes.
 
 <AutoTypeTable
   path="./types/docs/editable.ts"
-  name="SubmitProps"
+  name="EditableSubmitProps"
 />
 
-### Cancel
+### EditableCancel
 
 Button to cancel changes.
 
 <AutoTypeTable
   path="./types/docs/editable.ts"
-  name="CancelProps"
+  name="EditableCancelProps"
 />
 
 ## Accessibility

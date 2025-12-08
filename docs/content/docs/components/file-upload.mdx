@@ -27,9 +27,17 @@ npx shadcn@latest add @diceui/file-upload
      ```
   </Step>
   <Step>
+    Copy and paste the following hook into your `hooks` directory.
+
+    <ComponentSource name="use-lazy-ref" />
+  </Step>
+  <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="file-upload" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -38,22 +46,33 @@ npx shadcn@latest add @diceui/file-upload
 Import the parts, and compose them together.
 
 ```tsx
-import * as FileUpload from "@/components/ui/file-upload";
+import {
+  FileUpload,
+  FileUploadDropzone,
+  FileUploadTrigger,
+  FileUploadList,
+  FileUploadItem,
+  FileUploadItemPreview,
+  FileUploadItemMetadata,
+  FileUploadItemProgress,
+  FileUploadItemDelete,
+  FileUploadClear,
+} from "@/components/ui/file-upload";
 
 return (
-  <FileUpload.Root>
-    <FileUpload.Dropzone />
-    <FileUpload.Trigger />
-    <FileUpload.List>
-      <FileUpload.Item>
-        <FileUpload.ItemPreview />
-        <FileUpload.ItemMetadata />
-        <FileUpload.ItemProgress />
-        <FileUpload.ItemDelete />
-      </FileUpload.Item>
-    </FileUpload.List>
-    <FileUpload.Clear />
-  </FileUpload.Root>
+  <FileUpload>
+    <FileUploadDropzone />
+    <FileUploadTrigger />
+    <FileUploadList>
+      <FileUploadItem>
+        <FileUploadItemPreview />
+        <FileUploadItemMetadata />
+        <FileUploadItemProgress />
+        <FileUploadItemDelete />
+      </FileUploadItem>
+    </FileUploadList>
+    <FileUploadClear />
+  </FileUpload>
 )
 ```
 
@@ -103,22 +122,22 @@ Use the `value` and `onValueChange` props to handle file uploads with validation
 
 ## API Reference
 
-### Root
+### FileUpload
 
 The main container component for the file upload functionality.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="RootProps"
+  name="FileUploadProps"
 />
 
-### Dropzone
+### FileUploadDropzone
 
 A container for drag and drop functionality.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="DropzoneProps"
+  name="FileUploadDropzoneProps"
 />
 
 <DataAttributesTable
@@ -138,13 +157,13 @@ A container for drag and drop functionality.
   ]}
 />
 
-### Trigger
+### FileUploadTrigger
 
 A button that opens the file selection dialog.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="TriggerProps"
+  name="FileUploadTriggerProps"
 />
 
 <DataAttributesTable
@@ -156,13 +175,13 @@ A button that opens the file selection dialog.
   ]}
 />
 
-### List
+### FileUploadList
 
 A container for displaying uploaded files.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ListProps"
+  name="FileUploadListProps"
 />
 
 <DataAttributesTable
@@ -178,58 +197,58 @@ A container for displaying uploaded files.
   ]}
 />
 
-### Item
+### FileUploadItem
 
 Individual file item component.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ItemProps"
+  name="FileUploadItemProps"
 />
 
-### ItemPreview
+### FileUploadItemPreview
 
 Displays a preview of the file, showing an image for image files or an appropriate icon for other file types.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ItemPreviewProps"
+  name="FileUploadItemPreviewProps"
 />
 
-### ItemMetadata
+### FileUploadItemMetadata
 
 Displays file information such as name, size, and error messages.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ItemMetadataProps"
+  name="FileUploadItemMetadataProps"
 />
 
-### ItemProgress
+### FileUploadItemProgress
 
 Shows the upload progress for a file.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ItemProgressProps"
+  name="FileUploadItemProgressProps"
 />
 
-### ItemDelete
+### FileUploadItemDelete
 
 A button to remove a file from the list.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ItemDeleteProps"
+  name="FileUploadItemDeleteProps"
 />
 
-### Clear
+### FileUploadClear
 
 A button to clear all files from the list.
 
 <AutoTypeTable
   path="./types/docs/file-upload.ts"
-  name="ClearProps"
+  name="FileUploadClearProps"
 />
 
 <DataAttributesTable

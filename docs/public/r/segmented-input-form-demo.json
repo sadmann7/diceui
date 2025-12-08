@@ -1,9 +1,6 @@
 {
   "name": "segmented-input-form-demo",
   "type": "registry:example",
-  "dependencies": [
-    "class-variance-authority"
-  ],
   "registryDependencies": [
     "button",
     "segmented-input"

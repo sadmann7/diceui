@@ -6,6 +6,9 @@ import { Check } from "lucide-react";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "Stepper";
 const LIST_NAME = "StepperList";
@@ -100,29 +103,6 @@ function wrapArray<T>(array: T[], startIndex: number) {
   return array.map<T>(
     (_, index) => array[(startIndex + index) % array.length] as T,
   );
-}
-
-const useIsomorphicLayoutEffect =
-  typeof window === "undefined" ? React.useEffect : React.useLayoutEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
 }
 
 function getDataState(
@@ -225,7 +205,7 @@ function useStepperContext(consumerName: string) {
   return context;
 }
 
-interface StepperRootProps extends DivProps {
+interface StepperProps extends DivProps {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -244,7 +224,7 @@ interface StepperRootProps extends DivProps {
   nonInteractive?: boolean;
 }
 
-function StepperRoot(props: StepperRootProps) {
+function Stepper(props: StepperProps) {
   const {
     value,
     defaultValue,
@@ -1237,19 +1217,7 @@ function StepperNext(props: ButtonProps) {
 }
 
 export {
-  StepperRoot as Root,
-  StepperList as List,
-  StepperItem as Item,
-  StepperTrigger as Trigger,
-  StepperIndicator as Indicator,
-  StepperSeparator as Separator,
-  StepperTitle as Title,
-  StepperDescription as Description,
-  StepperContent as Content,
-  StepperPrev as Prev,
-  StepperNext as Next,
-  //
-  StepperRoot as Stepper,
+  Stepper,
   StepperList,
   StepperItem,
   StepperTrigger,
@@ -1263,5 +1231,5 @@ export {
   //
   useStore as useStepper,
   //
-  type StepperRootProps as StepperProps,
+  type StepperProps,
 };

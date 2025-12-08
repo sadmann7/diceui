@@ -1,6 +1,6 @@
 import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface EditableProps extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique identifier for the editable component.
    * @default React.useId()
@@ -116,15 +116,25 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   invalid?: boolean;
 }
 
-export interface LabelProps extends EmptyProps<"label">, CompositionProps {}
+export interface EditableLabelProps
+  extends EmptyProps<"label">,
+    CompositionProps {}
 
-export interface AreaProps extends EmptyProps<"div">, CompositionProps {}
+export interface EditableAreaProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface PreviewProps extends EmptyProps<"div">, CompositionProps {}
+export interface EditablePreviewProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface InputProps extends EmptyProps<"input">, CompositionProps {}
+export interface EditableInputProps
+  extends EmptyProps<"input">,
+    CompositionProps {}
 
-export interface TriggerProps extends EmptyProps<"button">, CompositionProps {
+export interface EditableTriggerProps
+  extends EmptyProps<"button">,
+    CompositionProps {
   /**
    * Whether to force mount the trigger.
    * @default false
@@ -132,7 +142,9 @@ export interface TriggerProps extends EmptyProps<"button">, CompositionProps {
   forceMount?: boolean;
 }
 
-export interface ToolbarProps extends EmptyProps<"div">, CompositionProps {
+export interface EditableToolbarProps
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The orientation of the toolbar.
    * @default "horizontal"
@@ -140,6 +152,10 @@ export interface ToolbarProps extends EmptyProps<"div">, CompositionProps {
   orientation?: "horizontal" | "vertical";
 }
 
-export interface SubmitProps extends EmptyProps<"button">, CompositionProps {}
+export interface EditableSubmitProps
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
-export interface CancelProps extends EmptyProps<"button">, CompositionProps {}
+export interface EditableCancelProps
+  extends EmptyProps<"button">,
+    CompositionProps {}

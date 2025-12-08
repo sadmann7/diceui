@@ -85,7 +85,7 @@ function useCircularProgressContext(consumerName: string) {
   return context;
 }
 
-interface CircularProgressRootProps extends React.ComponentProps<"div"> {
+interface CircularProgressProps extends React.ComponentProps<"div"> {
   value?: number | null | undefined;
   getValueText?(value: number, min: number, max: number): string;
   min?: number;
@@ -96,7 +96,7 @@ interface CircularProgressRootProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function CircularProgressRoot(props: CircularProgressRootProps) {
+function CircularProgress(props: CircularProgressProps) {
   const {
     value: valueProp = null,
     getValueText = getDefaultValueText,
@@ -334,30 +334,24 @@ function CircularProgressValueText(props: CircularProgressValueTextProps) {
   );
 }
 
-function CircularProgressCombined(props: CircularProgressRootProps) {
+function CircularProgressCombined(props: CircularProgressProps) {
   return (
-    <CircularProgressRoot {...props}>
+    <CircularProgress {...props}>
       <CircularProgressIndicator>
         <CircularProgressTrack />
         <CircularProgressRange />
       </CircularProgressIndicator>
       <CircularProgressValueText />
-    </CircularProgressRoot>
+    </CircularProgress>
   );
 }
 
 export {
-  CircularProgressRoot as Root,
-  CircularProgressIndicator as Indicator,
-  CircularProgressTrack as Track,
-  CircularProgressRange as Range,
-  CircularProgressValueText as ValueText,
-  CircularProgressCombined as Combined,
-  //
-  CircularProgressRoot as CircularProgress,
+  CircularProgress,
   CircularProgressIndicator,
   CircularProgressTrack,
   CircularProgressRange,
   CircularProgressValueText,
   CircularProgressCombined,
+  type CircularProgressProps,
 };

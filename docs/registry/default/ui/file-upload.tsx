@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "FileUpload";
 const DROPZONE_NAME = "FileUploadDropzone";
@@ -24,16 +25,6 @@ const ITEM_METADATA_NAME = "FileUploadItemMetadata";
 const ITEM_PROGRESS_NAME = "FileUploadItemProgress";
 const ITEM_DELETE_NAME = "FileUploadItemDelete";
 const CLEAR_NAME = "FileUploadClear";
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
 
 type Direction = "ltr" | "rtl";
 
@@ -279,7 +270,7 @@ function useFileUploadContext(consumerName: string) {
   return context;
 }
 
-interface FileUploadRootProps
+interface FileUploadProps
   extends Omit<React.ComponentProps<"div">, "defaultValue" | "onChange"> {
   value?: File[];
   defaultValue?: File[];
@@ -309,7 +300,7 @@ interface FileUploadRootProps
   required?: boolean;
 }
 
-function FileUploadRoot(props: FileUploadRootProps) {
+function FileUpload(props: FileUploadProps) {
   const {
     value,
     defaultValue,
@@ -1401,7 +1392,7 @@ function FileUploadClear(props: FileUploadClearProps) {
 }
 
 export {
-  FileUploadRoot as FileUpload,
+  FileUpload,
   FileUploadDropzone,
   FileUploadTrigger,
   FileUploadList,
@@ -1412,18 +1403,7 @@ export {
   FileUploadItemDelete,
   FileUploadClear,
   //
-  FileUploadRoot as Root,
-  FileUploadDropzone as Dropzone,
-  FileUploadTrigger as Trigger,
-  FileUploadList as List,
-  FileUploadItem as Item,
-  FileUploadItemPreview as ItemPreview,
-  FileUploadItemMetadata as ItemMetadata,
-  FileUploadItemProgress as ItemProgress,
-  FileUploadItemDelete as ItemDelete,
-  FileUploadClear as Clear,
-  //
   useStore as useFileUpload,
   //
-  type FileUploadRootProps as FileUploadProps,
+  type FileUploadProps,
 };

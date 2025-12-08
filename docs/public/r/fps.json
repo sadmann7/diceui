@@ -1,9 +1,7 @@
 {
   "name": "fps",
   "type": "registry:ui",
-  "dependencies": [
-    "class-variance-authority"
-  ],
+  "dependencies": [],
   "files": [
     {
       "path": "ui/fps.tsx",

@@ -1,9 +1,6 @@
 {
   "name": "segmented-input-rgb-demo",
   "type": "registry:example",
-  "dependencies": [
-    "class-variance-authority"
-  ],
   "registryDependencies": [
     "segmented-input"
   ],

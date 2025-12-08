@@ -30,12 +30,21 @@ npx shadcn@latest add @diceui/compare-slider
     Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.
 
     <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
+    Copy and paste the following hooks into your `hooks` directory.
 
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-lazy-ref" />
+    <ComponentSource name="use-as-ref" />
   </Step>
   <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="compare-slider" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -44,14 +53,19 @@ npx shadcn@latest add @diceui/compare-slider
 Import the parts, and compose them together.
 
 ```tsx
-import * as CompareSlider from "@/components/ui/compare-slider";
+import {
+  CompareSlider,
+  CompareSliderBefore,
+  CompareSliderAfter,
+  CompareSliderHandle,
+} from "@/components/ui/compare-slider";
 
 return (
-  <CompareSlider.Root>
-    <CompareSlider.Before />
-    <CompareSlider.After />
-    <CompareSlider.Handle />
-  </CompareSlider.Root>
+  <CompareSlider>
+    <CompareSliderBefore />
+    <CompareSliderAfter />
+    <CompareSliderHandle />
+  </CompareSlider>
 )
 ```
 
@@ -77,13 +91,13 @@ Compare slider with custom handle, labels, and vertical orientation.
 
 ## API Reference
 
-### Root
+### CompareSlider
 
 The root container for the compare slider component.
 
 <AutoTypeTable
   path="./types/docs/compare-slider.ts"
-  name="RootProps"
+  name="CompareSliderProps"
 />
 
 <DataAttributesTable
@@ -95,13 +109,13 @@ The root container for the compare slider component.
   ]}
 />
 
-### Before
+### CompareSliderBefore
 
 The container for the "before" content that appears on the left (or top in vertical mode).
 
 <AutoTypeTable
   path="./types/docs/compare-slider.ts"
-  name="BeforeProps"
+  name="CompareSliderBeforeProps"
 />
 
 <DataAttributesTable
@@ -113,13 +127,13 @@ The container for the "before" content that appears on the left (or top in verti
   ]}
 />
 
-### After
+### CompareSliderAfter
 
 The container for the "after" content that appears on the right (or bottom in vertical mode).
 
 <AutoTypeTable
   path="./types/docs/compare-slider.ts"
-  name="AfterProps"
+  name="CompareSliderAfterProps"
 />
 
 <DataAttributesTable
@@ -131,13 +145,13 @@ The container for the "after" content that appears on the right (or bottom in ve
   ]}
 />
 
-### Handle
+### CompareSliderHandle
 
 The draggable handle that controls the comparison position.
 
 <AutoTypeTable
   path="./types/docs/compare-slider.ts"
-  name="HandleProps"
+  name="CompareSliderHandleProps"
 />
 
 <DataAttributesTable
@@ -149,13 +163,13 @@ The draggable handle that controls the comparison position.
   ]}
 />
 
-### Label
+### CompareSliderLabel
 
 Custom labels that can be positioned on either side of the comparison.
 
 <AutoTypeTable
   path="./types/docs/compare-slider.ts"
-  name="LabelProps"
+  name="CompareSliderLabelProps"
 />
 
 ## Accessibility

@@ -5,6 +5,9 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "ScrollSpy";
 const NAV_NAME = "ScrollSpyNav";
@@ -17,29 +20,6 @@ type Orientation = "horizontal" | "vertical";
 
 type LinkElement = React.ComponentRef<typeof ScrollSpyLink>;
 type SectionElement = React.ComponentRef<typeof ScrollSpySection>;
-
-const useIsomorphicLayoutEffect =
-  typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
-function useAsRef<T>(props: T) {
-  const ref = React.useRef<T>(props);
-
-  useIsomorphicLayoutEffect(() => {
-    ref.current = props;
-  });
-
-  return ref;
-}
-
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
-}
 
 function getDefaultScrollBehavior(): ScrollBehavior {
   if (typeof window === "undefined") return "smooth";
@@ -104,7 +84,7 @@ function useScrollSpyContext(consumerName: string) {
   return context;
 }
 
-interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
+interface ScrollSpyProps extends React.ComponentProps<"div"> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -118,7 +98,7 @@ interface ScrollSpyRootProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-function ScrollSpyRoot(props: ScrollSpyRootProps) {
+function ScrollSpy(props: ScrollSpyProps) {
   const { value, defaultValue, onValueChange, ...rootProps } = props;
 
   const stateRef = useLazyRef<StoreState>(() => ({
@@ -157,16 +137,12 @@ function ScrollSpyRoot(props: ScrollSpyRootProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <ScrollSpyRootImpl
-        value={value}
-        defaultValue={defaultValue}
-        {...rootProps}
-      />
+      <ScrollSpyImpl value={value} defaultValue={defaultValue} {...rootProps} />
     </StoreContext.Provider>
   );
 }
 
-function ScrollSpyRootImpl(props: Omit<ScrollSpyRootProps, "onValueChange">) {
+function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
   const {
     value,
     defaultValue,
@@ -483,15 +459,11 @@ function ScrollSpySection(props: ScrollSpySectionProps) {
 }
 
 export {
-  ScrollSpyRoot as Root,
-  ScrollSpyLink as Link,
-  ScrollSpyNav as Nav,
-  ScrollSpySection as Section,
-  ScrollSpyViewport as Viewport,
-  //
-  ScrollSpyRoot as ScrollSpy,
+  ScrollSpy,
   ScrollSpyLink,
   ScrollSpyNav,
   ScrollSpySection,
   ScrollSpyViewport,
+  //
+  type ScrollSpyProps,
 };

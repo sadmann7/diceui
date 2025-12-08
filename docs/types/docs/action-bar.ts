@@ -1,7 +1,7 @@
 import type { Button } from "@/components/ui/button";
 import type { CompositionProps, EmptyProps } from "@/types";
 
-export interface RootProps extends EmptyProps<"div">, CompositionProps {
+export interface ActionBarProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Whether the action bar is open/visible.
    * @default false
@@ -82,11 +82,15 @@ export interface RootProps extends EmptyProps<"div">, CompositionProps {
   loop?: boolean;
 }
 
-export interface SelectionProps extends EmptyProps<"div">, CompositionProps {}
+export interface ActionBarSelectionProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface GroupProps extends EmptyProps<"div">, CompositionProps {}
+export interface ActionBarGroupProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
-export interface ItemProps
+export interface ActionBarItemProps
   extends Omit<
       React.ComponentProps<typeof Button>,
       keyof React.ComponentProps<"button">
@@ -106,6 +110,10 @@ export interface ItemProps
   onSelect?: (event: Event) => void;
 }
 
-export interface CloseProps extends EmptyProps<"button">, CompositionProps {}
+export interface ActionBarCloseProps
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
-export interface SeparatorProps extends EmptyProps<"div">, CompositionProps {}
+export interface ActionBarSeparatorProps
+  extends EmptyProps<"div">,
+    CompositionProps {}

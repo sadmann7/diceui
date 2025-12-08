@@ -31,12 +31,20 @@ npx shadcn@latest add @diceui/cropper
     Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.
 
     <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
+    Copy and paste the following hooks into your `hooks` directory.
 
+    <ComponentSource name="use-isomorphic-layout-effect" />
+    <ComponentSource name="use-lazy-ref" />
   </Step>
   <Step>
     Copy and paste the following code into your project.
 
     <ComponentSource name="cropper" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
   </Step>
 </Steps>
 
@@ -88,40 +96,40 @@ A cropper that works with video content.
 
 ## API Reference
 
-### Root
+### Cropper
 
 The root container for the cropper component.
 
 <AutoTypeTable
   path="./types/docs/cropper.ts"
-  name="RootProps"
+  name="CropperProps"
 />
 
-### Image
+### CropperImage
 
 The image element to be cropped.
 
 <AutoTypeTable
   path="./types/docs/cropper.ts"
-  name="ImageProps"
+  name="CropperImageProps"
 />
 
-### Video
+### CropperVideo
 
 The video element to be cropped.
 
 <AutoTypeTable
   path="./types/docs/cropper.ts"
-  name="VideoProps"
+  name="CropperVideoProps"
 />
 
-### Area
+### CropperArea
 
 The crop area overlay that shows the selected region.
 
 <AutoTypeTable
   path="./types/docs/cropper.ts"
-  name="AreaProps"
+  name="CropperAreaProps"
 />
 
 ## Accessibility

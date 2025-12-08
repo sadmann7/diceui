@@ -1,7 +1,7 @@
 import type { SlotProps } from "@radix-ui/react-slot";
 import type { CompositionProps } from "@/types";
 
-export interface RootProps
+export interface MasonryProps
   extends Omit<SlotProps, keyof React.ComponentProps<"div">>,
     CompositionProps {
   /**
@@ -99,6 +99,6 @@ export interface RootProps
   linear?: boolean;
 }
 
-export interface ItemProps
+export interface MasonryItemProps
   extends Omit<SlotProps, keyof React.ComponentProps<"div">>,
     CompositionProps {}

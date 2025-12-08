@@ -4,7 +4,14 @@ import { GripVertical } from "lucide-react";
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import * as Kanban from "@/registry/default/ui/kanban";
+import {
+  Kanban,
+  KanbanBoard,
+  KanbanColumn,
+  KanbanColumnHandle,
+  KanbanItem,
+  KanbanOverlay,
+} from "@/registry/default/ui/kanban";
 
 interface Task {
   id: string;
@@ -82,17 +89,17 @@ export default function KanbanDynamicOverlayDemo() {
   });
 
   return (
-    <Kanban.Root
+    <Kanban
       value={columns}
       onValueChange={setColumns}
       getItemValue={(item) => item.id}
     >
-      <Kanban.Board className="grid auto-rows-fr grid-cols-3">
+      <KanbanBoard className="grid auto-rows-fr grid-cols-3">
         {Object.entries(columns).map(([columnValue, tasks]) => (
           <TaskColumn key={columnValue} value={columnValue} tasks={tasks} />
         ))}
-      </Kanban.Board>
-      <Kanban.Overlay>
+      </KanbanBoard>
+      <KanbanOverlay>
         {({ value, variant }) => {
           if (variant === "column") {
             const tasks = columns[value] ?? [];
@@ -108,19 +115,19 @@ export default function KanbanDynamicOverlayDemo() {
 
           return <TaskCard task={task} />;
         }}
-      </Kanban.Overlay>
-    </Kanban.Root>
+      </KanbanOverlay>
+    </Kanban>
   );
 }
 
 interface TaskCardProps
-  extends Omit<React.ComponentProps<typeof Kanban.Item>, "value"> {
+  extends Omit<React.ComponentProps<typeof KanbanItem>, "value"> {
   task: Task;
 }
 
 function TaskCard({ task, ...props }: TaskCardProps) {
   return (
-    <Kanban.Item key={task.id} value={task.id} asChild {...props}>
+    <KanbanItem key={task.id} value={task.id} asChild {...props}>
       <div className="rounded-md border bg-card p-3 shadow-xs">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
@@ -153,18 +160,18 @@ function TaskCard({ task, ...props }: TaskCardProps) {
           </div>
         </div>
       </div>
-    </Kanban.Item>
+    </KanbanItem>
   );
 }
 
 interface TaskColumnProps
-  extends Omit<React.ComponentProps<typeof Kanban.Column>, "children"> {
+  extends Omit<React.ComponentProps<typeof KanbanColumn>, "children"> {
   tasks: Task[];
 }
 
 function TaskColumn({ value, tasks, ...props }: TaskColumnProps) {
   return (
-    <Kanban.Column value={value} {...props}>
+    <KanbanColumn value={value} {...props}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="font-semibold text-sm">{COLUMN_TITLES[value]}</span>
@@ -172,17 +179,17 @@ function TaskColumn({ value, tasks, ...props }: TaskColumnProps) {
             {tasks.length}
           </Badge>
         </div>
-        <Kanban.ColumnHandle asChild>
+        <KanbanColumnHandle asChild>
           <Button variant="ghost" size="icon">
             <GripVertical className="h-4 w-4" />
           </Button>
-        </Kanban.ColumnHandle>
+        </KanbanColumnHandle>
       </div>
       <div className="flex flex-col gap-2 p-0.5">
         {tasks.map((task) => (
           <TaskCard key={task.id} task={task} asHandle />
         ))}
       </div>
-    </Kanban.Column>
+    </KanbanColumn>
   );
 }

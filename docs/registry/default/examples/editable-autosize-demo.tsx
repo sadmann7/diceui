@@ -1,27 +1,36 @@
 import { Button } from "@/components/ui/button";
-import * as Editable from "@/registry/default/ui/editable";
+import {
+  Editable,
+  EditableArea,
+  EditableCancel,
+  EditableInput,
+  EditableLabel,
+  EditablePreview,
+  EditableSubmit,
+  EditableToolbar,
+} from "@/registry/default/ui/editable";
 
 export default function EditableAutosizeDemo() {
   return (
-    <Editable.Root
+    <Editable
       defaultValue="Adjust the size of the input with the text inside."
       autosize
     >
-      <Editable.Label>Autosize editable</Editable.Label>
-      <Editable.Area>
-        <Editable.Preview className="whitespace-pre-wrap" />
-        <Editable.Input />
-      </Editable.Area>
-      <Editable.Toolbar>
-        <Editable.Submit asChild>
+      <EditableLabel>Autosize editable</EditableLabel>
+      <EditableArea>
+        <EditablePreview className="whitespace-pre-wrap" />
+        <EditableInput />
+      </EditableArea>
+      <EditableToolbar>
+        <EditableSubmit asChild>
           <Button size="sm">Save</Button>
-        </Editable.Submit>
-        <Editable.Cancel asChild>
+        </EditableSubmit>
+        <EditableCancel asChild>
           <Button variant="outline" size="sm">
             Cancel
           </Button>
-        </Editable.Cancel>
-      </Editable.Toolbar>
-    </Editable.Root>
+        </EditableCancel>
+      </EditableToolbar>
+    </Editable>
   );
 }
