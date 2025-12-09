@@ -13,6 +13,7 @@
     "build:registry": "pnpm --filter=docs build:registry --loglevel silent",
     "validate:registry": "pnpm --filter=docs validate:registry --loglevel silent",
     "cleanup:registry": "pnpm --filter=docs cleanup:registry --loglevel silent",
+    "test:registry": "pnpm --filter=docs test:registry --loglevel silent",
     "build:packages": "pnpm --filter \"@diceui/*\" build",
     "dev": "turbo run dev",
     "docs:dev": "turbo run dev --filter=docs",

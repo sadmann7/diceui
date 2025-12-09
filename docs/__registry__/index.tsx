@@ -33,10 +33,6 @@ export const Index: Record<string, any> = {
         type: "registry:ui",
         target: ""
       },{
-        path: "registry/default/components/portal.tsx",
-        type: "registry:component",
-        target: ""
-      },{
         path: "registry/default/lib/compose-refs.ts",
         type: "registry:lib",
         target: ""
