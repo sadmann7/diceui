@@ -98,35 +98,6 @@ interface Store {
   notify: () => void;
 }
 
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-  onValueChange?: Partial<{
-    [K in keyof StoreState]: (value: StoreState[K], store: Store) => void;
-  }>,
-): Store {
-  const store: Store = {
-    subscribe: (cb) => {
-      listenersRef.current.add(cb);
-      return () => listenersRef.current.delete(cb);
-    },
-    getState: () => stateRef.current,
-    setState: (key, value) => {
-      if (Object.is(stateRef.current[key], value)) return;
-      stateRef.current[key] = value;
-      onValueChange?.[key]?.(value, store);
-      store.notify();
-    },
-    notify: () => {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
-    },
-  };
-
-  return store;
-}
-
 const StoreContext = React.createContext<Store | null>(null);
 
 function useStoreContext(consumerName: string) {
@@ -240,10 +211,25 @@ function MediaPlayer(props: MediaPlayerProps) {
     volumeIndicatorVisible: false,
   }));
 
-  const store = React.useMemo(
-    () => createStore(listenersRef, stateRef),
-    [listenersRef, stateRef],
-  );
+  const store = React.useMemo<Store>(() => {
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+        stateRef.current[key] = value;
+        store.notify();
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+    };
+  }, [listenersRef, stateRef]);
 
   const mediaId = React.useId();
   const labelId = React.useId();

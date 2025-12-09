@@ -118,152 +118,6 @@ interface Store {
   getPositionFromAngle: (angle: number) => { x: number; y: number };
 }
 
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-  onValueChange?: (value: number[]) => void,
-  onValueCommit?: (value: number[]) => void,
-): Store {
-  const store: Store = {
-    subscribe: (cb) => {
-      if (listenersRef.current) {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current?.delete(cb);
-      }
-      return () => {};
-    },
-    getState: () =>
-      stateRef.current ?? {
-        values: [0],
-        thumbs: new Map(),
-        valueIndexToChange: 0,
-        min: 0,
-        max: 100,
-        step: 1,
-        minStepsBetweenThumbs: 0,
-        size: 80,
-        thickness: 8,
-        startAngle: -90,
-        endAngle: 270,
-        disabled: false,
-        inverted: false,
-      },
-    setState: (key, value) => {
-      const state = stateRef.current;
-      if (!state || Object.is(state[key], value)) return;
-
-      if (key === "values" && Array.isArray(value)) {
-        const hasChanged = String(state.values) !== String(value);
-        state.values = value;
-        if (hasChanged) {
-          onValueChange?.(value);
-        }
-      } else {
-        state[key] = value;
-      }
-
-      store.notify();
-    },
-    addThumb: (index, thumbData) => {
-      const state = stateRef.current;
-      if (state) {
-        state.thumbs.set(index, thumbData);
-        store.notify();
-      }
-    },
-    removeThumb: (index) => {
-      const state = stateRef.current;
-      if (state) {
-        state.thumbs.delete(index);
-        store.notify();
-      }
-    },
-    updateValue: (value, atIndex, { commit = false } = {}) => {
-      const state = stateRef.current;
-      if (!state) return;
-
-      const { min, max, step, minStepsBetweenThumbs } = state;
-      const decimalCount = getDecimalCount(step);
-      const snapToStep = roundValue(
-        Math.round((value - min) / step) * step + min,
-        decimalCount,
-      );
-      const nextValue = clamp(snapToStep, [min, max]);
-
-      const nextValues = getNextSortedValues(state.values, nextValue, atIndex);
-
-      if (hasMinStepsBetweenValues(nextValues, minStepsBetweenThumbs * step)) {
-        state.valueIndexToChange = nextValues.indexOf(nextValue);
-        const hasChanged = String(nextValues) !== String(state.values);
-
-        if (hasChanged) {
-          state.values = nextValues;
-          onValueChange?.(nextValues);
-          if (commit) onValueCommit?.(nextValues);
-          store.notify();
-        }
-      }
-    },
-    getValueFromPointer: (clientX, clientY, rect) => {
-      const state = stateRef.current;
-      if (!state) return 0;
-
-      const { min, max, inverted, startAngle, endAngle } = state;
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-
-      const deltaX = clientX - centerX;
-      const deltaY = clientY - centerY;
-      let angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
-
-      if (angle < 0) angle += 360;
-
-      angle = (angle - startAngle + 360) % 360;
-
-      const totalAngle = (endAngle - startAngle + 360) % 360 || 360;
-
-      let percent = angle / totalAngle;
-      if (inverted) percent = 1 - percent;
-
-      return min + percent * (max - min);
-    },
-    getAngleFromValue: (value) => {
-      const state = stateRef.current;
-      if (!state) return 0;
-
-      const { min, max, inverted, startAngle, endAngle } = state;
-      let percent = (value - min) / (max - min);
-      if (inverted) percent = 1 - percent;
-
-      const totalAngle = (endAngle - startAngle + 360) % 360 || 360;
-      const angle = startAngle + percent * totalAngle;
-
-      return angle;
-    },
-    getPositionFromAngle: (angle) => {
-      const state = stateRef.current;
-      if (!state) return { x: 0, y: 0 };
-
-      const { size } = state;
-      const radians = (angle * Math.PI) / 180;
-
-      return {
-        x: size * Math.cos(radians),
-        y: size * Math.sin(radians),
-      };
-    },
-    notify: () => {
-      if (listenersRef.current) {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      }
-    },
-  };
-
-  return store;
-}
-
 const StoreContext = React.createContext<Store | null>(null);
 
 function useStoreContext(consumerName: string) {
@@ -364,10 +218,112 @@ function AngleSlider(props: AngleSliderProps) {
     endAngle,
   }));
 
-  const store = React.useMemo(
-    () => createStore(listenersRef, stateRef, onValueChange, onValueCommit),
-    [listenersRef, stateRef, onValueChange, onValueCommit],
-  );
+  const store = React.useMemo<Store>(() => {
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+
+        if (key === "values" && Array.isArray(value)) {
+          const hasChanged = String(stateRef.current.values) !== String(value);
+          stateRef.current.values = value;
+          if (hasChanged) {
+            onValueChange?.(value);
+          }
+        } else {
+          stateRef.current[key] = value;
+        }
+
+        store.notify();
+      },
+      addThumb: (index, thumbData) => {
+        stateRef.current.thumbs.set(index, thumbData);
+        store.notify();
+      },
+      removeThumb: (index) => {
+        stateRef.current.thumbs.delete(index);
+        store.notify();
+      },
+      updateValue: (value, atIndex, { commit = false } = {}) => {
+        const { min, max, step, minStepsBetweenThumbs } = stateRef.current;
+        const decimalCount = getDecimalCount(step);
+        const snapToStep = roundValue(
+          Math.round((value - min) / step) * step + min,
+          decimalCount,
+        );
+        const nextValue = clamp(snapToStep, [min, max]);
+
+        const nextValues = getNextSortedValues(
+          stateRef.current.values,
+          nextValue,
+          atIndex,
+        );
+
+        if (
+          hasMinStepsBetweenValues(nextValues, minStepsBetweenThumbs * step)
+        ) {
+          stateRef.current.valueIndexToChange = nextValues.indexOf(nextValue);
+          const hasChanged =
+            String(nextValues) !== String(stateRef.current.values);
+
+          if (hasChanged) {
+            stateRef.current.values = nextValues;
+            onValueChange?.(nextValues);
+            if (commit) onValueCommit?.(nextValues);
+            store.notify();
+          }
+        }
+      },
+      getValueFromPointer: (clientX, clientY, rect) => {
+        const { min, max, inverted, startAngle, endAngle } = stateRef.current;
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        const deltaX = clientX - centerX;
+        const deltaY = clientY - centerY;
+        let angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
+
+        if (angle < 0) angle += 360;
+
+        angle = (angle - startAngle + 360) % 360;
+
+        const totalAngle = (endAngle - startAngle + 360) % 360 || 360;
+
+        let percent = angle / totalAngle;
+        if (inverted) percent = 1 - percent;
+
+        return min + percent * (max - min);
+      },
+      getAngleFromValue: (value) => {
+        const { min, max, inverted, startAngle, endAngle } = stateRef.current;
+        let percent = (value - min) / (max - min);
+        if (inverted) percent = 1 - percent;
+
+        const totalAngle = (endAngle - startAngle + 360) % 360 || 360;
+        const angle = startAngle + percent * totalAngle;
+
+        return angle;
+      },
+      getPositionFromAngle: (angle) => {
+        const { size } = stateRef.current;
+        const radians = (angle * Math.PI) / 180;
+
+        return {
+          x: size * Math.cos(radians),
+          y: size * Math.sin(radians),
+        };
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+    };
+  }, [listenersRef, stateRef, onValueChange, onValueCommit]);
 
   useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {

@@ -333,156 +333,6 @@ interface Store {
   batch: (fn: () => void) => void;
 }
 
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-  aspectRatio: number,
-  onCropChange?: (crop: Point) => void,
-  onCropSizeChange?: (cropSize: Size) => void,
-  onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void,
-  onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void,
-  onZoomChange?: (zoom: number) => void,
-  onRotationChange?: (rotation: number) => void,
-  onMediaLoaded?: (mediaSize: MediaSize) => void,
-  onInteractionStart?: () => void,
-  onInteractionEnd?: () => void,
-): Store {
-  let isBatching = false;
-  let raf: number | null = null;
-
-  function notifyCropAreaChange() {
-    if (raf != null) return;
-    raf = requestAnimationFrame(() => {
-      raf = null;
-      const s = stateRef.current;
-      if (s?.mediaSize && s.cropSize && onCropAreaChange) {
-        const { croppedAreaPercentages, croppedAreaPixels } = getCroppedArea(
-          s.crop,
-          s.mediaSize,
-          s.cropSize,
-          aspectRatio,
-          s.zoom,
-          s.rotation,
-        );
-        onCropAreaChange(croppedAreaPercentages, croppedAreaPixels);
-      }
-    });
-  }
-
-  const store: Store = {
-    subscribe: (cb) => {
-      if (listenersRef.current) {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current?.delete(cb);
-      }
-      return () => {};
-    },
-    getState: () =>
-      stateRef.current ?? {
-        crop: { x: 0, y: 0 },
-        zoom: 1,
-        rotation: 0,
-        mediaSize: null,
-        cropSize: null,
-        isDragging: false,
-        isWheelZooming: false,
-      },
-    setState: (key, value) => {
-      const state = stateRef.current;
-      if (!state || Object.is(state[key], value)) return;
-
-      state[key] = value;
-
-      if (
-        key === "crop" &&
-        typeof value === "object" &&
-        value &&
-        "x" in value
-      ) {
-        onCropChange?.(value);
-      } else if (key === "zoom" && typeof value === "number") {
-        onZoomChange?.(value);
-      } else if (key === "rotation" && typeof value === "number") {
-        onRotationChange?.(value);
-      } else if (
-        key === "cropSize" &&
-        typeof value === "object" &&
-        value &&
-        "width" in value
-      ) {
-        onCropSizeChange?.(value);
-      } else if (
-        key === "mediaSize" &&
-        typeof value === "object" &&
-        value &&
-        "naturalWidth" in value
-      ) {
-        onMediaLoaded?.(value);
-      } else if (key === "isDragging") {
-        if (value) {
-          onInteractionStart?.();
-        } else {
-          onInteractionEnd?.();
-          const currentState = stateRef.current;
-          if (
-            currentState?.mediaSize &&
-            currentState.cropSize &&
-            onCropComplete
-          ) {
-            const { croppedAreaPercentages, croppedAreaPixels } =
-              getCroppedArea(
-                currentState.crop,
-                currentState.mediaSize,
-                currentState.cropSize,
-                aspectRatio,
-                currentState.zoom,
-                currentState.rotation,
-              );
-            onCropComplete(croppedAreaPercentages, croppedAreaPixels);
-          }
-        }
-      }
-
-      if (
-        (key === "crop" ||
-          key === "zoom" ||
-          key === "rotation" ||
-          key === "mediaSize" ||
-          key === "cropSize") &&
-        onCropAreaChange
-      ) {
-        notifyCropAreaChange();
-      }
-
-      if (!isBatching) {
-        store.notify();
-      }
-    },
-    notify: () => {
-      if (listenersRef.current) {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      }
-    },
-    batch: (fn: () => void) => {
-      if (isBatching) {
-        fn();
-        return;
-      }
-      isBatching = true;
-      try {
-        fn();
-      } finally {
-        isBatching = false;
-        store.notify();
-      }
-    },
-  };
-
-  return store;
-}
-
 const StoreContext = React.createContext<Store | null>(null);
 
 function useStoreContext(consumerName: string) {
@@ -610,37 +460,140 @@ function Cropper(props: CropperProps) {
   const rootRef = React.useRef<HTMLDivElement>(null);
   const composedRef = useComposedRefs(ref, rootRef);
 
-  const store = React.useMemo(
-    () =>
-      createStore(
-        listenersRef,
-        stateRef,
-        aspectRatio,
-        onCropChange,
-        onCropSizeChange,
-        onCropAreaChange,
-        onCropComplete,
-        onZoomChange,
-        onRotationChange,
-        onMediaLoaded,
-        onInteractionStart,
-        onInteractionEnd,
-      ),
-    [
-      listenersRef,
-      stateRef,
-      aspectRatio,
-      onCropChange,
-      onCropSizeChange,
-      onCropAreaChange,
-      onCropComplete,
-      onZoomChange,
-      onRotationChange,
-      onMediaLoaded,
-      onInteractionStart,
-      onInteractionEnd,
-    ],
-  );
+  const store = React.useMemo<Store>(() => {
+    let isBatching = false;
+    let raf: number | null = null;
+
+    function notifyCropAreaChange() {
+      if (raf != null) return;
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        const s = stateRef.current;
+        if (s?.mediaSize && s.cropSize && onCropAreaChange) {
+          const { croppedAreaPercentages, croppedAreaPixels } = getCroppedArea(
+            s.crop,
+            s.mediaSize,
+            s.cropSize,
+            aspectRatio,
+            s.zoom,
+            s.rotation,
+          );
+          onCropAreaChange(croppedAreaPercentages, croppedAreaPixels);
+        }
+      });
+    }
+
+    const store: Store = {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+
+        stateRef.current[key] = value;
+
+        if (
+          key === "crop" &&
+          typeof value === "object" &&
+          value &&
+          "x" in value
+        ) {
+          onCropChange?.(value);
+        } else if (key === "zoom" && typeof value === "number") {
+          onZoomChange?.(value);
+        } else if (key === "rotation" && typeof value === "number") {
+          onRotationChange?.(value);
+        } else if (
+          key === "cropSize" &&
+          typeof value === "object" &&
+          value &&
+          "width" in value
+        ) {
+          onCropSizeChange?.(value);
+        } else if (
+          key === "mediaSize" &&
+          typeof value === "object" &&
+          value &&
+          "naturalWidth" in value
+        ) {
+          onMediaLoaded?.(value);
+        } else if (key === "isDragging") {
+          if (value) {
+            onInteractionStart?.();
+          } else {
+            onInteractionEnd?.();
+            const currentState = stateRef.current;
+            if (
+              currentState?.mediaSize &&
+              currentState.cropSize &&
+              onCropComplete
+            ) {
+              const { croppedAreaPercentages, croppedAreaPixels } =
+                getCroppedArea(
+                  currentState.crop,
+                  currentState.mediaSize,
+                  currentState.cropSize,
+                  aspectRatio,
+                  currentState.zoom,
+                  currentState.rotation,
+                );
+              onCropComplete(croppedAreaPercentages, croppedAreaPixels);
+            }
+          }
+        }
+
+        if (
+          (key === "crop" ||
+            key === "zoom" ||
+            key === "rotation" ||
+            key === "mediaSize" ||
+            key === "cropSize") &&
+          onCropAreaChange
+        ) {
+          notifyCropAreaChange();
+        }
+
+        if (!isBatching) {
+          store.notify();
+        }
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+      batch: (fn: () => void) => {
+        if (isBatching) {
+          fn();
+          return;
+        }
+        isBatching = true;
+        try {
+          fn();
+        } finally {
+          isBatching = false;
+          store.notify();
+        }
+      },
+    };
+
+    return store;
+  }, [
+    listenersRef,
+    stateRef,
+    aspectRatio,
+    onCropChange,
+    onCropSizeChange,
+    onCropAreaChange,
+    onCropComplete,
+    onZoomChange,
+    onRotationChange,
+    onMediaLoaded,
+    onInteractionStart,
+    onInteractionEnd,
+  ]);
 
   useIsomorphicLayoutEffect(() => {
     const updates: Partial<StoreState> = {};
