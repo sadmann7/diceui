@@ -9,7 +9,6 @@ import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorph
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "Cropper";
-const CONTENT_NAME = "CropperContent";
 const IMAGE_NAME = "CropperImage";
 const VIDEO_NAME = "CropperVideo";
 const AREA_NAME = "CropperArea";
@@ -485,6 +484,14 @@ function createStore(
 }
 
 const StoreContext = React.createContext<Store | null>(null);
+
+function useStoreContext(consumerName: string) {
+  const context = React.useContext(StoreContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
 
 function useStore<T>(
   selector: (state: StoreState) => T,
