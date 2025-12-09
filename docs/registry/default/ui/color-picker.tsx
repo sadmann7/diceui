@@ -522,7 +522,6 @@ function ColorPicker(props: ColorPickerProps) {
     null,
   );
   const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
-
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -537,6 +536,7 @@ function ColorPicker(props: ColorPickerProps) {
       format: formatProp ?? defaultFormat,
     };
   });
+
   const propsRef = useAsRef({
     onValueChange,
     onOpenChange,

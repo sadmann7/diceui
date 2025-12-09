@@ -352,7 +352,6 @@ function TimePicker(props: TimePickerProps) {
   const [inputGroup, setInputGroup] = React.useState<InputGroupElement | null>(
     null,
   );
-
   const isFormControl = inputGroup ? !!inputGroup.closest("form") : true;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());

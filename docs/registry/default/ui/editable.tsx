@@ -43,53 +43,6 @@ interface Store {
   notify: () => void;
 }
 
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-  onValueChange?: (value: string) => void,
-  onEditingChange?: (editing: boolean) => void,
-): Store {
-  const store: Store = {
-    subscribe: (cb) => {
-      if (listenersRef.current) {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current?.delete(cb);
-      }
-      return () => {};
-    },
-    getState: () =>
-      stateRef.current ?? {
-        value: "",
-        editing: false,
-      },
-    setState: (key, value) => {
-      const state = stateRef.current;
-      if (!state || Object.is(state[key], value)) return;
-
-      if (key === "value" && typeof value === "string") {
-        state.value = value;
-        onValueChange?.(value);
-      } else if (key === "editing" && typeof value === "boolean") {
-        state.editing = value;
-        onEditingChange?.(value);
-      } else {
-        state[key] = value;
-      }
-
-      store.notify();
-    },
-    notify: () => {
-      if (listenersRef.current) {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      }
-    },
-  };
-
-  return store;
-}
-
 const StoreContext = React.createContext<Store | null>(null);
 
 function useStoreContext(consumerName: string) {
@@ -238,16 +191,35 @@ function Editable(props: EditableProps) {
     onEnterKeyDown,
   });
 
-  const store = React.useMemo(
-    () =>
-      createStore(
-        listenersRef,
-        stateRef,
-        propsRef.current.onValueChange,
-        propsRef.current.onEditingChange,
-      ),
-    [listenersRef, stateRef, propsRef],
-  );
+  const store = React.useMemo<Store>(() => {
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+
+        if (key === "value" && typeof value === "string") {
+          stateRef.current.value = value;
+          propsRef.current.onValueChange?.(value);
+        } else if (key === "editing" && typeof value === "boolean") {
+          stateRef.current.editing = value;
+          propsRef.current.onEditingChange?.(value);
+        } else {
+          stateRef.current[key] = value;
+        }
+
+        store.notify();
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+    };
+  }, [listenersRef, stateRef, propsRef]);
 
   const value = useStore((state) => state.value, store);
 
