@@ -30,7 +30,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootImplElement = React.ComponentRef<typeof CompareSliderImpl>;
+type RootElement = React.ComponentRef<typeof CompareSlider>;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -50,16 +50,17 @@ interface Store {
 
 const StoreContext = React.createContext<Store | null>(null);
 
-function useStoreContext(consumerName: string) {
-  const context = React.useContext(StoreContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
-  }
-  return context;
-}
+function useStore<T>(
+  selector: (state: StoreState) => T,
+  ogStore?: Store | null,
+): T {
+  const contextStore = React.useContext(StoreContext);
 
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -95,10 +96,26 @@ interface CompareSliderProps extends DivProps {
 }
 
 function CompareSlider(props: CompareSliderProps) {
-  const { value, defaultValue = 50, onValueChange, ...rootProps } = props;
+  const {
+    value: valueProp,
+    defaultValue = 50,
+    onValueChange,
+    step = 1,
+    interaction = "drag",
+    orientation = "horizontal",
+    className,
+    children,
+    ref,
+    onPointerMove: onPointerMoveProp,
+    onPointerUp: onPointerUpProp,
+    onPointerDown: onPointerDownProp,
+    onKeyDown: onKeyDownProp,
+    asChild,
+    ...rootProps
+  } = props;
 
   const stateRef = useLazyRef<StoreState>(() => ({
-    value: clamp(value ?? defaultValue, 0, 100),
+    value: clamp(valueProp ?? defaultValue, 0, 100),
     isDragging: false,
   }));
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -129,42 +146,8 @@ function CompareSlider(props: CompareSliderProps) {
     };
   }, [listenersRef, stateRef, onValueChangeRef]);
 
-  useIsomorphicLayoutEffect(() => {
-    if (value !== undefined) {
-      store.setState("value", clamp(value, 0, 100));
-    }
-  }, [value, store]);
-
-  return (
-    <StoreContext.Provider value={store}>
-      <CompareSliderImpl {...rootProps} />
-    </StoreContext.Provider>
-  );
-}
-
-function CompareSliderImpl(
-  props: Omit<CompareSliderProps, "value" | "defaultValue" | "onValueChange">,
-) {
-  const {
-    step = 1,
-    interaction = "drag",
-    orientation = "horizontal",
-    className,
-    children,
-    ref,
-    onPointerMove: onPointerMoveProp,
-    onPointerUp: onPointerUpProp,
-    onPointerDown: onPointerDownProp,
-    onKeyDown: onKeyDownProp,
-    asChild,
-    ...rootProps
-  } = props;
-
-  const store = useStoreContext(ROOT_NAME);
-  const value = useStore((state) => state.value);
-
-  const containerRef = React.useRef<RootImplElement>(null);
-  const composedRef = useComposedRefs(ref, containerRef);
+  const rootRef = React.useRef<RootElement | null>(null);
+  const composedRef = useComposedRefs(ref, rootRef);
   const isDraggingRef = React.useRef(false);
 
   const propsRef = useAsRef({
@@ -177,22 +160,30 @@ function CompareSliderImpl(
     step,
   });
 
+  const value = useStore((state) => state.value, store);
+
+  useIsomorphicLayoutEffect(() => {
+    if (valueProp !== undefined) {
+      store.setState("value", clamp(valueProp, 0, 100));
+    }
+  }, [valueProp]);
+
   const onPointerMove = React.useCallback(
-    (event: React.PointerEvent<RootImplElement>) => {
+    (event: React.PointerEvent<RootElement>) => {
       if (!isDraggingRef.current && propsRef.current.interaction === "drag") {
         return;
       }
-      if (!containerRef.current) return;
+      if (!rootRef.current) return;
 
       propsRef.current.onPointerMove?.(event);
       if (event.defaultPrevented) return;
 
-      const containerRect = containerRef.current.getBoundingClientRect();
+      const rootRect = rootRef.current.getBoundingClientRect();
       const isVertical = propsRef.current.orientation === "vertical";
       const position = isVertical
-        ? event.clientY - containerRect.top
-        : event.clientX - containerRect.left;
-      const size = isVertical ? containerRect.height : containerRect.width;
+        ? event.clientY - rootRect.top
+        : event.clientX - rootRect.left;
+      const size = isVertical ? rootRect.height : rootRect.width;
       const percentage = clamp((position / size) * 100, 0, 100);
 
       store.setState("value", percentage);
@@ -201,7 +192,7 @@ function CompareSliderImpl(
   );
 
   const onPointerDown = React.useCallback(
-    (event: React.PointerEvent<RootImplElement>) => {
+    (event: React.PointerEvent<RootElement>) => {
       if (propsRef.current.interaction !== "drag") return;
 
       propsRef.current.onPointerDown?.(event);
@@ -215,7 +206,7 @@ function CompareSliderImpl(
   );
 
   const onPointerUp = React.useCallback(
-    (event: React.PointerEvent<RootImplElement>) => {
+    (event: React.PointerEvent<RootElement>) => {
       if (propsRef.current.interaction !== "drag") return;
 
       propsRef.current.onPointerUp?.(event);
@@ -229,7 +220,7 @@ function CompareSliderImpl(
   );
 
   const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<RootImplElement>) => {
+    (event: React.KeyboardEvent<RootElement>) => {
       propsRef.current.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
@@ -278,32 +269,34 @@ function CompareSliderImpl(
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <CompareSliderContext.Provider value={contextValue}>
-      <RootPrimitive
-        role="slider"
-        aria-orientation={orientation}
-        aria-valuemax={100}
-        aria-valuemin={0}
-        aria-valuenow={value}
-        data-slot="compare-slider"
-        data-orientation={orientation}
-        {...rootProps}
-        ref={composedRef}
-        tabIndex={0}
-        className={cn(
-          "relative isolate touch-none select-none overflow-hidden outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-          orientation === "horizontal" ? "w-full" : "h-full",
-          className,
-        )}
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-        onKeyDown={onKeyDown}
-      >
-        {children}
-      </RootPrimitive>
-    </CompareSliderContext.Provider>
+    <StoreContext.Provider value={store}>
+      <CompareSliderContext.Provider value={contextValue}>
+        <RootPrimitive
+          role="slider"
+          aria-orientation={orientation}
+          aria-valuemax={100}
+          aria-valuemin={0}
+          aria-valuenow={value}
+          data-slot="compare-slider"
+          data-orientation={orientation}
+          {...rootProps}
+          ref={composedRef}
+          tabIndex={0}
+          className={cn(
+            "relative isolate touch-none select-none overflow-hidden outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+            orientation === "horizontal" ? "w-full" : "h-full",
+            className,
+          )}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          onKeyDown={onKeyDown}
+        >
+          {children}
+        </RootPrimitive>
+      </CompareSliderContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
@@ -499,5 +492,6 @@ export {
   CompareSliderBefore,
   CompareSliderHandle,
   CompareSliderLabel,
+  //
   type CompareSliderProps,
 };

@@ -2,8 +2,7 @@
   "name": "mention",
   "type": "registry:ui",
   "dependencies": [
-    "@diceui/mention",
-    "lucide-react"
+    "@diceui/mention"
   ],
   "files": [
     {

@@ -2,8 +2,7 @@
   "name": "listbox",
   "type": "registry:ui",
   "dependencies": [
-    "@diceui/listbox",
-    "lucide-react"
+    "@diceui/listbox"
   ],
   "files": [
     {

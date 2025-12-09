@@ -5,11 +5,12 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "Cropper";
-const CONTENT_NAME = "CropperContent";
+const ROOT_IMPL_NAME = "CropperImpl";
 const IMAGE_NAME = "CropperImage";
 const VIDEO_NAME = "CropperVideo";
 const AREA_NAME = "CropperArea";
@@ -334,156 +335,6 @@ interface Store {
   batch: (fn: () => void) => void;
 }
 
-function createStore(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<StoreState>,
-  aspectRatio: number,
-  onCropChange?: (crop: Point) => void,
-  onCropSizeChange?: (cropSize: Size) => void,
-  onCropAreaChange?: (croppedArea: Area, croppedAreaPixels: Area) => void,
-  onCropComplete?: (croppedArea: Area, croppedAreaPixels: Area) => void,
-  onZoomChange?: (zoom: number) => void,
-  onRotationChange?: (rotation: number) => void,
-  onMediaLoaded?: (mediaSize: MediaSize) => void,
-  onInteractionStart?: () => void,
-  onInteractionEnd?: () => void,
-): Store {
-  let isBatching = false;
-  let raf: number | null = null;
-
-  function notifyCropAreaChange() {
-    if (raf != null) return;
-    raf = requestAnimationFrame(() => {
-      raf = null;
-      const s = stateRef.current;
-      if (s?.mediaSize && s.cropSize && onCropAreaChange) {
-        const { croppedAreaPercentages, croppedAreaPixels } = getCroppedArea(
-          s.crop,
-          s.mediaSize,
-          s.cropSize,
-          aspectRatio,
-          s.zoom,
-          s.rotation,
-        );
-        onCropAreaChange(croppedAreaPercentages, croppedAreaPixels);
-      }
-    });
-  }
-
-  const store: Store = {
-    subscribe: (cb) => {
-      if (listenersRef.current) {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current?.delete(cb);
-      }
-      return () => {};
-    },
-    getState: () =>
-      stateRef.current ?? {
-        crop: { x: 0, y: 0 },
-        zoom: 1,
-        rotation: 0,
-        mediaSize: null,
-        cropSize: null,
-        isDragging: false,
-        isWheelZooming: false,
-      },
-    setState: (key, value) => {
-      const state = stateRef.current;
-      if (!state || Object.is(state[key], value)) return;
-
-      state[key] = value;
-
-      if (
-        key === "crop" &&
-        typeof value === "object" &&
-        value &&
-        "x" in value
-      ) {
-        onCropChange?.(value);
-      } else if (key === "zoom" && typeof value === "number") {
-        onZoomChange?.(value);
-      } else if (key === "rotation" && typeof value === "number") {
-        onRotationChange?.(value);
-      } else if (
-        key === "cropSize" &&
-        typeof value === "object" &&
-        value &&
-        "width" in value
-      ) {
-        onCropSizeChange?.(value);
-      } else if (
-        key === "mediaSize" &&
-        typeof value === "object" &&
-        value &&
-        "naturalWidth" in value
-      ) {
-        onMediaLoaded?.(value);
-      } else if (key === "isDragging") {
-        if (value) {
-          onInteractionStart?.();
-        } else {
-          onInteractionEnd?.();
-          const currentState = stateRef.current;
-          if (
-            currentState?.mediaSize &&
-            currentState.cropSize &&
-            onCropComplete
-          ) {
-            const { croppedAreaPercentages, croppedAreaPixels } =
-              getCroppedArea(
-                currentState.crop,
-                currentState.mediaSize,
-                currentState.cropSize,
-                aspectRatio,
-                currentState.zoom,
-                currentState.rotation,
-              );
-            onCropComplete(croppedAreaPercentages, croppedAreaPixels);
-          }
-        }
-      }
-
-      if (
-        (key === "crop" ||
-          key === "zoom" ||
-          key === "rotation" ||
-          key === "mediaSize" ||
-          key === "cropSize") &&
-        onCropAreaChange
-      ) {
-        notifyCropAreaChange();
-      }
-
-      if (!isBatching) {
-        store.notify();
-      }
-    },
-    notify: () => {
-      if (listenersRef.current) {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      }
-    },
-    batch: (fn: () => void) => {
-      if (isBatching) {
-        fn();
-        return;
-      }
-      isBatching = true;
-      try {
-        fn();
-      } finally {
-        isBatching = false;
-        store.notify();
-      }
-    },
-  };
-
-  return store;
-}
-
 const StoreContext = React.createContext<Store | null>(null);
 
 function useStoreContext(consumerName: string) {
@@ -596,39 +447,145 @@ function Cropper(props: CropperProps) {
     isWheelZooming: false,
   }));
 
-  const rootRef = React.useRef<RootElement>(null);
+  const propsRef = useAsRef({
+    onCropChange,
+    onCropSizeChange,
+    onCropAreaChange,
+    onCropComplete,
+    onZoomChange,
+    onRotationChange,
+    onMediaLoaded,
+    onInteractionStart,
+    onInteractionEnd,
+  });
 
-  const store = React.useMemo(
-    () =>
-      createStore(
-        listenersRef,
-        stateRef,
-        aspectRatio,
-        onCropChange,
-        onCropSizeChange,
-        onCropAreaChange,
-        onCropComplete,
-        onZoomChange,
-        onRotationChange,
-        onMediaLoaded,
-        onInteractionStart,
-        onInteractionEnd,
-      ),
-    [
-      listenersRef,
-      stateRef,
-      aspectRatio,
-      onCropChange,
-      onCropSizeChange,
-      onCropAreaChange,
-      onCropComplete,
-      onZoomChange,
-      onRotationChange,
-      onMediaLoaded,
-      onInteractionStart,
-      onInteractionEnd,
-    ],
-  );
+  const rootRef = React.useRef<RootElement | null>(null);
+
+  const store = React.useMemo<Store>(() => {
+    let isBatching = false;
+    let raf: number | null = null;
+
+    function notifyCropAreaChange() {
+      if (raf != null) return;
+      raf = requestAnimationFrame(() => {
+        raf = null;
+        const s = stateRef.current;
+        if (s?.mediaSize && s.cropSize && propsRef.current.onCropAreaChange) {
+          const { croppedAreaPercentages, croppedAreaPixels } = getCroppedArea(
+            s.crop,
+            s.mediaSize,
+            s.cropSize,
+            aspectRatio,
+            s.zoom,
+            s.rotation,
+          );
+          propsRef.current.onCropAreaChange(
+            croppedAreaPercentages,
+            croppedAreaPixels,
+          );
+        }
+      });
+    }
+
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+
+        stateRef.current[key] = value;
+
+        if (
+          key === "crop" &&
+          typeof value === "object" &&
+          value &&
+          "x" in value
+        ) {
+          propsRef.current.onCropChange?.(value);
+        } else if (key === "zoom" && typeof value === "number") {
+          propsRef.current.onZoomChange?.(value);
+        } else if (key === "rotation" && typeof value === "number") {
+          propsRef.current.onRotationChange?.(value);
+        } else if (
+          key === "cropSize" &&
+          typeof value === "object" &&
+          value &&
+          "width" in value
+        ) {
+          propsRef.current.onCropSizeChange?.(value);
+        } else if (
+          key === "mediaSize" &&
+          typeof value === "object" &&
+          value &&
+          "naturalWidth" in value
+        ) {
+          propsRef.current.onMediaLoaded?.(value);
+        } else if (key === "isDragging") {
+          if (value) {
+            propsRef.current.onInteractionStart?.();
+          } else {
+            propsRef.current.onInteractionEnd?.();
+            const currentState = stateRef.current;
+            if (
+              currentState?.mediaSize &&
+              currentState.cropSize &&
+              propsRef.current.onCropComplete
+            ) {
+              const { croppedAreaPercentages, croppedAreaPixels } =
+                getCroppedArea(
+                  currentState.crop,
+                  currentState.mediaSize,
+                  currentState.cropSize,
+                  aspectRatio,
+                  currentState.zoom,
+                  currentState.rotation,
+                );
+              propsRef.current.onCropComplete(
+                croppedAreaPercentages,
+                croppedAreaPixels,
+              );
+            }
+          }
+        }
+
+        if (
+          (key === "crop" ||
+            key === "zoom" ||
+            key === "rotation" ||
+            key === "mediaSize" ||
+            key === "cropSize") &&
+          propsRef.current.onCropAreaChange
+        ) {
+          notifyCropAreaChange();
+        }
+
+        if (!isBatching) {
+          store.notify();
+        }
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+      batch: (fn: () => void) => {
+        if (isBatching) {
+          fn();
+          return;
+        }
+        isBatching = true;
+        try {
+          fn();
+        } finally {
+          isBatching = false;
+          store.notify();
+        }
+      },
+    };
+  }, [listenersRef, stateRef, propsRef, aspectRatio]);
 
   useIsomorphicLayoutEffect(() => {
     const updates: Partial<StoreState> = {};
@@ -741,15 +698,33 @@ interface CropperImplProps extends CropperProps {
 }
 
 function CropperImpl(props: CropperImplProps) {
-  const { className, asChild, ref, ...contentProps } = props;
+  const {
+    onWheelZoom: onWheelZoomProp,
+    onKeyUp: onKeyUpProp,
+    onKeyDown: onKeyDownProp,
+    onMouseDown: onMouseDownProp,
+    onTouchStart: onTouchStartProp,
+    asChild,
+    className,
+    ref,
+    ...rootImplProps
+  } = props;
 
-  const context = useCropperContext(CONTENT_NAME);
-  const store = useStoreContext(CONTENT_NAME);
+  const context = useCropperContext(ROOT_IMPL_NAME);
+  const store = useStoreContext(ROOT_IMPL_NAME);
   const crop = useStore((state) => state.crop);
   const zoom = useStore((state) => state.zoom);
   const rotation = useStore((state) => state.rotation);
   const mediaSize = useStore((state) => state.mediaSize);
   const cropSize = useStore((state) => state.cropSize);
+
+  const propsRef = useAsRef({
+    onWheelZoom: onWheelZoomProp,
+    onKeyUp: onKeyUpProp,
+    onKeyDown: onKeyDownProp,
+    onMouseDown: onMouseDownProp,
+    onTouchStart: onTouchStartProp,
+  });
 
   const composedRef = useComposedRefs(ref, context.rootRef);
   const dragStartPositionRef = React.useRef<Point>({ x: 0, y: 0 });
@@ -780,7 +755,7 @@ function CropperImpl(props: CropperImplProps) {
     isTouchingRef.current = false;
   }, []);
 
-  const onCachesCleanup = React.useCallback(() => {
+  const onCacheCleanup = React.useCallback(() => {
     if (onPositionClampCache.size > MAX_CACHE_SIZE * 1.5) {
       onPositionClampCache.clear();
     }
@@ -1088,7 +1063,7 @@ function CropperImpl(props: CropperImplProps) {
 
   const onWheelZoom = React.useCallback(
     (event: WheelEvent) => {
-      contentProps.onWheelZoom?.(event);
+      propsRef.current.onWheelZoom?.(event);
       if (event.defaultPrevented) return;
 
       event.preventDefault();
@@ -1118,7 +1093,7 @@ function CropperImpl(props: CropperImplProps) {
       }, 250);
     },
     [
-      contentProps.onWheelZoom,
+      propsRef,
       getMousePoint,
       zoom,
       context.zoomSpeed,
@@ -1130,7 +1105,7 @@ function CropperImpl(props: CropperImplProps) {
 
   const onKeyUp = React.useCallback(
     (event: React.KeyboardEvent<RootElement>) => {
-      contentProps.onKeyUp?.(event);
+      propsRef.current.onKeyUp?.(event);
       if (event.defaultPrevented) return;
 
       const arrowKeys = new Set([
@@ -1145,12 +1120,12 @@ function CropperImpl(props: CropperImplProps) {
         store.setState("isDragging", false);
       }
     },
-    [contentProps.onKeyUp, store],
+    [propsRef, store],
   );
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<RootElement>) => {
-      contentProps.onKeyDown?.(event);
+      propsRef.current.onKeyDown?.(event);
       if (event.defaultPrevented || !cropSize || !mediaSize) return;
 
       let step = context.keyboardStep;
@@ -1183,7 +1158,7 @@ function CropperImpl(props: CropperImplProps) {
       store.setState("crop", newCrop);
     },
     [
-      contentProps.onKeyDown,
+      propsRef,
       cropSize,
       mediaSize,
       context.keyboardStep,
@@ -1197,7 +1172,7 @@ function CropperImpl(props: CropperImplProps) {
 
   const onMouseDown = React.useCallback(
     (event: React.MouseEvent<RootElement>) => {
-      contentProps.onMouseDown?.(event);
+      propsRef.current.onMouseDown?.(event);
       if (event.defaultPrevented) return;
 
       event.preventDefault();
@@ -1207,7 +1182,7 @@ function CropperImpl(props: CropperImplProps) {
       onDragStart(getMousePoint(event));
     },
     [
-      contentProps.onMouseDown,
+      propsRef,
       getMousePoint,
       onDragStart,
       onDragStopped,
@@ -1218,7 +1193,7 @@ function CropperImpl(props: CropperImplProps) {
 
   const onTouchStart = React.useCallback(
     (event: React.TouchEvent<RootElement>) => {
-      contentProps.onTouchStart?.(event);
+      propsRef.current.onTouchStart?.(event);
       if (event.defaultPrevented) return;
 
       isTouchingRef.current = true;
@@ -1251,7 +1226,7 @@ function CropperImpl(props: CropperImplProps) {
       }
     },
     [
-      contentProps.onTouchStart,
+      propsRef,
       onDragStopped,
       onTouchMove,
       onContentPositionChange,
@@ -1294,9 +1269,9 @@ function CropperImpl(props: CropperImplProps) {
   React.useEffect(() => {
     return () => {
       onRefsCleanup();
-      onCachesCleanup();
+      onCacheCleanup();
     };
-  }, [onRefsCleanup, onCachesCleanup]);
+  }, [onRefsCleanup, onCacheCleanup]);
 
   const RootPrimitive = asChild ? Slot : "div";
 
@@ -1304,7 +1279,7 @@ function CropperImpl(props: CropperImplProps) {
     <RootPrimitive
       data-slot="cropper"
       tabIndex={0}
-      {...contentProps}
+      {...rootImplProps}
       ref={composedRef}
       className={cn(
         "absolute inset-0 flex cursor-move touch-none select-none items-center justify-center overflow-hidden outline-none",

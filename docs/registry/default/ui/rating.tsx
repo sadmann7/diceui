@@ -19,6 +19,7 @@ type Step = 0.5 | 1;
 type DataState = "full" | "partial" | "empty";
 type FocusIntent = "first" | "last" | "prev" | "next";
 
+type RootElement = React.ComponentRef<typeof Rating>;
 type ItemElement = React.ComponentRef<typeof RatingItem>;
 
 const ROOT_NAME = "Rating";
@@ -102,8 +103,17 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
+function useStore<T>(
+  selector: (state: StoreState) => T,
+  ogStore?: Store | null,
+): T {
+  const contextStore = React.useContext(StoreContext);
+
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -121,7 +131,7 @@ interface ItemData {
 }
 
 interface RatingContextValue {
-  id: string;
+  rootId: string;
   dir: Direction;
   orientation: Orientation;
   activationMode: ActivationMode;
@@ -188,21 +198,46 @@ interface RatingProps extends React.ComponentProps<"div"> {
 
 function Rating(props: RatingProps) {
   const {
-    value,
+    value: valueProp,
     defaultValue = 0,
     onValueChange,
     onHover,
+    onFocus: onFocusProp,
+    onMouseDown: onMouseDownProp,
+    dir: dirProp,
+    orientation = "horizontal",
+    activationMode = "automatic",
+    size = "default",
+    max = 5,
+    step = 1,
+    clearable = false,
+    asChild,
+    disabled = false,
+    readOnly = false,
+    required = false,
+    className,
+    id,
+    name,
+    ref,
     ...rootProps
   } = props;
 
+  const dir = useDirection(dirProp);
+  const instanceId = React.useId();
+  const rootId = id ?? instanceId;
+
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
-    value: value ?? defaultValue,
+    value: valueProp ?? defaultValue,
     hoveredValue: null,
   }));
+
   const propsRef = useAsRef({
     onValueChange,
     onHover,
+    onFocus: onFocusProp,
+    onMouseDown: onMouseDownProp,
+    step,
   });
 
   const store = React.useMemo<Store>(() => {
@@ -235,66 +270,18 @@ function Rating(props: RatingProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  return (
-    <StoreContext.Provider value={store}>
-      <RatingImpl {...rootProps} value={value} />
-    </StoreContext.Provider>
-  );
-}
-
-interface RatingImplProps
-  extends Omit<RatingProps, "defaultValue" | "onValueChange" | "onHover"> {}
-
-function RatingImpl(props: RatingImplProps) {
-  const {
-    value,
-    id: idProp,
-    dir: dirProp,
-    orientation = "horizontal",
-    activationMode = "automatic",
-    size = "default",
-    max = 5,
-    step = 1,
-    clearable = false,
-    asChild,
-    disabled = false,
-    readOnly = false,
-    required = false,
-    name,
-    className,
-    ref,
-    ...rootProps
-  } = props;
-
-  const store = useStoreContext("RatingImpl");
-
   useIsomorphicLayoutEffect(() => {
-    if (value !== undefined) {
-      store.setState("value", value);
+    if (valueProp !== undefined) {
+      store.setState("value", valueProp);
     }
-  }, [value, store]);
+  }, [valueProp]);
 
-  const dir = useDirection(dirProp);
-  const id = React.useId();
-  const rootId = idProp ?? id;
-  const currentValue = useStore((state) => state.value);
+  const value = useStore((state) => state.value, store);
 
-  const propsRef = useAsRef({
-    orientation,
-    activationMode,
-    size,
-    max,
-    step,
-    clearable,
-    disabled,
-    readOnly,
-  });
-
-  const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
+  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
   );
   const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
-
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const [tabStopId, setTabStopId] = React.useState<string | null>(null);
@@ -371,7 +358,7 @@ function RatingImpl(props: RatingImplProps) {
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<HTMLDivElement>) => {
-      rootProps.onFocus?.(event);
+      propsRef.current.onFocus?.(event);
       if (event.defaultPrevented) return;
 
       const isKeyboardFocus = !isClickFocusRef.current;
@@ -391,8 +378,8 @@ function RatingImpl(props: RatingImplProps) {
           // by looking for the ceiling value (e.g., 3.5 → find item with value 4)
           const selectedItem =
             propsRef.current.step < 1
-              ? items.find((item) => item.value === Math.ceil(currentValue))
-              : items.find((item) => item.value === currentValue);
+              ? items.find((item) => item.value === Math.ceil(value))
+              : items.find((item) => item.value === value);
           const currentItem = items.find((item) => item.id === tabStopId);
 
           const candidateItems = [selectedItem, currentItem, ...items].filter(
@@ -404,35 +391,47 @@ function RatingImpl(props: RatingImplProps) {
       }
       isClickFocusRef.current = false;
     },
-    [rootProps.onFocus, isTabbingBackOut, currentValue, tabStopId, propsRef],
+    [propsRef, isTabbingBackOut, value, tabStopId],
   );
 
   const onMouseDown = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      rootProps.onMouseDown?.(event);
+      propsRef.current.onMouseDown?.(event);
 
       if (event.defaultPrevented) return;
 
       isClickFocusRef.current = true;
     },
-    [rootProps.onMouseDown],
+    [propsRef],
   );
 
   const contextValue = React.useMemo<RatingContextValue>(
     () => ({
-      id: rootId,
+      rootId,
       dir,
-      orientation: propsRef.current.orientation,
-      activationMode: propsRef.current.activationMode,
-      disabled: propsRef.current.disabled,
-      readOnly: propsRef.current.readOnly,
-      size: propsRef.current.size,
-      max: propsRef.current.max,
-      step: propsRef.current.step,
-      clearable: propsRef.current.clearable,
+      orientation,
+      activationMode,
+      disabled,
+      readOnly,
+      size,
+      max,
+      step,
+      clearable,
       getAutoIndex,
     }),
-    [rootId, dir, propsRef, getAutoIndex],
+    [
+      rootId,
+      dir,
+      orientation,
+      activationMode,
+      disabled,
+      readOnly,
+      size,
+      max,
+      step,
+      clearable,
+      getAutoIndex,
+    ],
   );
 
   const focusContextValue = React.useMemo<FocusContextValue>(
@@ -461,61 +460,63 @@ function RatingImpl(props: RatingImplProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <RatingContext.Provider value={contextValue}>
-      <FocusContext.Provider value={focusContextValue}>
-        <RootPrimitive
-          id={rootId}
-          role="radiogroup"
-          aria-orientation={orientation}
-          data-disabled={disabled ? "" : undefined}
-          data-readonly={readOnly ? "" : undefined}
-          data-orientation={orientation}
-          data-slot="rating"
-          dir={dir}
-          tabIndex={isTabbingBackOut || focusableItemCount === 0 ? -1 : 0}
-          {...rootProps}
-          ref={composedRef}
-          className={cn(
-            "flex gap-1 text-primary outline-none",
-            orientation === "horizontal"
-              ? "flex-row items-center"
-              : "flex-col items-start",
-            className,
-          )}
-          onBlur={onBlur}
-          onFocus={onFocus}
-          onMouseDown={onMouseDown}
-        />
-        <svg width="0" height="0" style={{ position: "absolute" }}>
-          <defs>
-            <linearGradient id={getPartialFillGradientId(rootId, step)}>
-              {dir === "rtl" ? (
-                <>
-                  <stop offset="50%" stopColor="transparent" />
-                  <stop offset="50%" stopColor="currentColor" />
-                </>
-              ) : (
-                <>
-                  <stop offset="50%" stopColor="currentColor" />
-                  <stop offset="50%" stopColor="transparent" />
-                </>
-              )}
-            </linearGradient>
-          </defs>
-        </svg>
-        {isFormControl && (
-          <VisuallyHiddenInput
-            type="hidden"
-            control={formTrigger}
-            name={name}
-            value={currentValue}
-            disabled={disabled}
-            readOnly={readOnly}
-            required={required}
+    <StoreContext.Provider value={store}>
+      <RatingContext.Provider value={contextValue}>
+        <FocusContext.Provider value={focusContextValue}>
+          <RootPrimitive
+            id={rootId}
+            role="radiogroup"
+            aria-orientation={orientation}
+            data-disabled={disabled ? "" : undefined}
+            data-readonly={readOnly ? "" : undefined}
+            data-orientation={orientation}
+            data-slot="rating"
+            dir={dir}
+            tabIndex={isTabbingBackOut || focusableItemCount === 0 ? -1 : 0}
+            {...rootProps}
+            ref={composedRef}
+            className={cn(
+              "flex gap-1 text-primary outline-none",
+              orientation === "horizontal"
+                ? "flex-row items-center"
+                : "flex-col items-start",
+              className,
+            )}
+            onBlur={onBlur}
+            onFocus={onFocus}
+            onMouseDown={onMouseDown}
           />
-        )}
-      </FocusContext.Provider>
-    </RatingContext.Provider>
+          <svg width="0" height="0" style={{ position: "absolute" }}>
+            <defs>
+              <linearGradient id={getPartialFillGradientId(rootId, step)}>
+                {dir === "rtl" ? (
+                  <>
+                    <stop offset="50%" stopColor="transparent" />
+                    <stop offset="50%" stopColor="currentColor" />
+                  </>
+                ) : (
+                  <>
+                    <stop offset="50%" stopColor="currentColor" />
+                    <stop offset="50%" stopColor="transparent" />
+                  </>
+                )}
+              </linearGradient>
+            </defs>
+          </svg>
+          {isFormControl && (
+            <VisuallyHiddenInput
+              type="hidden"
+              control={formTrigger}
+              name={name}
+              value={value}
+              disabled={disabled}
+              readOnly={readOnly}
+              required={required}
+            />
+          )}
+        </FocusContext.Provider>
+      </RatingContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
@@ -527,8 +528,22 @@ interface RatingItemProps
 }
 
 function RatingItem(props: RatingItemProps) {
-  const { index, asChild, disabled, className, ref, children, ...itemProps } =
-    props;
+  const {
+    index,
+    asChild,
+    onClick: onClickProp,
+    onFocus: onFocusProp,
+    onKeyDown: onKeyDownProp,
+    onMouseDown: onMouseDownProp,
+    onMouseEnter: onMouseEnterProp,
+    onMouseMove: onMouseMoveProp,
+    onMouseLeave: onMouseLeaveProp,
+    disabled,
+    className,
+    children,
+    ref,
+    ...itemProps
+  } = props;
 
   const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
@@ -554,7 +569,7 @@ function RatingItem(props: RatingItemProps) {
   const step = context.step;
   const activationMode = context.activationMode;
 
-  const itemId = getItemId(context.id, itemValue);
+  const itemId = getItemId(context.rootId, itemValue);
   const isDisabled = context.disabled || disabled;
   const isReadOnly = context.readOnly;
   const isTabStop = focusContext.tabStopId === itemId;
@@ -566,6 +581,16 @@ function RatingItem(props: RatingItemProps) {
   const isHovered = hoveredValue !== null && hoveredValue < itemValue;
 
   const isMouseClickRef = React.useRef(false);
+
+  const propsRef = useAsRef({
+    onClick: onClickProp,
+    onFocus: onFocusProp,
+    onKeyDown: onKeyDownProp,
+    onMouseDown: onMouseDownProp,
+    onMouseEnter: onMouseEnterProp,
+    onMouseMove: onMouseMoveProp,
+    onMouseLeave: onMouseLeaveProp,
+  });
 
   useIsomorphicLayoutEffect(() => {
     focusContext.onItemRegister({
@@ -589,7 +614,7 @@ function RatingItem(props: RatingItemProps) {
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ItemElement>) => {
-      itemProps.onClick?.(event);
+      propsRef.current.onClick?.(event);
       if (event.defaultPrevented) return;
 
       if (!isDisabled && !isReadOnly) {
@@ -627,94 +652,13 @@ function RatingItem(props: RatingItemProps) {
       itemValue,
       store,
       context.dir,
-      itemProps.onClick,
+      propsRef,
     ],
-  );
-
-  const onMouseEnter = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
-      itemProps.onMouseEnter?.(event);
-      if (event.defaultPrevented) return;
-
-      if (!isDisabled && !isReadOnly) {
-        let hoverValue = itemValue;
-
-        if (step < 1) {
-          const rect = event.currentTarget.getBoundingClientRect();
-          const mouseX = event.clientX - rect.left;
-          const isLeftHalf = mouseX < rect.width / 2;
-
-          if (context.dir === "rtl") {
-            if (!isLeftHalf) {
-              hoverValue = itemValue - step;
-            }
-          } else {
-            if (isLeftHalf) {
-              hoverValue = itemValue - step;
-            }
-          }
-        }
-
-        store.setState("hoveredValue", hoverValue);
-      }
-    },
-    [
-      isDisabled,
-      isReadOnly,
-      step,
-      itemValue,
-      store,
-      context.dir,
-      itemProps.onMouseEnter,
-    ],
-  );
-
-  const onMouseMove = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
-      itemProps.onMouseMove?.(event);
-      if (event.defaultPrevented) return;
-
-      if (!isDisabled && !isReadOnly && step < 1) {
-        const rect = event.currentTarget.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const isLeftHalf = mouseX < rect.width / 2;
-
-        let hoverValue = itemValue;
-        if (context.dir === "rtl") {
-          hoverValue = !isLeftHalf ? itemValue - step : itemValue;
-        } else {
-          hoverValue = isLeftHalf ? itemValue - step : itemValue;
-        }
-
-        store.setState("hoveredValue", hoverValue);
-      }
-    },
-    [
-      isDisabled,
-      isReadOnly,
-      step,
-      itemValue,
-      store,
-      context.dir,
-      itemProps.onMouseMove,
-    ],
-  );
-
-  const onMouseLeave = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
-      itemProps.onMouseLeave?.(event);
-      if (event.defaultPrevented) return;
-
-      if (!isDisabled && !isReadOnly) {
-        store.setState("hoveredValue", null);
-      }
-    },
-    [isDisabled, isReadOnly, store, itemProps.onMouseLeave],
   );
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<ItemElement>) => {
-      itemProps.onFocus?.(event);
+      propsRef.current.onFocus?.(event);
       if (event.defaultPrevented) return;
 
       focusContext.onItemFocus(itemId);
@@ -750,13 +694,13 @@ function RatingItem(props: RatingItemProps) {
       itemValue,
       step,
       store,
-      itemProps.onFocus,
+      propsRef,
     ],
   );
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<ItemElement>) => {
-      itemProps.onKeyDown?.(event);
+      propsRef.current.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
       if (
@@ -843,13 +787,13 @@ function RatingItem(props: RatingItemProps) {
       value,
       context.max,
       store,
-      itemProps.onKeyDown,
+      propsRef,
     ],
   );
 
   const onMouseDown = React.useCallback(
     (event: React.MouseEvent<ItemElement>) => {
-      itemProps.onMouseDown?.(event);
+      propsRef.current.onMouseDown?.(event);
       if (event.defaultPrevented) return;
 
       isMouseClickRef.current = true;
@@ -860,7 +804,72 @@ function RatingItem(props: RatingItemProps) {
         focusContext.onItemFocus(itemId);
       }
     },
-    [focusContext, itemId, isDisabled, itemProps.onMouseDown],
+    [focusContext, itemId, isDisabled, propsRef],
+  );
+
+  const onMouseEnter = React.useCallback(
+    (event: React.MouseEvent<ItemElement>) => {
+      propsRef.current.onMouseEnter?.(event);
+      if (event.defaultPrevented) return;
+
+      if (!isDisabled && !isReadOnly) {
+        let hoverValue = itemValue;
+
+        if (step < 1) {
+          const rect = event.currentTarget.getBoundingClientRect();
+          const mouseX = event.clientX - rect.left;
+          const isLeftHalf = mouseX < rect.width / 2;
+
+          if (context.dir === "rtl") {
+            if (!isLeftHalf) {
+              hoverValue = itemValue - step;
+            }
+          } else {
+            if (isLeftHalf) {
+              hoverValue = itemValue - step;
+            }
+          }
+        }
+
+        store.setState("hoveredValue", hoverValue);
+      }
+    },
+    [isDisabled, isReadOnly, step, itemValue, store, context.dir, propsRef],
+  );
+
+  const onMouseLeave = React.useCallback(
+    (event: React.MouseEvent<ItemElement>) => {
+      propsRef.current.onMouseLeave?.(event);
+      if (event.defaultPrevented) return;
+
+      if (!isDisabled && !isReadOnly) {
+        store.setState("hoveredValue", null);
+      }
+    },
+    [isDisabled, isReadOnly, store, propsRef],
+  );
+
+  const onMouseMove = React.useCallback(
+    (event: React.MouseEvent<ItemElement>) => {
+      propsRef.current.onMouseMove?.(event);
+      if (event.defaultPrevented) return;
+
+      if (!isDisabled && !isReadOnly && step < 1) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const isLeftHalf = mouseX < rect.width / 2;
+
+        let hoverValue = itemValue;
+        if (context.dir === "rtl") {
+          hoverValue = !isLeftHalf ? itemValue - step : itemValue;
+        } else {
+          hoverValue = isLeftHalf ? itemValue - step : itemValue;
+        }
+
+        store.setState("hoveredValue", hoverValue);
+      }
+    },
+    [isDisabled, isReadOnly, step, itemValue, store, context.dir, propsRef],
   );
 
   const dataState: DataState = isFilled
@@ -891,11 +900,11 @@ function RatingItem(props: RatingItemProps) {
       style={{
         ...itemProps.style,
         ...(isPartiallyFilled && {
-          "--partial-fill": `url(#${getPartialFillGradientId(context.id, step)})`,
+          "--partial-fill": `url(#${getPartialFillGradientId(context.rootId, step)})`,
         }),
       }}
       className={cn(
-        "inline-flex items-center justify-center rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
         "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill)",
         context.size === "sm"
           ? "size-4"
@@ -919,4 +928,9 @@ function RatingItem(props: RatingItemProps) {
   );
 }
 
-export { Rating, RatingItem, useStore as useRating, type RatingProps };
+export {
+  Rating,
+  RatingItem,
+  //
+  useStore as useRating,
+};

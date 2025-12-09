@@ -29,7 +29,11 @@ export const ui: Registry["items"] = [
     name: "angle-slider",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
-    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
+    registryDependencies: [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/angle-slider.tsx",
@@ -115,7 +119,6 @@ export const ui: Registry["items"] = [
       "@radix-ui/react-slider",
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
-      "lucide-react",
     ],
     registryDependencies: [
       "button",
@@ -155,7 +158,7 @@ export const ui: Registry["items"] = [
   {
     name: "compare-slider",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: ["@radix-ui/react-slot"],
     registryDependencies: [
       "use-as-ref",
       "use-isomorphic-layout-effect",
@@ -176,7 +179,11 @@ export const ui: Registry["items"] = [
     name: "cropper",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
+    registryDependencies: [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/cropper.tsx",
@@ -210,7 +217,11 @@ export const ui: Registry["items"] = [
     name: "editable",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
-    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
+    registryDependencies: [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/editable.tsx",
@@ -229,12 +240,8 @@ export const ui: Registry["items"] = [
   {
     name: "file-upload",
     type: "registry:ui",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "lucide-react",
-    ],
-    registryDependencies: ["use-lazy-ref"],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    registryDependencies: ["use-as-ref", "use-lazy-ref"],
     files: [
       {
         path: "ui/file-upload.tsx",
@@ -289,7 +296,7 @@ export const ui: Registry["items"] = [
   {
     name: "key-value",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: ["@radix-ui/react-slot"],
     registryDependencies: [
       "button",
       "input",
@@ -316,7 +323,7 @@ export const ui: Registry["items"] = [
   {
     name: "listbox",
     type: "registry:ui",
-    dependencies: ["@diceui/listbox", "lucide-react"],
+    dependencies: ["@diceui/listbox"],
     files: [
       {
         path: "ui/listbox.tsx",
@@ -442,7 +449,7 @@ export const ui: Registry["items"] = [
     dependencies: [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
-      "lucide-react",
+
       "media-chrome",
     ],
     registryDependencies: [
@@ -468,7 +475,7 @@ export const ui: Registry["items"] = [
   {
     name: "mention",
     type: "registry:ui",
-    dependencies: ["@diceui/mention", "lucide-react"],
+    dependencies: ["@diceui/mention"],
     files: [
       {
         path: "ui/mention.tsx",
@@ -591,11 +598,7 @@ export const ui: Registry["items"] = [
   {
     name: "stepper",
     type: "registry:ui",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "lucide-react",
-    ],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     registryDependencies: [
       "button",
       "use-as-ref",
@@ -629,11 +632,7 @@ export const ui: Registry["items"] = [
   {
     name: "rating",
     type: "registry:ui",
-    dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
-      "lucide-react",
-    ],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     registryDependencies: [
       "use-as-ref",
       "use-isomorphic-layout-effect",
@@ -657,7 +656,7 @@ export const ui: Registry["items"] = [
   {
     name: "tags-input",
     type: "registry:ui",
-    dependencies: ["@diceui/tags-input", "lucide-react"],
+    dependencies: ["@diceui/tags-input"],
     files: [
       {
         path: "ui/tags-input.tsx",
@@ -721,7 +720,6 @@ export const ui: Registry["items"] = [
       "@floating-ui/react-dom",
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
-      "lucide-react",
     ],
     registryDependencies: [
       "use-as-ref",

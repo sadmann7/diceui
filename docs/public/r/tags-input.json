@@ -2,8 +2,7 @@
   "name": "tags-input",
   "type": "registry:ui",
   "dependencies": [
-    "@diceui/tags-input",
-    "lucide-react"
+    "@diceui/tags-input"
   ],
   "files": [
     {

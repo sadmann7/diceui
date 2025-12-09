@@ -49,7 +49,7 @@ export const Index: Record<string, any> = {
       name: "angle-slider",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["use-isomorphic-layout-effect","use-lazy-ref"],
+      registryDependencies: ["use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/angle-slider.tsx",
         type: "registry:ui",
@@ -185,7 +185,7 @@ export const Index: Record<string, any> = {
       name: "cropper",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["use-isomorphic-layout-effect","use-lazy-ref"],
+      registryDependencies: ["use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/cropper.tsx",
         type: "registry:ui",
@@ -217,7 +217,7 @@ export const Index: Record<string, any> = {
       name: "editable",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["use-isomorphic-layout-effect","use-lazy-ref"],
+      registryDependencies: ["use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/editable.tsx",
         type: "registry:ui",
@@ -239,7 +239,7 @@ export const Index: Record<string, any> = {
       name: "file-upload",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["use-lazy-ref"],
+      registryDependencies: ["use-as-ref","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/file-upload.tsx",
         type: "registry:ui",

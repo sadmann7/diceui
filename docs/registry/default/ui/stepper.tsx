@@ -186,7 +186,7 @@ interface ItemData {
 }
 
 interface StepperContextValue {
-  id: string;
+  rootId: string;
   dir: Direction;
   orientation: Orientation;
   activationMode: ActivationMode;
@@ -233,7 +233,6 @@ function Stepper(props: StepperProps) {
     onValueAdd,
     onValueRemove,
     onValidate,
-    id: idProp,
     dir: dirProp,
     orientation = "horizontal",
     activationMode = "automatic",
@@ -242,6 +241,7 @@ function Stepper(props: StepperProps) {
     nonInteractive = false,
     loop = false,
     className,
+    id,
     ...rootProps
   } = props;
 
@@ -250,6 +250,7 @@ function Stepper(props: StepperProps) {
     steps: new Map(),
     value: value ?? defaultValue ?? "",
   }));
+
   const propsRef = useAsRef({
     onValueChange,
     onValueComplete,
@@ -330,17 +331,16 @@ function Stepper(props: StepperProps) {
     if (value !== undefined) {
       store.setState("value", value);
     }
-  }, [value, store]);
+  }, [value]);
 
   const dir = useDirection(dirProp);
 
-  const id = React.useId();
-
-  const rootId = idProp ?? id;
+  const instanceId = React.useId();
+  const rootId = id ?? instanceId;
 
   const contextValue = React.useMemo<StepperContextValue>(
     () => ({
-      id: rootId,
+      rootId,
       dir,
       orientation,
       activationMode,
@@ -402,11 +402,26 @@ interface StepperListProps extends DivProps {
 }
 
 function StepperList(props: StepperListProps) {
-  const { className, children, asChild, ref, ...listProps } = props;
+  const {
+    asChild,
+    onBlur: onBlurProp,
+    onFocus: onFocusProp,
+    onMouseDown: onMouseDownProp,
+    className,
+    children,
+    ref,
+    ...listProps
+  } = props;
 
   const context = useStepperContext(LIST_NAME);
   const orientation = context.orientation;
   const currentValue = useStore((state) => state.value);
+
+  const propsRef = useAsRef({
+    onBlur: onBlurProp,
+    onFocus: onFocusProp,
+    onMouseDown: onMouseDownProp,
+  });
 
   const [tabStopId, setTabStopId] = React.useState<string | null>(null);
   const [isTabbingBackOut, setIsTabbingBackOut] = React.useState(false);
@@ -460,17 +475,17 @@ function StepperList(props: StepperListProps) {
 
   const onBlur = React.useCallback(
     (event: React.FocusEvent<ListElement>) => {
-      listProps.onBlur?.(event);
+      propsRef.current.onBlur?.(event);
       if (event.defaultPrevented) return;
 
       setIsTabbingBackOut(false);
     },
-    [listProps.onBlur],
+    [propsRef],
   );
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<ListElement>) => {
-      listProps.onFocus?.(event);
+      propsRef.current.onFocus?.(event);
       if (event.defaultPrevented) return;
 
       const isKeyboardFocus = !isClickFocusRef.current;
@@ -504,18 +519,18 @@ function StepperList(props: StepperListProps) {
       }
       isClickFocusRef.current = false;
     },
-    [listProps.onFocus, isTabbingBackOut, currentValue, tabStopId],
+    [propsRef, isTabbingBackOut, currentValue, tabStopId],
   );
 
   const onMouseDown = React.useCallback(
     (event: React.MouseEvent<ListElement>) => {
-      listProps.onMouseDown?.(event);
+      propsRef.current.onMouseDown?.(event);
 
       if (event.defaultPrevented) return;
 
       isClickFocusRef.current = true;
     },
-    [listProps.onMouseDown],
+    [propsRef],
   );
 
   const focusContextValue = React.useMemo<FocusContextValue>(
@@ -660,29 +675,48 @@ function StepperItem(props: StepperItemProps) {
 }
 
 function StepperTrigger(props: ButtonProps) {
-  const { asChild, disabled, className, ref, ...triggerProps } = props;
+  const {
+    asChild,
+    onClick: onClickProp,
+    onFocus: onFocusProp,
+    onKeyDown: onKeyDownProp,
+    onMouseDown: onMouseDownProp,
+    disabled,
+    className,
+    ref,
+    ...triggerProps
+  } = props;
 
   const context = useStepperContext(TRIGGER_NAME);
   const itemContext = useStepperItemContext(TRIGGER_NAME);
+  const itemValue = itemContext.value;
+
   const store = useStoreContext(TRIGGER_NAME);
   const focusContext = useFocusContext(TRIGGER_NAME);
   const value = useStore((state) => state.value);
-  const itemValue = itemContext.value;
+  const steps = useStore((state) => state.steps);
   const stepState = useStore((state) => state.steps.get(itemValue));
+
+  const propsRef = useAsRef({
+    onClick: onClickProp,
+    onFocus: onFocusProp,
+    onKeyDown: onKeyDownProp,
+    onMouseDown: onMouseDownProp,
+  });
+
   const activationMode = context.activationMode;
   const orientation = context.orientation;
   const loop = context.loop;
 
-  const steps = useStore((state) => state.steps);
   const stepIndex = Array.from(steps.keys()).indexOf(itemValue);
 
   const stepPosition = stepIndex + 1;
   const stepCount = steps.size;
 
-  const triggerId = getId(context.id, "trigger", itemValue);
-  const contentId = getId(context.id, "content", itemValue);
-  const titleId = getId(context.id, "title", itemValue);
-  const descriptionId = getId(context.id, "description", itemValue);
+  const triggerId = getId(context.rootId, "trigger", itemValue);
+  const contentId = getId(context.rootId, "content", itemValue);
+  const titleId = getId(context.rootId, "title", itemValue);
+  const descriptionId = getId(context.rootId, "description", itemValue);
 
   const isDisabled = context.disabled || stepState?.disabled || disabled;
   const isActive = value === itemValue;
@@ -734,7 +768,7 @@ function StepperTrigger(props: ButtonProps) {
 
   const onClick = React.useCallback(
     async (event: React.MouseEvent<TriggerElement>) => {
-      triggerProps.onClick?.(event);
+      propsRef.current.onClick?.(event);
       if (event.defaultPrevented) return;
 
       if (!isDisabled && !context.nonInteractive) {
@@ -752,13 +786,13 @@ function StepperTrigger(props: ButtonProps) {
       itemValue,
       value,
       steps,
-      triggerProps.onClick,
+      propsRef,
     ],
   );
 
   const onFocus = React.useCallback(
     async (event: React.FocusEvent<TriggerElement>) => {
-      triggerProps.onFocus?.(event);
+      propsRef.current.onFocus?.(event);
       if (event.defaultPrevented) return;
 
       focusContext.onItemFocus(triggerId);
@@ -792,13 +826,13 @@ function StepperTrigger(props: ButtonProps) {
       itemValue,
       value,
       steps,
-      triggerProps.onFocus,
+      propsRef,
     ],
   );
 
   const onKeyDown = React.useCallback(
     async (event: React.KeyboardEvent<TriggerElement>) => {
-      triggerProps.onKeyDown?.(event);
+      propsRef.current.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
       if (event.key === "Enter" && context.nonInteractive) {
@@ -890,8 +924,8 @@ function StepperTrigger(props: ButtonProps) {
       orientation,
       loop,
       isDisabled,
-      triggerProps.onKeyDown,
       store,
+      propsRef,
       itemValue,
       value,
       steps,
@@ -900,7 +934,7 @@ function StepperTrigger(props: ButtonProps) {
 
   const onMouseDown = React.useCallback(
     (event: React.MouseEvent<TriggerElement>) => {
-      triggerProps.onMouseDown?.(event);
+      propsRef.current.onMouseDown?.(event);
       if (event.defaultPrevented) return;
 
       isMouseClickRef.current = true;
@@ -911,7 +945,7 @@ function StepperTrigger(props: ButtonProps) {
         focusContext.onItemFocus(triggerId);
       }
     },
-    [focusContext, triggerId, isDisabled, triggerProps.onMouseDown],
+    [focusContext, triggerId, isDisabled, propsRef],
   );
 
   const TriggerPrimitive = asChild ? Slot : "button";
@@ -953,6 +987,7 @@ interface StepperIndicatorProps extends Omit<DivProps, "children"> {
 
 function StepperIndicator(props: StepperIndicatorProps) {
   const { className, children, asChild, ref, ...indicatorProps } = props;
+
   const context = useStepperContext(INDICATOR_NAME);
   const itemContext = useStepperItemContext(INDICATOR_NAME);
   const value = useStore((state) => state.value);
@@ -1007,16 +1042,15 @@ function StepperSeparator(props: StepperSeparatorProps) {
   const context = useStepperContext(SEPARATOR_NAME);
   const itemContext = useStepperItemContext(SEPARATOR_NAME);
   const value = useStore((state) => state.value);
+  const steps = useStore((state) => state.steps);
+
   const orientation = context.orientation;
 
-  const steps = useStore((state) => state.steps);
   const stepIndex = Array.from(steps.keys()).indexOf(itemContext.value);
 
   const isLastStep = stepIndex === steps.size - 1;
 
-  if (isLastStep && !forceMount) {
-    return null;
-  }
+  if (isLastStep && !forceMount) return null;
 
   const dataState = getDataState(
     value,
@@ -1058,7 +1092,7 @@ function StepperTitle(props: StepperTitleProps) {
   const context = useStepperContext(TITLE_NAME);
   const itemContext = useStepperItemContext(TITLE_NAME);
 
-  const titleId = getId(context.id, "title", itemContext.value);
+  const titleId = getId(context.rootId, "title", itemContext.value);
 
   const TitlePrimitive = asChild ? Slot : "span";
 
@@ -1080,10 +1114,11 @@ interface StepperDescriptionProps extends React.ComponentProps<"span"> {
 
 function StepperDescription(props: StepperDescriptionProps) {
   const { className, asChild, ref, ...descriptionProps } = props;
+
   const context = useStepperContext(DESCRIPTION_NAME);
   const itemContext = useStepperItemContext(DESCRIPTION_NAME);
 
-  const descriptionId = getId(context.id, "description", itemContext.value);
+  const descriptionId = getId(context.rootId, "description", itemContext.value);
 
   const DescriptionPrimitive = asChild ? Slot : "span";
 
@@ -1117,8 +1152,8 @@ function StepperContent(props: StepperContentProps) {
   const context = useStepperContext(CONTENT_NAME);
   const value = useStore((state) => state.value);
 
-  const contentId = getId(context.id, "content", valueProp);
-  const triggerId = getId(context.id, "trigger", valueProp);
+  const contentId = getId(context.rootId, "content", valueProp);
+  const triggerId = getId(context.rootId, "trigger", valueProp);
 
   if (valueProp !== value && !forceMount) return null;
 
@@ -1139,11 +1174,15 @@ function StepperContent(props: StepperContentProps) {
 }
 
 function StepperPrev(props: ButtonProps) {
-  const { asChild, disabled, ...prevProps } = props;
+  const { asChild, onClick: onClickProp, disabled, ...prevProps } = props;
 
   const store = useStoreContext(PREV_NAME);
   const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
+
+  const propsRef = useAsRef({
+    onClick: onClickProp,
+  });
 
   const stepKeys = Array.from(steps.keys());
   const currentIndex = value ? stepKeys.indexOf(value) : -1;
@@ -1151,7 +1190,7 @@ function StepperPrev(props: ButtonProps) {
 
   const onClick = React.useCallback(
     async (event: React.MouseEvent<HTMLButtonElement>) => {
-      prevProps.onClick?.(event);
+      propsRef.current.onClick?.(event);
       if (event.defaultPrevented || isDisabled) return;
 
       const prevIndex = Math.max(currentIndex - 1, 0);
@@ -1161,7 +1200,7 @@ function StepperPrev(props: ButtonProps) {
         store.setState("value", prevStepValue);
       }
     },
-    [prevProps.onClick, isDisabled, currentIndex, stepKeys, store],
+    [propsRef, isDisabled, currentIndex, stepKeys, store],
   );
 
   const PrevPrimitive = asChild ? Slot : "button";
@@ -1178,11 +1217,15 @@ function StepperPrev(props: ButtonProps) {
 }
 
 function StepperNext(props: ButtonProps) {
-  const { asChild, disabled, ...nextProps } = props;
+  const { asChild, onClick: onClickProp, disabled, ...nextProps } = props;
 
   const store = useStoreContext(NEXT_NAME);
   const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
+
+  const propsRef = useAsRef({
+    onClick: onClickProp,
+  });
 
   const stepKeys = Array.from(steps.keys());
   const currentIndex = value ? stepKeys.indexOf(value) : -1;
@@ -1190,7 +1233,7 @@ function StepperNext(props: ButtonProps) {
 
   const onClick = React.useCallback(
     async (event: React.MouseEvent<HTMLButtonElement>) => {
-      nextProps.onClick?.(event);
+      propsRef.current.onClick?.(event);
       if (event.defaultPrevented || isDisabled) return;
 
       const nextIndex = Math.min(currentIndex + 1, stepKeys.length - 1);
@@ -1200,7 +1243,7 @@ function StepperNext(props: ButtonProps) {
         await store.setStateWithValidation(nextStepValue, "next");
       }
     },
-    [nextProps.onClick, isDisabled, currentIndex, stepKeys, store],
+    [propsRef, isDisabled, currentIndex, stepKeys, store],
   );
 
   const NextPrimitive = asChild ? Slot : "button";

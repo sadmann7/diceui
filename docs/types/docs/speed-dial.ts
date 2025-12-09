@@ -60,6 +60,11 @@ export interface SpeedDialProps extends EmptyProps<"div">, CompositionProps {
    * @default "top"
    */
   side?: Side;
+
+  /**
+   * Whether the speed dial is disabled.
+   */
+  disabled?: boolean;
 }
 
 export interface SpeedDialTriggerProps

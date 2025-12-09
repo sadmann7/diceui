@@ -61,8 +61,17 @@ interface Store {
   notify: () => void;
 }
 
-function useStore<T>(selector: (state: KeyValueState) => T): T {
-  const store = useStoreContext("useStore");
+function useStore<T>(
+  selector: (state: KeyValueState) => T,
+  ogStore?: Store | null,
+): T {
+  const contextStore = React.useContext(StoreContext);
+
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -72,14 +81,14 @@ function useStore<T>(selector: (state: KeyValueState) => T): T {
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-interface KeyValueItemData {
+interface ItemData {
   id: string;
   key: string;
   value: string;
 }
 
 interface KeyValueState {
-  value: KeyValueItemData[];
+  value: ItemData[];
   focusedId: string | null;
   errors: Record<string, { key?: string; value?: string }>;
 }
@@ -95,6 +104,15 @@ function useStoreContext(consumerName: string) {
 }
 
 interface KeyValueContextValue {
+  onPaste?: (event: ClipboardEvent, items: ItemData[]) => void;
+  onAdd?: (value: ItemData) => void;
+  onRemove?: (value: ItemData) => void;
+  onKeyValidate?: (key: string, value: ItemData[]) => string | undefined;
+  onValueValidate?: (
+    value: string,
+    key: string,
+    items: ItemData[],
+  ) => string | undefined;
   rootId: string;
   maxItems?: number;
   minItems: number;
@@ -121,9 +139,9 @@ function useKeyValueContext(consumerName: string) {
 
 interface KeyValueProps extends Omit<DivProps, "onPaste" | "defaultValue"> {
   id?: string;
-  defaultValue?: KeyValueItemData[];
-  value?: KeyValueItemData[];
-  onValueChange?: (value: KeyValueItemData[]) => void;
+  defaultValue?: ItemData[];
+  value?: ItemData[];
+  onValueChange?: (value: ItemData[]) => void;
   maxItems?: number;
   minItems?: number;
   keyPlaceholder?: string;
@@ -136,26 +154,58 @@ interface KeyValueProps extends Omit<DivProps, "onPaste" | "defaultValue"> {
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
-  onPaste?: (event: ClipboardEvent, items: KeyValueItemData[]) => void;
-  onAdd?: (value: KeyValueItemData) => void;
-  onRemove?: (value: KeyValueItemData) => void;
-  onKeyValidate?: (
-    key: string,
-    value: KeyValueItemData[],
-  ) => string | undefined;
+  onPaste?: (event: ClipboardEvent, items: ItemData[]) => void;
+  onAdd?: (value: ItemData) => void;
+  onRemove?: (value: ItemData) => void;
+  onKeyValidate?: (key: string, value: ItemData[]) => string | undefined;
   onValueValidate?: (
     value: string,
     key: string,
-    items: KeyValueItemData[],
+    items: ItemData[],
   ) => string | undefined;
 }
 
 function KeyValue(props: KeyValueProps) {
-  const { value, defaultValue, onValueChange, ...rootProps } = props;
+  const {
+    value: valueProp,
+    defaultValue,
+    onValueChange,
+    onPaste,
+    onAdd,
+    onRemove,
+    onKeyValidate,
+    onValueValidate,
+    maxItems,
+    minItems = 0,
+    keyPlaceholder = "Key",
+    valuePlaceholder = "Value",
+    allowDuplicateKeys = false,
+    asChild,
+    enablePaste = true,
+    trim = true,
+    stripQuotes = true,
+    disabled = false,
+    readOnly = false,
+    required = false,
+    className,
+    id,
+    name,
+    ref,
+    ...rootProps
+  } = props;
+
+  const instanceId = React.useId();
+  const rootId = id ?? instanceId;
+
+  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<KeyValueState>(() => ({
-    value: value ??
+    value: valueProp ??
       defaultValue ?? [{ id: crypto.randomUUID(), key: "", value: "" }],
     focusedId: null,
     errors: {},
@@ -173,8 +223,8 @@ function KeyValue(props: KeyValueProps) {
         if (Object.is(stateRef.current[key], val)) return;
 
         if (key === "value" && Array.isArray(val)) {
-          stateRef.current.value = val as KeyValueItemData[];
-          propsRef.current.onValueChange?.(val as KeyValueItemData[]);
+          stateRef.current.value = val as ItemData[];
+          propsRef.current.onValueChange?.(val as ItemData[]);
         } else {
           stateRef.current[key] = val;
         }
@@ -189,70 +239,23 @@ function KeyValue(props: KeyValueProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  return (
-    <StoreContext.Provider value={store}>
-      <KeyValueImpl {...rootProps} value={value} />
-    </StoreContext.Provider>
-  );
-}
-
-interface KeyValueImplProps
-  extends Omit<
-    KeyValueProps,
-    | "defaultValue"
-    | "onValueChange"
-    | "onPaste"
-    | "onAdd"
-    | "onRemove"
-    | "onKeyValidate"
-    | "onValueValidate"
-  > {}
-
-function KeyValueImpl(props: KeyValueImplProps) {
-  const {
-    id,
-    value: valueProp,
-    maxItems,
-    minItems = 0,
-    keyPlaceholder = "Key",
-    valuePlaceholder = "Value",
-    name,
-    allowDuplicateKeys = false,
-    enablePaste = true,
-    trim = true,
-    stripQuotes = true,
-    disabled = false,
-    readOnly = false,
-    required = false,
-    asChild,
-    className,
-    ref,
-    ...rootProps
-  } = props;
-
-  const store = useStoreContext("KeyValueImpl");
-
-  const value = useStore((state) => state.value);
-  const errors = useStore((state) => state.errors);
+  const value = useStore((state) => state.value, store);
+  const errors = useStore((state) => state.errors, store);
   const isInvalid = Object.keys(errors).length > 0;
 
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
-  }, [valueProp, store]);
-
-  const instanceId = React.useId();
-  const rootId = id ?? instanceId;
-
-  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
-    null,
-  );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
-  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
+  }, [valueProp]);
 
   const contextValue = React.useMemo<KeyValueContextValue>(
     () => ({
+      onPaste,
+      onAdd,
+      onRemove,
+      onKeyValidate,
+      onValueValidate,
       rootId,
       maxItems,
       minItems,
@@ -267,6 +270,11 @@ function KeyValueImpl(props: KeyValueImplProps) {
       required,
     }),
     [
+      onPaste,
+      onAdd,
+      onRemove,
+      onKeyValidate,
+      onValueValidate,
       rootId,
       disabled,
       readOnly,
@@ -285,7 +293,7 @@ function KeyValueImpl(props: KeyValueImplProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <>
+    <StoreContext.Provider value={store}>
       <KeyValueContext.Provider value={contextValue}>
         <RootPrimitive
           id={id}
@@ -297,19 +305,19 @@ function KeyValueImpl(props: KeyValueImplProps) {
           ref={composedRef}
           className={cn("flex flex-col gap-2", className)}
         />
+        {isFormControl && (
+          <VisuallyHiddenInput
+            type="hidden"
+            control={formTrigger}
+            name={name}
+            value={value}
+            disabled={disabled}
+            readOnly={readOnly}
+            required={required}
+          />
+        )}
       </KeyValueContext.Provider>
-      {isFormControl && (
-        <VisuallyHiddenInput
-          type="hidden"
-          control={formTrigger}
-          name={name}
-          value={value}
-          disabled={disabled}
-          readOnly={readOnly}
-          required={required}
-        />
-      )}
-    </>
+    </StoreContext.Provider>
   );
 }
 
@@ -339,6 +347,7 @@ function KeyValueList(props: KeyValueListProps) {
     >
       {value.map((item) => {
         const children = React.Children.toArray(props.children);
+
         return (
           <KeyValueItemContext.Provider key={item.id} value={item}>
             {children}
@@ -349,7 +358,7 @@ function KeyValueList(props: KeyValueListProps) {
   );
 }
 
-const KeyValueItemContext = React.createContext<KeyValueItemData | null>(null);
+const KeyValueItemContext = React.createContext<ItemData | null>(null);
 
 function useKeyValueItemContext(consumerName: string) {
   const context = React.useContext(KeyValueItemContext);
@@ -382,18 +391,14 @@ function KeyValueItem(props: KeyValueItemProps) {
   );
 }
 
-interface KeyValueKeyInputProps
-  extends Omit<React.ComponentProps<"input">, "onPaste">,
-    Pick<KeyValueProps, "onKeyValidate" | "onValueValidate" | "onPaste"> {
+interface KeyValueKeyInputProps extends React.ComponentProps<"input"> {
   asChild?: boolean;
 }
 
 function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   const {
-    onKeyValidate,
-    onValueValidate,
-    onChange,
-    onPaste,
+    onChange: onChangeProp,
+    onPaste: onPasteProp,
     asChild,
     disabled,
     readOnly,
@@ -404,22 +409,19 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   const context = useKeyValueContext(KEY_INPUT_NAME);
   const itemData = useKeyValueItemContext(KEY_INPUT_NAME);
   const store = useStoreContext(KEY_INPUT_NAME);
-
   const errors = useStore((state) => state.errors);
+
+  const propsRef = useAsRef({
+    onChange: onChangeProp,
+    onPaste: onPasteProp,
+  });
 
   const isDisabled = disabled || context.disabled;
   const isReadOnly = readOnly || context.readOnly;
   const isRequired = required || context.required;
   const isInvalid = errors[itemData.id]?.key !== undefined;
 
-  const propsRef = useAsRef({
-    onKeyValidate,
-    onValueValidate,
-    onChange,
-    onPaste,
-  });
-
-  const onKeyInputChange = React.useCallback(
+  const onChange = React.useCallback(
     (event: React.ChangeEvent<KeyInputElement>) => {
       const state = store.getState();
       const newValue = state.value.map((item) => {
@@ -435,11 +437,8 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
       if (updatedItemData) {
         const errors: { key?: string; value?: string } = {};
 
-        if (propsRef.current.onKeyValidate) {
-          const keyError = propsRef.current.onKeyValidate(
-            updatedItemData.key,
-            newValue,
-          );
+        if (context.onKeyValidate) {
+          const keyError = context.onKeyValidate(updatedItemData.key, newValue);
           if (keyError) errors.key = keyError;
         }
 
@@ -455,8 +454,8 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
           }
         }
 
-        if (propsRef.current.onValueValidate) {
-          const valueError = propsRef.current.onValueValidate(
+        if (context.onValueValidate) {
+          const valueError = context.onValueValidate(
             updatedItemData.value,
             updatedItemData.key,
             newValue,
@@ -475,12 +474,15 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
 
       propsRef.current.onChange?.(event);
     },
-    [store, itemData.id, context.trim, context.allowDuplicateKeys, propsRef],
+    [store, itemData.id, context, propsRef],
   );
 
-  const onKeyInputPaste = React.useCallback(
+  const onPaste = React.useCallback(
     (event: React.ClipboardEvent<KeyInputElement>) => {
       if (!context.enablePaste) return;
+
+      propsRef.current.onPaste?.(event);
+      if (event.defaultPrevented) return;
 
       const content = event.clipboardData.getData("text");
       const lines = content.split(/\r?\n/).filter((line) => line.trim());
@@ -488,7 +490,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
       if (lines.length > 1) {
         event.preventDefault();
 
-        const parsed: KeyValueItemData[] = [];
+        const parsed: ItemData[] = [];
 
         for (const line of lines) {
           let key = "";
@@ -528,7 +530,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
             (item) => item.id === itemData.id,
           );
 
-          let newValue: KeyValueItemData[];
+          let newValue: ItemData[];
           if (itemData.key === "" && itemData.value === "") {
             newValue = [
               ...state.value.slice(0, currentIndex),
@@ -549,8 +551,8 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
 
           store.setState("value", newValue);
 
-          if (propsRef.current.onPaste) {
-            propsRef.current.onPaste(
+          if (context.onPaste) {
+            context.onPaste(
               event.nativeEvent as unknown as ClipboardEvent,
               parsed,
             );
@@ -558,14 +560,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
         }
       }
     },
-    [
-      context.enablePaste,
-      context.maxItems,
-      context.stripQuotes,
-      store,
-      itemData,
-      propsRef,
-    ],
+    [context, store, itemData, propsRef],
   );
 
   const KeyInputPrimitive = asChild ? Slot : Input;
@@ -584,27 +579,24 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
       disabled={isDisabled}
       readOnly={isReadOnly}
       required={isRequired}
-      {...keyInputProps}
       placeholder={context.keyPlaceholder}
+      {...keyInputProps}
       value={itemData.key}
-      onChange={onKeyInputChange}
-      onPaste={onKeyInputPaste}
+      onChange={onChange}
+      onPaste={onPaste}
     />
   );
 }
 
 interface KeyValueValueInputProps
-  extends Omit<React.ComponentProps<"textarea">, "rows">,
-    Pick<KeyValueProps, "onKeyValidate" | "onValueValidate"> {
+  extends Omit<React.ComponentProps<"textarea">, "rows"> {
   maxRows?: number;
   asChild?: boolean;
 }
 
 function KeyValueValueInput(props: KeyValueValueInputProps) {
   const {
-    onKeyValidate,
-    onValueValidate,
-    onChange,
+    onChange: onChangeProp,
     asChild,
     disabled,
     readOnly,
@@ -618,13 +610,11 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   const context = useKeyValueContext(VALUE_INPUT_NAME);
   const itemData = useKeyValueItemContext(VALUE_INPUT_NAME);
   const store = useStoreContext(VALUE_INPUT_NAME);
+  const errors = useStore((state) => state.errors);
 
   const propsRef = useAsRef({
-    onKeyValidate,
-    onValueValidate,
-    onChange,
+    onChange: onChangeProp,
   });
-  const errors = useStore((state) => state.errors);
 
   const isDisabled = disabled || context.disabled;
   const isReadOnly = readOnly || context.readOnly;
@@ -632,7 +622,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   const isInvalid = errors[itemData.id]?.value !== undefined;
   const maxHeight = maxRows ? `calc(${maxRows} * 1.5em + 1rem)` : undefined;
 
-  const onValueInputChange = React.useCallback(
+  const onChange = React.useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       propsRef.current.onChange?.(event);
 
@@ -646,23 +636,18 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
 
       store.setState("value", newValue);
 
-      const updatedItemData = newValue.find(
-        (item: KeyValueItemData) => item.id === itemData.id,
-      );
+      const updatedItemData = newValue.find((item) => item.id === itemData.id);
       if (updatedItemData) {
         const errors: { key?: string; value?: string } = {};
 
-        if (propsRef.current.onKeyValidate) {
-          const keyError = propsRef.current.onKeyValidate(
-            updatedItemData.key,
-            newValue,
-          );
+        if (context.onKeyValidate) {
+          const keyError = context.onKeyValidate(updatedItemData.key, newValue);
           if (keyError) errors.key = keyError;
         }
 
         if (!context.allowDuplicateKeys) {
           const duplicateKey = newValue.find(
-            (item: KeyValueItemData) =>
+            (item) =>
               item.id !== updatedItemData.id &&
               item.key === updatedItemData.key &&
               updatedItemData.key !== "",
@@ -672,8 +657,8 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
           }
         }
 
-        if (propsRef.current.onValueValidate) {
-          const valueError = propsRef.current.onValueValidate(
+        if (context.onValueValidate) {
+          const valueError = context.onValueValidate(
             updatedItemData.value,
             updatedItemData.key,
             newValue,
@@ -690,7 +675,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
         store.setState("errors", newErrorsState);
       }
     },
-    [store, itemData.id, context.trim, context.allowDuplicateKeys, propsRef],
+    [store, itemData.id, context, propsRef],
   );
 
   const ValueInputPrimitive = asChild ? Slot : Textarea;
@@ -709,8 +694,8 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
       disabled={isDisabled}
       readOnly={isReadOnly}
       required={isRequired}
-      {...valueInputProps}
       placeholder={context.valuePlaceholder}
+      {...valueInputProps}
       className={cn(
         "field-sizing-content min-h-9 resize-none",
         maxRows && "overflow-y-auto",
@@ -721,27 +706,27 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
         ...(maxHeight && { maxHeight }),
       }}
       value={itemData.value}
-      onChange={onValueInputChange}
+      onChange={onChange}
     />
   );
 }
 
-interface KeyValueRemoveProps
-  extends React.ComponentProps<typeof Button>,
-    Pick<KeyValueProps, "onRemove"> {}
+interface KeyValueRemoveProps extends React.ComponentProps<typeof Button> {}
 
 function KeyValueRemove(props: KeyValueRemoveProps) {
-  const { onClick, onRemove, children, ...removeProps } = props;
+  const { onClick: onClickProp, children, ...removeProps } = props;
 
   const context = useKeyValueContext(REMOVE_NAME);
   const itemData = useKeyValueItemContext(REMOVE_NAME);
   const store = useStoreContext(REMOVE_NAME);
 
-  const propsRef = useAsRef({ onClick, onRemove });
+  const propsRef = useAsRef({
+    onClick: onClickProp,
+  });
   const value = useStore((state) => state.value);
   const isDisabled = context.disabled || value.length <= context.minItems;
 
-  const onRemoveClick = React.useCallback(
+  const onClick = React.useCallback(
     (event: React.MouseEvent<RemoveElement>) => {
       propsRef.current.onClick?.(event);
 
@@ -758,9 +743,9 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
       store.setState("value", newValue);
       store.setState("errors", newErrors);
 
-      propsRef.current.onRemove?.(itemToRemove);
+      context.onRemove?.(itemToRemove);
     },
-    [store, context.minItems, itemData.id, propsRef],
+    [store, context, itemData.id, propsRef],
   );
 
   return (
@@ -771,30 +756,28 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
       size="icon"
       disabled={isDisabled}
       {...removeProps}
-      onClick={onRemoveClick}
+      onClick={onClick}
     >
       {children ?? <XIcon />}
     </Button>
   );
 }
 
-interface KeyValueAddProps
-  extends React.ComponentProps<typeof Button>,
-    Pick<KeyValueProps, "onAdd"> {}
-
-function KeyValueAdd(props: KeyValueAddProps) {
-  const { onClick, onAdd, children, ...addProps } = props;
+function KeyValueAdd(props: React.ComponentProps<typeof Button>) {
+  const { onClick: onClickProp, children, ...addProps } = props;
 
   const context = useKeyValueContext(ADD_NAME);
   const store = useStoreContext(ADD_NAME);
 
-  const propsRef = useAsRef({ onClick, onAdd });
+  const propsRef = useAsRef({
+    onClick: onClickProp,
+  });
   const value = useStore((state) => state.value);
   const isDisabled =
     context.disabled ||
     (context.maxItems !== undefined && value.length >= context.maxItems);
 
-  const onAddClick = React.useCallback(
+  const onClick = React.useCallback(
     (event: React.MouseEvent<AddElement>) => {
       propsRef.current.onClick?.(event);
 
@@ -806,7 +789,7 @@ function KeyValueAdd(props: KeyValueAddProps) {
         return;
       }
 
-      const newItem: KeyValueItemData = {
+      const newItem: ItemData = {
         id: crypto.randomUUID(),
         key: "",
         value: "",
@@ -816,9 +799,9 @@ function KeyValueAdd(props: KeyValueAddProps) {
       store.setState("value", newValue);
       store.setState("focusedId", newItem.id);
 
-      propsRef.current.onAdd?.(newItem);
+      context.onAdd?.(newItem);
     },
-    [store, context.maxItems, propsRef],
+    [store, context, propsRef],
   );
 
   return (
@@ -828,7 +811,7 @@ function KeyValueAdd(props: KeyValueAddProps) {
       variant="outline"
       disabled={isDisabled}
       {...addProps}
-      onClick={onAddClick}
+      onClick={onClick}
     >
       {children ?? (
         <>
@@ -881,6 +864,6 @@ export {
   //
   useStore as useKeyValueStore,
   //
-  type KeyValueItemData,
   type KeyValueProps,
+  type ItemData as KeyValueItemData,
 };
