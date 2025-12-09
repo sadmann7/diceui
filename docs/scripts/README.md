@@ -1,6 +1,6 @@
-# DiceUI Scripts
+# Registry Scripts
 
-Build and test utilities for the component registry.
+Utilities for building, validating, and testing the component registry.
 
 ## Scripts
 
@@ -26,12 +26,16 @@ pnpm cleanup:registry
 ```
 
 ### `test-registry.mts`
-Auto-detects server and tests all registry entries (19 total).
+Auto-detects server and dynamically loads all registry entries to test.
 
 ```bash
 pnpm test:registry           
-VERBOSE=true pnpm test:registry  # Show dependency counts
+VERBOSE=true pnpm test:registry  # Show loaded items + dependency counts
 ```
+
+Automatically tests:
+- All hooks from `registry-hooks.ts`
+- All components with `@diceui/*` dependencies from `registry-ui.ts`
 
 ## Workflow
 

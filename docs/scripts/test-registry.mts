@@ -1,9 +1,5 @@
-#!/usr/bin/env tsx
-/**
- * DiceUI Registry Test
- *
- * Auto-detects environment and validates all registry entries.
- */
+import { hooks } from "../registry/registry-hooks.js";
+import { ui } from "../registry/registry-ui.js";
 
 interface TestResult {
   success: boolean;
@@ -20,26 +16,15 @@ const PROD_URL = "https://diceui.com";
 const LOCAL_URLS = ["http://localhost:3000", "http://localhost:3001"];
 const VERBOSE = process.env.VERBOSE === "true";
 
-const HOOKS = ["use-as-ref", "use-isomorphic-layout-effect", "use-lazy-ref"];
+// Extract hook names
+const HOOKS = hooks.map((h) => h.name);
 
-const COMPONENTS = [
-  "action-bar",
-  "angle-slider",
-  "color-picker",
-  "compare-slider",
-  "cropper",
-  "editable",
-  "file-upload",
-  "key-value",
-  "masonry",
-  "media-player",
-  "rating",
-  "scroll-spy",
-  "speed-dial",
-  "stepper",
-  "time-picker",
-  "tour",
-];
+// Extract components that have @diceui dependencies
+const COMPONENTS = ui
+  .filter((item) =>
+    item.registryDependencies?.some((dep) => dep.startsWith("@diceui/"))
+  )
+  .map((item) => item.name);
 
 async function detectServer(): Promise<ServerInfo> {
   // Check local servers first
@@ -76,7 +61,7 @@ async function testItem(name: string, url: string): Promise<TestResult> {
       const data = await response.json();
       const depCount =
         data.registryDependencies?.filter((d: string) =>
-          d.startsWith("@diceui/"),
+          d.startsWith("@diceui/")
         ).length || 0;
       return { success: true, deps: depCount };
     }
@@ -99,7 +84,14 @@ async function main(): Promise<void> {
   // Detect server
   console.log("🔍 Detecting server...");
   const { url, local } = await detectServer();
-  console.log(`✅ ${local ? "Local" : "Production"}: ${url}\n`);
+  console.log(`✅ ${local ? "Local" : "Production"}: ${url}`);
+
+  if (VERBOSE) {
+    console.log(
+      `📋 Loaded ${HOOKS.length} hooks + ${COMPONENTS.length} components from registry`
+    );
+  }
+  console.log();
 
   let passed = 0;
   let failed = 0;
