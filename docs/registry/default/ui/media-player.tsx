@@ -208,29 +208,6 @@ interface MediaPlayerProps
 }
 
 function MediaPlayer(props: MediaPlayerProps) {
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
-    controlsVisible: true,
-    dragging: false,
-    menuOpen: false,
-    volumeIndicatorVisible: false,
-  }));
-
-  const store = React.useMemo(
-    () => createStore(listenersRef, stateRef),
-    [listenersRef, stateRef],
-  );
-
-  return (
-    <MediaProvider>
-      <StoreContext.Provider value={store}>
-        <MediaPlayerImpl {...props} />
-      </StoreContext.Provider>
-    </MediaProvider>
-  );
-}
-
-function MediaPlayerImpl(props: MediaPlayerProps) {
   const {
     onPlay,
     onPause,
@@ -255,6 +232,19 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
     ...rootProps
   } = props;
 
+  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const stateRef = useLazyRef<StoreState>(() => ({
+    controlsVisible: true,
+    dragging: false,
+    menuOpen: false,
+    volumeIndicatorVisible: false,
+  }));
+
+  const store = React.useMemo(
+    () => createStore(listenersRef, stateRef),
+    [listenersRef, stateRef],
+  );
+
   const mediaId = React.useId();
   const labelId = React.useId();
   const descriptionId = React.useId();
@@ -269,11 +259,9 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
     null,
   );
 
-  const store = useStoreContext(ROOT_NAME);
-
-  const controlsVisible = useStore((state) => state.controlsVisible);
-  const dragging = useStore((state) => state.dragging);
-  const menuOpen = useStore((state) => state.menuOpen);
+  const controlsVisible = useStore((state) => state.controlsVisible, store);
+  const dragging = useStore((state) => state.dragging, store);
+  const menuOpen = useStore((state) => state.menuOpen, store);
 
   const hideControlsTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const lastMouseMoveRef = React.useRef<number>(Date.now());
@@ -752,43 +740,47 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <MediaPlayerContext.Provider value={contextValue}>
-      <RootPrimitive
-        aria-labelledby={labelId}
-        aria-describedby={descriptionId}
-        aria-disabled={disabled}
-        data-disabled={disabled ? "" : undefined}
-        data-controls-visible={controlsVisible ? "" : undefined}
-        data-slot="media-player"
-        data-state={isFullscreen ? "fullscreen" : "windowed"}
-        dir={dir}
-        tabIndex={disabled ? undefined : 0}
-        {...rootProps}
-        ref={composedRef}
-        onMouseLeave={onMouseLeave}
-        onMouseMove={onMouseMove}
-        onKeyDown={onKeyDown}
-        onKeyUp={onKeyUp}
-        className={cn(
-          "dark relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-disabled:pointer-events-none data-disabled:opacity-50 [&_video]:relative [&_video]:object-contain",
-          "in-[:fullscreen]:flex in-[:fullscreen]:h-full in-[:fullscreen]:max-h-screen in-[:fullscreen]:flex-col in-[:fullscreen]:justify-between data-[state=fullscreen]:[&_video]:size-full",
-          "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 **:data-slider:relative [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default",
-          "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]!",
-          className,
-        )}
-      >
-        <span id={labelId} className="sr-only">
-          {label ?? "Media player"}
-        </span>
-        <span id={descriptionId} className="sr-only">
-          {isVideo
-            ? "Video player with custom controls for playback, volume, seeking, and more. Use space bar to play/pause, arrow keys (←/→) to seek, and arrow keys (↑/↓) to adjust volume."
-            : "Audio player with custom controls for playback, volume, seeking, and more. Use space bar to play/pause, Shift + arrow keys (←/→) to seek, and arrow keys (↑/↓) to adjust volume."}
-        </span>
-        {children}
-        <MediaPlayerVolumeIndicator />
-      </RootPrimitive>
-    </MediaPlayerContext.Provider>
+    <MediaProvider>
+      <StoreContext.Provider value={store}>
+        <MediaPlayerContext.Provider value={contextValue}>
+          <RootPrimitive
+            aria-labelledby={labelId}
+            aria-describedby={descriptionId}
+            aria-disabled={disabled}
+            data-disabled={disabled ? "" : undefined}
+            data-controls-visible={controlsVisible ? "" : undefined}
+            data-slot="media-player"
+            data-state={isFullscreen ? "fullscreen" : "windowed"}
+            dir={dir}
+            tabIndex={disabled ? undefined : 0}
+            {...rootProps}
+            ref={composedRef}
+            onMouseLeave={onMouseLeave}
+            onMouseMove={onMouseMove}
+            onKeyDown={onKeyDown}
+            onKeyUp={onKeyUp}
+            className={cn(
+              "dark relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-disabled:pointer-events-none data-disabled:opacity-50 [&_video]:relative [&_video]:object-contain",
+              "in-[:fullscreen]:flex in-[:fullscreen]:h-full in-[:fullscreen]:max-h-screen in-[:fullscreen]:flex-col in-[:fullscreen]:justify-between data-[state=fullscreen]:[&_video]:size-full",
+              "[&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 **:data-slider:relative [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default",
+              "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]!",
+              className,
+            )}
+          >
+            <span id={labelId} className="sr-only">
+              {label ?? "Media player"}
+            </span>
+            <span id={descriptionId} className="sr-only">
+              {isVideo
+                ? "Video player with custom controls for playback, volume, seeking, and more. Use space bar to play/pause, arrow keys (←/→) to seek, and arrow keys (↑/↓) to adjust volume."
+                : "Audio player with custom controls for playback, volume, seeking, and more. Use space bar to play/pause, Shift + arrow keys (←/→) to seek, and arrow keys (↑/↓) to adjust volume."}
+            </span>
+            {children}
+            <MediaPlayerVolumeIndicator />
+          </RootPrimitive>
+        </MediaPlayerContext.Provider>
+      </StoreContext.Provider>
+    </MediaProvider>
   );
 }
 
