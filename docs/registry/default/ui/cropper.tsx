@@ -5,6 +5,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
@@ -467,9 +468,10 @@ function Cropper(props: CropperProps) {
     onMediaLoaded,
     onInteractionStart,
     onInteractionEnd,
+    onWheelZoom: onWheelZoomProp,
   });
 
-  const rootRef = React.useRef<HTMLDivElement>(null);
+  const rootRef = React.useRef<RootElement | null>(null);
   const composedRef = useComposedRefs(ref, rootRef);
 
   const store = React.useMemo<Store>(() => {
@@ -490,7 +492,10 @@ function Cropper(props: CropperProps) {
             s.zoom,
             s.rotation,
           );
-          propsRef.current.onCropAreaChange(croppedAreaPercentages, croppedAreaPixels);
+          propsRef.current.onCropAreaChange(
+            croppedAreaPercentages,
+            croppedAreaPixels,
+          );
         }
       });
     }
@@ -551,7 +556,10 @@ function Cropper(props: CropperProps) {
                   currentState.zoom,
                   currentState.rotation,
                 );
-              propsRef.current.onCropComplete(croppedAreaPercentages, croppedAreaPixels);
+              propsRef.current.onCropComplete(
+                croppedAreaPercentages,
+                croppedAreaPixels,
+              );
             }
           }
         }
@@ -1002,7 +1010,7 @@ function Cropper(props: CropperProps) {
 
   const onWheelZoom = React.useCallback(
     (event: WheelEvent) => {
-      onWheelZoomProp?.(event);
+      propsRef.current.onWheelZoom?.(event);
       if (event.defaultPrevented) return;
 
       event.preventDefault();
@@ -1032,7 +1040,7 @@ function Cropper(props: CropperProps) {
       }, 250);
     },
     [
-      onWheelZoomProp,
+      propsRef,
       getMousePoint,
       zoom,
       zoomSpeed,

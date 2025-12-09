@@ -864,6 +864,6 @@ export {
   //
   useStore as useKeyValueStore,
   //
-  type ItemData as KeyValueItemData,
   type KeyValueProps,
+  type ItemData as KeyValueItemData,
 };

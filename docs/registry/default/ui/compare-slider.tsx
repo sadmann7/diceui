@@ -146,16 +146,8 @@ function CompareSlider(props: CompareSliderProps) {
     };
   }, [listenersRef, stateRef, onValueChangeRef]);
 
-  const value = useStore((state) => state.value, store);
-
-  useIsomorphicLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", clamp(valueProp, 0, 100));
-    }
-  }, [valueProp]);
-
-  const containerRef = React.useRef<RootElement | null>(null);
-  const composedRef = useComposedRefs(ref, containerRef);
+  const rootRef = React.useRef<RootElement | null>(null);
+  const composedRef = useComposedRefs(ref, rootRef);
   const isDraggingRef = React.useRef(false);
 
   const propsRef = useAsRef({
@@ -168,22 +160,30 @@ function CompareSlider(props: CompareSliderProps) {
     step,
   });
 
+  const value = useStore((state) => state.value, store);
+
+  useIsomorphicLayoutEffect(() => {
+    if (valueProp !== undefined) {
+      store.setState("value", clamp(valueProp, 0, 100));
+    }
+  }, [valueProp]);
+
   const onPointerMove = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
       if (!isDraggingRef.current && propsRef.current.interaction === "drag") {
         return;
       }
-      if (!containerRef.current) return;
+      if (!rootRef.current) return;
 
       propsRef.current.onPointerMove?.(event);
       if (event.defaultPrevented) return;
 
-      const containerRect = containerRef.current.getBoundingClientRect();
+      const rootRect = rootRef.current.getBoundingClientRect();
       const isVertical = propsRef.current.orientation === "vertical";
       const position = isVertical
-        ? event.clientY - containerRect.top
-        : event.clientX - containerRect.left;
-      const size = isVertical ? containerRect.height : containerRect.width;
+        ? event.clientY - rootRect.top
+        : event.clientX - rootRect.left;
+      const size = isVertical ? rootRect.height : rootRect.width;
       const percentage = clamp((position / size) * 100, 0, 100);
 
       store.setState("value", percentage);
@@ -492,5 +492,6 @@ export {
   CompareSliderBefore,
   CompareSliderHandle,
   CompareSliderLabel,
+  //
   type CompareSliderProps,
 };

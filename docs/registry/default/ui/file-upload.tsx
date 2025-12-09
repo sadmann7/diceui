@@ -27,6 +27,68 @@ const ITEM_PROGRESS_NAME = "FileUploadItemProgress";
 const ITEM_DELETE_NAME = "FileUploadItemDelete";
 const CLEAR_NAME = "FileUploadClear";
 
+function formatBytes(bytes: number) {
+  if (bytes === 0) return "0 B";
+  const sizes = ["B", "KB", "MB", "GB", "TB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return `${(bytes / 1024 ** i).toFixed(i ? 1 : 0)} ${sizes[i]}`;
+}
+
+function getFileIcon(file: File) {
+  const type = file.type;
+  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
+
+  if (type.startsWith("video/")) {
+    return <FileVideoIcon />;
+  }
+
+  if (type.startsWith("audio/")) {
+    return <FileAudioIcon />;
+  }
+
+  if (
+    type.startsWith("text/") ||
+    ["txt", "md", "rtf", "pdf"].includes(extension)
+  ) {
+    return <FileTextIcon />;
+  }
+
+  if (
+    [
+      "html",
+      "css",
+      "js",
+      "jsx",
+      "ts",
+      "tsx",
+      "json",
+      "xml",
+      "php",
+      "py",
+      "rb",
+      "java",
+      "c",
+      "cpp",
+      "cs",
+    ].includes(extension)
+  ) {
+    return <FileCodeIcon />;
+  }
+
+  if (["zip", "rar", "7z", "tar", "gz", "bz2"].includes(extension)) {
+    return <FileArchiveIcon />;
+  }
+
+  if (
+    ["exe", "msi", "app", "apk", "deb", "rpm"].includes(extension) ||
+    type.startsWith("application/")
+  ) {
+    return <FileCogIcon />;
+  }
+
+  return <FileIcon />;
+}
+
 type Direction = "ltr" | "rtl";
 
 interface FileState {
@@ -633,9 +695,19 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
   const dragOver = useStore((state) => state.dragOver);
   const invalid = useStore((state) => state.invalid);
 
+  const propsRef = useAsRef({
+    onClick: onClickProp,
+    onDragOver: onDragOverProp,
+    onDragEnter: onDragEnterProp,
+    onDragLeave: onDragLeaveProp,
+    onDrop: onDropProp,
+    onPaste: onPasteProp,
+    onKeyDown: onKeyDownProp,
+  });
+
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      onClickProp?.(event);
+      propsRef.current.onClick?.(event);
 
       if (event.defaultPrevented) return;
 
@@ -649,36 +721,36 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
         context.inputRef.current?.click();
       }
     },
-    [context.inputRef, onClickProp],
+    [context.inputRef, propsRef],
   );
 
   const onDragOver = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
-      onDragOverProp?.(event);
+      propsRef.current.onDragOver?.(event);
 
       if (event.defaultPrevented) return;
 
       event.preventDefault();
       store.dispatch({ type: "SET_DRAG_OVER", dragOver: true });
     },
-    [store, onDragOverProp],
+    [store, propsRef],
   );
 
   const onDragEnter = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
-      onDragEnterProp?.(event);
+      propsRef.current.onDragEnter?.(event);
 
       if (event.defaultPrevented) return;
 
       event.preventDefault();
       store.dispatch({ type: "SET_DRAG_OVER", dragOver: true });
     },
-    [store, onDragEnterProp],
+    [store, propsRef],
   );
 
   const onDragLeave = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
-      onDragLeaveProp?.(event);
+      propsRef.current.onDragLeave?.(event);
 
       if (event.defaultPrevented) return;
 
@@ -694,12 +766,12 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       event.preventDefault();
       store.dispatch({ type: "SET_DRAG_OVER", dragOver: false });
     },
-    [store, onDragLeaveProp],
+    [store, propsRef],
   );
 
   const onDrop = React.useCallback(
     (event: React.DragEvent<HTMLDivElement>) => {
-      onDropProp?.(event);
+      propsRef.current.onDrop?.(event);
 
       if (event.defaultPrevented) return;
 
@@ -718,12 +790,12 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       inputElement.files = dataTransfer.files;
       inputElement.dispatchEvent(new Event("change", { bubbles: true }));
     },
-    [store, context.inputRef, onDropProp],
+    [store, context.inputRef, propsRef],
   );
 
   const onPaste = React.useCallback(
     (event: React.ClipboardEvent<HTMLDivElement>) => {
-      onPasteProp?.(event);
+      propsRef.current.onPaste?.(event);
 
       if (event.defaultPrevented) return;
 
@@ -757,12 +829,12 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       inputElement.files = dataTransfer.files;
       inputElement.dispatchEvent(new Event("change", { bubbles: true }));
     },
-    [store, context.inputRef, onPasteProp],
+    [store, context.inputRef, propsRef],
   );
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
-      onKeyDownProp?.(event);
+      propsRef.current.onKeyDown?.(event);
 
       if (
         !event.defaultPrevented &&
@@ -772,7 +844,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
         context.inputRef.current?.click();
       }
     },
-    [context.inputRef, onKeyDownProp],
+    [context.inputRef, propsRef],
   );
 
   const DropzonePrimitive = asChild ? Slot : "div";
@@ -812,17 +884,22 @@ interface FileUploadTriggerProps extends React.ComponentProps<"button"> {
 
 function FileUploadTrigger(props: FileUploadTriggerProps) {
   const { asChild, onClick: onClickProp, ...triggerProps } = props;
+
   const context = useFileUploadContext(TRIGGER_NAME);
+
+  const propsRef = useAsRef({
+    onClick: onClickProp,
+  });
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
-      onClickProp?.(event);
+      propsRef.current.onClick?.(event);
 
       if (event.defaultPrevented) return;
 
       context.inputRef.current?.click();
     },
-    [context.inputRef, onClickProp],
+    [context.inputRef, propsRef],
   );
 
   const TriggerPrimitive = asChild ? Slot : "button";
@@ -974,68 +1051,6 @@ function FileUploadItem(props: FileUploadItemProps) {
       </ItemPrimitive>
     </FileUploadItemContext.Provider>
   );
-}
-
-function formatBytes(bytes: number) {
-  if (bytes === 0) return "0 B";
-  const sizes = ["B", "KB", "MB", "GB", "TB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${(bytes / 1024 ** i).toFixed(i ? 1 : 0)} ${sizes[i]}`;
-}
-
-function getFileIcon(file: File) {
-  const type = file.type;
-  const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
-
-  if (type.startsWith("video/")) {
-    return <FileVideoIcon />;
-  }
-
-  if (type.startsWith("audio/")) {
-    return <FileAudioIcon />;
-  }
-
-  if (
-    type.startsWith("text/") ||
-    ["txt", "md", "rtf", "pdf"].includes(extension)
-  ) {
-    return <FileTextIcon />;
-  }
-
-  if (
-    [
-      "html",
-      "css",
-      "js",
-      "jsx",
-      "ts",
-      "tsx",
-      "json",
-      "xml",
-      "php",
-      "py",
-      "rb",
-      "java",
-      "c",
-      "cpp",
-      "cs",
-    ].includes(extension)
-  ) {
-    return <FileCodeIcon />;
-  }
-
-  if (["zip", "rar", "7z", "tar", "gz", "bz2"].includes(extension)) {
-    return <FileArchiveIcon />;
-  }
-
-  if (
-    ["exe", "msi", "app", "apk", "deb", "rpm"].includes(extension) ||
-    type.startsWith("application/")
-  ) {
-    return <FileCogIcon />;
-  }
-
-  return <FileIcon />;
 }
 
 interface FileUploadItemPreviewProps extends React.ComponentProps<"div"> {
