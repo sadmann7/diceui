@@ -111,6 +111,7 @@ interface SpeedDialContextValue {
   onNodeRegister: (node: NodeData) => void;
   onNodeUnregister: (id: string) => void;
   getNodes: () => NodeData[];
+  disabled?: boolean;
 }
 
 const SpeedDialContext = React.createContext<SpeedDialContextValue | null>(
@@ -132,6 +133,7 @@ interface SpeedDialProps extends DivProps {
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   onInteractOutside?: (event: InteractOutsideEvent) => void;
   side?: Side;
+  disabled?: boolean;
 }
 
 function SpeedDial(props: SpeedDialProps) {
@@ -143,6 +145,7 @@ function SpeedDial(props: SpeedDialProps) {
     onEscapeKeyDown,
     onInteractOutside,
     side = "top",
+    disabled,
     asChild,
     className,
     ref,
@@ -342,8 +345,9 @@ function SpeedDial(props: SpeedDialProps) {
       onNodeRegister,
       onNodeUnregister,
       getNodes,
+      disabled,
     }),
-    [contentId, side, onNodeRegister, onNodeUnregister, getNodes],
+    [contentId, side, onNodeRegister, onNodeUnregister, getNodes, disabled],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -367,16 +371,19 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
   const {
     onClick: onClickProp,
     className,
-    disabled,
+    disabled: disabledProp,
     id,
     ref,
     ...triggerProps
   } = props;
 
   const store = useStoreContext(TRIGGER_NAME);
-  const { onNodeRegister, onNodeUnregister, contentId } =
+
+  const { onNodeRegister, onNodeUnregister, contentId, disabled } =
     useSpeedDialContext(TRIGGER_NAME);
+
   const open = useStore((state) => state.open);
+  const isDisabled = disabled || disabledProp || false;
 
   const instanceId = React.useId();
   const triggerId = id ?? instanceId;
@@ -387,7 +394,7 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
     onNodeRegister({
       id: triggerId,
       ref: triggerRef,
-      disabled: !!disabled,
+      disabled: isDisabled,
     });
 
     return () => {
@@ -416,7 +423,7 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
       data-slot="speed-dial-trigger"
       data-state={getDataState(open)}
       size="icon"
-      disabled={disabled}
+      disabled={isDisabled}
       {...triggerProps}
       ref={composedRef}
       className={cn("size-11 rounded-full", className)}

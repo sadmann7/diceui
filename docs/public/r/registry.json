@@ -262,6 +262,7 @@
         "@radix-ui/react-direction"
       ],
       "registryDependencies": [
+        "use-as-ref",
         "use-isomorphic-layout-effect",
         "use-lazy-ref"
       ],

@@ -217,7 +217,7 @@ export const Index: Record<string, any> = {
       name: "editable",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["use-isomorphic-layout-effect","use-lazy-ref"],
+      registryDependencies: ["use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
       files: [{
         path: "registry/default/ui/editable.tsx",
         type: "registry:ui",

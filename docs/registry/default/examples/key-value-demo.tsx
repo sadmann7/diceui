@@ -14,7 +14,7 @@ export default function KeyValueDemo() {
       <KeyValueList>
         <KeyValueItem>
           <KeyValueKeyInput />
-          <KeyValueValueInput />
+          <KeyValueValueInput placeholder="Test" />
           <KeyValueRemove />
         </KeyValueItem>
       </KeyValueList>

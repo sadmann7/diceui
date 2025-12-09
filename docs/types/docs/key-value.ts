@@ -244,33 +244,11 @@ export interface KeyValueValueInputProps
 
 export interface KeyValueRemoveProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
-    CompositionProps {
-  /**
-   * Event handler called when an item is removed.
-   *
-   * ```ts
-   * onRemove={(value) => {
-   *   console.log(value);
-   * }}
-   * ```
-   */
-  onRemove?: (value: KeyValueItemData) => void;
-}
+    CompositionProps {}
 
 export interface KeyValueAddProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
-    CompositionProps {
-  /**
-   * Event handler called when an item is added.
-   *
-   * ```ts
-   * onAdd={(value) => {
-   *   console.log(value);
-   * }}
-   * ```
-   */
-  onAdd?: (value: KeyValueItemData) => void;
-}
+    CompositionProps {}
 
 export interface KeyValueErrorProps
   extends EmptyProps<"div">,
