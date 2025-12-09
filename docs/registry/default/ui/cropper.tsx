@@ -666,14 +666,12 @@ function Cropper(props: CropperProps) {
     }
   }, [cropProp, zoomProp, rotationProp, store, allowOverflow]);
 
-  // Store selectors
   const crop = useStore((state) => state.crop, store);
   const zoom = useStore((state) => state.zoom, store);
   const rotation = useStore((state) => state.rotation, store);
   const mediaSize = useStore((state) => state.mediaSize, store);
   const cropSize = useStore((state) => state.cropSize, store);
 
-  // Interaction refs
   const dragStartPositionRef = React.useRef<Point>({ x: 0, y: 0 });
   const dragStartCropRef = React.useRef<Point>({ x: 0, y: 0 });
   const contentPositionRef = React.useRef<Point>({ x: 0, y: 0 });
