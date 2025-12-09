@@ -29,7 +29,7 @@ pnpm cleanup:registry
 Auto-detects server and dynamically loads all registry entries to test.
 
 ```bash
-pnpm test:registry           
+pnpm test:registry
 VERBOSE=true pnpm test:registry  # Show loaded items + dependency counts
 ```
 

@@ -49,7 +49,9 @@ async function testItem(name: string, url: string): Promise<TestResult> {
   const itemUrl = `${url}/r/${name}.json`;
 
   try {
-    const response = await fetch(itemUrl);
+    const response = await fetch(itemUrl, {
+      signal: AbortSignal.timeout(5000),
+    });
     if (!response.ok) {
       return {
         success: false,
@@ -59,10 +61,11 @@ async function testItem(name: string, url: string): Promise<TestResult> {
 
     if (VERBOSE) {
       const data = await response.json();
-      const depCount =
+      const depCount = (
         data.registryDependencies?.filter((d: string) =>
           d.startsWith("@diceui/"),
-        ).length || 0;
+        ) ?? []
+      ).length;
       return { success: true, deps: depCount };
     }
 
