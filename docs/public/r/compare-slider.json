@@ -2,8 +2,7 @@
   "name": "compare-slider",
   "type": "registry:ui",
   "dependencies": [
-    "@radix-ui/react-slot",
-    "lucide-react"
+    "@radix-ui/react-slot"
   ],
   "registryDependencies": [
     "use-as-ref",

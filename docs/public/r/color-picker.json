@@ -4,8 +4,7 @@
   "dependencies": [
     "@radix-ui/react-slider",
     "@radix-ui/react-slot",
-    "@radix-ui/react-direction",
-    "lucide-react"
+    "@radix-ui/react-direction"
   ],
   "registryDependencies": [
     "button",

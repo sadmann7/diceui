@@ -153,8 +153,7 @@
       "dependencies": [
         "@radix-ui/react-slider",
         "@radix-ui/react-slot",
-        "@radix-ui/react-direction",
-        "lucide-react"
+        "@radix-ui/react-direction"
       ],
       "registryDependencies": [
         "button",
@@ -197,8 +196,7 @@
       "name": "compare-slider",
       "type": "registry:ui",
       "dependencies": [
-        "@radix-ui/react-slot",
-        "lucide-react"
+        "@radix-ui/react-slot"
       ],
       "registryDependencies": [
         "use-as-ref",
@@ -288,8 +286,7 @@
       "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
-        "@radix-ui/react-direction",
-        "lucide-react"
+        "@radix-ui/react-direction"
       ],
       "registryDependencies": [
         "use-as-ref",
@@ -355,8 +352,7 @@
       "name": "key-value",
       "type": "registry:ui",
       "dependencies": [
-        "@radix-ui/react-slot",
-        "lucide-react"
+        "@radix-ui/react-slot"
       ],
       "registryDependencies": [
         "button",
@@ -385,8 +381,7 @@
       "name": "listbox",
       "type": "registry:ui",
       "dependencies": [
-        "@diceui/listbox",
-        "lucide-react"
+        "@diceui/listbox"
       ],
       "files": [
         {
@@ -517,7 +512,6 @@
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction",
-        "lucide-react",
         "media-chrome"
       ],
       "registryDependencies": [
@@ -544,8 +538,7 @@
       "name": "mention",
       "type": "registry:ui",
       "dependencies": [
-        "@diceui/mention",
-        "lucide-react"
+        "@diceui/mention"
       ],
       "files": [
         {
@@ -686,8 +679,7 @@
       "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
-        "@radix-ui/react-direction",
-        "lucide-react"
+        "@radix-ui/react-direction"
       ],
       "registryDependencies": [
         "button",
@@ -731,8 +723,7 @@
       "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
-        "@radix-ui/react-direction",
-        "lucide-react"
+        "@radix-ui/react-direction"
       ],
       "registryDependencies": [
         "use-as-ref",
@@ -758,8 +749,7 @@
       "name": "tags-input",
       "type": "registry:ui",
       "dependencies": [
-        "@diceui/tags-input",
-        "lucide-react"
+        "@diceui/tags-input"
       ],
       "files": [
         {
@@ -831,8 +821,7 @@
       "dependencies": [
         "@floating-ui/react-dom",
         "@radix-ui/react-slot",
-        "@radix-ui/react-direction",
-        "lucide-react"
+        "@radix-ui/react-direction"
       ],
       "registryDependencies": [
         "use-as-ref",

@@ -4,7 +4,6 @@
   "dependencies": [
     "@radix-ui/react-slot",
     "@radix-ui/react-direction",
-    "lucide-react",
     "media-chrome"
   ],
   "registryDependencies": [
