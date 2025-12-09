@@ -22,7 +22,7 @@ const HOOKS = hooks.map((h) => h.name);
 // Extract components that have @diceui dependencies
 const COMPONENTS = ui
   .filter((item) =>
-    item.registryDependencies?.some((dep) => dep.startsWith("@diceui/"))
+    item.registryDependencies?.some((dep) => dep.startsWith("@diceui/")),
   )
   .map((item) => item.name);
 
@@ -61,7 +61,7 @@ async function testItem(name: string, url: string): Promise<TestResult> {
       const data = await response.json();
       const depCount =
         data.registryDependencies?.filter((d: string) =>
-          d.startsWith("@diceui/")
+          d.startsWith("@diceui/"),
         ).length || 0;
       return { success: true, deps: depCount };
     }
@@ -88,7 +88,7 @@ async function main(): Promise<void> {
 
   if (VERBOSE) {
     console.log(
-      `📋 Loaded ${HOOKS.length} hooks + ${COMPONENTS.length} components from registry`
+      `📋 Loaded ${HOOKS.length} hooks + ${COMPONENTS.length} components from registry`,
     );
   }
   console.log();
