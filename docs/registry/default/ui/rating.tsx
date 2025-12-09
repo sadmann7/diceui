@@ -198,7 +198,7 @@ interface RatingProps extends React.ComponentProps<"div"> {
 
 function Rating(props: RatingProps) {
   const {
-    value,
+    value: valueProp,
     defaultValue = 0,
     onValueChange,
     onHover,
@@ -228,7 +228,7 @@ function Rating(props: RatingProps) {
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
-    value: value ?? defaultValue,
+    value: valueProp ?? defaultValue,
     hoveredValue: null,
   }));
 
@@ -270,13 +270,13 @@ function Rating(props: RatingProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  const currentValue = useStore((state) => state.value, store);
-
   useIsomorphicLayoutEffect(() => {
-    if (value !== undefined) {
-      store.setState("value", value);
+    if (valueProp !== undefined) {
+      store.setState("value", valueProp);
     }
-  }, [value]);
+  }, [valueProp]);
+
+  const value = useStore((state) => state.value, store);
 
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
@@ -378,8 +378,8 @@ function Rating(props: RatingProps) {
           // by looking for the ceiling value (e.g., 3.5 → find item with value 4)
           const selectedItem =
             propsRef.current.step < 1
-              ? items.find((item) => item.value === Math.ceil(currentValue))
-              : items.find((item) => item.value === currentValue);
+              ? items.find((item) => item.value === Math.ceil(value))
+              : items.find((item) => item.value === value);
           const currentItem = items.find((item) => item.id === tabStopId);
 
           const candidateItems = [selectedItem, currentItem, ...items].filter(
@@ -391,7 +391,7 @@ function Rating(props: RatingProps) {
       }
       isClickFocusRef.current = false;
     },
-    [propsRef, isTabbingBackOut, currentValue, tabStopId],
+    [propsRef, isTabbingBackOut, value, tabStopId],
   );
 
   const onMouseDown = React.useCallback(
@@ -508,7 +508,7 @@ function Rating(props: RatingProps) {
               type="hidden"
               control={formTrigger}
               name={name}
-              value={currentValue}
+              value={value}
               disabled={disabled}
               readOnly={readOnly}
               required={required}

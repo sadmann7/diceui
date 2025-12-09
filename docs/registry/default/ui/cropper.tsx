@@ -10,7 +10,7 @@ import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorph
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "Cropper";
-const CONTENT_NAME = "CropperContent";
+const ROOT_IMPL_NAME = "CropperImpl";
 const IMAGE_NAME = "CropperImage";
 const VIDEO_NAME = "CropperVideo";
 const AREA_NAME = "CropperArea";
@@ -707,11 +707,11 @@ function CropperImpl(props: CropperImplProps) {
     asChild,
     className,
     ref,
-    ...contentProps
+    ...rootImplProps
   } = props;
 
-  const context = useCropperContext(CONTENT_NAME);
-  const store = useStoreContext(CONTENT_NAME);
+  const context = useCropperContext(ROOT_IMPL_NAME);
+  const store = useStoreContext(ROOT_IMPL_NAME);
   const crop = useStore((state) => state.crop);
   const zoom = useStore((state) => state.zoom);
   const rotation = useStore((state) => state.rotation);
@@ -1279,7 +1279,7 @@ function CropperImpl(props: CropperImplProps) {
     <RootPrimitive
       data-slot="cropper"
       tabIndex={0}
-      {...contentProps}
+      {...rootImplProps}
       ref={composedRef}
       className={cn(
         "absolute inset-0 flex cursor-move touch-none select-none items-center justify-center overflow-hidden outline-none",

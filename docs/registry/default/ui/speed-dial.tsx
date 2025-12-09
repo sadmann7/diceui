@@ -357,6 +357,8 @@ function SpeedDial(props: SpeedDialProps) {
       <SpeedDialContext.Provider value={contextValue}>
         <RootPrimitive
           data-slot="speed-dial"
+          data-state={getDataState(open)}
+          data-disabled={disabled}
           {...rootProps}
           ref={composedRefs}
           className={cn("relative flex flex-col items-end", className)}
