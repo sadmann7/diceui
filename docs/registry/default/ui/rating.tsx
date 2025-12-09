@@ -202,6 +202,8 @@ function Rating(props: RatingProps) {
     defaultValue = 0,
     onValueChange,
     onHover,
+    onFocus: onFocusProp,
+    onMouseDown: onMouseDownProp,
     dir: dirProp,
     orientation = "horizontal",
     activationMode = "automatic",
@@ -213,9 +215,9 @@ function Rating(props: RatingProps) {
     disabled = false,
     readOnly = false,
     required = false,
+    className,
     id,
     name,
-    className,
     ref,
     ...rootProps
   } = props;
@@ -229,9 +231,12 @@ function Rating(props: RatingProps) {
     value: value ?? defaultValue,
     hoveredValue: null,
   }));
+
   const propsRef = useAsRef({
     onValueChange,
     onHover,
+    onFocus: onFocusProp,
+    onMouseDown: onMouseDownProp,
     step,
   });
 
@@ -277,7 +282,6 @@ function Rating(props: RatingProps) {
     null,
   );
   const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
-
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const [tabStopId, setTabStopId] = React.useState<string | null>(null);
@@ -354,7 +358,7 @@ function Rating(props: RatingProps) {
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<HTMLDivElement>) => {
-      rootProps.onFocus?.(event);
+      propsRef.current.onFocus?.(event);
       if (event.defaultPrevented) return;
 
       const isKeyboardFocus = !isClickFocusRef.current;
@@ -387,18 +391,18 @@ function Rating(props: RatingProps) {
       }
       isClickFocusRef.current = false;
     },
-    [rootProps.onFocus, isTabbingBackOut, currentValue, tabStopId, propsRef],
+    [propsRef, isTabbingBackOut, currentValue, tabStopId],
   );
 
   const onMouseDown = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
-      rootProps.onMouseDown?.(event);
+      propsRef.current.onMouseDown?.(event);
 
       if (event.defaultPrevented) return;
 
       isClickFocusRef.current = true;
     },
-    [rootProps.onMouseDown],
+    [propsRef],
   );
 
   const contextValue = React.useMemo<RatingContextValue>(
@@ -524,8 +528,22 @@ interface RatingItemProps
 }
 
 function RatingItem(props: RatingItemProps) {
-  const { index, asChild, disabled, className, ref, children, ...itemProps } =
-    props;
+  const {
+    index,
+    asChild,
+    onClick: onClickProp,
+    onFocus: onFocusProp,
+    onKeyDown: onKeyDownProp,
+    onMouseDown: onMouseDownProp,
+    onMouseEnter: onMouseEnterProp,
+    onMouseMove: onMouseMoveProp,
+    onMouseLeave: onMouseLeaveProp,
+    disabled,
+    className,
+    children,
+    ref,
+    ...itemProps
+  } = props;
 
   const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
@@ -564,6 +582,16 @@ function RatingItem(props: RatingItemProps) {
 
   const isMouseClickRef = React.useRef(false);
 
+  const propsRef = useAsRef({
+    onClick: onClickProp,
+    onFocus: onFocusProp,
+    onKeyDown: onKeyDownProp,
+    onMouseDown: onMouseDownProp,
+    onMouseEnter: onMouseEnterProp,
+    onMouseMove: onMouseMoveProp,
+    onMouseLeave: onMouseLeaveProp,
+  });
+
   useIsomorphicLayoutEffect(() => {
     focusContext.onItemRegister({
       id: itemId,
@@ -586,7 +614,7 @@ function RatingItem(props: RatingItemProps) {
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ItemElement>) => {
-      itemProps.onClick?.(event);
+      propsRef.current.onClick?.(event);
       if (event.defaultPrevented) return;
 
       if (!isDisabled && !isReadOnly) {
@@ -624,94 +652,13 @@ function RatingItem(props: RatingItemProps) {
       itemValue,
       store,
       context.dir,
-      itemProps.onClick,
+      propsRef,
     ],
-  );
-
-  const onMouseEnter = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
-      itemProps.onMouseEnter?.(event);
-      if (event.defaultPrevented) return;
-
-      if (!isDisabled && !isReadOnly) {
-        let hoverValue = itemValue;
-
-        if (step < 1) {
-          const rect = event.currentTarget.getBoundingClientRect();
-          const mouseX = event.clientX - rect.left;
-          const isLeftHalf = mouseX < rect.width / 2;
-
-          if (context.dir === "rtl") {
-            if (!isLeftHalf) {
-              hoverValue = itemValue - step;
-            }
-          } else {
-            if (isLeftHalf) {
-              hoverValue = itemValue - step;
-            }
-          }
-        }
-
-        store.setState("hoveredValue", hoverValue);
-      }
-    },
-    [
-      isDisabled,
-      isReadOnly,
-      step,
-      itemValue,
-      store,
-      context.dir,
-      itemProps.onMouseEnter,
-    ],
-  );
-
-  const onMouseMove = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
-      itemProps.onMouseMove?.(event);
-      if (event.defaultPrevented) return;
-
-      if (!isDisabled && !isReadOnly && step < 1) {
-        const rect = event.currentTarget.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const isLeftHalf = mouseX < rect.width / 2;
-
-        let hoverValue = itemValue;
-        if (context.dir === "rtl") {
-          hoverValue = !isLeftHalf ? itemValue - step : itemValue;
-        } else {
-          hoverValue = isLeftHalf ? itemValue - step : itemValue;
-        }
-
-        store.setState("hoveredValue", hoverValue);
-      }
-    },
-    [
-      isDisabled,
-      isReadOnly,
-      step,
-      itemValue,
-      store,
-      context.dir,
-      itemProps.onMouseMove,
-    ],
-  );
-
-  const onMouseLeave = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
-      itemProps.onMouseLeave?.(event);
-      if (event.defaultPrevented) return;
-
-      if (!isDisabled && !isReadOnly) {
-        store.setState("hoveredValue", null);
-      }
-    },
-    [isDisabled, isReadOnly, store, itemProps.onMouseLeave],
   );
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<ItemElement>) => {
-      itemProps.onFocus?.(event);
+      propsRef.current.onFocus?.(event);
       if (event.defaultPrevented) return;
 
       focusContext.onItemFocus(itemId);
@@ -747,13 +694,13 @@ function RatingItem(props: RatingItemProps) {
       itemValue,
       step,
       store,
-      itemProps.onFocus,
+      propsRef,
     ],
   );
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<ItemElement>) => {
-      itemProps.onKeyDown?.(event);
+      propsRef.current.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
       if (
@@ -840,13 +787,13 @@ function RatingItem(props: RatingItemProps) {
       value,
       context.max,
       store,
-      itemProps.onKeyDown,
+      propsRef,
     ],
   );
 
   const onMouseDown = React.useCallback(
     (event: React.MouseEvent<ItemElement>) => {
-      itemProps.onMouseDown?.(event);
+      propsRef.current.onMouseDown?.(event);
       if (event.defaultPrevented) return;
 
       isMouseClickRef.current = true;
@@ -857,7 +804,72 @@ function RatingItem(props: RatingItemProps) {
         focusContext.onItemFocus(itemId);
       }
     },
-    [focusContext, itemId, isDisabled, itemProps.onMouseDown],
+    [focusContext, itemId, isDisabled, propsRef],
+  );
+
+  const onMouseEnter = React.useCallback(
+    (event: React.MouseEvent<ItemElement>) => {
+      propsRef.current.onMouseEnter?.(event);
+      if (event.defaultPrevented) return;
+
+      if (!isDisabled && !isReadOnly) {
+        let hoverValue = itemValue;
+
+        if (step < 1) {
+          const rect = event.currentTarget.getBoundingClientRect();
+          const mouseX = event.clientX - rect.left;
+          const isLeftHalf = mouseX < rect.width / 2;
+
+          if (context.dir === "rtl") {
+            if (!isLeftHalf) {
+              hoverValue = itemValue - step;
+            }
+          } else {
+            if (isLeftHalf) {
+              hoverValue = itemValue - step;
+            }
+          }
+        }
+
+        store.setState("hoveredValue", hoverValue);
+      }
+    },
+    [isDisabled, isReadOnly, step, itemValue, store, context.dir, propsRef],
+  );
+
+  const onMouseLeave = React.useCallback(
+    (event: React.MouseEvent<ItemElement>) => {
+      propsRef.current.onMouseLeave?.(event);
+      if (event.defaultPrevented) return;
+
+      if (!isDisabled && !isReadOnly) {
+        store.setState("hoveredValue", null);
+      }
+    },
+    [isDisabled, isReadOnly, store, propsRef],
+  );
+
+  const onMouseMove = React.useCallback(
+    (event: React.MouseEvent<ItemElement>) => {
+      propsRef.current.onMouseMove?.(event);
+      if (event.defaultPrevented) return;
+
+      if (!isDisabled && !isReadOnly && step < 1) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const isLeftHalf = mouseX < rect.width / 2;
+
+        let hoverValue = itemValue;
+        if (context.dir === "rtl") {
+          hoverValue = !isLeftHalf ? itemValue - step : itemValue;
+        } else {
+          hoverValue = isLeftHalf ? itemValue - step : itemValue;
+        }
+
+        store.setState("hoveredValue", hoverValue);
+      }
+    },
+    [isDisabled, isReadOnly, step, itemValue, store, context.dir, propsRef],
   );
 
   const dataState: DataState = isFilled
@@ -892,7 +904,7 @@ function RatingItem(props: RatingItemProps) {
         }),
       }}
       className={cn(
-        "inline-flex items-center justify-center rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
         "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill)",
         context.size === "sm"
           ? "size-4"
@@ -916,4 +928,9 @@ function RatingItem(props: RatingItemProps) {
   );
 }
 
-export { Rating, RatingItem, useStore as useRating, type RatingProps };
+export {
+  Rating,
+  RatingItem,
+  //
+  useStore as useRating,
+};
