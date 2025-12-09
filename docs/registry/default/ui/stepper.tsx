@@ -718,7 +718,7 @@ function StepperTrigger(props: ButtonProps) {
   const titleId = getId(context.rootId, "title", itemValue);
   const descriptionId = getId(context.rootId, "description", itemValue);
 
-  const isDisabled = context.disabled || stepState?.disabled || disabled;
+  const isDisabled = disabled || stepState?.disabled || context.disabled;
   const isActive = value === itemValue;
   const isTabStop = focusContext.tabStopId === triggerId;
   const dataState = getDataState(value, itemValue, stepState, steps);

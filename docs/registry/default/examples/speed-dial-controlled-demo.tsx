@@ -14,6 +14,7 @@ import {
 } from "@/registry/default/ui/speed-dial";
 
 export default function SpeedDialControlledDemo() {
+  const externalTriggerRef = React.useRef<HTMLButtonElement>(null);
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -22,7 +23,18 @@ export default function SpeedDialControlledDemo() {
         <SpeedDialTrigger className="transition-transform duration-200 ease-out data-[state=closed]:rotate-0 data-[state=open]:rotate-135">
           {open ? <X /> : <Plus />}
         </SpeedDialTrigger>
-        <SpeedDialContent>
+        <SpeedDialContent
+          onInteractOutside={(event) => {
+            // Prevent closing when clicking the external trigger
+            if (
+              externalTriggerRef.current?.contains(
+                event.detail.originalEvent.target as Node,
+              )
+            ) {
+              event.preventDefault();
+            }
+          }}
+        >
           <SpeedDialItem>
             <SpeedDialLabel className="sr-only">Share</SpeedDialLabel>
             <SpeedDialAction onSelect={() => toast.success("Shared")}>
@@ -43,8 +55,12 @@ export default function SpeedDialControlledDemo() {
           </SpeedDialItem>
         </SpeedDialContent>
       </SpeedDial>
-      <Button variant="outline" onClick={() => setOpen(!open)}>
-        {open ? "Close" : "Open"}
+      <Button
+        ref={externalTriggerRef}
+        variant="outline"
+        onClick={() => setOpen(!open)}
+      >
+        Toggle
       </Button>
     </div>
   );

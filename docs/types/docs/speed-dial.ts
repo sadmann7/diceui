@@ -30,6 +30,25 @@ export interface SpeedDialProps extends EmptyProps<"div">, CompositionProps {
   onOpenChange?: (open: boolean) => void;
 
   /**
+   * The side where the content should appear relative to the trigger.
+   * @default "top"
+   */
+  side?: Side;
+
+  /**
+   * Whether the speed dial is disabled.
+   */
+  disabled?: boolean;
+}
+
+export interface SpeedDialTriggerProps
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {}
+
+export interface SpeedDialContentProps
+  extends EmptyProps<"div">,
+    CompositionProps {
+  /**
    * Event handler called when the `Escape` key is pressed.
    * Can be used to prevent closing the speed dial on `Escape` key press.
    *
@@ -54,26 +73,7 @@ export interface SpeedDialProps extends EmptyProps<"div">, CompositionProps {
    * ```
    */
   onInteractOutside?: (event: InteractOutsideEvent) => void;
-
-  /**
-   * The side where the content should appear relative to the trigger.
-   * @default "top"
-   */
-  side?: Side;
-
-  /**
-   * Whether the speed dial is disabled.
-   */
-  disabled?: boolean;
 }
-
-export interface SpeedDialTriggerProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
-    CompositionProps {}
-
-export interface SpeedDialContentProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
 
 export interface SpeedDialItemProps
   extends EmptyProps<"div">,
