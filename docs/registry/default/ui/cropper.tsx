@@ -457,6 +457,18 @@ function Cropper(props: CropperProps) {
     isWheelZooming: false,
   }));
 
+  const propsRef = useAsRef({
+    onCropChange,
+    onCropSizeChange,
+    onCropAreaChange,
+    onCropComplete,
+    onZoomChange,
+    onRotationChange,
+    onMediaLoaded,
+    onInteractionStart,
+    onInteractionEnd,
+  });
+
   const rootRef = React.useRef<HTMLDivElement>(null);
   const composedRef = useComposedRefs(ref, rootRef);
 
@@ -469,7 +481,7 @@ function Cropper(props: CropperProps) {
       raf = requestAnimationFrame(() => {
         raf = null;
         const s = stateRef.current;
-        if (s?.mediaSize && s.cropSize && onCropAreaChange) {
+        if (s?.mediaSize && s.cropSize && propsRef.current.onCropAreaChange) {
           const { croppedAreaPercentages, croppedAreaPixels } = getCroppedArea(
             s.crop,
             s.mediaSize,
@@ -478,7 +490,7 @@ function Cropper(props: CropperProps) {
             s.zoom,
             s.rotation,
           );
-          onCropAreaChange(croppedAreaPercentages, croppedAreaPixels);
+          propsRef.current.onCropAreaChange(croppedAreaPercentages, croppedAreaPixels);
         }
       });
     }
@@ -500,35 +512,35 @@ function Cropper(props: CropperProps) {
           value &&
           "x" in value
         ) {
-          onCropChange?.(value);
+          propsRef.current.onCropChange?.(value);
         } else if (key === "zoom" && typeof value === "number") {
-          onZoomChange?.(value);
+          propsRef.current.onZoomChange?.(value);
         } else if (key === "rotation" && typeof value === "number") {
-          onRotationChange?.(value);
+          propsRef.current.onRotationChange?.(value);
         } else if (
           key === "cropSize" &&
           typeof value === "object" &&
           value &&
           "width" in value
         ) {
-          onCropSizeChange?.(value);
+          propsRef.current.onCropSizeChange?.(value);
         } else if (
           key === "mediaSize" &&
           typeof value === "object" &&
           value &&
           "naturalWidth" in value
         ) {
-          onMediaLoaded?.(value);
+          propsRef.current.onMediaLoaded?.(value);
         } else if (key === "isDragging") {
           if (value) {
-            onInteractionStart?.();
+            propsRef.current.onInteractionStart?.();
           } else {
-            onInteractionEnd?.();
+            propsRef.current.onInteractionEnd?.();
             const currentState = stateRef.current;
             if (
               currentState?.mediaSize &&
               currentState.cropSize &&
-              onCropComplete
+              propsRef.current.onCropComplete
             ) {
               const { croppedAreaPercentages, croppedAreaPixels } =
                 getCroppedArea(
@@ -539,7 +551,7 @@ function Cropper(props: CropperProps) {
                   currentState.zoom,
                   currentState.rotation,
                 );
-              onCropComplete(croppedAreaPercentages, croppedAreaPixels);
+              propsRef.current.onCropComplete(croppedAreaPercentages, croppedAreaPixels);
             }
           }
         }
@@ -550,7 +562,7 @@ function Cropper(props: CropperProps) {
             key === "rotation" ||
             key === "mediaSize" ||
             key === "cropSize") &&
-          onCropAreaChange
+          propsRef.current.onCropAreaChange
         ) {
           notifyCropAreaChange();
         }
@@ -580,20 +592,7 @@ function Cropper(props: CropperProps) {
     };
 
     return store;
-  }, [
-    listenersRef,
-    stateRef,
-    aspectRatio,
-    onCropChange,
-    onCropSizeChange,
-    onCropAreaChange,
-    onCropComplete,
-    onZoomChange,
-    onRotationChange,
-    onMediaLoaded,
-    onInteractionStart,
-    onInteractionEnd,
-  ]);
+  }, [listenersRef, stateRef, aspectRatio, propsRef]);
 
   useIsomorphicLayoutEffect(() => {
     const updates: Partial<StoreState> = {};

@@ -6,6 +6,7 @@ import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
@@ -218,6 +219,11 @@ function AngleSlider(props: AngleSliderProps) {
     endAngle,
   }));
 
+  const propsRef = useAsRef({
+    onValueChange,
+    onValueCommit,
+  });
+
   const store = React.useMemo<Store>(() => {
     return {
       subscribe: (cb) => {
@@ -232,7 +238,7 @@ function AngleSlider(props: AngleSliderProps) {
           const hasChanged = String(stateRef.current.values) !== String(value);
           stateRef.current.values = value;
           if (hasChanged) {
-            onValueChange?.(value);
+            propsRef.current.onValueChange?.(value);
           }
         } else {
           stateRef.current[key] = value;
@@ -272,8 +278,8 @@ function AngleSlider(props: AngleSliderProps) {
 
           if (hasChanged) {
             stateRef.current.values = nextValues;
-            onValueChange?.(nextValues);
-            if (commit) onValueCommit?.(nextValues);
+            propsRef.current.onValueChange?.(nextValues);
+            if (commit) propsRef.current.onValueCommit?.(nextValues);
             store.notify();
           }
         }
@@ -323,7 +329,7 @@ function AngleSlider(props: AngleSliderProps) {
         }
       },
     };
-  }, [listenersRef, stateRef, onValueChange, onValueCommit]);
+  }, [listenersRef, stateRef, propsRef]);
 
   useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {

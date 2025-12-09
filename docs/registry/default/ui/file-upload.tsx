@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "FileUpload";
@@ -182,6 +183,10 @@ function FileUpload(props: FileUploadProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const isControlled = value !== undefined;
 
+  const propsRef = useAsRef({
+    onValueChange,
+  });
+
   const store = React.useMemo<Store>(() => {
     let state: StoreState = {
       files,
@@ -200,11 +205,11 @@ function FileUpload(props: FileUploadProps) {
             });
           }
 
-          if (onValueChange) {
+          if (propsRef.current.onValueChange) {
             const fileList = Array.from(files.values()).map(
               (fileState) => fileState.file,
             );
-            onValueChange(fileList);
+            propsRef.current.onValueChange(fileList);
           }
           return { ...state, files };
         }
@@ -275,11 +280,11 @@ function FileUpload(props: FileUploadProps) {
 
           files.delete(action.file);
 
-          if (onValueChange) {
+          if (propsRef.current.onValueChange) {
             const fileList = Array.from(files.values()).map(
               (fileState) => fileState.file,
             );
-            onValueChange(fileList);
+            propsRef.current.onValueChange(fileList);
           }
           return { ...state, files };
         }
@@ -302,8 +307,8 @@ function FileUpload(props: FileUploadProps) {
           }
 
           files.clear();
-          if (onValueChange) {
-            onValueChange([]);
+          if (propsRef.current.onValueChange) {
+            propsRef.current.onValueChange([]);
           }
           return { ...state, files, invalid: false };
         }
@@ -326,7 +331,7 @@ function FileUpload(props: FileUploadProps) {
         return () => listeners.delete(listener);
       },
     };
-  }, [listeners, files, invalid, onValueChange, urlCache]);
+  }, [listeners, files, invalid, propsRef, urlCache]);
 
   const acceptTypes = React.useMemo(
     () => accept?.split(",").map((t) => t.trim()) ?? null,
