@@ -6,8 +6,8 @@
   ],
   "registryDependencies": [
     "button",
-    "use-as-ref",
-    "use-isomorphic-layout-effect"
+    "@diceui/use-as-ref",
+    "@diceui/use-isomorphic-layout-effect"
   ],
   "files": [
     {

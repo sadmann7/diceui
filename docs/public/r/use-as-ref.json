@@ -2,7 +2,7 @@
   "name": "use-as-ref",
   "type": "registry:hook",
   "registryDependencies": [
-    "use-isomorphic-layout-effect"
+    "@diceui/use-isomorphic-layout-effect"
   ],
   "files": [
     {

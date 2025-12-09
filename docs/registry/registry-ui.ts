@@ -7,8 +7,8 @@ export const ui: Registry["items"] = [
     dependencies: ["@radix-ui/react-slot"],
     registryDependencies: [
       "button",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
     ],
     files: [
       {
@@ -30,9 +30,9 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     registryDependencies: [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -125,9 +125,9 @@ export const ui: Registry["items"] = [
       "input",
       "popover",
       "select",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -160,9 +160,9 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
     registryDependencies: [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -180,9 +180,9 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
     registryDependencies: [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -218,9 +218,9 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     registryDependencies: [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -241,7 +241,7 @@ export const ui: Registry["items"] = [
     name: "file-upload",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
-    registryDependencies: ["use-as-ref", "use-lazy-ref"],
+    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
     files: [
       {
         path: "ui/file-upload.tsx",
@@ -301,9 +301,9 @@ export const ui: Registry["items"] = [
       "button",
       "input",
       "textarea",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -431,7 +431,7 @@ export const ui: Registry["items"] = [
     name: "masonry",
     type: "registry:ui",
     dependencies: ["@diceui/masonry", "@radix-ui/react-slot"],
-    registryDependencies: ["use-isomorphic-layout-effect"],
+    registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
     files: [
       {
         path: "ui/masonry.tsx",
@@ -459,7 +459,7 @@ export const ui: Registry["items"] = [
       "slider",
       "tooltip",
       "dropdown-menu",
-      "use-lazy-ref",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -515,9 +515,9 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     registryDependencies: [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -557,9 +557,9 @@ export const ui: Registry["items"] = [
     dependencies: ["@radix-ui/react-slot"],
     registryDependencies: [
       "button",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -601,9 +601,9 @@ export const ui: Registry["items"] = [
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     registryDependencies: [
       "button",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -621,7 +621,7 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "qrcode"],
     devDependencies: ["@types/qrcode"],
-    registryDependencies: ["use-lazy-ref"],
+    registryDependencies: ["@diceui/use-lazy-ref"],
     files: [
       {
         path: "ui/qr-code.tsx",
@@ -634,9 +634,9 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
     registryDependencies: [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {
@@ -668,7 +668,10 @@ export const ui: Registry["items"] = [
     name: "timeline",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
-    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/timeline.tsx",
@@ -686,9 +689,9 @@ export const ui: Registry["items"] = [
     dependencies: ["@radix-ui/react-slot"],
     registryDependencies: [
       "popover",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     css: {
       "@utility scrollbar-none": {
@@ -722,9 +725,9 @@ export const ui: Registry["items"] = [
       "@radix-ui/react-direction",
     ],
     registryDependencies: [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
     ],
     files: [
       {

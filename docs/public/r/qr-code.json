@@ -9,7 +9,7 @@
     "@types/qrcode"
   ],
   "registryDependencies": [
-    "use-lazy-ref"
+    "@diceui/use-lazy-ref"
   ],
   "files": [
     {

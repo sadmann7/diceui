@@ -7,8 +7,8 @@
     ],
     "registryDependencies": [
       "button",
-      "use-as-ref",
-      "use-isomorphic-layout-effect"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect"
     ],
     "files": [
       {
@@ -33,9 +33,9 @@
       "@radix-ui/react-direction"
     ],
     "registryDependencies": [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -136,9 +136,9 @@
       "input",
       "popover",
       "select",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -175,9 +175,9 @@
       "@radix-ui/react-slot"
     ],
     "registryDependencies": [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -197,9 +197,9 @@
       "@radix-ui/react-slot"
     ],
     "registryDependencies": [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -238,9 +238,9 @@
       "@radix-ui/react-direction"
     ],
     "registryDependencies": [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -265,8 +265,8 @@
       "@radix-ui/react-direction"
     ],
     "registryDependencies": [
-      "use-as-ref",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -334,9 +334,9 @@
       "button",
       "input",
       "textarea",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -469,7 +469,7 @@
       "@radix-ui/react-slot"
     ],
     "registryDependencies": [
-      "use-isomorphic-layout-effect"
+      "@diceui/use-isomorphic-layout-effect"
     ],
     "files": [
       {
@@ -497,7 +497,7 @@
       "slider",
       "tooltip",
       "dropdown-menu",
-      "use-lazy-ref"
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -564,9 +564,9 @@
       "@radix-ui/react-direction"
     ],
     "registryDependencies": [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -608,9 +608,9 @@
     ],
     "registryDependencies": [
       "button",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -659,9 +659,9 @@
     ],
     "registryDependencies": [
       "button",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -685,7 +685,7 @@
       "@types/qrcode"
     ],
     "registryDependencies": [
-      "use-lazy-ref"
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -702,9 +702,9 @@
       "@radix-ui/react-direction"
     ],
     "registryDependencies": [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -742,8 +742,8 @@
       "@radix-ui/react-direction"
     ],
     "registryDependencies": [
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -764,9 +764,9 @@
     ],
     "registryDependencies": [
       "popover",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
@@ -800,9 +800,9 @@
       "@radix-ui/react-direction"
     ],
     "registryDependencies": [
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
     ],
     "files": [
       {
