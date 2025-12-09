@@ -27,6 +27,23 @@ import { useAsRef } from "@/registry/default/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
+const ROOT_NAME = "ColorPicker";
+const TRIGGER_NAME = "ColorPickerTrigger";
+const CONTENT_NAME = "ColorPickerContent";
+const AREA_NAME = "ColorPickerArea";
+const HUE_SLIDER_NAME = "ColorPickerHueSlider";
+const ALPHA_SLIDER_NAME = "ColorPickerAlphaSlider";
+const SWATCH_NAME = "ColorPickerSwatch";
+const EYE_DROPPER_NAME = "ColorPickerEyeDropper";
+const FORMAT_SELECT_NAME = "ColorPickerFormatSelect";
+const INPUT_NAME = "ColorPickerInput";
+
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+type RootElement = React.ComponentRef<typeof ColorPicker>;
+
 /**
  * @see https://gist.github.com/bkrmendy/f4582173f50fab209ddfef1377ab31e3
  */
@@ -388,16 +405,16 @@ function parseColorString(value: string): ColorValue | null {
 
 type Direction = "ltr" | "rtl";
 
-interface ColorPickerStoreState {
+interface StoreState {
   color: ColorValue;
   hsv: HSVColorValue;
   open: boolean;
   format: ColorFormat;
 }
 
-interface ColorPickerStore {
+interface Store {
   subscribe: (cb: () => void) => () => void;
-  getState: () => ColorPickerStoreState;
+  getState: () => StoreState;
   setColor: (value: ColorValue) => void;
   setHsv: (value: HSVColorValue) => void;
   setOpen: (value: boolean) => void;
@@ -405,20 +422,27 @@ interface ColorPickerStore {
   notify: () => void;
 }
 
-function useColorPickerStoreContext(consumerName: string) {
+function useStoreContext(consumerName: string) {
   const context = React.useContext(ColorPickerStoreContext);
   if (!context) {
-    throw new Error(
-      `\`${consumerName}\` must be used within \`ColorPickerRoot\``,
-    );
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
 
-function useColorPickerStore<U>(
-  selector: (state: ColorPickerStoreState) => U,
+function useStore<U>(
+  selector: (state: StoreState) => U,
+  ogStore?: Store | null,
 ): U {
-  const store = useColorPickerStoreContext("useColorPickerStoreSelector");
+  const contextStore = React.useContext(ColorPickerStoreContext);
+
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(
+      `\`useColorPickerStore\` must be used within \`${ROOT_NAME}\``,
+    );
+  }
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -436,9 +460,7 @@ interface ColorPickerContextValue {
   required?: boolean;
 }
 
-const ColorPickerStoreContext = React.createContext<ColorPickerStore | null>(
-  null,
-);
+const ColorPickerStoreContext = React.createContext<Store | null>(null);
 const ColorPickerContext = React.createContext<ColorPickerContextValue | null>(
   null,
 );
@@ -446,15 +468,13 @@ const ColorPickerContext = React.createContext<ColorPickerContextValue | null>(
 function useColorPickerContext(consumerName: string) {
   const context = React.useContext(ColorPickerContext);
   if (!context) {
-    throw new Error(
-      `\`${consumerName}\` must be used within \`ColorPickerRoot\``,
-    );
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
 
 interface ColorPickerProps
-  extends Omit<React.ComponentProps<"div">, "onValueChange">,
+  extends Omit<DivProps, "onValueChange">,
     Pick<
       React.ComponentProps<typeof Popover>,
       "defaultOpen" | "open" | "onOpenChange" | "modal"
@@ -467,7 +487,6 @@ interface ColorPickerProps
   defaultFormat?: ColorFormat;
   onFormatChange?: (format: ColorFormat) => void;
   name?: string;
-  asChild?: boolean;
   disabled?: boolean;
   inline?: boolean;
   readOnly?: boolean;
@@ -485,16 +504,29 @@ function ColorPicker(props: ColorPickerProps) {
     defaultOpen,
     open: openProp,
     onOpenChange,
+    dir: dirProp,
     name,
     disabled,
     inline,
     readOnly,
     required,
+    modal,
+    asChild,
+    ref,
     ...rootProps
   } = props;
 
+  const dir = useDirection(dirProp);
+
+  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+
+  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
+
   const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<ColorPickerStoreState>(() => {
+  const stateRef = useLazyRef<StoreState>(() => {
     const colorString = valueProp ?? defaultValue;
     const color = hexToRgb(colorString);
 
@@ -511,7 +543,7 @@ function ColorPicker(props: ColorPickerProps) {
     onFormatChange,
   });
 
-  const store: ColorPickerStore = React.useMemo(() => {
+  const store = React.useMemo<Store>(() => {
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -575,71 +607,18 @@ function ColorPicker(props: ColorPickerProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  return (
-    <ColorPickerStoreContext.Provider value={store}>
-      <ColorPickerImpl
-        {...rootProps}
-        value={valueProp}
-        defaultOpen={defaultOpen}
-        open={openProp}
-        name={name}
-        disabled={disabled}
-        inline={inline}
-        readOnly={readOnly}
-        required={required}
-      />
-    </ColorPickerStoreContext.Provider>
-  );
-}
-
-interface ColorPickerImplProps
-  extends Omit<
-    ColorPickerProps,
-    | "defaultValue"
-    | "onValueChange"
-    | "onOpenChange"
-    | "format"
-    | "defaultFormat"
-    | "onFormatChange"
-  > {}
-
-function ColorPickerImpl(props: ColorPickerImplProps) {
-  const {
-    value: valueProp,
-    dir: dirProp,
-    defaultOpen,
-    open: openProp,
-    name,
-    ref,
-    asChild,
-    disabled,
-    inline,
-    modal,
-    readOnly,
-    required,
-    ...rootProps
-  } = props;
-
-  const store = useColorPickerStoreContext("ColorPickerImpl");
-
-  const dir = useDirection(dirProp);
-
-  const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
-    null,
-  );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
-
-  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
+  const value = useStore((state) => rgbToHex(state.color), store);
+  const open = useStore((state) => state.open, store);
+  const color = useStore((state) => state.color, store);
 
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
-      const currentState = store.getState();
-      const color = hexToRgb(valueProp, currentState.color.a);
-      const hsv = rgbToHsv(color);
-      store.setColor(color);
+      const colorValue = hexToRgb(valueProp, color.a);
+      const hsv = rgbToHsv(colorValue);
+      store.setColor(colorValue);
       store.setHsv(hsv);
     }
-  }, [valueProp, store]);
+  }, [valueProp, color]);
 
   useIsomorphicLayoutEffect(() => {
     if (openProp !== undefined) {
@@ -658,62 +637,62 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
     [dir, disabled, inline, readOnly, required],
   );
 
-  const value = useColorPickerStore((state) => rgbToHex(state.color));
-
-  const open = useColorPickerStore((state) => state.open);
-
   const RootPrimitive = asChild ? Slot : "div";
 
   if (inline) {
     return (
-      <ColorPickerContext.Provider value={contextValue}>
-        <RootPrimitive {...rootProps} ref={composedRef} />
-        {isFormControl && (
-          <VisuallyHiddenInput
-            type="hidden"
-            control={formTrigger}
-            name={name}
-            value={value}
-            disabled={disabled}
-            readOnly={readOnly}
-            required={required}
-          />
-        )}
-      </ColorPickerContext.Provider>
+      <ColorPickerStoreContext.Provider value={store}>
+        <ColorPickerContext.Provider value={contextValue}>
+          <RootPrimitive {...rootProps} ref={composedRef} />
+          {isFormControl && (
+            <VisuallyHiddenInput
+              type="hidden"
+              control={formTrigger}
+              name={name}
+              value={value}
+              disabled={disabled}
+              readOnly={readOnly}
+              required={required}
+            />
+          )}
+        </ColorPickerContext.Provider>
+      </ColorPickerStoreContext.Provider>
     );
   }
 
   return (
-    <ColorPickerContext.Provider value={contextValue}>
-      <Popover
-        defaultOpen={defaultOpen}
-        open={open}
-        onOpenChange={store.setOpen}
-        modal={modal}
-      >
-        <RootPrimitive {...rootProps} ref={composedRef} />
-        {isFormControl && (
-          <VisuallyHiddenInput
-            type="hidden"
-            control={formTrigger}
-            name={name}
-            value={value}
-            disabled={disabled}
-            readOnly={readOnly}
-            required={required}
-          />
-        )}
-      </Popover>
-    </ColorPickerContext.Provider>
+    <ColorPickerStoreContext.Provider value={store}>
+      <ColorPickerContext.Provider value={contextValue}>
+        <Popover
+          defaultOpen={defaultOpen}
+          open={open}
+          onOpenChange={store.setOpen}
+          modal={modal}
+        >
+          <RootPrimitive {...rootProps} ref={composedRef} />
+          {isFormControl && (
+            <VisuallyHiddenInput
+              type="hidden"
+              control={formTrigger}
+              name={name}
+              value={value}
+              disabled={disabled}
+              readOnly={readOnly}
+              required={required}
+            />
+          )}
+        </Popover>
+      </ColorPickerContext.Provider>
+    </ColorPickerStoreContext.Provider>
   );
 }
 
-interface ColorPickerTriggerProps
-  extends React.ComponentProps<typeof PopoverTrigger> {}
-
-function ColorPickerTrigger(props: ColorPickerTriggerProps) {
+function ColorPickerTrigger(
+  props: React.ComponentProps<typeof PopoverTrigger>,
+) {
   const { asChild, ...triggerProps } = props;
-  const context = useColorPickerContext("ColorPickerTrigger");
+
+  const context = useColorPickerContext(TRIGGER_NAME);
 
   const TriggerPrimitive = asChild ? Slot : Button;
 
@@ -724,12 +703,12 @@ function ColorPickerTrigger(props: ColorPickerTriggerProps) {
   );
 }
 
-interface ColorPickerContentProps
-  extends React.ComponentProps<typeof PopoverContent> {}
-
-function ColorPickerContent(props: ColorPickerContentProps) {
+function ColorPickerContent(
+  props: React.ComponentProps<typeof PopoverContent>,
+) {
   const { asChild, className, children, ...popoverContentProps } = props;
-  const context = useColorPickerContext("ColorPickerContent");
+
+  const context = useColorPickerContext(CONTENT_NAME);
 
   if (context.inline) {
     const ContentPrimitive = asChild ? Slot : "div";
@@ -757,16 +736,13 @@ function ColorPickerContent(props: ColorPickerContentProps) {
   );
 }
 
-interface ColorPickerAreaProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-function ColorPickerArea(props: ColorPickerAreaProps) {
+function ColorPickerArea(props: DivProps) {
   const { asChild, className, ref, ...areaProps } = props;
-  const context = useColorPickerContext("ColorPickerArea");
-  const store = useColorPickerStoreContext("ColorPickerArea");
 
-  const hsv = useColorPickerStore((state) => state.hsv);
+  const context = useColorPickerContext(AREA_NAME);
+  const store = useStoreContext(AREA_NAME);
+
+  const hsv = useStore((state) => state.hsv);
 
   const isDraggingRef = React.useRef(false);
   const areaRef = React.useRef<HTMLDivElement>(null);
@@ -871,15 +847,15 @@ function ColorPickerArea(props: ColorPickerAreaProps) {
   );
 }
 
-interface ColorPickerHueSliderProps
-  extends React.ComponentProps<typeof SliderPrimitive.Root> {}
-
-function ColorPickerHueSlider(props: ColorPickerHueSliderProps) {
+function ColorPickerHueSlider(
+  props: React.ComponentProps<typeof SliderPrimitive.Root>,
+) {
   const { className, ...sliderProps } = props;
-  const context = useColorPickerContext("ColorPickerHueSlider");
-  const store = useColorPickerStoreContext("ColorPickerHueSlider");
 
-  const hsv = useColorPickerStore((state) => state.hsv);
+  const context = useColorPickerContext(HUE_SLIDER_NAME);
+  const store = useStoreContext(HUE_SLIDER_NAME);
+
+  const hsv = useStore((state) => state.hsv);
 
   const onValueChange = React.useCallback(
     (values: number[]) => {
@@ -917,16 +893,16 @@ function ColorPickerHueSlider(props: ColorPickerHueSliderProps) {
   );
 }
 
-interface ColorPickerAlphaSliderProps
-  extends React.ComponentProps<typeof SliderPrimitive.Root> {}
-
-function ColorPickerAlphaSlider(props: ColorPickerAlphaSliderProps) {
+function ColorPickerAlphaSlider(
+  props: React.ComponentProps<typeof SliderPrimitive.Root>,
+) {
   const { className, ...sliderProps } = props;
-  const context = useColorPickerContext("ColorPickerAlphaSlider");
-  const store = useColorPickerStoreContext("ColorPickerAlphaSlider");
 
-  const color = useColorPickerStore((state) => state.color);
-  const hsv = useColorPickerStore((state) => state.hsv);
+  const context = useColorPickerContext(ALPHA_SLIDER_NAME);
+  const store = useStoreContext(ALPHA_SLIDER_NAME);
+
+  const color = useStore((state) => state.color);
+  const hsv = useStore((state) => state.hsv);
 
   const onValueChange = React.useCallback(
     (values: number[]) => {
@@ -977,16 +953,13 @@ function ColorPickerAlphaSlider(props: ColorPickerAlphaSliderProps) {
   );
 }
 
-interface ColorPickerSwatchProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-function ColorPickerSwatch(props: ColorPickerSwatchProps) {
+function ColorPickerSwatch(props: DivProps) {
   const { asChild, className, ...swatchProps } = props;
-  const context = useColorPickerContext("ColorPickerSwatch");
 
-  const color = useColorPickerStore((state) => state.color);
-  const format = useColorPickerStore((state) => state.format);
+  const context = useColorPickerContext(SWATCH_NAME);
+
+  const color = useStore((state) => state.color);
+  const format = useStore((state) => state.format);
 
   const backgroundStyle = React.useMemo(() => {
     if (!color) {
@@ -1034,15 +1007,13 @@ function ColorPickerSwatch(props: ColorPickerSwatchProps) {
   );
 }
 
-interface ColorPickerEyeDropperProps
-  extends React.ComponentProps<typeof Button> {}
+function ColorPickerEyeDropper(props: React.ComponentProps<typeof Button>) {
+  const { children, size: sizeProp, ...buttonProps } = props;
 
-function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
-  const { children, size, ...buttonProps } = props;
-  const context = useColorPickerContext("ColorPickerEyeDropper");
-  const store = useColorPickerStoreContext("ColorPickerEyeDropper");
+  const context = useColorPickerContext(EYE_DROPPER_NAME);
+  const store = useStoreContext(EYE_DROPPER_NAME);
 
-  const color = useColorPickerStore((state) => state.color);
+  const color = useStore((state) => state.color);
 
   const onEyeDropper = React.useCallback(async () => {
     if (!window.EyeDropper) return;
@@ -1067,14 +1038,14 @@ function ColorPickerEyeDropper(props: ColorPickerEyeDropperProps) {
 
   if (!hasEyeDropper) return null;
 
-  const buttonSize = size ?? (children ? "default" : "icon");
+  const size = sizeProp ?? (children ? "default" : "icon");
 
   return (
     <Button
       data-slot="color-picker-eye-dropper"
       {...buttonProps}
       variant="outline"
-      size={buttonSize}
+      size={size}
       onClick={onEyeDropper}
       disabled={context.disabled}
     >
@@ -1089,10 +1060,11 @@ interface ColorPickerFormatSelectProps
 
 function ColorPickerFormatSelect(props: ColorPickerFormatSelectProps) {
   const { size, className, ...selectProps } = props;
-  const context = useColorPickerContext("ColorPickerFormatSelector");
-  const store = useColorPickerStoreContext("ColorPickerFormatSelector");
 
-  const format = useColorPickerStore((state) => state.format);
+  const context = useColorPickerContext(FORMAT_SELECT_NAME);
+  const store = useStoreContext(FORMAT_SELECT_NAME);
+
+  const format = useStore((state) => state.format);
 
   const onFormatChange = React.useCallback(
     (value: ColorFormat) => {
@@ -1136,12 +1108,12 @@ interface ColorPickerInputProps
 }
 
 function ColorPickerInput(props: ColorPickerInputProps) {
-  const context = useColorPickerContext("ColorPickerInput");
-  const store = useColorPickerStoreContext("ColorPickerInput");
+  const context = useColorPickerContext(INPUT_NAME);
+  const store = useStoreContext(INPUT_NAME);
 
-  const color = useColorPickerStore((state) => state.color);
-  const format = useColorPickerStore((state) => state.format);
-  const hsv = useColorPickerStore((state) => state.hsv);
+  const color = useStore((state) => state.color);
+  const format = useStore((state) => state.format);
+  const hsv = useStore((state) => state.hsv);
 
   const onColorChange = React.useCallback(
     (newColor: ColorValue) => {
@@ -1636,7 +1608,7 @@ export {
   ColorPickerFormatSelect,
   ColorPickerInput,
   //
-  useColorPickerStore as useColorPicker,
+  useStore as useColorPicker,
   //
   type ColorPickerProps,
 };

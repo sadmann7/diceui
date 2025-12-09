@@ -210,7 +210,11 @@ export const ui: Registry["items"] = [
     name: "editable",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
-    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
+    registryDependencies: [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/editable.tsx",

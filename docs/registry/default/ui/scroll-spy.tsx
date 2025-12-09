@@ -41,16 +41,17 @@ interface Store {
 
 const StoreContext = React.createContext<Store | null>(null);
 
-function useStoreContext(consumerName: string) {
-  const context = React.useContext(StoreContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
-  }
-  return context;
-}
+function useStore<T>(
+  selector: (state: StoreState) => T,
+  ogStore?: Store | null,
+): T {
+  const contextStore = React.useContext(StoreContext);
 
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -99,7 +100,23 @@ interface ScrollSpyProps extends React.ComponentProps<"div"> {
 }
 
 function ScrollSpy(props: ScrollSpyProps) {
-  const { value, defaultValue, onValueChange, ...rootProps } = props;
+  const {
+    value,
+    defaultValue,
+    onValueChange,
+    rootMargin,
+    threshold = 0.1,
+    offset = 0,
+    scrollBehavior = getDefaultScrollBehavior(),
+    scrollContainer = null,
+    dir: dirProp,
+    orientation = "horizontal",
+    asChild,
+    className,
+    ...rootProps
+  } = props;
+
+  const dir = useDirection(dirProp);
 
   const stateRef = useLazyRef<StoreState>(() => ({
     value: value ?? defaultValue ?? "",
@@ -134,32 +151,6 @@ function ScrollSpy(props: ScrollSpyProps) {
       },
     };
   }, [listenersRef, stateRef, onValueChangeRef]);
-
-  return (
-    <StoreContext.Provider value={store}>
-      <ScrollSpyImpl value={value} defaultValue={defaultValue} {...rootProps} />
-    </StoreContext.Provider>
-  );
-}
-
-function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
-  const {
-    value,
-    defaultValue,
-    rootMargin,
-    threshold = 0.1,
-    offset = 0,
-    scrollBehavior = getDefaultScrollBehavior(),
-    scrollContainer = null,
-    dir: dirProp,
-    orientation = "horizontal",
-    asChild,
-    className,
-    ...rootProps
-  } = props;
-
-  const dir = useDirection(dirProp);
-  const store = useStoreContext(ROOT_NAME);
 
   const sectionMapRef = React.useRef(new Map<string, Element>());
   const isScrollingRef = React.useRef(false);
@@ -318,19 +309,21 @@ function ScrollSpyImpl(props: Omit<ScrollSpyProps, "onValueChange">) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <ScrollSpyContext.Provider value={contextValue}>
-      <RootPrimitive
-        data-orientation={orientation}
-        data-slot="scroll-spy"
-        dir={dir}
-        {...rootProps}
-        className={cn(
-          "flex",
-          orientation === "horizontal" ? "flex-row" : "flex-col",
-          className,
-        )}
-      />
-    </ScrollSpyContext.Provider>
+    <StoreContext.Provider value={store}>
+      <ScrollSpyContext.Provider value={contextValue}>
+        <RootPrimitive
+          data-orientation={orientation}
+          data-slot="scroll-spy"
+          dir={dir}
+          {...rootProps}
+          className={cn(
+            "flex",
+            orientation === "horizontal" ? "flex-row" : "flex-col",
+            className,
+          )}
+        />
+      </ScrollSpyContext.Provider>
+    </StoreContext.Provider>
   );
 }
 

@@ -50,7 +50,6 @@ interface ButtonProps extends React.ComponentProps<"button"> {
 
 type PopoverContentProps = React.ComponentProps<typeof PopoverContent>;
 
-type RootElement = React.ComponentRef<typeof TimePicker>;
 type InputGroupElement = React.ComponentRef<typeof TimePickerInputGroup>;
 type InputElement = React.ComponentRef<typeof TimePickerInput>;
 type TriggerElement = React.ComponentRef<typeof TimePickerTrigger>;
@@ -217,8 +216,17 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
+function useStore<T>(
+  selector: (state: StoreState) => T,
+  ogStore?: Store | null,
+): T {
+  const contextStore = React.useContext(StoreContext);
+
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -303,18 +311,54 @@ interface TimePickerProps extends DivProps {
 
 function TimePicker(props: TimePickerProps) {
   const {
-    value,
+    value: valueProp,
     defaultValue,
     onValueChange,
     open,
     defaultOpen,
     onOpenChange,
+    openOnFocus = false,
+    inputGroupClickAction = "focus",
+    min,
+    max,
+    hourStep = DEFAULT_STEP,
+    minuteStep = DEFAULT_STEP,
+    secondStep = DEFAULT_STEP,
+    segmentPlaceholder = DEFAULT_SEGMENT_PLACEHOLDER,
+    locale = DEFAULT_LOCALE,
+    name,
+    asChild,
+    disabled = false,
+    invalid = false,
+    readOnly = false,
+    required = false,
+    showSeconds = false,
+    className,
+    children,
+    id,
+    ref,
     ...rootProps
   } = props;
 
+  const instanceId = React.useId();
+  const rootId = id ?? instanceId;
+  const inputGroupId = React.useId();
+  const labelId = React.useId();
+  const triggerId = React.useId();
+
+  const inputGroupRef = React.useRef<InputGroupElement>(null);
+  const triggerRef = React.useRef<TriggerElement>(null);
+
+  const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+
+  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
+
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
-    value: value ?? defaultValue ?? "",
+    value: valueProp ?? defaultValue ?? "",
     open: open ?? defaultOpen ?? false,
     openedViaFocus: false,
   }));
@@ -353,49 +397,7 @@ function TimePicker(props: TimePickerProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  return (
-    <StoreContext.Provider value={store}>
-      <TimePickerImpl {...rootProps} value={value} open={open} />
-    </StoreContext.Provider>
-  );
-}
-
-interface TimePickerImplProps
-  extends Omit<
-    TimePickerProps,
-    "defaultValue" | "defaultOpen" | "onValueChange" | "onOpenChange"
-  > {}
-
-function TimePickerImpl(props: TimePickerImplProps) {
-  const {
-    value: valueProp,
-    open: openProp,
-    openOnFocus = false,
-    inputGroupClickAction = "focus",
-    min,
-    max,
-    hourStep = DEFAULT_STEP,
-    minuteStep = DEFAULT_STEP,
-    secondStep = DEFAULT_STEP,
-    segmentPlaceholder = DEFAULT_SEGMENT_PLACEHOLDER,
-    locale = DEFAULT_LOCALE,
-    name,
-    asChild,
-    disabled = false,
-    invalid = false,
-    readOnly = false,
-    required = false,
-    showSeconds = false,
-    className,
-    children,
-    id,
-    ref,
-    ...rootProps
-  } = props;
-
-  const store = useStoreContext("TimePickerImpl");
-
-  const value = useStore((state) => state.value);
+  const value = useStore((state) => state.value, store);
 
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
@@ -404,28 +406,12 @@ function TimePickerImpl(props: TimePickerImplProps) {
   }, [valueProp]);
 
   useIsomorphicLayoutEffect(() => {
-    if (openProp !== undefined) {
-      store.setState("open", openProp);
+    if (open !== undefined) {
+      store.setState("open", open);
     }
-  }, [openProp]);
+  }, [open]);
 
-  const instanceId = React.useId();
-  const rootId = id ?? instanceId;
-  const inputGroupId = React.useId();
-  const labelId = React.useId();
-  const triggerId = React.useId();
-
-  const inputGroupRef = React.useRef<InputGroupElement>(null);
-  const triggerRef = React.useRef<TriggerElement>(null);
-
-  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
-    null,
-  );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
-
-  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
-
-  const open = useStore((state) => state.open);
+  const storeOpen = useStore((state) => state.open, store);
 
   const onPopoverOpenChange = React.useCallback(
     (newOpen: boolean) => store.setState("open", newOpen),
@@ -500,20 +486,22 @@ function TimePickerImpl(props: TimePickerImplProps) {
 
   return (
     <>
-      <TimePickerContext.Provider value={rootContext}>
-        <Popover open={open} onOpenChange={onPopoverOpenChange}>
-          <RootPrimitive
-            data-slot="time-picker"
-            data-disabled={disabled ? "" : undefined}
-            data-invalid={invalid ? "" : undefined}
-            ref={composedRef}
-            {...rootProps}
-            className={cn("relative", className)}
-          >
-            {children}
-          </RootPrimitive>
-        </Popover>
-      </TimePickerContext.Provider>
+      <StoreContext.Provider value={store}>
+        <TimePickerContext.Provider value={rootContext}>
+          <Popover open={storeOpen} onOpenChange={onPopoverOpenChange}>
+            <RootPrimitive
+              data-slot="time-picker"
+              data-disabled={disabled ? "" : undefined}
+              data-invalid={invalid ? "" : undefined}
+              ref={composedRef}
+              {...rootProps}
+              className={cn("relative", className)}
+            >
+              {children}
+            </RootPrimitive>
+          </Popover>
+        </TimePickerContext.Provider>
+      </StoreContext.Provider>
       {isFormControl && (
         <VisuallyHiddenInput
           type="hidden"

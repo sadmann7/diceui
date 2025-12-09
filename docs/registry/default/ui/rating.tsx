@@ -19,6 +19,7 @@ type Step = 0.5 | 1;
 type DataState = "full" | "partial" | "empty";
 type FocusIntent = "first" | "last" | "prev" | "next";
 
+type RootElement = React.ComponentRef<typeof Rating>;
 type ItemElement = React.ComponentRef<typeof RatingItem>;
 
 const ROOT_NAME = "Rating";
@@ -102,8 +103,17 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
+function useStore<T>(
+  selector: (state: StoreState) => T,
+  ogStore?: Store | null,
+): T {
+  const contextStore = React.useContext(StoreContext);
+
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -121,7 +131,7 @@ interface ItemData {
 }
 
 interface RatingContextValue {
-  id: string;
+  rootId: string;
   dir: Direction;
   orientation: Orientation;
   activationMode: ActivationMode;
@@ -192,8 +202,27 @@ function Rating(props: RatingProps) {
     defaultValue = 0,
     onValueChange,
     onHover,
+    dir: dirProp,
+    orientation = "horizontal",
+    activationMode = "automatic",
+    size = "default",
+    max = 5,
+    step = 1,
+    clearable = false,
+    asChild,
+    disabled = false,
+    readOnly = false,
+    required = false,
+    id,
+    name,
+    className,
+    ref,
     ...rootProps
   } = props;
+
+  const dir = useDirection(dirProp);
+  const instanceId = React.useId();
+  const rootId = id ?? instanceId;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
@@ -203,6 +232,7 @@ function Rating(props: RatingProps) {
   const propsRef = useAsRef({
     onValueChange,
     onHover,
+    step,
   });
 
   const store = React.useMemo<Store>(() => {
@@ -235,62 +265,15 @@ function Rating(props: RatingProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  return (
-    <StoreContext.Provider value={store}>
-      <RatingImpl {...rootProps} value={value} />
-    </StoreContext.Provider>
-  );
-}
-
-interface RatingImplProps
-  extends Omit<RatingProps, "defaultValue" | "onValueChange" | "onHover"> {}
-
-function RatingImpl(props: RatingImplProps) {
-  const {
-    value,
-    id: idProp,
-    dir: dirProp,
-    orientation = "horizontal",
-    activationMode = "automatic",
-    size = "default",
-    max = 5,
-    step = 1,
-    clearable = false,
-    asChild,
-    disabled = false,
-    readOnly = false,
-    required = false,
-    name,
-    className,
-    ref,
-    ...rootProps
-  } = props;
-
-  const store = useStoreContext("RatingImpl");
+  const currentValue = useStore((state) => state.value, store);
 
   useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("value", value);
     }
-  }, [value, store]);
+  }, [value]);
 
-  const dir = useDirection(dirProp);
-  const id = React.useId();
-  const rootId = idProp ?? id;
-  const currentValue = useStore((state) => state.value);
-
-  const propsRef = useAsRef({
-    orientation,
-    activationMode,
-    size,
-    max,
-    step,
-    clearable,
-    disabled,
-    readOnly,
-  });
-
-  const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
+  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
   );
   const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
@@ -420,19 +403,31 @@ function RatingImpl(props: RatingImplProps) {
 
   const contextValue = React.useMemo<RatingContextValue>(
     () => ({
-      id: rootId,
+      rootId,
       dir,
-      orientation: propsRef.current.orientation,
-      activationMode: propsRef.current.activationMode,
-      disabled: propsRef.current.disabled,
-      readOnly: propsRef.current.readOnly,
-      size: propsRef.current.size,
-      max: propsRef.current.max,
-      step: propsRef.current.step,
-      clearable: propsRef.current.clearable,
+      orientation,
+      activationMode,
+      disabled,
+      readOnly,
+      size,
+      max,
+      step,
+      clearable,
       getAutoIndex,
     }),
-    [rootId, dir, propsRef, getAutoIndex],
+    [
+      rootId,
+      dir,
+      orientation,
+      activationMode,
+      disabled,
+      readOnly,
+      size,
+      max,
+      step,
+      clearable,
+      getAutoIndex,
+    ],
   );
 
   const focusContextValue = React.useMemo<FocusContextValue>(
@@ -461,61 +456,63 @@ function RatingImpl(props: RatingImplProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <RatingContext.Provider value={contextValue}>
-      <FocusContext.Provider value={focusContextValue}>
-        <RootPrimitive
-          id={rootId}
-          role="radiogroup"
-          aria-orientation={orientation}
-          data-disabled={disabled ? "" : undefined}
-          data-readonly={readOnly ? "" : undefined}
-          data-orientation={orientation}
-          data-slot="rating"
-          dir={dir}
-          tabIndex={isTabbingBackOut || focusableItemCount === 0 ? -1 : 0}
-          {...rootProps}
-          ref={composedRef}
-          className={cn(
-            "flex gap-1 text-primary outline-none",
-            orientation === "horizontal"
-              ? "flex-row items-center"
-              : "flex-col items-start",
-            className,
-          )}
-          onBlur={onBlur}
-          onFocus={onFocus}
-          onMouseDown={onMouseDown}
-        />
-        <svg width="0" height="0" style={{ position: "absolute" }}>
-          <defs>
-            <linearGradient id={getPartialFillGradientId(rootId, step)}>
-              {dir === "rtl" ? (
-                <>
-                  <stop offset="50%" stopColor="transparent" />
-                  <stop offset="50%" stopColor="currentColor" />
-                </>
-              ) : (
-                <>
-                  <stop offset="50%" stopColor="currentColor" />
-                  <stop offset="50%" stopColor="transparent" />
-                </>
-              )}
-            </linearGradient>
-          </defs>
-        </svg>
-        {isFormControl && (
-          <VisuallyHiddenInput
-            type="hidden"
-            control={formTrigger}
-            name={name}
-            value={currentValue}
-            disabled={disabled}
-            readOnly={readOnly}
-            required={required}
+    <StoreContext.Provider value={store}>
+      <RatingContext.Provider value={contextValue}>
+        <FocusContext.Provider value={focusContextValue}>
+          <RootPrimitive
+            id={rootId}
+            role="radiogroup"
+            aria-orientation={orientation}
+            data-disabled={disabled ? "" : undefined}
+            data-readonly={readOnly ? "" : undefined}
+            data-orientation={orientation}
+            data-slot="rating"
+            dir={dir}
+            tabIndex={isTabbingBackOut || focusableItemCount === 0 ? -1 : 0}
+            {...rootProps}
+            ref={composedRef}
+            className={cn(
+              "flex gap-1 text-primary outline-none",
+              orientation === "horizontal"
+                ? "flex-row items-center"
+                : "flex-col items-start",
+              className,
+            )}
+            onBlur={onBlur}
+            onFocus={onFocus}
+            onMouseDown={onMouseDown}
           />
-        )}
-      </FocusContext.Provider>
-    </RatingContext.Provider>
+          <svg width="0" height="0" style={{ position: "absolute" }}>
+            <defs>
+              <linearGradient id={getPartialFillGradientId(rootId, step)}>
+                {dir === "rtl" ? (
+                  <>
+                    <stop offset="50%" stopColor="transparent" />
+                    <stop offset="50%" stopColor="currentColor" />
+                  </>
+                ) : (
+                  <>
+                    <stop offset="50%" stopColor="currentColor" />
+                    <stop offset="50%" stopColor="transparent" />
+                  </>
+                )}
+              </linearGradient>
+            </defs>
+          </svg>
+          {isFormControl && (
+            <VisuallyHiddenInput
+              type="hidden"
+              control={formTrigger}
+              name={name}
+              value={currentValue}
+              disabled={disabled}
+              readOnly={readOnly}
+              required={required}
+            />
+          )}
+        </FocusContext.Provider>
+      </RatingContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
@@ -554,7 +551,7 @@ function RatingItem(props: RatingItemProps) {
   const step = context.step;
   const activationMode = context.activationMode;
 
-  const itemId = getItemId(context.id, itemValue);
+  const itemId = getItemId(context.rootId, itemValue);
   const isDisabled = context.disabled || disabled;
   const isReadOnly = context.readOnly;
   const isTabStop = focusContext.tabStopId === itemId;
@@ -891,7 +888,7 @@ function RatingItem(props: RatingItemProps) {
       style={{
         ...itemProps.style,
         ...(isPartiallyFilled && {
-          "--partial-fill": `url(#${getPartialFillGradientId(context.id, step)})`,
+          "--partial-fill": `url(#${getPartialFillGradientId(context.rootId, step)})`,
         }),
       }}
       className={cn(

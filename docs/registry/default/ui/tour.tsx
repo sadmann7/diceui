@@ -320,8 +320,17 @@ interface Store {
   removeStep: (id: string) => void;
 }
 
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
+function useStore<T>(
+  selector: (state: StoreState) => T,
+  ogStore?: Store | null,
+): T {
+  const contextStore = React.useContext(StoreContext);
+
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -554,8 +563,27 @@ function Tour(props: TourProps) {
     autoScroll = true,
     scrollBehavior = getDefaultScrollBehavior(),
     scrollOffset,
+    onEscapeKeyDown,
+    onPointerDownOutside,
+    onInteractOutside,
+    onOpenAutoFocus,
+    onCloseAutoFocus,
+    dir: dirProp,
+    alignOffset = DEFAULT_ALIGN_OFFSET,
+    sideOffset = DEFAULT_SIDE_OFFSET,
+    spotlightPadding = DEFAULT_SPOTLIGHT_PADDING,
+    dismissible = true,
+    modal = true,
+    stepFooter,
+    asChild,
     ...rootProps
   } = props;
+
+  const dir = useDirection(dirProp);
+
+  const [portal, setPortal] = React.useState<HTMLElement | null>(null);
+  const prevOpenRef = React.useRef<boolean | undefined>(undefined);
+  const previouslyFocusedElementRef = React.useRef<HTMLElement | null>(null);
 
   const stateRef = useLazyRef<StoreState>(() => ({
     open: openProp ?? defaultOpen,
@@ -573,6 +601,8 @@ function Tour(props: TourProps) {
     onValueChange,
     onComplete,
     onSkip,
+    onEscapeKeyDown,
+    onCloseAutoFocus,
     autoScroll,
     scrollBehavior,
     scrollOffset,
@@ -682,73 +712,13 @@ function Tour(props: TourProps) {
     [stateRef, listenersRef, stepIdsMapRef, stepIdCounterRef, propsRef],
   );
 
-  useIsomorphicLayoutEffect(() => {
-    if (openProp !== undefined) {
-      store.setState("open", openProp);
-    }
-  }, [openProp, store]);
-
-  useIsomorphicLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
-    }
-  }, [valueProp, store]);
-
-  return (
-    <StoreContext.Provider value={store}>
-      <TourImpl {...rootProps} />
-    </StoreContext.Provider>
-  );
-}
-
-interface TourImplProps
-  extends Omit<
-    TourProps,
-    | "open"
-    | "defaultOpen"
-    | "onOpenChange"
-    | "value"
-    | "defaultValue"
-    | "onValueChange"
-    | "onComplete"
-    | "onSkip"
-    | "autoScroll"
-    | "scrollBehavior"
-    | "scrollOffset"
-  > {}
-
-function TourImpl(props: TourImplProps) {
-  const {
-    onEscapeKeyDown,
-    onPointerDownOutside,
-    onInteractOutside,
-    onOpenAutoFocus,
-    onCloseAutoFocus,
-    dir: dirProp,
-    alignOffset = DEFAULT_ALIGN_OFFSET,
-    sideOffset = DEFAULT_SIDE_OFFSET,
-    spotlightPadding = DEFAULT_SPOTLIGHT_PADDING,
-    dismissible = true,
-    modal = true,
-    stepFooter,
-    asChild,
-    ...rootImplProps
-  } = props;
-
-  const store = useStoreContext("TourImpl");
-  const dir = useDirection(dirProp);
-
-  const [portal, setPortal] = React.useState<HTMLElement | null>(null);
-  const previouslyFocusedElementRef = React.useRef<HTMLElement | null>(null);
-
-  const onEscapeKeyDownRef = useAsRef(onEscapeKeyDown);
-  const onCloseAutoFocusRef = useAsRef(onCloseAutoFocus);
+  const open = useStore((state) => state.open, store);
 
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (store.getState().open && event.key === "Escape") {
-        if (onEscapeKeyDownRef.current) {
-          onEscapeKeyDownRef.current(event);
+      if (open && event.key === "Escape") {
+        if (propsRef.current.onEscapeKeyDown) {
+          propsRef.current.onEscapeKeyDown(event);
           if (event.defaultPrevented) return;
         }
         store.setState("open", false);
@@ -757,10 +727,7 @@ function TourImpl(props: TourImplProps) {
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [store, onEscapeKeyDownRef]);
-
-  const open = useStore((state) => state.open);
-  const prevOpenRef = React.useRef<boolean | undefined>(undefined);
+  }, [store, open, propsRef]);
 
   useIsomorphicLayoutEffect(() => {
     const wasOpen = prevOpenRef.current;
@@ -776,10 +743,10 @@ function TourImpl(props: TourImplProps) {
           EVENT_OPTIONS,
         );
 
-        if (onCloseAutoFocusRef.current) {
+        if (propsRef.current.onCloseAutoFocus) {
           container.addEventListener(
             CLOSE_AUTO_FOCUS,
-            onCloseAutoFocusRef.current as EventListener,
+            propsRef.current.onCloseAutoFocus as EventListener,
             { once: true },
           );
         }
@@ -797,7 +764,19 @@ function TourImpl(props: TourImplProps) {
     }
 
     prevOpenRef.current = open;
-  }, [open, portal, onCloseAutoFocusRef]);
+  }, [open, portal, propsRef]);
+
+  useIsomorphicLayoutEffect(() => {
+    if (openProp !== undefined) {
+      store.setState("open", openProp);
+    }
+  }, [openProp, store]);
+
+  useIsomorphicLayoutEffect(() => {
+    if (valueProp !== undefined) {
+      store.setState("value", valueProp);
+    }
+  }, [valueProp, store]);
 
   const contextValue = React.useMemo<TourContextValue>(
     () => ({
@@ -841,11 +820,13 @@ function TourImpl(props: TourImplProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <TourContext.Provider value={contextValue}>
-      <PortalContext.Provider value={portalContextValue}>
-        <RootPrimitive data-slot="tour" dir={dir} {...rootImplProps} />
-      </PortalContext.Provider>
-    </TourContext.Provider>
+    <StoreContext.Provider value={store}>
+      <TourContext.Provider value={contextValue}>
+        <PortalContext.Provider value={portalContextValue}>
+          <RootPrimitive data-slot="tour" dir={dir} {...rootProps} />
+        </PortalContext.Provider>
+      </TourContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
