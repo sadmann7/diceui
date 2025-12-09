@@ -185,6 +185,11 @@ function FileUpload(props: FileUploadProps) {
 
   const propsRef = useAsRef({
     onValueChange,
+    onAccept,
+    onFileAccept,
+    onFileReject,
+    onFileValidate,
+    onUpload,
   });
 
   const store = React.useMemo<Store>(() => {
@@ -383,8 +388,8 @@ function FileUpload(props: FileUploadProps) {
           store.dispatch({ type: "SET_PROGRESS", file, progress: 0 });
         }
 
-        if (onUpload) {
-          await onUpload(files, {
+        if (propsRef.current.onUpload) {
+          await propsRef.current.onUpload(files, {
             onProgress,
             onSuccess: (file) => {
               store.dispatch({ type: "SET_SUCCESS", file });
@@ -414,7 +419,7 @@ function FileUpload(props: FileUploadProps) {
         }
       }
     },
-    [store, onUpload, onProgress],
+    [store, propsRef, onProgress],
   );
 
   const onFilesChange = React.useCallback(
@@ -437,14 +442,14 @@ function FileUpload(props: FileUploadProps) {
           for (const file of rejectedFiles) {
             let rejectionMessage = `Maximum ${maxFiles} files allowed`;
 
-            if (onFileValidate) {
-              const validationMessage = onFileValidate(file);
+            if (propsRef.current.onFileValidate) {
+              const validationMessage = propsRef.current.onFileValidate(file);
               if (validationMessage) {
                 rejectionMessage = validationMessage;
               }
             }
 
-            onFileReject?.(file, rejectionMessage);
+            propsRef.current.onFileReject?.(file, rejectionMessage);
           }
         }
       }
@@ -456,11 +461,11 @@ function FileUpload(props: FileUploadProps) {
         let rejected = false;
         let rejectionMessage = "";
 
-        if (onFileValidate) {
-          const validationMessage = onFileValidate(file);
+        if (propsRef.current.onFileValidate) {
+          const validationMessage = propsRef.current.onFileValidate(file);
           if (validationMessage) {
             rejectionMessage = validationMessage;
-            onFileReject?.(file, rejectionMessage);
+            propsRef.current.onFileReject?.(file, rejectionMessage);
             rejected = true;
             invalid = true;
             continue;
@@ -481,7 +486,7 @@ function FileUpload(props: FileUploadProps) {
             )
           ) {
             rejectionMessage = "File type not accepted";
-            onFileReject?.(file, rejectionMessage);
+            propsRef.current.onFileReject?.(file, rejectionMessage);
             rejected = true;
             invalid = true;
           }
@@ -489,7 +494,7 @@ function FileUpload(props: FileUploadProps) {
 
         if (maxSize && file.size > maxSize) {
           rejectionMessage = "File too large";
-          onFileReject?.(file, rejectionMessage);
+          propsRef.current.onFileReject?.(file, rejectionMessage);
           rejected = true;
           invalid = true;
         }
@@ -511,22 +516,22 @@ function FileUpload(props: FileUploadProps) {
       if (acceptedFiles.length > 0) {
         store.dispatch({ type: "ADD_FILES", files: acceptedFiles });
 
-        if (isControlled && onValueChange) {
+        if (isControlled && propsRef.current.onValueChange) {
           const currentFiles = Array.from(store.getState().files.values()).map(
             (f) => f.file,
           );
-          onValueChange([...currentFiles]);
+          propsRef.current.onValueChange([...currentFiles]);
         }
 
-        if (onAccept) {
-          onAccept(acceptedFiles);
+        if (propsRef.current.onAccept) {
+          propsRef.current.onAccept(acceptedFiles);
         }
 
         for (const file of acceptedFiles) {
-          onFileAccept?.(file);
+          propsRef.current.onFileAccept?.(file);
         }
 
-        if (onUpload) {
+        if (propsRef.current.onUpload) {
           requestAnimationFrame(() => {
             onFilesUpload(acceptedFiles);
           });
@@ -536,14 +541,9 @@ function FileUpload(props: FileUploadProps) {
     [
       store,
       isControlled,
-      onValueChange,
-      onAccept,
-      onFileAccept,
-      onUpload,
+      propsRef,
       onFilesUpload,
       maxFiles,
-      onFileValidate,
-      onFileReject,
       acceptTypes,
       maxSize,
       disabled,
