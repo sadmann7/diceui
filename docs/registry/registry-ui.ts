@@ -29,7 +29,11 @@ export const ui: Registry["items"] = [
     name: "angle-slider",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
-    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
+    registryDependencies: [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/angle-slider.tsx",
@@ -176,7 +180,11 @@ export const ui: Registry["items"] = [
     name: "cropper",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["use-isomorphic-layout-effect", "use-lazy-ref"],
+    registryDependencies: [
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/cropper.tsx",
@@ -238,7 +246,7 @@ export const ui: Registry["items"] = [
       "@radix-ui/react-direction",
       "lucide-react",
     ],
-    registryDependencies: ["use-lazy-ref"],
+    registryDependencies: ["use-as-ref", "use-lazy-ref"],
     files: [
       {
         path: "ui/file-upload.tsx",

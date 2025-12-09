@@ -57,6 +57,7 @@
         "@radix-ui/react-direction"
       ],
       "registryDependencies": [
+        "use-as-ref",
         "use-isomorphic-layout-effect",
         "use-lazy-ref"
       ],
@@ -222,6 +223,7 @@
         "@radix-ui/react-slot"
       ],
       "registryDependencies": [
+        "use-as-ref",
         "use-isomorphic-layout-effect",
         "use-lazy-ref"
       ],
@@ -290,6 +292,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "use-as-ref",
         "use-lazy-ref"
       ],
       "files": [

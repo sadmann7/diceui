@@ -5,6 +5,7 @@
     "@radix-ui/react-slot"
   ],
   "registryDependencies": [
+    "use-as-ref",
     "use-isomorphic-layout-effect",
     "use-lazy-ref"
   ],
