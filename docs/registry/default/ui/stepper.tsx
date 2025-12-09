@@ -689,6 +689,8 @@ function StepperTrigger(props: ButtonProps) {
 
   const context = useStepperContext(TRIGGER_NAME);
   const itemContext = useStepperItemContext(TRIGGER_NAME);
+  const itemValue = itemContext.value;
+
   const store = useStoreContext(TRIGGER_NAME);
   const focusContext = useFocusContext(TRIGGER_NAME);
   const value = useStore((state) => state.value);
@@ -705,8 +707,6 @@ function StepperTrigger(props: ButtonProps) {
   const activationMode = context.activationMode;
   const orientation = context.orientation;
   const loop = context.loop;
-
-  const itemValue = itemContext.value;
 
   const stepIndex = Array.from(steps.keys()).indexOf(itemValue);
 
