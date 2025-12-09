@@ -254,6 +254,7 @@ interface TimePickerContextValue {
   triggerRef: React.RefObject<TriggerElement | null>;
   openOnFocus: boolean;
   inputGroupClickAction: "focus" | "open";
+  onInputGroupChange: (inputGroup: InputGroupElement | null) => void;
   disabled: boolean;
   readOnly: boolean;
   required: boolean;
@@ -336,7 +337,6 @@ function TimePicker(props: TimePickerProps) {
     className,
     children,
     id,
-    ref,
     ...rootProps
   } = props;
 
@@ -349,12 +349,11 @@ function TimePicker(props: TimePickerProps) {
   const inputGroupRef = React.useRef<InputGroupElement>(null);
   const triggerRef = React.useRef<TriggerElement>(null);
 
-  const [formTrigger, setFormTrigger] = React.useState<HTMLDivElement | null>(
+  const [inputGroup, setInputGroup] = React.useState<InputGroupElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
 
-  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
+  const isFormControl = inputGroup ? !!inputGroup.closest("form") : true;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
@@ -362,6 +361,7 @@ function TimePicker(props: TimePickerProps) {
     open: open ?? defaultOpen ?? false,
     openedViaFocus: false,
   }));
+
   const propsRef = useAsRef({ onValueChange, onOpenChange });
 
   const store: Store = React.useMemo(() => {
@@ -447,6 +447,7 @@ function TimePicker(props: TimePickerProps) {
       triggerRef,
       openOnFocus,
       inputGroupClickAction,
+      onInputGroupChange: setInputGroup,
       disabled,
       readOnly,
       required,
@@ -493,7 +494,6 @@ function TimePicker(props: TimePickerProps) {
               data-slot="time-picker"
               data-disabled={disabled ? "" : undefined}
               data-invalid={invalid ? "" : undefined}
-              ref={composedRef}
               {...rootProps}
               className={cn("relative", className)}
             >
@@ -505,7 +505,7 @@ function TimePicker(props: TimePickerProps) {
       {isFormControl && (
         <VisuallyHiddenInput
           type="hidden"
-          control={formTrigger}
+          control={inputGroup}
           name={name}
           value={value}
           disabled={disabled}
@@ -579,6 +579,7 @@ function TimePickerInputGroup(props: DivProps) {
   const {
     inputGroupId,
     labelId,
+    onInputGroupChange,
     disabled,
     readOnly,
     invalid,
@@ -590,7 +591,7 @@ function TimePickerInputGroup(props: DivProps) {
 
   const store = useStoreContext(INPUT_GROUP_NAME);
 
-  const composedRef = useComposedRefs(ref, inputGroupRef);
+  const composedRef = useComposedRefs(ref, inputGroupRef, onInputGroupChange);
 
   const inputRefsMap = React.useRef<
     Map<Segment, React.RefObject<InputElement | null>>

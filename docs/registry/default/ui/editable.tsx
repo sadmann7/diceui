@@ -227,6 +227,7 @@ function Editable(props: EditableProps) {
     value: valueProp ?? defaultValue,
     editing: editingProp ?? defaultEditing ?? false,
   }));
+
   const propsRef = useAsRef({
     onValueChange,
     onEditingChange,
