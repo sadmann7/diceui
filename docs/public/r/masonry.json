@@ -6,7 +6,7 @@
     "@radix-ui/react-slot"
   ],
   "registryDependencies": [
-    "use-isomorphic-layout-effect"
+    "@diceui/use-isomorphic-layout-effect"
   ],
   "files": [
     {

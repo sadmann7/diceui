@@ -13,7 +13,7 @@
     "slider",
     "tooltip",
     "dropdown-menu",
-    "use-lazy-ref"
+    "@diceui/use-lazy-ref"
   ],
   "files": [
     {

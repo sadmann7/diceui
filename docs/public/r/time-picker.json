@@ -6,9 +6,9 @@
   ],
   "registryDependencies": [
     "popover",
-    "use-as-ref",
-    "use-isomorphic-layout-effect",
-    "use-lazy-ref"
+    "@diceui/use-as-ref",
+    "@diceui/use-isomorphic-layout-effect",
+    "@diceui/use-lazy-ref"
   ],
   "files": [
     {

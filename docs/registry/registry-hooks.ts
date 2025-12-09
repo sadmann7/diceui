@@ -4,7 +4,7 @@ export const hooks: Registry["items"] = [
   {
     name: "use-as-ref",
     type: "registry:hook",
-    registryDependencies: ["use-isomorphic-layout-effect"],
+    registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
     files: [
       {
         path: "hooks/use-as-ref.ts",
