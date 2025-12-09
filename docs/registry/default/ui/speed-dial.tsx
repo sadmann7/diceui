@@ -348,7 +348,7 @@ function useSpeedDialItemImplContext() {
 }
 
 const speedDialContentVariants = cva(
-  "absolute z-50 flex gap-[var(--speed-dial-gap)]",
+  "absolute z-50 flex gap-[var(--speed-dial-gap)] data-[state=closed]:pointer-events-none",
   {
     variants: {
       side: {
@@ -501,8 +501,6 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     store,
   ]);
 
-  if (!open) return null;
-
   const ContentPrimitive = asChild ? Slot : "div";
 
   return (
@@ -511,6 +509,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       role="menu"
       aria-orientation={orientation}
       data-slot="speed-dial-content"
+      data-state={getDataState(open)}
       data-orientation={orientation}
       data-side={side}
       {...contentProps}
@@ -544,7 +543,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 }
 
 const speedDialItemVariants = cva(
-  "flex items-center gap-2 transition-all duration-200 [transform-origin:var(--speed-dial-transform-origin)] [transition-delay:var(--speed-dial-delay)]",
+  "flex items-center gap-2 transition-all duration-200 [transform-origin:var(--speed-dial-transform-origin)] [transition-delay:var(--speed-dial-delay)] data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=open]:scale-100 data-[state=open]:opacity-100",
   {
     variants: {
       side: {
@@ -553,36 +552,31 @@ const speedDialItemVariants = cva(
         left: "flex-row-reverse justify-start",
         right: "justify-start",
       },
-      open: {
-        true: "translate-x-0 translate-y-0 scale-100 opacity-100",
-        false: "",
-      },
     },
     compoundVariants: [
       {
         side: "top",
-        open: false,
-        className: "translate-y-4 scale-0 opacity-0",
+        className:
+          "data-[state=closed]:translate-y-4 data-[state=closed]:scale-0 data-[state=closed]:opacity-0",
       },
       {
         side: "bottom",
-        open: false,
-        className: "-translate-y-4 scale-0 opacity-0",
+        className:
+          "data-[state=closed]:-translate-y-4 data-[state=closed]:scale-0 data-[state=closed]:opacity-0",
       },
       {
         side: "left",
-        open: false,
-        className: "translate-x-4 scale-0 opacity-0",
+        className:
+          "data-[state=closed]:translate-x-4 data-[state=closed]:scale-0 data-[state=closed]:opacity-0",
       },
       {
         side: "right",
-        open: false,
-        className: "-translate-x-4 scale-0 opacity-0",
+        className:
+          "data-[state=closed]:-translate-x-4 data-[state=closed]:scale-0 data-[state=closed]:opacity-0",
       },
     ],
     defaultVariants: {
       side: "top",
-      open: false,
     },
   },
 );
@@ -614,8 +608,9 @@ function SpeedDialItem(props: DivProps) {
         role="none"
         data-slot="speed-dial-item"
         data-state={getDataState(open)}
+        data-side={side}
         {...itemProps}
-        className={cn(speedDialItemVariants({ side, open, className }))}
+        className={cn(speedDialItemVariants({ side, className }))}
         style={
           {
             "--speed-dial-delay": `${delay}ms`,

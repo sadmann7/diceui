@@ -13,33 +13,30 @@ import {
 
 export default function SpeedDialDemo() {
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div>Other content</div>
-      <SpeedDial>
-        <SpeedDialTrigger className="transition-transform duration-200 ease-out data-[state=closed]:rotate-0 data-[state=open]:rotate-135">
-          <Plus />
-        </SpeedDialTrigger>
-        <SpeedDialContent>
-          <SpeedDialItem>
-            <SpeedDialLabel className="sr-only">Share</SpeedDialLabel>
-            <SpeedDialAction onSelect={() => toast.success("Shared")}>
-              <Share2 />
-            </SpeedDialAction>
-          </SpeedDialItem>
-          <SpeedDialItem>
-            <SpeedDialLabel className="sr-only">Copy</SpeedDialLabel>
-            <SpeedDialAction onSelect={() => toast.success("Copied")}>
-              <Copy />
-            </SpeedDialAction>
-          </SpeedDialItem>
-          <SpeedDialItem>
-            <SpeedDialLabel className="sr-only">Like</SpeedDialLabel>
-            <SpeedDialAction onSelect={() => toast.success("Liked")}>
-              <Heart />
-            </SpeedDialAction>
-          </SpeedDialItem>
-        </SpeedDialContent>
-      </SpeedDial>
-    </div>
+    <SpeedDial>
+      <SpeedDialTrigger className="transition-transform duration-200 ease-out data-[state=closed]:rotate-0 data-[state=open]:rotate-135">
+        <Plus />
+      </SpeedDialTrigger>
+      <SpeedDialContent>
+        <SpeedDialItem>
+          <SpeedDialLabel className="sr-only">Share</SpeedDialLabel>
+          <SpeedDialAction onSelect={() => toast.success("Shared")}>
+            <Share2 />
+          </SpeedDialAction>
+        </SpeedDialItem>
+        <SpeedDialItem>
+          <SpeedDialLabel className="sr-only">Copy</SpeedDialLabel>
+          <SpeedDialAction onSelect={() => toast.success("Copied")}>
+            <Copy />
+          </SpeedDialAction>
+        </SpeedDialItem>
+        <SpeedDialItem>
+          <SpeedDialLabel className="sr-only">Like</SpeedDialLabel>
+          <SpeedDialAction onSelect={() => toast.success("Liked")}>
+            <Heart />
+          </SpeedDialAction>
+        </SpeedDialItem>
+      </SpeedDialContent>
+    </SpeedDial>
   );
 }
