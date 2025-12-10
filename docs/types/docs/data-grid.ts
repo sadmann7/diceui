@@ -43,12 +43,12 @@ export interface UseDataGridProps<TData>
    * Should return the position to focus after adding the row, or null to prevent default behavior.
    * Can be async to support server-side row creation.
    *
-   * @returns Position to focus after adding (rowIndex and/or columnId), or null/void
-   *
    * ```ts
    * onRowAdd={async () => {
    *   const newRow = await createRow()
    *   setData(prev => [...prev, newRow])
+   *
+   *   // Focus the cell under the "name" column in the new row
    *   return { rowIndex: data.length, columnId: "name" }
    * }}
    * ```
