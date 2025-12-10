@@ -52,13 +52,6 @@ links:
     ```
   </Step>
   <Step>
-    Install the [`DataTableActionBar`](#datatableactionbar) (optional):
-
-    ```package-install
-    npx shadcn@latest add "@diceui/data-table-action-bar"
-    ```
-  </Step>
-  <Step>
     Update import paths for custom components:
 
     The shadcn CLI doesn't handle custom component paths properly ([see issue](https://github.com/shadcn-ui/ui/issues/8308)). You'll need to update these imports manually:
@@ -273,19 +266,31 @@ const { table } = useDataTable({
     Render an action bar on row selection:
 
     ```tsx
-    import { DataTableActionBar } from "@/components/data-table/data-table-action-bar";
-    import { CustomTableActions } from "@/components/data-table/custom-table-actions";
+    import { ActionBar } from "@/components/ui/action-bar";
+
+    function TableActionBar({ table }: { table: Table<Data> }) {
+      const rows = table.getFilteredSelectedRowModel().rows;
+
+      const onOpenChange = React.useCallback((open: boolean) => {
+        if (!open) {
+          table.toggleAllRowsSelected(false);
+          }
+        },
+        [table],
+      );
+      
+      return (
+        <ActionBar open={rows.length > 0} onOpenChange={onOpenChange}>
+          {/* Add your custom actions here */}
+        </ActionBar>
+      );
+    }
 
     function DataTableDemo() {
       return (
         <DataTable 
           table={table}
-          actionBar={
-            <DataTableActionBar table={table}>
-              {/* Add your custom actions here */}
-              <CustomTableActions />
-            </DataTableActionBar>
-          }
+          actionBar={<TableActionBar table={table} />}
         >
           <DataTableToolbar table={table} />
         </DataTable>
@@ -547,15 +552,6 @@ Filter menu with ability to add, remove, and modify filters.
 <AutoTypeTable
   path="./types/docs/data-table.ts"
   name="DataTableFilterMenuProps"
-/>
-
-### DataTableActionBar
-
-Floating action bar component for actions for selected rows.
-
-<AutoTypeTable
-  path="./types/docs/data-table.ts"
-  name="DataTableActionBarProps"
 />
 
 ### DataTablePagination

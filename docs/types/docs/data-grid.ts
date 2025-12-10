@@ -453,7 +453,7 @@ export interface DataGridCellWrapperProps<TData> {
   isSelected: boolean;
 }
 
-export interface CellVariantProps<TData> {
+export interface DataGridCellProps<TData> {
   /**
    * The cell instance from TanStack Table.
    * Contains the cell value, column, and row information.
@@ -495,6 +495,18 @@ export interface CellVariantProps<TData> {
    * Used to render selection highlight for multi-cell selection.
    */
   isSelected: boolean;
+
+  /**
+   * Whether the cell matches the current search query.
+   * Used to highlight cells that match search results.
+   */
+  isSearchMatch: boolean;
+
+  /**
+   * Whether the cell is the currently active search match.
+   * Used to highlight the specific match being navigated to.
+   */
+  isActiveSearchMatch: boolean;
 
   /**
    * Whether the cell is read-only.
