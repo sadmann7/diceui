@@ -403,100 +403,6 @@ export interface DataGridCellProps<TData> {
   isSelected: boolean;
 
   /**
-   * Whether the cell is read-only.
-   * When true, prevents editing and shows read-only UI.
-   */
-  readOnly: boolean;
-}
-
-export interface DataGridCellWrapperProps<TData> {
-  /**
-   * The cell instance from TanStack Table.
-   * Contains the cell value, column, and row information.
-   */
-  cell: Cell<TData, unknown>;
-
-  /**
-   * The table instance from useDataGrid hook.
-   * Used to access table state and trigger cell actions.
-   */
-  table: Table<TData>;
-
-  /**
-   * The row index in the data array.
-   * Used for cell positioning and identification.
-   */
-  rowIndex: number;
-
-  /**
-   * The column ID for this cell.
-   * Used to identify the cell in the grid.
-   */
-  columnId: string;
-
-  /**
-   * Whether the cell is currently focused.
-   * Used to render focus ring and handle keyboard navigation.
-   */
-  isFocused: boolean;
-
-  /**
-   * Whether the cell is currently being edited.
-   * Used to show edit mode UI and handle editing interactions.
-   */
-  isEditing: boolean;
-
-  /**
-   * Whether the cell is selected.
-   * Used to render selection highlight for multi-cell selection.
-   */
-  isSelected: boolean;
-}
-
-export interface DataGridCellProps<TData> {
-  /**
-   * The cell instance from TanStack Table.
-   * Contains the cell value, column, and row information.
-   */
-  cell: Cell<TData, unknown>;
-
-  /**
-   * The table instance from useDataGrid hook.
-   * Used to access table state and trigger cell updates.
-   */
-  table: Table<TData>;
-
-  /**
-   * The row index in the data array.
-   * Used for cell positioning and data updates.
-   */
-  rowIndex: number;
-
-  /**
-   * The column ID for this cell.
-   * Used to identify the cell when updating data.
-   */
-  columnId: string;
-
-  /**
-   * Whether the cell is currently focused.
-   * Used to render focus ring and enable editing mode.
-   */
-  isFocused: boolean;
-
-  /**
-   * Whether the cell is currently being edited.
-   * Used to show edit UI (input, select, textarea, etc).
-   */
-  isEditing: boolean;
-
-  /**
-   * Whether the cell is selected.
-   * Used to render selection highlight for multi-cell selection.
-   */
-  isSelected: boolean;
-
-  /**
    * Whether the cell matches the current search query.
    * Used to highlight cells that match search results.
    */
@@ -514,6 +420,10 @@ export interface DataGridCellProps<TData> {
    */
   readOnly: boolean;
 }
+
+export interface DataGridCellWrapperProps<TData>
+  extends DataGridCellProps<TData>,
+    EmptyProps<"div"> {}
 
 export interface DataGridRowProps<TData> {
   /**
