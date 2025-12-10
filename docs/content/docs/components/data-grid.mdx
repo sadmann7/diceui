@@ -619,11 +619,11 @@ Each cell variant receives the same props and wraps its content in `DataGridCell
 
 ### Creating Custom Cell Variants
 
-You can create custom cell variants by implementing the `CellVariantProps` interface and wrapping your content in `DataGridCellWrapper`:
+You can create custom cell variants by implementing the `DataGridCellProps` interface and wrapping your content in `DataGridCellWrapper`:
 
 ```tsx
 import { DataGridCellWrapper } from "@/components/data-grid/data-grid-cell-wrapper";
-import type { CellVariantProps } from "@/types/data-grid";
+import type { DataGridCellProps } from "@/types/data-grid";
 
 export function CustomCell<TData>({
   cell,
@@ -633,9 +633,11 @@ export function CustomCell<TData>({
   isFocused,
   isEditing,
   isSelected,
+  isSearchMatch,
+  isActiveSearchMatch,
   readOnly,
-}: CellVariantProps<TData>) {
-  const value = cell.getValue() as YourType;
+}: DataGridCellProps<TData>) {
+  const value = cell.getValue() as CustomCellValue;
   
   return (
     <DataGridCellWrapper
@@ -646,6 +648,9 @@ export function CustomCell<TData>({
       isEditing={isEditing}
       isFocused={isFocused}
       isSelected={isSelected}
+      isSearchMatch={isSearchMatch}
+      isActiveSearchMatch={isActiveSearchMatch}
+      readOnly={readOnly}
     >
       {/* Your custom cell content */}
     </DataGridCellWrapper>
@@ -783,11 +788,11 @@ Base wrapper providing common functionality for all cell variants including focu
 
 ### DataGridCellVariants
 
-Individual cell variants for different data variants. Each variant implements the `CellVariantProps` interface and wraps its content in `DataGridCellWrapper`.
+Individual cell variants for different data variants. Each variant implements the `DataGridCellProps` interface and wraps its content in `DataGridCellWrapper`.
 
 <AutoTypeTable
   path="./types/docs/data-grid.ts"
-  name="CellVariantProps"
+  name="DataGridCellProps"
 />
 
 Available cell variants:

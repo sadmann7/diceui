@@ -416,9 +416,12 @@ function useDataGrid<TData>({
 
   const getIsCellSelected = React.useCallback(
     (rowIndex: number, columnId: string) => {
-      return selectionState.selectedCells.has(getCellKey(rowIndex, columnId));
+      const currentSelectionState = store.getState().selectionState;
+      return currentSelectionState.selectedCells.has(
+        getCellKey(rowIndex, columnId),
+      );
     },
-    [selectionState.selectedCells],
+    [store],
   );
 
   const clearSelection = React.useCallback(() => {
@@ -1634,24 +1637,47 @@ function useDataGrid<TData>({
 
   const getIsSearchMatch = React.useCallback(
     (rowIndex: number, columnId: string) => {
-      return searchMatches.some(
+      const currentSearchMatches = store.getState().searchMatches;
+      return currentSearchMatches.some(
         (match) => match.rowIndex === rowIndex && match.columnId === columnId,
       );
     },
-    [searchMatches],
+    [store],
   );
 
   const getIsActiveSearchMatch = React.useCallback(
     (rowIndex: number, columnId: string) => {
-      if (matchIndex < 0) return false;
-      const currentMatch = searchMatches[matchIndex];
+      const currentState = store.getState();
+      if (currentState.matchIndex < 0) return false;
+      const currentMatch = currentState.searchMatches[currentState.matchIndex];
       return (
         currentMatch?.rowIndex === rowIndex &&
         currentMatch?.columnId === columnId
       );
     },
-    [searchMatches, matchIndex],
+    [store],
   );
+
+  // Compute search match data for targeted row re-renders
+  // Maps rowIndex -> Set of columnIds that have matches in that row
+  const searchMatchesByRow = React.useMemo(() => {
+    if (searchMatches.length === 0) return null;
+    const rowMap = new Map<number, Set<string>>();
+    for (const match of searchMatches) {
+      let columnSet = rowMap.get(match.rowIndex);
+      if (!columnSet) {
+        columnSet = new Set<string>();
+        rowMap.set(match.rowIndex, columnSet);
+      }
+      columnSet.add(match.columnId);
+    }
+    return rowMap;
+  }, [searchMatches]);
+
+  const activeSearchMatch = React.useMemo<CellPosition | null>(() => {
+    if (matchIndex < 0 || searchMatches.length === 0) return null;
+    return searchMatches[matchIndex] ?? null;
+  }, [searchMatches, matchIndex]);
 
   const blurCell = React.useCallback(() => {
     const currentState = store.getState();
@@ -2504,8 +2530,10 @@ function useDataGrid<TData>({
       const newSorting =
         typeof updater === "function" ? updater(currentState.sorting) : updater;
       store.setState("sorting", newSorting);
+
+      propsRef.current.onSortingChange?.(newSorting);
     },
-    [store],
+    [store, propsRef],
   );
 
   const onColumnFiltersChange = React.useCallback(
@@ -2516,8 +2544,10 @@ function useDataGrid<TData>({
           ? updater(currentState.columnFilters)
           : updater;
       store.setState("columnFilters", newColumnFilters);
+
+      propsRef.current.onColumnFiltersChange?.(newColumnFilters);
     },
-    [store],
+    [store, propsRef],
   );
 
   const onRowSelectionChange = React.useCallback(
@@ -2767,6 +2797,7 @@ function useDataGrid<TData>({
       onSortingChange,
       onColumnFiltersChange,
       columnResizeMode: "onChange",
+      columnResizeDirection: dir,
       getCoreRowModel: getMemoizedCoreRowModel,
       getFilteredRowModel: getMemoizedFilteredRowModel,
       getSortedRowModel: getMemoizedSortedRowModel,
@@ -2778,6 +2809,7 @@ function useDataGrid<TData>({
     columns,
     defaultColumn,
     tableState,
+    dir,
     onRowSelectionChange,
     onSortingChange,
     onColumnFiltersChange,
@@ -2862,16 +2894,37 @@ function useDataGrid<TData>({
     async (event?: React.MouseEvent<HTMLDivElement>) => {
       if (propsRef.current.readOnly || !propsRef.current.onRowAdd) return;
 
+      // Capture initial row count before the insert
+      const initialRowCount =
+        tableRef.current?.getRowModel().rows.length ??
+        propsRef.current.data.length;
+
       const result = await propsRef.current.onRowAdd(event);
 
       if (event?.defaultPrevented || result === null) return;
 
-      const currentTable = tableRef.current;
-      const rows = currentTable?.getRowModel().rows ?? [];
+      // Wait for the row to actually be added to the table
+      // This handles async state updates (e.g., from TanStack DB collections)
+      let attempts = 0;
+      const maxAttempts = 20;
+      let currentRowCount = tableRef.current?.getRowModel().rows.length ?? 0;
+
+      while (currentRowCount <= initialRowCount && attempts < maxAttempts) {
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+        currentRowCount = tableRef.current?.getRowModel().rows.length ?? 0;
+        attempts++;
+      }
+
+      const rowCount = tableRef.current?.getRowModel().rows.length ?? 0;
+      const newRowIndex = Math.max(0, rowCount - 1);
 
       if (result) {
-        const adjustedRowIndex =
-          (result.rowIndex ?? 0) >= rows.length ? rows.length : result.rowIndex;
+        // Default to new row if rowIndex not specified, clamp to valid range
+        const targetRowIndex = result.rowIndex ?? newRowIndex;
+        const adjustedRowIndex = Math.min(
+          Math.max(0, targetRowIndex),
+          newRowIndex,
+        );
 
         onScrollToRow({
           rowIndex: adjustedRowIndex,
@@ -2880,7 +2933,7 @@ function useDataGrid<TData>({
         return;
       }
 
-      onScrollToRow({ rowIndex: rows.length });
+      onScrollToRow({ rowIndex: newRowIndex });
     },
     [propsRef, onScrollToRow],
   );
@@ -3055,8 +3108,18 @@ function useDataGrid<TData>({
         dataGridRef.current &&
         !dataGridRef.current.contains(event.target as Node)
       ) {
-        const target = event.target;
-        const isInsidePopover = getIsInPopover(target);
+        // Get all elements at the click point to see what's really there
+        // This is more reliable than event.target which may have bubbled up
+        const elements = document.elementsFromPoint(
+          event.clientX,
+          event.clientY,
+        );
+
+        // Check if ANY element at the click point is inside a popover
+        // This handles cases where event.target has bubbled too far
+        const isInsidePopover = elements.some((element) =>
+          getIsInPopover(element),
+        );
 
         if (!isInsidePopover) {
           blurCell();
@@ -3128,6 +3191,11 @@ function useDataGrid<TData>({
     table.getState().sorting,
   ]);
 
+  // Calculate virtual values outside of child render to avoid flushSync issues
+  const virtualTotalSize = rowVirtualizer.getTotalSize();
+  const virtualItems = rowVirtualizer.getVirtualItems();
+  const measureElement = rowVirtualizer.measureElement;
+
   return React.useMemo(
     () => ({
       dataGridRef,
@@ -3137,10 +3205,14 @@ function useDataGrid<TData>({
       dir,
       table,
       tableMeta,
-      rowVirtualizer,
+      virtualTotalSize,
+      virtualItems,
+      measureElement,
       columns,
-      searchState,
       columnSizeVars,
+      searchState,
+      searchMatchesByRow,
+      activeSearchMatch,
       cellSelectionMap,
       focusedCell,
       editingCell,
@@ -3154,10 +3226,14 @@ function useDataGrid<TData>({
       dir,
       table,
       tableMeta,
-      rowVirtualizer,
+      virtualTotalSize,
+      virtualItems,
+      measureElement,
       columns,
-      searchState,
       columnSizeVars,
+      searchState,
+      searchMatchesByRow,
+      activeSearchMatch,
       cellSelectionMap,
       focusedCell,
       editingCell,

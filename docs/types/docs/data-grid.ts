@@ -43,12 +43,12 @@ export interface UseDataGridProps<TData>
    * Should return the position to focus after adding the row, or null to prevent default behavior.
    * Can be async to support server-side row creation.
    *
-   * @returns Position to focus after adding (rowIndex and/or columnId), or null/void
-   *
    * ```ts
    * onRowAdd={async () => {
    *   const newRow = await createRow()
    *   setData(prev => [...prev, newRow])
+   *
+   *   // Focus the cell under the "name" column in the new row
    *   return { rowIndex: data.length, columnId: "name" }
    * }}
    * ```
@@ -253,10 +253,22 @@ export interface DataGridProps<TData> extends EmptyProps<"div"> {
   rowMapRef: React.RefObject<Map<number, HTMLDivElement>>;
 
   /**
-   * The row virtualizer instance from @tanstack/react-virtual.
-   * Handles efficient rendering of large datasets by virtualizing rows.
+   * Total size of all virtualized rows in pixels.
+   * Used to set the scroll container height.
    */
-  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+  virtualTotalSize: number;
+
+  /**
+   * Array of virtual items currently visible in the viewport.
+   * Each item contains index, size, and position information.
+   */
+  virtualItems: VirtualItem[];
+
+  /**
+   * Callback function to measure row elements for virtualization.
+   * Called with row DOM nodes to update virtual measurements.
+   */
+  measureElement: (node: Element | null) => void;
 
   /**
    * Text direction for the grid.
@@ -290,6 +302,18 @@ export interface DataGridProps<TData> extends EmptyProps<"div"> {
    * Used to efficiently track multi-cell selection per row.
    */
   cellSelectionMap: Map<number, Set<string>>;
+
+  /**
+   * Map of row indexes to sets of column IDs with search matches.
+   * Used for efficient row-level search match tracking.
+   */
+  searchMatchesByRow: Map<number, Set<string>> | null;
+
+  /**
+   * The currently active search match position.
+   * Used to highlight the specific match being navigated to.
+   */
+  activeSearchMatch: CellPosition | null;
 
   /**
    * The currently focused cell position.
@@ -403,98 +427,16 @@ export interface DataGridCellProps<TData> {
   isSelected: boolean;
 
   /**
-   * Whether the cell is read-only.
-   * When true, prevents editing and shows read-only UI.
+   * Whether the cell matches the current search query.
+   * Used to highlight cells that match search results.
    */
-  readOnly: boolean;
-}
-
-export interface DataGridCellWrapperProps<TData> {
-  /**
-   * The cell instance from TanStack Table.
-   * Contains the cell value, column, and row information.
-   */
-  cell: Cell<TData, unknown>;
+  isSearchMatch: boolean;
 
   /**
-   * The table instance from useDataGrid hook.
-   * Used to access table state and trigger cell actions.
+   * Whether the cell is the currently active search match.
+   * Used to highlight the specific match being navigated to.
    */
-  table: Table<TData>;
-
-  /**
-   * The row index in the data array.
-   * Used for cell positioning and identification.
-   */
-  rowIndex: number;
-
-  /**
-   * The column ID for this cell.
-   * Used to identify the cell in the grid.
-   */
-  columnId: string;
-
-  /**
-   * Whether the cell is currently focused.
-   * Used to render focus ring and handle keyboard navigation.
-   */
-  isFocused: boolean;
-
-  /**
-   * Whether the cell is currently being edited.
-   * Used to show edit mode UI and handle editing interactions.
-   */
-  isEditing: boolean;
-
-  /**
-   * Whether the cell is selected.
-   * Used to render selection highlight for multi-cell selection.
-   */
-  isSelected: boolean;
-}
-
-export interface CellVariantProps<TData> {
-  /**
-   * The cell instance from TanStack Table.
-   * Contains the cell value, column, and row information.
-   */
-  cell: Cell<TData, unknown>;
-
-  /**
-   * The table instance from useDataGrid hook.
-   * Used to access table state and trigger cell updates.
-   */
-  table: Table<TData>;
-
-  /**
-   * The row index in the data array.
-   * Used for cell positioning and data updates.
-   */
-  rowIndex: number;
-
-  /**
-   * The column ID for this cell.
-   * Used to identify the cell when updating data.
-   */
-  columnId: string;
-
-  /**
-   * Whether the cell is currently focused.
-   * Used to render focus ring and enable editing mode.
-   */
-  isFocused: boolean;
-
-  /**
-   * Whether the cell is currently being edited.
-   * Used to show edit UI (input, select, textarea, etc).
-   */
-  isEditing: boolean;
-
-  /**
-   * Whether the cell is selected.
-   * Used to render selection highlight for multi-cell selection.
-   */
-  isSelected: boolean;
+  isActiveSearchMatch: boolean;
 
   /**
    * Whether the cell is read-only.
@@ -503,7 +445,11 @@ export interface CellVariantProps<TData> {
   readOnly: boolean;
 }
 
-export interface DataGridRowProps<TData> {
+export interface DataGridCellWrapperProps<TData>
+  extends DataGridCellProps<TData>,
+    EmptyProps<"div"> {}
+
+export interface DataGridRowProps<TData> extends React.ComponentProps<"div"> {
   /**
    * The row instance from TanStack Table.
    * Contains row data, cells, and selection state.
@@ -517,16 +463,16 @@ export interface DataGridRowProps<TData> {
   tableMeta: TableMeta<TData>;
 
   /**
-   * The row virtualizer instance from @tanstack/react-virtual.
-   * Provides scroll state and measurement functions.
-   */
-  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
-
-  /**
    * The virtual item representing this row.
    * Contains positioning and measurement data for virtualization.
    */
   virtualItem: VirtualItem;
+
+  /**
+   * Callback function to measure the row element for virtualization.
+   * Called with the row DOM node to update virtual measurements.
+   */
+  measureElement: (node: Element | null) => void;
 
   /**
    * Map of row indexes to their DOM elements.
@@ -539,6 +485,18 @@ export interface DataGridRowProps<TData> {
    * Determines row dimensions based on the selected height option.
    */
   rowHeight: RowHeightValue;
+
+  /**
+   * Column visibility state from TanStack Table.
+   * Determines which columns should be rendered.
+   */
+  columnVisibility: VisibilityState;
+
+  /**
+   * Column pinning state from TanStack Table.
+   * Determines which columns are pinned to left or right.
+   */
+  columnPinning: ColumnPinningState;
 
   /**
    * The currently focused cell position.
@@ -556,19 +514,19 @@ export interface DataGridRowProps<TData> {
    * Set of selected cell keys for this row.
    * Used to render selection highlights for multi-cell selection.
    */
-  cellSelectionKeys?: Set<string>;
+  cellSelectionKeys: Set<string>;
 
   /**
-   * Column visibility state from TanStack Table.
-   * Determines which columns should be rendered.
+   * Set of column IDs that have search matches in this row.
+   * Used to efficiently highlight search matches per row.
    */
-  columnVisibility?: VisibilityState;
+  searchMatchColumns: Set<string> | null;
 
   /**
-   * Column pinning state from TanStack Table.
-   * Determines which columns are pinned to left or right.
+   * The currently active search match position.
+   * Only provided when the active match is in this row.
    */
-  columnPinning?: ColumnPinningState;
+  activeSearchMatch: CellPosition | null;
 
   /**
    * Text direction for the grid.
@@ -586,7 +544,7 @@ export interface DataGridRowProps<TData> {
    * Whether columns should stretch to fill available space.
    * When true, columns grow to fill the grid width.
    */
-  stretchColumns?: boolean;
+  stretchColumns: boolean;
 }
 
 export interface DataGridSearchProps {
