@@ -253,10 +253,22 @@ export interface DataGridProps<TData> extends EmptyProps<"div"> {
   rowMapRef: React.RefObject<Map<number, HTMLDivElement>>;
 
   /**
-   * The row virtualizer instance from @tanstack/react-virtual.
-   * Handles efficient rendering of large datasets by virtualizing rows.
+   * Total size of all virtualized rows in pixels.
+   * Used to set the scroll container height.
    */
-  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+  virtualTotalSize: number;
+
+  /**
+   * Array of virtual items currently visible in the viewport.
+   * Each item contains index, size, and position information.
+   */
+  virtualItems: VirtualItem[];
+
+  /**
+   * Callback function to measure row elements for virtualization.
+   * Called with row DOM nodes to update virtual measurements.
+   */
+  measureElement: (node: Element | null) => void;
 
   /**
    * Text direction for the grid.
@@ -290,6 +302,18 @@ export interface DataGridProps<TData> extends EmptyProps<"div"> {
    * Used to efficiently track multi-cell selection per row.
    */
   cellSelectionMap: Map<number, Set<string>>;
+
+  /**
+   * Map of row indexes to sets of column IDs with search matches.
+   * Used for efficient row-level search match tracking.
+   */
+  searchMatchesByRow: Map<number, Set<string>> | null;
+
+  /**
+   * The currently active search match position.
+   * Used to highlight the specific match being navigated to.
+   */
+  activeSearchMatch: CellPosition | null;
 
   /**
    * The currently focused cell position.
@@ -425,7 +449,7 @@ export interface DataGridCellWrapperProps<TData>
   extends DataGridCellProps<TData>,
     EmptyProps<"div"> {}
 
-export interface DataGridRowProps<TData> {
+export interface DataGridRowProps<TData> extends React.ComponentProps<"div"> {
   /**
    * The row instance from TanStack Table.
    * Contains row data, cells, and selection state.
@@ -439,16 +463,16 @@ export interface DataGridRowProps<TData> {
   tableMeta: TableMeta<TData>;
 
   /**
-   * The row virtualizer instance from @tanstack/react-virtual.
-   * Provides scroll state and measurement functions.
-   */
-  rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
-
-  /**
    * The virtual item representing this row.
    * Contains positioning and measurement data for virtualization.
    */
   virtualItem: VirtualItem;
+
+  /**
+   * Callback function to measure the row element for virtualization.
+   * Called with the row DOM node to update virtual measurements.
+   */
+  measureElement: (node: Element | null) => void;
 
   /**
    * Map of row indexes to their DOM elements.
@@ -461,6 +485,18 @@ export interface DataGridRowProps<TData> {
    * Determines row dimensions based on the selected height option.
    */
   rowHeight: RowHeightValue;
+
+  /**
+   * Column visibility state from TanStack Table.
+   * Determines which columns should be rendered.
+   */
+  columnVisibility: VisibilityState;
+
+  /**
+   * Column pinning state from TanStack Table.
+   * Determines which columns are pinned to left or right.
+   */
+  columnPinning: ColumnPinningState;
 
   /**
    * The currently focused cell position.
@@ -478,19 +514,19 @@ export interface DataGridRowProps<TData> {
    * Set of selected cell keys for this row.
    * Used to render selection highlights for multi-cell selection.
    */
-  cellSelectionKeys?: Set<string>;
+  cellSelectionKeys: Set<string>;
 
   /**
-   * Column visibility state from TanStack Table.
-   * Determines which columns should be rendered.
+   * Set of column IDs that have search matches in this row.
+   * Used to efficiently highlight search matches per row.
    */
-  columnVisibility?: VisibilityState;
+  searchMatchColumns: Set<string> | null;
 
   /**
-   * Column pinning state from TanStack Table.
-   * Determines which columns are pinned to left or right.
+   * The currently active search match position.
+   * Only provided when the active match is in this row.
    */
-  columnPinning?: ColumnPinningState;
+  activeSearchMatch: CellPosition | null;
 
   /**
    * Text direction for the grid.
@@ -508,7 +544,7 @@ export interface DataGridRowProps<TData> {
    * Whether columns should stretch to fill available space.
    * When true, columns grow to fill the grid width.
    */
-  stretchColumns?: boolean;
+  stretchColumns: boolean;
 }
 
 export interface DataGridSearchProps {
