@@ -274,10 +274,10 @@ const { table } = useDataTable({
       const onOpenChange = React.useCallback((open: boolean) => {
         if (!open) {
           table.toggleAllRowsSelected(false);
-          }
-        },
-        [table],
-      );
+        }
+      },
+      [table],
+    );
       
       return (
         <ActionBar open={rows.length > 0} onOpenChange={onOpenChange}>
