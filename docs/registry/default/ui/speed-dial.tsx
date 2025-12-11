@@ -163,7 +163,9 @@ function SpeedDial(props: SpeedDialProps) {
   const stateRef = useLazyRef<StoreState>(() => ({
     open: openProp ?? defaultOpen ?? false,
   }));
-  const onOpenChangeRef = useAsRef(onOpenChange);
+  const propsRef = useAsRef({
+    onOpenChange,
+  });
 
   const onNodeRegister = React.useCallback((node: NodeData) => {
     nodesRef.current.set(node.id, node);
@@ -203,7 +205,7 @@ function SpeedDial(props: SpeedDialProps) {
 
         if (key === "open" && typeof value === "boolean") {
           stateRef.current.open = value;
-          onOpenChangeRef.current?.(value);
+          propsRef.current.onOpenChange?.(value);
         } else {
           stateRef.current[key] = value;
         }
@@ -216,15 +218,15 @@ function SpeedDial(props: SpeedDialProps) {
         }
       },
     };
-  }, [listenersRef, stateRef, onOpenChangeRef]);
-
-  const open = useStore((state) => state.open, store);
+  }, [listenersRef, stateRef, propsRef]);
 
   useIsomorphicLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
   }, [openProp]);
+
+  const open = useStore((state) => state.open, store);
 
   const onPointerDownCapture = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {

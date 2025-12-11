@@ -339,7 +339,6 @@ export default function DataGridDemo() {
         left: ["select"],
       },
     },
-    enableSearch: true,
     enablePaste: true,
   });
 

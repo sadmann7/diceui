@@ -8,7 +8,7 @@ import type {
   TableOptions,
   VisibilityState,
 } from "@tanstack/react-table";
-import type { VirtualItem, Virtualizer } from "@tanstack/react-virtual";
+import type { VirtualItem } from "@tanstack/react-virtual";
 import type * as React from "react";
 import type { PopoverContent } from "@/components/ui/popover";
 import type { EmptyProps } from "@/types";
@@ -449,7 +449,7 @@ export interface DataGridCellWrapperProps<TData>
   extends DataGridCellProps<TData>,
     EmptyProps<"div"> {}
 
-export interface DataGridRowProps<TData> extends React.ComponentProps<"div"> {
+export interface DataGridRowProps<TData> extends EmptyProps<"div"> {
   /**
    * The row instance from TanStack Table.
    * Contains row data, cells, and selection state.
