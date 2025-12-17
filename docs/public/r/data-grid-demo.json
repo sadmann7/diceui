@@ -1,6 +1,5 @@
 {
   "name": "data-grid-demo",
-  "type": "registry:example",
   "dependencies": [
     "@tanstack/react-table",
     "@tanstack/react-virtual",
@@ -20,5 +19,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

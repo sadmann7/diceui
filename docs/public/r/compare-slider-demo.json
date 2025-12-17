@@ -1,6 +1,5 @@
 {
   "name": "compare-slider-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "compare-slider"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

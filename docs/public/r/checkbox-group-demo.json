@@ -1,6 +1,5 @@
 {
   "name": "checkbox-group-demo",
-  "type": "registry:example",
   "dependencies": [
     "@diceui/checkbox-group",
     "lucide-react"
@@ -15,5 +14,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

@@ -1,6 +1,5 @@
 {
   "name": "segmented-input",
-  "type": "registry:ui",
   "dependencies": [
     "@radix-ui/react-slot",
     "@radix-ui/react-direction"
@@ -15,5 +14,6 @@
       "type": "registry:ui",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

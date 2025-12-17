@@ -1,6 +1,5 @@
 {
   "name": "time-picker-controlled-demo",
-  "type": "registry:example",
   "files": [
     {
       "path": "examples/time-picker-controlled-demo.tsx",
@@ -8,5 +7,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

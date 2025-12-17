@@ -1,6 +1,5 @@
 {
   "name": "badge-overflow-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "badge",
     "badge-overflow"
@@ -12,5 +11,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

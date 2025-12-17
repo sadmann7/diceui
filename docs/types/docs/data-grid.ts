@@ -1,5 +1,6 @@
 import type {
   Cell,
+  ColumnDef,
   ColumnPinningState,
   Header,
   Row,
@@ -365,6 +366,32 @@ export interface DataGridProps<TData> extends EmptyProps<"div"> {
   stretchColumns?: boolean;
 }
 
+export type GetDataGridSelectColumnProps<TData> = Partial<ColumnDef<TData>> & {
+  /**
+   * The width of the select column in pixels.
+   * @default 40
+   */
+  size?: number;
+
+  /**
+   * Whether the column can be hidden via the view menu.
+   * @default false
+   */
+  enableHiding?: boolean;
+
+  /**
+   * Whether the column can be resized.
+   * @default false
+   */
+  enableResizing?: boolean;
+
+  /**
+   * Whether the column can be sorted.
+   * @default false
+   */
+  enableSorting?: boolean;
+};
+
 export interface DataGridColumnHeaderProps<TData> {
   /**
    * The header instance from TanStack Table.
@@ -662,6 +689,12 @@ export interface DataGridSortMenuProps<TData>
    * ```
    */
   table: Table<TData>;
+
+  /**
+   * Whether the menu trigger is disabled.
+   * @default false
+   */
+  disabled?: boolean;
 }
 
 export interface DataGridRowHeightMenuProps<TData>
@@ -675,6 +708,12 @@ export interface DataGridRowHeightMenuProps<TData>
    * ```
    */
   table: Table<TData>;
+
+  /**
+   * Whether the menu trigger is disabled.
+   * @default false
+   */
+  disabled?: boolean;
 }
 
 export interface DataGridViewMenuProps<TData>
@@ -688,6 +727,12 @@ export interface DataGridViewMenuProps<TData>
    * ```
    */
   table: Table<TData>;
+
+  /**
+   * Whether the menu trigger is disabled.
+   * @default false
+   */
+  disabled?: boolean;
 }
 
 export interface DataGridFilterMenuProps<TData>
@@ -701,6 +746,12 @@ export interface DataGridFilterMenuProps<TData>
    * ```
    */
   table: Table<TData>;
+
+  /**
+   * Whether the menu trigger is disabled.
+   * @default false
+   */
+  disabled?: boolean;
 }
 
 export interface DataGridPasteDialogProps<TData> {

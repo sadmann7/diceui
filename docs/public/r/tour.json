@@ -1,6 +1,5 @@
 {
   "name": "tour",
-  "type": "registry:ui",
   "dependencies": [
     "@floating-ui/react-dom",
     "@radix-ui/react-slot",
@@ -24,5 +23,6 @@
       "type": "registry:lib",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

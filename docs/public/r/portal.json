@@ -1,6 +1,5 @@
 {
   "name": "portal",
-  "type": "registry:component",
   "files": [
     {
       "path": "components/portal.tsx",
@@ -8,5 +7,6 @@
       "type": "registry:component",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:component"
 }

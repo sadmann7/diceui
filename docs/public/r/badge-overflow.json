@@ -1,6 +1,5 @@
 {
   "name": "badge-overflow",
-  "type": "registry:ui",
   "dependencies": [
     "@radix-ui/react-slot"
   ],
@@ -17,5 +16,6 @@
       "type": "registry:lib",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

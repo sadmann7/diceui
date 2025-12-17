@@ -1,6 +1,5 @@
 {
   "name": "timeline-custom-dot-demo",
-  "type": "registry:example",
   "dependencies": [
     "lucide-react"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

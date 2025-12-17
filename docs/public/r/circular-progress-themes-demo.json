@@ -1,6 +1,5 @@
 {
   "name": "circular-progress-themes-demo",
-  "type": "registry:example",
   "dependencies": [
     "motion"
   ],
@@ -14,5 +13,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

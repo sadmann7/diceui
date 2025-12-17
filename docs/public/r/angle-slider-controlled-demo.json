@@ -1,6 +1,5 @@
 {
   "name": "angle-slider-controlled-demo",
-  "type": "registry:example",
   "dependencies": [
     "motion",
     "lucide-react"
@@ -16,5 +15,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

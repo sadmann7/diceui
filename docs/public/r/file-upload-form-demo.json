@@ -1,6 +1,5 @@
 {
   "name": "file-upload-form-demo",
-  "type": "registry:example",
   "dependencies": [
     "lucide-react",
     "@hookform/resolvers/zod",
@@ -18,5 +17,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

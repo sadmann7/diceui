@@ -1,6 +1,5 @@
 {
   "name": "hitbox-positions-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "checkbox",
     "hitbox"
@@ -12,5 +11,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

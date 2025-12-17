@@ -1,6 +1,5 @@
 {
   "name": "scroller-navigation-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "scroller"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

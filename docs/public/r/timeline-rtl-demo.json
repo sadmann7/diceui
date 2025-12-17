@@ -1,6 +1,5 @@
 {
   "name": "timeline-rtl-demo",
-  "type": "registry:example",
   "files": [
     {
       "path": "examples/timeline-rtl-demo.tsx",
@@ -8,5 +7,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

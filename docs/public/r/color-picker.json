@@ -1,6 +1,5 @@
 {
   "name": "color-picker",
-  "type": "registry:ui",
   "dependencies": [
     "@radix-ui/react-slider",
     "@radix-ui/react-slot",
@@ -34,5 +33,6 @@
       "type": "registry:lib",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,6 +1,5 @@
 {
   "name": "combobox",
-  "type": "registry:ui",
   "dependencies": [
     "@diceui/combobox",
     "@dnd-kit/core",
@@ -16,5 +15,6 @@
       "type": "registry:ui",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

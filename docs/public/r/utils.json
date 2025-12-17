@@ -1,6 +1,5 @@
 {
   "name": "utils",
-  "type": "registry:lib",
   "dependencies": [
     "clsx",
     "tailwind-merge"
@@ -12,5 +11,6 @@
       "type": "registry:lib",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:lib"
 }

@@ -1,6 +1,5 @@
 {
   "name": "mention",
-  "type": "registry:ui",
   "dependencies": [
     "@diceui/mention"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:ui",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

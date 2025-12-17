@@ -1,6 +1,5 @@
 {
   "name": "checkbox-group",
-  "type": "registry:ui",
   "dependencies": [
     "@diceui/checkbox-group"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:ui",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

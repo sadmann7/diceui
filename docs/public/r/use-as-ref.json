@@ -1,6 +1,5 @@
 {
   "name": "use-as-ref",
-  "type": "registry:hook",
   "registryDependencies": [
     "@diceui/use-isomorphic-layout-effect"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:hook",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:hook"
 }

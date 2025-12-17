@@ -1,6 +1,5 @@
 {
   "name": "rating-form-demo",
-  "type": "registry:example",
   "dependencies": [
     "@hookform/resolvers/zod",
     "react-hook-form",
@@ -19,5 +18,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

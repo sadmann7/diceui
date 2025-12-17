@@ -1,6 +1,5 @@
 {
   "name": "listbox",
-  "type": "registry:ui",
   "dependencies": [
     "@diceui/listbox"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:ui",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

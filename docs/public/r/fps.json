@@ -1,6 +1,5 @@
 {
   "name": "fps",
-  "type": "registry:ui",
   "dependencies": [],
   "files": [
     {
@@ -9,5 +8,6 @@
       "type": "registry:ui",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

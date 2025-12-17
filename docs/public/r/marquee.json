@@ -1,6 +1,5 @@
 {
   "name": "marquee",
-  "type": "registry:ui",
   "dependencies": [
     "@radix-ui/react-slot",
     "@radix-ui/react-direction"
@@ -78,5 +77,6 @@
         "transform": "translateX(0%)"
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

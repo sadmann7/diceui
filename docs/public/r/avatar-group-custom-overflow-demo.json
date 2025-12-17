@@ -1,6 +1,5 @@
 {
   "name": "avatar-group-custom-overflow-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "avatar",
     "avatar-group"
@@ -12,5 +11,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

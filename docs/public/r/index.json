@@ -1,7 +1,6 @@
 [
   {
     "name": "action-bar",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -19,11 +18,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "angle-slider",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
@@ -46,11 +45,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "avatar-group",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -59,11 +58,11 @@
         "path": "ui/avatar-group.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "badge-overflow",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -76,11 +75,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "checkbox-group",
-    "type": "registry:ui",
     "dependencies": [
       "@diceui/checkbox-group"
     ],
@@ -89,11 +88,11 @@
         "path": "ui/checkbox-group.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "circular-progress",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -117,11 +116,11 @@
           "transform": "rotate(270deg)"
         }
       }
-    }
+    },
+    "type": "registry:ui"
   },
   {
     "name": "color-picker",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slider",
       "@radix-ui/react-slot",
@@ -149,11 +148,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "color-swatch",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -162,11 +161,11 @@
         "path": "ui/color-swatch.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "compare-slider",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -184,11 +183,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "cropper",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -206,11 +205,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "combobox",
-    "type": "registry:ui",
     "dependencies": [
       "@diceui/combobox",
       "@dnd-kit/core",
@@ -224,11 +223,11 @@
         "path": "ui/combobox.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "editable",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
@@ -251,11 +250,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "file-upload",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
@@ -269,22 +268,22 @@
         "path": "ui/file-upload.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "fps",
-    "type": "registry:ui",
     "dependencies": [],
     "files": [
       {
         "path": "ui/fps.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "segmented-input",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
@@ -297,11 +296,11 @@
         "path": "ui/segmented-input.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "kanban",
-    "type": "registry:ui",
     "dependencies": [
       "@dnd-kit/core",
       "@dnd-kit/modifiers",
@@ -318,11 +317,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "key-value",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -347,11 +346,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "listbox",
-    "type": "registry:ui",
     "dependencies": [
       "@diceui/listbox"
     ],
@@ -360,11 +359,11 @@
         "path": "ui/listbox.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "marquee",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
@@ -438,11 +437,11 @@
           "transform": "translateX(0%)"
         }
       }
-    }
+    },
+    "type": "registry:ui"
   },
   {
     "name": "mask-input",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -455,11 +454,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "masonry",
-    "type": "registry:ui",
     "dependencies": [
       "@diceui/masonry",
       "@radix-ui/react-slot"
@@ -476,11 +475,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "media-player",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction",
@@ -504,11 +503,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "mention",
-    "type": "registry:ui",
     "dependencies": [
       "@diceui/mention"
     ],
@@ -517,11 +516,11 @@
         "path": "ui/mention.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "relative-time-card",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -533,11 +532,11 @@
         "path": "ui/relative-time-card.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "scroller",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -550,11 +549,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "scroll-spy",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
@@ -573,11 +572,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "sortable",
-    "type": "registry:ui",
     "dependencies": [
       "@dnd-kit/core",
       "@dnd-kit/modifiers",
@@ -594,11 +593,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "speed-dial",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -617,11 +616,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "stack",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -630,11 +629,11 @@
         "path": "ui/stack.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "stat",
-    "type": "registry:ui",
     "dependencies": [],
     "registryDependencies": [
       "separator"
@@ -644,11 +643,11 @@
         "path": "ui/stat.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "stepper",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
@@ -668,11 +667,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "qr-code",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "qrcode"
@@ -688,11 +687,11 @@
         "path": "ui/qr-code.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "rating",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
@@ -715,11 +714,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "tags-input",
-    "type": "registry:ui",
     "dependencies": [
       "@diceui/tags-input"
     ],
@@ -728,11 +727,11 @@
         "path": "ui/tags-input.tsx",
         "type": "registry:ui"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "timeline",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot",
       "@radix-ui/react-direction"
@@ -750,11 +749,11 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   },
   {
     "name": "time-picker",
-    "type": "registry:ui",
     "dependencies": [
       "@radix-ui/react-slot"
     ],
@@ -785,11 +784,11 @@
           "display": "none"
         }
       }
-    }
+    },
+    "type": "registry:ui"
   },
   {
     "name": "tour",
-    "type": "registry:ui",
     "dependencies": [
       "@floating-ui/react-dom",
       "@radix-ui/react-slot",
@@ -809,6 +808,7 @@
         "path": "lib/compose-refs.ts",
         "type": "registry:lib"
       }
-    ]
+    ],
+    "type": "registry:ui"
   }
 ]

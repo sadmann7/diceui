@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   CheckboxCell,
   DateCell,
@@ -24,6 +25,7 @@ export const DataGridCell = React.memo(DataGridCellImpl, (prev, next) => {
   if (prev.readOnly !== next.readOnly) return false;
   if (prev.rowIndex !== next.rowIndex) return false;
   if (prev.columnId !== next.columnId) return false;
+  if (prev.rowHeight !== next.rowHeight) return false;
 
   // Check cell value using row.original instead of getValue() for stability
   // getValue() is unstable and recreates on every render, breaking memoization
@@ -54,6 +56,7 @@ function DataGridCellImpl<TData>({
   isSearchMatch,
   isActiveSearchMatch,
   readOnly,
+  rowHeight,
 }: DataGridCellProps<TData>) {
   const cellOpts = cell.column.columnDef.meta?.cell;
   const variant = cellOpts?.variant ?? "text";
@@ -100,6 +103,7 @@ function DataGridCellImpl<TData>({
       tableMeta={tableMeta}
       rowIndex={rowIndex}
       columnId={columnId}
+      rowHeight={rowHeight}
       isEditing={isEditing}
       isFocused={isFocused}
       isSelected={isSelected}
