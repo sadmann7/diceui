@@ -1,6 +1,5 @@
 {
   "name": "scroll-spy-controlled-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "scroll-spy",
     "button"
@@ -12,5 +11,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

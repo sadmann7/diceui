@@ -1,6 +1,5 @@
 {
   "name": "mask-input-card-information-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "card",
     "label",
@@ -13,5 +12,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

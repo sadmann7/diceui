@@ -1,6 +1,5 @@
 {
   "name": "color-picker-controlled-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "color-picker",
     "button"
@@ -12,5 +11,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

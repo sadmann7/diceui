@@ -1,6 +1,5 @@
 {
   "name": "sortable-dynamic-overlay-demo",
-  "type": "registry:example",
   "dependencies": [
     "@dnd-kit/core",
     "@dnd-kit/modifiers",
@@ -18,5 +17,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

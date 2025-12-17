@@ -1,6 +1,5 @@
 {
   "name": "fps-strategy-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "fps"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

@@ -1,6 +1,5 @@
 {
   "name": "speed-dial-demo",
-  "type": "registry:example",
   "dependencies": [
     "lucide-react",
     "sonner"
@@ -15,5 +14,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

@@ -1,6 +1,5 @@
 {
   "name": "tags-input-validation-demo",
-  "type": "registry:example",
   "dependencies": [
     "@diceui/tags-input",
     "lucide-react"
@@ -16,5 +15,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

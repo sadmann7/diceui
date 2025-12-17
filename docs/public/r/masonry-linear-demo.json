@@ -1,6 +1,5 @@
 {
   "name": "masonry-linear-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "masonry",
     "skeleton"
@@ -12,5 +11,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

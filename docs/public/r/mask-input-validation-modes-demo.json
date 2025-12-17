@@ -1,6 +1,5 @@
 {
   "name": "mask-input-validation-modes-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "badge",
     "card",
@@ -14,5 +13,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

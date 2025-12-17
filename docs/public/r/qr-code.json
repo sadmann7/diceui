@@ -1,6 +1,5 @@
 {
   "name": "qr-code",
-  "type": "registry:ui",
   "dependencies": [
     "@radix-ui/react-slot",
     "qrcode"
@@ -18,5 +17,6 @@
       "type": "registry:ui",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

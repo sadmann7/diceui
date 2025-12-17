@@ -1,6 +1,5 @@
 {
   "name": "stepper",
-  "type": "registry:ui",
   "dependencies": [
     "@radix-ui/react-slot",
     "@radix-ui/react-direction"
@@ -24,5 +23,6 @@
       "type": "registry:lib",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

@@ -1,6 +1,5 @@
 {
   "name": "sortable",
-  "type": "registry:ui",
   "dependencies": [
     "@dnd-kit/core",
     "@dnd-kit/modifiers",
@@ -21,5 +20,6 @@
       "type": "registry:lib",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

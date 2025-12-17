@@ -1,6 +1,5 @@
 {
   "name": "qr-code-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "qr-code"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

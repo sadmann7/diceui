@@ -1,6 +1,5 @@
 {
   "name": "color-swatch-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "color-swatch"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

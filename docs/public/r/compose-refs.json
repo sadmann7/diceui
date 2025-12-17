@@ -1,6 +1,5 @@
 {
   "name": "compose-refs",
-  "type": "registry:lib",
   "files": [
     {
       "path": "lib/compose-refs.ts",
@@ -8,5 +7,6 @@
       "type": "registry:lib",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:lib"
 }

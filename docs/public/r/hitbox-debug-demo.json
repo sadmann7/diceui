@@ -1,6 +1,5 @@
 {
   "name": "hitbox-debug-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "button",
     "hitbox"
@@ -12,5 +11,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

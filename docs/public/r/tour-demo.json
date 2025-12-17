@@ -1,6 +1,5 @@
 {
   "name": "tour-demo",
-  "type": "registry:example",
   "dependencies": [
     "@radix-ui/react-slot",
     "lucide-react"
@@ -16,5 +15,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

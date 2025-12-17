@@ -1,6 +1,5 @@
 {
   "name": "relative-time-card-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "button",
     "hover-card"
@@ -12,5 +11,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

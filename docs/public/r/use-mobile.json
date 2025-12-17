@@ -1,6 +1,5 @@
 {
   "name": "use-mobile",
-  "type": "registry:hook",
   "files": [
     {
       "path": "hooks/use-mobile.ts",
@@ -8,5 +7,6 @@
       "type": "registry:hook",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:hook"
 }

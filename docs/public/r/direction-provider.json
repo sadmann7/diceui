@@ -1,6 +1,5 @@
 {
   "name": "direction-provider",
-  "type": "registry:component",
   "files": [
     {
       "path": "components/direction-provider.tsx",
@@ -8,5 +7,6 @@
       "type": "registry:component",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:component"
 }

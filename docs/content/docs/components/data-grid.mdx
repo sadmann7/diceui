@@ -22,6 +22,12 @@ links:
   <Step>
     Install the following optional components:
 
+    [`getDataGridSelectColumn`](#getdatagridselectcolumn):
+
+    ```package-install
+    npx shadcn@latest add "@diceui/data-grid-select-column"
+    ```
+
     [`DataGridSortMenu`](#datagridsortmenu):
 
     ```package-install
@@ -554,55 +560,28 @@ const { table, ...dataGridProps } = useDataGrid({
 
 ## Row Selection
 
-Add a selection column to enable row selection with shift-click support:
+Add a selection column to enable row selection with shift-click support using the `getDataGridSelectColumn` helper:
 
 ```tsx
-import { Checkbox } from "@/components/ui/checkbox";
+import { getDataGridSelectColumn } from "@/components/data-grid/data-grid-select-column";
 
 const columns = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-      />
-    ),
-    cell: ({ row, table }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => {
-          const onRowSelect = table.options.meta?.onRowSelect;
-          if (onRowSelect) {
-            onRowSelect(row.index, !!value, false);
-          } else {
-            row.toggleSelected(!!value);
-          }
-        }}
-        onClick={(event) => {
-          if (event.shiftKey) {
-            event.preventDefault();
-            const onRowSelect = table.options.meta?.onRowSelect;
-            if (onRowSelect) {
-              onRowSelect(row.index, !row.getIsSelected(), true);
-            }
-          }
-        }}
-      />
-    ),
-    size: 40,
-    enableSorting: false,
-    enableHiding: false,
-    enableResizing: false,
-  },
+  getDataGridSelectColumn<YourData>(),
   // ... other columns
 ];
 ```
 
-The shift-click functionality is handled automatically by the `useDataGrid` hook when you include the `onRowSelect` logic.
+You can customize the select column by passing options:
+
+```tsx
+getDataGridSelectColumn<YourData>({
+  size: 50, // Custom width (default: 40)
+  enableHiding: true, // Allow hiding via view menu (default: false)
+  enableResizing: true, // Allow resizing (default: false)
+})
+```
+
+The shift-click functionality is handled automatically by the `useDataGrid` hook when you include the select column.
 
 ## Cell Architecture
 
@@ -681,7 +660,7 @@ To enable filtering and sorting on columns, use the `filterFn` from the data gri
 import { getFilterFn } from "@/lib/data-grid-filters";
 
 const columns = React.useMemo(() => {
-  const filterFn = getFilterFn<YourDataType>();
+  const filterFn = getFilterFn<YourData>();
   
   return [
     {
@@ -771,6 +750,16 @@ Main data grid component with virtualization and editing capabilities.
   path="./types/docs/data-grid.ts"
   name="DataGridProps"
 />
+
+### getDataGridSelectColumn
+
+A utility function that returns a reusable select column definition for the data grid with checkbox selection and shift-click support.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="GetDataGridSelectColumnProps"
+/>
+
 
 ### DataGridColumnHeader
 
@@ -899,6 +888,7 @@ Searchable reference dialog for all available keyboard shortcuts for navigating 
   path="./types/docs/data-grid.ts"
   name="DataGridKeyboardShortcutsProps"
 />
+
 
 ## Accessibility
 

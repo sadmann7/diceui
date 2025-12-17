@@ -1,6 +1,5 @@
 {
   "name": "presence",
-  "type": "registry:component",
   "files": [
     {
       "path": "components/presence.tsx",
@@ -8,5 +7,6 @@
       "type": "registry:component",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:component"
 }

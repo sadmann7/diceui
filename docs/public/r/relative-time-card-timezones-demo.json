@@ -1,6 +1,5 @@
 {
   "name": "relative-time-card-timezones-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "hover-card",
     "relative-time-card"
@@ -12,5 +11,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

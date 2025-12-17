@@ -1,6 +1,5 @@
 {
   "name": "stat",
-  "type": "registry:ui",
   "dependencies": [],
   "registryDependencies": [
     "separator"
@@ -12,5 +11,6 @@
       "type": "registry:ui",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

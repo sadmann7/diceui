@@ -1,6 +1,5 @@
 {
   "name": "style",
-  "type": "registry:style",
   "dependencies": [
     "tailwindcss-animate",
     "class-variance-authority",
@@ -17,5 +16,6 @@
       ]
     }
   },
-  "cssVars": {}
+  "cssVars": {},
+  "type": "registry:style"
 }

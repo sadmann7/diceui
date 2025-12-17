@@ -1,6 +1,5 @@
 {
   "name": "scroll-spy-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "scroll-spy"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

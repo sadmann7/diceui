@@ -1,6 +1,5 @@
 {
   "name": "stepper-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "stepper"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

@@ -1,6 +1,5 @@
 {
   "name": "segmented-input-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "segmented-input"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

@@ -54,6 +54,7 @@ export function ShortTextCell<TData>({
   tableMeta,
   rowIndex,
   columnId,
+  rowHeight,
   isEditing,
   isFocused,
   isSelected,
@@ -177,6 +178,7 @@ export function ShortTextCell<TData>({
       tableMeta={tableMeta}
       rowIndex={rowIndex}
       columnId={columnId}
+      rowHeight={rowHeight}
       isEditing={isEditing}
       isFocused={isFocused}
       isSelected={isSelected}
@@ -210,6 +212,7 @@ export function LongTextCell<TData>({
   tableMeta,
   rowIndex,
   columnId,
+  rowHeight,
   isFocused,
   isEditing,
   isSelected,
@@ -331,6 +334,7 @@ export function LongTextCell<TData>({
           tableMeta={tableMeta}
           rowIndex={rowIndex}
           columnId={columnId}
+          rowHeight={rowHeight}
           isEditing={isEditing}
           isFocused={isFocused}
           isSelected={isSelected}
@@ -351,7 +355,7 @@ export function LongTextCell<TData>({
       >
         <Textarea
           placeholder="Enter text..."
-          className="min-h-[150px] resize-none rounded-none border-0 shadow-none focus-visible:ring-0"
+          className="max-h-[300px] min-h-[150px] resize-none overflow-y-auto rounded-none border-0 shadow-none focus-visible:ring-0"
           ref={textareaRef}
           value={value}
           onBlur={onBlur}
@@ -368,6 +372,7 @@ export function NumberCell<TData>({
   tableMeta,
   rowIndex,
   columnId,
+  rowHeight,
   isFocused,
   isEditing,
   isSelected,
@@ -457,6 +462,7 @@ export function NumberCell<TData>({
       tableMeta={tableMeta}
       rowIndex={rowIndex}
       columnId={columnId}
+      rowHeight={rowHeight}
       isEditing={isEditing}
       isFocused={isFocused}
       isSelected={isSelected}
@@ -508,6 +514,7 @@ export function UrlCell<TData>({
   tableMeta,
   rowIndex,
   columnId,
+  rowHeight,
   isEditing,
   isFocused,
   isSelected,
@@ -670,6 +677,7 @@ export function UrlCell<TData>({
       tableMeta={tableMeta}
       rowIndex={rowIndex}
       columnId={columnId}
+      rowHeight={rowHeight}
       isEditing={isEditing}
       isFocused={isFocused}
       isSelected={isSelected}
@@ -722,6 +730,7 @@ export function CheckboxCell<TData>({
   tableMeta,
   rowIndex,
   columnId,
+  rowHeight,
   isFocused,
   isSelected,
   isSearchMatch,
@@ -803,6 +812,7 @@ export function CheckboxCell<TData>({
       tableMeta={tableMeta}
       rowIndex={rowIndex}
       columnId={columnId}
+      rowHeight={rowHeight}
       isEditing={false}
       isFocused={isFocused}
       isSelected={isSelected}
@@ -831,6 +841,7 @@ export function SelectCell<TData>({
   tableMeta,
   rowIndex,
   columnId,
+  rowHeight,
   isFocused,
   isEditing,
   isSelected,
@@ -897,6 +908,7 @@ export function SelectCell<TData>({
       tableMeta={tableMeta}
       rowIndex={rowIndex}
       columnId={columnId}
+      rowHeight={rowHeight}
       isEditing={isEditing}
       isFocused={isFocused}
       isSelected={isSelected}
@@ -916,7 +928,16 @@ export function SelectCell<TData>({
             size="sm"
             className="size-full items-start border-none p-0 shadow-none focus-visible:ring-0 dark:bg-transparent [&_svg]:hidden"
           >
-            <SelectValue />
+            {displayLabel ? (
+              <Badge
+                variant="secondary"
+                className="whitespace-pre-wrap px-1.5 py-px"
+              >
+                <SelectValue />
+              </Badge>
+            ) : (
+              <SelectValue />
+            )}
           </SelectTrigger>
           <SelectContent
             data-grid-cell-editor=""
@@ -933,9 +954,15 @@ export function SelectCell<TData>({
             ))}
           </SelectContent>
         </Select>
-      ) : (
-        <span data-slot="grid-cell-content">{displayLabel}</span>
-      )}
+      ) : displayLabel ? (
+        <Badge
+          data-slot="grid-cell-content"
+          variant="secondary"
+          className="whitespace-pre-wrap px-1.5 py-px"
+        >
+          {displayLabel}
+        </Badge>
+      ) : null}
     </DataGridCellWrapper>
   );
 }
@@ -945,6 +972,7 @@ export function MultiSelectCell<TData>({
   tableMeta,
   rowIndex,
   columnId,
+  rowHeight,
   isFocused,
   isEditing,
   isSelected,
@@ -1080,7 +1108,6 @@ export function MultiSelectCell<TData>({
     .map((val) => options.find((opt) => opt.value === val)?.label ?? val)
     .filter(Boolean);
 
-  const rowHeight = tableMeta?.rowHeight ?? "short";
   const lineCount = getLineCount(rowHeight);
 
   const { visibleItems: visibleLabels, hiddenCount: hiddenBadgeCount } =
@@ -1098,6 +1125,7 @@ export function MultiSelectCell<TData>({
       tableMeta={tableMeta}
       rowIndex={rowIndex}
       columnId={columnId}
+      rowHeight={rowHeight}
       isEditing={isEditing}
       isFocused={isFocused}
       isSelected={isSelected}
@@ -1128,7 +1156,7 @@ export function MultiSelectCell<TData>({
                     <Badge
                       key={value}
                       variant="secondary"
-                      className="h-5 gap-1 px-1.5 text-xs"
+                      className="gap-1 px-1.5 py-px"
                     >
                       {label}
                       <button
@@ -1204,7 +1232,7 @@ export function MultiSelectCell<TData>({
             <Badge
               key={selectedValues[index]}
               variant="secondary"
-              className="h-5 shrink-0 px-1.5 text-xs"
+              className="px-1.5 py-px"
             >
               {label}
             </Badge>
@@ -1212,7 +1240,7 @@ export function MultiSelectCell<TData>({
           {hiddenBadgeCount > 0 && (
             <Badge
               variant="outline"
-              className="h-5 shrink-0 px-1.5 text-muted-foreground text-xs"
+              className="px-1.5 py-px text-muted-foreground"
             >
               +{hiddenBadgeCount}
             </Badge>
@@ -1234,6 +1262,7 @@ export function DateCell<TData>({
   tableMeta,
   rowIndex,
   columnId,
+  rowHeight,
   isFocused,
   isEditing,
   isSelected,
@@ -1299,6 +1328,7 @@ export function DateCell<TData>({
       tableMeta={tableMeta}
       rowIndex={rowIndex}
       columnId={columnId}
+      rowHeight={rowHeight}
       isEditing={isEditing}
       isFocused={isFocused}
       isSelected={isSelected}
@@ -1373,6 +1403,7 @@ export function FileCell<TData>({
   tableMeta,
   rowIndex,
   columnId,
+  rowHeight,
   isFocused,
   isEditing,
   isSelected,
@@ -1865,7 +1896,6 @@ export function FileCell<TData>({
     };
   }, [files]);
 
-  const rowHeight = tableMeta?.rowHeight ?? "short";
   const lineCount = getLineCount(rowHeight);
 
   const { visibleItems: visibleFiles, hiddenCount: hiddenFileCount } =
@@ -1886,6 +1916,7 @@ export function FileCell<TData>({
       tableMeta={tableMeta}
       rowIndex={rowIndex}
       columnId={columnId}
+      rowHeight={rowHeight}
       isEditing={isEditing}
       isFocused={isFocused}
       isSelected={isSelected}
@@ -2038,7 +2069,6 @@ export function FileCell<TData>({
             const isUploading = uploadingFiles.has(file.id);
 
             if (isUploading) {
-              // Show skeleton for uploading files
               return (
                 <Skeleton
                   key={file.id}
@@ -2050,15 +2080,15 @@ export function FileCell<TData>({
               );
             }
 
+            const FileIcon = getFileIcon(file.type);
+
             return (
               <Badge
                 key={file.id}
                 variant="secondary"
-                className="h-5 shrink-0 gap-1 px-1.5 text-xs"
+                className="gap-1 px-1.5 py-px"
               >
-                {React.createElement(getFileIcon(file.type), {
-                  className: "size-3 shrink-0",
-                })}
+                {FileIcon && <FileIcon className="size-3 shrink-0" />}
                 <span className="max-w-[100px] truncate">{file.name}</span>
               </Badge>
             );
@@ -2066,7 +2096,7 @@ export function FileCell<TData>({
           {hiddenFileCount > 0 && (
             <Badge
               variant="outline"
-              className="h-5 shrink-0 px-1.5 text-muted-foreground text-xs"
+              className="px-1.5 py-px text-muted-foreground"
             >
               +{hiddenFileCount}
             </Badge>

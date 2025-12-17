@@ -1,6 +1,5 @@
 {
   "name": "circular-progress",
-  "type": "registry:ui",
   "dependencies": [
     "@radix-ui/react-slot"
   ],
@@ -26,5 +25,6 @@
         "transform": "rotate(270deg)"
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

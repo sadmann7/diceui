@@ -1,6 +1,5 @@
 {
   "name": "relative-time-card",
-  "type": "registry:ui",
   "dependencies": [
     "@radix-ui/react-slot"
   ],
@@ -14,5 +13,6 @@
       "type": "registry:ui",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:ui"
 }

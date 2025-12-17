@@ -1,6 +1,5 @@
 {
   "name": "listbox-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "listbox"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

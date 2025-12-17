@@ -1,6 +1,5 @@
 {
   "name": "cropper-video-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "cropper",
     "button",
@@ -14,5 +13,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

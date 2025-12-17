@@ -1,6 +1,5 @@
 {
   "name": "cropper-file-upload-demo",
-  "type": "registry:example",
   "dependencies": [
     "@hookform/resolvers",
     "react-hook-form",
@@ -20,5 +19,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

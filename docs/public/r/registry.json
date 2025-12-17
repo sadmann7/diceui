@@ -4,7 +4,6 @@
   "items": [
     {
       "name": "style",
-      "type": "registry:style",
       "dependencies": [
         "tailwindcss-animate",
         "class-variance-authority",
@@ -21,11 +20,11 @@
           ]
         }
       },
-      "cssVars": {}
+      "cssVars": {},
+      "type": "registry:style"
     },
     {
       "name": "action-bar",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -43,11 +42,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "angle-slider",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction"
@@ -70,11 +69,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "avatar-group",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -83,11 +82,11 @@
           "path": "ui/avatar-group.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "badge-overflow",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -100,11 +99,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "checkbox-group",
-      "type": "registry:ui",
       "dependencies": [
         "@diceui/checkbox-group"
       ],
@@ -113,11 +112,11 @@
           "path": "ui/checkbox-group.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "circular-progress",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -141,11 +140,11 @@
             "transform": "rotate(270deg)"
           }
         }
-      }
+      },
+      "type": "registry:ui"
     },
     {
       "name": "color-picker",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slider",
         "@radix-ui/react-slot",
@@ -173,11 +172,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "color-swatch",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -186,11 +185,11 @@
           "path": "ui/color-swatch.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "compare-slider",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -208,11 +207,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "cropper",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -230,11 +229,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "combobox",
-      "type": "registry:ui",
       "dependencies": [
         "@diceui/combobox",
         "@dnd-kit/core",
@@ -248,11 +247,11 @@
           "path": "ui/combobox.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "editable",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction"
@@ -275,11 +274,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "file-upload",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction"
@@ -293,22 +292,22 @@
           "path": "ui/file-upload.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "fps",
-      "type": "registry:ui",
       "dependencies": [],
       "files": [
         {
           "path": "ui/fps.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "segmented-input",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction"
@@ -321,11 +320,11 @@
           "path": "ui/segmented-input.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "kanban",
-      "type": "registry:ui",
       "dependencies": [
         "@dnd-kit/core",
         "@dnd-kit/modifiers",
@@ -342,11 +341,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "key-value",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -371,11 +370,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "listbox",
-      "type": "registry:ui",
       "dependencies": [
         "@diceui/listbox"
       ],
@@ -384,11 +383,11 @@
           "path": "ui/listbox.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "marquee",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction"
@@ -462,11 +461,11 @@
             "transform": "translateX(0%)"
           }
         }
-      }
+      },
+      "type": "registry:ui"
     },
     {
       "name": "mask-input",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -479,11 +478,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "masonry",
-      "type": "registry:ui",
       "dependencies": [
         "@diceui/masonry",
         "@radix-ui/react-slot"
@@ -500,11 +499,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "media-player",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction",
@@ -528,11 +527,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "mention",
-      "type": "registry:ui",
       "dependencies": [
         "@diceui/mention"
       ],
@@ -541,11 +540,11 @@
           "path": "ui/mention.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "relative-time-card",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -557,11 +556,11 @@
           "path": "ui/relative-time-card.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "scroller",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -574,11 +573,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "scroll-spy",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction"
@@ -597,11 +596,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "sortable",
-      "type": "registry:ui",
       "dependencies": [
         "@dnd-kit/core",
         "@dnd-kit/modifiers",
@@ -618,11 +617,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "speed-dial",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -641,11 +640,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "stack",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -654,11 +653,11 @@
           "path": "ui/stack.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "stat",
-      "type": "registry:ui",
       "dependencies": [],
       "registryDependencies": [
         "separator"
@@ -668,11 +667,11 @@
           "path": "ui/stat.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "stepper",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction"
@@ -692,11 +691,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "qr-code",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "qrcode"
@@ -712,11 +711,11 @@
           "path": "ui/qr-code.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "rating",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction"
@@ -739,11 +738,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "tags-input",
-      "type": "registry:ui",
       "dependencies": [
         "@diceui/tags-input"
       ],
@@ -752,11 +751,11 @@
           "path": "ui/tags-input.tsx",
           "type": "registry:ui"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "timeline",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot",
         "@radix-ui/react-direction"
@@ -774,11 +773,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "time-picker",
-      "type": "registry:ui",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -809,11 +808,11 @@
             "display": "none"
           }
         }
-      }
+      },
+      "type": "registry:ui"
     },
     {
       "name": "tour",
-      "type": "registry:ui",
       "dependencies": [
         "@floating-ui/react-dom",
         "@radix-ui/react-slot",
@@ -833,11 +832,11 @@
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:ui"
     },
     {
       "name": "utils",
-      "type": "registry:lib",
       "dependencies": [
         "clsx",
         "tailwind-merge"
@@ -847,21 +846,21 @@
           "path": "lib/utils.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:lib"
     },
     {
       "name": "compose-refs",
-      "type": "registry:lib",
       "files": [
         {
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
         }
-      ]
+      ],
+      "type": "registry:lib"
     },
     {
       "name": "use-as-ref",
-      "type": "registry:hook",
       "registryDependencies": [
         "@diceui/use-isomorphic-layout-effect"
       ],
@@ -870,41 +869,41 @@
           "path": "hooks/use-as-ref.ts",
           "type": "registry:hook"
         }
-      ]
+      ],
+      "type": "registry:hook"
     },
     {
       "name": "use-isomorphic-layout-effect",
-      "type": "registry:hook",
       "files": [
         {
           "path": "hooks/use-isomorphic-layout-effect.ts",
           "type": "registry:hook"
         }
-      ]
+      ],
+      "type": "registry:hook"
     },
     {
       "name": "use-lazy-ref",
-      "type": "registry:hook",
       "files": [
         {
           "path": "hooks/use-lazy-ref.ts",
           "type": "registry:hook"
         }
-      ]
+      ],
+      "type": "registry:hook"
     },
     {
       "name": "use-mobile",
-      "type": "registry:hook",
       "files": [
         {
           "path": "hooks/use-mobile.ts",
           "type": "registry:hook"
         }
-      ]
+      ],
+      "type": "registry:hook"
     },
     {
       "name": "action-bar-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -917,11 +916,11 @@
           "path": "examples/action-bar-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "action-bar-position-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -936,11 +935,11 @@
           "path": "examples/action-bar-position-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "angle-slider-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "angle-slider"
       ],
@@ -949,11 +948,11 @@
           "path": "examples/angle-slider-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "angle-slider-controlled-demo",
-      "type": "registry:example",
       "dependencies": [
         "motion",
         "lucide-react"
@@ -967,11 +966,11 @@
           "path": "examples/angle-slider-controlled-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "angle-slider-range-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "angle-slider"
       ],
@@ -980,11 +979,11 @@
           "path": "examples/angle-slider-range-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "angle-slider-themes-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "angle-slider"
       ],
@@ -993,11 +992,11 @@
           "path": "examples/angle-slider-themes-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "angle-slider-form-demo",
-      "type": "registry:example",
       "dependencies": [
         "@hookform/resolvers",
         "react-hook-form",
@@ -1014,11 +1013,11 @@
           "path": "examples/angle-slider-form-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "avatar-group-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "avatar",
         "avatar-group"
@@ -1028,11 +1027,11 @@
           "path": "examples/avatar-group-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "avatar-group-truncation-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "avatar",
         "avatar-group"
@@ -1042,11 +1041,11 @@
           "path": "examples/avatar-group-truncation-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "avatar-group-rtl-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "avatar",
         "avatar-group"
@@ -1056,11 +1055,11 @@
           "path": "examples/avatar-group-rtl-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "avatar-group-icons-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1072,11 +1071,11 @@
           "path": "examples/avatar-group-icons-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "avatar-group-custom-overflow-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "avatar",
         "avatar-group"
@@ -1086,11 +1085,11 @@
           "path": "examples/avatar-group-custom-overflow-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "badge-overflow-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "badge",
         "badge-overflow"
@@ -1100,11 +1099,11 @@
           "path": "examples/badge-overflow-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "badge-overflow-multiline-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "badge",
         "badge-overflow"
@@ -1114,11 +1113,11 @@
           "path": "examples/badge-overflow-multiline-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "badge-overflow-interactive-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1133,11 +1132,11 @@
           "path": "examples/badge-overflow-interactive-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "checkbox-group-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/checkbox-group",
         "lucide-react"
@@ -1150,11 +1149,11 @@
           "path": "examples/checkbox-group-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "checkbox-group-animated-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/checkbox-group",
         "lucide-react"
@@ -1167,11 +1166,11 @@
           "path": "examples/checkbox-group-animated-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "checkbox-group-horizontal-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/checkbox-group",
         "lucide-react"
@@ -1184,11 +1183,11 @@
           "path": "examples/checkbox-group-horizontal-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "checkbox-group-multi-selection-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/checkbox-group",
         "lucide-react"
@@ -1201,11 +1200,11 @@
           "path": "examples/checkbox-group-multi-selection-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "checkbox-group-validation-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/checkbox-group",
         "lucide-react"
@@ -1218,11 +1217,11 @@
           "path": "examples/checkbox-group-validation-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "circular-progress-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "circular-progress"
       ],
@@ -1231,11 +1230,11 @@
           "path": "examples/circular-progress-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "circular-progress-interactive-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "circular-progress"
@@ -1245,11 +1244,11 @@
           "path": "examples/circular-progress-interactive-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "circular-progress-themes-demo",
-      "type": "registry:example",
       "dependencies": [
         "motion"
       ],
@@ -1261,11 +1260,11 @@
           "path": "examples/circular-progress-themes-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "color-picker-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "color-picker"
       ],
@@ -1274,11 +1273,11 @@
           "path": "examples/color-picker-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "color-picker-controlled-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "color-picker",
         "button"
@@ -1288,11 +1287,11 @@
           "path": "examples/color-picker-controlled-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "color-picker-form-demo",
-      "type": "registry:example",
       "dependencies": [
         "@hookform/resolvers/zod",
         "react-hook-form",
@@ -1308,11 +1307,11 @@
           "path": "examples/color-picker-form-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "color-picker-inline-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "color-picker"
       ],
@@ -1321,11 +1320,11 @@
           "path": "examples/color-picker-inline-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "color-swatch-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "color-swatch"
       ],
@@ -1334,11 +1333,11 @@
           "path": "examples/color-swatch-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "color-swatch-sizes-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "color-swatch"
       ],
@@ -1347,11 +1346,11 @@
           "path": "examples/color-swatch-sizes-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "color-swatch-transparency-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "color-swatch"
       ],
@@ -1360,11 +1359,11 @@
           "path": "examples/color-swatch-transparency-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "combobox-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1376,11 +1375,11 @@
           "path": "examples/combobox-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "combobox-custom-filter-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1392,11 +1391,11 @@
           "path": "examples/combobox-custom-filter-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "combobox-debounced-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1408,11 +1407,11 @@
           "path": "examples/combobox-debounced-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "combobox-groups-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1424,11 +1423,11 @@
           "path": "examples/combobox-groups-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "combobox-multiple-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1440,11 +1439,11 @@
           "path": "examples/combobox-multiple-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "combobox-tags-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1457,11 +1456,11 @@
           "path": "examples/combobox-tags-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "combobox-virtualized-demo",
-      "type": "registry:example",
       "dependencies": [
         "@tanstack/react-virtual",
         "lucide-react"
@@ -1474,11 +1473,11 @@
           "path": "examples/combobox-virtualized-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "compare-slider-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "compare-slider"
       ],
@@ -1487,11 +1486,11 @@
           "path": "examples/compare-slider-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "compare-slider-controlled-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1506,11 +1505,11 @@
           "path": "examples/compare-slider-controlled-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "compare-slider-customization-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "compare-slider"
       ],
@@ -1519,11 +1518,11 @@
           "path": "examples/compare-slider-customization-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "compare-slider-vertical-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "compare-slider"
       ],
@@ -1532,11 +1531,11 @@
           "path": "examples/compare-slider-vertical-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "cropper-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "cropper"
       ],
@@ -1545,11 +1544,11 @@
           "path": "examples/cropper-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "cropper-controlled-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "cropper",
         "button",
@@ -1561,11 +1560,11 @@
           "path": "examples/cropper-controlled-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "cropper-file-upload-demo",
-      "type": "registry:example",
       "dependencies": [
         "@hookform/resolvers",
         "react-hook-form",
@@ -1583,11 +1582,11 @@
           "path": "examples/cropper-file-upload-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "cropper-shapes-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "cropper",
         "label",
@@ -1599,11 +1598,11 @@
           "path": "examples/cropper-shapes-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "cropper-video-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "cropper",
         "button",
@@ -1615,11 +1614,11 @@
           "path": "examples/cropper-video-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "data-grid-demo",
-      "type": "registry:example",
       "dependencies": [
         "@tanstack/react-table",
         "@tanstack/react-virtual",
@@ -1637,11 +1636,11 @@
           "path": "examples/data-grid-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "data-table-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1653,11 +1652,11 @@
           "path": "examples/data-table-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "editable-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "editable"
@@ -1667,11 +1666,11 @@
           "path": "examples/editable-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "editable-autosize-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "editable"
@@ -1681,11 +1680,11 @@
           "path": "examples/editable-autosize-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "editable-double-click-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "editable"
@@ -1695,11 +1694,11 @@
           "path": "examples/editable-double-click-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "editable-form-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "editable",
@@ -1710,11 +1709,11 @@
           "path": "examples/editable-form-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "editable-todo-list-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "checkbox",
@@ -1725,11 +1724,11 @@
           "path": "examples/editable-todo-list-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "file-upload-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "sonner"
@@ -1743,11 +1742,11 @@
           "path": "examples/file-upload-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "file-upload-chat-input-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "sonner",
@@ -1764,11 +1763,11 @@
           "path": "examples/file-upload-chat-input-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "file-upload-circular-progress-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1781,11 +1780,11 @@
           "path": "examples/file-upload-circular-progress-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "file-upload-direct-upload-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "sonner"
@@ -1799,11 +1798,11 @@
           "path": "examples/file-upload-direct-upload-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "file-upload-fill-progress-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1816,11 +1815,11 @@
           "path": "examples/file-upload-fill-progress-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "file-upload-form-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "@hookform/resolvers/zod",
@@ -1836,11 +1835,11 @@
           "path": "examples/file-upload-form-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "file-upload-uploadthing-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "uploadthing",
@@ -1855,11 +1854,11 @@
           "path": "examples/file-upload-uploadthing-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "file-upload-validation-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "sonner"
@@ -1873,11 +1872,11 @@
           "path": "examples/file-upload-validation-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "fps-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "fps"
       ],
@@ -1886,11 +1885,11 @@
           "path": "examples/fps-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "fps-strategy-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "fps"
       ],
@@ -1899,11 +1898,11 @@
           "path": "examples/fps-strategy-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "hitbox-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1916,11 +1915,11 @@
           "path": "examples/hitbox-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "hitbox-sizes-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "checkbox",
         "hitbox"
@@ -1930,11 +1929,11 @@
           "path": "examples/hitbox-sizes-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "hitbox-positions-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "checkbox",
         "hitbox"
@@ -1944,11 +1943,11 @@
           "path": "examples/hitbox-positions-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "hitbox-radii-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -1961,11 +1960,11 @@
           "path": "examples/hitbox-radii-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "hitbox-debug-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "hitbox"
@@ -1975,11 +1974,11 @@
           "path": "examples/hitbox-debug-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "segmented-input-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "segmented-input"
       ],
@@ -1988,11 +1987,11 @@
           "path": "examples/segmented-input-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "segmented-input-form-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "segmented-input"
@@ -2002,11 +2001,11 @@
           "path": "examples/segmented-input-form-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "segmented-input-rgb-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "segmented-input"
       ],
@@ -2015,11 +2014,11 @@
           "path": "examples/segmented-input-rgb-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "segmented-input-vertical-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "segmented-input"
       ],
@@ -2028,11 +2027,11 @@
           "path": "examples/segmented-input-vertical-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "marquee-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "marquee"
       ],
@@ -2041,11 +2040,11 @@
           "path": "examples/marquee-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "marquee-logo-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "marquee"
       ],
@@ -2054,11 +2053,11 @@
           "path": "examples/marquee-logo-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "marquee-vertical-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "marquee"
       ],
@@ -2067,11 +2066,11 @@
           "path": "examples/marquee-vertical-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "marquee-rtl-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "marquee"
       ],
@@ -2080,11 +2079,11 @@
           "path": "examples/marquee-rtl-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "mask-input-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "mask-input"
       ],
@@ -2093,11 +2092,11 @@
           "path": "examples/mask-input-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "mask-input-custom-pattern-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "label",
         "mask-input"
@@ -2107,11 +2106,11 @@
           "path": "examples/mask-input-custom-pattern-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "mask-input-validation-modes-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "badge",
         "card",
@@ -2123,11 +2122,11 @@
           "path": "examples/mask-input-validation-modes-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "mask-input-card-information-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "card",
         "label",
@@ -2138,11 +2137,11 @@
           "path": "examples/mask-input-card-information-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "mask-input-form-demo",
-      "type": "registry:example",
       "dependencies": [
         "@hookform/resolvers/zod",
         "react-hook-form",
@@ -2158,11 +2157,11 @@
           "path": "examples/mask-input-form-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "kanban-demo",
-      "type": "registry:example",
       "dependencies": [
         "@dnd-kit/core",
         "@dnd-kit/modifiers",
@@ -2180,11 +2179,11 @@
           "path": "examples/kanban-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "kanban-dynamic-overlay-demo",
-      "type": "registry:example",
       "dependencies": [
         "@dnd-kit/core",
         "@dnd-kit/modifiers",
@@ -2202,11 +2201,11 @@
           "path": "examples/kanban-dynamic-overlay-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "key-value-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "key-value"
       ],
@@ -2215,11 +2214,11 @@
           "path": "examples/key-value-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "key-value-form-demo",
-      "type": "registry:example",
       "dependencies": [
         "@hookform/resolvers",
         "react-hook-form",
@@ -2237,11 +2236,11 @@
           "path": "examples/key-value-form-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "key-value-validation-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "key-value"
       ],
@@ -2250,11 +2249,11 @@
           "path": "examples/key-value-validation-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "key-value-paste-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -2266,11 +2265,11 @@
           "path": "examples/key-value-paste-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "listbox-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "listbox"
       ],
@@ -2279,11 +2278,11 @@
           "path": "examples/listbox-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "listbox-grid-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "listbox"
       ],
@@ -2292,11 +2291,11 @@
           "path": "examples/listbox-grid-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "listbox-group-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "listbox"
       ],
@@ -2305,11 +2304,11 @@
           "path": "examples/listbox-group-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "listbox-horizontal-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "listbox"
       ],
@@ -2318,11 +2317,11 @@
           "path": "examples/listbox-horizontal-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "masonry-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "masonry"
       ],
@@ -2331,11 +2330,11 @@
           "path": "examples/masonry-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "masonry-linear-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "masonry",
         "skeleton"
@@ -2345,11 +2344,11 @@
           "path": "examples/masonry-linear-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "masonry-ssr-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "masonry",
         "skeleton"
@@ -2359,11 +2358,11 @@
           "path": "examples/masonry-ssr-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "media-player-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "media-chrome"
@@ -2380,11 +2379,11 @@
           "path": "examples/media-player-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "media-player-audio-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "media-chrome"
@@ -2401,11 +2400,11 @@
           "path": "examples/media-player-audio-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "media-player-error-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "media-chrome"
@@ -2421,11 +2420,11 @@
           "path": "examples/media-player-error-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "media-player-hls-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "media-chrome",
@@ -2443,11 +2442,11 @@
           "path": "examples/media-player-hls-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "media-player-playlist-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "media-chrome"
@@ -2462,11 +2461,11 @@
           "path": "examples/media-player-playlist-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "media-player-settings-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "media-chrome"
@@ -2485,11 +2484,11 @@
           "path": "examples/media-player-settings-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "mention-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/mention",
         "lucide-react"
@@ -2499,11 +2498,11 @@
           "path": "examples/mention-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "mention-custom-filter-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/mention",
         "lucide-react"
@@ -2513,11 +2512,11 @@
           "path": "examples/mention-custom-filter-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "mention-custom-trigger-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/mention",
         "lucide-react"
@@ -2527,11 +2526,11 @@
           "path": "examples/mention-custom-trigger-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "qr-code-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "qr-code"
       ],
@@ -2540,11 +2539,11 @@
           "path": "examples/qr-code-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "qr-code-customization-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "qr-code"
       ],
@@ -2553,11 +2552,11 @@
           "path": "examples/qr-code-customization-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "qr-code-formats-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "qr-code"
@@ -2567,11 +2566,11 @@
           "path": "examples/qr-code-formats-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "qr-code-overlay-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -2583,11 +2582,11 @@
           "path": "examples/qr-code-overlay-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "rating-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "rating"
       ],
@@ -2596,11 +2595,11 @@
           "path": "examples/rating-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "rating-themes-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -2612,11 +2611,11 @@
           "path": "examples/rating-themes-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "rating-controlled-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "rating",
         "button"
@@ -2626,11 +2625,11 @@
           "path": "examples/rating-controlled-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "rating-form-demo",
-      "type": "registry:example",
       "dependencies": [
         "@hookform/resolvers/zod",
         "react-hook-form",
@@ -2647,11 +2646,11 @@
           "path": "examples/rating-form-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "relative-time-card-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "hover-card"
@@ -2661,11 +2660,11 @@
           "path": "examples/relative-time-card-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "relative-time-card-timezones-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "hover-card",
         "relative-time-card"
@@ -2675,11 +2674,11 @@
           "path": "examples/relative-time-card-timezones-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "relative-time-card-variants-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "hover-card"
@@ -2689,11 +2688,11 @@
           "path": "examples/relative-time-card-variants-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "scroller-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "scroller"
       ],
@@ -2702,11 +2701,11 @@
           "path": "examples/scroller-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "scroller-hidden-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "scroller"
       ],
@@ -2715,11 +2714,11 @@
           "path": "examples/scroller-hidden-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "scroller-horizontal-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "scroller"
       ],
@@ -2728,11 +2727,11 @@
           "path": "examples/scroller-horizontal-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "scroller-navigation-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "scroller"
       ],
@@ -2741,11 +2740,11 @@
           "path": "examples/scroller-navigation-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "scroll-spy-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "scroll-spy"
       ],
@@ -2754,11 +2753,11 @@
           "path": "examples/scroll-spy-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "scroll-spy-controlled-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "scroll-spy",
         "button"
@@ -2768,11 +2767,11 @@
           "path": "examples/scroll-spy-controlled-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "scroll-spy-vertical-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "scroll-spy"
       ],
@@ -2781,11 +2780,11 @@
           "path": "examples/scroll-spy-vertical-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "sortable-demo",
-      "type": "registry:example",
       "dependencies": [
         "@dnd-kit/core",
         "@dnd-kit/modifiers",
@@ -2801,11 +2800,11 @@
           "path": "examples/sortable-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "sortable-dynamic-overlay-demo",
-      "type": "registry:example",
       "dependencies": [
         "@dnd-kit/core",
         "@dnd-kit/modifiers",
@@ -2821,11 +2820,11 @@
           "path": "examples/sortable-dynamic-overlay-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "sortable-handle-demo",
-      "type": "registry:example",
       "dependencies": [
         "@dnd-kit/core",
         "@dnd-kit/modifiers",
@@ -2843,11 +2842,11 @@
           "path": "examples/sortable-handle-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "sortable-primitive-values-demo",
-      "type": "registry:example",
       "dependencies": [
         "@dnd-kit/core",
         "@dnd-kit/modifiers",
@@ -2863,11 +2862,11 @@
           "path": "examples/sortable-primitive-values-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "speed-dial-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "sonner"
@@ -2880,11 +2879,11 @@
           "path": "examples/speed-dial-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "speed-dial-controlled-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "sonner"
@@ -2898,11 +2897,11 @@
           "path": "examples/speed-dial-controlled-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "speed-dial-side-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "sonner"
@@ -2915,11 +2914,11 @@
           "path": "examples/speed-dial-side-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "speed-dial-labels-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react",
         "sonner"
@@ -2932,11 +2931,11 @@
           "path": "examples/speed-dial-labels-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "stack-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "stack"
       ],
@@ -2945,11 +2944,11 @@
           "path": "examples/stack-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "stack-no-expand-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "stack"
       ],
@@ -2958,11 +2957,11 @@
           "path": "examples/stack-no-expand-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "stack-side-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "stack"
       ],
@@ -2971,11 +2970,11 @@
           "path": "examples/stack-side-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "stat-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -2988,11 +2987,11 @@
           "path": "examples/stat-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "stat-variants-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -3004,11 +3003,11 @@
           "path": "examples/stat-variants-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "stat-layout-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -3020,11 +3019,11 @@
           "path": "examples/stat-layout-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "stepper-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "stepper"
       ],
@@ -3033,11 +3032,11 @@
           "path": "examples/stepper-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "stepper-form-demo",
-      "type": "registry:example",
       "dependencies": [
         "@hookform/resolvers/zod",
         "react-hook-form",
@@ -3055,11 +3054,11 @@
           "path": "examples/stepper-form-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "stepper-validation-demo",
-      "type": "registry:example",
       "dependencies": [
         "@hookform/resolvers",
         "react-hook-form",
@@ -3075,11 +3074,11 @@
           "path": "examples/stepper-validation-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "stepper-vertical-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "stepper"
       ],
@@ -3088,11 +3087,11 @@
           "path": "examples/stepper-vertical-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "tags-input-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/tags-input",
         "lucide-react"
@@ -3105,11 +3104,11 @@
           "path": "examples/tags-input-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "tags-input-editable-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/tags-input",
         "lucide-react"
@@ -3123,11 +3122,11 @@
           "path": "examples/tags-input-editable-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "tags-input-sortable-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/tags-input",
         "@dnd-kit/core",
@@ -3145,11 +3144,11 @@
           "path": "examples/tags-input-sortable-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "tags-input-validation-demo",
-      "type": "registry:example",
       "dependencies": [
         "@diceui/tags-input",
         "lucide-react"
@@ -3163,41 +3162,41 @@
           "path": "examples/tags-input-validation-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "time-picker-demo",
-      "type": "registry:example",
       "files": [
         {
           "path": "examples/time-picker-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "time-picker-step-demo",
-      "type": "registry:example",
       "files": [
         {
           "path": "examples/time-picker-step-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "time-picker-seconds-demo",
-      "type": "registry:example",
       "files": [
         {
           "path": "examples/time-picker-seconds-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "time-picker-placeholder-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "time-picker"
       ],
@@ -3206,11 +3205,11 @@
           "path": "examples/time-picker-placeholder-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "time-picker-open-on-focus-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "time-picker"
       ],
@@ -3219,11 +3218,11 @@
           "path": "examples/time-picker-open-on-focus-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "time-picker-input-group-click-action-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "time-picker"
       ],
@@ -3232,21 +3231,21 @@
           "path": "examples/time-picker-input-group-click-action-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "time-picker-controlled-demo",
-      "type": "registry:example",
       "files": [
         {
           "path": "examples/time-picker-controlled-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "time-picker-form-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "button",
         "form",
@@ -3257,21 +3256,21 @@
           "path": "examples/time-picker-form-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "timeline-demo",
-      "type": "registry:example",
       "files": [
         {
           "path": "examples/timeline-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "timeline-horizontal-demo",
-      "type": "registry:example",
       "registryDependencies": [
         "timeline"
       ],
@@ -3280,41 +3279,41 @@
           "path": "examples/timeline-horizontal-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "timeline-rtl-demo",
-      "type": "registry:example",
       "files": [
         {
           "path": "examples/timeline-rtl-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "timeline-alternate-demo",
-      "type": "registry:example",
       "files": [
         {
           "path": "examples/timeline-alternate-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "timeline-horizontal-alternate-demo",
-      "type": "registry:example",
       "files": [
         {
           "path": "examples/timeline-horizontal-alternate-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "timeline-custom-dot-demo",
-      "type": "registry:example",
       "dependencies": [
         "lucide-react"
       ],
@@ -3323,11 +3322,11 @@
           "path": "examples/timeline-custom-dot-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "tour-demo",
-      "type": "registry:example",
       "dependencies": [
         "@radix-ui/react-slot",
         "lucide-react"
@@ -3341,11 +3340,11 @@
           "path": "examples/tour-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "tour-controlled-demo",
-      "type": "registry:example",
       "dependencies": [
         "@radix-ui/react-slot",
         "lucide-react"
@@ -3359,31 +3358,31 @@
           "path": "examples/tour-controlled-demo.tsx",
           "type": "registry:example"
         }
-      ]
+      ],
+      "type": "registry:example"
     },
     {
       "name": "client-only",
-      "type": "registry:component",
       "files": [
         {
           "path": "components/client-only.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "type": "registry:component"
     },
     {
       "name": "direction-provider",
-      "type": "registry:component",
       "files": [
         {
           "path": "components/direction-provider.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "type": "registry:component"
     },
     {
       "name": "hitbox",
-      "type": "registry:component",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -3392,31 +3391,31 @@
           "path": "components/hitbox.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "type": "registry:component"
     },
     {
       "name": "portal",
-      "type": "registry:component",
       "files": [
         {
           "path": "components/portal.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "type": "registry:component"
     },
     {
       "name": "presence",
-      "type": "registry:component",
       "files": [
         {
           "path": "components/presence.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "type": "registry:component"
     },
     {
       "name": "visually-hidden",
-      "type": "registry:component",
       "dependencies": [
         "@radix-ui/react-slot"
       ],
@@ -3425,17 +3424,18 @@
           "path": "components/visually-hidden.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "type": "registry:component"
     },
     {
       "name": "visually-hidden-input",
-      "type": "registry:component",
       "files": [
         {
           "path": "components/visually-hidden-input.tsx",
           "type": "registry:component"
         }
-      ]
+      ],
+      "type": "registry:component"
     }
   ]
 }

@@ -1,6 +1,5 @@
 {
   "name": "rating-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "rating"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

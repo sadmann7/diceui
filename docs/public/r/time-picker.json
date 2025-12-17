@@ -1,6 +1,5 @@
 {
   "name": "time-picker",
-  "type": "registry:ui",
   "dependencies": [
     "@radix-ui/react-slot"
   ],
@@ -37,5 +36,6 @@
         "display": "none"
       }
     }
-  }
+  },
+  "type": "registry:ui"
 }

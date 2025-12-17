@@ -1,6 +1,5 @@
 {
   "name": "combobox-virtualized-demo",
-  "type": "registry:example",
   "dependencies": [
     "@tanstack/react-virtual",
     "lucide-react"
@@ -15,5 +14,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

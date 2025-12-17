@@ -1,6 +1,5 @@
 {
   "name": "masonry-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "masonry"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

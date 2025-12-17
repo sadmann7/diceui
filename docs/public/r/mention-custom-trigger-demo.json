@@ -1,6 +1,5 @@
 {
   "name": "mention-custom-trigger-demo",
-  "type": "registry:example",
   "dependencies": [
     "@diceui/mention",
     "lucide-react"
@@ -12,5 +11,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

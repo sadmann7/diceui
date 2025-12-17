@@ -1,6 +1,5 @@
 {
   "name": "mask-input-demo",
-  "type": "registry:example",
   "registryDependencies": [
     "mask-input"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

@@ -1,6 +1,5 @@
 {
   "name": "media-player-playlist-demo",
-  "type": "registry:example",
   "dependencies": [
     "lucide-react",
     "media-chrome"
@@ -17,5 +16,6 @@
       "type": "registry:example",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:example"
 }

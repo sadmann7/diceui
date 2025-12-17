@@ -113,6 +113,7 @@ declare module "@tanstack/react-table" {
     }) => void;
     onCellsCopy?: () => void;
     onCellsCut?: () => void;
+    onSelectionClear?: () => void;
     onFilesUpload?: (params: {
       files: File[];
       rowIndex: number;
@@ -193,6 +194,7 @@ export interface DataGridCellProps<TData> {
   tableMeta: TableMeta<TData>;
   rowIndex: number;
   columnId: string;
+  rowHeight: RowHeightValue;
   isEditing: boolean;
   isFocused: boolean;
   isSelected: boolean;
@@ -226,7 +228,7 @@ export type NumberFilterOperator =
   | "lessThanOrEqual"
   | "greaterThan"
   | "greaterThanOrEqual"
-  | "between"
+  | "isBetween"
   | "isEmpty"
   | "isNotEmpty";
 
@@ -237,7 +239,7 @@ export type DateFilterOperator =
   | "after"
   | "onOrBefore"
   | "onOrAfter"
-  | "between"
+  | "isBetween"
   | "isEmpty"
   | "isNotEmpty";
 

@@ -1,6 +1,5 @@
 {
   "name": "client-only",
-  "type": "registry:component",
   "files": [
     {
       "path": "components/client-only.tsx",
@@ -8,5 +7,6 @@
       "type": "registry:component",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:component"
 }

@@ -1,6 +1,5 @@
 {
   "name": "visually-hidden",
-  "type": "registry:component",
   "dependencies": [
     "@radix-ui/react-slot"
   ],
@@ -11,5 +10,6 @@
       "type": "registry:component",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:component"
 }

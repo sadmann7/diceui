@@ -1,6 +1,5 @@
 {
   "name": "use-isomorphic-layout-effect",
-  "type": "registry:hook",
   "files": [
     {
       "path": "hooks/use-isomorphic-layout-effect.ts",
@@ -8,5 +7,6 @@
       "type": "registry:hook",
       "target": ""
     }
-  ]
+  ],
+  "type": "registry:hook"
 }
