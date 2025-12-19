@@ -46,7 +46,7 @@ export default function StepperVerticalDemo() {
                 <StepperDescription>{step.description}</StepperDescription>
               </div>
             </StepperTrigger>
-            <StepperSeparator className="-order-1 -translate-x-1/2 -z-10 absolute inset-y-0 top-5 left-3.5 h-full" />
+            <StepperSeparator className="absolute inset-y-0 top-5 left-3.5 -z-10 -order-1 h-full -translate-x-1/2" />
           </StepperItem>
         ))}
       </StepperList>

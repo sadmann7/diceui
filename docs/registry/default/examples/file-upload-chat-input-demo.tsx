@@ -138,7 +138,7 @@ export default function FileUploadChatInputDemo() {
                 <Button
                   variant="secondary"
                   size="icon"
-                  className="-top-1 -right-1 absolute size-4 shrink-0 cursor-pointer rounded-full"
+                  className="absolute -top-1 -right-1 size-4 shrink-0 cursor-pointer rounded-full"
                 >
                   <X className="size-2.5" />
                 </Button>

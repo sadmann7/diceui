@@ -1220,7 +1220,7 @@ function FileUploadItemProgress(props: FileUploadItemProgressProps) {
           data-slot="file-upload-progress"
           {...progressProps}
           className={cn(
-            "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2",
+            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
             className,
           )}
         >

@@ -118,7 +118,7 @@ export default function FileUploadCircularProgressDemo() {
               <Button
                 variant="secondary"
                 size="icon"
-                className="-top-1 -right-1 absolute size-5 rounded-full"
+                className="absolute -top-1 -right-1 size-5 rounded-full"
               >
                 <X className="size-3" />
               </Button>

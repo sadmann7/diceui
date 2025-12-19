@@ -89,7 +89,7 @@ function ComboboxCancel({
     <ComboboxPrimitive.Cancel
       data-slot="combobox-cancel"
       className={cn(
-        "-translate-y-1/2 absolute top-1/2 right-1 flex size-6 items-center justify-center rounded-sm bg-background opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+        "absolute top-1/2 right-1 flex size-6 -translate-y-1/2 items-center justify-center rounded-sm bg-background opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
         className,
       )}
       {...props}

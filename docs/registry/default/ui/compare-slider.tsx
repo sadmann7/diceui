@@ -411,8 +411,8 @@ function CompareSliderHandle(props: DivProps) {
       className={cn(
         "absolute z-50 flex items-center justify-center",
         isVertical
-          ? "-translate-y-1/2 left-0 h-10 w-full"
-          : "-translate-x-1/2 top-0 h-full w-10",
+          ? "left-0 h-10 w-full -translate-y-1/2"
+          : "top-0 h-full w-10 -translate-x-1/2",
         interaction === "drag" && "cursor-grab active:cursor-grabbing",
         className,
       )}
@@ -427,8 +427,8 @@ function CompareSliderHandle(props: DivProps) {
             className={cn(
               "absolute bg-background",
               isVertical
-                ? "-translate-y-1/2 top-1/2 h-1 w-full"
-                : "-translate-x-1/2 left-1/2 h-full w-1",
+                ? "top-1/2 h-1 w-full -translate-y-1/2"
+                : "left-1/2 h-full w-1 -translate-x-1/2",
             )}
           />
           {interaction === "drag" && (
