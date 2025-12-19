@@ -57,6 +57,12 @@ links:
     ```package-install
     npx shadcn@latest add "@diceui/data-grid-keyboard-shortcuts"
     ```
+
+    [`DataGridSkeleton`](#datagridskeleton):
+
+    ```package-install
+    npx shadcn@latest add "@diceui/data-grid-skeleton"
+    ```
   </Step>
   <Step>
     Update import paths for custom components:
@@ -341,6 +347,34 @@ Control the grid height and column stretching:
   height={800} // Custom height in pixels (default: 600)
   stretchColumns={true} // Stretch columns to fill available width
 />
+```
+
+### Loading States
+
+Use the `DataGridSkeleton` component for loading states:
+
+```tsx
+import { Suspense } from "react";
+import {
+  DataGridSkeleton,
+  DataGridSkeletonGrid,
+  DataGridSkeletonToolbar,
+} from "@/components/data-grid/data-grid-skeleton";
+
+export default function Page() {
+  return (
+    <Suspense
+      fallback={
+        <DataGridSkeleton className="container flex flex-col gap-4 py-4">
+          <DataGridSkeletonToolbar actionCount={5} />
+          <DataGridSkeletonGrid />
+        </DataGridSkeleton>
+      }
+    >
+      <DataGridDemo />
+    </Suspense>
+  );
+}
 ```
 
 ## Cell Variants
@@ -889,6 +923,43 @@ Searchable reference dialog for all available keyboard shortcuts for navigating 
   name="DataGridKeyboardShortcutsProps"
 />
 
+### DataGridSkeleton
+
+A composable skeleton component for the data grid with toolbar and grid parts for loading states.
+
+```tsx
+import {
+  DataGridSkeleton,
+  DataGridSkeletonGrid,
+  DataGridSkeletonToolbar,
+} from "@/components/data-grid/data-grid-skeleton";
+
+return (
+  <DataGridSkeleton>
+    <DataGridSkeletonToolbar />
+    <DataGridSkeletonGrid />
+  </DataGridSkeleton>
+);
+```
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridSkeletonProps"
+/>
+
+#### DataGridSkeletonToolbar
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridSkeletonToolbarProps"
+/>
+
+#### DataGridSkeletonGrid
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="DataGridSkeletonGridProps"
+/>
 
 ## Accessibility
 
