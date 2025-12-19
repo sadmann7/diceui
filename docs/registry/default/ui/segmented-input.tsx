@@ -150,12 +150,12 @@ const segmentedInputItemVariants = cva("", {
     {
       position: "middle",
       orientation: "vertical",
-      class: "-mt-px ms-0 rounded-none border-t-0 border-l",
+      class: "ms-0 -mt-px rounded-none border-t-0 border-l",
     },
     {
       position: "last",
       orientation: "vertical",
-      class: "-mt-px ms-0 rounded-s-md rounded-t-none border-t-0 border-l",
+      class: "ms-0 -mt-px rounded-s-md rounded-t-none border-t-0 border-l",
     },
   ],
   defaultVariants: {

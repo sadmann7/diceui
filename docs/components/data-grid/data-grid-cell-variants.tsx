@@ -232,7 +232,6 @@ export function LongTextCell<TData>({
     setValue(initialValue ?? "");
   }
 
-  // Debounced auto-save (300ms delay)
   const debouncedSave = useDebouncedCallback((newValue: string) => {
     if (!readOnly) {
       tableMeta?.onDataUpdate?.({ rowIndex, columnId, value: newValue });
@@ -257,8 +256,8 @@ export function LongTextCell<TData>({
   }, [tableMeta, initialValue, rowIndex, columnId, readOnly]);
 
   const onOpenChange = React.useCallback(
-    (isOpen: boolean) => {
-      if (isOpen && !readOnly) {
+    (open: boolean) => {
+      if (open && !readOnly) {
         tableMeta?.onCellEditingStart?.(rowIndex, columnId);
       } else {
         // Immediately save any pending changes when closing
@@ -294,7 +293,6 @@ export function LongTextCell<TData>({
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       const newValue = event.target.value;
       setValue(newValue);
-      // Debounced auto-save
       debouncedSave(newValue);
     },
     [debouncedSave],
@@ -384,11 +382,14 @@ export function NumberCell<TData>({
   const [value, setValue] = React.useState(String(initialValue ?? ""));
   const inputRef = React.useRef<HTMLInputElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+
   const cellOpts = cell.column.columnDef.meta?.cell;
   const numberCellOpts = cellOpts?.variant === "number" ? cellOpts : null;
   const min = numberCellOpts?.min;
   const max = numberCellOpts?.max;
   const step = numberCellOpts?.step;
+
+  const prevIsEditingRef = React.useRef(isEditing);
 
   const prevInitialValueRef = React.useRef(initialValue);
   if (initialValue !== prevInitialValueRef.current) {
@@ -449,9 +450,12 @@ export function NumberCell<TData>({
   );
 
   React.useEffect(() => {
-    if (isEditing && inputRef.current) {
+    const wasEditing = prevIsEditingRef.current;
+    prevIsEditingRef.current = isEditing;
+
+    // Only focus when we start editing (transition from false to true)
+    if (isEditing && !wasEditing && inputRef.current) {
       inputRef.current.focus();
-      inputRef.current.select();
     }
   }, [isEditing]);
 
@@ -473,15 +477,15 @@ export function NumberCell<TData>({
     >
       {isEditing ? (
         <input
-          ref={inputRef}
           type="number"
+          ref={inputRef}
           value={value}
           min={min}
           max={max}
           step={step}
+          className="w-full border-none bg-transparent p-0 outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           onBlur={onBlur}
           onChange={onChange}
-          className="w-full border-none bg-transparent p-0 outline-none"
         />
       ) : (
         <span data-slot="grid-cell-content">{value}</span>
@@ -500,12 +504,10 @@ function getUrlHref(urlString: string): string {
     return "";
   }
 
-  // Check if it already has a protocol
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
     return trimmed;
   }
 
-  // Add http:// prefix for links without protocol
   return `http://${trimmed}`;
 }
 
@@ -872,8 +874,8 @@ export function SelectCell<TData>({
   );
 
   const onOpenChange = React.useCallback(
-    (isOpen: boolean) => {
-      if (isOpen && !readOnly) {
+    (open: boolean) => {
+      if (open && !readOnly) {
         tableMeta?.onCellEditingStart?.(rowIndex, columnId);
       } else {
         tableMeta?.onCellEditingStop?.();
@@ -1045,8 +1047,8 @@ export function MultiSelectCell<TData>({
   }, [tableMeta, rowIndex, columnId, readOnly]);
 
   const onOpenChange = React.useCallback(
-    (isOpen: boolean) => {
-      if (isOpen && !readOnly) {
+    (open: boolean) => {
+      if (open && !readOnly) {
         tableMeta?.onCellEditingStart?.(rowIndex, columnId);
       } else {
         setSearchValue("");
@@ -1295,8 +1297,8 @@ export function DateCell<TData>({
   );
 
   const onOpenChange = React.useCallback(
-    (isOpen: boolean) => {
-      if (isOpen && !readOnly) {
+    (open: boolean) => {
+      if (open && !readOnly) {
         tableMeta?.onCellEditingStart?.(rowIndex, columnId);
       } else {
         tableMeta?.onCellEditingStop?.();
@@ -1824,8 +1826,8 @@ export function FileCell<TData>({
   );
 
   const onOpenChange = React.useCallback(
-    (isOpen: boolean) => {
-      if (isOpen && !readOnly) {
+    (open: boolean) => {
+      if (open && !readOnly) {
         setError(null);
         tableMeta?.onCellEditingStart?.(rowIndex, columnId);
       } else {

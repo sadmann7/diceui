@@ -790,3 +790,33 @@ export interface DataGridKeyboardShortcutsProps {
    */
   enableSearch?: boolean;
 }
+
+export interface DataGridSkeletonProps extends EmptyProps<"div"> {}
+
+export interface DataGridSkeletonToolbarProps extends EmptyProps<"div"> {
+  /**
+   * Alignment of the toolbar skeleton.
+   * Controls the horizontal positioning of action button skeletons.
+   *
+   * ```tsx
+   * <DataGridSkeletonToolbar align="end" />
+   * ```
+   *
+   * @default "end"
+   */
+  align?: "start" | "center" | "end";
+
+  /**
+   * Number of action button skeletons to display.
+   * Represents the number of toolbar actions (filter, sort, view, etc).
+   *
+   * ```tsx
+   * <DataGridSkeletonToolbar actionCount={5} />
+   * ```
+   *
+   * @default 4
+   */
+  actionCount?: number;
+}
+
+export interface DataGridSkeletonGridProps extends EmptyProps<"div"> {}

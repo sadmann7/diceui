@@ -900,7 +900,7 @@ function ColorPickerArea(props: DivProps) {
         />
       </div>
       <div
-        className="-translate-x-1/2 -translate-y-1/2 absolute size-3 rounded-full border-2 border-white shadow-sm"
+        className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-sm"
         style={{
           left: `${hsv?.s ?? 0}%`,
           top: `${100 - (hsv?.v ?? 0)}%`,

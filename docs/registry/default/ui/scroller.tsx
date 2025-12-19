@@ -279,10 +279,10 @@ const scrollButtonVariants = cva(
   {
     variants: {
       direction: {
-        up: "-translate-x-1/2 top-2 left-1/2",
-        down: "-translate-x-1/2 bottom-2 left-1/2",
-        left: "-translate-y-1/2 top-1/2 left-2",
-        right: "-translate-y-1/2 top-1/2 right-2",
+        up: "top-2 left-1/2 -translate-x-1/2",
+        down: "bottom-2 left-1/2 -translate-x-1/2",
+        left: "top-1/2 left-2 -translate-y-1/2",
+        right: "top-1/2 right-2 -translate-y-1/2",
       },
     },
     defaultVariants: {

@@ -457,7 +457,7 @@ function QRCodeOverlay(props: QRCodeOverlayProps) {
       data-slot="qr-code-overlay"
       {...overlayProps}
       className={cn(
-        "-translate-x-1/2 -translate-y-1/2 absolute top-1/2 left-1/2 flex items-center justify-center rounded-sm bg-background",
+        "absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-background",
         className,
       )}
     />

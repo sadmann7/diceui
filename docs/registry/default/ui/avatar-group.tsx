@@ -23,7 +23,7 @@ const avatarGroupVariants = cva("flex items-center", {
     {
       orientation: "horizontal",
       dir: "rtl",
-      className: "-space-x-1 flex-row-reverse space-x-reverse",
+      className: "flex-row-reverse -space-x-1 space-x-reverse",
     },
     {
       orientation: "vertical",
@@ -33,7 +33,7 @@ const avatarGroupVariants = cva("flex items-center", {
     {
       orientation: "vertical",
       dir: "rtl",
-      className: "-space-y-1 flex-col-reverse space-y-reverse",
+      className: "flex-col-reverse -space-y-1 space-y-reverse",
     },
   ],
   defaultVariants: {
