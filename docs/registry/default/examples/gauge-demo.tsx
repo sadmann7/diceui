@@ -27,13 +27,13 @@ export default function GaugeDemo() {
   }, []);
 
   return (
-    <Gauge value={value} size={180} thickness={12}>
+    <Gauge value={value} size={180} thickness={12} startAngle={-90} endAngle={90}>
       <GaugeIndicator>
         <GaugeTrack />
         <GaugeRange />
       </GaugeIndicator>
       <GaugeValueText />
-      <GaugeLabel className="sr-only">Performance</GaugeLabel>
+      <GaugeLabel>Performance</GaugeLabel>
     </Gauge>
   );
 }
