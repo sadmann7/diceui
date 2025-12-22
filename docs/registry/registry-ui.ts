@@ -257,6 +257,21 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "gauge",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "ui/gauge.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "segmented-input",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],

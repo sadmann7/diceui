@@ -739,6 +739,72 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "gauge-demo",
+    type: "registry:example",
+    registryDependencies: ["gauge"],
+    files: [
+      {
+        path: "examples/gauge-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "gauge-circle-demo",
+    type: "registry:example",
+    registryDependencies: ["gauge"],
+    files: [
+      {
+        path: "examples/gauge-circle-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "gauge-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["gauge", "button", "slider"],
+    files: [
+      {
+        path: "examples/gauge-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "gauge-sizes-demo",
+    type: "registry:example",
+    registryDependencies: ["gauge"],
+    files: [
+      {
+        path: "examples/gauge-sizes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "gauge-colors-demo",
+    type: "registry:example",
+    registryDependencies: ["gauge"],
+    files: [
+      {
+        path: "examples/gauge-colors-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "gauge-variants-demo",
+    type: "registry:example",
+    registryDependencies: ["gauge"],
+    files: [
+      {
+        path: "examples/gauge-variants-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "hitbox-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],
