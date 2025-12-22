@@ -94,7 +94,7 @@ By default, the gauge displays the percentage value (0–100) based on `value`, 
 ### Show Percentage
 ```tsx
 <Gauge 
-  value={75}
+  value={85}
   getValueText={(value, min, max) => {
     const percentage = ((value - min) / (max - min)) * 100;
     return `${Math.round(percentage)}%`;

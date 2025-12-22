@@ -1265,7 +1265,7 @@
       "type": "registry:example"
     },
     {
-      "name": "circular-progress-themes-demo",
+      "name": "circular-progress-colors-demo",
       "dependencies": [
         "motion"
       ],
@@ -1274,7 +1274,7 @@
       ],
       "files": [
         {
-          "path": "examples/circular-progress-themes-demo.tsx",
+          "path": "examples/circular-progress-colors-demo.tsx",
           "type": "registry:example"
         }
       ],

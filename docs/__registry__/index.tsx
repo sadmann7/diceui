@@ -1063,17 +1063,17 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "circular-progress-themes-demo": {
-      name: "circular-progress-themes-demo",
+    "circular-progress-colors-demo": {
+      name: "circular-progress-colors-demo",
       description: "",
       type: "registry:example",
       registryDependencies: ["circular-progress"],
       files: [{
-        path: "registry/default/examples/circular-progress-themes-demo.tsx",
+        path: "registry/default/examples/circular-progress-colors-demo.tsx",
         type: "registry:example",
         target: ""
       }],
-      component: React.lazy(() => import("@/registry/default/examples/circular-progress-themes-demo.tsx")),
+      component: React.lazy(() => import("@/registry/default/examples/circular-progress-colors-demo.tsx")),
       source: "",
       chunks: []
     },
