@@ -1,8 +1,6 @@
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import GaugeColorsDemo from "@/registry/default/examples/gauge-colors-demo";
-import GaugeDemo from "@/registry/default/examples/gauge-demo";
 import GaugeVariantsDemo from "@/registry/default/examples/gauge-variants-demo";
 import SpeedDialControlledDemo from "@/registry/default/examples/speed-dial-controlled-demo";
 import SpeedDialDemo from "@/registry/default/examples/speed-dial-demo";
@@ -12,8 +10,6 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <GaugeDemo />
-        <GaugeColorsDemo />
         <GaugeVariantsDemo />
         <SpeedDialDemo />
         <SpeedDialControlledDemo />
