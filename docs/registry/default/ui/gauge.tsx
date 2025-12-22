@@ -241,46 +241,44 @@ function Gauge(props: GaugeProps) {
     : null;
 
   // Calculate the visual center Y of the arc for text positioning
-  // For full circles, use geometric center. For partial arcs, position based on arc midpoint
+  // For full circles, use geometric center. For partial arcs, calculate based on bounding box
   const angleDiffDeg = Math.abs(endAngle - startAngle);
   const isFullCircle = angleDiffDeg >= 360;
 
   let arcCenterY = center;
   if (!isFullCircle) {
-    // Instead of bounding box, position text at a point along the arc's midpoint
-    // This works better for symmetric arcs where bounding box gives geometric center
-    const midAngle = (startAngle + endAngle) / 2;
-    const midAngleRad = (midAngle * Math.PI) / 180;
-    
-    // Position text at 50% radius along the midpoint angle
-    // This places it between center and arc, in the "open" area for most gauges
-    const textDistance = radius * 0.5;
-    arcCenterY = center - textDistance * Math.cos(midAngleRad);
+    // Calculate bounding box of the arc to find visual center
+    const startRad = (startAngle * Math.PI) / 180;
+    const endRad = (endAngle * Math.PI) / 180;
 
-    // Debug logs
-    if (process.env.NODE_ENV === "development") {
-      console.table([
-        {
-          metric: "Angles",
-          startAngle,
-          endAngle,
-          midAngle: midAngle.toFixed(2),
-        },
-        {
-          metric: "Calculations",
-          "midAngle (rad)": midAngleRad.toFixed(4),
-          "cos(midAngle)": Math.cos(midAngleRad).toFixed(4),
-          textDistance: textDistance.toFixed(2),
-        },
-        {
-          metric: "Result",
-          center,
-          radius,
-          arcCenterY: arcCenterY.toFixed(2),
-          "Y offset": (arcCenterY - center).toFixed(2),
-        },
-      ]);
-    }
+    // Get Y coordinates at key points
+    const startY = center - radius * Math.cos(startRad);
+    const endY = center - radius * Math.cos(endRad);
+
+    // Find min and max Y within the arc range
+    let minY = Math.min(startY, endY);
+    let maxY = Math.max(startY, endY);
+
+    // Check if arc passes through cardinal points
+    const normalizeAngle = (angle: number) => ((angle % 360) + 360) % 360;
+    const normStart = normalizeAngle(startAngle);
+    const normEnd = normalizeAngle(endAngle);
+
+    // Check if arc includes top (270° or -90°) or bottom (90°)
+    const includesTop =
+      normStart > normEnd
+        ? normStart <= 270 || normEnd >= 270
+        : normStart <= 270 && normEnd >= 270;
+    const includesBottom =
+      normStart > normEnd
+        ? normStart <= 90 || normEnd >= 90
+        : normStart <= 90 && normEnd >= 90;
+
+    if (includesTop) minY = Math.min(minY, center - radius);
+    if (includesBottom) maxY = Math.max(maxY, center + radius);
+
+    // Visual center is middle of bounding box
+    arcCenterY = (minY + maxY) / 2;
   }
 
   const labelId = React.useId();
