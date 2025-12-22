@@ -409,7 +409,7 @@ function GaugeRange(props: React.ComponentProps<"path">) {
       vectorEffect="non-scaling-stroke"
       {...rangeProps}
       className={cn(
-        "text-primary transition-all duration-300 ease-in-out",
+        "text-primary transition-[stroke-dashoffset] duration-700 ease-out",
         className,
       )}
     />
