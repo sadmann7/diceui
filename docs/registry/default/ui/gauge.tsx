@@ -172,7 +172,7 @@ function Gauge(props: GaugeProps) {
   // For full circles, use geometric center. For partial arcs, adjust based on arc position
   const angleDiffDeg = Math.abs(endAngle - startAngle);
   const isFullCircle = angleDiffDeg >= 360;
-  
+
   let arcCenterY = center;
   if (!isFullCircle) {
     const midAngle = (startAngle + endAngle) / 2;
@@ -274,8 +274,6 @@ function GaugeIndicator(props: React.ComponentProps<"svg">) {
   );
 }
 
-GaugeIndicator.displayName = INDICATOR_NAME;
-
 function polarToCartesian(
   centerX: number,
   centerY: number,
@@ -372,8 +370,6 @@ function GaugeTrack(props: React.ComponentProps<"path">) {
   );
 }
 
-GaugeTrack.displayName = TRACK_NAME;
-
 function GaugeRange(props: React.ComponentProps<"path">) {
   const { className, ...rangeProps } = props;
 
@@ -420,8 +416,6 @@ function GaugeRange(props: React.ComponentProps<"path">) {
   );
 }
 
-GaugeRange.displayName = RANGE_NAME;
-
 interface GaugeValueTextProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
@@ -452,14 +446,12 @@ function GaugeValueText(props: GaugeValueTextProps) {
   );
 }
 
-GaugeValueText.displayName = VALUE_TEXT_NAME;
-
 interface GaugeLabelProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
 function GaugeLabel(props: GaugeLabelProps) {
-  const { asChild, className, children, ...labelProps } = props;
+  const { asChild, className, ...labelProps } = props;
 
   const context = useGaugeContext(LABEL_NAME);
 
@@ -474,19 +466,15 @@ function GaugeLabel(props: GaugeLabelProps) {
         "mt-2 font-medium text-muted-foreground text-sm",
         className,
       )}
-    >
-      {children}
-    </LabelPrimitive>
+    />
   );
 }
 
-GaugeLabel.displayName = LABEL_NAME;
-
 function GaugeCombined(props: GaugeProps) {
-  const { label, children, ...rest } = props;
+  const { label, children, ...gaugeProps } = props;
 
   return (
-    <Gauge {...rest}>
+    <Gauge {...gaugeProps}>
       <GaugeIndicator>
         <GaugeTrack />
         <GaugeRange />
