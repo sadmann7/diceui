@@ -5,7 +5,6 @@ import * as React from "react";
 import {
   Gauge,
   GaugeIndicator,
-  GaugeLabel,
   GaugeRange,
   GaugeTrack,
   GaugeValueText,
