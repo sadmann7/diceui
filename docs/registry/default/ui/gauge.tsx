@@ -241,27 +241,15 @@ function Gauge(props: GaugeProps) {
     : null;
 
   // Calculate the visual center Y of the arc for text positioning
-  // For full circles, use geometric center. For partial arcs, calculate bounding box
+  // For full circles, use geometric center. For partial arcs, adjust based on arc position
   const angleDiffDeg = Math.abs(endAngle - startAngle);
   const isFullCircle = angleDiffDeg >= 360;
 
   let arcCenterY = center;
   if (!isFullCircle) {
-    // Sample multiple points along the arc to find accurate bounding box
-    const sampleCount = 5;
-    let minY = Number.POSITIVE_INFINITY;
-    let maxY = Number.NEGATIVE_INFINITY;
-
-    for (let i = 0; i <= sampleCount; i++) {
-      const angle = startAngle + (endAngle - startAngle) * (i / sampleCount);
-      const angleRad = ((angle - 90) * Math.PI) / 180;
-      const y = center + radius * Math.sin(angleRad);
-      minY = Math.min(minY, y);
-      maxY = Math.max(maxY, y);
-    }
-
-    // Position text at the vertical center of the arc's bounding box
-    arcCenterY = (minY + maxY) / 2;
+    const midAngle = (startAngle + endAngle) / 2;
+    const midAngleRad = ((midAngle - 90) * Math.PI) / 180;
+    arcCenterY = center + radius * 0.4 * Math.sin(midAngleRad);
   }
 
   const labelId = React.useId();
