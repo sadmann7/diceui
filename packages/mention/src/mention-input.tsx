@@ -22,6 +22,15 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
+    // Sync input value with context value to handle controlled state changes
+    React.useEffect(() => {
+      const input = context.inputRef.current;
+      if (input && input.value !== context.inputValue) {
+        input.value = context.inputValue;
+      }
+    }, [context.inputValue, context.inputRef]);
+
+
     const getTextWidth = React.useCallback(
       (text: string, input: InputElement) => {
         const style = window.getComputedStyle(input);
