@@ -11,20 +11,22 @@ import {
 } from "@/registry/default/ui/gauge";
 
 export default function GaugeDemo() {
-  const [value, setValue] = React.useState(0);
+  // Debug: Disable animation
+  const value = 75;
+  // const [value, setValue] = React.useState(0);
 
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setValue((prev) => {
-        if (prev >= 75) {
-          clearInterval(interval);
-          return 75;
-        }
-        return prev + 1;
-      });
-    }, 30);
-    return () => clearInterval(interval);
-  }, []);
+  // React.useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setValue((prev) => {
+  //       if (prev >= 75) {
+  //         clearInterval(interval);
+  //         return 75;
+  //       }
+  //       return prev + 1;
+  //     });
+  //   }, 30);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   return (
     <Gauge value={value} size={180} thickness={12}>

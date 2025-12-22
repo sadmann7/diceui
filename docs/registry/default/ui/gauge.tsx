@@ -282,22 +282,34 @@ function Gauge(props: GaugeProps) {
 
     // Debug logs
     if (process.env.NODE_ENV === "development") {
-      console.log("Gauge positioning:", {
-        startAngle,
-        endAngle,
-        normStart,
-        normEnd,
-        includesTop,
-        includesBottom,
-        startY: startY.toFixed(2),
-        endY: endY.toFixed(2),
-        minY: minY.toFixed(2),
-        maxY: maxY.toFixed(2),
-        center,
-        radius,
-        arcCenterY: arcCenterY.toFixed(2),
-        "Y offset": (arcCenterY - center).toFixed(2),
-      });
+      console.table([
+        {
+          metric: "Angles",
+          startAngle,
+          endAngle,
+          normStart,
+          normEnd,
+        },
+        {
+          metric: "Flags",
+          includesTop,
+          includesBottom,
+        },
+        {
+          metric: "Y Coords",
+          startY: startY.toFixed(2),
+          endY: endY.toFixed(2),
+          minY: minY.toFixed(2),
+          maxY: maxY.toFixed(2),
+        },
+        {
+          metric: "Result",
+          center,
+          radius,
+          arcCenterY: arcCenterY.toFixed(2),
+          "Y offset": (arcCenterY - center).toFixed(2),
+        },
+      ]);
     }
   }
 
