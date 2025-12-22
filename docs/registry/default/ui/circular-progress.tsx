@@ -198,7 +198,7 @@ function CircularProgress(props: CircularProgressProps) {
       <RootPrimitive
         role="progressbar"
         aria-describedby={valueText ? valueTextId : undefined}
-        aria-labelledby={labelId}
+        aria-labelledby={label ? labelId : undefined}
         aria-valuemax={max}
         aria-valuemin={min}
         aria-valuenow={getIsValidNumber(value) ? value : undefined}
@@ -215,7 +215,7 @@ function CircularProgress(props: CircularProgressProps) {
         )}
       >
         {children}
-        {label && <label id={labelId}>{label}</label>}
+        {label && <div id={labelId}>{label}</div>}
       </RootPrimitive>
     </CircularProgressContext.Provider>
   );

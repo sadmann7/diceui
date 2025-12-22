@@ -151,6 +151,7 @@ interface GaugeContextValue {
   arcCenterY: number;
   valueTextId?: string;
   labelId?: string;
+  setHasLabel: (hasLabel: boolean) => void;
 }
 
 const GaugeContext = React.createContext<GaugeContextValue | null>(null);
@@ -281,6 +282,7 @@ function Gauge(props: GaugeProps) {
 
   const labelId = React.useId();
   const valueTextId = React.useId();
+  const [hasLabel, setHasLabel] = React.useState(false);
 
   const contextValue = React.useMemo<GaugeContextValue>(
     () => ({
@@ -300,6 +302,7 @@ function Gauge(props: GaugeProps) {
       arcCenterY,
       valueTextId,
       labelId,
+      setHasLabel,
     }),
     [
       value,
@@ -328,6 +331,7 @@ function Gauge(props: GaugeProps) {
       <RootPrimitive
         role="meter"
         aria-describedby={valueText ? valueTextId : undefined}
+        aria-labelledby={hasLabel ? labelId : undefined}
         aria-valuemax={max}
         aria-valuemin={min}
         aria-valuenow={getIsValidNumber(value) ? value : undefined}
@@ -474,9 +478,15 @@ function GaugeValueText(props: DivProps) {
 }
 
 function GaugeLabel(props: DivProps) {
-  const { asChild, className, ...labelProps } = props;
+  const { asChild, className, children, ...labelProps } = props;
 
-  const { labelId, state } = useGaugeContext(LABEL_NAME);
+  const { labelId, state, setHasLabel } = useGaugeContext(LABEL_NAME);
+
+  // Notify parent that label is rendered
+  React.useEffect(() => {
+    setHasLabel(true);
+    return () => setHasLabel(false);
+  }, [setHasLabel]);
 
   const LabelPrimitive = asChild ? Slot : "div";
 
@@ -489,7 +499,9 @@ function GaugeLabel(props: DivProps) {
         "mt-2 font-medium text-muted-foreground text-sm",
         className,
       )}
-    />
+    >
+      {children}
+    </LabelPrimitive>
   );
 }
 
