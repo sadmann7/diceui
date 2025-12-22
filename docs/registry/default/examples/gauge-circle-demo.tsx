@@ -27,13 +27,7 @@ export default function GaugeCircleDemo() {
   }, []);
 
   return (
-    <Gauge
-      value={value}
-      size={180}
-      thickness={12}
-      startAngle={0}
-      endAngle={360}
-    >
+    <Gauge value={value} size={180} thickness={12}>
       <GaugeIndicator>
         <GaugeTrack />
         <GaugeRange />

@@ -27,13 +27,7 @@ export default function GaugeDemo() {
   }, []);
 
   return (
-    <Gauge
-      value={value}
-      size={180}
-      thickness={12}
-      startAngle={-90}
-      endAngle={90}
-    >
+    <Gauge value={value} size={180} thickness={12}>
       <GaugeIndicator>
         <GaugeTrack />
         <GaugeRange />

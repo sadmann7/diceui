@@ -12,8 +12,8 @@ const VALUE_TEXT_NAME = "GaugeValueText";
 const LABEL_NAME = "GaugeLabel";
 
 const DEFAULT_MAX = 100;
-const DEFAULT_START_ANGLE = -90;
-const DEFAULT_END_ANGLE = 90;
+const DEFAULT_START_ANGLE = 0;
+const DEFAULT_END_ANGLE = 360;
 
 type GaugeState = "indeterminate" | "complete" | "loading";
 
@@ -74,6 +74,7 @@ interface GaugeContextValue {
   startAngle: number;
   endAngle: number;
   arcLength: number;
+  arcCenterY: number;
   valueTextId?: string;
   labelId?: string;
 }
@@ -159,14 +160,19 @@ function Gauge(props: GaugeProps) {
 
   // Calculate arc length based on angles
   const angleDiff = Math.abs(endAngle - startAngle);
-  const arcLength =
-    (Math.min(angleDiff, 360) / 360) * (2 * Math.PI * radius);
+  const arcLength = (Math.min(angleDiff, 360) / 360) * (2 * Math.PI * radius);
 
   const percentage = getIsValidNumber(value)
     ? max === min
       ? 1
       : (value - min) / (max - min)
     : null;
+
+  // Calculate the visual center Y of the arc for text positioning
+  // For partial arcs, find the midpoint Y of the arc's bounding box
+  const midAngle = (startAngle + endAngle) / 2;
+  const midAngleRad = ((midAngle - 90) * Math.PI) / 180;
+  const arcCenterY = center + radius * 0.5 * Math.sin(midAngleRad);
 
   const labelId = React.useId();
   const valueTextId = React.useId();
@@ -186,6 +192,7 @@ function Gauge(props: GaugeProps) {
       startAngle,
       endAngle,
       arcLength,
+      arcCenterY,
       valueTextId,
       labelId,
     }),
@@ -203,6 +210,7 @@ function Gauge(props: GaugeProps) {
       startAngle,
       endAngle,
       arcLength,
+      arcCenterY,
       valueTextId,
       labelId,
     ],
@@ -413,7 +421,7 @@ interface GaugeValueTextProps extends React.ComponentProps<"div"> {
 }
 
 function GaugeValueText(props: GaugeValueTextProps) {
-  const { asChild, className, children, ...valueTextProps } = props;
+  const { asChild, className, children, style, ...valueTextProps } = props;
 
   const context = useGaugeContext(VALUE_TEXT_NAME);
 
@@ -424,8 +432,12 @@ function GaugeValueText(props: GaugeValueTextProps) {
       id={context.valueTextId}
       data-state={context.state}
       {...valueTextProps}
+      style={{
+        top: `${context.arcCenterY}px`,
+        ...style,
+      }}
       className={cn(
-        "absolute inset-0 flex items-center justify-center font-semibold text-2xl",
+        "absolute right-0 left-0 flex -translate-y-1/2 items-center justify-center font-semibold text-2xl",
         className,
       )}
     >
