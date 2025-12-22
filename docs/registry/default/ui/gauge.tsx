@@ -510,5 +510,6 @@ export {
   GaugeValueText,
   GaugeLabel,
   GaugeCombined,
+  //
   type GaugeProps,
 };
