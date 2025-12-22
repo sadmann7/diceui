@@ -17,6 +17,12 @@ const DEFAULT_END_ANGLE = 360;
 
 type GaugeState = "indeterminate" | "complete" | "loading";
 
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+interface PathProps extends React.ComponentProps<"path"> {}
+
 function getGaugeState(
   value: number | undefined | null,
   maxValue: number,
@@ -60,6 +66,74 @@ function getInvalidMaxError(propValue: string, componentName: string): string {
   return `Invalid prop \`max\` of value \`${propValue}\` supplied to \`${componentName}\`. Only numbers greater than 0 are valid. Defaulting to ${DEFAULT_MAX}.`;
 }
 
+function polarToCartesian(
+  centerX: number,
+  centerY: number,
+  radius: number,
+  angleInDegrees: number,
+) {
+  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+  return {
+    x: centerX + radius * Math.cos(angleInRadians),
+    y: centerY + radius * Math.sin(angleInRadians),
+  };
+}
+
+function describeArc(
+  x: number,
+  y: number,
+  radius: number,
+  startAngle: number,
+  endAngle: number,
+) {
+  const angleDiff = endAngle - startAngle;
+
+  // For full circles (360 degrees), draw as two semi-circles
+  if (Math.abs(angleDiff) >= 360) {
+    const mid = polarToCartesian(x, y, radius, startAngle + 180);
+    const end = polarToCartesian(x, y, radius, startAngle + 360);
+    return [
+      "M",
+      mid.x,
+      mid.y,
+      "A",
+      radius,
+      radius,
+      0,
+      0,
+      1,
+      end.x,
+      end.y,
+      "A",
+      radius,
+      radius,
+      0,
+      0,
+      1,
+      mid.x,
+      mid.y,
+    ].join(" ");
+  }
+
+  const start = polarToCartesian(x, y, radius, startAngle);
+  const end = polarToCartesian(x, y, radius, endAngle);
+  const largeArcFlag = angleDiff <= 180 ? "0" : "1";
+
+  return [
+    "M",
+    start.x,
+    start.y,
+    "A",
+    radius,
+    radius,
+    0,
+    largeArcFlag,
+    1,
+    end.x,
+    end.y,
+  ].join(" ");
+}
+
 interface GaugeContextValue {
   value: number | null;
   valueText: string | undefined;
@@ -91,7 +165,7 @@ function useGaugeContext(consumerName: string) {
   return context;
 }
 
-interface GaugeProps extends React.ComponentProps<"div"> {
+interface GaugeProps extends DivProps {
   value?: number | null | undefined;
   getValueText?(value: number, min: number, max: number): string;
   min?: number;
@@ -101,7 +175,6 @@ interface GaugeProps extends React.ComponentProps<"div"> {
   startAngle?: number;
   endAngle?: number;
   label?: string;
-  asChild?: boolean;
 }
 
 function Gauge(props: GaugeProps) {
@@ -117,7 +190,6 @@ function Gauge(props: GaugeProps) {
     label,
     asChild,
     className,
-    children,
     ...gaugeProps
   } = props;
 
@@ -244,9 +316,7 @@ function Gauge(props: GaugeProps) {
           "relative inline-flex w-fit flex-col items-center justify-center",
           className,
         )}
-      >
-        {children}
-      </RootPrimitive>
+      />
     </GaugeContext.Provider>
   );
 }
@@ -254,114 +324,42 @@ function Gauge(props: GaugeProps) {
 function GaugeIndicator(props: React.ComponentProps<"svg">) {
   const { className, ...indicatorProps } = props;
 
-  const context = useGaugeContext(INDICATOR_NAME);
+  const { size, state, value, max, min, percentage } =
+    useGaugeContext(INDICATOR_NAME);
 
   return (
     <svg
       aria-hidden="true"
       focusable="false"
-      viewBox={`0 0 ${context.size} ${context.size}`}
-      data-state={context.state}
-      data-value={context.value ?? undefined}
-      data-max={context.max}
-      data-min={context.min}
-      data-percentage={context.percentage}
-      width={context.size}
-      height={context.size}
+      viewBox={`0 0 ${size} ${size}`}
+      data-state={state}
+      data-value={value ?? undefined}
+      data-max={max}
+      data-min={min}
+      data-percentage={percentage}
+      width={size}
+      height={size}
       {...indicatorProps}
       className={cn("transform", className)}
     />
   );
 }
 
-function polarToCartesian(
-  centerX: number,
-  centerY: number,
-  radius: number,
-  angleInDegrees: number,
-) {
-  const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
-  return {
-    x: centerX + radius * Math.cos(angleInRadians),
-    y: centerY + radius * Math.sin(angleInRadians),
-  };
-}
-
-function describeArc(
-  x: number,
-  y: number,
-  radius: number,
-  startAngle: number,
-  endAngle: number,
-) {
-  const angleDiff = endAngle - startAngle;
-
-  // For full circles (360 degrees), draw as two semi-circles
-  if (Math.abs(angleDiff) >= 360) {
-    const mid = polarToCartesian(x, y, radius, startAngle + 180);
-    const end = polarToCartesian(x, y, radius, startAngle + 360);
-    return [
-      "M",
-      mid.x,
-      mid.y,
-      "A",
-      radius,
-      radius,
-      0,
-      0,
-      1,
-      end.x,
-      end.y,
-      "A",
-      radius,
-      radius,
-      0,
-      0,
-      1,
-      mid.x,
-      mid.y,
-    ].join(" ");
-  }
-
-  const start = polarToCartesian(x, y, radius, startAngle);
-  const end = polarToCartesian(x, y, radius, endAngle);
-  const largeArcFlag = angleDiff <= 180 ? "0" : "1";
-
-  return [
-    "M",
-    start.x,
-    start.y,
-    "A",
-    radius,
-    radius,
-    0,
-    largeArcFlag,
-    1,
-    end.x,
-    end.y,
-  ].join(" ");
-}
-
-function GaugeTrack(props: React.ComponentProps<"path">) {
+function GaugeTrack(props: PathProps) {
   const { className, ...trackProps } = props;
 
-  const context = useGaugeContext(TRACK_NAME);
+  const { center, radius, startAngle, endAngle, thickness, state } =
+    useGaugeContext(TRACK_NAME);
 
-  const pathData = describeArc(
-    context.center,
-    context.center,
-    context.radius,
-    context.startAngle,
-    context.endAngle,
-  );
+  const pathData = describeArc(center, center, radius, startAngle, endAngle);
 
   return (
     <path
-      data-state={context.state}
+      data-state={state}
       d={pathData}
       fill="none"
       stroke="currentColor"
-      strokeWidth={context.thickness}
+      strokeWidth={thickness}
       strokeLinecap="round"
       vectorEffect="non-scaling-stroke"
       {...trackProps}
@@ -370,39 +368,45 @@ function GaugeTrack(props: React.ComponentProps<"path">) {
   );
 }
 
-function GaugeRange(props: React.ComponentProps<"path">) {
+function GaugeRange(props: PathProps) {
   const { className, ...rangeProps } = props;
 
-  const context = useGaugeContext(RANGE_NAME);
+  const {
+    center,
+    radius,
+    startAngle,
+    endAngle,
+    value,
+    max,
+    min,
+    state,
+    thickness,
+    arcLength,
+    percentage,
+  } = useGaugeContext(RANGE_NAME);
 
   // Always draw the full arc path
-  const pathData = describeArc(
-    context.center,
-    context.center,
-    context.radius,
-    context.startAngle,
-    context.endAngle,
-  );
+  const pathData = describeArc(center, center, radius, startAngle, endAngle);
 
   // Use stroke-dasharray/dashoffset to animate the fill
-  const strokeDasharray = context.arcLength;
+  const strokeDasharray = arcLength;
   const strokeDashoffset =
-    context.state === "indeterminate"
+    state === "indeterminate"
       ? 0
-      : context.percentage !== null
-        ? context.arcLength - context.percentage * context.arcLength
-        : context.arcLength;
+      : percentage !== null
+        ? arcLength - percentage * arcLength
+        : arcLength;
 
   return (
     <path
-      data-state={context.state}
-      data-value={context.value ?? undefined}
-      data-max={context.max}
-      data-min={context.min}
+      data-state={state}
+      data-value={value ?? undefined}
+      data-max={max}
+      data-min={min}
       d={pathData}
       fill="none"
       stroke="currentColor"
-      strokeWidth={context.thickness}
+      strokeWidth={thickness}
       strokeLinecap="round"
       strokeDasharray={strokeDasharray}
       strokeDashoffset={strokeDashoffset}
@@ -416,24 +420,21 @@ function GaugeRange(props: React.ComponentProps<"path">) {
   );
 }
 
-interface GaugeValueTextProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-function GaugeValueText(props: GaugeValueTextProps) {
+function GaugeValueText(props: DivProps) {
   const { asChild, className, children, style, ...valueTextProps } = props;
 
-  const context = useGaugeContext(VALUE_TEXT_NAME);
+  const { valueTextId, state, arcCenterY, valueText } =
+    useGaugeContext(VALUE_TEXT_NAME);
 
   const ValueTextPrimitive = asChild ? Slot : "div";
 
   return (
     <ValueTextPrimitive
-      id={context.valueTextId}
-      data-state={context.state}
+      id={valueTextId}
+      data-state={state}
       {...valueTextProps}
       style={{
-        top: `${context.arcCenterY}px`,
+        top: `${arcCenterY}px`,
         ...style,
       }}
       className={cn(
@@ -441,26 +442,22 @@ function GaugeValueText(props: GaugeValueTextProps) {
         className,
       )}
     >
-      {children ?? context.valueText}
+      {children ?? valueText}
     </ValueTextPrimitive>
   );
 }
 
-interface GaugeLabelProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
-function GaugeLabel(props: GaugeLabelProps) {
+function GaugeLabel(props: DivProps) {
   const { asChild, className, ...labelProps } = props;
 
-  const context = useGaugeContext(LABEL_NAME);
+  const { labelId, state } = useGaugeContext(LABEL_NAME);
 
   const LabelPrimitive = asChild ? Slot : "div";
 
   return (
     <LabelPrimitive
-      id={context.labelId}
-      data-state={context.state}
+      id={labelId}
+      data-state={state}
       {...labelProps}
       className={cn(
         "mt-2 font-medium text-muted-foreground text-sm",

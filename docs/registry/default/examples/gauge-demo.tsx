@@ -33,7 +33,7 @@ export default function GaugeDemo() {
         <GaugeRange />
       </GaugeIndicator>
       <GaugeValueText />
-      <GaugeLabel>Performance</GaugeLabel>
+      <GaugeLabel className="sr-only">Performance</GaugeLabel>
     </Gauge>
   );
 }
