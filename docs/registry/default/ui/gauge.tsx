@@ -280,8 +280,8 @@ function describeArc(
   startAngle: number,
   endAngle: number,
 ) {
-  const start = polarToCartesian(x, y, radius, endAngle);
-  const end = polarToCartesian(x, y, radius, startAngle);
+  const start = polarToCartesian(x, y, radius, startAngle);
+  const end = polarToCartesian(x, y, radius, endAngle);
   const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
 
   return [
@@ -293,7 +293,7 @@ function describeArc(
     radius,
     0,
     largeArcFlag,
-    0,
+    1,
     end.x,
     end.y,
   ].join(" ");
