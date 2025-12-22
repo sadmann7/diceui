@@ -663,9 +663,9 @@ function FileUpload(props: FileUploadProps) {
             required={required}
             onChange={onInputChange}
           />
-          <span id={labelId} className="sr-only">
+          <div id={labelId} className="sr-only">
             {label ?? "File upload"}
-          </span>
+          </div>
         </RootPrimitive>
       </FileUploadContext.Provider>
     </StoreContext.Provider>

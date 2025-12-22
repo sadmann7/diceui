@@ -66,6 +66,10 @@ function getInvalidMaxError(propValue: string, componentName: string): string {
   return `Invalid prop \`max\` of value \`${propValue}\` supplied to \`${componentName}\`. Only numbers greater than 0 are valid. Defaulting to ${DEFAULT_MAX}.`;
 }
 
+function getNormalizedAngle(angle: number) {
+  return ((angle % 360) + 360) % 360;
+}
+
 function polarToCartesian(
   centerX: number,
   centerY: number,
@@ -151,7 +155,6 @@ interface GaugeContextValue {
   arcCenterY: number;
   valueTextId?: string;
   labelId?: string;
-  setHasLabel: (hasLabel: boolean) => void;
 }
 
 const GaugeContext = React.createContext<GaugeContextValue | null>(null);
@@ -229,7 +232,6 @@ function Gauge(props: GaugeProps) {
   const radius = Math.max(0, (size - thickness) / 2);
   const center = size / 2;
 
-  // Calculate arc length based on angles
   const angleDiff = Math.abs(endAngle - startAngle);
   const arcLength = (Math.min(angleDiff, 360) / 360) * (2 * Math.PI * radius);
 
@@ -246,24 +248,18 @@ function Gauge(props: GaugeProps) {
 
   let arcCenterY = center;
   if (!isFullCircle) {
-    // Calculate bounding box of the arc to find visual center
     const startRad = (startAngle * Math.PI) / 180;
     const endRad = (endAngle * Math.PI) / 180;
 
-    // Get Y coordinates at key points
     const startY = center - radius * Math.cos(startRad);
     const endY = center - radius * Math.cos(endRad);
 
-    // Find min and max Y within the arc range
     let minY = Math.min(startY, endY);
     let maxY = Math.max(startY, endY);
 
-    // Check if arc passes through cardinal points
-    const normalizeAngle = (angle: number) => ((angle % 360) + 360) % 360;
-    const normStart = normalizeAngle(startAngle);
-    const normEnd = normalizeAngle(endAngle);
+    const normStart = getNormalizedAngle(startAngle);
+    const normEnd = getNormalizedAngle(endAngle);
 
-    // Check if arc includes top (270° or -90°) or bottom (90°)
     const includesTop =
       normStart > normEnd
         ? normStart <= 270 || normEnd >= 270
@@ -276,13 +272,11 @@ function Gauge(props: GaugeProps) {
     if (includesTop) minY = Math.min(minY, center - radius);
     if (includesBottom) maxY = Math.max(maxY, center + radius);
 
-    // Visual center is middle of bounding box
     arcCenterY = (minY + maxY) / 2;
   }
 
   const labelId = React.useId();
   const valueTextId = React.useId();
-  const [hasLabel, setHasLabel] = React.useState(false);
 
   const contextValue = React.useMemo<GaugeContextValue>(
     () => ({
@@ -302,7 +296,6 @@ function Gauge(props: GaugeProps) {
       arcCenterY,
       valueTextId,
       labelId,
-      setHasLabel,
     }),
     [
       value,
@@ -331,7 +324,7 @@ function Gauge(props: GaugeProps) {
       <RootPrimitive
         role="meter"
         aria-describedby={valueText ? valueTextId : undefined}
-        aria-labelledby={hasLabel ? labelId : undefined}
+        aria-labelledby={labelId}
         aria-valuemax={max}
         aria-valuemin={min}
         aria-valuenow={getIsValidNumber(value) ? value : undefined}
@@ -478,15 +471,9 @@ function GaugeValueText(props: DivProps) {
 }
 
 function GaugeLabel(props: DivProps) {
-  const { asChild, className, children, ...labelProps } = props;
+  const { asChild, className, ...labelProps } = props;
 
-  const { labelId, state, setHasLabel } = useGaugeContext(LABEL_NAME);
-
-  // Notify parent that label is rendered
-  React.useEffect(() => {
-    setHasLabel(true);
-    return () => setHasLabel(false);
-  }, [setHasLabel]);
+  const { labelId, state } = useGaugeContext(LABEL_NAME);
 
   const LabelPrimitive = asChild ? Slot : "div";
 
@@ -499,9 +486,7 @@ function GaugeLabel(props: DivProps) {
         "mt-2 font-medium text-muted-foreground text-sm",
         className,
       )}
-    >
-      {children}
-    </LabelPrimitive>
+    />
   );
 }
 
@@ -525,6 +510,5 @@ export {
   GaugeValueText,
   GaugeLabel,
   GaugeCombined,
-  //
   type GaugeProps,
 };
