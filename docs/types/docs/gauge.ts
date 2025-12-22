@@ -16,10 +16,17 @@ export interface GaugeProps extends EmptyProps<"div">, CompositionProps {
    * Useful for providing custom formatting or localization.
    *
    * ```ts
+   * // Show percentage
+   * getValueText={(value, min, max) => {
+   *   const percentage = ((value - min) / (max - min)) * 100;
+   *   return `${Math.round(percentage)}%`;
+   * }}
+   * 
+   * // Show fraction
    * getValueText={(value, min, max) => `${value}/${max}`}
    * ```
    *
-   * @default (value, min, max) => Math.round(((value - min) / (max - min)) * 100) + "%"
+   * @default (value) => Math.round(value).toString()
    */
   getValueText?(value: number, min: number, max: number): string;
 

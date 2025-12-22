@@ -87,6 +87,44 @@ Different arc configurations including semi-circle, three-quarter circle, and fu
 
 <ComponentTabs name="gauge-variants-demo" />
 
+## Value Text Formatting
+
+By default, the gauge displays the raw value. You can customize the format using the `getValueText` prop:
+
+### Show Percentage
+```tsx
+<Gauge 
+  value={75}
+  getValueText={(value, min, max) => {
+    const percentage = ((value - min) / (max - min)) * 100;
+    return `${Math.round(percentage)}%`;
+  }}
+>
+  {/* ... */}
+</Gauge>
+```
+
+### Show Fraction
+```tsx
+<Gauge 
+  value={75}
+  max={100}
+  getValueText={(value, min, max) => `${value}/${max}`}
+>
+  {/* ... */}
+</Gauge>
+```
+
+### Custom Text
+```tsx
+<Gauge 
+  value={75}
+  getValueText={(value) => `${value} points`}
+>
+  {/* ... */}
+</Gauge>
+```
+
 ## Theming
 
 The gauge component uses CSS `currentColor` for stroke colors, making it easy to theme using Tailwind's text utilities:
