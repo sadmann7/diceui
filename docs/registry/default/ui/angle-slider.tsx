@@ -197,8 +197,11 @@ function AngleSlider(props: AngleSliderProps) {
     inverted = false,
     asChild,
     className,
-    children,
     ref,
+    onPointerMove: onPointerMoveProp,
+    onPointerUp: onPointerUpProp,
+    onPointerDown: onPointerDownProp,
+    onKeyDown: onKeyDownProp,
     ...rootProps
   } = props;
 
@@ -222,6 +225,10 @@ function AngleSlider(props: AngleSliderProps) {
   const propsRef = useAsRef({
     onValueChange,
     onValueCommit,
+    onPointerMove: onPointerMoveProp,
+    onPointerUp: onPointerUpProp,
+    onPointerDown: onPointerDownProp,
+    onKeyDown: onKeyDownProp,
   });
 
   const store = React.useMemo<Store>(() => {
@@ -439,7 +446,7 @@ function AngleSlider(props: AngleSliderProps) {
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<RootElement>) => {
-      rootProps.onKeyDown?.(event);
+      propsRef.current.onKeyDown?.(event);
       if (event.defaultPrevented || disabled) return;
 
       const state = store.getState();
@@ -473,12 +480,12 @@ function AngleSlider(props: AngleSliderProps) {
         });
       }
     },
-    [rootProps.onKeyDown, disabled, store, inverted],
+    [store, propsRef, disabled, inverted],
   );
 
   const onPointerDown = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
-      rootProps.onPointerDown?.(event);
+      propsRef.current.onPointerDown?.(event);
       if (event.defaultPrevented || disabled) return;
 
       const target = event.target as HTMLElement;
@@ -507,12 +514,12 @@ function AngleSlider(props: AngleSliderProps) {
         }
       }
     },
-    [rootProps.onPointerDown, disabled, store, sliderElement, onSliderStart],
+    [store, propsRef, disabled, sliderElement, onSliderStart],
   );
 
   const onPointerMove = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
-      rootProps.onPointerMove?.(event);
+      propsRef.current.onPointerMove?.(event);
       if (event.defaultPrevented || disabled) return;
 
       const target = event.target as HTMLElement;
@@ -526,12 +533,12 @@ function AngleSlider(props: AngleSliderProps) {
         onSliderMove(pointerValue);
       }
     },
-    [rootProps.onPointerMove, disabled, sliderElement, store, onSliderMove],
+    [store, propsRef, disabled, sliderElement, onSliderMove],
   );
 
   const onPointerUp = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
-      rootProps.onPointerUp?.(event);
+      propsRef.current.onPointerUp?.(event);
       if (event.defaultPrevented) return;
 
       const target = event.target as RootElement;
@@ -540,7 +547,7 @@ function AngleSlider(props: AngleSliderProps) {
         onSliderEnd();
       }
     },
-    [rootProps.onPointerUp, onSliderEnd],
+    [propsRef, onSliderEnd],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -567,9 +574,7 @@ function AngleSlider(props: AngleSliderProps) {
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
-        >
-          {children}
-        </RootPrimitive>
+        />
       </SliderContext.Provider>
     </StoreContext.Provider>
   );

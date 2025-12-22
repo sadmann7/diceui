@@ -255,13 +255,13 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "circular-progress-themes-demo",
+    name: "circular-progress-colors-demo",
     type: "registry:example",
     dependencies: ["motion"],
     registryDependencies: ["circular-progress"],
     files: [
       {
-        path: "examples/circular-progress-themes-demo.tsx",
+        path: "examples/circular-progress-colors-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -734,6 +734,50 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/fps-strategy-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "gauge-demo",
+    type: "registry:example",
+    registryDependencies: ["gauge"],
+    files: [
+      {
+        path: "examples/gauge-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "gauge-sizes-demo",
+    type: "registry:example",
+    registryDependencies: ["gauge"],
+    files: [
+      {
+        path: "examples/gauge-sizes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "gauge-colors-demo",
+    type: "registry:example",
+    registryDependencies: ["gauge"],
+    files: [
+      {
+        path: "examples/gauge-colors-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "gauge-variants-demo",
+    type: "registry:example",
+    registryDependencies: ["gauge"],
+    files: [
+      {
+        path: "examples/gauge-variants-demo.tsx",
         type: "registry:example",
       },
     ],
