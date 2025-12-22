@@ -353,5 +353,6 @@ export {
   CircularProgressRange,
   CircularProgressValueText,
   CircularProgressCombined,
+  //
   type CircularProgressProps,
 };

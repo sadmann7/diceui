@@ -21,7 +21,7 @@ export interface GaugeProps extends EmptyProps<"div">, CompositionProps {
    *   const percentage = ((value - min) / (max - min)) * 100;
    *   return `${Math.round(percentage)}%`;
    * }}
-   * 
+   *
    * // Show fraction
    * getValueText={(value, min, max) => `${value}/${max}`}
    * ```

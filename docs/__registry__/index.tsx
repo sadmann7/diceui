@@ -259,6 +259,24 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "gauge": {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/gauge.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/gauge.tsx")),
+      source: "",
+      chunks: []
+    },
     "segmented-input": {
       name: "segmented-input",
       description: "",
@@ -1616,6 +1634,62 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/fps-strategy-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "gauge-demo": {
+      name: "gauge-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["gauge"],
+      files: [{
+        path: "registry/default/examples/gauge-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/gauge-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "gauge-sizes-demo": {
+      name: "gauge-sizes-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["gauge"],
+      files: [{
+        path: "registry/default/examples/gauge-sizes-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/gauge-sizes-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "gauge-colors-demo": {
+      name: "gauge-colors-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["gauge"],
+      files: [{
+        path: "registry/default/examples/gauge-colors-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/gauge-colors-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "gauge-variants-demo": {
+      name: "gauge-variants-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["gauge"],
+      files: [{
+        path: "registry/default/examples/gauge-variants-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/gauge-variants-demo.tsx")),
       source: "",
       chunks: []
     },

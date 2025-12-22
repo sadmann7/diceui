@@ -307,6 +307,23 @@
       "type": "registry:ui"
     },
     {
+      "name": "gauge",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "files": [
+        {
+          "path": "ui/gauge.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
       "name": "segmented-input",
       "dependencies": [
         "@radix-ui/react-slot",
@@ -1896,6 +1913,58 @@
       "files": [
         {
           "path": "examples/fps-strategy-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "gauge-demo",
+      "registryDependencies": [
+        "gauge"
+      ],
+      "files": [
+        {
+          "path": "examples/gauge-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "gauge-sizes-demo",
+      "registryDependencies": [
+        "gauge"
+      ],
+      "files": [
+        {
+          "path": "examples/gauge-sizes-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "gauge-colors-demo",
+      "registryDependencies": [
+        "gauge"
+      ],
+      "files": [
+        {
+          "path": "examples/gauge-colors-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "gauge-variants-demo",
+      "registryDependencies": [
+        "gauge"
+      ],
+      "files": [
+        {
+          "path": "examples/gauge-variants-demo.tsx",
           "type": "registry:example"
         }
       ],

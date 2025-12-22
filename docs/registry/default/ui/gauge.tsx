@@ -51,7 +51,8 @@ function getIsValidValueNumber(
 }
 
 function getDefaultValueText(value: number, min: number, max: number): string {
-  return `${Math.round(value)}`;
+  const percentage = max === min ? 100 : ((value - min) / (max - min)) * 100;
+  return Math.round(percentage).toString();
 }
 
 function getInvalidValueError(

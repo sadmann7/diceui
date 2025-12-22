@@ -283,6 +283,23 @@
     "type": "registry:ui"
   },
   {
+    "name": "gauge",
+    "dependencies": [
+      "@radix-ui/react-slot"
+    ],
+    "files": [
+      {
+        "path": "ui/gauge.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "type": "registry:ui"
+  },
+  {
     "name": "segmented-input",
     "dependencies": [
       "@radix-ui/react-slot",

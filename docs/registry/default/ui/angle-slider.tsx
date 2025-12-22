@@ -197,7 +197,6 @@ function AngleSlider(props: AngleSliderProps) {
     inverted = false,
     asChild,
     className,
-    children,
     ref,
     ...rootProps
   } = props;
@@ -567,9 +566,7 @@ function AngleSlider(props: AngleSliderProps) {
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={onPointerUp}
-        >
-          {children}
-        </RootPrimitive>
+        />
       </SliderContext.Provider>
     </StoreContext.Provider>
   );
