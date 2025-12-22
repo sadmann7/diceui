@@ -174,7 +174,6 @@ interface GaugeProps extends DivProps {
   thickness?: number;
   startAngle?: number;
   endAngle?: number;
-  label?: string;
 }
 
 function Gauge(props: GaugeProps) {
@@ -187,7 +186,6 @@ function Gauge(props: GaugeProps) {
     thickness = 8,
     startAngle = DEFAULT_START_ANGLE,
     endAngle = DEFAULT_END_ANGLE,
-    label,
     asChild,
     className,
     ...rootProps
@@ -330,7 +328,7 @@ function Gauge(props: GaugeProps) {
       <RootPrimitive
         role="meter"
         aria-describedby={valueText ? valueTextId : undefined}
-        aria-labelledby={label ? labelId : undefined}
+        aria-labelledby={labelId}
         aria-valuemax={max}
         aria-valuemin={min}
         aria-valuenow={getIsValidNumber(value) ? value : undefined}
@@ -497,16 +495,13 @@ function GaugeLabel(props: DivProps) {
 }
 
 function GaugeCombined(props: GaugeProps) {
-  const { label, children, ...gaugeProps } = props;
-
   return (
-    <Gauge {...gaugeProps}>
+    <Gauge {...props}>
       <GaugeIndicator>
         <GaugeTrack />
         <GaugeRange />
       </GaugeIndicator>
-      <GaugeValueText>{children}</GaugeValueText>
-      {label && <GaugeLabel>{label}</GaugeLabel>}
+      <GaugeValueText />
     </Gauge>
   );
 }

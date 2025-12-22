@@ -87,13 +87,6 @@ export interface GaugeProps extends EmptyProps<"div">, CompositionProps {
    * @default 360
    */
   endAngle?: number;
-
-  /**
-   * An accessible label for the gauge.
-   * This is used for screen readers and doesn't render visually in the Gauge component.
-   * Use the GaugeLabel component for a visible label.
-   */
-  label?: string;
 }
 
 export interface GaugeIndicatorProps extends EmptyProps<"svg"> {}
