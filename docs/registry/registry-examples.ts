@@ -750,28 +750,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "gauge-circle-demo",
-    type: "registry:example",
-    registryDependencies: ["gauge"],
-    files: [
-      {
-        path: "examples/gauge-circle-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
-    name: "gauge-controlled-demo",
-    type: "registry:example",
-    registryDependencies: ["gauge", "button", "slider"],
-    files: [
-      {
-        path: "examples/gauge-controlled-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "gauge-sizes-demo",
     type: "registry:example",
     registryDependencies: ["gauge"],

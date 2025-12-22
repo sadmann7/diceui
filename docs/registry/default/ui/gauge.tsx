@@ -241,15 +241,36 @@ function Gauge(props: GaugeProps) {
     : null;
 
   // Calculate the visual center Y of the arc for text positioning
-  // For full circles, use geometric center. For partial arcs, adjust based on arc position
+  // For full circles, use geometric center. For partial arcs, position along midpoint angle
   const angleDiffDeg = Math.abs(endAngle - startAngle);
   const isFullCircle = angleDiffDeg >= 360;
 
   let arcCenterY = center;
   if (!isFullCircle) {
+    // Position text along the midpoint angle at ~65% of radius from center
+    // This places it in the "open" area of partial arc gauges
     const midAngle = (startAngle + endAngle) / 2;
-    const midAngleRad = ((midAngle - 90) * Math.PI) / 180;
-    arcCenterY = center + radius * 0.4 * Math.sin(midAngleRad);
+    const midAngleRad = (midAngle * Math.PI) / 180;
+
+    // Use 0.65 multiplier to position text between center and arc
+    const textRadius = radius * 0.65;
+    arcCenterY = center + textRadius * Math.sin(midAngleRad);
+
+    // Debug logs
+    if (process.env.NODE_ENV === "development") {
+      console.log("Gauge positioning:", {
+        startAngle,
+        endAngle,
+        midAngle,
+        "midAngle (rad)": midAngleRad,
+        "sin(midAngle)": Math.sin(midAngleRad),
+        center,
+        radius,
+        textRadius,
+        arcCenterY,
+        "Y offset": arcCenterY - center,
+      });
+    }
   }
 
   const labelId = React.useId();
