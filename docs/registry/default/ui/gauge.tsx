@@ -241,15 +241,48 @@ function Gauge(props: GaugeProps) {
     : null;
 
   // Calculate the visual center Y of the arc for text positioning
-  // For full circles, use geometric center. For partial arcs, adjust based on arc position
+  // For full circles, use geometric center. For partial arcs, find the actual bounding box
   const angleDiffDeg = Math.abs(endAngle - startAngle);
   const isFullCircle = angleDiffDeg >= 360;
 
   let arcCenterY = center;
   if (!isFullCircle) {
-    const midAngle = (startAngle + endAngle) / 2;
-    const midAngleRad = ((midAngle - 90) * Math.PI) / 180;
-    arcCenterY = center + radius * 0.4 * Math.sin(midAngleRad);
+    // Find the min and max Y coordinates of the arc
+    // Check start and end points
+    const startRad = ((startAngle - 90) * Math.PI) / 180;
+    const endRad = ((endAngle - 90) * Math.PI) / 180;
+    const startY = center + radius * Math.sin(startRad);
+    const endY = center + radius * Math.sin(endRad);
+
+    let minY = Math.min(startY, endY);
+    let maxY = Math.max(startY, endY);
+
+    // Check if arc crosses top (0°) or bottom (180°) extremes
+    // Normalize angles to 0-360 range for checking
+    const normalizedStart = ((startAngle % 360) + 360) % 360;
+    const normalizedEnd = ((endAngle % 360) + 360) % 360;
+
+    // Helper to check if angle is within arc range
+    const angleInRange = (angle: number) => {
+      const normalized = ((angle % 360) + 360) % 360;
+      if (normalizedStart <= normalizedEnd) {
+        return normalized >= normalizedStart && normalized <= normalizedEnd;
+      }
+      return normalized >= normalizedStart || normalized <= normalizedEnd;
+    };
+
+    // Top of circle is at 0° (12 o'clock in our coordinate system)
+    if (angleInRange(0)) {
+      minY = Math.min(minY, center - radius);
+    }
+
+    // Bottom of circle is at 180°
+    if (angleInRange(180)) {
+      maxY = Math.max(maxY, center + radius);
+    }
+
+    // Center text in the vertical middle of the arc's bounding box
+    arcCenterY = (minY + maxY) / 2;
   }
 
   const labelId = React.useId();
