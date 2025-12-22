@@ -334,19 +334,23 @@ function GaugeRange(props: React.ComponentProps<"path">) {
 
   const context = useGaugeContext(RANGE_NAME);
 
-  const currentAngle =
-    context.percentage !== null
-      ? context.startAngle +
-        (context.endAngle - context.startAngle) * context.percentage
-      : context.startAngle;
-
+  // Always draw the full arc path
   const pathData = describeArc(
     context.center,
     context.center,
     context.radius,
     context.startAngle,
-    context.state === "indeterminate" ? context.endAngle : currentAngle,
+    context.endAngle,
   );
+
+  // Use stroke-dasharray/dashoffset to animate the fill
+  const strokeDasharray = context.arcLength;
+  const strokeDashoffset =
+    context.state === "indeterminate"
+      ? 0
+      : context.percentage !== null
+        ? context.arcLength - context.percentage * context.arcLength
+        : context.arcLength;
 
   return (
     <path
@@ -359,6 +363,8 @@ function GaugeRange(props: React.ComponentProps<"path">) {
       stroke="currentColor"
       strokeWidth={context.thickness}
       strokeLinecap="round"
+      strokeDasharray={strokeDasharray}
+      strokeDashoffset={strokeDashoffset}
       vectorEffect="non-scaling-stroke"
       {...rangeProps}
       className={cn(
@@ -415,7 +421,10 @@ function GaugeLabel(props: GaugeLabelProps) {
       id={context.labelId}
       data-state={context.state}
       {...labelProps}
-      className={cn("mt-2 font-medium text-muted-foreground text-sm", className)}
+      className={cn(
+        "mt-2 font-medium text-muted-foreground text-sm",
+        className,
+      )}
     >
       {children}
     </LabelPrimitive>
@@ -447,6 +456,6 @@ export {
   GaugeValueText,
   GaugeLabel,
   GaugeCombined,
+  //
   type GaugeProps,
 };
-

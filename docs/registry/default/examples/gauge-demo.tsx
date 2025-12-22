@@ -4,10 +4,10 @@ import * as React from "react";
 import {
   Gauge,
   GaugeIndicator,
+  GaugeLabel,
   GaugeRange,
   GaugeTrack,
   GaugeValueText,
-  GaugeLabel,
 } from "@/registry/default/ui/gauge";
 
 export default function GaugeDemo() {
@@ -27,7 +27,13 @@ export default function GaugeDemo() {
   }, []);
 
   return (
-    <Gauge value={value} size={180} thickness={12} startAngle={-90} endAngle={90}>
+    <Gauge
+      value={value}
+      size={180}
+      thickness={12}
+      startAngle={-90}
+      endAngle={90}
+    >
       <GaugeIndicator>
         <GaugeTrack />
         <GaugeRange />
@@ -37,4 +43,3 @@ export default function GaugeDemo() {
     </Gauge>
   );
 }
-
