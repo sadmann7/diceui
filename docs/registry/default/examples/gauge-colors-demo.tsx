@@ -69,8 +69,8 @@ export default function GaugeColorsDemo() {
               <GaugeRange className={theme.rangeClass} />
             </GaugeIndicator>
             <GaugeValueText className={cn("text-xl", theme.textClass)} />
+            <GaugeLabel>{theme.name}</GaugeLabel>
           </Gauge>
-          <GaugeLabel>{theme.name}</GaugeLabel>
         </div>
       ))}
     </div>
