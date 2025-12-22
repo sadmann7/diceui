@@ -255,13 +255,13 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "circular-progress-themes-demo",
+    name: "circular-progress-colors-demo",
     type: "registry:example",
     dependencies: ["motion"],
     registryDependencies: ["circular-progress"],
     files: [
       {
-        path: "examples/circular-progress-themes-demo.tsx",
+        path: "examples/circular-progress-colors-demo.tsx",
         type: "registry:example",
       },
     ],

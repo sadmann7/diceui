@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, useInView, useMotionValue, useSpring } from "motion/react";
 import * as React from "react";
 import {
   Gauge,
@@ -17,41 +18,79 @@ const sizes = [
 ];
 
 export default function GaugeSizesDemo() {
-  const [value, setValue] = React.useState(0);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setValue((prev) => {
-        if (prev >= 68) {
-          clearInterval(interval);
-          return 68;
-        }
-        return prev + 1;
-      });
-    }, 30);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="flex flex-wrap items-end justify-center gap-8">
-      {sizes.map((config) => (
-        <div key={config.label} className="flex flex-col items-center gap-2">
-          <Gauge
-            value={value}
-            size={config.size}
-            thickness={config.thickness}
-            startAngle={-90}
-            endAngle={90}
-          >
-            <GaugeIndicator>
-              <GaugeTrack />
-              <GaugeRange />
-            </GaugeIndicator>
-            <GaugeValueText className={config.size < 140 ? "text-xl" : ""} />
-          </Gauge>
-          <p className="text-muted-foreground text-sm">{config.label}</p>
-        </div>
+      {sizes.map((config, index) => (
+        <AnimatedGauge key={config.label} config={config} index={index} />
       ))}
     </div>
+  );
+}
+
+interface AnimatedGaugeProps {
+  config: (typeof sizes)[0];
+  index: number;
+}
+
+function AnimatedGauge({ config, index }: AnimatedGaugeProps) {
+  const ref = React.useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  const motionValue = useMotionValue(0);
+  const springValue = useSpring(motionValue, {
+    stiffness: 60,
+    damping: 15,
+    mass: 1,
+  });
+
+  const [displayValue, setDisplayValue] = React.useState(0);
+
+  React.useEffect(() => {
+    if (isInView) {
+      const delay = index * 150;
+      const timer = setTimeout(() => {
+        motionValue.set(68);
+      }, delay);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isInView, motionValue, index]);
+
+  React.useEffect(() => {
+    const unsubscribe = springValue.on("change", (latest) => {
+      setDisplayValue(Math.round(latest));
+    });
+
+    return unsubscribe;
+  }, [springValue]);
+
+  return (
+    <motion.div
+      ref={ref}
+      className="flex flex-col items-center gap-2"
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{
+        duration: 0.6,
+        delay: index * 0.1,
+        ease: [0.21, 1.11, 0.81, 0.99],
+      }}
+    >
+      <Gauge
+        value={displayValue}
+        size={config.size}
+        thickness={config.thickness}
+        startAngle={-90}
+        endAngle={90}
+      >
+        <GaugeIndicator>
+          <GaugeTrack />
+          <GaugeRange />
+        </GaugeIndicator>
+        <GaugeValueText className={config.size < 140 ? "text-xl" : ""} />
+        <GaugeLabel className="sr-only">{config.label}</GaugeLabel>
+      </Gauge>
+      <p className="text-muted-foreground text-sm">{config.label}</p>
+    </motion.div>
   );
 }

@@ -62,7 +62,7 @@ const themes = [
   },
 ];
 
-export default function CircularProgressThemesDemo() {
+export default function CircularProgressColorsDemo() {
   return (
     <>
       <div className="hidden grid-cols-4 gap-4 sm:grid">
