@@ -158,7 +158,9 @@ function Gauge(props: GaugeProps) {
   const center = size / 2;
 
   // Calculate arc length based on angles
-  const arcLength = ((endAngle - startAngle) / 360) * (2 * Math.PI * radius);
+  const angleDiff = Math.abs(endAngle - startAngle);
+  const arcLength =
+    (Math.min(angleDiff, 360) / 360) * (2 * Math.PI * radius);
 
   const percentage = getIsValidNumber(value)
     ? max === min
@@ -280,9 +282,38 @@ function describeArc(
   startAngle: number,
   endAngle: number,
 ) {
+  const angleDiff = endAngle - startAngle;
+
+  // For full circles (360 degrees), draw as two semi-circles
+  if (Math.abs(angleDiff) >= 360) {
+    const mid = polarToCartesian(x, y, radius, startAngle + 180);
+    const end = polarToCartesian(x, y, radius, startAngle + 360);
+    return [
+      "M",
+      mid.x,
+      mid.y,
+      "A",
+      radius,
+      radius,
+      0,
+      0,
+      1,
+      end.x,
+      end.y,
+      "A",
+      radius,
+      radius,
+      0,
+      0,
+      1,
+      mid.x,
+      mid.y,
+    ].join(" ");
+  }
+
   const start = polarToCartesian(x, y, radius, startAngle);
   const end = polarToCartesian(x, y, radius, endAngle);
-  const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+  const largeArcFlag = angleDiff <= 180 ? "0" : "1";
 
   return [
     "M",
