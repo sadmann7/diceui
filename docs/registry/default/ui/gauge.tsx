@@ -328,7 +328,6 @@ function Gauge(props: GaugeProps) {
       <RootPrimitive
         role="meter"
         aria-describedby={valueText ? valueTextId : undefined}
-        aria-labelledby={labelId}
         aria-valuemax={max}
         aria-valuemin={min}
         aria-valuenow={getIsValidNumber(value) ? value : undefined}
