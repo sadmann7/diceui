@@ -190,7 +190,7 @@ function Gauge(props: GaugeProps) {
     label,
     asChild,
     className,
-    ...gaugeProps
+    ...rootProps
   } = props;
 
   if ((maxProp || maxProp === 0) && !getIsValidMaxNumber(maxProp)) {
@@ -340,7 +340,7 @@ function Gauge(props: GaugeProps) {
         data-max={max}
         data-min={min}
         data-percentage={percentage}
-        {...gaugeProps}
+        {...rootProps}
         className={cn(
           "relative inline-flex w-fit flex-col items-center justify-center",
           className,
