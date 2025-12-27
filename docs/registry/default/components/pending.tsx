@@ -9,7 +9,7 @@ import * as React from "react";
 interface UsePendingOptions {
   id?: string;
   isPending?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
 }
 
 interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
@@ -25,7 +25,7 @@ interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
 function usePending<T extends HTMLElement = HTMLElement>(
   options: UsePendingOptions = {},
 ): UsePendingReturn<T> {
-  const { id, isPending = false, isDisabled = false } = options;
+  const { id, isPending = false, disabled = false } = options;
 
   const instanceId = React.useId();
   const pendingId = id || instanceId;
@@ -40,38 +40,36 @@ function usePending<T extends HTMLElement = HTMLElement>(
       id: pendingId,
     };
 
-    // When pending, disable interactions but keep focusable
     if (isPending) {
       props["aria-busy"] = "true";
       props["aria-disabled"] = "true";
       props["data-pending"] = true;
 
-      // Override event handlers to prevent interaction
-      // Using object spread means these will be merged by Radix Slot
-      const preventEvent = (event: React.SyntheticEvent) =>
+      function onEventPrevent(event: React.SyntheticEvent) {
         event.preventDefault();
-      const preventKeyEvent = (event: React.KeyboardEvent<T>) => {
+      }
+
+      function onKeyEventPrevent(event: React.KeyboardEvent<T>) {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
         }
-      };
+      }
 
-      props.onClick = preventEvent;
-      props.onPointerDown = preventEvent;
-      props.onPointerUp = preventEvent;
-      props.onMouseDown = preventEvent;
-      props.onMouseUp = preventEvent;
-      props.onKeyDown = preventKeyEvent;
-      props.onKeyUp = preventKeyEvent;
+      props.onClick = onEventPrevent;
+      props.onPointerDown = onEventPrevent;
+      props.onPointerUp = onEventPrevent;
+      props.onMouseDown = onEventPrevent;
+      props.onMouseUp = onEventPrevent;
+      props.onKeyDown = onKeyEventPrevent;
+      props.onKeyUp = onKeyEventPrevent;
     }
 
-    // Mark as disabled if explicitly disabled
-    if (isDisabled) {
+    if (disabled) {
       props["data-disabled"] = true;
     }
 
     return props;
-  }, [isPending, isDisabled, pendingId]);
+  }, [isPending, disabled, pendingId]);
 
   return React.useMemo(() => {
     return {
@@ -83,13 +81,12 @@ function usePending<T extends HTMLElement = HTMLElement>(
 
 interface PendingProps extends React.ComponentProps<typeof Slot> {
   isPending?: boolean;
-  isDisabled?: boolean;
+  disabled?: boolean;
 }
 
-function Pending({ id, isPending, isDisabled, ...props }: PendingProps) {
-  const { pendingProps } = usePending({ isPending, id, isDisabled });
+function Pending({ id, isPending, disabled, ...props }: PendingProps) {
+  const { pendingProps } = usePending({ id, isPending, disabled });
 
-  // Spread user props first, then pendingProps to ensure event prevention takes precedence
   return <Slot {...props} {...pendingProps} />;
 }
 

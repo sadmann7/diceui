@@ -33,13 +33,13 @@ export interface UsePendingOptions {
    * ```tsx
    * const { pendingProps } = usePending({
    *   isPending: true,
-   *   isDisabled: false
+   *   disabled: false
    * });
    * ```
    *
    * @default false
    */
-  isDisabled?: boolean;
+  disabled?: boolean;
 }
 
 export interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
@@ -98,7 +98,7 @@ export interface PendingProps extends EmptyProps<"div"> {
    *
    * @default false
    */
-  isDisabled?: boolean;
+  disabled?: boolean;
 
   /**
    * The children to render.
