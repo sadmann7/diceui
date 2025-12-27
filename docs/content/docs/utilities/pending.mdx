@@ -1,6 +1,6 @@
 ---
 title: Pending
-description: A utility component and hook for managing pending states on interactive elements with proper accessibility and user feedback.
+description: A utility for managing pending states on any interactive element—buttons, links, cards, switches, and more—with proper accessibility.
 preview: true
 links:
   api: /docs/utilities/pending#api-reference
@@ -74,6 +74,30 @@ Style pending states using the `data-pending` attribute for custom visual feedba
 
 <ComponentTabs name="pending-custom-demo" />
 
+### Navigation Links
+
+Apply pending states to links during async navigation or route transitions.
+
+<ComponentTabs name="pending-link-demo" />
+
+### Interactive Cards
+
+Use with clickable cards that trigger async actions like creating projects or loading content.
+
+<ComponentTabs name="pending-card-demo" />
+
+### Menu Items
+
+Apply pending states to menu items that perform async operations like exporting data or syncing.
+
+<ComponentTabs name="pending-menu-demo" />
+
+### Toggle Switches
+
+Show pending states on switches that save settings to an API or perform async updates.
+
+<ComponentTabs name="pending-switch-demo" />
+
 ## API Reference
 
 ### usePending
@@ -123,6 +147,21 @@ The Pending utility follows best practices for accessible pending states:
 - Prevents all interaction events (click, pointer, keyboard) when pending
 - Screen readers announce the changed button content (e.g., "Submitting...")
 - Provides `data-pending` attribute for custom styling
+
+## Use Cases
+
+The Pending utility works with **any interactive element**, not just buttons:
+
+- **Buttons** - Form submissions, actions
+- **Links** - Navigation with async route transitions
+- **Cards** - Clickable cards that load content
+- **Menu Items** - Actions like export, sync, archive
+- **Switches/Toggles** - Settings that save to an API
+- **Form Fields** - Inputs with async validation
+- **Tabs** - Tab switches that load content
+- **Select Options** - Dropdowns with async actions
+- **Icon Buttons** - Icon-only interactive elements
+- **List Items** - Navigation items in sidebars
 
 ## Notes
 

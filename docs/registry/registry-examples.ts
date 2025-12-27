@@ -1713,6 +1713,50 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "pending-link-demo",
+    type: "registry:example",
+    registryDependencies: ["pending"],
+    files: [
+      {
+        path: "examples/pending-link-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-card-demo",
+    type: "registry:example",
+    registryDependencies: ["pending"],
+    files: [
+      {
+        path: "examples/pending-card-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-menu-demo",
+    type: "registry:example",
+    registryDependencies: ["pending"],
+    files: [
+      {
+        path: "examples/pending-menu-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-switch-demo",
+    type: "registry:example",
+    registryDependencies: ["pending", "switch", "label"],
+    files: [
+      {
+        path: "examples/pending-switch-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "status-demo",
     type: "registry:example",
     registryDependencies: ["status"],
