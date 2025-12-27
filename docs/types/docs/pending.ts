@@ -15,7 +15,7 @@ export interface UsePendingOptions {
   isPending?: boolean;
 
   /**
-   * The ID of the element. Used for aria-labelledby when announcing state changes.
+   * The ID of the element. If not provided, an ID will be automatically generated.
    *
    * ```tsx
    * const { pendingProps } = usePending({
@@ -66,6 +66,11 @@ export interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
 
 export interface PendingProps extends EmptyProps<"div"> {
   /**
+   * The ID of the element. If not provided, an ID will be automatically generated.
+   */
+  id?: string;
+
+  /**
    * Whether the element is in a pending state.
    * This disables press and hover events while retaining focusability,
    * and announces the pending state to screen readers.
@@ -79,25 +84,6 @@ export interface PendingProps extends EmptyProps<"div"> {
    * @default false
    */
   isPending?: boolean;
-
-  /**
-   * Whether to render as the child element via Radix Slot.
-   * When true, the component merges its props and behavior onto the immediate child element.
-   *
-   * ```tsx
-   * <Pending isPending={true} asChild>
-   *   <button>Submit</button>
-   * </Pending>
-   * ```
-   *
-   * @default true
-   */
-  asChild?: boolean;
-
-  /**
-   * The ID of the element. Used for aria-labelledby when announcing state changes.
-   */
-  id?: string;
 
   /**
    * Whether the element is disabled.
