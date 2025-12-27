@@ -2729,6 +2729,48 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "status-variants-demo": {
+      name: "status-variants-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-variants-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-variants-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "status-text-only-demo": {
+      name: "status-text-only-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-text-only-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-text-only-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "status-list-demo": {
+      name: "status-list-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-list-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-list-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "stepper-demo": {
       name: "stepper-demo",
       description: "",

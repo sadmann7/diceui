@@ -69,7 +69,7 @@ Display multiple status items in a list format, ideal for system health dashboar
 
 ### Status
 
-The root container component that provides the badge-style wrapper with color variants.
+The main container component that provides the badge-style wrapper with color variants.
 
 <AutoTypeTable
   path="./types/docs/status.ts"
@@ -87,9 +87,7 @@ The root container component that provides the badge-style wrapper with color va
 
 ### StatusIndicator
 
-An animated pulse indicator that inherits the color from the parent Status variant.
-
-The ping animation is inspired by [Tailwind CSS's animate-ping utility](https://tailwindcss.com/docs/animation#ping), creating a radar-like ripple effect perfect for real-time status indicators.
+An animated pulse indicator for the status.
 
 <AutoTypeTable
   path="./types/docs/status.ts"
@@ -119,4 +117,3 @@ The Status component uses semantic HTML and follows best practices for accessibi
 - Colors automatically adapt to dark mode
 - The indicator animation runs continuously to draw attention to live status changes
 - Use the `asChild` prop to render Status as a link or button for interactive use cases
-

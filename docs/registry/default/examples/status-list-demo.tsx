@@ -6,7 +6,6 @@ import {
 
 const services = [
   { name: "API Server", status: "success" as const, uptime: "99.9%" },
-  { name: "Database", status: "success" as const, uptime: "100%" },
   { name: "Cache Service", status: "warning" as const, uptime: "98.5%" },
   { name: "Message Queue", status: "success" as const, uptime: "99.8%" },
   { name: "CDN", status: "error" as const, uptime: "95.2%" },
@@ -19,9 +18,9 @@ export default function StatusListDemo() {
       {services.map((service) => (
         <div
           key={service.name}
-          className="flex items-center justify-between rounded-lg border bg-card p-4"
+          className="flex items-center justify-between rounded-lg border bg-card p-3"
         >
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-0.5">
             <span className="font-medium text-sm">{service.name}</span>
             <span className="text-muted-foreground text-xs">
               Uptime: {service.uptime}
