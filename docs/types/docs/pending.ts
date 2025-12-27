@@ -47,12 +47,19 @@ export interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
    * Props to spread on the interactive element.
    * Includes aria attributes, data attributes, and event handler overrides.
    *
+   * **Important**: Spread pendingProps LAST to ensure event prevention works:
+   *
    * ```tsx
    * const { pendingProps } = usePending({ isPending: true });
-   * <button {...pendingProps}>Submit</button>
+   * // ❌ Wrong - onClick will override prevention
+   * <button {...pendingProps} onClick={onSubmit}>Submit</button>
+   *
+   * // ✅ Correct - prevention takes precedence
+   * <button onClick={onSubmit} {...pendingProps}>Submit</button>
    * ```
    */
   pendingProps: React.HTMLAttributes<T> & {
+    "aria-busy"?: "true";
     "aria-disabled"?: "true";
     "data-pending"?: true;
     "data-disabled"?: true;

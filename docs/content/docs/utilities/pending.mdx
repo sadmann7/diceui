@@ -124,7 +124,8 @@ A wrapper component that applies pending state behavior to its child using Radix
 
 The Pending utility follows best practices for accessible pending states:
 
-- Uses `aria-disabled="true"` to indicate the disabled state to screen readers
+- Uses `aria-busy="true"` to indicate loading/pending state to screen readers
+- Uses `aria-disabled="true"` to indicate the element is not currently interactive
 - Maintains focus ability—users can still Tab to the element
 - Prevents all interaction events (click, pointer, keyboard) when pending
 - Screen readers announce the changed button content (e.g., "Submitting...")
@@ -151,7 +152,8 @@ The Pending utility works with **any interactive element**, not just buttons:
 - **Focus management**: Elements remain focusable but don't respond to interactions when pending
 - **Event prevention**: All pointer and keyboard events are prevented during pending state
 - **Styling**: Use the `data-pending` attribute to style elements based on their pending state
-- **Accessibility**: Screen readers naturally announce changed content and the `aria-disabled` state
+- **Accessibility**: Screen readers announce both `aria-busy` (loading state) and `aria-disabled` (not interactive)
+- **Hook usage**: When using the hook directly, spread `pendingProps` **last** to ensure event prevention works correctly
 
 ## Credits
 
