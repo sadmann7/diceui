@@ -94,20 +94,12 @@ function describeArc(
 
   // For full circles (360 degrees), draw as two semi-circles
   if (Math.abs(angleDiff) >= 360) {
+    const start = polarToCartesian(x, y, radius, startAngle);
     const mid = polarToCartesian(x, y, radius, startAngle + 180);
-    const end = polarToCartesian(x, y, radius, startAngle + 360);
     return [
       "M",
-      mid.x,
-      mid.y,
-      "A",
-      radius,
-      radius,
-      0,
-      0,
-      1,
-      end.x,
-      end.y,
+      start.x,
+      start.y,
       "A",
       radius,
       radius,
@@ -116,6 +108,14 @@ function describeArc(
       1,
       mid.x,
       mid.y,
+      "A",
+      radius,
+      radius,
+      0,
+      0,
+      1,
+      start.x,
+      start.y,
     ].join(" ");
   }
 
