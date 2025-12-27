@@ -43,6 +43,17 @@ export const components: Registry["items"] = [
     ],
   },
   {
+    name: "pending",
+    type: "registry:component",
+    dependencies: ["@radix-ui/react-slot"],
+    files: [
+      {
+        path: "components/pending.tsx",
+        type: "registry:component",
+      },
+    ],
+  },
+  {
     name: "presence",
     type: "registry:component",
     files: [

@@ -545,6 +545,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "status": {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/status.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/status.tsx")),
+      source: "",
+      chunks: []
+    },
     "stepper": {
       name: "stepper",
       description: "",
@@ -2701,6 +2715,132 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "pending-demo": {
+      name: "pending-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["pending","button"],
+      files: [{
+        path: "registry/default/examples/pending-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/pending-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "pending-wrapper-demo": {
+      name: "pending-wrapper-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["pending","button"],
+      files: [{
+        path: "registry/default/examples/pending-wrapper-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/pending-wrapper-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "pending-form-demo": {
+      name: "pending-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["pending","button","input","label"],
+      files: [{
+        path: "registry/default/examples/pending-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/pending-form-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "pending-link-demo": {
+      name: "pending-link-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["pending"],
+      files: [{
+        path: "registry/default/examples/pending-link-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/pending-link-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "pending-switch-demo": {
+      name: "pending-switch-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["pending","switch","label"],
+      files: [{
+        path: "registry/default/examples/pending-switch-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/pending-switch-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "status-demo": {
+      name: "status-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "status-variants-demo": {
+      name: "status-variants-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-variants-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-variants-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "status-text-only-demo": {
+      name: "status-text-only-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-text-only-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-text-only-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "status-list-demo": {
+      name: "status-list-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-list-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-list-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "stepper-demo": {
       name: "stepper-demo",
       description: "",
@@ -3090,6 +3230,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/components/portal.tsx")),
+      source: "",
+      chunks: []
+    },
+    "pending": {
+      name: "pending",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/components/pending.tsx",
+        type: "registry:component",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/components/pending.tsx")),
       source: "",
       chunks: []
     },

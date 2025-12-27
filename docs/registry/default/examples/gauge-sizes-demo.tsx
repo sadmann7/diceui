@@ -12,10 +12,10 @@ import {
 } from "@/registry/default/ui/gauge";
 
 const sizes = [
-  { size: 100, thickness: 6, label: "Small" },
-  { size: 140, thickness: 10, label: "Medium" },
-  { size: 180, thickness: 12, label: "Large" },
-];
+  { size: 100, thickness: 6, label: "Small", valueTextClassName: "text-xl" },
+  { size: 140, thickness: 10, label: "Medium", valueTextClassName: "text-3xl" },
+  { size: 180, thickness: 12, label: "Large", valueTextClassName: "text-4xl" },
+] as const;
 
 export default function GaugeSizesDemo() {
   return (
@@ -28,7 +28,7 @@ export default function GaugeSizesDemo() {
 }
 
 interface AnimatedGaugeProps {
-  config: (typeof sizes)[0];
+  config: (typeof sizes)[number];
   index: number;
 }
 
@@ -80,14 +80,12 @@ function AnimatedGauge({ config, index }: AnimatedGaugeProps) {
         value={displayValue}
         size={config.size}
         thickness={config.thickness}
-        startAngle={-90}
-        endAngle={90}
       >
         <GaugeIndicator>
           <GaugeTrack />
           <GaugeRange />
         </GaugeIndicator>
-        <GaugeValueText className={config.size < 140 ? "text-xl" : ""} />
+        <GaugeValueText className={config.valueTextClassName} />
         <GaugeLabel className="sr-only">{config.label}</GaugeLabel>
       </Gauge>
       <p className="text-muted-foreground text-sm">{config.label}</p>

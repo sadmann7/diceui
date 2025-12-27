@@ -108,7 +108,7 @@ function CircularProgress(props: CircularProgressProps) {
     asChild,
     className,
     children,
-    ...progressProps
+    ...rootProps
   } = props;
 
   if ((maxProp || maxProp === 0) && !getIsValidMaxNumber(maxProp)) {
@@ -208,7 +208,7 @@ function CircularProgress(props: CircularProgressProps) {
         data-max={max}
         data-min={min}
         data-percentage={percentage}
-        {...progressProps}
+        {...rootProps}
         className={cn(
           "relative inline-flex w-fit items-center justify-center",
           className,

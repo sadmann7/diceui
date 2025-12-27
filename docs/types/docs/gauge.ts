@@ -66,11 +66,13 @@ export interface GaugeProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The starting angle of the gauge arc in degrees.
-   * 0° is at the 3 o'clock position, increasing clockwise.
+   * 0° is at the 12 o'clock position (top), increasing clockwise.
    *
    * ```ts
-   * startAngle={-90} // Start at 12 o'clock
-   * startAngle={135} // Start at 8 o'clock
+   * startAngle={0}   // Start at 12 o'clock (top)
+   * startAngle={90}  // Start at 3 o'clock (right)
+   * startAngle={180} // Start at 6 o'clock (bottom)
+   * startAngle={270} // Start at 9 o'clock (left)
    * ```
    *
    * @default 0
@@ -79,12 +81,12 @@ export interface GaugeProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The ending angle of the gauge arc in degrees.
-   * 0° is at the 3 o'clock position, increasing clockwise.
+   * 0° is at the 12 o'clock position (top), increasing clockwise.
    *
    * ```ts
-   * endAngle={180} // Half circle
+   * endAngle={180} // Half circle (top to bottom)
    * endAngle={270} // Three-quarter circle
-   * endAngle={360} // Full circle
+   * endAngle={360} // Full circle (complete rotation back to top)
    * ```
    *
    * @default 360
