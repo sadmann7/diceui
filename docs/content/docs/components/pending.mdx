@@ -1,0 +1,135 @@
+---
+title: Pending
+description: A utility component and hook for managing pending states on interactive elements with proper accessibility and user feedback.
+preview: true
+links:
+  api: /docs/components/pending#api-reference
+---
+
+<ComponentTabs name="pending-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add @diceui/pending
+```
+
+### Manual
+
+<Steps>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="pending" />
+  </Step>
+</Steps>
+
+## Layout
+
+Import the utility and use it with your interactive elements.
+
+```tsx
+import { usePending, Pending } from "@/components/pending";
+import { Button } from "@/components/ui/button";
+
+// Using the hook
+function SubmitButton() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { pendingProps, isPending } = usePending({ isPending: isSubmitting });
+
+  return <Button {...pendingProps}>Submit</Button>;
+}
+
+// Using the wrapper component
+function SubmitButton() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  return (
+    <Pending isPending={isSubmitting}>
+      <Button>Submit</Button>
+    </Pending>
+  );
+}
+```
+
+## Examples
+
+### Wrapper Component
+
+Use the `Pending` wrapper component to easily apply pending state to any interactive element using Radix Slot.
+
+<ComponentTabs name="pending-wrapper-demo" />
+
+### Form with Pending State
+
+Handle form submissions with proper pending state management and user feedback.
+
+<ComponentTabs name="pending-form-demo" />
+
+### Custom Styling
+
+Style pending states using the `data-pending` attribute for custom visual feedback.
+
+<ComponentTabs name="pending-custom-demo" />
+
+## API Reference
+
+### usePending
+
+A hook that manages pending state for interactive elements. Returns props to spread on your element and the current pending state.
+
+<AutoTypeTable
+  path="./types/docs/pending.ts"
+  name="UsePendingOptions"
+/>
+
+#### Returns
+
+<AutoTypeTable
+  path="./types/docs/pending.ts"
+  name="UsePendingReturn"
+/>
+
+### Pending
+
+A wrapper component that applies pending state behavior to its child using Radix Slot.
+
+<AutoTypeTable
+  path="./types/docs/pending.ts"
+  name="PendingProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-pending]",
+      value: ["true"],
+    },
+    {
+      title: "[data-disabled]",
+      value: ["true"],
+    },
+  ]}
+/>
+
+## Accessibility
+
+The Pending utility follows best practices for accessible pending states:
+
+- Uses `aria-disabled="true"` to indicate the disabled state to screen readers
+- Maintains focus ability—users can still Tab to the element
+- Prevents all interaction events (click, pointer, keyboard) when pending
+- Screen readers announce the changed button content (e.g., "Submitting...")
+- Provides `data-pending` attribute for custom styling
+
+## Notes
+
+- **Choose your API**: Use the `usePending` hook for more control, or the `Pending` wrapper for convenience
+- **Focus management**: Elements remain focusable but don't respond to interactions when pending
+- **Event prevention**: All pointer and keyboard events are prevented during pending state
+- **Styling**: Use the `data-pending` attribute to style elements based on their pending state
+- **Accessibility**: Screen readers naturally announce changed content and the `aria-disabled` state
+- **Credits**: Implementation inspired by [React Aria's Button](https://github.com/adobe/react-spectrum/blob/main/packages/react-aria-components/src/Button.tsx) (Apache License 2.0)
+
