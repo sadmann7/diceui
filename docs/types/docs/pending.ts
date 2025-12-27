@@ -4,7 +4,7 @@ export interface UsePendingOptions {
   /**
    * Whether the element is in a pending state.
    * This disables press and hover events while retaining focusability,
-   * and announces the pending state to screen readers.
+   * and sets aria-busy and aria-disabled for screen readers.
    *
    * ```tsx
    * const { pendingProps } = usePending({ isPending: isSubmitting });
@@ -80,7 +80,7 @@ export interface PendingProps extends EmptyProps<"div"> {
   /**
    * Whether the element is in a pending state.
    * This disables press and hover events while retaining focusability,
-   * and announces the pending state to screen readers.
+   * and sets aria-busy and aria-disabled for screen readers.
    *
    * ```tsx
    * <Pending isPending={isSubmitting}>
@@ -99,9 +99,4 @@ export interface PendingProps extends EmptyProps<"div"> {
    * @default false
    */
   disabled?: boolean;
-
-  /**
-   * The children to render.
-   */
-  children: React.ReactNode;
 }
