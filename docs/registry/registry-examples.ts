@@ -1669,6 +1669,61 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "pending-demo",
+    type: "registry:example",
+    registryDependencies: ["pending", "button"],
+    files: [
+      {
+        path: "examples/pending-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-wrapper-demo",
+    type: "registry:example",
+    registryDependencies: ["pending", "button"],
+    files: [
+      {
+        path: "examples/pending-wrapper-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-form-demo",
+    type: "registry:example",
+    registryDependencies: ["pending", "button", "input", "label"],
+    files: [
+      {
+        path: "examples/pending-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-link-demo",
+    type: "registry:example",
+    registryDependencies: ["pending"],
+    files: [
+      {
+        path: "examples/pending-link-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-switch-demo",
+    type: "registry:example",
+    registryDependencies: ["pending", "switch", "label"],
+    files: [
+      {
+        path: "examples/pending-switch-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "status-demo",
     type: "registry:example",
     registryDependencies: ["status"],
