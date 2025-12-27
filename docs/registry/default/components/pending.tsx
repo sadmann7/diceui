@@ -10,8 +10,8 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 
 interface UsePendingOptions {
-  isPending?: boolean;
   id?: string;
+  isPending?: boolean;
   isDisabled?: boolean;
 }
 

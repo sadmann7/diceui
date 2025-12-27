@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Pending } from "@/registry/default/components/pending";
 
-export default function UsePendingWrapperDemo() {
+export default function PendingWrapperDemo() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = () => {

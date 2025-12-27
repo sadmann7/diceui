@@ -4,7 +4,7 @@ import { Download, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { usePending } from "@/registry/default/components/pending";
 
-export default function UsePendingCustomDemo() {
+export default function PendingCustomDemo() {
   const [isDownloading, setIsDownloading] = useState(false);
   const { pendingProps, isPending } = usePending({
     isPending: isDownloading,

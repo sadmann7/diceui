@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { usePending } from "@/registry/default/components/pending";
 
-export default function UsePendingDemo() {
+export default function PendingDemo() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { pendingProps, isPending } = usePending({ isPending: isSubmitting });
 

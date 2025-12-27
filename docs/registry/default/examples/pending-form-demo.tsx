@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePending } from "@/registry/default/components/pending";
 
-export default function UsePendingFormDemo() {
+export default function PendingFormDemo() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const { pendingProps, isPending } = usePending({ isPending: isSubmitting });
