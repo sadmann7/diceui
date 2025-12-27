@@ -19,7 +19,7 @@ export default function PendingDemo() {
 
   return (
     <div className="flex flex-col items-center gap-4">
-      <Button {...pendingProps} onClick={onSubmit}>
+      <Button onClick={onSubmit} {...pendingProps}>
         {isPending && <Loader2 className="size-4 animate-spin" />}
         {isPending ? "Submitting..." : "Submit"}
       </Button>
