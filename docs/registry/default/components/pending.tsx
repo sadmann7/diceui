@@ -1,9 +1,6 @@
 /**
  * Based on React Aria's Button implementation
  * @see https://github.com/adobe/react-spectrum/blob/main/packages/react-aria-components/src/Button.tsx
- *
- * Copyright 2022 Adobe. All rights reserved.
- * Licensed under the Apache License, Version 2.0
  */
 
 import { Slot } from "@radix-ui/react-slot";
@@ -81,17 +78,15 @@ function usePending<T extends HTMLElement = HTMLElement>(
   }, [pendingProps, isPending]);
 }
 
-interface PendingProps {
-  id?: string;
+interface PendingProps extends React.ComponentProps<typeof Slot> {
   isPending?: boolean;
   isDisabled?: boolean;
-  children: React.ReactNode;
 }
 
-function Pending({ id, isPending, isDisabled, children }: PendingProps) {
+function Pending({ id, isPending, isDisabled, ...props }: PendingProps) {
   const { pendingProps } = usePending({ isPending, id, isDisabled });
 
-  return <Slot {...pendingProps}>{children}</Slot>;
+  return <Slot {...pendingProps} {...props} />;
 }
 
 export {

@@ -1,0 +1,15 @@
+{
+  "name": "pending",
+  "dependencies": [
+    "@radix-ui/react-slot"
+  ],
+  "files": [
+    {
+      "path": "components/pending.tsx",
+      "content": "import { Slot } from \"@radix-ui/react-slot\";\nimport * as React from \"react\";\n\ninterface UsePendingOptions {\n  id?: string;\n  isPending?: boolean;\n  isDisabled?: boolean;\n}\n\ninterface UsePendingReturn<T extends HTMLElement = HTMLElement> {\n  pendingProps: React.HTMLAttributes<T> & {\n    \"aria-disabled\"?: \"true\";\n    \"data-pending\"?: true;\n    \"data-disabled\"?: true;\n  };\n  isPending: boolean;\n}\n\nfunction usePending<T extends HTMLElement = HTMLElement>(\n  options: UsePendingOptions = {},\n): UsePendingReturn<T> {\n  const { id, isPending = false, isDisabled = false } = options;\n\n  const instanceId = React.useId();\n  const pendingId = id || instanceId;\n\n  const pendingProps = React.useMemo(() => {\n    const props: React.HTMLAttributes<T> & {\n      \"aria-disabled\"?: \"true\";\n      \"data-pending\"?: true;\n      \"data-disabled\"?: true;\n    } = {\n      id: pendingId,\n    };\n\n    // When pending, disable interactions but keep focusable\n    if (isPending) {\n      props[\"aria-disabled\"] = \"true\";\n      props[\"data-pending\"] = true;\n\n      // Disable all interaction event handlers\n      props.onClick = (event) => event.preventDefault();\n      props.onPointerDown = (event) => event.preventDefault();\n      props.onPointerUp = (event) => event.preventDefault();\n      props.onMouseDown = (event) => event.preventDefault();\n      props.onMouseUp = (event) => event.preventDefault();\n      props.onKeyDown = (event) => {\n        // Prevent Enter/Space from triggering actions\n        if (event.key === \"Enter\" || event.key === \" \") {\n          event.preventDefault();\n        }\n      };\n      props.onKeyUp = (event) => {\n        if (event.key === \"Enter\" || event.key === \" \") {\n          event.preventDefault();\n        }\n      };\n    }\n\n    // Mark as disabled if explicitly disabled\n    if (isDisabled) {\n      props[\"data-disabled\"] = true;\n    }\n\n    return props;\n  }, [isPending, isDisabled, pendingId]);\n\n  return React.useMemo(() => {\n    return {\n      pendingProps,\n      isPending,\n    };\n  }, [pendingProps, isPending]);\n}\n\ninterface PendingProps extends React.ComponentProps<typeof Slot> {\n  isPending?: boolean;\n  isDisabled?: boolean;\n}\n\nfunction Pending({ id, isPending, isDisabled, ...props }: PendingProps) {\n  const { pendingProps } = usePending({ isPending, id, isDisabled });\n\n  return <Slot {...pendingProps} {...props} />;\n}\n\nexport {\n  Pending,\n  //\n  usePending,\n};\n",
+      "type": "registry:component",
+      "target": ""
+    }
+  ],
+  "type": "registry:component"
+}

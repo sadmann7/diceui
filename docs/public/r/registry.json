@@ -3105,6 +3105,78 @@
       "type": "registry:example"
     },
     {
+      "name": "pending-demo",
+      "registryDependencies": [
+        "pending",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "examples/pending-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "pending-wrapper-demo",
+      "registryDependencies": [
+        "pending",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "examples/pending-wrapper-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "pending-form-demo",
+      "registryDependencies": [
+        "pending",
+        "button",
+        "input",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "examples/pending-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "pending-link-demo",
+      "registryDependencies": [
+        "pending"
+      ],
+      "files": [
+        {
+          "path": "examples/pending-link-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "pending-switch-demo",
+      "registryDependencies": [
+        "pending",
+        "switch",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "examples/pending-switch-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
       "name": "status-demo",
       "registryDependencies": [
         "status"
@@ -3533,6 +3605,19 @@
       "files": [
         {
           "path": "components/portal.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "type": "registry:component"
+    },
+    {
+      "name": "pending",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "files": [
+        {
+          "path": "components/pending.tsx",
           "type": "registry:component"
         }
       ],

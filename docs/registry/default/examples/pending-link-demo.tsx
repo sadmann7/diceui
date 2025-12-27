@@ -23,7 +23,7 @@ export default function PendingLinkDemo() {
     <div className="flex items-center justify-center">
       <Pending isPending={isPending}>
         <a
-          href="/dashboard"
+          href="/docs/components/pending"
           onClick={onNavigate}
           className="text-primary underline-offset-4 hover:underline"
         >
