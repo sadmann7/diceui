@@ -1,19 +1,19 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePending } from "@/registry/default/components/pending";
 
 export default function PendingFormDemo() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [submitted, setSubmitted] = React.useState(false);
   const { pendingProps, isPending } = usePending({ isPending: isSubmitting });
 
-  const onSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = React.useCallback((event: React.FormEvent) => {
+    event.preventDefault();
     setIsSubmitting(true);
     setSubmitted(false);
 
@@ -23,7 +23,7 @@ export default function PendingFormDemo() {
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 2000);
     }, 2000);
-  };
+  }, []);
 
   return (
     <form onSubmit={onSubmit} className="w-full max-w-sm space-y-4">

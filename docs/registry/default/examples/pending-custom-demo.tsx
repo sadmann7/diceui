@@ -1,22 +1,22 @@
 "use client";
 
 import { Download, Loader2 } from "lucide-react";
-import { useState } from "react";
+import * as React from "react";
 import { usePending } from "@/registry/default/components/pending";
 
 export default function PendingCustomDemo() {
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [isDownloading, setIsDownloading] = React.useState(false);
   const { pendingProps, isPending } = usePending({
     isPending: isDownloading,
   });
 
-  const onDownload = () => {
+  const onDownload = React.useCallback(() => {
     setIsDownloading(true);
     // Simulate download
     setTimeout(() => {
       setIsDownloading(false);
     }, 3000);
-  };
+  }, []);
 
   return (
     <div className="flex flex-col items-center gap-4">

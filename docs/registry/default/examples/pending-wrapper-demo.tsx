@@ -1,20 +1,20 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Pending } from "@/registry/default/components/pending";
 
 export default function PendingWrapperDemo() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-  const onSubmit = () => {
+  const onSubmit = React.useCallback(() => {
     setIsSubmitting(true);
     // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
     }, 2000);
-  };
+  }, []);
 
   return (
     <div className="flex flex-col items-center gap-4">
