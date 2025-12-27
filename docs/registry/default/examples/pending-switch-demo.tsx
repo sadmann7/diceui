@@ -1,15 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { Label } from "@/registry/default/ui/label";
-import { Switch } from "@/registry/default/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Pending } from "@/registry/default/components/pending";
 
 export default function PendingSwitchDemo() {
   const [isEnabled, setIsEnabled] = React.useState(false);
   const [isPending, setIsPending] = React.useState(false);
 
-  const onToggle = () => {
+  const onToggle = React.useCallback(() => {
     setIsPending(true);
 
     // Simulate async API call to save setting
@@ -17,7 +17,7 @@ export default function PendingSwitchDemo() {
       setIsEnabled((prev) => !prev);
       setIsPending(false);
     }, 1500);
-  };
+  }, []);
 
   return (
     <div className="flex flex-col gap-6">
@@ -25,7 +25,9 @@ export default function PendingSwitchDemo() {
         <div className="flex flex-col gap-1">
           <Label htmlFor="notifications">Email Notifications</Label>
           <p className="text-muted-foreground text-sm">
-            {isPending ? "Saving..." : "Receive email about your account activity"}
+            {isPending
+              ? "Saving..."
+              : "Receive email about your account activity"}
           </p>
         </div>
         <Pending isPending={isPending}>
@@ -50,4 +52,3 @@ export default function PendingSwitchDemo() {
     </div>
   );
 }
-

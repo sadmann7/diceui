@@ -6,15 +6,18 @@ import { Pending } from "@/registry/default/components/pending";
 export default function PendingLinkDemo() {
   const [isPending, setIsPending] = React.useState(false);
 
-  const onNavigate = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-    setIsPending(true);
+  const onNavigate = React.useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+      setIsPending(true);
 
-    // Simulate async navigation
-    setTimeout(() => {
-      setIsPending(false);
-    }, 2000);
-  };
+      // Simulate async navigation
+      setTimeout(() => {
+        setIsPending(false);
+      }, 2000);
+    },
+    [],
+  );
 
   return (
     <div className="flex items-center justify-center">
@@ -30,4 +33,3 @@ export default function PendingLinkDemo() {
     </div>
   );
 }
-
