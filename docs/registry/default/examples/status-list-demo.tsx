@@ -15,7 +15,7 @@ const services = [
 
 export default function StatusListDemo() {
   return (
-    <div className="w-full max-w-md space-y-2">
+    <div className="flex w-full max-w-md flex-col gap-2">
       {services.map((service) => (
         <div
           key={service.name}
