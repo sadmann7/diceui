@@ -9,7 +9,7 @@ export default function StatusVariantsDemo() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Success Variants</h3>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Status variant="success">
             <StatusIndicator />
             <StatusLabel>Online</StatusLabel>
@@ -18,7 +18,7 @@ export default function StatusVariantsDemo() {
             <StatusIndicator />
             <StatusLabel>Active</StatusLabel>
           </Status>
-          <Status variant="success" className="hidden sm:block">
+          <Status variant="success" className="hidden sm:inline-flex">
             <StatusIndicator />
             <StatusLabel>Connected</StatusLabel>
           </Status>
@@ -27,7 +27,7 @@ export default function StatusVariantsDemo() {
 
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Error Variants</h3>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Status variant="error">
             <StatusIndicator />
             <StatusLabel>Offline</StatusLabel>
@@ -36,7 +36,7 @@ export default function StatusVariantsDemo() {
             <StatusIndicator />
             <StatusLabel>Disconnected</StatusLabel>
           </Status>
-          <Status variant="error" className="hidden sm:block">
+          <Status variant="error" className="hidden sm:inline-flex">
             <StatusIndicator />
             <StatusLabel>Failed</StatusLabel>
           </Status>
@@ -45,7 +45,7 @@ export default function StatusVariantsDemo() {
 
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Warning Variants</h3>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Status variant="warning">
             <StatusIndicator />
             <StatusLabel>Away</StatusLabel>
@@ -54,7 +54,7 @@ export default function StatusVariantsDemo() {
             <StatusIndicator />
             <StatusLabel>Busy</StatusLabel>
           </Status>
-          <Status variant="warning" className="hidden sm:block">
+          <Status variant="warning" className="hidden sm:inline-flex">
             <StatusIndicator />
             <StatusLabel>Pending</StatusLabel>
           </Status>
@@ -63,7 +63,7 @@ export default function StatusVariantsDemo() {
 
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Info Variants</h3>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Status variant="info">
             <StatusIndicator />
             <StatusLabel>Idle</StatusLabel>
@@ -72,7 +72,7 @@ export default function StatusVariantsDemo() {
             <StatusIndicator />
             <StatusLabel>In Progress</StatusLabel>
           </Status>
-          <Status variant="info" className="hidden sm:block">
+          <Status variant="info" className="hidden sm:inline-flex">
             <StatusIndicator />
             <StatusLabel>Syncing</StatusLabel>
           </Status>
@@ -81,7 +81,7 @@ export default function StatusVariantsDemo() {
 
       <div className="flex flex-col gap-3">
         <h3 className="font-medium text-sm">Default Variants</h3>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Status variant="default">
             <StatusIndicator />
             <StatusLabel>Unknown</StatusLabel>
@@ -90,7 +90,7 @@ export default function StatusVariantsDemo() {
             <StatusIndicator />
             <StatusLabel>Not Set</StatusLabel>
           </Status>
-          <Status variant="default" className="hidden sm:block">
+          <Status variant="default" className="hidden sm:inline-flex">
             <StatusIndicator />
             <StatusLabel>N/A</StatusLabel>
           </Status>

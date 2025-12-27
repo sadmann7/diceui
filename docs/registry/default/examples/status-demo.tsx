@@ -6,7 +6,7 @@ import {
 
 export default function StatusDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-4">
+    <div className="flex flex-wrap items-center gap-2.5">
       <Status variant="success">
         <StatusIndicator />
         <StatusLabel>Online</StatusLabel>

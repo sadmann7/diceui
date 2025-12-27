@@ -2,7 +2,7 @@ import { Status, StatusLabel } from "@/registry/default/ui/status";
 
 export default function StatusTextOnlyDemo() {
   return (
-    <div className="flex flex-wrap items-center gap-4">
+    <div className="flex flex-wrap items-center gap-2.5">
       <Status variant="success">
         <StatusLabel>Active</StatusLabel>
       </Status>
