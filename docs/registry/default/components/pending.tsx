@@ -32,28 +32,6 @@ function usePending<T extends HTMLElement = HTMLElement>(
   const instanceId = React.useId();
   const pendingId = id || instanceId;
 
-  // Track previous pending state for announcements
-  const wasPending = React.useRef(isPending);
-  const [isFocused, setIsFocused] = React.useState(false);
-
-  // Announce state changes to screen readers when focused
-  React.useEffect(() => {
-    if (isFocused) {
-      if (!wasPending.current && isPending) {
-        // Announce when entering pending state
-        const message =
-          document.getElementById(pendingId)?.textContent || "Loading";
-        announce(message, "assertive");
-      } else if (wasPending.current && !isPending) {
-        // Announce when leaving pending state
-        const message =
-          document.getElementById(pendingId)?.textContent || "Ready";
-        announce(message, "assertive");
-      }
-    }
-    wasPending.current = isPending;
-  }, [isPending, isFocused, pendingId]);
-
   const pendingProps = React.useMemo(() => {
     const props: React.HTMLAttributes<T> & {
       "aria-disabled"?: "true";
@@ -61,12 +39,6 @@ function usePending<T extends HTMLElement = HTMLElement>(
       "data-disabled"?: true;
     } = {
       id: pendingId,
-      onFocus: () => {
-        setIsFocused(true);
-      },
-      onBlur: () => {
-        setIsFocused(false);
-      },
     };
 
     // When pending, disable interactions but keep focusable
@@ -116,50 +88,10 @@ interface PendingProps {
   children: React.ReactNode;
 }
 
-function Pending({ id, isPending, isDisabled }: PendingProps) {
+function Pending({ id, isPending, isDisabled, children }: PendingProps) {
   const { pendingProps } = usePending({ isPending, id, isDisabled });
 
-  return <Slot {...pendingProps} />;
-}
-
-function announce(
-  message: string,
-  politeness: "polite" | "assertive" = "polite",
-) {
-  // Check if we already have an announcer
-  let announcer = document.querySelector<HTMLElement>(
-    `[data-live-announcer="${politeness}"]`,
-  );
-
-  if (!announcer) {
-    announcer = document.createElement("div");
-    announcer.setAttribute("data-live-announcer", politeness);
-    announcer.setAttribute(
-      "role",
-      politeness === "assertive" ? "alert" : "status",
-    );
-    announcer.setAttribute("aria-live", politeness);
-    announcer.setAttribute("aria-atomic", "true");
-
-    // Visually hide but keep accessible
-    Object.assign(announcer.style, {
-      position: "absolute",
-      left: "-10000px",
-      width: "1px",
-      height: "1px",
-      overflow: "hidden",
-    });
-
-    document.body.appendChild(announcer);
-  }
-
-  // Clear and set new message
-  announcer.textContent = "";
-  setTimeout(() => {
-    if (announcer) {
-      announcer.textContent = message;
-    }
-  }, 100);
+  return <Slot {...pendingProps}>{children}</Slot>;
 }
 
 export {
