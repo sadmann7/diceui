@@ -408,10 +408,8 @@ function GaugeRange(props: PathProps) {
     percentage,
   } = useGaugeContext(RANGE_NAME);
 
-  // Always draw the full arc path
   const pathData = describeArc(center, center, radius, startAngle, endAngle);
 
-  // Use stroke-dasharray/dashoffset to animate the fill
   const strokeDasharray = arcLength;
   const strokeDashoffset =
     state === "indeterminate"
