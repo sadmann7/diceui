@@ -1669,6 +1669,50 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "status-demo",
+    type: "registry:example",
+    registryDependencies: ["status"],
+    files: [
+      {
+        path: "examples/status-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "status-variants-demo",
+    type: "registry:example",
+    registryDependencies: ["status"],
+    files: [
+      {
+        path: "examples/status-variants-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "status-text-only-demo",
+    type: "registry:example",
+    registryDependencies: ["status"],
+    files: [
+      {
+        path: "examples/status-text-only-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "status-list-demo",
+    type: "registry:example",
+    registryDependencies: ["status"],
+    files: [
+      {
+        path: "examples/status-list-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "stepper-demo",
     type: "registry:example",
     registryDependencies: ["stepper"],

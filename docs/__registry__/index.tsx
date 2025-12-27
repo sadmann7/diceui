@@ -545,6 +545,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "status": {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/ui/status.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/status.tsx")),
+      source: "",
+      chunks: []
+    },
     "stepper": {
       name: "stepper",
       description: "",
@@ -2698,6 +2712,62 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/stat-layout-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "status-demo": {
+      name: "status-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "status-variants-demo": {
+      name: "status-variants-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-variants-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-variants-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "status-text-only-demo": {
+      name: "status-text-only-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-text-only-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-text-only-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "status-list-demo": {
+      name: "status-list-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["status"],
+      files: [{
+        path: "registry/default/examples/status-list-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/status-list-demo.tsx")),
       source: "",
       chunks: []
     },

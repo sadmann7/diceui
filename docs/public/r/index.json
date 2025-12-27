@@ -664,6 +664,19 @@
     "type": "registry:ui"
   },
   {
+    "name": "status",
+    "dependencies": [
+      "@radix-ui/react-slot"
+    ],
+    "files": [
+      {
+        "path": "ui/status.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "type": "registry:ui"
+  },
+  {
     "name": "stepper",
     "dependencies": [
       "@radix-ui/react-slot",
