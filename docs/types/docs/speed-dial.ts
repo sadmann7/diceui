@@ -43,7 +43,28 @@ export interface SpeedDialProps extends EmptyProps<"div">, CompositionProps {
 
 export interface SpeedDialTriggerProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
-    CompositionProps {}
+    CompositionProps {
+  /**
+   * Whether the speed dial should open on hover.
+   * When enabled, hovering over the trigger will open the speed dial after the specified delay.
+   * @default false
+   */
+  openOnHover?: boolean;
+
+  /**
+   * The delay in milliseconds before opening the speed dial on hover.
+   * Only applies when `openOnHover` is `true`.
+   *
+   * ```tsx
+   * <SpeedDialTrigger openOnHover delay={300}>
+   *   <Plus />
+   * </SpeedDialTrigger>
+   * ```
+   *
+   * @default 250
+   */
+  delay?: number;
+}
 
 export interface SpeedDialContentProps
   extends EmptyProps<"div">,

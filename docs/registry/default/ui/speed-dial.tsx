@@ -277,9 +277,18 @@ function SpeedDial(props: SpeedDialProps) {
   );
 }
 
-function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
+interface SpeedDialTriggerProps extends React.ComponentProps<typeof Button> {
+  openOnHover?: boolean;
+  delay?: number;
+}
+
+function SpeedDialTrigger(props: SpeedDialTriggerProps) {
   const {
+    openOnHover = false,
+    delay = 250,
     onClick: onClickProp,
+    onMouseEnter: onMouseEnterProp,
+    onMouseLeave: onMouseLeaveProp,
     className,
     disabled: disabledProp,
     id,
@@ -300,6 +309,7 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
 
   const triggerRef = React.useRef<TriggerElement | null>(null);
   const composedRef = useComposedRefs(ref, triggerRef);
+  const hoverTimerRef = React.useRef<number | null>(null);
 
   useIsomorphicLayoutEffect(() => {
     onNodeRegister({
@@ -313,6 +323,14 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
     };
   }, [onNodeRegister, onNodeUnregister, triggerId, disabled]);
 
+  React.useEffect(() => {
+    return () => {
+      if (hoverTimerRef.current) {
+        window.clearTimeout(hoverTimerRef.current);
+      }
+    };
+  }, []);
+
   const onClick = React.useCallback(
     (event: React.MouseEvent<TriggerElement>) => {
       onClickProp?.(event);
@@ -321,6 +339,37 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
       store.setState("open", !open);
     },
     [onClickProp, store, open],
+  );
+
+  const onMouseEnter = React.useCallback(
+    (event: React.MouseEvent<TriggerElement>) => {
+      onMouseEnterProp?.(event);
+      if (event.defaultPrevented || !openOnHover || isDisabled) return;
+
+      if (hoverTimerRef.current) {
+        window.clearTimeout(hoverTimerRef.current);
+      }
+
+      hoverTimerRef.current = window.setTimeout(() => {
+        store.setState("open", true);
+      }, delay);
+    },
+    [onMouseEnterProp, openOnHover, isDisabled, store, delay],
+  );
+
+  const onMouseLeave = React.useCallback(
+    (event: React.MouseEvent<TriggerElement>) => {
+      onMouseLeaveProp?.(event);
+      if (event.defaultPrevented || !openOnHover || isDisabled) return;
+
+      if (hoverTimerRef.current) {
+        window.clearTimeout(hoverTimerRef.current);
+        hoverTimerRef.current = null;
+      }
+
+      store.setState("open", false);
+    },
+    [onMouseLeaveProp, openOnHover, isDisabled, store],
   );
 
   return (
@@ -339,6 +388,8 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
       ref={composedRef}
       className={cn("size-11 rounded-full", className)}
       onClick={onClick}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     />
   );
 }
