@@ -596,7 +596,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 }
 
 const speedDialItemVariants = cva(
-  "flex items-center gap-2 transition-all duration-200 [transform-origin:var(--speed-dial-transform-origin)] [transition-delay:var(--speed-dial-delay)] data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=open]:scale-100 data-[state=open]:opacity-100",
+  "flex items-center gap-2 transition-all duration-200 [transform-origin:var(--speed-dial-transform-origin)] [transition-delay:var(--speed-dial-delay)] data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=closed]:scale-0 data-[state=open]:scale-100 data-[state=closed]:opacity-0 data-[state=open]:opacity-100",
   {
     variants: {
       side: {
@@ -609,23 +609,19 @@ const speedDialItemVariants = cva(
     compoundVariants: [
       {
         side: "top",
-        className:
-          "data-[state=closed]:translate-y-4 data-[state=closed]:scale-0 data-[state=closed]:opacity-0",
+        className: "data-[state=closed]:translate-y-4",
       },
       {
         side: "bottom",
-        className:
-          "data-[state=closed]:-translate-y-4 data-[state=closed]:scale-0 data-[state=closed]:opacity-0",
+        className: "data-[state=closed]:-translate-y-4",
       },
       {
         side: "left",
-        className:
-          "data-[state=closed]:translate-x-4 data-[state=closed]:scale-0 data-[state=closed]:opacity-0",
+        className: "data-[state=closed]:translate-x-4",
       },
       {
         side: "right",
-        className:
-          "data-[state=closed]:-translate-x-4 data-[state=closed]:scale-0 data-[state=closed]:opacity-0",
+        className: "data-[state=closed]:-translate-x-4",
       },
     ],
     defaultVariants: {
@@ -634,7 +630,13 @@ const speedDialItemVariants = cva(
   },
 );
 
-const SpeedDialItemContext = React.createContext<string | null>(null);
+interface SpeedDialItemContextValue {
+  actionId: string;
+  labelId: string;
+}
+
+const SpeedDialItemContext =
+  React.createContext<SpeedDialItemContextValue | null>(null);
 
 function useSpeedDialItemContext(consumerName: string) {
   const context = React.useContext(SpeedDialItemContext);
@@ -651,12 +653,18 @@ function SpeedDialItem(props: DivProps) {
   const { side } = useSpeedDialContext(ITEM_NAME);
   const delay = useSpeedDialItemImplContext() ?? 0;
 
+  const actionId = React.useId();
   const labelId = React.useId();
+
+  const contextValue = React.useMemo<SpeedDialItemContextValue>(
+    () => ({ actionId, labelId }),
+    [actionId, labelId],
+  );
 
   const ItemPrimitive = asChild ? Slot : "div";
 
   return (
-    <SpeedDialItemContext.Provider value={labelId}>
+    <SpeedDialItemContext.Provider value={contextValue}>
       <ItemPrimitive
         role="none"
         data-slot="speed-dial-item"
@@ -689,7 +697,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
     onClick: onClickProp,
     className,
     disabled,
-    id,
+    id: idProp,
     ref,
     ...actionProps
   } = props;
@@ -701,10 +709,10 @@ function SpeedDialAction(props: SpeedDialActionProps) {
 
   const store = useStoreContext(ACTION_NAME);
   const { onNodeRegister, onNodeUnregister } = useSpeedDialContext(ACTION_NAME);
-  const labelId = useSpeedDialItemContext(ACTION_NAME);
+  const { actionId: contextActionId, labelId } =
+    useSpeedDialItemContext(ACTION_NAME);
 
-  const instanceId = React.useId();
-  const actionId = id ?? instanceId;
+  const actionId = idProp ?? contextActionId;
 
   const actionRef = React.useRef<ActionElement | null>(null);
   const composedRefs = useComposedRefs(ref, actionRef);
@@ -766,7 +774,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
 }
 
 function SpeedDialLabel({ asChild, className, ...props }: DivProps) {
-  const labelId = useSpeedDialItemContext(LABEL_NAME);
+  const { labelId } = useSpeedDialItemContext(LABEL_NAME);
 
   const LabelPrimitive = asChild ? Slot : "div";
 
