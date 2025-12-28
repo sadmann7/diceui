@@ -1,0 +1,316 @@
+---
+title: Selection Toolbar
+description: A floating toolbar that appears on text selection with formatting and utility actions.
+preview: true
+links:
+  api: /docs/components/selection-toolbar#api-reference
+---
+
+<ComponentTabs name="selection-toolbar-demo" align="start" className="p-8" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add @diceui/selection-toolbar
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @floating-ui/react-dom @radix-ui/react-slot
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following utility into your `lib` directory.
+
+    <ComponentSource name="compose-refs" />
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource name="selection-toolbar" />
+  </Step>
+  <Step>
+    Update the import paths to match your project setup.
+  </Step>
+</Steps>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import {
+  SelectionToolbar,
+  SelectionToolbarItem,
+  SelectionToolbarSeparator,
+} from "@/components/ui/selection-toolbar";
+
+return (
+  <SelectionToolbar>
+    <SelectionToolbarItem>
+      <Bold />
+    </SelectionToolbarItem>
+    <SelectionToolbarItem>
+      <Italic />
+    </SelectionToolbarItem>
+    <SelectionToolbarSeparator />
+    <SelectionToolbarItem>
+      <Copy />
+    </SelectionToolbarItem>
+  </SelectionToolbar>
+)
+```
+
+## Usage
+
+### Basic Usage
+
+The toolbar automatically appears when text is selected and disappears when the selection is cleared.
+
+```tsx
+import {
+  SelectionToolbar,
+  SelectionToolbarItem,
+} from "@/components/ui/selection-toolbar";
+import { Bold, Italic } from "lucide-react";
+
+export default function Example() {
+  const onBold = () => {
+    // Apply bold formatting
+    document.execCommand("bold");
+  };
+
+  const onItalic = () => {
+    // Apply italic formatting
+    document.execCommand("italic");
+  };
+
+  return (
+    <div contentEditable>
+      <p>Select this text to see the toolbar</p>
+      
+      <SelectionToolbar>
+        <SelectionToolbarItem onSelect={onBold}>
+          <Bold />
+        </SelectionToolbarItem>
+        <SelectionToolbarItem onSelect={onItalic}>
+          <Italic />
+        </SelectionToolbarItem>
+      </SelectionToolbar>
+    </div>
+  );
+}
+```
+
+### Scoped to Container
+
+Limit the toolbar to only appear for selections within a specific container.
+
+```tsx
+import { useRef } from "react";
+import {
+  SelectionToolbar,
+  SelectionToolbarItem,
+} from "@/components/ui/selection-toolbar";
+
+export default function Example() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div ref={containerRef} contentEditable>
+      <p>Toolbar only appears for selections in this container</p>
+      
+      <SelectionToolbar container={containerRef.current}>
+        <SelectionToolbarItem>
+          <Bold />
+        </SelectionToolbarItem>
+      </SelectionToolbar>
+    </div>
+  );
+}
+```
+
+### With Actions
+
+Handle different actions like formatting, copying, and sharing.
+
+```tsx
+import {
+  SelectionToolbar,
+  SelectionToolbarItem,
+  SelectionToolbarSeparator,
+} from "@/components/ui/selection-toolbar";
+import { Bold, Copy, Share2 } from "lucide-react";
+
+export default function Example() {
+  const onBold = () => {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+
+    const range = selection.getRangeAt(0);
+    const wrapper = document.createElement("strong");
+    
+    try {
+      range.surroundContents(wrapper);
+    } catch {
+      wrapper.textContent = range.toString();
+      range.deleteContents();
+      range.insertNode(wrapper);
+    }
+    
+    selection.removeAllRanges();
+  };
+
+  const onCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+  };
+
+  const onShare = (text: string) => {
+    if (navigator.share) {
+      navigator.share({ text });
+    }
+  };
+
+  return (
+    <div contentEditable>
+      <p>Select text to format, copy, or share</p>
+      
+      <SelectionToolbar>
+        <SelectionToolbarItem onSelect={onBold}>
+          <Bold />
+        </SelectionToolbarItem>
+        <SelectionToolbarSeparator />
+        <SelectionToolbarItem onSelect={onCopy}>
+          <Copy />
+        </SelectionToolbarItem>
+        <SelectionToolbarItem onSelect={onShare}>
+          <Share2 />
+        </SelectionToolbarItem>
+      </SelectionToolbar>
+    </div>
+  );
+}
+```
+
+### Controlled
+
+Control the toolbar's open state externally.
+
+```tsx
+import { useState } from "react";
+import {
+  SelectionToolbar,
+  SelectionToolbarItem,
+} from "@/components/ui/selection-toolbar";
+
+export default function Example() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div contentEditable>
+      <p>Select text to see the toolbar</p>
+      
+      <SelectionToolbar 
+        open={open} 
+        onOpenChange={setOpen}
+        onSelectionChange={(text) => {
+          console.log({ selectedText: text });
+        }}
+      >
+        <SelectionToolbarItem>
+          <Bold />
+        </SelectionToolbarItem>
+      </SelectionToolbar>
+    </div>
+  );
+}
+```
+
+## API Reference
+
+### SelectionToolbar
+
+The root component that manages the toolbar's visibility and positioning.
+
+<AutoTypeTable
+  path="./types/docs/selection-toolbar.ts"
+  name="SelectionToolbarProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: '"positioned" | "measuring" - The positioning state of the toolbar.',
+    },
+    {
+      title: "[data-slot]",
+      value: '"selection-toolbar" - Identifies the toolbar element.',
+    },
+  ]}
+/>
+
+### SelectionToolbarItem
+
+An actionable item within the toolbar, typically containing an icon.
+
+<AutoTypeTable
+  path="./types/docs/selection-toolbar.ts"
+  name="SelectionToolbarItemProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-slot]",
+      value: '"selection-toolbar-item" - Identifies the item element.',
+    },
+  ]}
+/>
+
+### SelectionToolbarSeparator
+
+A visual separator between toolbar items.
+
+<AutoTypeTable
+  path="./types/docs/selection-toolbar.ts"
+  name="SelectionToolbarSeparatorProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-slot]",
+      value: '"selection-toolbar-separator" - Identifies the separator element.',
+    },
+  ]}
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Escape"],
+      description: "Closes the toolbar and clears the text selection.",
+    },
+  ]}
+/>
+
+## Notes
+
+- The toolbar uses Floating UI for intelligent positioning that automatically flips and shifts to stay within the viewport
+- Clicking outside the toolbar or pressing Escape will close it and clear the selection
+- The toolbar is portaled to `document.body` by default to avoid z-index issues
+- Text selection is tracked using the native Selection API
+- The component respects `prefers-reduced-motion` for animations
+

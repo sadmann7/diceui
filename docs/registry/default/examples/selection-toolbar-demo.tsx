@@ -11,7 +11,7 @@ import {
 export default function SelectionToolbarDemo() {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
-  const wrapSelection = (tagName: string) => {
+  const wrapSelection = React.useCallback((tagName: string) => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
 
@@ -31,19 +31,19 @@ export default function SelectionToolbarDemo() {
 
     // Clear selection
     selection.removeAllRanges();
-  };
+  }, []);
 
-  const onBold = () => {
+  const onBold = React.useCallback(() => {
     wrapSelection("strong");
     console.log({ action: "bold" });
-  };
+  }, [wrapSelection]);
 
-  const onItalic = () => {
+  const onItalic = React.useCallback(() => {
     wrapSelection("em");
     console.log({ action: "italic" });
-  };
+  }, [wrapSelection]);
 
-  const onLink = () => {
+  const onLink = React.useCallback(() => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) return;
 
@@ -65,19 +65,19 @@ export default function SelectionToolbarDemo() {
 
     selection.removeAllRanges();
     console.log({ action: "link", url });
-  };
+  }, []);
 
-  const onCopy = (text: string) => {
+  const onCopy = React.useCallback((text: string) => {
     navigator.clipboard.writeText(text);
     console.log({ action: "copy", text });
-  };
+  }, []);
 
-  const onShare = (text: string) => {
+  const onShare = React.useCallback((text: string) => {
     if (navigator.share) {
       navigator.share({ text });
     }
     console.log({ action: "share", text });
-  };
+  }, []);
 
   return (
     <div className="flex min-h-[400px] w-full items-center justify-center">
@@ -102,15 +102,24 @@ export default function SelectionToolbarDemo() {
         </p>
 
         <SelectionToolbar container={containerRef.current}>
-          <SelectionToolbarItem icon={Bold} onSelect={onBold} />
-          <SelectionToolbarItem icon={Italic} onSelect={onItalic} />
-          <SelectionToolbarItem icon={Link} onSelect={onLink} />
+          <SelectionToolbarItem onSelect={onBold}>
+            <Bold />
+          </SelectionToolbarItem>
+          <SelectionToolbarItem onSelect={onItalic}>
+            <Italic />
+          </SelectionToolbarItem>
+          <SelectionToolbarItem onSelect={onLink}>
+            <Link />
+          </SelectionToolbarItem>
           <SelectionToolbarSeparator />
-          <SelectionToolbarItem icon={Copy} onSelect={onCopy} />
-          <SelectionToolbarItem icon={Share2} onSelect={onShare} />
+          <SelectionToolbarItem onSelect={onCopy}>
+            <Copy />
+          </SelectionToolbarItem>
+          <SelectionToolbarItem onSelect={onShare}>
+            <Share2 />
+          </SelectionToolbarItem>
         </SelectionToolbar>
       </div>
     </div>
   );
 }
-

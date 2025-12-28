@@ -851,6 +851,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "selection-toolbar-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["selection-toolbar"],
+    files: [
+      {
+        path: "examples/selection-toolbar-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "segmented-input-form-demo",
     type: "registry:example",
     registryDependencies: ["button", "segmented-input"],

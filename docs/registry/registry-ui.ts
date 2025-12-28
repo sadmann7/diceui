@@ -284,6 +284,22 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "selection-toolbar",
+    type: "registry:ui",
+    dependencies: ["@floating-ui/react-dom", "@radix-ui/react-slot"],
+    registryDependencies: ["button"],
+    files: [
+      {
+        path: "ui/selection-toolbar.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "kanban",
     type: "registry:ui",
     dependencies: [

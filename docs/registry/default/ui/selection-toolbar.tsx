@@ -10,7 +10,6 @@ import {
   useFloating,
 } from "@floating-ui/react-dom";
 import { Slot } from "@radix-ui/react-slot";
-import type { LucideIcon } from "lucide-react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
@@ -60,8 +59,8 @@ interface SelectionToolbarProps extends DivProps {
   onOpenChange?: (open: boolean) => void;
   onSelectionChange?: (text: string) => void;
   container?: HTMLElement | null;
-  sideOffset?: number;
   portalContainer?: Element | DocumentFragment | null;
+  sideOffset?: number;
 }
 
 function SelectionToolbar(props: SelectionToolbarProps) {
@@ -70,8 +69,8 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     onOpenChange,
     onSelectionChange,
     container: containerProp,
-    sideOffset = 8,
     portalContainer: portalContainerProp,
+    sideOffset = 8,
     className,
     style,
     ref,
@@ -358,14 +357,12 @@ function getSideAndAlignFromPlacement(placement: Placement) {
 interface SelectionToolbarItemProps
   extends Omit<React.ComponentProps<typeof Button>, "onSelect"> {
   onSelect?: (text: string, event: Event) => void;
-  icon?: LucideIcon;
 }
 
 function SelectionToolbarItem(props: SelectionToolbarItemProps) {
   const {
     onSelect,
     onClick: onClickProp,
-    icon: Icon,
     className,
     children,
     ref,
@@ -414,9 +411,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
       className={cn("size-8", className)}
       ref={composedRef}
       onClick={onClick}
-    >
-      {Icon ? <Icon className="size-4" /> : children}
-    </Button>
+    />
   );
 }
 
