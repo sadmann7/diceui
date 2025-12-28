@@ -2631,6 +2631,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "speed-dial-hover-demo": {
+      name: "speed-dial-hover-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["speed-dial"],
+      files: [{
+        path: "registry/default/examples/speed-dial-hover-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/speed-dial-hover-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "stack-demo": {
       name: "stack-demo",
       description: "",

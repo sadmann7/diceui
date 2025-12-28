@@ -3017,6 +3017,23 @@
       "type": "registry:example"
     },
     {
+      "name": "speed-dial-hover-demo",
+      "dependencies": [
+        "lucide-react",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "speed-dial"
+      ],
+      "files": [
+        {
+          "path": "examples/speed-dial-hover-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
       "name": "stack-demo",
       "registryDependencies": [
         "stack"

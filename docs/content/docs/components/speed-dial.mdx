@@ -83,6 +83,12 @@ Display visible labels next to each action button for better discoverability.
 
 <ComponentTabs name="speed-dial-labels-demo" />
 
+### Hover Mode
+
+Set `activationMode="hover"` on the root component to open the speed dial when hovering over the trigger. The speed dial will automatically close when the mouse leaves. Use the `delay` prop to control how long to wait before the speed dial opens.
+
+<ComponentTabs name="speed-dial-hover-demo" />
+
 ### Controlled
 
 Use the `open` and `onOpenChange` props to control the speed dial state programmatically.
@@ -200,6 +206,10 @@ A wrapper for each action and its associated label.
 
 <CSSVariablesTable
   data={[
+    {
+      title: "--speed-dial-animation-duration",
+      description: "Duration of the animation for item appearance. Defaults to 200ms.",
+    },
     {
       title: "--speed-dial-delay",
       description: "Animation delay for staggered item appearance.",

@@ -1,23 +1,21 @@
 import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
-import PendingDemo from "@/registry/default/examples/pending-demo";
-import PendingFormDemo from "@/registry/default/examples/pending-form-demo";
-import PendingLinkDemo from "@/registry/default/examples/pending-link-demo";
-import PendingSwitchDemo from "@/registry/default/examples/pending-switch-demo";
-import PendingWrapperDemo from "@/registry/default/examples/pending-wrapper-demo";
+import SpeedDialControlledDemo from "@/registry/default/examples/speed-dial-controlled-demo";
+import SpeedDialDemo from "@/registry/default/examples/speed-dial-demo";
+import SpeedDialHoverDemo from "@/registry/default/examples/speed-dial-hover-demo";
+import SpeedDialLabelsDemo from "@/registry/default/examples/speed-dial-labels-demo";
+import SpeedDialSideDemo from "@/registry/default/examples/speed-dial-side-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <div className="flex flex-col gap-4">
-          <PendingDemo />
-          <PendingWrapperDemo />
-          <PendingFormDemo />
-          <PendingLinkDemo />
-          <PendingSwitchDemo />
-        </div>
+        <SpeedDialDemo />
+        <SpeedDialLabelsDemo />
+        <SpeedDialControlledDemo />
+        <SpeedDialSideDemo />
+        <SpeedDialHoverDemo />
         <ColorPickerDemo />
       </Demo>
     </Shell>

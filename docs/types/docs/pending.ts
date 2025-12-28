@@ -2,6 +2,18 @@ import type { EmptyProps } from "@/types";
 
 export interface UsePendingOptions {
   /**
+   * The ID of the element. If not provided, an ID will be automatically generated.
+   *
+   * ```tsx
+   * const { pendingProps } = usePending({
+   *   isPending: true,
+   *   id: "submit-button"
+   * });
+   * ```
+   */
+  id?: string;
+
+  /**
    * Whether the element is in a pending state.
    * This disables press and hover events while retaining focusability,
    * and sets aria-busy and aria-disabled for screen readers.
@@ -13,18 +25,6 @@ export interface UsePendingOptions {
    * @default false
    */
   isPending?: boolean;
-
-  /**
-   * The ID of the element. If not provided, an ID will be automatically generated.
-   *
-   * ```tsx
-   * const { pendingProps } = usePending({
-   *   isPending: true,
-   *   id: "submit-button"
-   * });
-   * ```
-   */
-  id?: string;
 
   /**
    * Whether the element is disabled.
@@ -47,7 +47,7 @@ export interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
    * Props to spread on the interactive element.
    * Includes aria attributes, data attributes, and event handler overrides.
    *
-   * **Important**: Spread pendingProps LAST to ensure event prevention works:
+   * **Important**: Spread pendingProps last to ensure event prevention works:
    *
    * ```tsx
    * const { pendingProps } = usePending({ isPending: true });

@@ -1,10 +1,10 @@
-import type { ButtonProps, CompositionProps, EmptyProps, Side } from "@/types";
-
-interface InteractOutsideEvent extends CustomEvent {
-  detail: {
-    originalEvent: PointerEvent;
-  };
-}
+import type {
+  ButtonProps,
+  CompositionProps,
+  EmptyProps,
+  PointerDownOutsideEvent,
+  Side,
+} from "@/types";
 
 export interface SpeedDialProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -39,6 +39,39 @@ export interface SpeedDialProps extends EmptyProps<"div">, CompositionProps {
    * Whether the speed dial is disabled.
    */
   disabled?: boolean;
+
+  /**
+   * The activation mode for the speed dial trigger.
+   * - `"click"`: Opens and closes on click (default behavior)
+   * - `"hover"`: Opens on hover and closes when mouse leaves
+   *
+   * ```tsx
+   * <SpeedDial activationMode="hover">
+   *   <SpeedDialTrigger>
+   *     <Plus />
+   *   </SpeedDialTrigger>
+   * </SpeedDial>
+   * ```
+   *
+   * @default "click"
+   */
+  activationMode?: "click" | "hover";
+
+  /**
+   * The delay in milliseconds before opening the speed dial on hover.
+   * Only applies when `activationMode` is `"hover"`.
+   *
+   * ```tsx
+   * <SpeedDial activationMode="hover" delay={300}>
+   *   <SpeedDialTrigger>
+   *     <Plus />
+   *   </SpeedDialTrigger>
+   * </SpeedDial>
+   * ```
+   *
+   * @default 250
+   */
+  delay?: number;
 }
 
 export interface SpeedDialTriggerProps
@@ -48,6 +81,25 @@ export interface SpeedDialTriggerProps
 export interface SpeedDialContentProps
   extends EmptyProps<"div">,
     CompositionProps {
+  /**
+   * The distance in pixels from the trigger.
+   * @default 8
+   */
+  offset?: number;
+
+  /**
+   * The gap in pixels between speed dial items.
+   * @default 8
+   */
+  gap?: number;
+
+  /**
+   * When `true`, forces the content to be rendered even if it's not active.
+   * Useful for controlling animations with external animation libraries.
+   * @default false
+   */
+  forceMount?: boolean;
+
   /**
    * Event handler called when the `Escape` key is pressed.
    * Can be used to prevent closing the speed dial on `Escape` key press.
@@ -72,7 +124,7 @@ export interface SpeedDialContentProps
    * }}
    * ```
    */
-  onInteractOutside?: (event: InteractOutsideEvent) => void;
+  onInteractOutside?: (event: PointerDownOutsideEvent) => void;
 }
 
 export interface SpeedDialItemProps

@@ -5,6 +5,7 @@ import type {
   CompositionProps,
   Direction,
   EmptyProps,
+  PointerDownOutsideEvent,
   Side,
 } from "@/types";
 
@@ -114,9 +115,7 @@ export interface TourProps extends EmptyProps<"div">, CompositionProps {
    * }}
    * ```
    */
-  onPointerDownOutside?: (
-    event: CustomEvent<{ originalEvent: PointerEvent }>,
-  ) => void;
+  onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 
   /**
    * Event handler called when an interaction (pointer or focus) occurs outside the tour step.

@@ -1600,6 +1600,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "speed-dial-hover-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "sonner"],
+    registryDependencies: ["speed-dial"],
+    files: [
+      {
+        path: "examples/speed-dial-hover-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "stack-demo",
     type: "registry:example",
     registryDependencies: ["stack"],
