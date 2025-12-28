@@ -697,7 +697,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
     onClick: onClickProp,
     className,
     disabled,
-    id: idProp,
+    id,
     ref,
     ...actionProps
   } = props;
@@ -708,11 +708,12 @@ function SpeedDialAction(props: SpeedDialActionProps) {
   });
 
   const store = useStoreContext(ACTION_NAME);
+
   const { onNodeRegister, onNodeUnregister } = useSpeedDialContext(ACTION_NAME);
-  const { actionId: contextActionId, labelId } =
+  const { actionId: itemActionId, labelId } =
     useSpeedDialItemContext(ACTION_NAME);
 
-  const actionId = idProp ?? contextActionId;
+  const actionId = id ?? itemActionId;
 
   const actionRef = React.useRef<ActionElement | null>(null);
   const composedRefs = useComposedRefs(ref, actionRef);
@@ -767,7 +768,10 @@ function SpeedDialAction(props: SpeedDialActionProps) {
       disabled={disabled}
       ref={composedRefs}
       {...actionProps}
-      className={cn("size-11 shrink-0 rounded-full shadow-md", className)}
+      className={cn(
+        "size-11 shrink-0 rounded-full bg-accent shadow-md",
+        className,
+      )}
       onClick={onClick}
     />
   );
