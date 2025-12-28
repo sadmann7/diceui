@@ -14,7 +14,7 @@ import {
 export default function SpeedDialDemo() {
   return (
     <SpeedDial>
-      <SpeedDialTrigger className="transition-transform duration-200 ease-out data-[state=closed]:rotate-0 data-[state=open]:rotate-135">
+      <SpeedDialTrigger className="fixed right-4 bottom-4 transition-transform duration-200 ease-out data-[state=closed]:rotate-0 data-[state=open]:rotate-135">
         <Plus />
       </SpeedDialTrigger>
       <SpeedDialContent>

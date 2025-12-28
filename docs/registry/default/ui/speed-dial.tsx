@@ -114,6 +114,7 @@ interface SpeedDialContextValue {
   onNodeUnregister: (id: string) => void;
   getNodes: () => NodeData[];
   rootRef: React.RefObject<RootElement | null>;
+  triggerRef: React.RefObject<TriggerElement | null>;
   isPointerInsideReactTreeRef: React.RefObject<boolean>;
   disabled: boolean;
   hoverCloseTimerRef: React.RefObject<number | null>;
@@ -157,6 +158,7 @@ function SpeedDial(props: SpeedDialProps) {
 
   const rootRef = React.useRef<RootElement | null>(null);
   const composedRefs = useComposedRefs(ref, rootRef);
+  const triggerRef = React.useRef<TriggerElement | null>(null);
 
   const nodesRef = React.useRef<Map<string, NodeData>>(new Map());
   const isPointerInsideReactTreeRef = React.useRef(false);
@@ -255,6 +257,7 @@ function SpeedDial(props: SpeedDialProps) {
       onNodeUnregister,
       getNodes,
       rootRef,
+      triggerRef,
       isPointerInsideReactTreeRef,
       disabled,
       hoverCloseTimerRef,
@@ -308,6 +311,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
     contentId,
     disabled,
     hoverCloseTimerRef,
+    triggerRef,
   } = useSpeedDialContext(TRIGGER_NAME);
 
   const open = useStore((state) => state.open);
@@ -316,7 +320,6 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
   const instanceId = React.useId();
   const triggerId = id ?? instanceId;
 
-  const triggerRef = React.useRef<TriggerElement | null>(null);
   const composedRef = useComposedRefs(ref, triggerRef);
   const hoverOpenTimerRef = React.useRef<number | null>(null);
 
@@ -522,6 +525,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     side,
     getNodes,
     rootRef,
+    triggerRef,
     isPointerInsideReactTreeRef,
     hoverCloseTimerRef,
   } = useSpeedDialContext(CONTENT_NAME);
@@ -594,28 +598,28 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   }, [open, forceMount, children]);
 
   const updatePosition = React.useCallback(() => {
-    if (!rootRef.current || !open) return;
+    if (!triggerRef.current || !open) return;
 
-    const rootRect = rootRef.current.getBoundingClientRect();
+    const triggerRect = triggerRef.current.getBoundingClientRect();
 
     const newPosition: React.CSSProperties = {};
 
     switch (side) {
       case "top":
-        newPosition.bottom = `${window.innerHeight - rootRect.top + offset}px`;
-        newPosition.right = `${window.innerWidth - rootRect.right}px`;
+        newPosition.bottom = `${window.innerHeight - triggerRect.top + offset}px`;
+        newPosition.right = `${window.innerWidth - triggerRect.right}px`;
         break;
       case "bottom":
-        newPosition.top = `${rootRect.bottom + offset}px`;
-        newPosition.right = `${window.innerWidth - rootRect.right}px`;
+        newPosition.top = `${triggerRect.bottom + offset}px`;
+        newPosition.right = `${window.innerWidth - triggerRect.right}px`;
         break;
       case "left":
-        newPosition.right = `${window.innerWidth - rootRect.left + offset}px`;
-        newPosition.top = `${rootRect.top}px`;
+        newPosition.right = `${window.innerWidth - triggerRect.left + offset}px`;
+        newPosition.top = `${triggerRect.top}px`;
         break;
       case "right":
-        newPosition.left = `${rootRect.right + offset}px`;
-        newPosition.top = `${rootRect.top}px`;
+        newPosition.left = `${triggerRect.right + offset}px`;
+        newPosition.top = `${triggerRect.top}px`;
         break;
     }
 
@@ -626,7 +630,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       });
       return hasChanged ? newPosition : prev;
     });
-  }, [rootRef, open, side, offset]);
+  }, [triggerRef, open, side, offset]);
 
   const schedulePositionUpdate = React.useCallback(() => {
     if (rafRef.current) return;
