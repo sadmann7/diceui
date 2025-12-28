@@ -397,11 +397,7 @@ function useFocusContext(consumerName: string) {
   return context;
 }
 
-interface StepperListProps extends DivProps {
-  asChild?: boolean;
-}
-
-function StepperList(props: StepperListProps) {
+function StepperList(props: DivProps) {
   const {
     asChild,
     onBlur: onBlurProp,
@@ -990,6 +986,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
 
   const context = useStepperContext(INDICATOR_NAME);
   const itemContext = useStepperItemContext(INDICATOR_NAME);
+
   const value = useStore((state) => state.value);
   const itemValue = itemContext.value;
   const stepState = useStore((state) => state.steps.get(itemValue));
