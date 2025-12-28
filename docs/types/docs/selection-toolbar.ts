@@ -50,18 +50,18 @@ export interface SelectionToolbarProps
   container?: HTMLElement | null;
 
   /**
-   * The distance in pixels from the selection to the toolbar.
-   *
-   * @default 8
-   */
-  sideOffset?: number;
-
-  /**
    * The container element where the toolbar will be portaled to.
    *
    * @default document.body
    */
   portalContainer?: Element | DocumentFragment | null;
+
+  /**
+   * The distance in pixels from the selection to the toolbar.
+   *
+   * @default 8
+   */
+  sideOffset?: number;
 }
 
 export interface SelectionToolbarItemProps
