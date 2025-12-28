@@ -341,6 +341,27 @@
       "type": "registry:ui"
     },
     {
+      "name": "selection-toolbar",
+      "dependencies": [
+        "@floating-ui/react-dom",
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "button"
+      ],
+      "files": [
+        {
+          "path": "ui/selection-toolbar.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
       "name": "kanban",
       "dependencies": [
         "@dnd-kit/core",
@@ -2067,6 +2088,22 @@
       "files": [
         {
           "path": "examples/segmented-input-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "selection-toolbar-demo",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "selection-toolbar"
+      ],
+      "files": [
+        {
+          "path": "examples/selection-toolbar-demo.tsx",
           "type": "registry:example"
         }
       ],

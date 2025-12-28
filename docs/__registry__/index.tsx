@@ -291,6 +291,24 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["button"],
+      files: [{
+        path: "registry/default/ui/selection-toolbar.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/selection-toolbar.tsx")),
+      source: "",
+      chunks: []
+    },
     "kanban": {
       name: "kanban",
       description: "",
@@ -1788,6 +1806,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/segmented-input-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "selection-toolbar-demo": {
+      name: "selection-toolbar-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["selection-toolbar"],
+      files: [{
+        path: "registry/default/examples/selection-toolbar-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/selection-toolbar-demo.tsx")),
       source: "",
       chunks: []
     },

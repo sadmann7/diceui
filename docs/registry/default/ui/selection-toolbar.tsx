@@ -364,7 +364,6 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
     onSelect,
     onClick: onClickProp,
     className,
-    children,
     ref,
     ...itemProps
   } = props;

@@ -317,6 +317,27 @@
     "type": "registry:ui"
   },
   {
+    "name": "selection-toolbar",
+    "dependencies": [
+      "@floating-ui/react-dom",
+      "@radix-ui/react-slot"
+    ],
+    "registryDependencies": [
+      "button"
+    ],
+    "files": [
+      {
+        "path": "ui/selection-toolbar.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "type": "registry:ui"
+  },
+  {
     "name": "kanban",
     "dependencies": [
       "@dnd-kit/core",
