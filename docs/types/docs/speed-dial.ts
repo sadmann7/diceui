@@ -70,6 +70,32 @@ export interface SpeedDialContentProps
   extends EmptyProps<"div">,
     CompositionProps {
   /**
+   * The distance in pixels between the trigger and the content.
+   *
+   * ```tsx
+   * <SpeedDialContent offset={16}>
+   *   {/* items */}
+   * </SpeedDialContent>
+   * ```
+   *
+   * @default 8
+   */
+  offset?: number;
+
+  /**
+   * The gap in pixels between speed dial items.
+   *
+   * ```tsx
+   * <SpeedDialContent gap={12}>
+   *   {/* items */}
+   * </SpeedDialContent>
+   * ```
+   *
+   * @default 8
+   */
+  gap?: number;
+
+  /**
    * Event handler called when the `Escape` key is pressed.
    * Can be used to prevent closing the speed dial on `Escape` key press.
    *

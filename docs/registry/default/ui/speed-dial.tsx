@@ -3,6 +3,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -21,8 +22,8 @@ const ACTION_SELECT = "speedDial.actionSelect";
 const INTERACT_OUTSIDE = "speedDial.interactOutside";
 const EVENT_OPTIONS = { bubbles: true, cancelable: true };
 
-const DEFAULT_GAP = "0.5rem";
-const DEFAULT_OFFSET = "0.5rem";
+const DEFAULT_GAP = 8;
+const DEFAULT_OFFSET = 8;
 const DEFAULT_ITEM_DELAY = 50;
 
 type Side = "top" | "right" | "bottom" | "left";
@@ -401,15 +402,14 @@ function useSpeedDialItemImplContext() {
 }
 
 const speedDialContentVariants = cva(
-  "absolute z-50 flex gap-[var(--speed-dial-gap)] data-[state=closed]:pointer-events-none",
+  "fixed z-50 flex gap-[var(--speed-dial-gap)] data-[state=closed]:pointer-events-none",
   {
     variants: {
       side: {
-        top: "right-0 bottom-full mb-[var(--speed-dial-offset)] flex-col-reverse items-end",
-        bottom:
-          "top-full right-0 mt-[var(--speed-dial-offset)] flex-col items-end",
-        left: "right-full mr-[var(--speed-dial-offset)] flex-row-reverse items-center",
-        right: "left-full ml-[var(--speed-dial-offset)] flex-row items-center",
+        top: "flex-col-reverse items-end",
+        bottom: "flex-col items-end",
+        left: "flex-row-reverse items-center",
+        right: "flex-row items-center",
       },
     },
     defaultVariants: {
@@ -421,12 +421,16 @@ const speedDialContentVariants = cva(
 interface SpeedDialContentProps
   extends DivProps,
     VariantProps<typeof speedDialContentVariants> {
+  offset?: number;
+  gap?: number;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   onInteractOutside?: (event: InteractOutsideEvent) => void;
 }
 
 function SpeedDialContent(props: SpeedDialContentProps) {
   const {
+    offset = DEFAULT_OFFSET,
+    gap = DEFAULT_GAP,
     onEscapeKeyDown,
     onInteractOutside,
     asChild,
@@ -456,6 +460,56 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
   const ownerDocument =
     contentRef.current?.ownerDocument ?? globalThis?.document;
+
+  const [mounted, setMounted] = React.useState(false);
+  const [position, setPosition] = React.useState<React.CSSProperties>({});
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const updatePosition = React.useCallback(() => {
+    if (!rootRef.current || !open) return;
+
+    const rootRect = rootRef.current.getBoundingClientRect();
+
+    const newPosition: React.CSSProperties = {};
+
+    switch (side) {
+      case "top":
+        newPosition.bottom = `${window.innerHeight - rootRect.top + offset}px`;
+        newPosition.right = `${window.innerWidth - rootRect.right}px`;
+        break;
+      case "bottom":
+        newPosition.top = `${rootRect.bottom + offset}px`;
+        newPosition.right = `${window.innerWidth - rootRect.right}px`;
+        break;
+      case "left":
+        newPosition.right = `${window.innerWidth - rootRect.left + offset}px`;
+        newPosition.top = `${rootRect.top}px`;
+        break;
+      case "right":
+        newPosition.left = `${rootRect.right + offset}px`;
+        newPosition.top = `${rootRect.top}px`;
+        break;
+    }
+
+    setPosition(newPosition);
+  }, [rootRef, open, side, offset]);
+
+  useIsomorphicLayoutEffect(() => {
+    if (!open) return;
+
+    updatePosition();
+
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [open, updatePosition]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -556,7 +610,9 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
   const ContentPrimitive = asChild ? Slot : "div";
 
-  return (
+  if (!mounted) return null;
+
+  return ReactDOM.createPortal(
     <ContentPrimitive
       id={contentId}
       role="menu"
@@ -570,9 +626,10 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       className={cn(speedDialContentVariants({ side, className }))}
       style={
         {
-          "--speed-dial-gap": DEFAULT_GAP,
-          "--speed-dial-offset": DEFAULT_OFFSET,
+          "--speed-dial-gap": `${gap}px`,
+          "--speed-dial-offset": `${offset}px`,
           "--speed-dial-transform-origin": getTransformOrigin(side),
+          ...position,
           ...style,
         } as React.CSSProperties
       }
@@ -591,7 +648,8 @@ function SpeedDialContent(props: SpeedDialContentProps) {
           </SpeedDialItemImplContext.Provider>
         );
       })}
-    </ContentPrimitive>
+    </ContentPrimitive>,
+    document.body,
   );
 }
 
