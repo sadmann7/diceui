@@ -116,6 +116,7 @@ interface SpeedDialContextValue {
   rootRef: React.RefObject<RootElement | null>;
   isPointerInsideReactTreeRef: React.RefObject<boolean>;
   disabled: boolean;
+  hoverCloseTimerRef: React.RefObject<number | null>;
 }
 
 const SpeedDialContext = React.createContext<SpeedDialContextValue | null>(
@@ -159,6 +160,7 @@ function SpeedDial(props: SpeedDialProps) {
 
   const nodesRef = React.useRef<Map<string, NodeData>>(new Map());
   const isPointerInsideReactTreeRef = React.useRef(false);
+  const hoverCloseTimerRef = React.useRef<number | null>(null);
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
@@ -255,6 +257,7 @@ function SpeedDial(props: SpeedDialProps) {
       rootRef,
       isPointerInsideReactTreeRef,
       disabled,
+      hoverCloseTimerRef,
     }),
     [contentId, side, onNodeRegister, onNodeUnregister, getNodes, disabled],
   );
@@ -299,8 +302,13 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
 
   const store = useStoreContext(TRIGGER_NAME);
 
-  const { onNodeRegister, onNodeUnregister, contentId, disabled } =
-    useSpeedDialContext(TRIGGER_NAME);
+  const {
+    onNodeRegister,
+    onNodeUnregister,
+    contentId,
+    disabled,
+    hoverCloseTimerRef,
+  } = useSpeedDialContext(TRIGGER_NAME);
 
   const open = useStore((state) => state.open);
   const isDisabled = disabledProp || disabled;
@@ -310,7 +318,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
 
   const triggerRef = React.useRef<TriggerElement | null>(null);
   const composedRef = useComposedRefs(ref, triggerRef);
-  const hoverTimerRef = React.useRef<number | null>(null);
+  const hoverOpenTimerRef = React.useRef<number | null>(null);
 
   useIsomorphicLayoutEffect(() => {
     onNodeRegister({
@@ -326,20 +334,33 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
 
   React.useEffect(() => {
     return () => {
-      if (hoverTimerRef.current) {
-        window.clearTimeout(hoverTimerRef.current);
+      if (hoverOpenTimerRef.current) {
+        window.clearTimeout(hoverOpenTimerRef.current);
+      }
+      if (hoverCloseTimerRef.current) {
+        window.clearTimeout(hoverCloseTimerRef.current);
       }
     };
-  }, []);
+  }, [hoverCloseTimerRef]);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<TriggerElement>) => {
       onClickProp?.(event);
       if (event.defaultPrevented) return;
 
+      // Clear all hover timers when clicking
+      if (hoverOpenTimerRef.current) {
+        window.clearTimeout(hoverOpenTimerRef.current);
+        hoverOpenTimerRef.current = null;
+      }
+      if (hoverCloseTimerRef.current) {
+        window.clearTimeout(hoverCloseTimerRef.current);
+        hoverCloseTimerRef.current = null;
+      }
+
       store.setState("open", !open);
     },
-    [onClickProp, store, open],
+    [onClickProp, store, open, hoverCloseTimerRef],
   );
 
   const onMouseEnter = React.useCallback(
@@ -347,15 +368,30 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
       onMouseEnterProp?.(event);
       if (event.defaultPrevented || !openOnHover || isDisabled) return;
 
-      if (hoverTimerRef.current) {
-        window.clearTimeout(hoverTimerRef.current);
+      // Cancel any pending close timer
+      if (hoverCloseTimerRef.current) {
+        window.clearTimeout(hoverCloseTimerRef.current);
+        hoverCloseTimerRef.current = null;
       }
 
-      hoverTimerRef.current = window.setTimeout(() => {
+      // Cancel any pending open timer
+      if (hoverOpenTimerRef.current) {
+        window.clearTimeout(hoverOpenTimerRef.current);
+      }
+
+      // Set new open timer
+      hoverOpenTimerRef.current = window.setTimeout(() => {
         store.setState("open", true);
       }, delay);
     },
-    [onMouseEnterProp, openOnHover, isDisabled, store, delay],
+    [
+      onMouseEnterProp,
+      openOnHover,
+      isDisabled,
+      store,
+      delay,
+      hoverCloseTimerRef,
+    ],
   );
 
   const onMouseLeave = React.useCallback(
@@ -363,14 +399,18 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
       onMouseLeaveProp?.(event);
       if (event.defaultPrevented || !openOnHover || isDisabled) return;
 
-      if (hoverTimerRef.current) {
-        window.clearTimeout(hoverTimerRef.current);
-        hoverTimerRef.current = null;
+      // Cancel pending open timer
+      if (hoverOpenTimerRef.current) {
+        window.clearTimeout(hoverOpenTimerRef.current);
+        hoverOpenTimerRef.current = null;
       }
 
-      store.setState("open", false);
+      // Add delay before closing to allow moving to content
+      hoverCloseTimerRef.current = window.setTimeout(() => {
+        store.setState("open", false);
+      }, 100);
     },
-    [onMouseLeaveProp, openOnHover, isDisabled, store],
+    [onMouseLeaveProp, openOnHover, isDisabled, store, hoverCloseTimerRef],
   );
 
   return (
@@ -433,6 +473,8 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     gap = DEFAULT_GAP,
     onEscapeKeyDown,
     onInteractOutside,
+    onMouseEnter: onMouseEnterProp,
+    onMouseLeave: onMouseLeaveProp,
     asChild,
     className,
     children,
@@ -444,13 +486,21 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   const store = useStoreContext(CONTENT_NAME);
   const open = useStore((state) => state.open);
 
-  const { contentId, side, getNodes, rootRef, isPointerInsideReactTreeRef } =
-    useSpeedDialContext(CONTENT_NAME);
+  const {
+    contentId,
+    side,
+    getNodes,
+    rootRef,
+    isPointerInsideReactTreeRef,
+    hoverCloseTimerRef,
+  } = useSpeedDialContext(CONTENT_NAME);
 
   const contentRef = React.useRef<ContentElement | null>(null);
   const composedRef = useComposedRefs(ref, contentRef);
 
   const propsRef = useAsRef({
+    onMouseEnter: onMouseEnterProp,
+    onMouseLeave: onMouseLeaveProp,
     onEscapeKeyDown,
     onInteractOutside,
   });
@@ -608,6 +658,33 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     store,
   ]);
 
+  const onMouseEnter = React.useCallback(
+    (event: React.MouseEvent<ContentElement>) => {
+      propsRef.current?.onMouseEnter?.(event);
+      if (event.defaultPrevented) return;
+
+      // Cancel any pending close timer when hovering over content
+      if (hoverCloseTimerRef.current) {
+        window.clearTimeout(hoverCloseTimerRef.current);
+        hoverCloseTimerRef.current = null;
+      }
+    },
+    [propsRef, hoverCloseTimerRef],
+  );
+
+  const onMouseLeave = React.useCallback(
+    (event: React.MouseEvent<ContentElement>) => {
+      propsRef.current?.onMouseLeave?.(event);
+      if (event.defaultPrevented) return;
+
+      // Set close timer when leaving content
+      hoverCloseTimerRef.current = window.setTimeout(() => {
+        store.setState("open", false);
+      }, 100);
+    },
+    [propsRef, hoverCloseTimerRef, store],
+  );
+
   const ContentPrimitive = asChild ? Slot : "div";
 
   if (!mounted) return null;
@@ -624,6 +701,8 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       {...contentProps}
       ref={composedRef}
       className={cn(speedDialContentVariants({ side, className }))}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
       style={
         {
           "--speed-dial-gap": `${gap}px`,
