@@ -13,12 +13,8 @@ import {
 
 export default function SpeedDialHoverDemo() {
   return (
-    <SpeedDial>
-      <SpeedDialTrigger
-        openOnHover
-        delay={300}
-        className="transition-transform duration-200 ease-out data-[state=closed]:rotate-0 data-[state=open]:rotate-135"
-      >
+    <SpeedDial activationMode="hover" delay={300}>
+      <SpeedDialTrigger className="transition-transform duration-200 ease-out data-[state=closed]:rotate-0 data-[state=open]:rotate-135">
         <Plus />
       </SpeedDialTrigger>
       <SpeedDialContent>
