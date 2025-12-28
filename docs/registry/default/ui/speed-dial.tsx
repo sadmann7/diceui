@@ -25,6 +25,8 @@ const EVENT_OPTIONS = { bubbles: true, cancelable: true };
 const DEFAULT_GAP = 8;
 const DEFAULT_OFFSET = 8;
 const DEFAULT_ITEM_DELAY = 50;
+const DEFAULT_HOVER_CLOSE_DELAY = 100;
+const DEFAULT_ANIMATION_DURATION = 200;
 
 type Side = "top" | "right" | "bottom" | "left";
 type ActivationMode = "click" | "hover";
@@ -423,7 +425,7 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
 
       hoverCloseTimerRef.current = window.setTimeout(() => {
         store.setState("open", false);
-      }, 100);
+      }, DEFAULT_HOVER_CLOSE_DELAY);
     },
     [onMouseLeaveProp, activationMode, isDisabled, store, hoverCloseTimerRef],
   );
@@ -601,7 +603,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
       if (!forceMount) {
         const childCount = React.Children.count(children);
-        const animationDuration = 200;
+        const animationDuration = DEFAULT_ANIMATION_DURATION;
         const longestDelay = (childCount - 1) * DEFAULT_ITEM_DELAY;
         const totalDuration = longestDelay + animationDuration;
 
@@ -801,7 +803,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
       hoverCloseTimerRef.current = window.setTimeout(() => {
         store.setState("open", false);
-      }, 100);
+      }, DEFAULT_HOVER_CLOSE_DELAY);
     },
     [propsRef, hoverCloseTimerRef, store],
   );
@@ -865,7 +867,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 }
 
 const speedDialItemVariants = cva(
-  "flex items-center gap-2 transition-all duration-200 [transition-delay:var(--speed-dial-delay)] data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=closed]:opacity-0 data-[state=open]:opacity-100",
+  "flex items-center gap-2 transition-all [transition-delay:var(--speed-dial-delay)] [transition-duration:var(--speed-dial-animation-duration)] data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=closed]:opacity-0 data-[state=open]:opacity-100",
   {
     variants: {
       side: {
@@ -933,6 +935,7 @@ function SpeedDialItem(props: DivProps) {
 
   const itemStyle = React.useMemo<React.CSSProperties>(
     () => ({
+      "--speed-dial-animation-duration": `${DEFAULT_ANIMATION_DURATION}ms`,
       "--speed-dial-delay": `${delay}ms`,
       ...style,
     }),
