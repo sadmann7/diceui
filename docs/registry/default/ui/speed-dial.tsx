@@ -738,9 +738,9 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       {...contentProps}
       ref={composedRef}
       className={cn(speedDialContentVariants({ side, className }))}
+      style={contentStyle}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      style={contentStyle}
     >
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return child;
@@ -762,7 +762,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 }
 
 const speedDialItemVariants = cva(
-  "flex items-center gap-2 transition-all duration-200 [transform-origin:var(--speed-dial-transform-origin)] [transition-delay:var(--speed-dial-delay)] data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=closed]:scale-0 data-[state=open]:scale-100 data-[state=closed]:opacity-0 data-[state=open]:opacity-100",
+  "flex items-center gap-2 transition-all duration-200 [transition-delay:var(--speed-dial-delay)] data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=closed]:opacity-0 data-[state=open]:opacity-100",
   {
     variants: {
       side: {
@@ -775,19 +775,19 @@ const speedDialItemVariants = cva(
     compoundVariants: [
       {
         side: "top",
-        className: "data-[state=closed]:translate-y-4",
+        className: "data-[state=closed]:translate-y-2",
       },
       {
         side: "bottom",
-        className: "data-[state=closed]:-translate-y-4",
+        className: "data-[state=closed]:-translate-y-2",
       },
       {
         side: "left",
-        className: "data-[state=closed]:translate-x-4",
+        className: "data-[state=closed]:translate-x-2",
       },
       {
         side: "right",
-        className: "data-[state=closed]:-translate-x-4",
+        className: "data-[state=closed]:-translate-x-2",
       },
     ],
     defaultVariants: {
@@ -830,10 +830,9 @@ function SpeedDialItem(props: DivProps) {
   const itemStyle = React.useMemo<React.CSSProperties>(
     () => ({
       "--speed-dial-delay": `${delay}ms`,
-      "--speed-dial-transform-origin": getTransformOrigin(side),
       ...style,
     }),
-    [delay, side, style],
+    [delay, style],
   );
 
   const ItemPrimitive = asChild ? Slot : "div";
@@ -938,7 +937,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
       ref={composedRefs}
       {...actionProps}
       className={cn(
-        "size-11 shrink-0 rounded-full bg-accent shadow-md",
+        "size-11 shrink-0 rounded-full bg-accent shadow-md transition-transform duration-200 hover:scale-110 active:scale-95",
         className,
       )}
       onClick={onClick}
