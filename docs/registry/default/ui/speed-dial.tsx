@@ -508,11 +508,15 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   const orientation =
     side === "top" || side === "bottom" ? "vertical" : "horizontal";
 
+  const transformOrigin = React.useMemo(() => getTransformOrigin(side), [side]);
+
   const ownerDocument =
     contentRef.current?.ownerDocument ?? globalThis?.document;
 
   const [mounted, setMounted] = React.useState(false);
   const [position, setPosition] = React.useState<React.CSSProperties>({});
+
+  const rafRef = React.useRef<number | null>(null);
 
   React.useEffect(() => {
     setMounted(true);
@@ -544,22 +548,44 @@ function SpeedDialContent(props: SpeedDialContentProps) {
         break;
     }
 
-    setPosition(newPosition);
+    setPosition((prev) => {
+      const hasChanged = Object.keys(newPosition).some((key) => {
+        const k = key as keyof typeof newPosition;
+        return prev[k] !== newPosition[k];
+      });
+      return hasChanged ? newPosition : prev;
+    });
   }, [rootRef, open, side, offset]);
+
+  const schedulePositionUpdate = React.useCallback(() => {
+    if (rafRef.current) return;
+
+    rafRef.current = requestAnimationFrame(() => {
+      updatePosition();
+      rafRef.current = null;
+    });
+  }, [updatePosition]);
 
   useIsomorphicLayoutEffect(() => {
     if (!open) return;
 
     updatePosition();
 
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", schedulePositionUpdate);
+    window.addEventListener("scroll", schedulePositionUpdate, {
+      capture: true,
+      passive: true,
+    });
 
     return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", schedulePositionUpdate);
+      window.removeEventListener("scroll", schedulePositionUpdate, true);
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
-  }, [open, updatePosition]);
+  }, [open, updatePosition, schedulePositionUpdate]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -685,6 +711,17 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     [propsRef, hoverCloseTimerRef, store],
   );
 
+  const contentStyle = React.useMemo<React.CSSProperties>(
+    () => ({
+      "--speed-dial-gap": `${gap}px`,
+      "--speed-dial-offset": `${offset}px`,
+      "--speed-dial-transform-origin": transformOrigin,
+      ...position,
+      ...style,
+    }),
+    [gap, offset, transformOrigin, position, style],
+  );
+
   const ContentPrimitive = asChild ? Slot : "div";
 
   if (!mounted) return null;
@@ -703,15 +740,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       className={cn(speedDialContentVariants({ side, className }))}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      style={
-        {
-          "--speed-dial-gap": `${gap}px`,
-          "--speed-dial-offset": `${offset}px`,
-          "--speed-dial-transform-origin": getTransformOrigin(side),
-          ...position,
-          ...style,
-        } as React.CSSProperties
-      }
+      style={contentStyle}
     >
       {React.Children.map(children, (child, index) => {
         if (!React.isValidElement(child)) return child;
@@ -798,6 +827,15 @@ function SpeedDialItem(props: DivProps) {
     [actionId, labelId],
   );
 
+  const itemStyle = React.useMemo<React.CSSProperties>(
+    () => ({
+      "--speed-dial-delay": `${delay}ms`,
+      "--speed-dial-transform-origin": getTransformOrigin(side),
+      ...style,
+    }),
+    [delay, side, style],
+  );
+
   const ItemPrimitive = asChild ? Slot : "div";
 
   return (
@@ -809,13 +847,7 @@ function SpeedDialItem(props: DivProps) {
         data-side={side}
         {...itemProps}
         className={cn(speedDialItemVariants({ side, className }))}
-        style={
-          {
-            "--speed-dial-delay": `${delay}ms`,
-            "--speed-dial-transform-origin": getTransformOrigin(side),
-            ...style,
-          } as React.CSSProperties
-        }
+        style={itemStyle}
       >
         {children}
       </ItemPrimitive>
