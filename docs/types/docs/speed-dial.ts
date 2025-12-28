@@ -1,10 +1,10 @@
-import type { ButtonProps, CompositionProps, EmptyProps, Side } from "@/types";
-
-interface InteractOutsideEvent extends CustomEvent {
-  detail: {
-    originalEvent: PointerEvent;
-  };
-}
+import type {
+  ButtonProps,
+  CompositionProps,
+  EmptyProps,
+  PointerDownOutsideEvent,
+  Side,
+} from "@/types";
 
 export interface SpeedDialProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -70,30 +70,23 @@ export interface SpeedDialContentProps
   extends EmptyProps<"div">,
     CompositionProps {
   /**
-   * The distance in pixels between the trigger and the content.
-   *
-   * ```tsx
-   * <SpeedDialContent offset={16}>
-   *   {/* items */}
-   * </SpeedDialContent>
-   * ```
-   *
+   * The distance in pixels from the trigger.
    * @default 8
    */
   offset?: number;
 
   /**
    * The gap in pixels between speed dial items.
-   *
-   * ```tsx
-   * <SpeedDialContent gap={12}>
-   *   {/* items */}
-   * </SpeedDialContent>
-   * ```
-   *
    * @default 8
    */
   gap?: number;
+
+  /**
+   * When `true`, forces the content to be rendered even if it's not active.
+   * Useful for controlling animations with external animation libraries.
+   * @default false
+   */
+  forceMount?: boolean;
 
   /**
    * Event handler called when the `Escape` key is pressed.
@@ -119,7 +112,7 @@ export interface SpeedDialContentProps
    * }}
    * ```
    */
-  onInteractOutside?: (event: InteractOutsideEvent) => void;
+  onInteractOutside?: (event: PointerDownOutsideEvent) => void;
 }
 
 export interface SpeedDialItemProps

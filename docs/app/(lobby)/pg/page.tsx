@@ -4,6 +4,7 @@ import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
 import SpeedDialControlledDemo from "@/registry/default/examples/speed-dial-controlled-demo";
 import SpeedDialDemo from "@/registry/default/examples/speed-dial-demo";
 import SpeedDialHoverDemo from "@/registry/default/examples/speed-dial-hover-demo";
+import SpeedDialLabelsDemo from "@/registry/default/examples/speed-dial-labels-demo";
 import SpeedDialSideDemo from "@/registry/default/examples/speed-dial-side-demo";
 
 export default function PlaygroundPage() {
@@ -11,6 +12,7 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <SpeedDialDemo />
+        <SpeedDialLabelsDemo />
         <SpeedDialControlledDemo />
         <SpeedDialSideDemo />
         <SpeedDialHoverDemo />

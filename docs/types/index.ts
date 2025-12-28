@@ -24,6 +24,10 @@ export type Orientation = "horizontal" | "vertical";
 export type Align = "start" | "center" | "end";
 export type Side = "top" | "right" | "bottom" | "left";
 
+export type PointerDownOutsideEvent = CustomEvent<{
+  originalEvent: PointerEvent;
+}>;
+
 export type ButtonProps = React.ComponentProps<typeof Button>;
 
 export interface UploadedFile<T = unknown> extends ClientUploadedFileData<T> {}

@@ -435,11 +435,40 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
   );
 }
 
-const SpeedDialItemImplContext = React.createContext<number | null>(null);
+interface SpeedDialItemImplContextValue {
+  delay: number;
+  open: boolean;
+}
+
+const SpeedDialItemImplContext =
+  React.createContext<SpeedDialItemImplContextValue | null>(null);
 
 function useSpeedDialItemImplContext() {
   return React.useContext(SpeedDialItemImplContext);
 }
+
+interface SpeedDialItemImplProps {
+  delay: number;
+  open: boolean;
+  children: React.ReactNode;
+}
+
+const SpeedDialItemImpl = React.memo(function SpeedDialItemImpl({
+  delay,
+  open,
+  children,
+}: SpeedDialItemImplProps) {
+  const contextValue = React.useMemo<SpeedDialItemImplContextValue>(
+    () => ({ delay, open }),
+    [delay, open],
+  );
+
+  return (
+    <SpeedDialItemImplContext.Provider value={contextValue}>
+      {children}
+    </SpeedDialItemImplContext.Provider>
+  );
+});
 
 const speedDialContentVariants = cva(
   "fixed z-50 flex gap-[var(--speed-dial-gap)] data-[state=closed]:pointer-events-none",
@@ -463,6 +492,7 @@ interface SpeedDialContentProps
     VariantProps<typeof speedDialContentVariants> {
   offset?: number;
   gap?: number;
+  forceMount?: boolean;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
   onInteractOutside?: (event: InteractOutsideEvent) => void;
 }
@@ -471,6 +501,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   const {
     offset = DEFAULT_OFFSET,
     gap = DEFAULT_GAP,
+    forceMount = false,
     onEscapeKeyDown,
     onInteractOutside,
     onMouseEnter: onMouseEnterProp,
@@ -514,13 +545,53 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     contentRef.current?.ownerDocument ?? globalThis?.document;
 
   const [mounted, setMounted] = React.useState(false);
+  const [renderState, setRenderState] = React.useState({
+    shouldRender: false,
+    animating: false,
+  });
   const [position, setPosition] = React.useState<React.CSSProperties>({});
 
   const rafRef = React.useRef<number | null>(null);
+  const unmountTimerRef = React.useRef<number | null>(null);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     setMounted(true);
   }, []);
+
+  React.useEffect(() => {
+    if (open) {
+      if (unmountTimerRef.current) {
+        clearTimeout(unmountTimerRef.current);
+        unmountTimerRef.current = null;
+      }
+
+      setRenderState((prev) => ({ ...prev, shouldRender: true }));
+
+      requestAnimationFrame(() => {
+        setRenderState((prev) => ({ ...prev, animating: true }));
+      });
+    } else {
+      setRenderState((prev) => ({ ...prev, animating: false }));
+
+      if (!forceMount) {
+        const childCount = React.Children.count(children);
+        const animationDuration = 200;
+        const longestDelay = (childCount - 1) * DEFAULT_ITEM_DELAY;
+        const totalDuration = longestDelay + animationDuration;
+
+        unmountTimerRef.current = window.setTimeout(() => {
+          setRenderState((prev) => ({ ...prev, shouldRender: false }));
+        }, totalDuration);
+
+        return () => {
+          if (unmountTimerRef.current) {
+            clearTimeout(unmountTimerRef.current);
+            unmountTimerRef.current = null;
+          }
+        };
+      }
+    }
+  }, [open, forceMount, children]);
 
   const updatePosition = React.useCallback(() => {
     if (!rootRef.current || !open) return;
@@ -689,7 +760,6 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       propsRef.current?.onMouseEnter?.(event);
       if (event.defaultPrevented) return;
 
-      // Cancel any pending close timer when hovering over content
       if (hoverCloseTimerRef.current) {
         window.clearTimeout(hoverCloseTimerRef.current);
         hoverCloseTimerRef.current = null;
@@ -724,7 +794,9 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
   const ContentPrimitive = asChild ? Slot : "div";
 
-  if (!mounted) return null;
+  const shouldMount = forceMount || renderState.shouldRender;
+
+  if (!mounted || !shouldMount) return null;
 
   return ReactDOM.createPortal(
     <ContentPrimitive
@@ -732,7 +804,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       role="menu"
       aria-orientation={orientation}
       data-slot="speed-dial-content"
-      data-state={getDataState(open)}
+      data-state={getDataState(renderState.animating)}
       data-orientation={orientation}
       data-side={side}
       {...contentProps}
@@ -746,14 +818,18 @@ function SpeedDialContent(props: SpeedDialContentProps) {
         if (!React.isValidElement(child)) return child;
 
         const totalChildren = React.Children.count(children);
-        const delay = open
+        const delay = renderState.animating
           ? index * DEFAULT_ITEM_DELAY
           : (totalChildren - index - 1) * DEFAULT_ITEM_DELAY;
 
         return (
-          <SpeedDialItemImplContext.Provider value={delay}>
+          <SpeedDialItemImpl
+            key={child.key ?? index}
+            delay={delay}
+            open={renderState.animating}
+          >
             {child}
-          </SpeedDialItemImplContext.Provider>
+          </SpeedDialItemImpl>
         );
       })}
     </ContentPrimitive>,
@@ -815,9 +891,10 @@ function useSpeedDialItemContext(consumerName: string) {
 function SpeedDialItem(props: DivProps) {
   const { asChild, className, style, children, ...itemProps } = props;
 
-  const open = useStore((state) => state.open);
   const { side } = useSpeedDialContext(ITEM_NAME);
-  const delay = useSpeedDialItemImplContext() ?? 0;
+  const itemImplContext = useSpeedDialItemImplContext();
+  const delay = itemImplContext?.delay ?? 0;
+  const open = itemImplContext?.open ?? false;
 
   const actionId = React.useId();
   const labelId = React.useId();
@@ -937,7 +1014,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
       ref={composedRefs}
       {...actionProps}
       className={cn(
-        "size-11 shrink-0 rounded-full bg-accent shadow-md transition-transform duration-200 hover:scale-110 active:scale-95",
+        "size-11 shrink-0 rounded-full bg-accent shadow-md",
         className,
       )}
       onClick={onClick}
