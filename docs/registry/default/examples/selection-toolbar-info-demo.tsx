@@ -104,12 +104,14 @@ export default function SelectionToolbarInfoDemo() {
             </div>
           </div>
           <div className="text-muted-foreground text-xs">
-            <span className="font-medium">Selected text: </span>
-            "{selectedText.length > 50 ? `${selectedText.slice(0, 50)}...` : selectedText}"
+            <span className="font-medium">Selected text: </span>"
+            {selectedText.length > 50
+              ? `${selectedText.slice(0, 50)}...`
+              : selectedText}
+            "
           </div>
         </div>
       )}
     </div>
   );
 }
-

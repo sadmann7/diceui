@@ -1823,6 +1823,34 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "selection-toolbar-rich-demo": {
+      name: "selection-toolbar-rich-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["selection-toolbar"],
+      files: [{
+        path: "registry/default/examples/selection-toolbar-rich-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/selection-toolbar-rich-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "selection-toolbar-info-demo": {
+      name: "selection-toolbar-info-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["selection-toolbar"],
+      files: [{
+        path: "registry/default/examples/selection-toolbar-info-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/selection-toolbar-info-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "segmented-input-form-demo": {
       name: "segmented-input-form-demo",
       description: "",
