@@ -1,4 +1,4 @@
-import type { CompositionProps, EmptyProps } from "@/types";
+import type { ButtonProps, CompositionProps, EmptyProps } from "@/types";
 
 export interface SelectionToolbarProps
   extends EmptyProps<"div">,
@@ -65,33 +65,23 @@ export interface SelectionToolbarProps
 }
 
 export interface SelectionToolbarItemProps
-  extends Omit<
-    React.ComponentProps<"button">,
-    "onSelect" | "type" | "children"
-  > {
+  extends Omit<ButtonProps, "onSelect"> {
   /**
    * Callback fired when the item is selected.
-   * Receives the selected text and the event.
-   *
-   * ```ts
-   * onSelect={(text, event) => {
-   *   console.log({ selectedText: text })
-   *   // Apply formatting
-   * }}
-   * ```
-   */
-  onSelect?: (text: string, event: Event) => void;
-
-  /**
-   * The content of the item (usually an icon).
+   * Receives the selected text and a custom event.
    *
    * ```tsx
-   * <SelectionToolbarItem>
-   *   <Bold />
+   * <SelectionToolbarItem
+   *   onSelect={(text, event) => {
+   *     console.log({ selectedText: text })
+   *     // Apply formatting, copy to clipboard, etc.
+   *   }}
+   * >
+   *   <BoldIcon />
    * </SelectionToolbarItem>
    * ```
    */
-  children?: React.ReactNode;
+  onSelect?: (text: string, event: Event) => void;
 }
 
 export interface SelectionToolbarSeparatorProps
