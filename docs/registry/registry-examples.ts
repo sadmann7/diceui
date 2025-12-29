@@ -1252,6 +1252,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "mention-controlled-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/mention"],
+    files: [
+      {
+        path: "examples/mention-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "mention-custom-filter-demo",
     type: "registry:example",
     dependencies: ["@diceui/mention", "lucide-react"],

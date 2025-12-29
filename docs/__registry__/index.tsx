@@ -2239,6 +2239,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "mention-controlled-demo": {
+      name: "mention-controlled-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: undefined,
+      files: [{
+        path: "registry/default/examples/mention-controlled-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/mention-controlled-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "mention-custom-filter-demo": {
       name: "mention-custom-filter-demo",
       description: "",

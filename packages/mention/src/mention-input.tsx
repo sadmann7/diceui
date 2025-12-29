@@ -22,6 +22,17 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
+    // Sync controlled inputValue to the actual input element
+    React.useEffect(() => {
+      const inputElement = context.inputRef.current;
+      if (!inputElement) return;
+
+      // Only sync if the values differ (avoid unnecessary DOM updates)
+      if (inputElement.value !== context.inputValue) {
+        inputElement.value = context.inputValue;
+      }
+    }, [context.inputValue, context.inputRef]);
+
     const getTextWidth = React.useCallback(
       (text: string, input: InputElement) => {
         const style = window.getComputedStyle(input);
@@ -272,24 +283,45 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const prevValue = context.inputValue;
         const insertedLength = newValue.length - prevValue.length;
 
+        // Clear all mentions if input is completely cleared
+        if (newValue === "") {
+          if (context.mentions.length > 0) {
+            context.onMentionsChange([]);
+            context.onValueChange?.([]);
+          }
+          context.onInputValueChange?.(newValue);
+          onMentionUpdate(input);
+          return;
+        }
+
         // Update mentions positions based on text changes
         if (insertedLength !== 0) {
-          context.onMentionsChange((prev) =>
-            prev.map((mention) => {
-              // Only update positions for mentions that come after the cursor
-              if (
-                mention.start >=
-                cursorPosition - (insertedLength > 0 ? insertedLength : 0)
-              ) {
-                return {
-                  ...mention,
-                  start: mention.start + insertedLength,
-                  end: mention.end + insertedLength,
-                };
-              }
-              return mention;
-            }),
-          );
+          context.onMentionsChange((prev) => {
+            const updated = prev
+              .map((mention) => {
+                // Only update positions for mentions that come after the cursor
+                if (
+                  mention.start >=
+                  cursorPosition - (insertedLength > 0 ? insertedLength : 0)
+                ) {
+                  return {
+                    ...mention,
+                    start: mention.start + insertedLength,
+                    end: mention.end + insertedLength,
+                  };
+                }
+                return mention;
+              })
+              // Filter out mentions with invalid positions
+              .filter(
+                (mention) =>
+                  mention.start >= 0 &&
+                  mention.end <= newValue.length &&
+                  mention.start < mention.end,
+              );
+
+            return updated;
+          });
         }
 
         context.onInputValueChange?.(newValue);
@@ -299,6 +331,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.onInputValueChange,
         context.inputValue,
         context.onMentionsChange,
+        context.onValueChange,
+        context.mentions.length,
         onMentionUpdate,
         context.disabled,
         context.readonly,

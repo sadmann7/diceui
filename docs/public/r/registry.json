@@ -2584,6 +2584,19 @@
       "type": "registry:example"
     },
     {
+      "name": "mention-controlled-demo",
+      "dependencies": [
+        "@diceui/mention"
+      ],
+      "files": [
+        {
+          "path": "examples/mention-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
       "name": "mention-custom-filter-demo",
       "dependencies": [
         "@diceui/mention",

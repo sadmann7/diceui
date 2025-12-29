@@ -130,14 +130,25 @@ const MentionHighlighter = React.memo(
       }, [inputStyle, style, context.dir]);
 
       const onSegmentsRender = React.useCallback(() => {
-        const inputElement = context.inputRef.current;
-        if (!inputElement) return null;
+        const value = context.inputValue;
 
-        const { value } = inputElement;
+        // Return early if there's no value
+        if (!value) {
+          return <span key="space">&nbsp;</span>;
+        }
+
         const segments: React.ReactNode[] = [];
         let lastIndex = 0;
 
-        for (const { start, end } of context.mentions) {
+        // Filter out mentions with invalid positions
+        const validMentions = context.mentions.filter(
+          (mention) =>
+            mention.start >= 0 &&
+            mention.end <= value.length &&
+            mention.start < mention.end
+        );
+
+        for (const { start, end } of validMentions) {
           // Add text before mention
           if (start > lastIndex) {
             segments.push(
@@ -170,7 +181,7 @@ const MentionHighlighter = React.memo(
         segments.push(<span key="space">&nbsp;</span>);
 
         return segments;
-      }, [context.inputRef, context.mentions]);
+      }, [context.inputValue, context.mentions]);
 
       if (!inputStyle) return null;
 
