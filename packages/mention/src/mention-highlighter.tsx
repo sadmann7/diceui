@@ -132,11 +132,6 @@ const MentionHighlighter = React.memo(
       const onSegmentsRender = React.useCallback(() => {
         const value = context.inputValue;
 
-        // Return early if there's no value
-        if (!value) {
-          return <span key="space">&nbsp;</span>;
-        }
-
         const segments: React.ReactNode[] = [];
         let lastIndex = 0;
 
