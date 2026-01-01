@@ -15,6 +15,8 @@ import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
+import { useAsRef } from "../hooks/use-as-ref";
 
 const ROOT_NAME = "SelectionToolbar";
 const ITEM_NAME = "SelectionToolbarItem";
@@ -36,6 +38,39 @@ interface SelectionRect {
   left: number;
   width: number;
   height: number;
+}
+
+interface StoreState {
+  open: boolean;
+}
+
+interface Store {
+  subscribe: (callback: () => void) => () => void;
+  getState: () => StoreState;
+  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
+  notify: () => void;
+}
+
+const StoreContext = React.createContext<Store | null>(null);
+
+function useStoreContext(consumerName: string) {
+  const context = React.useContext(StoreContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
+
+// biome-ignore lint/correctness/noUnusedVariables: Available for consumer use
+function useStore<T>(selector: (state: StoreState) => T): T {
+  const store = useStoreContext("useStore");
+
+  const getSnapshot = React.useCallback(
+    () => selector(store.getState()),
+    [store, selector],
+  );
+
+  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
 interface SelectionToolbarContextValue {
@@ -79,11 +114,39 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     ...rootProps
   } = props;
 
+  const propsRef = useAsRef({
+    onOpenChange,
+    onSelectionChange,
+  });
+
   const [mounted, setMounted] = React.useState(false);
   const [internalOpen, setInternalOpen] = React.useState(false);
   const [selectedText, setSelectedText] = React.useState("");
   const [selectionRect, setSelectionRect] =
     React.useState<SelectionRect | null>(null);
+
+  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const stateRef = useLazyRef<StoreState>(() => ({
+    open: false,
+  }));
+
+  const store = useLazyRef<Store>(() => ({
+    subscribe: (callback) => {
+      listenersRef.current.add(callback);
+      return () => listenersRef.current.delete(callback);
+    },
+    getState: () => stateRef.current,
+    setState: (key, value) => {
+      if (Object.is(stateRef.current[key], value)) return;
+      stateRef.current[key] = value;
+      store.current.notify();
+    },
+    notify: () => {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    },
+  }));
 
   const rafRef = React.useRef<number | null>(null);
 
@@ -214,8 +277,14 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     });
     setOpen(true);
 
-    onSelectionChange?.(text);
-  }, [containerProp, setOpen, onSelectionChange]);
+    propsRef.current.onSelectionChange?.(text);
+  }, [containerProp, setOpen, propsRef]);
+
+  // Sync store state with open prop
+  // biome-ignore lint/correctness/useExhaustiveDependencies: store is a stable lazy ref
+  React.useEffect(() => {
+    store.current.setState("open", open);
+  }, [open]);
 
   React.useEffect(() => {
     const container = containerProp ?? document;
@@ -306,46 +375,48 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <SelectionToolbarContext.Provider value={contextValue}>
-      {ReactDOM.createPortal(
-        <div
-          ref={refs.setFloating}
-          style={{
-            ...floatingStyles,
-            // Keep off-page when measuring to prevent janky initial position
-            transform: isPositioned
-              ? floatingStyles.transform
-              : "translate(0, -200%)",
-          }}
-          data-state={isPositioned ? "positioned" : "measuring"}
-        >
-          <RootPrimitive
-            role="toolbar"
-            aria-label="Text formatting toolbar"
-            data-slot="selection-toolbar"
-            {...rootProps}
-            ref={composedRef}
-            className={cn(
-              "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
-              isPositioned &&
-                "fade-in-0 zoom-in-95 animate-in duration-200 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
-              "motion-reduce:animate-none motion-reduce:transition-none",
-              className,
-            )}
+    <StoreContext.Provider value={store.current}>
+      <SelectionToolbarContext.Provider value={contextValue}>
+        {ReactDOM.createPortal(
+          <div
+            ref={refs.setFloating}
             style={{
-              // Set transform origin based on placement for smooth animations
-              transformOrigin: middlewareData.transformOrigin
-                ? `${middlewareData.transformOrigin.x} ${middlewareData.transformOrigin.y}`
-                : undefined,
-              ...style,
+              ...floatingStyles,
+              // Keep off-page when measuring to prevent janky initial position
+              transform: isPositioned
+                ? floatingStyles.transform
+                : "translate(0, -200%)",
             }}
+            data-state={isPositioned ? "positioned" : "measuring"}
           >
-            {children}
-          </RootPrimitive>
-        </div>,
-        portalContainer,
-      )}
-    </SelectionToolbarContext.Provider>
+            <RootPrimitive
+              role="toolbar"
+              aria-label="Text formatting toolbar"
+              data-slot="selection-toolbar"
+              {...rootProps}
+              ref={composedRef}
+              className={cn(
+                "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
+                isPositioned &&
+                  "fade-in-0 zoom-in-95 animate-in duration-200 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
+                "motion-reduce:animate-none motion-reduce:transition-none",
+                className,
+              )}
+              style={{
+                // Set transform origin based on placement for smooth animations
+                transformOrigin: middlewareData.transformOrigin
+                  ? `${middlewareData.transformOrigin.x} ${middlewareData.transformOrigin.y}`
+                  : undefined,
+                ...style,
+              }}
+            >
+              {children}
+            </RootPrimitive>
+          </div>,
+          portalContainer,
+        )}
+      </SelectionToolbarContext.Provider>
+    </StoreContext.Provider>
   );
 }
 
@@ -368,6 +439,11 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
     ...itemProps
   } = props;
 
+  const propsRef = useAsRef({
+    onSelect,
+    onClick: onClickProp,
+  });
+
   const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
 
@@ -375,7 +451,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ItemElement>) => {
-      onClickProp?.(event);
+      propsRef.current.onClick?.(event);
       if (event.defaultPrevented) return;
 
       const item = itemRef.current;
@@ -389,7 +465,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 
       item.addEventListener(
         "selectiontoolbar.select",
-        (event) => onSelect?.(context.selectedText, event),
+        (event) => propsRef.current.onSelect?.(context.selectedText, event),
         {
           once: true,
         },
@@ -397,7 +473,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 
       item.dispatchEvent(selectEvent);
     },
-    [onClickProp, onSelect, context.selectedText],
+    [propsRef, context.selectedText],
   );
 
   return (
