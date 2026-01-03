@@ -22,15 +22,22 @@ export default function SelectionToolbarDemo() {
     const wrapper = document.createElement(tagName);
     try {
       range.surroundContents(wrapper);
+      // Re-select the wrapped content to allow multiple formatting actions
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.selectNodeContents(wrapper);
+      selection.addRange(newRange);
     } catch {
       // Fallback: extract, wrap, and insert
       wrapper.textContent = selectedText;
       range.deleteContents();
       range.insertNode(wrapper);
+      // Re-select the wrapped content
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.selectNodeContents(wrapper);
+      selection.addRange(newRange);
     }
-
-    // Clear selection
-    selection.removeAllRanges();
   }, []);
 
   const onBold = React.useCallback(() => {
@@ -57,13 +64,22 @@ export default function SelectionToolbarDemo() {
 
     try {
       range.surroundContents(link);
+      // Re-select the linked content
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.selectNodeContents(link);
+      selection.addRange(newRange);
     } catch {
       link.textContent = range.toString();
       range.deleteContents();
       range.insertNode(link);
+      // Re-select the linked content
+      selection.removeAllRanges();
+      const newRange = document.createRange();
+      newRange.selectNodeContents(link);
+      selection.addRange(newRange);
     }
 
-    selection.removeAllRanges();
     console.log({ action: "link", url });
   }, []);
 
