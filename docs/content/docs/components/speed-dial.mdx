@@ -89,7 +89,7 @@ Set `activationMode="hover"` on the root component to open the speed dial when h
 
 <ComponentTabs name="speed-dial-hover-demo" />
 
-### Controlled
+### Controlled State
 
 Use the `open` and `onOpenChange` props to control the speed dial state programmatically.
 
@@ -100,6 +100,49 @@ Use the `open` and `onOpenChange` props to control the speed dial state programm
 The speed dial can expand in different directions using the `side` prop.
 
 <ComponentTabs name="speed-dial-side-demo" />
+
+### Fixed Positioning
+
+To position the speed dial at a fixed location in the viewport (e.g., bottom-right corner), apply positioning classes to the `SpeedDial` root component, not the trigger.
+
+```tsx
+<SpeedDial className="fixed right-4 bottom-4">
+  <SpeedDialTrigger>
+    <Plus />
+  </SpeedDialTrigger>
+  <SpeedDialContent>
+    {/* actions */}
+  </SpeedDialContent>
+</SpeedDial>
+```
+
+<Callout type="warn">
+**Important:** Apply `fixed` positioning to the `SpeedDial` root, not the `SpeedDialTrigger`. This ensures the content stays aligned with the trigger.
+</Callout>
+
+**Why this matters:** The content uses `absolute` positioning relative to its parent. If you apply `fixed` to the trigger instead, the content won't be able to position itself correctly relative to the trigger.
+
+```tsx
+// ❌ Incorrect - content won't align properly
+<SpeedDial>
+  <SpeedDialTrigger className="fixed right-4 bottom-4">
+    <Plus />
+  </SpeedDialTrigger>
+  <SpeedDialContent>
+    {/* actions */}
+  </SpeedDialContent>
+</SpeedDial>
+
+// ✅ Correct - content aligns with trigger
+<SpeedDial className="fixed right-4 bottom-4">
+  <SpeedDialTrigger>
+    <Plus />
+  </SpeedDialTrigger>
+  <SpeedDialContent>
+    {/* actions */}
+  </SpeedDialContent>
+</SpeedDial>
+```
 
 ## API Reference
 
