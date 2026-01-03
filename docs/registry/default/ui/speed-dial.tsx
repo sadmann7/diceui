@@ -3,7 +3,6 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -488,7 +487,7 @@ const SpeedDialItemImpl = React.memo(function SpeedDialItemImpl({
 });
 
 const speedDialContentVariants = cva(
-  "fixed z-50 flex gap-[var(--speed-dial-gap)] data-[state=closed]:pointer-events-none",
+  "absolute z-50 flex gap-[var(--speed-dial-gap)] data-[state=closed]:pointer-events-none",
   {
     variants: {
       side: {
@@ -542,6 +541,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     triggerRef,
     isPointerInsideReactTreeRef,
     hoverCloseTimerRef,
+    activationMode,
   } = useSpeedDialContext(CONTENT_NAME);
 
   const contentRef = React.useRef<ContentElement | null>(null);
@@ -562,20 +562,20 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   const ownerDocument =
     contentRef.current?.ownerDocument ?? globalThis?.document;
 
-  const [mounted, setMounted] = React.useState(false);
+  const mounted = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
+
   const [renderState, setRenderState] = React.useState({
     shouldRender: false,
     animating: false,
   });
   const [position, setPosition] = React.useState<React.CSSProperties>({});
 
-  const rafRef = React.useRef<number | null>(null);
   const openRafRef = React.useRef<number | null>(null);
   const unmountTimerRef = React.useRef<number | null>(null);
-
-  React.useLayoutEffect(() => {
-    setMounted(true);
-  }, []);
 
   React.useEffect(() => {
     if (open) {
@@ -624,26 +624,24 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   const updatePosition = React.useCallback(() => {
     if (!triggerRef.current || !open) return;
 
-    const triggerRect = triggerRef.current.getBoundingClientRect();
-
     const newPosition: React.CSSProperties = {};
 
     switch (side) {
       case "top":
-        newPosition.bottom = `${window.innerHeight - triggerRect.top + offset}px`;
-        newPosition.right = `${window.innerWidth - triggerRect.right}px`;
+        newPosition.bottom = `calc(100% + ${offset}px)`;
+        newPosition.right = "0";
         break;
       case "bottom":
-        newPosition.top = `${triggerRect.bottom + offset}px`;
-        newPosition.right = `${window.innerWidth - triggerRect.right}px`;
+        newPosition.top = `calc(100% + ${offset}px)`;
+        newPosition.right = "0";
         break;
       case "left":
-        newPosition.right = `${window.innerWidth - triggerRect.left + offset}px`;
-        newPosition.top = `${triggerRect.top}px`;
+        newPosition.right = `calc(100% + ${offset}px)`;
+        newPosition.top = "0";
         break;
       case "right":
-        newPosition.left = `${triggerRect.right + offset}px`;
-        newPosition.top = `${triggerRect.top}px`;
+        newPosition.left = `calc(100% + ${offset}px)`;
+        newPosition.top = "0";
         break;
     }
 
@@ -656,35 +654,10 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     });
   }, [triggerRef, open, side, offset]);
 
-  const schedulePositionUpdate = React.useCallback(() => {
-    if (rafRef.current) return;
-
-    rafRef.current = requestAnimationFrame(() => {
-      updatePosition();
-      rafRef.current = null;
-    });
-  }, [updatePosition]);
-
   useIsomorphicLayoutEffect(() => {
     if (!open) return;
-
     updatePosition();
-
-    window.addEventListener("resize", schedulePositionUpdate);
-    window.addEventListener("scroll", schedulePositionUpdate, {
-      capture: true,
-      passive: true,
-    });
-
-    return () => {
-      window.removeEventListener("resize", schedulePositionUpdate);
-      window.removeEventListener("scroll", schedulePositionUpdate, true);
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
-    };
-  }, [open, updatePosition, schedulePositionUpdate]);
+  }, [open, updatePosition]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -786,26 +759,26 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   const onMouseEnter = React.useCallback(
     (event: React.MouseEvent<ContentElement>) => {
       propsRef.current?.onMouseEnter?.(event);
-      if (event.defaultPrevented) return;
+      if (event.defaultPrevented || activationMode !== "hover") return;
 
       if (hoverCloseTimerRef.current) {
         window.clearTimeout(hoverCloseTimerRef.current);
         hoverCloseTimerRef.current = null;
       }
     },
-    [propsRef, hoverCloseTimerRef],
+    [propsRef, hoverCloseTimerRef, activationMode],
   );
 
   const onMouseLeave = React.useCallback(
     (event: React.MouseEvent<ContentElement>) => {
       propsRef.current?.onMouseLeave?.(event);
-      if (event.defaultPrevented) return;
+      if (event.defaultPrevented || activationMode !== "hover") return;
 
       hoverCloseTimerRef.current = window.setTimeout(() => {
         store.setState("open", false);
       }, DEFAULT_HOVER_CLOSE_DELAY);
     },
-    [propsRef, hoverCloseTimerRef, store],
+    [propsRef, hoverCloseTimerRef, store, activationMode],
   );
 
   const contentStyle = React.useMemo<React.CSSProperties>(
@@ -825,7 +798,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
   if (!mounted || !shouldMount) return null;
 
-  return ReactDOM.createPortal(
+  return (
     <ContentPrimitive
       id={contentId}
       role="menu"
@@ -861,8 +834,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
           );
         });
       })()}
-    </ContentPrimitive>,
-    document.body,
+    </ContentPrimitive>
   );
 }
 

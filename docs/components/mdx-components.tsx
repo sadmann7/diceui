@@ -1,4 +1,5 @@
 import type { InferPageType } from "fumadocs-core/source";
+import { Callout } from "fumadocs-ui/components/callout";
 import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
 import { Heading } from "fumadocs-ui/components/heading";
 import { Step, Steps } from "fumadocs-ui/components/steps";
@@ -98,11 +99,12 @@ export function useMdxComponents(
         {...props}
       />
     ),
-    AlertTitle,
-    AlertDescription,
     Kbd: ({ className, ...props }: React.ComponentProps<typeof Kbd>) => (
       <Kbd className={cn("not-prose", className)} {...props} />
     ),
+    AlertTitle,
+    AlertDescription,
+    Callout,
     ComponentTabs,
     ComponentSource,
     Steps,

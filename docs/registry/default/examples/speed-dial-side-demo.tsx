@@ -11,7 +11,7 @@ import {
   SpeedDialTrigger,
 } from "@/registry/default/ui/speed-dial";
 
-const sides = ["top", "right", "bottom", "left"] as const;
+const sides = ["top", "right", "left", "bottom"] as const;
 
 export default function SpeedDialSideDemo() {
   return (
@@ -25,7 +25,7 @@ export default function SpeedDialSideDemo() {
             <SpeedDialTrigger className="transition-transform duration-200 ease-out data-[state=closed]:rotate-0 data-[state=open]:rotate-135">
               <Plus />
             </SpeedDialTrigger>
-            <SpeedDialContent className="bg-background">
+            <SpeedDialContent>
               <SpeedDialItem>
                 <SpeedDialLabel className="sr-only">Share</SpeedDialLabel>
                 <SpeedDialAction onSelect={() => toast.success("Shared")}>
