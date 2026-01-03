@@ -15,8 +15,9 @@ import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
-import { useAsRef } from "../hooks/use-as-ref";
 
 const ROOT_NAME = "SelectionToolbar";
 const ITEM_NAME = "SelectionToolbarItem";
@@ -42,6 +43,8 @@ interface SelectionRect {
 
 interface StoreState {
   open: boolean;
+  selectedText: string;
+  selectionRect: SelectionRect | null;
 }
 
 interface Store {
@@ -61,9 +64,17 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: Available for consumer use
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
+function useStore<T>(
+  selector: (state: StoreState) => T,
+  ogStore?: Store | null,
+): T {
+  const contextStore = React.useContext(StoreContext);
+
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
 
   const getSnapshot = React.useCallback(
     () => selector(store.getState()),
@@ -71,22 +82,6 @@ function useStore<T>(selector: (state: StoreState) => T): T {
   );
 
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
-}
-
-interface SelectionToolbarContextValue {
-  selectedText: string;
-  selectionRect: SelectionRect | null;
-}
-
-const SelectionToolbarContext =
-  React.createContext<SelectionToolbarContextValue | null>(null);
-
-function useSelectionToolbarContext(consumerName: string) {
-  const context = React.useContext(SelectionToolbarContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
-  }
-  return context;
 }
 
 interface SelectionToolbarProps extends DivProps {
@@ -114,46 +109,65 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     ...rootProps
   } = props;
 
+  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const stateRef = useLazyRef<StoreState>(() => ({
+    open: openProp ?? false,
+    selectedText: "",
+    selectionRect: null,
+  }));
+
   const propsRef = useAsRef({
     onOpenChange,
     onSelectionChange,
   });
 
-  const [mounted, setMounted] = React.useState(false);
-  const [internalOpen, setInternalOpen] = React.useState(false);
-  const [selectedText, setSelectedText] = React.useState("");
-  const [selectionRect, setSelectionRect] =
-    React.useState<SelectionRect | null>(null);
+  const store = React.useMemo<Store>(() => {
+    return {
+      subscribe: (callback) => {
+        listenersRef.current.add(callback);
+        return () => listenersRef.current.delete(callback);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
-    open: false,
-  }));
+        if (key === "open" && typeof value === "boolean") {
+          stateRef.current.open = value;
+          propsRef.current.onOpenChange?.(value);
+        } else if (key === "selectedText" && typeof value === "string") {
+          stateRef.current.selectedText = value;
+          propsRef.current.onSelectionChange?.(value);
+        } else {
+          stateRef.current[key] = value;
+        }
 
-  const store = useLazyRef<Store>(() => ({
-    subscribe: (callback) => {
-      listenersRef.current.add(callback);
-      return () => listenersRef.current.delete(callback);
-    },
-    getState: () => stateRef.current,
-    setState: (key, value) => {
-      if (Object.is(stateRef.current[key], value)) return;
-      stateRef.current[key] = value;
-      store.current.notify();
-    },
-    notify: () => {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
-    },
-  }));
+        store.notify();
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+    };
+  }, [listenersRef, stateRef, propsRef]);
+
+  useIsomorphicLayoutEffect(() => {
+    if (openProp !== undefined) {
+      store.setState("open", openProp);
+    }
+  }, [openProp]);
+
+  const open = useStore((state) => state.open, store);
+  const selectionRect = useStore((state) => state.selectionRect, store);
 
   const rafRef = React.useRef<number | null>(null);
 
-  const open = openProp ?? internalOpen;
-  const setOpen = onOpenChange ?? setInternalOpen;
+  const mounted = React.useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
-  // Create a virtual element from the selection rect
   const virtualElement = React.useMemo(() => {
     if (!selectionRect) return null;
 
@@ -227,24 +241,20 @@ function SelectionToolbar(props: SelectionToolbarProps) {
 
   const composedRef = useComposedRefs(ref);
 
-  React.useLayoutEffect(() => {
-    setMounted(true);
-  }, []);
-
   const updateSelection = React.useCallback(() => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) {
-      setOpen(false);
-      setSelectedText("");
-      setSelectionRect(null);
+      store.setState("open", false);
+      store.setState("selectedText", "");
+      store.setState("selectionRect", null);
       return;
     }
 
     const text = selection.toString().trim();
     if (!text) {
-      setOpen(false);
-      setSelectedText("");
-      setSelectionRect(null);
+      store.setState("open", false);
+      store.setState("selectedText", "");
+      store.setState("selectionRect", null);
       return;
     }
 
@@ -258,9 +268,9 @@ function SelectionToolbar(props: SelectionToolbarProps) {
           : commonAncestor.parentElement;
 
       if (!element || !containerProp.contains(element)) {
-        setOpen(false);
-        setSelectedText("");
-        setSelectionRect(null);
+        store.setState("open", false);
+        store.setState("selectedText", "");
+        store.setState("selectionRect", null);
         return;
       }
     }
@@ -268,23 +278,15 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
 
-    setSelectedText(text);
-    setSelectionRect({
+    store.setState("selectedText", text);
+    store.setState("selectionRect", {
       top: rect.top,
       left: rect.left,
       width: rect.width,
       height: rect.height,
     });
-    setOpen(true);
-
-    propsRef.current.onSelectionChange?.(text);
-  }, [containerProp, setOpen, propsRef]);
-
-  // Sync store state with open prop
-  // biome-ignore lint/correctness/useExhaustiveDependencies: store is a stable lazy ref
-  React.useEffect(() => {
-    store.current.setState("open", open);
-  }, [open]);
+    store.setState("open", true);
+  }, [containerProp, store]);
 
   React.useEffect(() => {
     const container = containerProp ?? document;
@@ -299,16 +301,16 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     function onSelectionChange() {
       const selection = window.getSelection();
       if (!selection || !selection.toString().trim()) {
-        setOpen(false);
-        setSelectedText("");
-        setSelectionRect(null);
+        store.setState("open", false);
+        store.setState("selectedText", "");
+        store.setState("selectionRect", null);
       }
     }
 
     function onScroll() {
       if (rafRef.current !== null) return;
       rafRef.current = requestAnimationFrame(() => {
-        if (open) {
+        if (store.getState().open) {
           updateSelection();
         }
         rafRef.current = null;
@@ -324,7 +326,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
       document.removeEventListener("selectionchange", onSelectionChange);
       window.removeEventListener("scroll", onScroll);
     };
-  }, [containerProp, open, setOpen, updateSelection]);
+  }, [containerProp, store, updateSelection]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -336,7 +338,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
         if (selection) {
           selection.removeAllRanges();
         }
-        setOpen(false);
+        store.setState("open", false);
       }
     }
 
@@ -346,7 +348,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
         if (selection) {
           selection.removeAllRanges();
         }
-        setOpen(false);
+        store.setState("open", false);
       }
     }
 
@@ -357,15 +359,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
       document.removeEventListener("mousedown", onMouseDown);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open, setOpen, refs.floating]);
-
-  const contextValue = React.useMemo<SelectionToolbarContextValue>(
-    () => ({
-      selectedText,
-      selectionRect,
-    }),
-    [selectedText, selectionRect],
-  );
+  }, [open, store, refs.floating]);
 
   const portalContainer =
     portalContainerProp ?? (mounted ? globalThis.document?.body : null);
@@ -375,47 +369,45 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
-    <StoreContext.Provider value={store.current}>
-      <SelectionToolbarContext.Provider value={contextValue}>
-        {ReactDOM.createPortal(
-          <div
-            ref={refs.setFloating}
+    <StoreContext.Provider value={store}>
+      {ReactDOM.createPortal(
+        <div
+          ref={refs.setFloating}
+          style={{
+            ...floatingStyles,
+            // Keep off-page when measuring to prevent janky initial position
+            transform: isPositioned
+              ? floatingStyles.transform
+              : "translate(0, -200%)",
+          }}
+          data-state={isPositioned ? "positioned" : "measuring"}
+        >
+          <RootPrimitive
+            role="toolbar"
+            aria-label="Text formatting toolbar"
+            data-slot="selection-toolbar"
+            {...rootProps}
+            ref={composedRef}
+            className={cn(
+              "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
+              isPositioned &&
+                "fade-in-0 zoom-in-95 animate-in duration-200 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
+              "motion-reduce:animate-none motion-reduce:transition-none",
+              className,
+            )}
             style={{
-              ...floatingStyles,
-              // Keep off-page when measuring to prevent janky initial position
-              transform: isPositioned
-                ? floatingStyles.transform
-                : "translate(0, -200%)",
+              // Set transform origin based on placement for smooth animations
+              transformOrigin: middlewareData.transformOrigin
+                ? `${middlewareData.transformOrigin.x} ${middlewareData.transformOrigin.y}`
+                : undefined,
+              ...style,
             }}
-            data-state={isPositioned ? "positioned" : "measuring"}
           >
-            <RootPrimitive
-              role="toolbar"
-              aria-label="Text formatting toolbar"
-              data-slot="selection-toolbar"
-              {...rootProps}
-              ref={composedRef}
-              className={cn(
-                "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
-                isPositioned &&
-                  "fade-in-0 zoom-in-95 animate-in duration-200 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
-                "motion-reduce:animate-none motion-reduce:transition-none",
-                className,
-              )}
-              style={{
-                // Set transform origin based on placement for smooth animations
-                transformOrigin: middlewareData.transformOrigin
-                  ? `${middlewareData.transformOrigin.x} ${middlewareData.transformOrigin.y}`
-                  : undefined,
-                ...style,
-              }}
-            >
-              {children}
-            </RootPrimitive>
-          </div>,
-          portalContainer,
-        )}
-      </SelectionToolbarContext.Provider>
+            {children}
+          </RootPrimitive>
+        </div>,
+        portalContainer,
+      )}
     </StoreContext.Provider>
   );
 }
@@ -439,6 +431,8 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
     ...itemProps
   } = props;
 
+  const store = useStoreContext(ITEM_NAME);
+
   const propsRef = useAsRef({
     onSelect,
     onClick: onClickProp,
@@ -446,8 +440,6 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 
   const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
-
-  const context = useSelectionToolbarContext(ITEM_NAME);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ItemElement>) => {
@@ -457,15 +449,17 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
       const item = itemRef.current;
       if (!item) return;
 
+      const text = store.getState().selectedText;
+
       const selectEvent = new CustomEvent("selectiontoolbar.select", {
         bubbles: true,
         cancelable: true,
-        detail: { text: context.selectedText },
+        detail: { text },
       });
 
       item.addEventListener(
         "selectiontoolbar.select",
-        (event) => propsRef.current.onSelect?.(context.selectedText, event),
+        (event) => propsRef.current.onSelect?.(text, event),
         {
           once: true,
         },
@@ -473,7 +467,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 
       item.dispatchEvent(selectEvent);
     },
-    [propsRef, context.selectedText],
+    [propsRef, store],
   );
 
   return (
@@ -511,6 +505,8 @@ export {
   SelectionToolbar,
   SelectionToolbarItem,
   SelectionToolbarSeparator,
+  //
+  useStore as useSelectionToolbar,
   //
   type SelectionToolbarProps,
 };
