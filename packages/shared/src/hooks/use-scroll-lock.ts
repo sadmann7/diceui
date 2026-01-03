@@ -29,7 +29,7 @@ function isNodeScrollable(node: Element | null): boolean {
 
   const style = window.getComputedStyle(node);
   const hasScrollStyle = /(auto|scroll)/.test(
-    style.overflow + style.overflowX + style.overflowY
+    style.overflow + style.overflowX + style.overflowY,
   );
 
   return (
@@ -159,11 +159,11 @@ function useScrollLock({
 
     const scrollbarWidth = Math.max(
       0,
-      win.innerWidth - doc.documentElement.clientWidth
+      win.innerWidth - doc.documentElement.clientWidth,
     );
     const scrollbarHeight = Math.max(
       0,
-      win.innerHeight - doc.documentElement.clientHeight
+      win.innerHeight - doc.documentElement.clientHeight,
     );
     const dvhSupported = getIsDvhSupported();
     const isInsetScroll = getIsInsetScroll(referenceElement);
@@ -272,7 +272,7 @@ function useScrollLock({
               win.visualViewport.addEventListener(
                 "resize",
                 () => scrollIntoView(target),
-                { once: true }
+                { once: true },
               );
             });
           }
@@ -322,8 +322,8 @@ function useScrollLock({
               ? `calc(100dvh - ${marginY}px)`
               : "100dvh"
             : marginY
-            ? `calc(100vh - ${marginY}px)`
-            : "100vh",
+              ? `calc(100vh - ${marginY}px)`
+              : "100vh",
           boxSizing: "border-box",
           overflow: "hidden",
         });
@@ -366,7 +366,7 @@ function useScrollLock({
       // Restore scroll position
       win.scrollTo(
         scrollPositionRef.current.left,
-        scrollPositionRef.current.top
+        scrollPositionRef.current.top,
       );
     }
 
