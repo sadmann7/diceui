@@ -70,6 +70,12 @@ export default function SelectionToolbarDemo() {
   const onCopy = React.useCallback((text: string) => {
     navigator.clipboard.writeText(text);
     console.log({ action: "copy", text });
+    
+    // Clear selection to close the toolbar
+    const selection = window.getSelection();
+    if (selection) {
+      selection.removeAllRanges();
+    }
   }, []);
 
   const onShare = React.useCallback((text: string) => {
@@ -77,6 +83,12 @@ export default function SelectionToolbarDemo() {
       navigator.share({ text });
     }
     console.log({ action: "share", text });
+    
+    // Clear selection to close the toolbar
+    const selection = window.getSelection();
+    if (selection) {
+      selection.removeAllRanges();
+    }
   }, []);
 
   return (
