@@ -1,6 +1,6 @@
 import type { InferPageType } from "fumadocs-core/source";
 import { Callout } from "fumadocs-ui/components/callout";
-import { CodeBlock, Pre } from "fumadocs-ui/components/codeblock";
+import { Pre } from "fumadocs-ui/components/codeblock";
 import { Heading } from "fumadocs-ui/components/heading";
 import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
@@ -9,6 +9,7 @@ import type { MDXComponents } from "mdx/types";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import type * as React from "react";
+import { CodeBlock } from "@/components/code-block";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Kbd } from "@/components/ui/kbd";
 import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
@@ -70,19 +71,17 @@ export function useMdxComponents(
     ...defaultComponents,
     ...components,
     ...headings,
-    table: ({ className, ...props }) => (
-      <Table className={cn(className)} mdx {...props} />
-    ),
+    table: Table,
     tr: TableRow,
     th: TableHead,
     td: TableCell,
-    Tabs: ({ className, ...props }) => (
+    Tabs: ({ className, ...props }: React.ComponentProps<typeof Tabs>) => (
       <Tabs className={cn("rounded-md", className)} {...props} />
     ),
-    Tab: ({ className, ...props }) => (
+    Tab: ({ className, ...props }: React.ComponentProps<typeof Tab>) => (
       <Tab className={cn("rounded-none", className)} {...props} />
     ),
-    pre: ({ children, ...props }) => (
+    pre: ({ children, ...props }: React.ComponentProps<typeof CodeBlock>) => (
       <CodeBlock {...props}>
         <Pre>{children}</Pre>
       </CodeBlock>

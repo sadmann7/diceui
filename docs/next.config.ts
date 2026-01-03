@@ -44,7 +44,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // Already doing typechecking as separate task in CI
+  // Already doing typechecking as separate tasks in CI
   typescript: { ignoreBuildErrors: true },
 };
 
