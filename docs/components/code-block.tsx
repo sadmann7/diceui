@@ -24,7 +24,7 @@ export function CodeBlock({ lang, ...props }: CodeBlockProps) {
       if (button) {
         // eslint-disable-next-line no-console
         console.log("📋 Copy button clicked", { lang, component });
-        
+
         trackEvent({
           name: "copy_code",
           properties: {
