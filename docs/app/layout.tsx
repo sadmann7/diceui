@@ -1,4 +1,3 @@
-import { AnalyticsProvider } from "@/components/analytics-provider";
 import { Providers } from "@/components/providers";
 import { ReactScan } from "@/components/react-scan";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
@@ -8,6 +7,7 @@ import { fontMono, fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import "@/styles/globals.css";
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import type * as React from "react";
 
 export const metadata: Metadata = {
@@ -84,7 +84,11 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontMono.variable,
         )}
       >
-        <AnalyticsProvider />
+        <Script
+          defer
+          data-debug="diceui.com"
+          src="https://assets.onedollarstats.com/stonks.js"
+        />
         <TailwindIndicator />
         <Toaster />
         <ReactScan />

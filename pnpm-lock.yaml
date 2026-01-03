@@ -218,9 +218,6 @@ importers:
       nuqs:
         specifier: ^2.8.5
         version: 2.8.6(next@16.1.1(@babel/core@7.28.5)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
-      onedollarstats:
-        specifier: ^0.0.11
-        version: 0.0.11
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -4431,9 +4428,6 @@ packages:
 
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
-
-  onedollarstats@0.0.11:
-    resolution: {integrity: sha512-GboD/AZdfQB9Bhs0uupp40jG/F+yI4ed7rkUI6zbtXXqqKdo8qlT1ZqGATXF4zccBXnPylUvG7bYpiDyaONpjg==}
 
   onetime@5.1.2:
     resolution: {integrity: sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==}
@@ -9868,8 +9862,6 @@ snapshots:
   once@1.4.0:
     dependencies:
       wrappy: 1.0.2
-
-  onedollarstats@0.0.11: {}
 
   onetime@5.1.2:
     dependencies:

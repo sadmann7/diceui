@@ -22,11 +22,24 @@ export function CodeBlock({ lang, ...props }: CodeBlockProps) {
       const button = target.closest('button[aria-label="Copy Text"]');
 
       if (button) {
-        // eslint-disable-next-line no-console
-        console.log("📋 Copy button clicked", { lang, component });
+        const currentContainer = containerRef.current;
+        if (!currentContainer) return;
+
+        const pre = currentContainer.querySelector("pre");
+        const code = pre?.textContent || "";
+
+        const isInstallCommand =
+          /^(npm|pnpm|yarn|bun|npx)\s+(install|add|i)\s+/.test(code.trim()) ||
+          /^(npm|pnpm|yarn|bun)\s+create\s+/.test(code.trim()) ||
+          code.includes("shadcn") ||
+          code.includes("@diceui/");
+
+        const eventName = isInstallCommand
+          ? "copy_install_command"
+          : "copy_code";
 
         trackEvent({
-          name: "copy_code",
+          name: eventName,
           properties: {
             language: lang || "unknown",
             ...(component && { component }),
