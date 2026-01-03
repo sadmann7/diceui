@@ -87,6 +87,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Script
           defer
           data-site-id="diceui.com"
+          data-debug="diceui.com"
           src="https://assets.onedollarstats.com/tracker.js"
         />
         <TailwindIndicator />
