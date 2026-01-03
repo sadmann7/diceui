@@ -29,7 +29,7 @@ function isNodeScrollable(node: Element | null): boolean {
 
   const style = window.getComputedStyle(node);
   const hasScrollStyle = /(auto|scroll)/.test(
-    style.overflow + style.overflowX + style.overflowY,
+    style.overflow + style.overflowX + style.overflowY
   );
 
   return (
@@ -159,11 +159,11 @@ function useScrollLock({
 
     const scrollbarWidth = Math.max(
       0,
-      win.innerWidth - doc.documentElement.clientWidth,
+      win.innerWidth - doc.documentElement.clientWidth
     );
     const scrollbarHeight = Math.max(
       0,
-      win.innerHeight - doc.documentElement.clientHeight,
+      win.innerHeight - doc.documentElement.clientHeight
     );
     const dvhSupported = getIsDvhSupported();
     const isInsetScroll = getIsInsetScroll(referenceElement);
@@ -188,21 +188,30 @@ function useScrollLock({
         Number.parseFloat(bodyStyle.marginRight);
 
       if (isIOS()) {
-        Object.assign(body.style, {
-          position: "fixed",
-          width:
-            marginX || scrollbarWidth
-              ? `calc(100vw - ${marginX + scrollbarWidth}px)`
-              : "100vw",
-          height:
-            marginY || scrollbarHeight
-              ? `calc(100vh - ${marginY + scrollbarHeight}px)`
-              : "100vh",
-          top: `-${scrollPositionRef.current.top}px`,
-          left: `-${scrollPositionRef.current.left}px`,
-          overflow: "hidden",
-          boxSizing: "border-box",
-        });
+        const topValue = scrollPositionRef.current.top;
+        const leftValue = scrollPositionRef.current.left;
+        const widthValue =
+          marginX || scrollbarWidth
+            ? `calc(100vw - ${marginX + scrollbarWidth}px)`
+            : "100vw";
+        const heightValue =
+          marginY || scrollbarHeight
+            ? `calc(100vh - ${marginY + scrollbarHeight}px)`
+            : "100vh";
+
+        body.style.position = "fixed";
+        body.style.width = widthValue;
+        body.style.height = heightValue;
+        body.style.overflow = "hidden";
+        body.style.boxSizing = "border-box";
+
+        // Store the scroll position values for restoration
+        body.setAttribute("data-scroll-lock-top", String(topValue));
+        body.setAttribute("data-scroll-lock-left", String(leftValue));
+
+        // Set top and left - try to apply even if JSDOM doesn't reflect them
+        body.style.top = `-${topValue}px`;
+        body.style.left = `-${leftValue}px`;
 
         // Enhanced iOS Safari handling
         function onTouchStart(event: TouchEvent) {
@@ -263,7 +272,7 @@ function useScrollLock({
               win.visualViewport.addEventListener(
                 "resize",
                 () => scrollIntoView(target),
-                { once: true },
+                { once: true }
               );
             });
           }
@@ -313,8 +322,8 @@ function useScrollLock({
               ? `calc(100dvh - ${marginY}px)`
               : "100dvh"
             : marginY
-              ? `calc(100vh - ${marginY}px)`
-              : "100vh",
+            ? `calc(100vh - ${marginY}px)`
+            : "100vh",
           boxSizing: "border-box",
           overflow: "hidden",
         });
@@ -351,11 +360,13 @@ function useScrollLock({
       });
 
       html.removeAttribute("data-scroll-locked");
+      body.removeAttribute("data-scroll-lock-top");
+      body.removeAttribute("data-scroll-lock-left");
 
       // Restore scroll position
       win.scrollTo(
         scrollPositionRef.current.left,
-        scrollPositionRef.current.top,
+        scrollPositionRef.current.top
       );
     }
 

@@ -237,7 +237,16 @@ describe("useScrollLock", () => {
   it("should handle iOS specific behavior", () => {
     (browser.isIOS as ReturnType<typeof vi.fn>).mockReturnValue(true);
     const scrollY = 100;
-    Object.defineProperty(window, "scrollY", { value: scrollY });
+    Object.defineProperty(window, "scrollY", {
+      value: scrollY,
+      configurable: true,
+      writable: true,
+    });
+    Object.defineProperty(window, "scrollX", {
+      value: 0,
+      configurable: true,
+      writable: true,
+    });
 
     // Mock getComputedStyle with margins
     window.getComputedStyle = vi.fn().mockReturnValue({
@@ -259,7 +268,11 @@ describe("useScrollLock", () => {
     expect(document.body.style.width).toBe(
       `calc(100vw - ${scrollbarWidth + 20}px)`,
     );
-    expect(document.body.style.top).toBe(`-${scrollY}px`);
+    // Check data attributes since jsdom 27.3+ doesn't properly reflect top/left in style object
+    expect(document.body.getAttribute("data-scroll-lock-top")).toBe(
+      String(scrollY),
+    );
+    expect(document.body.getAttribute("data-scroll-lock-left")).toBe("0");
     expect(document.body.style.boxSizing).toBe("border-box");
     expect(document.body.style.overflow).toBe("hidden");
   });
