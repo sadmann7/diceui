@@ -25,7 +25,16 @@ export type Event = z.infer<typeof eventSchema>;
 
 export function trackEvent(input: Event): void {
   const event = eventSchema.parse(input);
+  
+  // eslint-disable-next-line no-console
+  console.log("📊 Analytics Event:", event);
+  
   if (event && typeof window !== "undefined" && window.stonks) {
     window.stonks.event(event.name, event.properties as Record<string, string>);
+    // eslint-disable-next-line no-console
+    console.log("✅ Event sent to OneDollarStats");
+  } else {
+    // eslint-disable-next-line no-console
+    console.warn("⚠️ OneDollarStats not loaded");
   }
 }
