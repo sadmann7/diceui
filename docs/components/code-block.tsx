@@ -4,53 +4,50 @@ import { CodeBlock as FumadocsCodeBlock } from "fumadocs-ui/components/codeblock
 import * as React from "react";
 import { trackEvent } from "@/lib/analytics";
 
-interface CodeBlockProps
-  extends React.ComponentProps<typeof FumadocsCodeBlock> {
-  "data-component"?: string;
+const INSTALL_COMMAND_REGEX =
+  /^(npm|pnpm|yarn|bun|npx)\s+(install|add|i|create)\s+/;
+
+function getIsInstallCommand(code: string): boolean {
+  const trimmed = code.trim();
+  return (
+    INSTALL_COMMAND_REGEX.test(trimmed) ||
+    trimmed.includes("shadcn") ||
+    trimmed.includes("@diceui/")
+  );
 }
 
-export function CodeBlock({ lang, ...props }: CodeBlockProps) {
-  const component = props["data-component"];
+export function CodeBlock({
+  lang,
+  ...props
+}: React.ComponentProps<typeof FumadocsCodeBlock>) {
   const containerRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    function onClick(event: MouseEvent) {
-      const target = event.target as HTMLElement;
-      const button = target.closest('button[aria-label="Copy Text"]');
+    const onClick = (event: MouseEvent) => {
+      const button = (event.target as HTMLElement).closest(
+        'button[aria-label="Copy Text"]',
+      );
+      if (!button || !containerRef.current) return;
 
-      if (button) {
-        const currentContainer = containerRef.current;
-        if (!currentContainer) return;
+      const code = containerRef.current.querySelector("pre")?.textContent ?? "";
+      const eventName = getIsInstallCommand(code)
+        ? "copy_install_command"
+        : "copy_code";
 
-        const pre = currentContainer.querySelector("pre");
-        const code = pre?.textContent || "";
-
-        const isInstallCommand =
-          /^(npm|pnpm|yarn|bun|npx)\s+(install|add|i)\s+/.test(code.trim()) ||
-          /^(npm|pnpm|yarn|bun)\s+create\s+/.test(code.trim()) ||
-          code.includes("shadcn") ||
-          code.includes("@diceui/");
-
-        const eventName = isInstallCommand
-          ? "copy_install_command"
-          : "copy_code";
-
-        trackEvent({
-          name: eventName,
-          properties: {
-            language: lang || "unknown",
-            ...(component && { component }),
-          },
-        });
-      }
-    }
+      trackEvent({
+        name: eventName,
+        properties: {
+          ...(lang && { language: lang }),
+        },
+      });
+    };
 
     container.addEventListener("click", onClick);
     return () => container.removeEventListener("click", onClick);
-  }, [lang, component]);
+  }, [lang]);
 
   return (
     <div ref={containerRef}>
