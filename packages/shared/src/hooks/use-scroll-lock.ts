@@ -188,21 +188,30 @@ function useScrollLock({
         Number.parseFloat(bodyStyle.marginRight);
 
       if (isIOS()) {
-        Object.assign(body.style, {
-          position: "fixed",
-          width:
-            marginX || scrollbarWidth
-              ? `calc(100vw - ${marginX + scrollbarWidth}px)`
-              : "100vw",
-          height:
-            marginY || scrollbarHeight
-              ? `calc(100vh - ${marginY + scrollbarHeight}px)`
-              : "100vh",
-          top: `-${scrollPositionRef.current.top}px`,
-          left: `-${scrollPositionRef.current.left}px`,
-          overflow: "hidden",
-          boxSizing: "border-box",
-        });
+        const topValue = scrollPositionRef.current.top;
+        const leftValue = scrollPositionRef.current.left;
+        const widthValue =
+          marginX || scrollbarWidth
+            ? `calc(100vw - ${marginX + scrollbarWidth}px)`
+            : "100vw";
+        const heightValue =
+          marginY || scrollbarHeight
+            ? `calc(100vh - ${marginY + scrollbarHeight}px)`
+            : "100vh";
+
+        body.style.position = "fixed";
+        body.style.width = widthValue;
+        body.style.height = heightValue;
+        body.style.overflow = "hidden";
+        body.style.boxSizing = "border-box";
+
+        // Store the scroll position values for restoration
+        body.setAttribute("data-scroll-lock-top", String(topValue));
+        body.setAttribute("data-scroll-lock-left", String(leftValue));
+
+        // Set top and left - try to apply even if JSDOM doesn't reflect them
+        body.style.top = `-${topValue}px`;
+        body.style.left = `-${leftValue}px`;
 
         // Enhanced iOS Safari handling
         function onTouchStart(event: TouchEvent) {
@@ -351,6 +360,8 @@ function useScrollLock({
       });
 
       html.removeAttribute("data-scroll-locked");
+      body.removeAttribute("data-scroll-lock-top");
+      body.removeAttribute("data-scroll-lock-left");
 
       // Restore scroll position
       win.scrollTo(
