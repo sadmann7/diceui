@@ -16,10 +16,13 @@ const eventSchema = z.object({
 type Event = z.infer<typeof eventSchema>;
 
 function trackEvent(input: Event) {
-  const parsedEvent = eventSchema.parse(input);
+  const result = eventSchema.safeParse(input);
+  if (!result.success) {
+    return;
+  }
 
   if (typeof window !== "undefined" && window.stonks) {
-    window.stonks.event(parsedEvent.name, parsedEvent.properties);
+    window.stonks.event(result.data.name, result.data.properties);
   }
 }
 
