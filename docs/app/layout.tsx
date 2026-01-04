@@ -84,11 +84,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           fontMono.variable,
         )}
       >
-        <Script
-          defer
-          data-debug="diceui.com"
-          src="https://assets.onedollarstats.com/stonks.js"
-        />
+        <Script defer src="https://assets.onedollarstats.com/stonks.js" />
         <TailwindIndicator />
         <Toaster />
         <ReactScan />
