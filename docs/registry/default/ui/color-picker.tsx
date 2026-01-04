@@ -650,7 +650,8 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
       const currentState = store.getState();
-      const color = hexToRgb(valueProp, currentState.color.a);
+      const parsed = parseColorString(valueProp);
+      const color = parsed || { r: 0, g: 0, b: 0, a: currentState.color.a };
       const hsv = rgbToHsv(color);
       store.setColor(color);
       store.setHsv(hsv);
