@@ -3,10 +3,13 @@
 import {
   autoUpdate,
   flip,
+  hide,
+  limitShift,
   type Middleware,
   offset,
   type Placement,
   shift,
+  size,
   useFloating,
 } from "@floating-ui/react-dom";
 import { Slot } from "@radix-ui/react-slot";
@@ -27,6 +30,7 @@ const ALIGN_OPTIONS = ["start", "center", "end"] as const;
 
 type Side = (typeof SIDE_OPTIONS)[number];
 type Align = (typeof ALIGN_OPTIONS)[number];
+type Boundary = Element | null;
 
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
@@ -90,7 +94,16 @@ interface SelectionToolbarProps extends DivProps {
   onSelectionChange?: (text: string) => void;
   container?: HTMLElement | null;
   portalContainer?: Element | DocumentFragment | null;
+  side?: Side;
   sideOffset?: number;
+  align?: Align;
+  alignOffset?: number;
+  avoidCollisions?: boolean;
+  collisionBoundary?: Boundary | Boundary[];
+  collisionPadding?: number | Partial<Record<Side, number>>;
+  sticky?: "partial" | "always";
+  hideWhenDetached?: boolean;
+  updatePositionStrategy?: "optimized" | "always";
 }
 
 function SelectionToolbar(props: SelectionToolbarProps) {
@@ -100,7 +113,16 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     onSelectionChange,
     container: containerProp,
     portalContainer: portalContainerProp,
+    side = "top",
     sideOffset = 8,
+    align = "center",
+    alignOffset = 0,
+    avoidCollisions = true,
+    collisionBoundary = [],
+    collisionPadding: collisionPaddingProp = 0,
+    sticky = "partial",
+    hideWhenDetached = false,
+    updatePositionStrategy = "optimized",
     className,
     style,
     ref,
@@ -218,22 +240,86 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     [],
   );
 
+  const desiredPlacement = React.useMemo(
+    () => (side + (align !== "center" ? "-" + align : "")) as Placement,
+    [side, align],
+  );
+
+  const collisionPadding = React.useMemo(
+    () =>
+      typeof collisionPaddingProp === "number"
+        ? collisionPaddingProp
+        : { top: 0, right: 0, bottom: 0, left: 0, ...collisionPaddingProp },
+    [collisionPaddingProp],
+  );
+
+  const boundary = React.useMemo(
+    () =>
+      Array.isArray(collisionBoundary)
+        ? collisionBoundary
+        : [collisionBoundary],
+    [collisionBoundary],
+  );
+
+  const hasExplicitBoundaries = boundary.length > 0;
+
+  const detectOverflowOptions = React.useMemo(
+    () => ({
+      padding: collisionPadding,
+      boundary: boundary.filter(isNotNull),
+      // with `strategy: 'fixed'`, this is the only way to get it to respect boundaries
+      altBoundary: hasExplicitBoundaries,
+    }),
+    [collisionPadding, boundary, hasExplicitBoundaries],
+  );
+
   const { refs, floatingStyles, isPositioned, middlewareData } = useFloating({
     open: open && !!virtualElement,
-    placement: "top",
+    placement: desiredPlacement,
     strategy: "fixed",
     middleware: [
-      offset(sideOffset),
-      flip({
-        fallbackPlacements: ["bottom", "top"],
-        padding: 8,
-      }),
-      shift({
-        padding: 8,
+      offset({ mainAxis: sideOffset, alignmentAxis: alignOffset }),
+      avoidCollisions &&
+        shift({
+          mainAxis: true,
+          crossAxis: false,
+          limiter: sticky === "partial" ? limitShift() : undefined,
+          ...detectOverflowOptions,
+        }),
+      avoidCollisions && flip({ ...detectOverflowOptions }),
+      size({
+        ...detectOverflowOptions,
+        apply: ({ elements, rects, availableWidth, availableHeight }) => {
+          const { width: anchorWidth, height: anchorHeight } = rects.reference;
+          const contentStyle = elements.floating.style;
+          contentStyle.setProperty(
+            "--radix-popper-available-width",
+            `${availableWidth}px`,
+          );
+          contentStyle.setProperty(
+            "--radix-popper-available-height",
+            `${availableHeight}px`,
+          );
+          contentStyle.setProperty(
+            "--radix-popper-anchor-width",
+            `${anchorWidth}px`,
+          );
+          contentStyle.setProperty(
+            "--radix-popper-anchor-height",
+            `${anchorHeight}px`,
+          );
+        },
       }),
       transformOrigin,
+      hideWhenDetached &&
+        hide({ strategy: "referenceHidden", ...detectOverflowOptions }),
     ],
-    whileElementsMounted: autoUpdate,
+    whileElementsMounted: (...args) => {
+      const cleanup = autoUpdate(...args, {
+        animationFrame: updatePositionStrategy === "always",
+      });
+      return cleanup;
+    },
     elements: {
       reference: virtualElement,
     },
@@ -317,14 +403,26 @@ function SelectionToolbar(props: SelectionToolbarProps) {
       });
     }
 
+    function onResize() {
+      if (rafRef.current !== null) return;
+      rafRef.current = requestAnimationFrame(() => {
+        if (store.getState().open) {
+          updateSelection();
+        }
+        rafRef.current = null;
+      });
+    }
+
     container.addEventListener("mouseup", onMouseUp);
     document.addEventListener("selectionchange", onSelectionChange);
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onResize, { passive: true });
 
     return () => {
       container.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("selectionchange", onSelectionChange);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onResize);
     };
   }, [containerProp, store, updateSelection]);
 
@@ -379,6 +477,14 @@ function SelectionToolbar(props: SelectionToolbarProps) {
             transform: isPositioned
               ? floatingStyles.transform
               : "translate(0, -200%)",
+            minWidth: "max-content",
+            // Hide the content if using the hide middleware and should be hidden
+            // Set visibility to hidden and disable pointer events so the UI behaves
+            // as if the SelectionToolbar isn't there at all
+            ...(middlewareData.hide?.referenceHidden && {
+              visibility: "hidden",
+              pointerEvents: "none",
+            }),
           }}
           data-state={isPositioned ? "positioned" : "measuring"}
         >
@@ -400,6 +506,9 @@ function SelectionToolbar(props: SelectionToolbarProps) {
               transformOrigin: middlewareData.transformOrigin
                 ? `${middlewareData.transformOrigin.x} ${middlewareData.transformOrigin.y}`
                 : undefined,
+              // If the SelectionToolbar hasn't been placed yet (not all measurements done)
+              // we prevent animations so that users's animation don't kick in too early referring wrong sides
+              animation: !isPositioned ? "none" : undefined,
               ...style,
             }}
           >
@@ -415,6 +524,10 @@ function SelectionToolbar(props: SelectionToolbarProps) {
 function getSideAndAlignFromPlacement(placement: Placement) {
   const [side, align = "center"] = placement.split("-");
   return [side as Side, align as Align] as const;
+}
+
+function isNotNull<T>(value: T | null): value is T {
+  return value !== null;
 }
 
 interface SelectionToolbarItemProps
