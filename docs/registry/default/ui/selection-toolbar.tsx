@@ -259,7 +259,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   );
 
   const desiredPlacement = React.useMemo(
-    () => (side + (align !== "center" ? "-" + align : "")) as Placement,
+    () => (side + (align !== "center" ? `-${align}` : "")) as Placement,
     [side, align],
   );
 
@@ -299,19 +299,19 @@ function SelectionToolbar(props: SelectionToolbarProps) {
           const { width: anchorWidth, height: anchorHeight } = rects.reference;
           const contentStyle = elements.floating.style;
           contentStyle.setProperty(
-            "--radix-popper-available-width",
+            "--selection-toolbar-available-width",
             `${availableWidth}px`,
           );
           contentStyle.setProperty(
-            "--radix-popper-available-height",
+            "--selection-toolbar-available-height",
             `${availableHeight}px`,
           );
           contentStyle.setProperty(
-            "--radix-popper-anchor-width",
+            "--selection-toolbar-anchor-width",
             `${anchorWidth}px`,
           );
           contentStyle.setProperty(
-            "--radix-popper-anchor-height",
+            "--selection-toolbar-anchor-height",
             `${anchorHeight}px`,
           );
         },
