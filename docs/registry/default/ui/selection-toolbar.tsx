@@ -514,6 +514,70 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     };
   }, [open, refs.floating, clearSelection]);
 
+  const toolbarRef = React.useRef<HTMLDivElement>(null);
+
+  // Auto-focus first toolbar item when positioned
+  React.useEffect(() => {
+    if (isPositioned && open && toolbarRef.current) {
+      const firstFocusable = toolbarRef.current.querySelector<HTMLElement>(
+        '[role="toolbar"] > button:not(:disabled)',
+      );
+      if (firstFocusable) {
+        firstFocusable.focus();
+      }
+    }
+  }, [isPositioned, open]);
+
+  // Handle keyboard navigation within toolbar
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      const toolbar = toolbarRef.current;
+      if (!toolbar) return;
+
+      const items = Array.from(
+        toolbar.querySelectorAll<HTMLElement>(
+          '[role="toolbar"] > button:not(:disabled)',
+        ),
+      );
+
+      if (items.length === 0) return;
+
+      const currentIndex = items.findIndex(
+        (item) => item === document.activeElement,
+      );
+
+      let nextIndex = -1;
+
+      switch (event.key) {
+        case "ArrowLeft":
+        case "ArrowUp":
+          event.preventDefault();
+          nextIndex = currentIndex <= 0 ? items.length - 1 : currentIndex - 1;
+          break;
+        case "ArrowRight":
+        case "ArrowDown":
+          event.preventDefault();
+          nextIndex = currentIndex >= items.length - 1 ? 0 : currentIndex + 1;
+          break;
+        case "Home":
+          event.preventDefault();
+          nextIndex = 0;
+          break;
+        case "End":
+          event.preventDefault();
+          nextIndex = items.length - 1;
+          break;
+        default:
+          return;
+      }
+
+      if (nextIndex !== -1) {
+        items[nextIndex]?.focus();
+      }
+    },
+    [],
+  );
+
   const portalContainer =
     portalContainerProp ?? (mounted ? globalThis.document?.body : null);
 
@@ -544,11 +608,13 @@ function SelectionToolbar(props: SelectionToolbarProps) {
           data-state={isPositioned ? "positioned" : "measuring"}
         >
           <RootPrimitive
+            ref={toolbarRef}
             role="toolbar"
             aria-label="Text formatting toolbar"
             data-slot="selection-toolbar"
             data-state={open ? "open" : "closed"}
             {...rootProps}
+            onKeyDown={onKeyDown}
             className={cn(
               "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
               isPositioned &&
