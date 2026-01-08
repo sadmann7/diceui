@@ -2110,22 +2110,6 @@
       "type": "registry:example"
     },
     {
-      "name": "selection-toolbar-rich-demo",
-      "dependencies": [
-        "lucide-react"
-      ],
-      "registryDependencies": [
-        "selection-toolbar"
-      ],
-      "files": [
-        {
-          "path": "examples/selection-toolbar-rich-demo.tsx",
-          "type": "registry:example"
-        }
-      ],
-      "type": "registry:example"
-    },
-    {
       "name": "selection-toolbar-info-demo",
       "dependencies": [
         "lucide-react"

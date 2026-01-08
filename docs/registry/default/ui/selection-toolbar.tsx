@@ -38,6 +38,15 @@ interface DivProps extends React.ComponentProps<"div"> {
 
 type ItemElement = React.ComponentRef<typeof SelectionToolbarItem>;
 
+function getSideAndAlignFromPlacement(placement: Placement) {
+  const [side, align = "center"] = placement.split("-");
+  return [side as Side, align as Align] as const;
+}
+
+function isNotNull<T>(value: T | null): value is T {
+  return value !== null;
+}
+
 interface SelectionRect {
   top: number;
   left: number;
@@ -126,9 +135,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     updatePositionStrategy = "optimized",
     className,
     style,
-    ref,
     asChild,
-    children,
     ...rootProps
   } = props;
 
@@ -542,7 +549,6 @@ function SelectionToolbar(props: SelectionToolbarProps) {
             data-slot="selection-toolbar"
             data-state={open ? "open" : "closed"}
             {...rootProps}
-            ref={ref}
             className={cn(
               "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
               isPositioned &&
@@ -560,23 +566,12 @@ function SelectionToolbar(props: SelectionToolbarProps) {
               animation: !isPositioned ? "none" : undefined,
               ...style,
             }}
-          >
-            {children}
-          </RootPrimitive>
+          />
         </div>,
         portalContainer,
       )}
     </StoreContext.Provider>
   );
-}
-
-function getSideAndAlignFromPlacement(placement: Placement) {
-  const [side, align = "center"] = placement.split("-");
-  return [side as Side, align as Align] as const;
-}
-
-function isNotNull<T>(value: T | null): value is T {
-  return value !== null;
 }
 
 interface SelectionToolbarItemProps
