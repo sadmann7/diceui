@@ -85,10 +85,6 @@ The root component that manages the toolbar's visibility and positioning.
       title: "[data-state]",
       value: '"positioned" | "measuring" - The positioning state of the toolbar.',
     },
-    {
-      title: "[data-slot]",
-      value: '"selection-toolbar" - Identifies the toolbar element.',
-    },
   ]}
 />
 
@@ -101,15 +97,6 @@ An actionable item within the toolbar, typically containing an icon.
   name="SelectionToolbarItemProps"
 />
 
-<DataAttributesTable
-  data={[
-    {
-      title: "[data-slot]",
-      value: '"selection-toolbar-item" - Identifies the item element.',
-    },
-  ]}
-/>
-
 ### SelectionToolbarSeparator
 
 A visual separator between toolbar items.
@@ -119,14 +106,29 @@ A visual separator between toolbar items.
   name="SelectionToolbarSeparatorProps"
 />
 
-<DataAttributesTable
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
   data={[
     {
-      title: "[data-slot]",
-      value: '"selection-toolbar-separator" - Identifies the separator element.',
+      keys: ["Escape"],
+      description: "Closes the toolbar and clears the text selection.",
     },
   ]}
 />
+
+## Notes
+
+- The toolbar uses Floating UI for intelligent positioning that automatically flips and shifts to stay within the viewport
+- Supports collision detection with customizable boundaries and padding to keep the toolbar within specific areas
+- CSS variables are provided for responsive styling based on available space and anchor dimensions
+- Clicking outside the toolbar or pressing Escape will close it and clear the selection
+- The toolbar is portaled to `document.body` by default to avoid z-index issues
+- Text selection is tracked using the native Selection API and updates on scroll and resize events
+- The component respects `prefers-reduced-motion` for animations
+- Performance optimized with RAF-based updates and batched state changes
 
 ## CSS Variables
 
@@ -168,28 +170,4 @@ The following CSS variables are available for styling and responsive layouts:
   min-width: var(--selection-toolbar-anchor-width);
 }
 ```
-
-## Accessibility
-
-### Keyboard Interactions
-
-<KeyboardShortcutsTable
-  data={[
-    {
-      keys: ["Escape"],
-      description: "Closes the toolbar and clears the text selection.",
-    },
-  ]}
-/>
-
-## Notes
-
-- The toolbar uses Floating UI for intelligent positioning that automatically flips and shifts to stay within the viewport
-- Supports collision detection with customizable boundaries and padding to keep the toolbar within specific areas
-- CSS variables are provided for responsive styling based on available space and anchor dimensions
-- Clicking outside the toolbar or pressing Escape will close it and clear the selection
-- The toolbar is portaled to `document.body` by default to avoid z-index issues
-- Text selection is tracked using the native Selection API and updates on scroll and resize events
-- The component respects `prefers-reduced-motion` for animations
-- Performance optimized with RAF-based updates and batched state changes
 
