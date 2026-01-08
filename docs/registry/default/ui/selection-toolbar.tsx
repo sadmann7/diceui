@@ -273,20 +273,8 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     [collisionPadding, boundary, hasExplicitBoundaries],
   );
 
-  const { refs, floatingStyles, isPositioned, middlewareData } = useFloating({
-    open: open && !!virtualElement,
-    placement: desiredPlacement,
-    strategy: "fixed",
-    middleware: [
-      offset({ mainAxis: sideOffset, alignmentAxis: alignOffset }),
-      avoidCollisions &&
-        shift({
-          mainAxis: true,
-          crossAxis: false,
-          limiter: sticky === "partial" ? limitShift() : undefined,
-          ...detectOverflowOptions,
-        }),
-      avoidCollisions && flip({ ...detectOverflowOptions }),
+  const sizeMiddleware = React.useMemo(
+    () =>
       size({
         ...detectOverflowOptions,
         apply: ({ elements, rects, availableWidth, availableHeight }) => {
@@ -310,15 +298,46 @@ function SelectionToolbar(props: SelectionToolbarProps) {
           );
         },
       }),
+    [detectOverflowOptions],
+  );
+
+  const middleware = React.useMemo<Array<Middleware | false | undefined>>(
+    () => [
+      offset({ mainAxis: sideOffset, alignmentAxis: alignOffset }),
+      avoidCollisions &&
+        shift({
+          mainAxis: true,
+          crossAxis: false,
+          limiter: sticky === "partial" ? limitShift() : undefined,
+          ...detectOverflowOptions,
+        }),
+      avoidCollisions && flip({ ...detectOverflowOptions }),
+      sizeMiddleware,
       transformOrigin,
       hideWhenDetached &&
         hide({ strategy: "referenceHidden", ...detectOverflowOptions }),
     ],
-    whileElementsMounted: (...args) => {
-      const cleanup = autoUpdate(...args, {
+    [
+      sideOffset,
+      alignOffset,
+      avoidCollisions,
+      sticky,
+      detectOverflowOptions,
+      sizeMiddleware,
+      transformOrigin,
+      hideWhenDetached,
+    ],
+  );
+
+  const { refs, floatingStyles, isPositioned, middlewareData } = useFloating({
+    open: open && !!virtualElement,
+    placement: desiredPlacement,
+    strategy: "fixed",
+    middleware,
+    whileElementsMounted: (reference, floating, update) => {
+      return autoUpdate(reference, floating, update, {
         animationFrame: updatePositionStrategy === "always",
       });
-      return cleanup;
     },
     elements: {
       reference: virtualElement,
@@ -327,20 +346,30 @@ function SelectionToolbar(props: SelectionToolbarProps) {
 
   const composedRef = useComposedRefs(ref);
 
+  const closeToolbar = React.useCallback(() => {
+    const state = store.getState();
+    if (state.open || state.selectedText || state.selectionRect) {
+      // Batch updates by modifying state directly then notifying once
+      stateRef.current.open = false;
+      stateRef.current.selectedText = "";
+      stateRef.current.selectionRect = null;
+      propsRef.current.onOpenChange?.(false);
+      propsRef.current.onSelectionChange?.("");
+      store.notify();
+    }
+    // eslint-disable-next-line react-compiler/react-compiler
+  }, [store]);
+
   const updateSelection = React.useCallback(() => {
     const selection = window.getSelection();
     if (!selection || selection.rangeCount === 0) {
-      store.setState("open", false);
-      store.setState("selectedText", "");
-      store.setState("selectionRect", null);
+      closeToolbar();
       return;
     }
 
     const text = selection.toString().trim();
     if (!text) {
-      store.setState("open", false);
-      store.setState("selectedText", "");
-      store.setState("selectionRect", null);
+      closeToolbar();
       return;
     }
 
@@ -354,9 +383,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
           : commonAncestor.parentElement;
 
       if (!element || !containerProp.contains(element)) {
-        store.setState("open", false);
-        store.setState("selectedText", "");
-        store.setState("selectionRect", null);
+        closeToolbar();
         return;
       }
     }
@@ -364,21 +391,48 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
 
-    store.setState("selectedText", text);
-    store.setState("selectionRect", {
-      top: rect.top,
-      left: rect.left,
-      width: rect.width,
-      height: rect.height,
+    // Batch updates by modifying state directly then notifying once
+    const state = stateRef.current;
+    const hasChanges =
+      state.selectedText !== text ||
+      !state.selectionRect ||
+      state.selectionRect.top !== rect.top ||
+      state.selectionRect.left !== rect.left ||
+      state.selectionRect.width !== rect.width ||
+      state.selectionRect.height !== rect.height ||
+      !state.open;
+
+    if (hasChanges) {
+      stateRef.current.selectedText = text;
+      stateRef.current.selectionRect = {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
+      };
+      stateRef.current.open = true;
+      propsRef.current.onSelectionChange?.(text);
+      propsRef.current.onOpenChange?.(true);
+      store.notify();
+    }
+    // eslint-disable-next-line react-compiler/react-compiler
+  }, [containerProp, store, closeToolbar]);
+
+  const scheduleUpdate = React.useCallback(() => {
+    if (rafRef.current !== null) return;
+    rafRef.current = requestAnimationFrame(() => {
+      if (store.getState().open) {
+        updateSelection();
+      }
+      rafRef.current = null;
     });
-    store.setState("open", true);
-  }, [containerProp, store]);
+  }, [store, updateSelection]);
 
   React.useEffect(() => {
     const container = containerProp ?? document;
 
     function onMouseUp() {
-      // Small delay to ensure selection is complete
+      // Use RAF to ensure selection is complete
       requestAnimationFrame(() => {
         updateSelection();
       });
@@ -387,44 +441,35 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     function onSelectionChange() {
       const selection = window.getSelection();
       if (!selection || !selection.toString().trim()) {
-        store.setState("open", false);
-        store.setState("selectedText", "");
-        store.setState("selectionRect", null);
+        closeToolbar();
       }
-    }
-
-    function onScroll() {
-      if (rafRef.current !== null) return;
-      rafRef.current = requestAnimationFrame(() => {
-        if (store.getState().open) {
-          updateSelection();
-        }
-        rafRef.current = null;
-      });
-    }
-
-    function onResize() {
-      if (rafRef.current !== null) return;
-      rafRef.current = requestAnimationFrame(() => {
-        if (store.getState().open) {
-          updateSelection();
-        }
-        rafRef.current = null;
-      });
     }
 
     container.addEventListener("mouseup", onMouseUp);
     document.addEventListener("selectionchange", onSelectionChange);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onResize, { passive: true });
+    window.addEventListener("scroll", scheduleUpdate, { passive: true });
+    window.addEventListener("resize", scheduleUpdate, { passive: true });
 
     return () => {
       container.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("selectionchange", onSelectionChange);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", scheduleUpdate);
+      window.removeEventListener("resize", scheduleUpdate);
+      // Clean up any pending RAF
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
     };
-  }, [containerProp, store, updateSelection]);
+  }, [containerProp, updateSelection, closeToolbar, scheduleUpdate]);
+
+  const clearSelection = React.useCallback(() => {
+    const selection = window.getSelection();
+    if (selection) {
+      selection.removeAllRanges();
+    }
+    closeToolbar();
+  }, [closeToolbar]);
 
   React.useEffect(() => {
     if (!open) return;
@@ -432,21 +477,13 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     function onMouseDown(event: MouseEvent) {
       const target = event.target as Node;
       if (refs.floating.current && !refs.floating.current.contains(target)) {
-        const selection = window.getSelection();
-        if (selection) {
-          selection.removeAllRanges();
-        }
-        store.setState("open", false);
+        clearSelection();
       }
     }
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        const selection = window.getSelection();
-        if (selection) {
-          selection.removeAllRanges();
-        }
-        store.setState("open", false);
+        clearSelection();
       }
     }
 
@@ -457,7 +494,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
       document.removeEventListener("mousedown", onMouseDown);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open, store, refs.floating]);
+  }, [open, refs.floating, clearSelection]);
 
   const portalContainer =
     portalContainerProp ?? (mounted ? globalThis.document?.body : null);
