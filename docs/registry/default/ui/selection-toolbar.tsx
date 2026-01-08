@@ -540,6 +540,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
             role="toolbar"
             aria-label="Text formatting toolbar"
             data-slot="selection-toolbar"
+            data-state={open ? "open" : "closed"}
             {...rootProps}
             ref={ref}
             className={cn(
