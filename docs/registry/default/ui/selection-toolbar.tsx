@@ -307,6 +307,22 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     ],
   );
 
+  // Auto-focus first item when toolbar opens
+  React.useEffect(() => {
+    if (!open) return;
+
+    // Set first item as tab stop and focus it
+    const items = Array.from(itemsRef.current.values()).filter(
+      (item) => !item.disabled,
+    );
+    if (items.length > 0 && items[0]) {
+      setTabStopId(items[0].id);
+      queueMicrotask(() => {
+        items[0]?.ref.current?.focus();
+      });
+    }
+  }, [open]);
+
   const rafRef = React.useRef<number | null>(null);
 
   const mounted = React.useSyncExternalStore(
