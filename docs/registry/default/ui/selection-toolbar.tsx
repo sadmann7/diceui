@@ -583,6 +583,8 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
   const {
     onSelect,
     onClick: onClickProp,
+    onPointerDown: onPointerDownProp,
+    onPointerUp: onPointerUpProp,
     className,
     ref,
     ...itemProps
@@ -593,38 +595,75 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
   const propsRef = useAsRef({
     onSelect,
     onClick: onClickProp,
+    onPointerDown: onPointerDownProp,
+    onPointerUp: onPointerUpProp,
   });
 
   const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
+  const pointerTypeRef = React.useRef<React.PointerEvent["pointerType"]>("touch");
+
+  const handleSelect = React.useCallback(() => {
+    const item = itemRef.current;
+    if (!item) return;
+
+    const text = store.getState().selectedText;
+
+    const selectEvent = new CustomEvent("selectiontoolbar.select", {
+      bubbles: true,
+      cancelable: true,
+      detail: { text },
+    });
+
+    item.addEventListener(
+      "selectiontoolbar.select",
+      (event) => propsRef.current.onSelect?.(text, event),
+      {
+        once: true,
+      },
+    );
+
+    item.dispatchEvent(selectEvent);
+  }, [propsRef, store]);
+
+  const onPointerDown = React.useCallback(
+    (event: React.PointerEvent<ItemElement>) => {
+      pointerTypeRef.current = event.pointerType;
+      propsRef.current.onPointerDown?.(event);
+
+      // Prevent the button from stealing focus from the contentEditable container
+      // when using a mouse. This is crucial for maintaining the focus ring.
+      if (event.pointerType === "mouse") {
+        event.preventDefault();
+      }
+    },
+    [propsRef],
+  );
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ItemElement>) => {
       propsRef.current.onClick?.(event);
       if (event.defaultPrevented) return;
 
-      const item = itemRef.current;
-      if (!item) return;
-
-      const text = store.getState().selectedText;
-
-      const selectEvent = new CustomEvent("selectiontoolbar.select", {
-        bubbles: true,
-        cancelable: true,
-        detail: { text },
-      });
-
-      item.addEventListener(
-        "selectiontoolbar.select",
-        (event) => propsRef.current.onSelect?.(text, event),
-        {
-          once: true,
-        },
-      );
-
-      item.dispatchEvent(selectEvent);
+      // Handle selection on click when using touch or pen device
+      if (pointerTypeRef.current !== "mouse") {
+        handleSelect();
+      }
     },
-    [propsRef, store],
+    [propsRef, handleSelect],
+  );
+
+  const onPointerUp = React.useCallback(
+    (event: React.PointerEvent<ItemElement>) => {
+      propsRef.current.onPointerUp?.(event);
+      if (event.defaultPrevented) return;
+
+      // Handle selection on pointer up when using a mouse
+      if (pointerTypeRef.current === "mouse") {
+        handleSelect();
+      }
+    },
+    [propsRef, handleSelect],
   );
 
   return (
@@ -636,7 +675,9 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
       {...itemProps}
       className={cn("size-8", className)}
       ref={composedRef}
+      onPointerDown={onPointerDown}
       onClick={onClick}
+      onPointerUp={onPointerUp}
     />
   );
 }
