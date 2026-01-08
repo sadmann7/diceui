@@ -88,6 +88,31 @@ The root component that manages the toolbar's visibility and positioning.
   ]}
 />
 
+<CSSVariablesTable
+  data={[
+    {
+      title: "--selection-toolbar-available-width",
+      description: "The available width in the viewport for the toolbar to fit within, accounting for collision boundaries.",
+      defaultValue: "Dynamic (e.g., 1200px)",
+    },
+    {
+      title: "--selection-toolbar-available-height",
+      description: "The available height in the viewport for the toolbar to fit within, accounting for collision boundaries.",
+      defaultValue: "Dynamic (e.g., 800px)",
+    },
+    {
+      title: "--selection-toolbar-anchor-width",
+      description: "The width of the selected text (anchor element).",
+      defaultValue: "Dynamic (e.g., 150px)",
+    },
+    {
+      title: "--selection-toolbar-anchor-height",
+      description: "The height of the selected text (anchor element).",
+      defaultValue: "Dynamic (e.g., 24px)",
+    },
+  ]}
+/>
+
 ### SelectionToolbarItem
 
 An actionable item within the toolbar, typically containing an icon.
@@ -129,45 +154,3 @@ A visual separator between toolbar items.
 - Text selection is tracked using the native Selection API and updates on scroll and resize events
 - The component respects `prefers-reduced-motion` for animations
 - Performance optimized with RAF-based updates and batched state changes
-
-## CSS Variables
-
-The following CSS variables are available for styling and responsive layouts:
-
-<CSSVariablesTable
-  data={[
-    {
-      title: "--selection-toolbar-available-width",
-      description: "The available width in the viewport for the toolbar to fit within, accounting for collision boundaries.",
-      defaultValue: "Dynamic (e.g., 1200px)",
-    },
-    {
-      title: "--selection-toolbar-available-height",
-      description: "The available height in the viewport for the toolbar to fit within, accounting for collision boundaries.",
-      defaultValue: "Dynamic (e.g., 800px)",
-    },
-    {
-      title: "--selection-toolbar-anchor-width",
-      description: "The width of the selected text (anchor element).",
-      defaultValue: "Dynamic (e.g., 150px)",
-    },
-    {
-      title: "--selection-toolbar-anchor-height",
-      description: "The height of the selected text (anchor element).",
-      defaultValue: "Dynamic (e.g., 24px)",
-    },
-  ]}
-/>
-
-### Usage Example
-
-```css
-.my-toolbar {
-  /* Constrain toolbar to available width */
-  max-width: var(--selection-toolbar-available-width);
-  
-  /* Match anchor width */
-  min-width: var(--selection-toolbar-anchor-width);
-}
-```
-
