@@ -55,8 +55,8 @@ interface Store {
   subscribe: (callback: () => void) => () => void;
   getState: () => StoreState;
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  batchUpdate: (updates: Partial<StoreState>) => void;
   notify: () => void;
+  batch: (fn: () => void) => void;
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -145,6 +145,8 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   });
 
   const store = React.useMemo<Store>(() => {
+    let isBatching = false;
+
     return {
       subscribe: (callback) => {
         listenersRef.current.add(callback);
@@ -164,44 +166,26 @@ function SelectionToolbar(props: SelectionToolbarProps) {
           stateRef.current[key] = value;
         }
 
-        store.notify();
-      },
-      batchUpdate: (updates) => {
-        let hasChanges = false;
-
-        // Update open
-        if (updates.open !== undefined && !Object.is(stateRef.current.open, updates.open)) {
-          stateRef.current.open = updates.open;
-          hasChanges = true;
+        if (!isBatching) {
+          store.notify();
         }
-
-        // Update selectedText
-        if (updates.selectedText !== undefined && !Object.is(stateRef.current.selectedText, updates.selectedText)) {
-          stateRef.current.selectedText = updates.selectedText;
-          hasChanges = true;
-        }
-
-        // Update selectionRect
-        if (updates.selectionRect !== undefined && !Object.is(stateRef.current.selectionRect, updates.selectionRect)) {
-          stateRef.current.selectionRect = updates.selectionRect;
-          hasChanges = true;
-        }
-
-        if (!hasChanges) return;
-
-        // Trigger callbacks after all updates
-        if (updates.open !== undefined) {
-          propsRef.current.onOpenChange?.(updates.open);
-        }
-        if (updates.selectedText !== undefined) {
-          propsRef.current.onSelectionChange?.(updates.selectedText);
-        }
-
-        store.notify();
       },
       notify: () => {
         for (const cb of listenersRef.current) {
           cb();
+        }
+      },
+      batch: (fn: () => void) => {
+        if (isBatching) {
+          fn();
+          return;
+        }
+        isBatching = true;
+        try {
+          fn();
+        } finally {
+          isBatching = false;
+          store.notify();
         }
       },
     };
@@ -383,10 +367,10 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   const closeToolbar = React.useCallback(() => {
     const state = store.getState();
     if (state.open || state.selectedText || state.selectionRect) {
-      store.batchUpdate({
-        open: false,
-        selectedText: "",
-        selectionRect: null,
+      store.batch(() => {
+        store.setState("open", false);
+        store.setState("selectedText", "");
+        store.setState("selectionRect", null);
       });
     }
   }, [store]);
@@ -434,15 +418,15 @@ function SelectionToolbar(props: SelectionToolbarProps) {
       !state.open;
 
     if (hasChanges) {
-      store.batchUpdate({
-        selectedText: text,
-        selectionRect: {
+      store.batch(() => {
+        store.setState("selectedText", text);
+        store.setState("selectionRect", {
           top: rect.top,
           left: rect.left,
           width: rect.width,
           height: rect.height,
-        },
-        open: true,
+        });
+        store.setState("open", true);
       });
     }
   }, [containerProp, store, closeToolbar]);
