@@ -362,8 +362,6 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     },
   });
 
-  const composedRef = useComposedRefs(ref);
-
   const closeToolbar = React.useCallback(() => {
     const state = store.getState();
     if (state.open || state.selectedText || state.selectionRect) {
@@ -543,7 +541,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
             aria-label="Text formatting toolbar"
             data-slot="selection-toolbar"
             {...rootProps}
-            ref={composedRef}
+            ref={ref}
             className={cn(
               "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
               isPositioned &&
