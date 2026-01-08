@@ -239,6 +239,48 @@ export default function Example() {
 }
 ```
 
+### Custom Positioning
+
+Control the toolbar's position and collision behavior.
+
+```tsx
+import { useRef } from "react";
+import {
+  SelectionToolbar,
+  SelectionToolbarItem,
+} from "@/components/ui/selection-toolbar";
+import { Bold } from "lucide-react";
+
+export default function Example() {
+  const boundaryRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div 
+      ref={boundaryRef}
+      className="relative h-[400px] overflow-auto border rounded-lg p-4"
+    >
+      <div contentEditable>
+        <p>Select text to see the toolbar</p>
+        
+        <SelectionToolbar
+          side="bottom"
+          align="start"
+          sideOffset={12}
+          collisionBoundary={boundaryRef.current}
+          collisionPadding={8}
+          sticky="partial"
+          hideWhenDetached
+        >
+          <SelectionToolbarItem>
+            <Bold />
+          </SelectionToolbarItem>
+        </SelectionToolbar>
+      </div>
+    </div>
+  );
+}
+```
+
 ## API Reference
 
 ### SelectionToolbar
@@ -299,6 +341,47 @@ A visual separator between toolbar items.
   ]}
 />
 
+## CSS Variables
+
+The following CSS variables are available for styling and responsive layouts:
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--selection-toolbar-available-width",
+      description: "The available width in the viewport for the toolbar to fit within, accounting for collision boundaries.",
+      defaultValue: "Dynamic (e.g., 1200px)",
+    },
+    {
+      title: "--selection-toolbar-available-height",
+      description: "The available height in the viewport for the toolbar to fit within, accounting for collision boundaries.",
+      defaultValue: "Dynamic (e.g., 800px)",
+    },
+    {
+      title: "--selection-toolbar-anchor-width",
+      description: "The width of the selected text (anchor element).",
+      defaultValue: "Dynamic (e.g., 150px)",
+    },
+    {
+      title: "--selection-toolbar-anchor-height",
+      description: "The height of the selected text (anchor element).",
+      defaultValue: "Dynamic (e.g., 24px)",
+    },
+  ]}
+/>
+
+### Usage Example
+
+```css
+.my-toolbar {
+  /* Constrain toolbar to available width */
+  max-width: var(--selection-toolbar-available-width);
+  
+  /* Match anchor width */
+  min-width: var(--selection-toolbar-anchor-width);
+}
+```
+
 ## Accessibility
 
 ### Keyboard Interactions
@@ -315,8 +398,11 @@ A visual separator between toolbar items.
 ## Notes
 
 - The toolbar uses Floating UI for intelligent positioning that automatically flips and shifts to stay within the viewport
+- Supports collision detection with customizable boundaries and padding to keep the toolbar within specific areas
+- CSS variables are provided for responsive styling based on available space and anchor dimensions
 - Clicking outside the toolbar or pressing Escape will close it and clear the selection
 - The toolbar is portaled to `document.body` by default to avoid z-index issues
-- Text selection is tracked using the native Selection API
+- Text selection is tracked using the native Selection API and updates on scroll and resize events
 - The component respects `prefers-reduced-motion` for animations
+- Performance optimized with RAF-based updates and batched state changes
 
