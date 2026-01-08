@@ -581,7 +581,7 @@ interface SelectionToolbarItemProps
 
 function SelectionToolbarItem(props: SelectionToolbarItemProps) {
   const {
-    onSelect,
+    onSelect: onSelectProp,
     onClick: onClickProp,
     onPointerDown: onPointerDownProp,
     onPointerUp: onPointerUpProp,
@@ -593,7 +593,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
   const store = useStoreContext(ITEM_NAME);
 
   const propsRef = useAsRef({
-    onSelect,
+    onSelect: onSelectProp,
     onClick: onClickProp,
     onPointerDown: onPointerDownProp,
     onPointerUp: onPointerUpProp,
@@ -601,9 +601,10 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 
   const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
-  const pointerTypeRef = React.useRef<React.PointerEvent["pointerType"]>("touch");
+  const pointerTypeRef =
+    React.useRef<React.PointerEvent["pointerType"]>("touch");
 
-  const handleSelect = React.useCallback(() => {
+  const onSelect = React.useCallback(() => {
     const item = itemRef.current;
     if (!item) return;
 
@@ -647,10 +648,10 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 
       // Handle selection on click when using touch or pen device
       if (pointerTypeRef.current !== "mouse") {
-        handleSelect();
+        onSelect();
       }
     },
-    [propsRef, handleSelect],
+    [propsRef, onSelect],
   );
 
   const onPointerUp = React.useCallback(
@@ -660,10 +661,10 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 
       // Handle selection on pointer up when using a mouse
       if (pointerTypeRef.current === "mouse") {
-        handleSelect();
+        onSelect();
       }
     },
-    [propsRef, handleSelect],
+    [propsRef, onSelect],
   );
 
   return (
