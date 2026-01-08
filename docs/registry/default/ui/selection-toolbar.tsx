@@ -36,6 +36,8 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
+type ItemElement = React.ComponentRef<typeof SelectionToolbarItem>;
+
 function getSideAndAlignFromPlacement(placement: Placement) {
   const [side, align = "center"] = placement.split("-");
   return [side as Side, align as Align] as const;
@@ -74,53 +76,6 @@ function useStoreContext(consumerName: string) {
     throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
-}
-
-interface ItemData {
-  id: string;
-  ref: React.RefObject<HTMLButtonElement | null>;
-  disabled: boolean;
-}
-
-interface FocusContextValue {
-  tabStopId: string | null;
-  onItemFocus: (tabStopId: string) => void;
-  onItemShiftTab: () => void;
-  onFocusableItemAdd: () => void;
-  onFocusableItemRemove: () => void;
-  onItemRegister: (item: ItemData) => void;
-  onItemUnregister: (id: string) => void;
-  getItems: () => ItemData[];
-}
-
-const FocusContext = React.createContext<FocusContextValue | null>(null);
-
-function useFocusContext(consumerName: string) {
-  const context = React.useContext(FocusContext);
-  if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
-  }
-  return context;
-}
-
-function focusFirst(
-  candidates: React.RefObject<HTMLElement | null>[],
-  preventScroll = false,
-) {
-  const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
-  for (const candidateRef of candidates) {
-    const candidate = candidateRef.current;
-    if (!candidate) continue;
-    if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
-    candidate.focus({ preventScroll });
-    if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
-  }
-}
-
-function wrapArray<T>(array: T[], startIndex: number) {
-  return array.map<T>(
-    (_, index) => array[(startIndex + index) % array.length] as T,
-  );
 }
 
 function useStore<T>(
@@ -251,77 +206,6 @@ function SelectionToolbar(props: SelectionToolbarProps) {
 
   const open = useStore((state) => state.open, store);
   const selectionRect = useStore((state) => state.selectionRect, store);
-
-  // Roving focus management
-  const [tabStopId, setTabStopId] = React.useState<string | null>(null);
-  const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
-
-  const onItemFocus = React.useCallback((tabStopId: string) => {
-    setTabStopId(tabStopId);
-  }, []);
-
-  const onItemShiftTab = React.useCallback(() => {
-    // Allow tab to exit the toolbar
-  }, []);
-
-  const onFocusableItemAdd = React.useCallback(() => {
-    // Track focusable items
-  }, []);
-
-  const onFocusableItemRemove = React.useCallback(() => {
-    // Track focusable items
-  }, []);
-
-  const onItemRegister = React.useCallback((item: ItemData) => {
-    itemsRef.current.set(item.id, item);
-  }, []);
-
-  const onItemUnregister = React.useCallback((id: string) => {
-    itemsRef.current.delete(id);
-  }, []);
-
-  const getItems = React.useCallback(() => {
-    return Array.from(itemsRef.current.values());
-  }, []);
-
-  const focusContext = React.useMemo<FocusContextValue>(
-    () => ({
-      tabStopId,
-      onItemFocus,
-      onItemShiftTab,
-      onFocusableItemAdd,
-      onFocusableItemRemove,
-      onItemRegister,
-      onItemUnregister,
-      getItems,
-    }),
-    [
-      tabStopId,
-      onItemFocus,
-      onItemShiftTab,
-      onFocusableItemAdd,
-      onFocusableItemRemove,
-      onItemRegister,
-      onItemUnregister,
-      getItems,
-    ],
-  );
-
-  // Auto-focus first item when toolbar opens
-  React.useEffect(() => {
-    if (!open) return;
-
-    // Set first item as tab stop and focus it
-    const items = Array.from(itemsRef.current.values()).filter(
-      (item) => !item.disabled,
-    );
-    if (items.length > 0 && items[0]) {
-      setTabStopId(items[0].id);
-      queueMicrotask(() => {
-        items[0]?.ref.current?.focus();
-      });
-    }
-  }, [open]);
 
   const rafRef = React.useRef<number | null>(null);
 
@@ -639,55 +523,53 @@ function SelectionToolbar(props: SelectionToolbarProps) {
 
   return (
     <StoreContext.Provider value={store}>
-      <FocusContext.Provider value={focusContext}>
-        {ReactDOM.createPortal(
-          <div
-            ref={refs.setFloating}
+      {ReactDOM.createPortal(
+        <div
+          ref={refs.setFloating}
+          style={{
+            ...floatingStyles,
+            // Keep off-page when measuring to prevent janky initial position
+            transform: isPositioned
+              ? floatingStyles.transform
+              : "translate(0, -200%)",
+            minWidth: "max-content",
+            // Hide the content if using the hide middleware and should be hidden
+            // Set visibility to hidden and disable pointer events so the UI behaves
+            // as if the SelectionToolbar isn't there at all
+            ...(middlewareData.hide?.referenceHidden && {
+              visibility: "hidden",
+              pointerEvents: "none",
+            }),
+          }}
+          data-state={isPositioned ? "positioned" : "measuring"}
+        >
+          <RootPrimitive
+            role="toolbar"
+            aria-label="Text formatting toolbar"
+            data-slot="selection-toolbar"
+            data-state={open ? "open" : "closed"}
+            {...rootProps}
+            className={cn(
+              "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
+              isPositioned &&
+                "fade-in-0 zoom-in-95 animate-in duration-200 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
+              "motion-reduce:animate-none motion-reduce:transition-none",
+              className,
+            )}
             style={{
-              ...floatingStyles,
-              // Keep off-page when measuring to prevent janky initial position
-              transform: isPositioned
-                ? floatingStyles.transform
-                : "translate(0, -200%)",
-              minWidth: "max-content",
-              // Hide the content if using the hide middleware and should be hidden
-              // Set visibility to hidden and disable pointer events so the UI behaves
-              // as if the SelectionToolbar isn't there at all
-              ...(middlewareData.hide?.referenceHidden && {
-                visibility: "hidden",
-                pointerEvents: "none",
-              }),
+              // Set transform origin based on placement for smooth animations
+              transformOrigin: middlewareData.transformOrigin
+                ? `${middlewareData.transformOrigin.x} ${middlewareData.transformOrigin.y}`
+                : undefined,
+              // If the SelectionToolbar hasn't been placed yet (not all measurements done)
+              // we prevent animations so that users's animation don't kick in too early referring wrong sides
+              animation: !isPositioned ? "none" : undefined,
+              ...style,
             }}
-            data-state={isPositioned ? "positioned" : "measuring"}
-          >
-            <RootPrimitive
-              role="toolbar"
-              aria-label="Text formatting toolbar"
-              data-slot="selection-toolbar"
-              data-state={open ? "open" : "closed"}
-              {...rootProps}
-              className={cn(
-                "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
-                isPositioned &&
-                  "fade-in-0 zoom-in-95 animate-in duration-200 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
-                "motion-reduce:animate-none motion-reduce:transition-none",
-                className,
-              )}
-              style={{
-                // Set transform origin based on placement for smooth animations
-                transformOrigin: middlewareData.transformOrigin
-                  ? `${middlewareData.transformOrigin.x} ${middlewareData.transformOrigin.y}`
-                  : undefined,
-                // If the SelectionToolbar hasn't been placed yet (not all measurements done)
-                // we prevent animations so that users's animation don't kick in too early referring wrong sides
-                animation: !isPositioned ? "none" : undefined,
-                ...style,
-              }}
-            />
-          </div>,
-          portalContainer,
-        )}
-      </FocusContext.Provider>
+          />
+        </div>,
+        portalContainer,
+      )}
     </StoreContext.Provider>
   );
 }
@@ -701,47 +583,28 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
   const {
     onSelect: onSelectProp,
     onClick: onClickProp,
-    onFocus: onFocusProp,
-    onKeyDown: onKeyDownProp,
     onPointerDown: onPointerDownProp,
     onPointerUp: onPointerUpProp,
     className,
-    disabled,
     ref,
     ...itemProps
   } = props;
 
   const store = useStoreContext(ITEM_NAME);
-  const focusContext = useFocusContext(ITEM_NAME);
 
-  const itemRef = React.useRef<HTMLButtonElement>(null);
+  const propsRef = useAsRef({
+    onSelect: onSelectProp,
+    onClick: onClickProp,
+    onPointerDown: onPointerDownProp,
+    onPointerUp: onPointerUpProp,
+  });
+
+  const itemRef = React.useRef<ItemElement>(null);
   const composedRef = useComposedRefs(ref, itemRef);
   const pointerTypeRef =
     React.useRef<React.PointerEvent["pointerType"]>("touch");
 
-  const itemId = React.useId();
-  const isTabStop = focusContext.tabStopId === itemId;
-
-  useIsomorphicLayoutEffect(() => {
-    focusContext.onItemRegister({
-      id: itemId,
-      ref: itemRef,
-      disabled: !!disabled,
-    });
-
-    if (!disabled) {
-      focusContext.onFocusableItemAdd();
-    }
-
-    return () => {
-      focusContext.onItemUnregister(itemId);
-      if (!disabled) {
-        focusContext.onFocusableItemRemove();
-      }
-    };
-  }, [focusContext, itemId, disabled]);
-
-  const handleSelect = React.useCallback(() => {
+  const onSelect = React.useCallback(() => {
     const item = itemRef.current;
     if (!item) return;
 
@@ -755,115 +618,53 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 
     item.addEventListener(
       "selectiontoolbar.select",
-      (event) => onSelectProp?.(text, event),
+      (event) => propsRef.current.onSelect?.(text, event),
       {
         once: true,
       },
     );
 
     item.dispatchEvent(selectEvent);
-  }, [onSelectProp, store]);
+  }, [propsRef, store]);
 
   const onPointerDown = React.useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
+    (event: React.PointerEvent<ItemElement>) => {
       pointerTypeRef.current = event.pointerType;
-      onPointerDownProp?.(event);
+      propsRef.current.onPointerDown?.(event);
 
       // Prevent the button from stealing focus from the contentEditable container
       // when using a mouse. This is crucial for maintaining the focus ring.
       if (event.pointerType === "mouse") {
         event.preventDefault();
       }
-
-      if (!disabled) {
-        focusContext.onItemFocus(itemId);
-      }
     },
-    [onPointerDownProp, focusContext, itemId, disabled],
+    [propsRef],
   );
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      onClickProp?.(event);
+    (event: React.MouseEvent<ItemElement>) => {
+      propsRef.current.onClick?.(event);
       if (event.defaultPrevented) return;
 
       // Handle selection on click when using touch or pen device
       if (pointerTypeRef.current !== "mouse") {
-        handleSelect();
+        onSelect();
       }
     },
-    [onClickProp, handleSelect],
+    [propsRef, onSelect],
   );
 
   const onPointerUp = React.useCallback(
-    (event: React.PointerEvent<HTMLButtonElement>) => {
-      onPointerUpProp?.(event);
+    (event: React.PointerEvent<ItemElement>) => {
+      propsRef.current.onPointerUp?.(event);
       if (event.defaultPrevented) return;
 
       // Handle selection on pointer up when using a mouse
       if (pointerTypeRef.current === "mouse") {
-        handleSelect();
+        onSelect();
       }
     },
-    [onPointerUpProp, handleSelect],
-  );
-
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<HTMLButtonElement>) => {
-      onFocusProp?.(event);
-      if (event.defaultPrevented) return;
-
-      focusContext.onItemFocus(itemId);
-    },
-    [onFocusProp, focusContext, itemId],
-  );
-
-  const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLButtonElement>) => {
-      onKeyDownProp?.(event);
-      if (event.defaultPrevented) return;
-
-      if (event.key === "Tab" && event.shiftKey) {
-        focusContext.onItemShiftTab();
-        return;
-      }
-
-      if (event.target !== event.currentTarget) return;
-
-      let focusIntent: "first" | "last" | "prev" | "next" | undefined;
-
-      if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-        focusIntent = "prev";
-      } else if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-        focusIntent = "next";
-      } else if (event.key === "Home") {
-        focusIntent = "first";
-      } else if (event.key === "End") {
-        focusIntent = "last";
-      }
-
-      if (focusIntent !== undefined) {
-        if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey)
-          return;
-        event.preventDefault();
-
-        const items = focusContext.getItems().filter((item) => !item.disabled);
-        let candidateRefs = items.map((item) => item.ref);
-
-        if (focusIntent === "last") {
-          candidateRefs.reverse();
-        } else if (focusIntent === "prev" || focusIntent === "next") {
-          if (focusIntent === "prev") candidateRefs.reverse();
-          const currentIndex = candidateRefs.findIndex(
-            (ref) => ref.current === event.currentTarget,
-          );
-          candidateRefs = wrapArray(candidateRefs, currentIndex + 1);
-        }
-
-        queueMicrotask(() => focusFirst(candidateRefs));
-      }
-    },
-    [onKeyDownProp, focusContext],
+    [propsRef, onSelect],
   );
 
   return (
@@ -872,16 +673,12 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
       data-slot="selection-toolbar-item"
       variant="ghost"
       size="icon"
-      disabled={disabled}
-      tabIndex={isTabStop ? 0 : -1}
       {...itemProps}
       className={cn("size-8", className)}
       ref={composedRef}
       onPointerDown={onPointerDown}
       onClick={onClick}
       onPointerUp={onPointerUp}
-      onFocus={onFocus}
-      onKeyDown={onKeyDown}
     />
   );
 }
