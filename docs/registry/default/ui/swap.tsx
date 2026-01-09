@@ -67,6 +67,7 @@ function Swap(props: SwapProps) {
     onMouseEnter: onMouseEnterProp,
     onMouseLeave: onMouseLeaveProp,
     onClick: onClickProp,
+    onKeyDown: onKeyDownProp,
     ...rootProps
   } = props;
 
@@ -81,6 +82,7 @@ function Swap(props: SwapProps) {
     onClick: onClickProp,
     onMouseEnter: onMouseEnterProp,
     onMouseLeave: onMouseLeaveProp,
+    onKeyDown: onKeyDownProp,
   });
 
   const store = React.useMemo<Store>(() => {
@@ -119,9 +121,10 @@ function Swap(props: SwapProps) {
   }, [swappedProp]);
 
   const onToggle = React.useCallback(() => {
-    if (disabled) return;
+    if (propsRef.current.disabled) return;
+
     store.setState("swapped", !store.getState().swapped);
-  }, [store, disabled]);
+  }, [store, propsRef]);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -163,6 +166,24 @@ function Swap(props: SwapProps) {
     [propsRef, activationMode, store],
   );
 
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      propsRef.current.onKeyDown?.(event);
+      if (
+        event.defaultPrevented ||
+        activationMode !== "click" ||
+        propsRef.current.disabled
+      )
+        return;
+
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onToggle();
+      }
+    },
+    [propsRef, activationMode, onToggle],
+  );
+
   const RootPrimitive = asChild ? Slot : "div";
 
   return (
@@ -175,22 +196,14 @@ function Swap(props: SwapProps) {
         data-state={swapped ? "on" : "off"}
         data-disabled={disabled ? "" : undefined}
         {...rootProps}
-        onClick={onClick}
-        onMouseEnter={onMouseEnter}
-        onMouseLeave={onMouseLeave}
-        onKeyDown={(event) => {
-          rootProps.onKeyDown?.(event);
-          if (event.defaultPrevented || activationMode !== "click" || disabled)
-            return;
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
-            onToggle();
-          }
-        }}
         className={cn(
           "relative inline-flex cursor-pointer select-none items-center justify-center data-disabled:cursor-not-allowed data-disabled:opacity-50",
           className,
         )}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onKeyDown={onKeyDown}
       />
     </StoreContext.Provider>
   );
