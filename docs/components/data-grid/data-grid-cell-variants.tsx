@@ -1,18 +1,6 @@
 "use client";
 
-import {
-  Check,
-  File,
-  FileArchive,
-  FileAudio,
-  FileImage,
-  FileSpreadsheet,
-  FileText,
-  FileVideo,
-  Presentation,
-  Upload,
-  X,
-} from "lucide-react";
+import { Check, Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 import { DataGridCellWrapper } from "@/components/data-grid/data-grid-cell-wrapper";
@@ -45,7 +33,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useBadgeOverflow } from "@/hooks/use-badge-overflow";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
-import { getCellKey, getLineCount } from "@/lib/data-grid";
+import {
+  formatDateForDisplay,
+  formatDateToString,
+  formatFileSize,
+  getCellKey,
+  getFileIcon,
+  getLineCount,
+  getUrlHref,
+  parseLocalDate,
+} from "@/lib/data-grid";
 import { cn } from "@/lib/utils";
 import type { DataGridCellProps, FileCellData } from "@/types/data-grid";
 
@@ -224,6 +221,7 @@ export function LongTextCell<TData>({
   const [value, setValue] = React.useState(initialValue ?? "");
   const textareaRef = React.useRef<HTMLTextAreaElement>(null);
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const pendingCharRef = React.useRef<string | null>(null);
   const sideOffset = -(containerRef.current?.clientHeight ?? 0);
 
   const prevInitialValueRef = React.useRef(initialValue);
@@ -278,8 +276,44 @@ export function LongTextCell<TData>({
       textareaRef.current.focus();
       const length = textareaRef.current.value.length;
       textareaRef.current.setSelectionRange(length, length);
+
+      // Insert pending character using execCommand so it's part of undo history
+      // Use requestAnimationFrame to ensure focus has fully settled
+      if (pendingCharRef.current) {
+        const char = pendingCharRef.current;
+        pendingCharRef.current = null;
+        requestAnimationFrame(() => {
+          if (
+            textareaRef.current &&
+            document.activeElement === textareaRef.current
+          ) {
+            document.execCommand("insertText", false, char);
+            textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+          }
+        });
+      } else {
+        textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+      }
     }
   }, []);
+
+  const onWrapperKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (
+        isFocused &&
+        !isEditing &&
+        !readOnly &&
+        event.key.length === 1 &&
+        !event.ctrlKey &&
+        !event.metaKey
+      ) {
+        // Store the character to be inserted after textarea focuses
+        // This ensures it's part of the textarea's undo history
+        pendingCharRef.current = event.key;
+      }
+    },
+    [isFocused, isEditing, readOnly],
+  );
 
   const onBlur = React.useCallback(() => {
     // Immediately save any pending changes on blur
@@ -339,6 +373,7 @@ export function LongTextCell<TData>({
           isSearchMatch={isSearchMatch}
           isActiveSearchMatch={isActiveSearchMatch}
           readOnly={readOnly}
+          onKeyDown={onWrapperKeyDown}
         >
           <span data-slot="grid-cell-content">{value}</span>
         </DataGridCellWrapper>
@@ -353,7 +388,7 @@ export function LongTextCell<TData>({
       >
         <Textarea
           placeholder="Enter text..."
-          className="max-h-[300px] min-h-[150px] resize-none overflow-y-auto rounded-none border-0 shadow-none focus-visible:ring-0"
+          className="max-h-[300px] min-h-[150px] resize-none overflow-y-auto rounded-none border-0 shadow-none focus-visible:ring-1 focus-visible:ring-ring"
           ref={textareaRef}
           value={value}
           onBlur={onBlur}
@@ -492,23 +527,6 @@ export function NumberCell<TData>({
       )}
     </DataGridCellWrapper>
   );
-}
-
-function getUrlHref(urlString: string): string {
-  if (!urlString || urlString.trim() === "") return "";
-
-  const trimmed = urlString.trim();
-
-  // Reject dangerous protocols (extra safety, though our http:// prefix would neutralize them)
-  if (/^(javascript|data|vbscript|file):/i.test(trimmed)) {
-    return "";
-  }
-
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-    return trimmed;
-  }
-
-  return `http://${trimmed}`;
 }
 
 export function UrlCell<TData>({
@@ -890,7 +908,7 @@ export function SelectCell<TData>({
         event.preventDefault();
         setValue(initialValue);
         tableMeta?.onCellEditingStop?.();
-      } else if (!isEditing && isFocused && event.key === "Tab") {
+      } else if (isFocused && event.key === "Tab") {
         event.preventDefault();
         tableMeta?.onCellEditingStop?.({
           direction: event.shiftKey ? "left" : "right",
@@ -1072,7 +1090,7 @@ export function MultiSelectCell<TData>({
         setSelectedValues(cellValue);
         setSearchValue("");
         tableMeta?.onCellEditingStop?.();
-      } else if (!isEditing && isFocused && event.key === "Tab") {
+      } else if (isFocused && event.key === "Tab") {
         event.preventDefault();
         setSearchValue("");
         tableMeta?.onCellEditingStop?.({
@@ -1253,12 +1271,6 @@ export function MultiSelectCell<TData>({
   );
 }
 
-function formatDateForDisplay(dateStr: string) {
-  if (!dateStr) return "";
-  const date = new Date(dateStr);
-  return date.toLocaleDateString();
-}
-
 export function DateCell<TData>({
   cell,
   tableMeta,
@@ -1282,13 +1294,15 @@ export function DateCell<TData>({
     setValue(initialValue ?? "");
   }
 
-  const selectedDate = value ? new Date(value) : undefined;
+  // Parse date as local time to avoid timezone shifts
+  const selectedDate = value ? (parseLocalDate(value) ?? undefined) : undefined;
 
   const onDateSelect = React.useCallback(
     (date: Date | undefined) => {
       if (!date || readOnly) return;
 
-      const formattedDate = date.toISOString().split("T")[0] ?? "";
+      // Format using local date components to avoid timezone issues
+      const formattedDate = formatDateToString(date);
       setValue(formattedDate);
       tableMeta?.onDataUpdate?.({ rowIndex, columnId, value: formattedDate });
       tableMeta?.onCellEditingStop?.();
@@ -1313,7 +1327,7 @@ export function DateCell<TData>({
         event.preventDefault();
         setValue(initialValue);
         tableMeta?.onCellEditingStop?.();
-      } else if (!isEditing && isFocused && event.key === "Tab") {
+      } else if (isFocused && event.key === "Tab") {
         event.preventDefault();
         tableMeta?.onCellEditingStop?.({
           direction: event.shiftKey ? "left" : "right",
@@ -1365,39 +1379,6 @@ export function DateCell<TData>({
       </Popover>
     </DataGridCellWrapper>
   );
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${Number.parseFloat((bytes / k ** i).toFixed(1))} ${sizes[i]}`;
-}
-
-function getFileIcon(
-  type: string,
-): React.ComponentType<React.SVGProps<SVGSVGElement>> {
-  if (type.startsWith("image/")) return FileImage;
-  if (type.startsWith("video/")) return FileVideo;
-  if (type.startsWith("audio/")) return FileAudio;
-  if (type.includes("pdf")) return FileText;
-  if (type.includes("zip") || type.includes("rar")) return FileArchive;
-  if (
-    type.includes("word") ||
-    type.includes("document") ||
-    type.includes("doc")
-  )
-    return FileText;
-  if (type.includes("sheet") || type.includes("excel") || type.includes("xls"))
-    return FileSpreadsheet;
-  if (
-    type.includes("presentation") ||
-    type.includes("powerpoint") ||
-    type.includes("ppt")
-  )
-    return Presentation;
-  return File;
 }
 
 export function FileCell<TData>({
@@ -1866,11 +1847,16 @@ export function FileCell<TData>({
         } else if (event.key === " ") {
           event.preventDefault();
           onDropzoneClick();
+        } else if (event.key === "Tab") {
+          event.preventDefault();
+          tableMeta?.onCellEditingStop?.({
+            direction: event.shiftKey ? "left" : "right",
+          });
         }
       } else if (isFocused && event.key === "Enter") {
         event.preventDefault();
         tableMeta?.onCellEditingStart?.(rowIndex, columnId);
-      } else if (!isEditing && isFocused && event.key === "Tab") {
+      } else if (isFocused && event.key === "Tab") {
         event.preventDefault();
         tableMeta?.onCellEditingStop?.({
           direction: event.shiftKey ? "left" : "right",

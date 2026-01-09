@@ -163,7 +163,8 @@ export interface SelectionToolbarProps
 }
 
 export interface SelectionToolbarItemProps
-  extends Omit<ButtonProps, "onSelect"> {
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+    CompositionProps {
   /**
    * Callback fired when the item is selected.
    * Receives the selected text and a custom event.

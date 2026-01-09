@@ -9,7 +9,11 @@ import { DataGridRow } from "@/components/data-grid/data-grid-row";
 import { DataGridSearch } from "@/components/data-grid/data-grid-search";
 import { useAsRef } from "@/hooks/use-as-ref";
 import type { useDataGrid } from "@/hooks/use-data-grid";
-import { flexRender, getCommonPinningStyles } from "@/lib/data-grid";
+import {
+  flexRender,
+  getColumnBorderVisibility,
+  getColumnPinningStyle,
+} from "@/lib/data-grid";
 import { cn } from "@/lib/utils";
 import type { Direction } from "@/types/data-grid";
 
@@ -48,6 +52,7 @@ export function DataGrid<TData>({
   onRowAdd: onRowAddProp,
   height = 600,
   stretchColumns = false,
+  adjustLayout = false,
   className,
   ...props
 }: DataGridProps<TData>) {
@@ -135,6 +140,17 @@ export function DataGrid<TData>({
                 );
                 const isSortable = header.column.getCanSort();
 
+                const nextHeader = headerGroup.headers[colIndex + 1];
+                const isLastColumn =
+                  colIndex === headerGroup.headers.length - 1;
+
+                const { showEndBorder, showStartBorder } =
+                  getColumnBorderVisibility({
+                    column: header.column,
+                    nextColumn: nextHeader?.column,
+                    isLastColumn,
+                  });
+
                 return (
                   <div
                     key={header.id}
@@ -153,10 +169,13 @@ export function DataGrid<TData>({
                     tabIndex={-1}
                     className={cn("relative", {
                       grow: stretchColumns && header.column.id !== "select",
-                      "border-e": header.column.id !== "select",
+                      "border-e":
+                        showEndBorder && header.column.id !== "select",
+                      "border-s":
+                        showStartBorder && header.column.id !== "select",
                     })}
                     style={{
-                      ...getCommonPinningStyles({ column: header.column, dir }),
+                      ...getColumnPinningStyle({ column: header.column, dir }),
                       width: `calc(var(--header-${header.id}-size) * 1px)`,
                     }}
                   >
@@ -183,7 +202,7 @@ export function DataGrid<TData>({
           className="relative grid"
           style={{
             height: `${virtualTotalSize}px`,
-            contain: "strict",
+            contain: adjustLayout ? "layout paint" : "strict",
           }}
         >
           {virtualItems.map((virtualItem) => {
@@ -216,8 +235,9 @@ export function DataGrid<TData>({
                 searchMatchColumns={searchMatchColumns}
                 activeSearchMatch={isActiveSearchRow ? activeSearchMatch : null}
                 dir={dir}
-                readOnly={readOnly}
+                adjustLayout={adjustLayout}
                 stretchColumns={stretchColumns}
+                readOnly={readOnly}
               />
             );
           })}

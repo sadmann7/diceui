@@ -789,6 +789,176 @@ export interface DataGridKeyboardShortcutsProps {
    * @default false
    */
   enableSearch?: boolean;
+
+  /**
+   * Whether to show the shortcuts related to undo/redo functionality.
+   * Should be set to true when using the useDataGridUndoRedo hook.
+   * Adds undo/redo shortcuts (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y) to the dialog.
+   *
+   * ```tsx
+   * <DataGridKeyboardShortcuts enableUndoRedo />
+   * ```
+   *
+   * @default false
+   */
+  enableUndoRedo?: boolean;
+
+  /**
+   * Whether to show the shortcuts related to paste functionality.
+   * Should be set to true when `enablePaste` is true in useDataGrid.
+   * Adds paste shortcut (Ctrl+V) to the dialog.
+   *
+   * ```tsx
+   * <DataGridKeyboardShortcuts enablePaste />
+   * ```
+   *
+   * @default false
+   */
+  enablePaste?: boolean;
+
+  /**
+   * Whether to show the shortcuts related to row addition.
+   * Should be set to true when `onRowAdd` is provided to useDataGrid.
+   * Adds row insertion shortcut (Shift+Enter) to the dialog.
+   *
+   * ```tsx
+   * <DataGridKeyboardShortcuts enableRowAdd />
+   * ```
+   *
+   * @default false
+   */
+  enableRowAdd?: boolean;
+
+  /**
+   * Whether to show the shortcuts related to row deletion.
+   * Should be set to true when `onRowsDelete` is provided to useDataGrid.
+   * Adds row deletion shortcuts (Ctrl+Backspace, Ctrl+Delete) to the dialog.
+   *
+   * ```tsx
+   * <DataGridKeyboardShortcuts enableRowsDelete />
+   * ```
+   *
+   * @default false
+   */
+  enableRowsDelete?: boolean;
+}
+
+export interface UseDataGridUndoRedoProps<TData> {
+  /**
+   * The data array for the grid.
+   * Used to track changes and apply undo/redo operations.
+   */
+  data: TData[];
+
+  /**
+   * Callback function called when data changes due to undo/redo.
+   * Receives the updated data array after applying the operation.
+   *
+   * ```tsx
+   * onDataChange={(data) => setData(data)}
+   * ```
+   */
+  onDataChange: (data: TData[]) => void;
+
+  /**
+   * Function to get a unique ID from a row.
+   * Used for ID-based tracking instead of index-based, making undo/redo robust against sorting/filtering.
+   *
+   * ```tsx
+   * getRowId={(row) => row.id}
+   * ```
+   */
+  getRowId: (row: TData) => string;
+
+  /**
+   * Maximum number of history entries to keep.
+   * Older entries are discarded when the limit is reached.
+   *
+   * @default 100
+   */
+  maxHistory?: number;
+
+  /**
+   * Whether undo/redo functionality is enabled.
+   * When false, keyboard shortcuts and history tracking are disabled.
+   *
+   * @default true
+   */
+  enabled?: boolean;
+}
+
+export interface UseDataGridUndoRedoReturn<TData> {
+  /**
+   * Whether there are any actions to undo.
+   * Use this to conditionally enable/disable undo buttons.
+   */
+  canUndo: boolean;
+
+  /**
+   * Whether there are any actions to redo.
+   * Use this to conditionally enable/disable redo buttons.
+   */
+  canRedo: boolean;
+
+  /**
+   * Function to undo the last action.
+   * Shows a toast notification with the result.
+   */
+  onUndo: () => void;
+
+  /**
+   * Function to redo the last undone action.
+   * Shows a toast notification with the result.
+   */
+  onRedo: () => void;
+
+  /**
+   * Function to clear all history.
+   * Useful when resetting the grid state.
+   */
+  onClear: () => void;
+
+  /**
+   * Function to track cell updates for undo/redo.
+   * Call this when cells are modified to enable undoing those changes.
+   *
+   * ```tsx
+   * trackCellsUpdate([{
+   *   rowId: "row-1",
+   *   columnId: "name",
+   *   previousValue: "Old Name",
+   *   newValue: "New Name"
+   * }])
+   * ```
+   */
+  trackCellsUpdate: (
+    updates: Array<{
+      rowId: string;
+      columnId: string;
+      previousValue: unknown;
+      newValue: unknown;
+    }>,
+  ) => void;
+
+  /**
+   * Function to track row additions for undo/redo.
+   * Call this after adding new rows to enable undoing the addition.
+   *
+   * ```tsx
+   * trackRowsAdd([newRow1, newRow2])
+   * ```
+   */
+  trackRowsAdd: (rows: TData[]) => void;
+
+  /**
+   * Function to track row deletions for undo/redo.
+   * Call this before deleting rows to enable undoing the deletion.
+   *
+   * ```tsx
+   * trackRowsDelete([rowToDelete1, rowToDelete2])
+   * ```
+   */
+  trackRowsDelete: (rows: TData[]) => void;
 }
 
 export interface DataGridSkeletonProps extends EmptyProps<"div"> {}

@@ -1,0 +1,208 @@
+# Tablcn to DiceUI Migration
+
+This rule guides the migration of data-grid and data-table changes from the tablcn upstream repository to the diceui docs.
+
+## When to Use
+
+Use this rule when PRs are merged into the tablcn repository and need to be synced to diceui. Common scenarios:
+- New features added to data-grid or data-table
+- Bug fixes in components
+- New keyboard shortcuts or props added
+- API changes to hooks or components
+
+---
+
+## Data Grid Migration
+
+### 1. Fix Import Paths
+
+After updating registry files, fix all incorrect import paths:
+
+**Files to check:**
+- `docs/lib/data-grid.ts`
+- `docs/hooks/use-data-grid.ts`
+- `docs/hooks/use-data-grid-undo-redo.ts` (if exists)
+- `docs/components/data-grid/*.tsx` (all files)
+
+**Import path transformations:**
+```tsx
+// WRONG - from tablcn registry
+from "@/components/data-grid/data-grid"
+
+// CORRECT - split into lib and types
+from "@/lib/data-grid"      // for utility functions
+from "@/types/data-grid"    // for type imports
+```
+
+**Utility functions (go to @/lib/data-grid):**
+- `flexRender`, `getCellKey`, `parseCellKey`
+- `getColumnBorderVisibility`, `getColumnPinningStyle`, `getColumnVariant`
+- `getRowHeightValue`, `getLineCount`
+- `getIsFileCellData`, `getIsInPopover`, `getScrollDirection`
+- `matchSelectOption`, `scrollCellIntoView`
+- `getUrlHref`, `parseLocalDate`, `formatDateToString`, `formatDateForDisplay`
+- `formatFileSize`, `getFileIcon`
+
+**Types (go to @/types/data-grid):**
+- `Direction`, `RowHeightValue`, `CellPosition`, `CellRange`
+- `CellOpts`, `CellUpdate`, `CellSelectOption`
+- `SelectionState`, `ContextMenuState`, `PasteDialogState`
+- `NavigationDirection`, `SearchState`, `DataGridCellProps`, `FileCellData`
+- `FilterValue`, `*FilterOperator` types
+
+### 2. Update Documentation
+
+Update `docs/content/docs/components/data-grid.mdx`:
+
+- **Installation (Step 2):** Add new optional component/hook installations
+- **Installation (Step 3):** Update import path fix instructions for new files
+- **Usage:** Add `### With [Feature Name]` sections with code examples
+- **API Reference:** Add `<AutoTypeTable>` for new hooks/components
+- **Keyboard Interactions:** Add new shortcuts to appropriate category
+- **Features:** Update Core Features, Cell Variants, or Advanced Features
+
+### 3. Update Types
+
+Update `docs/types/docs/data-grid.ts`:
+- Add new prop/return interfaces with JSDoc comments
+- Update `DataGridKeyboardShortcutsProps` for new keyboard features
+
+---
+
+## Data Table Migration
+
+### 1. Fix Import Paths
+
+**Files to check:**
+- `docs/components/data-table/data-table.tsx`
+- `docs/components/data-table/data-table-toolbar.tsx`
+- `docs/lib/data-table.ts`
+- `docs/lib/parsers.ts`
+- `docs/hooks/use-data-table.ts`
+
+**Import path transformations:**
+```tsx
+// WRONG - from tablcn registry
+from "@/components/data-table/data-table"
+
+// CORRECT - split into lib, config, and types
+from "@/lib/data-table"      // for utility functions (getCommonPinningStyles, etc.)
+from "@/config/data-table"   // for dataTableConfig
+from "@/types/data-table"    // for type imports
+```
+
+**Utility functions (go to @/lib/data-table):**
+- `getCommonPinningStyles`
+- `getFilterOperators`
+- `getDefaultFilterOperator`
+- Other utility functions
+
+**Config (go to @/config/data-table):**
+- `dataTableConfig`
+
+**Types (go to @/types/data-table):**
+- `ExtendedColumnFilter`, `ExtendedColumnSort`
+- `FilterOperator`, `FilterVariant`
+- `DataTableConfig`, `ColumnType`
+- Other type definitions
+
+### 2. Update Documentation
+
+Update `docs/content/docs/components/data-table.mdx`:
+
+- **Installation (Step 3/4):** Add new optional components
+- **Installation (Step 4/5):** Update import path fix instructions
+- **Usage:** Add new usage examples
+- **API Reference:** Add `<AutoTypeTable>` references
+- **Features:** Update feature lists
+
+### 3. Update Types
+
+Update `docs/types/docs/data-table.ts`:
+- Add new interfaces with JSDoc comments
+- Update existing interfaces when props change
+
+---
+
+## Quick Commands
+
+**Find data-grid files with wrong imports:**
+```bash
+grep -r 'from "@/components/data-grid/data-grid"' docs/
+```
+
+**Find data-table files with wrong imports:**
+```bash
+grep -r 'from "@/components/data-table/data-table"' docs/
+```
+
+**Data Grid files commonly needing fixes:**
+```
+docs/lib/data-grid.ts
+docs/hooks/use-data-grid.ts
+docs/hooks/use-data-grid-undo-redo.ts
+docs/components/data-grid/data-grid.tsx
+docs/components/data-grid/data-grid-cell.tsx
+docs/components/data-grid/data-grid-cell-wrapper.tsx
+docs/components/data-grid/data-grid-cell-variants.tsx
+docs/components/data-grid/data-grid-column-header.tsx
+docs/components/data-grid/data-grid-context-menu.tsx
+docs/components/data-grid/data-grid-paste-dialog.tsx
+docs/components/data-grid/data-grid-row.tsx
+docs/components/data-grid/data-grid-search.tsx
+```
+
+**Data Table files commonly needing fixes:**
+```
+docs/lib/data-table.ts
+docs/lib/parsers.ts
+docs/hooks/use-data-table.ts
+docs/components/data-table/data-table.tsx
+docs/components/data-table/data-table-toolbar.tsx
+```
+
+---
+
+## Example Migration PR Description
+
+```markdown
+## Changes from tablcn
+
+### Data Grid
+- feat(data-grid): add undo-redo support (#1093)
+- fix(data-grid): improve delete rows shortcut (#1094)
+
+### Data Table
+- feat(data-table): add new filter variant (#XXX)
+
+## DiceUI Updates
+
+### Import Path Fixes
+- Fixed imports in data-grid components and hooks
+- Fixed imports in data-table components
+
+### Documentation
+- Added new hook/component installations
+- Added usage examples
+- Added API references
+- Updated keyboard shortcuts
+
+### Types
+- Added new interfaces for API documentation
+```
+
+---
+
+## DataGridKeyboardShortcuts Flags
+
+When adding features with keyboard shortcuts:
+
+```tsx
+export interface DataGridKeyboardShortcutsProps {
+  enableSearch?: boolean;      // Ctrl+F search
+  enableUndoRedo?: boolean;    // Ctrl+Z, Ctrl+Shift+Z
+  enablePaste?: boolean;       // Ctrl+V paste
+  enableRowAdd?: boolean;      // Shift+Enter row insert
+  enableRowsDelete?: boolean;  // Ctrl+Backspace/Delete row delete
+}
+```

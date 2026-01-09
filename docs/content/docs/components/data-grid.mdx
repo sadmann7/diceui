@@ -63,6 +63,12 @@ links:
     ```package-install
     npx shadcn@latest add "@diceui/data-grid-skeleton"
     ```
+
+    [`useDataGridUndoRedo`](#usedatagridundoredo):
+
+    ```package-install
+    npx shadcn@latest add "@diceui/use-data-grid-undo-redo"
+    ```
   </Step>
   <Step>
     Update import paths for custom components:
@@ -109,7 +115,7 @@ links:
       RowHeightValue, // [!code --]
       SearchState, // [!code --]
       SelectionState, // [!code --]
-      UpdateCell, // [!code --]
+      CellUpdate, // [!code --]
     } from "@/components/data-grid/data-grid"; // [!code --]
     import { // [!code ++]
       getCellKey, // [!code ++]
@@ -131,7 +137,7 @@ links:
       RowHeightValue, // [!code ++]
       SearchState, // [!code ++]
       SelectionState, // [!code ++]
-      UpdateCell, // [!code ++]
+      CellUpdate, // [!code ++]
     } from "@/types/data-grid"; // [!code ++]
     ```
 
@@ -283,6 +289,93 @@ const { table, ...dataGridProps } = useDataGrid({
     setData((prev) => [...prev, ...newRows]);
   },
 });
+```
+
+### With Undo/Redo
+
+Use the `useDataGridUndoRedo` hook to add undo/redo support with keyboard shortcuts (Ctrl/Cmd+Z to undo, Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y to redo):
+
+```tsx
+import { useDataGrid } from "@/hooks/use-data-grid";
+import {
+  useDataGridUndoRedo,
+  type UndoRedoCellUpdate,
+} from "@/hooks/use-data-grid-undo-redo";
+
+export default function MyDataGrid() {
+  const [data, setData] = React.useState(initialData);
+
+  const { trackCellsUpdate, trackRowsAdd, trackRowsDelete } =
+    useDataGridUndoRedo({
+      data,
+      onDataChange: setData,
+      getRowId: (row) => row.id,
+    });
+
+  const onDataChange = React.useCallback(
+    (newData: Person[]) => {
+      // Track cell updates for undo/redo
+      const cellUpdates: Array<UndoRedoCellUpdate> = [];
+
+      for (let rowIndex = 0; rowIndex < data.length; rowIndex++) {
+        const oldRow = data[rowIndex];
+        const newRow = newData[rowIndex];
+        if (!oldRow || !newRow) continue;
+
+        for (const key of Object.keys(oldRow)) {
+          const oldValue = oldRow[key];
+          const newValue = newRow[key];
+          if (!Object.is(oldValue, newValue)) {
+            cellUpdates.push({
+              rowId: oldRow.id,
+              columnId: key,
+              previousValue: oldValue,
+              newValue,
+            });
+          }
+        }
+      }
+
+      if (cellUpdates.length > 0) {
+        trackCellsUpdate(cellUpdates);
+      }
+
+      setData(newData);
+    },
+    [data, trackCellsUpdate],
+  );
+
+  const onRowAdd = React.useCallback(() => {
+    const newRow = { id: generateId() };
+    setData((prev) => [...prev, newRow]);
+    trackRowsAdd([newRow]);
+    return { rowIndex: data.length, columnId: "name" };
+  }, [data.length, trackRowsAdd]);
+
+  const onRowsDelete = React.useCallback(
+    (rows) => {
+      trackRowsDelete(rows);
+      setData((prev) => prev.filter((row) => !rows.includes(row)));
+    },
+    [trackRowsDelete],
+  );
+
+  const { table, ...dataGridProps } = useDataGrid({
+    data,
+    columns,
+    onDataChange,
+    onRowAdd,
+    onRowsDelete,
+    getRowId: (row) => row.id,
+  });
+
+  return (
+    <>
+      <DataGridKeyboardShortcuts enableUndoRedo />
+      <DataGrid table={table} {...dataGridProps} />
+    </>
+  );
+}
 ```
 
 ### Read-Only Mode
@@ -776,6 +869,22 @@ Hook for initializing the data grid with state management and editing capabiliti
   name="UseDataGridProps"
 />
 
+### useDataGridUndoRedo
+
+Hook for adding undo/redo support to the data grid with keyboard shortcuts and history management.
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="UseDataGridUndoRedoProps"
+/>
+
+Returns:
+
+<AutoTypeTable
+  path="./types/docs/data-grid.ts"
+  name="UseDataGridUndoRedoReturn"
+/>
+
 ### DataGrid
 
 Main data grid component with virtualization and editing capabilities.
@@ -1135,6 +1244,22 @@ The Data Grid follows WAI-ARIA guidelines for grid widgets:
       keys: ["Ctrl + Backspace", "Cmd + Backspace"],
       description: "Delete selected rows",
     },
+    {
+      keys: ["Ctrl + Delete", "Cmd + Delete"],
+      description: "Delete selected rows",
+    },
+    {
+      keys: ["Ctrl + Z", "Cmd + Z"],
+      description: "Undo last action",
+    },
+    {
+      keys: ["Ctrl + Shift + Z", "Cmd + Shift + Z"],
+      description: "Redo last action",
+    },
+    {
+      keys: ["Ctrl + Y", "Cmd + Y"],
+      description: "Redo last action",
+    },
   ]}
 />
 
@@ -1184,6 +1309,7 @@ The Data Grid component provides a comprehensive spreadsheet-like experience wit
 - **Cell Selection**: Single and multi-cell selection with keyboard and mouse
 - **Keyboard Navigation**: Full keyboard support with Excel-like shortcuts
 - **Copy/Cut/Paste**: Full clipboard support including paste from Excel/Google Sheets
+- **Undo/Redo**: Full history support for cell updates, row additions, and deletions (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z)
 - **Context Menu**: Right-click actions for cells and rows
 - **Search**: Find and navigate to matching cells (Ctrl/Cmd+F)
 - **Filtering**: Advanced filtering with multiple operators and drag-and-drop reordering
