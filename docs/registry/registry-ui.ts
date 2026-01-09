@@ -655,6 +655,18 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "swap",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot"],
+    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    files: [
+      {
+        path: "ui/swap.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "qr-code",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot", "qrcode"],
