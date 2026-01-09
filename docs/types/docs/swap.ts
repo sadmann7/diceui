@@ -2,15 +2,15 @@ import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface SwapProps extends EmptyProps<"div">, CompositionProps {
   /**
+   * Whether the swap is in the swapped state (controlled).
+   */
+  swapped?: boolean;
+
+  /**
    * Whether the swap is initially in the swapped state.
    * @default false
    */
   defaultSwapped?: boolean;
-
-  /**
-   * Whether the swap is in the swapped state (controlled).
-   */
-  swapped?: boolean;
 
   /**
    * Callback when the swapped state changes.
@@ -34,6 +34,6 @@ export interface SwapProps extends EmptyProps<"div">, CompositionProps {
   disabled?: boolean;
 }
 
-export interface SwapOnProps extends EmptyProps<"span">, CompositionProps {}
+export interface SwapOnProps extends EmptyProps<"div">, CompositionProps {}
 
-export interface SwapOffProps extends EmptyProps<"span">, CompositionProps {}
+export interface SwapOffProps extends EmptyProps<"div">, CompositionProps {}
