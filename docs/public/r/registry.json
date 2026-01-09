@@ -746,6 +746,23 @@
       "type": "registry:ui"
     },
     {
+      "name": "swap",
+      "dependencies": [
+        "@radix-ui/react-slot"
+      ],
+      "registryDependencies": [
+        "@diceui/use-as-ref",
+        "@diceui/use-lazy-ref"
+      ],
+      "files": [
+        {
+          "path": "ui/swap.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
       "name": "qr-code",
       "dependencies": [
         "@radix-ui/react-slot",
@@ -3306,6 +3323,22 @@
       "files": [
         {
           "path": "examples/stepper-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "swap-demo",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "swap"
+      ],
+      "files": [
+        {
+          "path": "examples/swap-demo.tsx",
           "type": "registry:example"
         }
       ],

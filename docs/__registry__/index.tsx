@@ -595,6 +595,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "swap": {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+      files: [{
+        path: "registry/default/ui/swap.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/swap.tsx")),
+      source: "",
+      chunks: []
+    },
     "qr-code": {
       name: "qr-code",
       description: "",
@@ -2912,6 +2926,20 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/stepper-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "swap-demo": {
+      name: "swap-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["swap"],
+      files: [{
+        path: "registry/default/examples/swap-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/swap-demo.tsx")),
       source: "",
       chunks: []
     },
