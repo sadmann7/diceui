@@ -52,7 +52,6 @@ interface SwapProps extends DivProps {
   onSwappedChange?: (swapped: boolean) => void;
   activationMode?: "click" | "hover";
   disabled?: boolean;
-  asChild?: boolean;
 }
 
 function Swap(props: SwapProps) {
