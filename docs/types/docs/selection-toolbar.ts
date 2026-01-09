@@ -1,3 +1,4 @@
+import type React from "react";
 import type { ButtonProps, CompositionProps, EmptyProps } from "@/types";
 
 export interface SelectionToolbarProps
@@ -40,14 +41,17 @@ export interface SelectionToolbarProps
    * The container element to scope text selection to.
    * When provided, the toolbar will only appear for selections within this element.
    *
+   * You can pass either a ref object or the element directly:
+   *
    * ```tsx
-   * const containerRef = useRef<HTMLDivElement>(null)
+   * <SelectionToolbar container={containerRef} />
+   * // or
    * <SelectionToolbar container={containerRef.current} />
    * ```
    *
    * @default document
    */
-  container?: HTMLElement | null;
+  container?: HTMLElement | React.RefObject<HTMLElement | null> | null;
 
   /**
    * The container element where the toolbar will be portaled to.

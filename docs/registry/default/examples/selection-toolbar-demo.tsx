@@ -129,7 +129,7 @@ export default function SelectionToolbarDemo() {
           similar to popular writing platforms.
         </p>
 
-        <SelectionToolbar container={containerRef.current}>
+        <SelectionToolbar container={containerRef}>
           <SelectionToolbarItem onSelect={onBold}>
             <Bold />
           </SelectionToolbarItem>

@@ -74,7 +74,7 @@ export default function SelectionToolbarInfoDemo() {
         </p>
 
         <SelectionToolbar
-          container={containerRef.current}
+          container={containerRef}
           onSelectionChange={onSelectionChange}
         >
           <SelectionToolbarItem onSelect={onBold}>

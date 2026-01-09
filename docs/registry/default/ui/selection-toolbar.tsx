@@ -102,7 +102,7 @@ interface SelectionToolbarProps extends DivProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   onSelectionChange?: (text: string) => void;
-  container?: HTMLElement | null;
+  container?: HTMLElement | React.RefObject<HTMLElement | null> | null;
   portalContainer?: Element | DocumentFragment | null;
   side?: Side;
   sideOffset?: number;
@@ -150,6 +150,14 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     onOpenChange,
     onSelectionChange,
   });
+
+  const getContainer = React.useCallback((): HTMLElement | null => {
+    if (containerProp === undefined || containerProp === null) return null;
+    if (typeof containerProp === "object" && "current" in containerProp) {
+      return containerProp.current;
+    }
+    return containerProp;
+  }, [containerProp]);
 
   const store = React.useMemo<Store>(() => {
     let isBatching = false;
@@ -292,7 +300,6 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     () => ({
       padding: collisionPadding,
       boundary: boundary.filter(isNotNull),
-      // with `strategy: 'fixed'`, this is the only way to get it to respect boundaries
       altBoundary: hasExplicitBoundaries,
     }),
     [collisionPadding, boundary, hasExplicitBoundaries],
@@ -393,8 +400,10 @@ function SelectionToolbar(props: SelectionToolbarProps) {
       return;
     }
 
-    // Check if selection is within container
-    if (containerProp) {
+    if (containerProp !== undefined) {
+      const resolvedContainer = getContainer();
+      if (!resolvedContainer) return;
+
       const range = selection.getRangeAt(0);
       const commonAncestor = range.commonAncestorContainer;
       const element =
@@ -402,7 +411,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
           ? (commonAncestor as Element)
           : commonAncestor.parentElement;
 
-      if (!element || !containerProp.contains(element)) {
+      if (!element || !resolvedContainer.contains(element)) {
         closeToolbar();
         return;
       }
@@ -411,7 +420,6 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
 
-    // Check if anything has changed before batching updates
     const state = store.getState();
     const hasChanges =
       state.selectedText !== text ||
@@ -434,7 +442,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
         store.setState("open", true);
       });
     }
-  }, [containerProp, store, closeToolbar]);
+  }, [containerProp, getContainer, store, closeToolbar]);
 
   const scheduleUpdate = React.useCallback(() => {
     if (rafRef.current !== null) return;
@@ -447,10 +455,9 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   }, [store, updateSelection]);
 
   React.useEffect(() => {
-    const container = containerProp ?? document;
+    const container = getContainer() ?? document;
 
     function onMouseUp() {
-      // Use RAF to ensure selection is complete
       requestAnimationFrame(() => {
         updateSelection();
       });
@@ -473,13 +480,12 @@ function SelectionToolbar(props: SelectionToolbarProps) {
       document.removeEventListener("selectionchange", onSelectionChange);
       window.removeEventListener("scroll", scheduleUpdate);
       window.removeEventListener("resize", scheduleUpdate);
-      // Clean up any pending RAF
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
         rafRef.current = null;
       }
     };
-  }, [containerProp, updateSelection, closeToolbar, scheduleUpdate]);
+  }, [getContainer, updateSelection, closeToolbar, scheduleUpdate]);
 
   const clearSelection = React.useCallback(() => {
     const selection = window.getSelection();
@@ -528,14 +534,10 @@ function SelectionToolbar(props: SelectionToolbarProps) {
           ref={refs.setFloating}
           style={{
             ...floatingStyles,
-            // Keep off-page when measuring to prevent janky initial position
             transform: isPositioned
               ? floatingStyles.transform
               : "translate(0, -200%)",
             minWidth: "max-content",
-            // Hide the content if using the hide middleware and should be hidden
-            // Set visibility to hidden and disable pointer events so the UI behaves
-            // as if the SelectionToolbar isn't there at all
             ...(middlewareData.hide?.referenceHidden && {
               visibility: "hidden",
               pointerEvents: "none",
@@ -557,12 +559,9 @@ function SelectionToolbar(props: SelectionToolbarProps) {
               className,
             )}
             style={{
-              // Set transform origin based on placement for smooth animations
               transformOrigin: middlewareData.transformOrigin
                 ? `${middlewareData.transformOrigin.x} ${middlewareData.transformOrigin.y}`
                 : undefined,
-              // If the SelectionToolbar hasn't been placed yet (not all measurements done)
-              // we prevent animations so that users's animation don't kick in too early referring wrong sides
               animation: !isPositioned ? "none" : undefined,
               ...style,
             }}
@@ -632,8 +631,6 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
       pointerTypeRef.current = event.pointerType;
       propsRef.current.onPointerDown?.(event);
 
-      // Prevent the button from stealing focus from the contentEditable container
-      // when using a mouse. This is crucial for maintaining the focus ring.
       if (event.pointerType === "mouse") {
         event.preventDefault();
       }
@@ -646,7 +643,6 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
       propsRef.current.onClick?.(event);
       if (event.defaultPrevented) return;
 
-      // Handle selection on click when using touch or pen device
       if (pointerTypeRef.current !== "mouse") {
         onSelect();
       }
@@ -659,7 +655,6 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
       propsRef.current.onPointerUp?.(event);
       if (event.defaultPrevented) return;
 
-      // Handle selection on pointer up when using a mouse
       if (pointerTypeRef.current === "mouse") {
         onSelect();
       }
