@@ -277,38 +277,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "segmented-input": {
-      name: "segmented-input",
-      description: "",
-      type: "registry:ui",
-      registryDependencies: ["input"],
-      files: [{
-        path: "registry/default/ui/segmented-input.tsx",
-        type: "registry:ui",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/ui/segmented-input.tsx")),
-      source: "",
-      chunks: []
-    },
-    "selection-toolbar": {
-      name: "selection-toolbar",
-      description: "",
-      type: "registry:ui",
-      registryDependencies: ["button"],
-      files: [{
-        path: "registry/default/ui/selection-toolbar.tsx",
-        type: "registry:ui",
-        target: ""
-      },{
-        path: "registry/default/lib/compose-refs.ts",
-        type: "registry:lib",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/ui/selection-toolbar.tsx")),
-      source: "",
-      chunks: []
-    },
     "kanban": {
       name: "kanban",
       description: "",
@@ -496,6 +464,38 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/ui/scroll-spy.tsx")),
+      source: "",
+      chunks: []
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input"],
+      files: [{
+        path: "registry/default/ui/segmented-input.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/segmented-input.tsx")),
+      source: "",
+      chunks: []
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+      files: [{
+        path: "registry/default/ui/selection-toolbar.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/selection-toolbar.tsx")),
       source: "",
       chunks: []
     },

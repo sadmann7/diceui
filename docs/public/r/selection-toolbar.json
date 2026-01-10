@@ -5,7 +5,10 @@
     "@radix-ui/react-slot"
   ],
   "registryDependencies": [
-    "button"
+    "button",
+    "@diceui/use-as-ref",
+    "@diceui/use-isomorphic-layout-effect",
+    "@diceui/use-lazy-ref"
   ],
   "files": [
     {
