@@ -278,7 +278,7 @@ function useFocusTrap(
   ]);
 }
 
-function getDataState(open: boolean): string {
+function getDataState(open: boolean) {
   return open ? "open" : "closed";
 }
 
