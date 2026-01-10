@@ -3345,6 +3345,22 @@
       "type": "registry:example"
     },
     {
+      "name": "swap-animations-demo",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "swap"
+      ],
+      "files": [
+        {
+          "path": "examples/swap-animations-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
       "name": "stepper-form-demo",
       "dependencies": [
         "@hookform/resolvers/zod",

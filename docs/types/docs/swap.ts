@@ -28,6 +28,30 @@ export interface SwapProps extends EmptyProps<"div">, CompositionProps {
   activationMode?: "click" | "hover";
 
   /**
+   * The animation type for the swap transition.
+   *
+   * - `fade`: Simple opacity transition
+   * - `rotate`: Rotates 180 degrees
+   * - `flip`: 3D flip effect on y-axis
+   * - `scale`: Scales from/to 0
+   * - `slide-up`: Slides upward
+   * - `slide-down`: Slides downward
+   * - `slide-left`: Slides left
+   * - `slide-right`: Slides right
+   *
+   * @default "fade"
+   */
+  animation?:
+    | "fade"
+    | "rotate"
+    | "flip"
+    | "scale"
+    | "slide-up"
+    | "slide-down"
+    | "slide-left"
+    | "slide-right";
+
+  /**
    * Whether the swap is disabled.
    * @default false
    */

@@ -7,6 +7,18 @@ import { useAsRef } from "@/registry/default/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
+type ActivationMode = "click" | "hover";
+
+type Animation =
+  | "fade"
+  | "rotate"
+  | "flip"
+  | "scale"
+  | "slide-up"
+  | "slide-down"
+  | "slide-left"
+  | "slide-right";
+
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
@@ -48,7 +60,8 @@ interface SwapProps extends DivProps {
   swapped?: boolean;
   defaultSwapped?: boolean;
   onSwappedChange?: (swapped: boolean) => void;
-  activationMode?: "click" | "hover";
+  activationMode?: ActivationMode;
+  animation?: Animation;
   disabled?: boolean;
 }
 
@@ -58,12 +71,13 @@ function Swap(props: SwapProps) {
     defaultSwapped,
     onSwappedChange,
     activationMode = "click",
+    animation = "fade",
     disabled,
     asChild,
     className,
+    onClick: onClickProp,
     onMouseEnter: onMouseEnterProp,
     onMouseLeave: onMouseLeaveProp,
-    onClick: onClickProp,
     onKeyDown: onKeyDownProp,
     ...rootProps
   } = props;
@@ -188,6 +202,7 @@ function Swap(props: SwapProps) {
         tabIndex={isClickMode && !disabled ? 0 : undefined}
         aria-pressed={isClickMode ? swapped : undefined}
         data-slot="swap"
+        data-animation={animation}
         data-state={swapped ? "on" : "off"}
         data-disabled={disabled ? "" : undefined}
         {...rootProps}
@@ -217,8 +232,23 @@ function SwapOn(props: DivProps) {
       data-state={swapped ? "on" : "off"}
       {...onProps}
       className={cn(
-        "transition-opacity duration-200",
+        "transition-all duration-300",
+        // Fade (default)
         swapped ? "opacity-100" : "absolute opacity-0",
+        // Rotate
+        "[*[data-animation=rotate]_&]:data-[state=off]:rotate-180 [*[data-animation=rotate]_&]:data-[state=on]:rotate-0",
+        // Flip
+        "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(180deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(0deg)]",
+        // Scale
+        "[*[data-animation=scale]_&]:data-[state=off]:scale-0 [*[data-animation=scale]_&]:data-[state=on]:scale-100",
+        // Slide up
+        "[*[data-animation=slide-up]_&]:data-[state=off]:translate-y-2 [*[data-animation=slide-up]_&]:data-[state=on]:translate-y-0",
+        // Slide down
+        "[*[data-animation=slide-down]_&]:data-[state=off]:-translate-y-2 [*[data-animation=slide-down]_&]:data-[state=on]:translate-y-0",
+        // Slide left
+        "[*[data-animation=slide-left]_&]:data-[state=off]:translate-x-2 [*[data-animation=slide-left]_&]:data-[state=on]:translate-x-0",
+        // Slide right
+        "[*[data-animation=slide-right]_&]:data-[state=off]:-translate-x-2 [*[data-animation=slide-right]_&]:data-[state=on]:translate-x-0",
         className,
       )}
     />
@@ -238,8 +268,23 @@ function SwapOff(props: DivProps) {
       data-state={swapped ? "on" : "off"}
       {...offProps}
       className={cn(
-        "transition-opacity duration-200",
+        "transition-all duration-300",
+        // Fade (default)
         swapped ? "absolute opacity-0" : "opacity-100",
+        // Rotate
+        "[*[data-animation=rotate]_&]:data-[state=off]:rotate-0 [*[data-animation=rotate]_&]:data-[state=on]:rotate-180",
+        // Flip
+        "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(0deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(180deg)]",
+        // Scale
+        "[*[data-animation=scale]_&]:data-[state=off]:scale-100 [*[data-animation=scale]_&]:data-[state=on]:scale-0",
+        // Slide up
+        "[*[data-animation=slide-up]_&]:data-[state=off]:translate-y-0 [*[data-animation=slide-up]_&]:data-[state=on]:translate-y-2",
+        // Slide down
+        "[*[data-animation=slide-down]_&]:data-[state=off]:translate-y-0 [*[data-animation=slide-down]_&]:data-[state=on]:-translate-y-2",
+        // Slide left
+        "[*[data-animation=slide-left]_&]:data-[state=off]:translate-x-0 [*[data-animation=slide-left]_&]:data-[state=on]:translate-x-2",
+        // Slide right
+        "[*[data-animation=slide-right]_&]:data-[state=off]:translate-x-0 [*[data-animation=slide-right]_&]:data-[state=on]:-translate-x-2",
         className,
       )}
     />

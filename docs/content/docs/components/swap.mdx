@@ -57,6 +57,14 @@ return (
 )
 ```
 
+## Examples
+
+### Animations
+
+The swap component supports 8 different animation types: fade, rotate, flip, scale, slide-up, slide-down, slide-left, and slide-right.
+
+<ComponentTabs name="swap-animations-demo" />
+
 ## API Reference
 
 ### Swap
@@ -72,7 +80,11 @@ The main container component for swap functionality.
   data={[
     {
       title: "[data-state]",
-      value: "'on' | 'off'",
+      value: ["on", "off"],
+    },
+    {
+      title: "[data-animation]",
+      value: ["fade", "rotate", "flip", "scale", "slide-up", "slide-down", "slide-left", "slide-right"],
     },
     {
       title: "[data-disabled]",
@@ -94,7 +106,7 @@ The content shown when the swap is in the swapped state.
   data={[
     {
       title: "[data-state]",
-      value: "'on' | 'off'",
+      value: ["on", "off"],
     },
   ]}
 />
@@ -112,7 +124,7 @@ The content shown when the swap is in the default state.
   data={[
     {
       title: "[data-state]",
-      value: "'on' | 'off'",
+      value: ["on", "off"],
     },
   ]}
 />

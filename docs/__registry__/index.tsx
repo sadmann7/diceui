@@ -2943,6 +2943,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "swap-animations-demo": {
+      name: "swap-animations-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["swap"],
+      files: [{
+        path: "registry/default/examples/swap-animations-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/swap-animations-demo.tsx")),
+      source: "",
+      chunks: []
+    },
     "stepper-form-demo": {
       name: "stepper-form-demo",
       description: "",
