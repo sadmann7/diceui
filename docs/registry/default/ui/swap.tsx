@@ -7,20 +7,12 @@ import { useAsRef } from "@/registry/default/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
-type ActivationMode = "click" | "hover";
-
-type Animation =
-  | "fade"
-  | "rotate"
-  | "flip"
-  | "scale"
-  | "slide-up"
-  | "slide-down"
-  | "slide-left"
-  | "slide-right";
-
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
+}
+
+function getDataState(swapped: boolean) {
+  return swapped ? "on" : "off";
 }
 
 interface StoreState {
@@ -60,8 +52,8 @@ interface SwapProps extends DivProps {
   swapped?: boolean;
   defaultSwapped?: boolean;
   onSwappedChange?: (swapped: boolean) => void;
-  activationMode?: ActivationMode;
-  animation?: Animation;
+  activationMode?: "click" | "hover";
+  animation?: "fade" | "rotate" | "flip" | "scale";
   disabled?: boolean;
 }
 
@@ -199,12 +191,13 @@ function Swap(props: SwapProps) {
     <StoreContext.Provider value={store}>
       <RootPrimitive
         role={isClickMode ? "button" : undefined}
-        tabIndex={isClickMode && !disabled ? 0 : undefined}
         aria-pressed={isClickMode ? swapped : undefined}
+        aria-disabled={disabled}
         data-slot="swap"
         data-animation={animation}
-        data-state={swapped ? "on" : "off"}
+        data-state={getDataState(swapped)}
         data-disabled={disabled ? "" : undefined}
+        tabIndex={isClickMode && !disabled ? 0 : undefined}
         {...rootProps}
         className={cn(
           "relative inline-flex cursor-pointer select-none items-center justify-center data-disabled:cursor-not-allowed data-disabled:opacity-50",
@@ -229,17 +222,13 @@ function SwapOn(props: DivProps) {
   return (
     <OnPrimitive
       data-slot="swap-on"
-      data-state={swapped ? "on" : "off"}
+      data-state={getDataState(swapped)}
       {...onProps}
       className={cn(
-        "transition-all duration-300 data-[state=off]:absolute data-[state=off]:opacity-0 data-[state=on]:opacity-100",
-        "[*[data-animation=rotate]_&]:data-[state=off]:rotate-180 [*[data-animation=rotate]_&]:data-[state=on]:rotate-0",
-        "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(180deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(0deg)]",
-        "[*[data-animation=scale]_&]:data-[state=off]:scale-0 [*[data-animation=scale]_&]:data-[state=on]:scale-100",
-        "[*[data-animation=slide-up]_&]:data-[state=off]:translate-y-2 [*[data-animation=slide-up]_&]:data-[state=on]:translate-y-0",
-        "[*[data-animation=slide-down]_&]:data-[state=off]:-translate-y-2 [*[data-animation=slide-down]_&]:data-[state=on]:translate-y-0",
-        "[*[data-animation=slide-left]_&]:data-[state=off]:translate-x-2 [*[data-animation=slide-left]_&]:data-[state=on]:translate-x-0",
-        "[*[data-animation=slide-right]_&]:data-[state=off]:-translate-x-2 [*[data-animation=slide-right]_&]:data-[state=on]:translate-x-0",
+        "transition-all duration-300 data-[state=off]:absolute data-[state=off]:opacity-0 data-[state=on]:opacity-100 motion-reduce:transition-none",
+        "[*[data-animation=rotate]_&]:data-[state=off]:rotate-180 [*[data-animation=rotate]_&]:data-[state=on]:rotate-0 motion-reduce:[*[data-animation=rotate]_&]:data-[state=off]:rotate-0",
+        "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(180deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(0deg)] motion-reduce:[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(0deg)]",
+        "[*[data-animation=scale]_&]:data-[state=off]:scale-0 [*[data-animation=scale]_&]:data-[state=on]:scale-100 motion-reduce:[*[data-animation=scale]_&]:data-[state=off]:scale-100",
         className,
       )}
     />
@@ -256,17 +245,13 @@ function SwapOff(props: DivProps) {
   return (
     <OffPrimitive
       data-slot="swap-off"
-      data-state={swapped ? "on" : "off"}
+      data-state={getDataState(swapped)}
       {...offProps}
       className={cn(
-        "transition-all duration-300 data-[state=on]:absolute data-[state=off]:opacity-100 data-[state=on]:opacity-0",
-        "[*[data-animation=rotate]_&]:data-[state=off]:rotate-0 [*[data-animation=rotate]_&]:data-[state=on]:rotate-180",
-        "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(0deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(180deg)]",
-        "[*[data-animation=scale]_&]:data-[state=off]:scale-100 [*[data-animation=scale]_&]:data-[state=on]:scale-0",
-        "[*[data-animation=slide-up]_&]:data-[state=off]:translate-y-0 [*[data-animation=slide-up]_&]:data-[state=on]:translate-y-2",
-        "[*[data-animation=slide-down]_&]:data-[state=off]:translate-y-0 [*[data-animation=slide-down]_&]:data-[state=on]:-translate-y-2",
-        "[*[data-animation=slide-left]_&]:data-[state=off]:translate-x-0 [*[data-animation=slide-left]_&]:data-[state=on]:translate-x-2",
-        "[*[data-animation=slide-right]_&]:data-[state=off]:translate-x-0 [*[data-animation=slide-right]_&]:data-[state=on]:-translate-x-2",
+        "transition-all duration-300 data-[state=on]:absolute data-[state=off]:opacity-100 data-[state=on]:opacity-0 motion-reduce:transition-none",
+        "[*[data-animation=rotate]_&]:data-[state=off]:rotate-0 [*[data-animation=rotate]_&]:data-[state=on]:rotate-180 motion-reduce:[*[data-animation=rotate]_&]:data-[state=on]:rotate-0",
+        "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(0deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(180deg)] motion-reduce:[*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(0deg)]",
+        "[*[data-animation=scale]_&]:data-[state=off]:scale-100 [*[data-animation=scale]_&]:data-[state=on]:scale-0 motion-reduce:[*[data-animation=scale]_&]:data-[state=on]:scale-100",
         className,
       )}
     />
