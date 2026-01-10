@@ -206,6 +206,7 @@ function Swap(props: SwapProps) {
 
 function SwapOn(props: DivProps) {
   const { asChild, className, ...onProps } = props;
+
   const swapped = useStore((state) => state.swapped);
 
   const OnPrimitive = asChild ? Slot : "div";
@@ -226,6 +227,7 @@ function SwapOn(props: DivProps) {
 
 function SwapOff(props: DivProps) {
   const { asChild, className, ...offProps } = props;
+
   const swapped = useStore((state) => state.swapped);
 
   const OffPrimitive = asChild ? Slot : "div";
