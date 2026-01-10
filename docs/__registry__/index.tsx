@@ -599,7 +599,7 @@ export const Index: Record<string, any> = {
       name: "swap",
       description: "",
       type: "registry:ui",
-      registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+      registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
       files: [{
         path: "registry/default/ui/swap.tsx",
         type: "registry:ui",

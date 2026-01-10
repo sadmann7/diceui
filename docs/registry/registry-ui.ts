@@ -658,7 +658,11 @@ export const ui: Registry["items"] = [
     name: "swap",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/swap.tsx",

@@ -728,6 +728,7 @@
     ],
     "registryDependencies": [
       "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref"
     ],
     "files": [
