@@ -7,8 +7,6 @@ import { useAsRef } from "@/registry/default/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
-const ROOT_NAME = "Swap";
-
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
@@ -35,7 +33,7 @@ function useStore<T>(
   const store = ogStore ?? contextStore;
 
   if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(`\`useStore\` must be used within \`Swap\``);
   }
 
   const getSnapshot = React.useCallback(
@@ -84,6 +82,8 @@ function Swap(props: SwapProps) {
     onKeyDown: onKeyDownProp,
   });
 
+  const isClickMode = activationMode === "click";
+
   const store = React.useMemo<Store>(() => {
     return {
       subscribe: (cb) => {
@@ -128,11 +128,11 @@ function Swap(props: SwapProps) {
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       propsRef.current.onClick?.(event);
-      if (event.defaultPrevented || activationMode !== "click") return;
+      if (event.defaultPrevented || !isClickMode) return;
 
       onToggle();
     },
-    [propsRef, activationMode, onToggle],
+    [propsRef, isClickMode, onToggle],
   );
 
   const onMouseEnter = React.useCallback(
@@ -168,11 +168,7 @@ function Swap(props: SwapProps) {
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       propsRef.current.onKeyDown?.(event);
-      if (
-        event.defaultPrevented ||
-        activationMode !== "click" ||
-        propsRef.current.disabled
-      )
+      if (event.defaultPrevented || !isClickMode || propsRef.current.disabled)
         return;
 
       if (event.key === "Enter" || event.key === " ") {
@@ -180,7 +176,7 @@ function Swap(props: SwapProps) {
         onToggle();
       }
     },
-    [propsRef, activationMode, onToggle],
+    [propsRef, isClickMode, onToggle],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
@@ -188,9 +184,9 @@ function Swap(props: SwapProps) {
   return (
     <StoreContext.Provider value={store}>
       <RootPrimitive
-        role={activationMode === "click" ? "button" : undefined}
-        tabIndex={activationMode === "click" && !disabled ? 0 : undefined}
-        aria-pressed={activationMode === "click" ? swapped : undefined}
+        role={isClickMode ? "button" : undefined}
+        tabIndex={isClickMode && !disabled ? 0 : undefined}
+        aria-pressed={isClickMode ? swapped : undefined}
         data-slot="swap"
         data-state={swapped ? "on" : "off"}
         data-disabled={disabled ? "" : undefined}
