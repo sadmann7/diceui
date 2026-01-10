@@ -232,22 +232,13 @@ function SwapOn(props: DivProps) {
       data-state={swapped ? "on" : "off"}
       {...onProps}
       className={cn(
-        "transition-all duration-300",
-        // Fade (default)
-        swapped ? "opacity-100" : "absolute opacity-0",
-        // Rotate
+        "transition-all duration-300 data-[state=off]:absolute data-[state=off]:opacity-0 data-[state=on]:opacity-100",
         "[*[data-animation=rotate]_&]:data-[state=off]:rotate-180 [*[data-animation=rotate]_&]:data-[state=on]:rotate-0",
-        // Flip
         "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(180deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(0deg)]",
-        // Scale
         "[*[data-animation=scale]_&]:data-[state=off]:scale-0 [*[data-animation=scale]_&]:data-[state=on]:scale-100",
-        // Slide up
         "[*[data-animation=slide-up]_&]:data-[state=off]:translate-y-2 [*[data-animation=slide-up]_&]:data-[state=on]:translate-y-0",
-        // Slide down
         "[*[data-animation=slide-down]_&]:data-[state=off]:-translate-y-2 [*[data-animation=slide-down]_&]:data-[state=on]:translate-y-0",
-        // Slide left
         "[*[data-animation=slide-left]_&]:data-[state=off]:translate-x-2 [*[data-animation=slide-left]_&]:data-[state=on]:translate-x-0",
-        // Slide right
         "[*[data-animation=slide-right]_&]:data-[state=off]:-translate-x-2 [*[data-animation=slide-right]_&]:data-[state=on]:translate-x-0",
         className,
       )}
@@ -268,22 +259,13 @@ function SwapOff(props: DivProps) {
       data-state={swapped ? "on" : "off"}
       {...offProps}
       className={cn(
-        "transition-all duration-300",
-        // Fade (default)
-        swapped ? "absolute opacity-0" : "opacity-100",
-        // Rotate
+        "transition-all duration-300 data-[state=on]:absolute data-[state=off]:opacity-100 data-[state=on]:opacity-0",
         "[*[data-animation=rotate]_&]:data-[state=off]:rotate-0 [*[data-animation=rotate]_&]:data-[state=on]:rotate-180",
-        // Flip
         "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(0deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(180deg)]",
-        // Scale
         "[*[data-animation=scale]_&]:data-[state=off]:scale-100 [*[data-animation=scale]_&]:data-[state=on]:scale-0",
-        // Slide up
         "[*[data-animation=slide-up]_&]:data-[state=off]:translate-y-0 [*[data-animation=slide-up]_&]:data-[state=on]:translate-y-2",
-        // Slide down
         "[*[data-animation=slide-down]_&]:data-[state=off]:translate-y-0 [*[data-animation=slide-down]_&]:data-[state=on]:-translate-y-2",
-        // Slide left
         "[*[data-animation=slide-left]_&]:data-[state=off]:translate-x-0 [*[data-animation=slide-left]_&]:data-[state=on]:translate-x-2",
-        // Slide right
         "[*[data-animation=slide-right]_&]:data-[state=off]:translate-x-0 [*[data-animation=slide-right]_&]:data-[state=on]:-translate-x-2",
         className,
       )}
