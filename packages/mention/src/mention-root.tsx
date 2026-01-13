@@ -234,6 +234,14 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
     const [mentions, setMentions] = React.useState<Mention[]>([]);
     const [isPasting, setIsPasting] = React.useState(false);
 
+    // Reset mentions array when value is cleared
+    React4.useEffect(() => {
+      // If there are no selected values but mentions still exist, clear them
+      if (value.length === 0 && mentions.length > 0) {
+        setMentions([]);
+      }
+    }, [value, mentions]);
+
     const { filterStore, onItemsFilter, getIsItemVisible } = useFilterStore({
       itemMap,
       onFilter,
