@@ -6,9 +6,24 @@
       "cache": false,
       "persistent": true
     },
+    "docs#dev": {
+      "dependsOn": ["^build", "docs#generate:content"],
+      "cache": false,
+      "persistent": true
+    },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", ".nuxt/**", ".source/**"]
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        ".nuxt/**",
+        ".source/**"
+      ]
+    },
+    "docs#build": {
+      "dependsOn": ["^build", "docs#generate:content"],
+      "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {
       "cache": false,
@@ -31,7 +46,7 @@
       "outputs": [".source/**"]
     },
     "check": {
-      "dependsOn": ["^lint", "^typecheck"],
+      "dependsOn": ["lint", "typecheck"],
       "cache": false,
       "outputs": []
     },
