@@ -1,7 +1,7 @@
 "use client";
 
+import { Loader2, TrashIcon } from "lucide-react";
 import * as React from "react";
-import { TrashIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   ResponsiveDialog,
@@ -17,13 +17,13 @@ import {
 export default function ResponsiveDialogConfirmDemo() {
   const [isDeleting, setIsDeleting] = React.useState(false);
 
-  function onDelete() {
+  const onDelete = React.useCallback(() => {
     setIsDeleting(true);
     // Simulate deletion
     setTimeout(() => {
       setIsDeleting(false);
     }, 1000);
-  }
+  }, []);
 
   return (
     <ResponsiveDialog>
@@ -41,12 +41,17 @@ export default function ResponsiveDialogConfirmDemo() {
             of its data. This action cannot be undone.
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
-        <ResponsiveDialogFooter className="gap-2 sm:gap-0">
+        <ResponsiveDialogFooter>
           <ResponsiveDialogClose asChild>
             <Button variant="outline">Cancel</Button>
           </ResponsiveDialogClose>
-          <Button variant="destructive" onClick={onDelete} disabled={isDeleting}>
-            {isDeleting ? "Deleting..." : "Delete"}
+          <Button
+            variant="destructive"
+            onClick={onDelete}
+            disabled={isDeleting}
+          >
+            {isDeleting && <Loader2 className="size-4 animate-spin" />}
+            Delete
           </Button>
         </ResponsiveDialogFooter>
       </ResponsiveDialogContent>

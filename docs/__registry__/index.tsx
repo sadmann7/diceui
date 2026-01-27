@@ -431,6 +431,20 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-mobile"],
+      files: [{
+        path: "registry/default/ui/responsive-dialog.tsx",
+        type: "registry:ui",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/responsive-dialog.tsx")),
+      source: "",
+      chunks: []
+    },
     "scroller": {
       name: "scroller",
       description: "",
@@ -2478,6 +2492,34 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/relative-time-card-variants-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "responsive-dialog-demo": {
+      name: "responsive-dialog-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","input","label","responsive-dialog"],
+      files: [{
+        path: "registry/default/examples/responsive-dialog-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/responsive-dialog-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "responsive-dialog-confirm-demo": {
+      name: "responsive-dialog-confirm-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["button","responsive-dialog"],
+      files: [{
+        path: "registry/default/examples/responsive-dialog-confirm-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/responsive-dialog-confirm-demo.tsx")),
       source: "",
       chunks: []
     },
