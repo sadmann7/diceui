@@ -266,21 +266,31 @@ The portal container for the dialog/drawer.
 
 ## Accessibility
 
+Adheres to the [Dialog WAI-ARIA design pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/).
+
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
   data={[
     {
-      keys: ["Escape"],
-      description: "Closes the dialog/drawer.",
+      keys: ["Space"],
+      description: "Opens/closes the dialog when focus is on the trigger.",
+    },
+    {
+      keys: ["Enter"],
+      description: "Opens/closes the dialog when focus is on the trigger.",
     },
     {
       keys: ["Tab"],
-      description: "Moves focus to the next focusable element within the dialog/drawer.",
+      description: "Moves focus to the next focusable element.",
     },
     {
       keys: ["Shift + Tab"],
-      description: "Moves focus to the previous focusable element within the dialog/drawer.",
+      description: "Moves focus to the previous focusable element.",
+    },
+    {
+      keys: ["Escape"],
+      description: "Closes the dialog/drawer and moves focus to the trigger.",
     },
   ]}
 />
