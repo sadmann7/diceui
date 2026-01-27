@@ -1438,6 +1438,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "responsive-dialog-confirm-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["button", "responsive-dialog"],
+    files: [
+      {
+        path: "examples/responsive-dialog-confirm-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "scroller-demo",
     type: "registry:example",
     registryDependencies: ["scroller"],
