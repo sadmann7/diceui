@@ -1,0 +1,19 @@
+{
+  "name": "responsive-dialog-confirm-demo",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "responsive-dialog"
+  ],
+  "files": [
+    {
+      "path": "examples/responsive-dialog-confirm-demo.tsx",
+      "content": "\"use client\";\n\nimport { Loader2, TrashIcon } from \"lucide-react\";\nimport * as React from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport {\n  ResponsiveDialog,\n  ResponsiveDialogClose,\n  ResponsiveDialogContent,\n  ResponsiveDialogDescription,\n  ResponsiveDialogFooter,\n  ResponsiveDialogHeader,\n  ResponsiveDialogTitle,\n  ResponsiveDialogTrigger,\n} from \"@/registry/default/ui/responsive-dialog\";\n\nexport default function ResponsiveDialogConfirmDemo() {\n  const [isDeleting, setIsDeleting] = React.useState(false);\n\n  const onDelete = React.useCallback(() => {\n    setIsDeleting(true);\n    // Simulate deletion\n    setTimeout(() => {\n      setIsDeleting(false);\n    }, 1000);\n  }, []);\n\n  return (\n    <ResponsiveDialog>\n      <ResponsiveDialogTrigger asChild>\n        <Button variant=\"destructive\">\n          <TrashIcon />\n          Delete Project\n        </Button>\n      </ResponsiveDialogTrigger>\n      <ResponsiveDialogContent>\n        <ResponsiveDialogHeader>\n          <ResponsiveDialogTitle>Delete project?</ResponsiveDialogTitle>\n          <ResponsiveDialogDescription>\n            This will permanently delete &quot;My Awesome Project&quot; and all\n            of its data. This action cannot be undone.\n          </ResponsiveDialogDescription>\n        </ResponsiveDialogHeader>\n        <ResponsiveDialogFooter>\n          <ResponsiveDialogClose asChild>\n            <Button variant=\"outline\">Cancel</Button>\n          </ResponsiveDialogClose>\n          <Button\n            variant=\"destructive\"\n            onClick={onDelete}\n            disabled={isDeleting}\n          >\n            {isDeleting && <Loader2 className=\"size-4 animate-spin\" />}\n            Delete\n          </Button>\n        </ResponsiveDialogFooter>\n      </ResponsiveDialogContent>\n    </ResponsiveDialog>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

@@ -495,6 +495,25 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "responsive-dialog",
+    type: "registry:ui",
+    dependencies: ["vaul"],
+    registryDependencies: [
+      "dialog",
+      "drawer",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+      "@diceui/use-mobile",
+    ],
+    files: [
+      {
+        path: "ui/responsive-dialog.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "scroller",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],

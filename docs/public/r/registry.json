@@ -560,6 +560,27 @@
       "type": "registry:ui"
     },
     {
+      "name": "responsive-dialog",
+      "dependencies": [
+        "vaul"
+      ],
+      "registryDependencies": [
+        "dialog",
+        "drawer",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-mobile"
+      ],
+      "files": [
+        {
+          "path": "ui/responsive-dialog.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
       "name": "scroller",
       "dependencies": [
         "@radix-ui/react-slot"
@@ -2842,6 +2863,39 @@
       "files": [
         {
           "path": "examples/relative-time-card-variants-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "responsive-dialog-demo",
+      "registryDependencies": [
+        "button",
+        "input",
+        "label",
+        "responsive-dialog"
+      ],
+      "files": [
+        {
+          "path": "examples/responsive-dialog-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "responsive-dialog-confirm-demo",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "responsive-dialog"
+      ],
+      "files": [
+        {
+          "path": "examples/responsive-dialog-confirm-demo.tsx",
           "type": "registry:example"
         }
       ],

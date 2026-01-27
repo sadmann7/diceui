@@ -80,6 +80,8 @@ function Swap(props: SwapProps) {
   }));
 
   const propsRef = useAsRef({
+    activationMode,
+    animation,
     disabled,
     onSwappedChange,
     onClick: onClickProp,
@@ -134,11 +136,12 @@ function Swap(props: SwapProps) {
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       propsRef.current.onClick?.(event);
-      if (event.defaultPrevented || !isClickMode) return;
+      if (event.defaultPrevented || propsRef.current.activationMode !== "click")
+        return;
 
       onToggle();
     },
-    [propsRef, isClickMode, onToggle],
+    [propsRef, onToggle],
   );
 
   const onMouseEnter = React.useCallback(
@@ -174,7 +177,11 @@ function Swap(props: SwapProps) {
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       propsRef.current.onKeyDown?.(event);
-      if (event.defaultPrevented || !isClickMode || propsRef.current.disabled)
+      if (
+        event.defaultPrevented ||
+        propsRef.current.activationMode !== "click" ||
+        propsRef.current.disabled
+      )
         return;
 
       if (event.key === "Enter" || event.key === " ") {
@@ -182,7 +189,7 @@ function Swap(props: SwapProps) {
         onToggle();
       }
     },
-    [propsRef, isClickMode, onToggle],
+    [propsRef, onToggle],
   );
 
   const RootPrimitive = asChild ? Slot : "div";

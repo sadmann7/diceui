@@ -536,6 +536,27 @@
     "type": "registry:ui"
   },
   {
+    "name": "responsive-dialog",
+    "dependencies": [
+      "vaul"
+    ],
+    "registryDependencies": [
+      "dialog",
+      "drawer",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+      "@diceui/use-mobile"
+    ],
+    "files": [
+      {
+        "path": "ui/responsive-dialog.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "type": "registry:ui"
+  },
+  {
     "name": "scroller",
     "dependencies": [
       "@radix-ui/react-slot"

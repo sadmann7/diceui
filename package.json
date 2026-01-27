@@ -19,8 +19,8 @@
     "docs:dev": "turbo run dev --filter=docs",
     "lint": "biome check .",
     "lint:fix": "biome check . --write",
-    "typecheck": "turbo typecheck",
-    "check": "turbo lint typecheck",
+    "typecheck": "turbo run typecheck",
+    "check": "turbo run lint typecheck",
     "test": "turbo run test",
     "release": "changeset publish"
   },
