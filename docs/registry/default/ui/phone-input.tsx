@@ -450,7 +450,7 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
             )}
           </>
         ) : (
-          <span className="text-muted-foreground">Select</span>
+          <div className="h-4 w-16 rounded bg-muted/50" />
         )}
         <ChevronDown className="size-4 opacity-50" />
       </PopoverTrigger>
