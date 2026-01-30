@@ -24,8 +24,6 @@ import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorph
 import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "PhoneInput";
-const LABEL_NAME = "PhoneInputLabel";
-const GROUP_NAME = "PhoneInputGroup";
 const COUNTRY_SELECT_NAME = "PhoneInputCountrySelect";
 const FIELD_NAME = "PhoneInputField";
 
@@ -145,8 +143,6 @@ function useStore<T>(
 
 interface PhoneInputContextValue {
   rootId: string;
-  inputId: string;
-  labelId: string;
   countries: Country[];
   placeholder: string;
   disabled?: boolean;
@@ -216,9 +212,6 @@ function PhoneInput(props: PhoneInputProps) {
   const instanceId = React.useId();
   const rootId = id ?? instanceId;
 
-  const inputId = React.useId();
-  const labelId = React.useId();
-
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
   );
@@ -284,8 +277,6 @@ function PhoneInput(props: PhoneInputProps) {
   const contextValue = React.useMemo<PhoneInputContextValue>(
     () => ({
       rootId,
-      inputId,
-      labelId,
       countries,
       placeholder,
       disabled,
@@ -297,8 +288,6 @@ function PhoneInput(props: PhoneInputProps) {
     }),
     [
       rootId,
-      inputId,
-      labelId,
       countries,
       placeholder,
       disabled,
@@ -321,11 +310,18 @@ function PhoneInput(props: PhoneInputProps) {
     <StoreContext.Provider value={store}>
       <PhoneInputContext.Provider value={contextValue}>
         <RootPrimitive
+          role="group"
           data-slot="phone-input"
+          data-disabled={disabled ? "" : undefined}
+          data-invalid={invalid ? "" : undefined}
+          data-readonly={readOnly ? "" : undefined}
           {...rootProps}
           id={id}
           ref={composedRef}
-          className={cn("flex min-w-0 flex-col gap-2", className)}
+          className={cn(
+            "relative flex h-10 w-full items-center overflow-hidden rounded-md border border-input bg-background transition-colors has-[[data-slot=phone-input-field]:focus-visible]:outline-hidden has-[[data-slot=phone-input-field]:focus-visible]:ring-1 has-[[data-slot=phone-input-field]:focus-visible]:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50",
+            className,
+          )}
         >
           {children}
         </RootPrimitive>
@@ -342,61 +338,6 @@ function PhoneInput(props: PhoneInputProps) {
         )}
       </PhoneInputContext.Provider>
     </StoreContext.Provider>
-  );
-}
-
-interface PhoneInputLabelProps extends React.ComponentProps<"label"> {
-  asChild?: boolean;
-}
-
-function PhoneInputLabel(props: PhoneInputLabelProps) {
-  const { asChild, className, children, ref, ...labelProps } = props;
-  const context = usePhoneInputContext(LABEL_NAME);
-
-  const LabelPrimitive = asChild ? Slot : "label";
-
-  return (
-    <LabelPrimitive
-      data-disabled={context.disabled ? "" : undefined}
-      data-invalid={context.invalid ? "" : undefined}
-      data-required={context.required ? "" : undefined}
-      data-slot="phone-input-label"
-      {...labelProps}
-      ref={ref}
-      id={context.labelId}
-      htmlFor={context.inputId}
-      className={cn(
-        "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 data-required:after:ml-0.5 data-required:after:text-destructive data-required:after:content-['*']",
-        className,
-      )}
-    >
-      {children}
-    </LabelPrimitive>
-  );
-}
-
-interface PhoneInputGroupProps extends React.ComponentProps<"div"> {}
-
-function PhoneInputGroup(props: PhoneInputGroupProps) {
-  const { className, children, ref, ...groupProps } = props;
-  const context = usePhoneInputContext(GROUP_NAME);
-
-  return (
-    <div
-      role="group"
-      data-slot="phone-input-group"
-      data-disabled={context.disabled ? "" : undefined}
-      data-invalid={context.invalid ? "" : undefined}
-      data-readonly={context.readOnly ? "" : undefined}
-      {...groupProps}
-      ref={ref}
-      className={cn(
-        "relative flex h-10 w-full items-center overflow-hidden rounded-md border border-input bg-background transition-colors has-[[data-slot=phone-input-field]:focus-visible]:outline-hidden has-[[data-slot=phone-input-field]:focus-visible]:ring-1 has-[[data-slot=phone-input-field]:focus-visible]:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50",
-        className,
-      )}
-    >
-      {children}
-    </div>
   );
 }
 
@@ -527,8 +468,6 @@ function PhoneInputField(props: PhoneInputFieldProps) {
       readOnly={isReadOnly}
       required={isRequired}
       {...inputProps}
-      id={context.inputId}
-      aria-labelledby={context.labelId}
       ref={ref}
       placeholder={context.placeholder}
       value={value}
@@ -543,8 +482,6 @@ function PhoneInputField(props: PhoneInputFieldProps) {
 
 export {
   PhoneInput,
-  PhoneInputLabel,
-  PhoneInputGroup,
   PhoneInputCountrySelect,
   PhoneInputField,
   DEFAULT_COUNTRIES,

@@ -4,8 +4,6 @@ import {
   PhoneInput,
   PhoneInputCountrySelect,
   PhoneInputField,
-  PhoneInputGroup,
-  PhoneInputLabel,
 } from "@/registry/default/ui/phone-input";
 
 const NORTH_AMERICAN_COUNTRIES: Country[] = [
@@ -21,11 +19,8 @@ export default function PhoneInputCustomCountriesDemo() {
       defaultCountry="US"
       countries={NORTH_AMERICAN_COUNTRIES}
     >
-      <PhoneInputLabel>Phone Number (North America only)</PhoneInputLabel>
-      <PhoneInputGroup>
-        <PhoneInputCountrySelect />
-        <PhoneInputField />
-      </PhoneInputGroup>
+      <PhoneInputCountrySelect />
+      <PhoneInputField />
     </PhoneInput>
   );
 }

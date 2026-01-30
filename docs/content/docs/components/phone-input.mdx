@@ -60,19 +60,14 @@ Import the parts, and compose them together.
 ```tsx
 import {
   PhoneInput,
-  PhoneInputLabel,
-  PhoneInputGroup,
   PhoneInputCountrySelect,
   PhoneInputField,
 } from "@/components/ui/phone-input";
 
 return (
   <PhoneInput>
-    <PhoneInputLabel />
-    <PhoneInputGroup>
-      <PhoneInputCountrySelect />
-      <PhoneInputField />
-    </PhoneInputGroup>
+    <PhoneInputCountrySelect />
+    <PhoneInputField />
   </PhoneInput>
 )
 ```
@@ -95,59 +90,11 @@ Use the phone input component in a form with validation.
 
 ### PhoneInput
 
-The main container component for phone input functionality.
+The root container component that acts as both the wrapper and input group. Handles layout, borders, and focus states.
 
 <AutoTypeTable
   path="./types/docs/phone-input.ts"
   name="PhoneInputProps"
-/>
-
-<DataAttributesTable
-  data={[
-    {
-      title: "[data-slot]",
-      value: "phone-input",
-    },
-  ]}
-/>
-
-### PhoneInputLabel
-
-The label component for the phone input field.
-
-<AutoTypeTable
-  path="./types/docs/phone-input.ts"
-  name="PhoneInputLabelProps"
-/>
-
-<DataAttributesTable
-  data={[
-    {
-      title: "[data-disabled]",
-      value: "Present when the phone input is disabled",
-    },
-    {
-      title: "[data-invalid]",
-      value: "Present when the phone input is invalid",
-    },
-    {
-      title: "[data-required]",
-      value: "Present when the phone input is required",
-    },
-    {
-      title: "[data-slot]",
-      value: "phone-input-label",
-    },
-  ]}
-/>
-
-### PhoneInputGroup
-
-The container component that groups the country select and input field. Similar to an input group pattern.
-
-<AutoTypeTable
-  path="./types/docs/phone-input.ts"
-  name="PhoneInputGroupProps"
 />
 
 <DataAttributesTable
@@ -166,7 +113,7 @@ The container component that groups the country select and input field. Similar 
     },
     {
       title: "[data-slot]",
-      value: "phone-input-group",
+      value: "phone-input",
     },
   ]}
 />
@@ -182,14 +129,6 @@ The button component that triggers the country dropdown. Uses Popover and Comman
 
 <DataAttributesTable
   data={[
-    {
-      title: "[data-disabled]",
-      value: "Present when the country select is disabled",
-    },
-    {
-      title: "[data-readonly]",
-      value: "Present when the country select is read-only",
-    },
     {
       title: "[data-slot]",
       value: "phone-input-country-select",
