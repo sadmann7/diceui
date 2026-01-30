@@ -296,7 +296,7 @@ function PhoneInput(props: PhoneInputProps) {
 
   // Detect locale on client after hydration to avoid SSR mismatch
   React.useEffect(() => {
-    // Only auto-detect if no country is set and autoDetect is enabled
+    // Only auto-detect once on mount if no country is set
     if (autoDetect && !countryProp && !defaultCountry && !country) {
       const detectedCountry =
         getCountryFromLocale(countries, locale) || countries[0]?.code;
@@ -304,7 +304,8 @@ function PhoneInput(props: PhoneInputProps) {
         store.setState("country", detectedCountry);
       }
     }
-  }, [autoDetect, countryProp, defaultCountry, country, countries, locale, store]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
