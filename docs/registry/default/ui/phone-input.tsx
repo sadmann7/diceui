@@ -97,6 +97,11 @@ function getCountryFromLocale(
   countries: Country[],
   locale?: string,
 ): string | undefined {
+  // Skip locale detection during SSR to avoid hydration mismatch
+  if (typeof window === "undefined" && !locale) {
+    return undefined;
+  }
+
   const userLocale =
     locale || (typeof navigator !== "undefined" ? navigator.language : "");
 
@@ -244,10 +249,16 @@ function PhoneInput(props: PhoneInputProps) {
     let initialCountry = countryProp;
 
     if (!initialCountry && autoDetect) {
-      initialCountry =
-        defaultCountry ||
-        getCountryFromLocale(countries, locale) ||
-        countries[0]?.code;
+      // During SSR, skip locale detection and use defaultCountry or empty
+      // This prevents hydration mismatches between server and client
+      if (typeof window === "undefined") {
+        initialCountry = defaultCountry;
+      } else {
+        initialCountry =
+          defaultCountry ||
+          getCountryFromLocale(countries, locale) ||
+          countries[0]?.code;
+      }
     }
 
     return {
