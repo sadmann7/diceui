@@ -294,6 +294,18 @@ function PhoneInput(props: PhoneInputProps) {
   const value = useStore((state) => state.value, store);
   const country = useStore((state) => state.country, store);
 
+  // Detect locale on client after hydration to avoid SSR mismatch
+  React.useEffect(() => {
+    // Only auto-detect if no country is set and autoDetect is enabled
+    if (autoDetect && !countryProp && !defaultCountry && !country) {
+      const detectedCountry =
+        getCountryFromLocale(countries, locale) || countries[0]?.code;
+      if (detectedCountry) {
+        store.setState("country", detectedCountry);
+      }
+    }
+  }, [autoDetect, countryProp, defaultCountry, country, countries, locale, store]);
+
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
