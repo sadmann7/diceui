@@ -4,6 +4,7 @@ import {
   PhoneInput,
   PhoneInputCountrySelect,
   PhoneInputField,
+  PhoneInputGroup,
   PhoneInputLabel,
 } from "@/registry/default/ui/phone-input";
 
@@ -21,10 +22,10 @@ export default function PhoneInputCustomCountriesDemo() {
       countries={NORTH_AMERICAN_COUNTRIES}
     >
       <PhoneInputLabel>Phone Number (North America only)</PhoneInputLabel>
-      <div className="flex">
+      <PhoneInputGroup>
         <PhoneInputCountrySelect />
         <PhoneInputField />
-      </div>
+      </PhoneInputGroup>
     </PhoneInput>
   );
 }

@@ -16,6 +16,7 @@ import {
   PhoneInput,
   PhoneInputCountrySelect,
   PhoneInputField,
+  PhoneInputGroup,
 } from "@/registry/default/ui/phone-input";
 
 const FormSchema = z.object({
@@ -70,10 +71,10 @@ export default function PhoneInputFormDemo() {
                   }
                   required
                 >
-                  <div className="flex">
+                  <PhoneInputGroup>
                     <PhoneInputCountrySelect />
                     <PhoneInputField />
-                  </div>
+                  </PhoneInputGroup>
                 </PhoneInput>
               </FormControl>
               <FormDescription>

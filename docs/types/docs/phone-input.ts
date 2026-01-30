@@ -112,6 +112,10 @@ export interface PhoneInputProps extends EmptyProps<"div">, CompositionProps {
   showDialCode?: boolean;
 }
 
+export interface PhoneInputGroupProps
+  extends EmptyProps<"div">,
+    CompositionProps {}
+
 export interface PhoneInputCountrySelectProps extends CompositionProps {
   /**
    * Custom children to render inside the country selector.

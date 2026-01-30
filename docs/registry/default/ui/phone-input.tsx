@@ -25,6 +25,7 @@ import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
 
 const ROOT_NAME = "PhoneInput";
 const LABEL_NAME = "PhoneInputLabel";
+const GROUP_NAME = "PhoneInputGroup";
 const COUNTRY_SELECT_NAME = "PhoneInputCountrySelect";
 const FIELD_NAME = "PhoneInputField";
 
@@ -206,6 +207,7 @@ function PhoneInput(props: PhoneInputProps) {
     showFlag = true,
     showDialCode = true,
     className,
+    children,
     id,
     ref,
     ...rootProps
@@ -324,7 +326,9 @@ function PhoneInput(props: PhoneInputProps) {
           id={id}
           ref={composedRef}
           className={cn("flex min-w-0 flex-col gap-2", className)}
-        />
+        >
+          {children}
+        </RootPrimitive>
         {isFormControl && (
           <VisuallyHiddenInput
             type="hidden"
@@ -371,6 +375,31 @@ function PhoneInputLabel(props: PhoneInputLabelProps) {
   );
 }
 
+interface PhoneInputGroupProps extends React.ComponentProps<"div"> {}
+
+function PhoneInputGroup(props: PhoneInputGroupProps) {
+  const { className, children, ref, ...groupProps } = props;
+  const context = usePhoneInputContext(GROUP_NAME);
+
+  return (
+    <div
+      role="group"
+      data-slot="phone-input-group"
+      data-disabled={context.disabled ? "" : undefined}
+      data-invalid={context.invalid ? "" : undefined}
+      data-readonly={context.readOnly ? "" : undefined}
+      {...groupProps}
+      ref={ref}
+      className={cn(
+        "relative flex h-10 w-full items-center overflow-hidden rounded-md border border-input bg-background transition-colors has-[[data-slot=phone-input-field]:focus-visible]:outline-hidden has-[[data-slot=phone-input-field]:focus-visible]:ring-1 has-[[data-slot=phone-input-field]:focus-visible]:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 interface PhoneInputCountrySelectProps {
   children?: React.ReactNode;
 }
@@ -392,11 +421,9 @@ function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
           aria-expanded={open}
           aria-haspopup="listbox"
           aria-controls={`${context.rootId}-list`}
-          data-disabled={context.disabled ? "" : undefined}
-          data-readonly={context.readOnly ? "" : undefined}
           data-slot="phone-input-country-select"
           disabled={context.disabled}
-          className="flex items-center gap-2 rounded-l-md border border-input bg-background px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+          className="flex shrink-0 items-center gap-2 border-input border-r bg-transparent px-3 text-sm hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
         >
           {context.showFlag && country?.flag && (
             <span className="text-lg leading-none">{country.flag}</span>
@@ -507,7 +534,7 @@ function PhoneInputField(props: PhoneInputFieldProps) {
       value={value}
       onChange={onChange}
       className={cn(
-        "flex h-10 w-full rounded-r-md border border-input border-l-0 bg-transparent px-3 py-2 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "flex h-full w-full flex-1 bg-transparent px-3 py-2 text-base shadow-none outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed md:text-sm",
         className,
       )}
     />
@@ -517,6 +544,7 @@ function PhoneInputField(props: PhoneInputFieldProps) {
 export {
   PhoneInput,
   PhoneInputLabel,
+  PhoneInputGroup,
   PhoneInputCountrySelect,
   PhoneInputField,
   DEFAULT_COUNTRIES,

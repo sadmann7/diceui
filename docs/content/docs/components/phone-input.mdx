@@ -61,6 +61,7 @@ Import the parts, and compose them together.
 import {
   PhoneInput,
   PhoneInputLabel,
+  PhoneInputGroup,
   PhoneInputCountrySelect,
   PhoneInputField,
 } from "@/components/ui/phone-input";
@@ -68,10 +69,10 @@ import {
 return (
   <PhoneInput>
     <PhoneInputLabel />
-    <div className="flex">
+    <PhoneInputGroup>
       <PhoneInputCountrySelect />
       <PhoneInputField />
-    </div>
+    </PhoneInputGroup>
   </PhoneInput>
 )
 ```
@@ -136,6 +137,36 @@ The label component for the phone input field.
     {
       title: "[data-slot]",
       value: "phone-input-label",
+    },
+  ]}
+/>
+
+### PhoneInputGroup
+
+The container component that groups the country select and input field. Similar to an input group pattern.
+
+<AutoTypeTable
+  path="./types/docs/phone-input.ts"
+  name="PhoneInputGroupProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the phone input is disabled",
+    },
+    {
+      title: "[data-invalid]",
+      value: "Present when the phone input is invalid",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when the phone input is read-only",
+    },
+    {
+      title: "[data-slot]",
+      value: "phone-input-group",
     },
   ]}
 />
