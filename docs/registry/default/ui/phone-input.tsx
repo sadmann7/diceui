@@ -226,7 +226,7 @@ function PhoneInput(props: PhoneInputProps) {
     readOnly,
     invalid,
     showFlag = true,
-    showDialCode = true,
+    showDialCode = false,
     className,
     children,
     id,
@@ -307,7 +307,7 @@ function PhoneInput(props: PhoneInputProps) {
 
     const detectedCountry =
       getCountryFromLocale(countries, locale) || countries[0]?.code;
-    
+
     if (detectedCountry) {
       store.setState("country", detectedCountry);
     }
@@ -372,7 +372,7 @@ function PhoneInput(props: PhoneInputProps) {
           id={id}
           ref={composedRef}
           className={cn(
-            "relative flex h-10 w-full items-center rounded-md border border-input bg-background data-disabled:cursor-not-allowed data-disabled:opacity-50 dark:bg-input/30",
+            "relative flex h-10 w-full items-center overflow-hidden rounded-md border border-input bg-background transition-colors has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:ring-[3px] has-[[data-slot][aria-invalid=true]]:ring-destructive/20 data-disabled:cursor-not-allowed data-disabled:opacity-50 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40",
             className,
           )}
         >
@@ -403,22 +403,23 @@ interface PhoneInputCountrySelectProps
 
 function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const {
-    disabled,
+    disabled: disabledProp,
     className,
     children,
     onOpenChange: onOpenChangeProp,
     ...popoverProps
   } = props;
 
-  const context = usePhoneInputContext(COUNTRY_SELECT_NAME);
+  const { countries, inputRef, disabled, showDialCode, showFlag } =
+    usePhoneInputContext(COUNTRY_SELECT_NAME);
   const store = useStoreContext(COUNTRY_SELECT_NAME);
-  const selectedCountry = useStore((state) => state.country);
+  const country = useStore((state) => state.country);
   const isLoading = useStore((state) => state.isLoading);
   const open = useStore((state) => state.open);
 
-  const isDisabled = disabled || context.disabled;
+  const isDisabled = disabled || disabled;
 
-  const country = context.countries.find((c) => c.code === selectedCountry);
+  const countryContext = countries.find((c) => c.code === country);
 
   const onOpenChange = React.useCallback(
     (open: boolean) => {
@@ -438,19 +439,31 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
           className,
         )}
       >
-        {isLoading ? (
-          <div className="h-4 w-16 animate-pulse rounded bg-muted" />
-        ) : country ? (
-          <>
-            {context.showFlag && country.flag && (
-              <span className="text-lg leading-none">{country.flag}</span>
+        {isLoading || !countryContext ? (
+          <div
+            className={cn(
+              "h-4 rounded",
+              isLoading ? "animate-pulse bg-muted" : "bg-muted/50",
+              showFlag && showDialCode
+                ? "w-17"
+                : showDialCode
+                  ? "w-10"
+                  : showFlag
+                    ? "w-4.5"
+                    : "w-8",
             )}
-            {context.showDialCode && country.dialCode && (
-              <span className="font-medium">{country.dialCode}</span>
+          />
+        ) : (
+          <>
+            {showFlag && countryContext.flag && (
+              <span className="text-lg leading-none">
+                {countryContext.flag}
+              </span>
+            )}
+            {showDialCode && countryContext.dialCode && (
+              <span className="font-medium">{countryContext.dialCode}</span>
             )}
           </>
-        ) : (
-          <div className="h-4 w-16 rounded bg-muted/50" />
         )}
         <ChevronDown className="size-4 opacity-50" />
       </PopoverTrigger>
@@ -460,31 +473,27 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
           <CommandList>
             <CommandEmpty>No country found.</CommandEmpty>
             <CommandGroup>
-              {context.countries.map((countryItem) => (
+              {countries.map((c) => (
                 <CommandItem
-                  key={countryItem.code}
-                  value={`${countryItem.name} ${countryItem.dialCode} ${countryItem.code}`}
+                  key={c.code}
+                  value={`${c.name} ${c.dialCode} ${c.code}`}
                   onSelect={() => {
-                    store.setState("country", countryItem.code);
+                    store.setState("country", c.code);
                     store.setState("open", false);
                     requestAnimationFrame(() => {
-                      context.inputRef.current?.focus();
+                      inputRef.current?.focus();
                     });
                   }}
                 >
-                  {context.showFlag && countryItem.flag && (
-                    <span className="text-lg">{countryItem.flag}</span>
+                  {showFlag && c.flag && (
+                    <span className="text-lg">{c.flag}</span>
                   )}
-                  <span className="flex-1">{countryItem.name}</span>
-                  <span className="text-muted-foreground">
-                    {countryItem.dialCode}
-                  </span>
+                  <span className="flex-1">{c.name}</span>
+                  <span className="text-muted-foreground">{c.dialCode}</span>
                   <Check
                     className={cn(
                       "size-4",
-                      selectedCountry === countryItem.code
-                        ? "opacity-100"
-                        : "opacity-0",
+                      country === c.code ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>
