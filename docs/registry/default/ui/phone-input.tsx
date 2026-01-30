@@ -398,7 +398,13 @@ interface PhoneInputCountrySelectProps
     > {}
 
 function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
-  const { disabled, className, children, ...popoverProps } = props;
+  const {
+    disabled,
+    className,
+    children,
+    onOpenChange: onOpenChangeProp,
+    ...popoverProps
+  } = props;
 
   const context = usePhoneInputContext(COUNTRY_SELECT_NAME);
   const store = useStoreContext(COUNTRY_SELECT_NAME);
@@ -413,8 +419,9 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const onOpenChange = React.useCallback(
     (newOpen: boolean) => {
       store.setState("open", newOpen);
+      onOpenChangeProp?.(newOpen);
     },
-    [store],
+    [store, onOpenChangeProp],
   );
 
   return (
