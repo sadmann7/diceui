@@ -427,7 +427,7 @@ interface PhoneInputProps extends React.ComponentProps<"div"> {
 function PhoneInput(props: PhoneInputProps) {
   const {
     value: valueProp,
-    defaultValue = "",
+    defaultValue,
     defaultCountry,
     country: countryProp,
     onValueChange,
@@ -468,7 +468,7 @@ function PhoneInput(props: PhoneInputProps) {
     const shouldAutoDetect = autoDetect && !initialCountry;
 
     return {
-      value: valueProp ?? defaultValue,
+      value: valueProp ?? defaultValue ?? "",
       country: initialCountry ?? "",
       isLoading: shouldAutoDetect,
       open: false,
