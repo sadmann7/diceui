@@ -121,6 +121,8 @@ type RootElement = React.ComponentRef<typeof PhoneInput>;
 interface StoreState {
   value: string;
   country: string;
+  isLoading: boolean;
+  open: boolean;
 }
 
 interface Store {
@@ -253,6 +255,8 @@ function PhoneInput(props: PhoneInputProps) {
     return {
       value: valueProp ?? defaultValue,
       country: initialCountry ?? "",
+      isLoading: autoDetect && !countryProp && !defaultCountry,
+      open: false,
     };
   });
 
@@ -294,17 +298,16 @@ function PhoneInput(props: PhoneInputProps) {
   const value = useStore((state) => state.value, store);
   const country = useStore((state) => state.country, store);
 
-  // Detect locale on client after hydration to avoid SSR mismatch
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Only run once on mount to detect locale after hydration, not when dependencies change
   React.useEffect(() => {
-    // Only auto-detect once on mount if no country is set
     if (autoDetect && !countryProp && !defaultCountry && !country) {
       const detectedCountry =
         getCountryFromLocale(countries, locale) || countries[0]?.code;
       if (detectedCountry) {
         store.setState("country", detectedCountry);
       }
+      store.setState("isLoading", false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useIsomorphicLayoutEffect(() => {
@@ -388,33 +391,43 @@ function PhoneInput(props: PhoneInputProps) {
 }
 
 function PhoneInputCountrySelect(
-  props: React.ComponentProps<typeof PopoverTrigger>,
+  props: React.ComponentProps<typeof Popover>,
 ) {
-  const { className, ...countrySelectProps } = props;
+  const { children, ...popoverProps } = props;
 
   const context = usePhoneInputContext(COUNTRY_SELECT_NAME);
   const store = useStoreContext(COUNTRY_SELECT_NAME);
   const selectedCountry = useStore((state) => state.country);
-  const [open, setOpen] = React.useState(false);
+  const isLoading = useStore((state) => state.isLoading);
+  const open = useStore((state) => state.open);
 
   const country = context.countries.find((c) => c.code === selectedCountry);
 
+  const onOpenChange = React.useCallback(
+    (newOpen: boolean) => {
+      store.setState("open", newOpen);
+    },
+    [store],
+  );
+
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={onOpenChange} {...popoverProps}>
       <PopoverTrigger
         data-slot="phone-input-country-select"
         disabled={context.disabled}
-        {...countrySelectProps}
-        className={cn(
-          "flex h-full shrink-0 items-center gap-2 rounded-l-md border-input border-r bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
-          className,
-        )}
+        className="flex h-full shrink-0 items-center gap-2 rounded-l-md border-input border-r bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
       >
-        {context.showFlag && country?.flag && (
-          <span className="text-lg leading-none">{country.flag}</span>
-        )}
-        {context.showDialCode && country?.dialCode && (
-          <span className="font-medium">{country.dialCode}</span>
+        {isLoading ? (
+          <div className="h-4 w-10 animate-pulse rounded bg-muted" />
+        ) : (
+          <>
+            {context.showFlag && country?.flag && (
+              <span className="text-lg leading-none">{country.flag}</span>
+            )}
+            {context.showDialCode && country?.dialCode && (
+              <span className="font-medium">{country.dialCode}</span>
+            )}
+          </>
         )}
         <ChevronDown className="size-4 opacity-50" />
       </PopoverTrigger>
@@ -430,7 +443,7 @@ function PhoneInputCountrySelect(
                   value={`${countryItem.name} ${countryItem.dialCode} ${countryItem.code}`}
                   onSelect={() => {
                     store.setState("country", countryItem.code);
-                    setOpen(false);
+                    store.setState("open", false);
                     requestAnimationFrame(() => {
                       context.inputRef.current?.focus();
                     });

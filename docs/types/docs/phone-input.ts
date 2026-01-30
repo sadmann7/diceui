@@ -127,7 +127,7 @@ export interface PhoneInputProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface PhoneInputCountrySelectProps
-  extends EmptyProps<"button">,
+  extends EmptyProps<"div">,
     CompositionProps {}
 
 export interface PhoneInputFieldProps extends EmptyProps<"input"> {}
