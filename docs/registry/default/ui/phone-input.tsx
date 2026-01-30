@@ -151,6 +151,7 @@ interface PhoneInputContextValue {
   invalid?: boolean;
   showFlag: boolean;
   showDialCode: boolean;
+  inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const PhoneInputContext = React.createContext<PhoneInputContextValue | null>(
@@ -211,6 +212,8 @@ function PhoneInput(props: PhoneInputProps) {
 
   const instanceId = React.useId();
   const rootId = id ?? instanceId;
+
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
@@ -285,6 +288,7 @@ function PhoneInput(props: PhoneInputProps) {
       invalid,
       showFlag,
       showDialCode,
+      inputRef,
     }),
     [
       rootId,
@@ -381,6 +385,10 @@ function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
                   onSelect={() => {
                     store.setState("country", countryItem.code);
                     setOpen(false);
+                    // Focus the input field after country selection
+                    requestAnimationFrame(() => {
+                      context.inputRef.current?.focus();
+                    });
                   }}
                 >
                   {context.showFlag && countryItem.flag && (
@@ -417,12 +425,15 @@ function PhoneInputField(props: PhoneInputFieldProps) {
     disabled,
     readOnly,
     required,
+    ref,
     ...inputProps
   } = props;
 
   const context = usePhoneInputContext(FIELD_NAME);
   const store = useStoreContext(FIELD_NAME);
   const value = useStore((state) => state.value);
+
+  const composedRef = useComposedRefs(ref, context.inputRef);
 
   const propsRef = useAsRef({ onChange: onChangeProp });
 
@@ -455,6 +466,7 @@ function PhoneInputField(props: PhoneInputFieldProps) {
       readOnly={isReadOnly}
       required={isRequired}
       {...inputProps}
+      ref={composedRef}
       placeholder={context.placeholder}
       value={value}
       onChange={onChange}
