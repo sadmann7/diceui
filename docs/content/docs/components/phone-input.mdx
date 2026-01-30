@@ -94,6 +94,12 @@ The phone input automatically detects the user's country based on their browser 
   <PhoneInputCountrySelect />
   <PhoneInputField />
 </PhoneInput>
+
+// Disable auto-detection, force users to select
+<PhoneInput autoDetect={false}>
+  <PhoneInputCountrySelect />
+  <PhoneInputField />
+</PhoneInput>
 ```
 
 If no country can be detected from the locale, it defaults to the first country in the `countries` list.
@@ -105,6 +111,12 @@ If no country can be detected from the locale, it defaults to the first country 
 Provide a custom list of countries to display in the dropdown.
 
 <ComponentTabs name="phone-input-custom-countries-demo" className="items-start justify-start [&>div]:pt-20" />
+
+### No Auto-Detection
+
+Disable automatic country detection to force users to explicitly select a country.
+
+<ComponentTabs name="phone-input-no-auto-detect-demo" className="items-start justify-start [&>div]:pt-20" />
 
 ### With Form
 

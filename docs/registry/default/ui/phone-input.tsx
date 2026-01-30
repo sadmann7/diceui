@@ -189,6 +189,7 @@ interface PhoneInputProps extends React.ComponentProps<"div"> {
   onCountryChange?: (country: string) => void;
   countries?: Country[];
   locale?: string;
+  autoDetect?: boolean;
   name?: string;
   placeholder?: string;
   asChild?: boolean;
@@ -210,6 +211,7 @@ function PhoneInput(props: PhoneInputProps) {
     onCountryChange,
     countries = DEFAULT_COUNTRIES,
     locale,
+    autoDetect = true,
     name,
     placeholder = "Enter phone number",
     asChild,
@@ -239,11 +241,18 @@ function PhoneInput(props: PhoneInputProps) {
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => {
-    const detectedCountry =
-      defaultCountry || getCountryFromLocale(countries, locale);
+    let initialCountry = countryProp;
+
+    if (!initialCountry && autoDetect) {
+      initialCountry =
+        defaultCountry ||
+        getCountryFromLocale(countries, locale) ||
+        countries[0]?.code;
+    }
+
     return {
       value: valueProp ?? defaultValue,
-      country: countryProp ?? detectedCountry ?? countries[0]?.code ?? "",
+      country: initialCountry ?? "",
     };
   });
 
@@ -283,7 +292,7 @@ function PhoneInput(props: PhoneInputProps) {
   }, [listenersRef, stateRef, propsRef]);
 
   const value = useStore((state) => state.value, store);
-  const selectedCountry = useStore((state) => state.country, store);
+  const country = useStore((state) => state.country, store);
 
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
@@ -325,7 +334,7 @@ function PhoneInput(props: PhoneInputProps) {
 
   const RootPrimitive = asChild ? Slot : "div";
 
-  const currentCountry = countries.find((c) => c.code === selectedCountry);
+  const currentCountry = countries.find((c) => c.code === country);
   const fullValue = currentCountry
     ? `${currentCountry.dialCode}${value}`
     : value;
