@@ -256,7 +256,7 @@ function PhoneInput(props: PhoneInputProps) {
       value: valueProp ?? defaultValue,
       country: initialCountry ?? "",
       isLoading: autoDetect && !countryProp && !defaultCountry,
-      open: false, // defaultOpen is handled in PhoneInputCountrySelect
+      open: false,
     };
   });
 
@@ -398,52 +398,24 @@ interface PhoneInputCountrySelectProps
     > {}
 
 function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
-  const {
-    open: openProp,
-    defaultOpen,
-    onOpenChange: onOpenChangeProp,
-    disabled,
-    className,
-    children,
-    ...popoverProps
-  } = props;
+  const { disabled, className, children, ...popoverProps } = props;
 
   const context = usePhoneInputContext(COUNTRY_SELECT_NAME);
   const store = useStoreContext(COUNTRY_SELECT_NAME);
   const selectedCountry = useStore((state) => state.country);
   const isLoading = useStore((state) => state.isLoading);
-  const internalOpen = useStore((state) => state.open);
+  const open = useStore((state) => state.open);
 
   const isDisabled = disabled || context.disabled;
 
   const country = context.countries.find((c) => c.code === selectedCountry);
 
-  // Initialize with defaultOpen if provided
-  React.useEffect(() => {
-    if (defaultOpen !== undefined && openProp === undefined) {
-      store.setState("open", defaultOpen);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Sync controlled open prop
-  useIsomorphicLayoutEffect(() => {
-    if (openProp !== undefined) {
-      store.setState("open", openProp);
-    }
-  }, [openProp]);
-
   const onOpenChange = React.useCallback(
     (newOpen: boolean) => {
-      onOpenChangeProp?.(newOpen);
-      if (openProp === undefined) {
-        store.setState("open", newOpen);
-      }
+      store.setState("open", newOpen);
     },
-    [onOpenChangeProp, openProp, store],
+    [store],
   );
-
-  const open = openProp ?? internalOpen;
 
   return (
     <Popover open={open} onOpenChange={onOpenChange} {...popoverProps}>

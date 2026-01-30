@@ -128,21 +128,6 @@ export interface PhoneInputProps extends EmptyProps<"div">, CompositionProps {
 
 export interface PhoneInputCountrySelectProps
   extends EmptyProps<"div">,
-    CompositionProps {
-  /**
-   * The controlled open state of the popover.
-   */
-  open?: boolean;
-
-  /**
-   * The default open state when uncontrolled.
-   */
-  defaultOpen?: boolean;
-
-  /**
-   * Callback when the open state changes.
-   */
-  onOpenChange?: (open: boolean) => void;
-}
+    CompositionProps {}
 
 export interface PhoneInputFieldProps extends EmptyProps<"input"> {}
