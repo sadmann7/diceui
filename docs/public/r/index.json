@@ -522,10 +522,7 @@
   {
     "name": "phone-input",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-popover",
-      "lucide-react",
-      "cmdk"
+      "@radix-ui/react-slot"
     ],
     "registryDependencies": [
       "command",

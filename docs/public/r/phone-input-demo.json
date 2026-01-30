@@ -6,7 +6,7 @@
   "files": [
     {
       "path": "examples/phone-input-demo.tsx",
-      "content": "import * as React from \"react\";\nimport {\n  PhoneInput,\n  PhoneInputCountrySelect,\n  PhoneInputField,\n} from \"@/registry/default/ui/phone-input\";\n\nexport default function PhoneInputDemo() {\n  return (\n    <PhoneInput defaultValue=\"5551234\">\n      <PhoneInputCountrySelect />\n      <PhoneInputField />\n    </PhoneInput>\n  );\n}\n",
+      "content": "import * as React from \"react\";\nimport {\n  PhoneInput,\n  PhoneInputCountrySelect,\n  PhoneInputField,\n} from \"@/registry/default/ui/phone-input\";\n\nexport default function PhoneInputDemo() {\n  return (\n    <PhoneInput defaultValue=\"5551234\" showFlag={true}>\n      <PhoneInputCountrySelect />\n      <PhoneInputField />\n    </PhoneInput>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
     }

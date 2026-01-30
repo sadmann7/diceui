@@ -121,7 +121,7 @@ export interface PhoneInputProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * Whether to show the dial code in the input.
-   * @default true
+   * @default false
    */
   showDialCode?: boolean;
 }
