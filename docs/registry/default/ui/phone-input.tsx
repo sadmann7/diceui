@@ -356,10 +356,6 @@ function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        role="combobox"
-        aria-expanded={open}
-        aria-haspopup="listbox"
-        aria-controls={`${context.rootId}-list`}
         data-slot="phone-input-country-select"
         disabled={context.disabled}
         className="flex shrink-0 items-center gap-2 border-input border-r bg-transparent px-3 text-sm hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
