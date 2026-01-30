@@ -1,15 +1,15 @@
-import * as React from "react";
-import type { Country } from "@/registry/default/ui/phone-input";
+import type { PhoneInputProps } from "@/registry/default/ui/phone-input";
 import {
   PhoneInput,
   PhoneInputCountrySelect,
   PhoneInputField,
 } from "@/registry/default/ui/phone-input";
 
-const NORTH_AMERICAN_COUNTRIES: Country[] = [
+const NORTH_AMERICAN_COUNTRIES: PhoneInputProps["countries"] = [
   { code: "US", name: "United States", dialCode: "+1", flag: "🇺🇸" },
   { code: "CA", name: "Canada", dialCode: "+1", flag: "🇨🇦" },
   { code: "MX", name: "Mexico", dialCode: "+52", flag: "🇲🇽" },
+  { code: "BR", name: "Brazil", dialCode: "+55", flag: "🇧🇷" },
 ];
 
 export default function PhoneInputCustomCountriesDemo() {

@@ -29,8 +29,7 @@ const COUNTRY_SELECT_NAME = "PhoneInputCountrySelect";
 const FIELD_NAME = "PhoneInputField";
 
 /**
- * Country data derived from country-telephone-data
- * @see https://github.com/OpenCui/country-telephone-data
+ * @see https://github.com/mukeshsoni/country-telephone-data/blob/master/country_telephone_data.js
  * @format [iso2, dialCode]
  */
 const COUNTRY_DATA: [string, string][] = [
