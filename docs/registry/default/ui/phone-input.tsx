@@ -256,7 +256,7 @@ function PhoneInput(props: PhoneInputProps) {
       value: valueProp ?? defaultValue,
       country: initialCountry ?? "",
       isLoading: autoDetect && !countryProp && !defaultCountry,
-      open: false,
+      open: false, // defaultOpen is handled in PhoneInputCountrySelect
     };
   });
 
@@ -390,32 +390,70 @@ function PhoneInput(props: PhoneInputProps) {
   );
 }
 
-function PhoneInputCountrySelect(
-  props: React.ComponentProps<typeof Popover>,
-) {
-  const { children, ...popoverProps } = props;
+interface PhoneInputCountrySelectProps
+  extends React.ComponentProps<typeof Popover>,
+    Pick<
+      React.ComponentProps<typeof PopoverTrigger>,
+      "disabled" | "className"
+    > {}
+
+function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
+  const {
+    open: openProp,
+    defaultOpen,
+    onOpenChange: onOpenChangeProp,
+    disabled,
+    className,
+    children,
+    ...popoverProps
+  } = props;
 
   const context = usePhoneInputContext(COUNTRY_SELECT_NAME);
   const store = useStoreContext(COUNTRY_SELECT_NAME);
   const selectedCountry = useStore((state) => state.country);
   const isLoading = useStore((state) => state.isLoading);
-  const open = useStore((state) => state.open);
+  const internalOpen = useStore((state) => state.open);
+
+  const isDisabled = disabled || context.disabled;
 
   const country = context.countries.find((c) => c.code === selectedCountry);
 
+  // Initialize with defaultOpen if provided
+  React.useEffect(() => {
+    if (defaultOpen !== undefined && openProp === undefined) {
+      store.setState("open", defaultOpen);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Sync controlled open prop
+  useIsomorphicLayoutEffect(() => {
+    if (openProp !== undefined) {
+      store.setState("open", openProp);
+    }
+  }, [openProp]);
+
   const onOpenChange = React.useCallback(
     (newOpen: boolean) => {
-      store.setState("open", newOpen);
+      onOpenChangeProp?.(newOpen);
+      if (openProp === undefined) {
+        store.setState("open", newOpen);
+      }
     },
-    [store],
+    [onOpenChangeProp, openProp, store],
   );
+
+  const open = openProp ?? internalOpen;
 
   return (
     <Popover open={open} onOpenChange={onOpenChange} {...popoverProps}>
       <PopoverTrigger
         data-slot="phone-input-country-select"
-        disabled={context.disabled}
-        className="flex h-full shrink-0 items-center gap-2 rounded-l-md border-input border-r bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
+        disabled={isDisabled}
+        className={cn(
+          "flex h-full shrink-0 items-center gap-2 rounded-l-md border-input border-r bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
+          className,
+        )}
       >
         {isLoading ? (
           <div className="h-4 w-10 animate-pulse rounded bg-muted" />
