@@ -97,7 +97,6 @@ function getCountryFromLocale(
   countries: Country[],
   locale?: string,
 ): string | undefined {
-  // Skip locale detection during SSR to avoid hydration mismatch
   if (typeof window === "undefined" && !locale) {
     return undefined;
   }
@@ -248,8 +247,6 @@ function PhoneInput(props: PhoneInputProps) {
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => {
-    // For SSR compatibility, always start with the same initial state
-    // Locale detection will happen in useEffect after hydration
     const initialCountry = countryProp || defaultCountry;
 
     return {
@@ -417,9 +414,9 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const country = context.countries.find((c) => c.code === selectedCountry);
 
   const onOpenChange = React.useCallback(
-    (newOpen: boolean) => {
-      store.setState("open", newOpen);
-      onOpenChangeProp?.(newOpen);
+    (open: boolean) => {
+      store.setState("open", open);
+      onOpenChangeProp?.(open);
     },
     [store, onOpenChangeProp],
   );
