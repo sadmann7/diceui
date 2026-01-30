@@ -247,12 +247,15 @@ function PhoneInput(props: PhoneInputProps) {
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => {
+    // For SSR compatibility, start with same initial state on server and client
+    // Locale detection happens after mount to avoid hydration mismatch
     const initialCountry = countryProp || defaultCountry;
+    const shouldAutoDetect = autoDetect && !initialCountry;
 
     return {
       value: valueProp ?? defaultValue,
       country: initialCountry ?? "",
-      isLoading: autoDetect && !countryProp && !defaultCountry,
+      isLoading: shouldAutoDetect,
       open: false,
     };
   });
@@ -294,17 +297,21 @@ function PhoneInput(props: PhoneInputProps) {
 
   const value = useStore((state) => state.value, store);
   const country = useStore((state) => state.country, store);
+  const isLoading = useStore((state) => state.isLoading, store);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Only run once on mount to detect locale after hydration, not when dependencies change
+  // Auto-detect country from locale after mount (client-side only)
+  // This runs after hydration to avoid SSR mismatch
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Only run once on mount to detect locale, not on every state change
   React.useEffect(() => {
-    if (autoDetect && !countryProp && !defaultCountry && !country) {
-      const detectedCountry =
-        getCountryFromLocale(countries, locale) || countries[0]?.code;
-      if (detectedCountry) {
-        store.setState("country", detectedCountry);
-      }
-      store.setState("isLoading", false);
+    if (!isLoading) return;
+
+    const detectedCountry =
+      getCountryFromLocale(countries, locale) || countries[0]?.code;
+    
+    if (detectedCountry) {
+      store.setState("country", detectedCountry);
     }
+    store.setState("isLoading", false);
   }, []);
 
   useIsomorphicLayoutEffect(() => {
@@ -432,16 +439,18 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
         )}
       >
         {isLoading ? (
-          <div className="h-4 w-10 animate-pulse rounded bg-muted" />
-        ) : (
+          <div className="h-4 w-16 animate-pulse rounded bg-muted" />
+        ) : country ? (
           <>
-            {context.showFlag && country?.flag && (
+            {context.showFlag && country.flag && (
               <span className="text-lg leading-none">{country.flag}</span>
             )}
-            {context.showDialCode && country?.dialCode && (
+            {context.showDialCode && country.dialCode && (
               <span className="font-medium">{country.dialCode}</span>
             )}
           </>
+        ) : (
+          <span className="text-muted-foreground">Select</span>
         )}
         <ChevronDown className="size-4 opacity-50" />
       </PopoverTrigger>

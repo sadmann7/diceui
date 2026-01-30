@@ -7,7 +7,7 @@ import {
 
 export default function PhoneInputDemo() {
   return (
-    <PhoneInput defaultValue="5551234">
+    <PhoneInput defaultValue="5551234" autoDetect={false}>
       <PhoneInputCountrySelect />
       <PhoneInputField />
     </PhoneInput>
