@@ -483,6 +483,32 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "phone-input",
+    type: "registry:ui",
+    dependencies: ["@radix-ui/react-slot", "cmdk"],
+    registryDependencies: [
+      "command",
+      "popover",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+    ],
+    files: [
+      {
+        path: "ui/phone-input.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "components/visually-hidden-input.tsx",
+        type: "registry:component",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "relative-time-card",
     type: "registry:ui",
     dependencies: ["@radix-ui/react-slot"],

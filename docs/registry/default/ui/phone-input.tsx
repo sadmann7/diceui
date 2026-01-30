@@ -1,0 +1,527 @@
+"use client";
+
+import { Slot } from "@radix-ui/react-slot";
+import { Check, ChevronDown } from "lucide-react";
+import * as React from "react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useComposedRefs } from "@/lib/compose-refs";
+import { cn } from "@/lib/utils";
+import { VisuallyHiddenInput } from "@/registry/default/components/visually-hidden-input";
+import { useAsRef } from "@/registry/default/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/default/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/default/hooks/use-lazy-ref";
+
+const ROOT_NAME = "PhoneInput";
+const LABEL_NAME = "PhoneInputLabel";
+const COUNTRY_SELECT_NAME = "PhoneInputCountrySelect";
+const FIELD_NAME = "PhoneInputField";
+
+export interface Country {
+  code: string;
+  name: string;
+  dialCode: string;
+  flag?: string;
+}
+
+const DEFAULT_COUNTRIES: Country[] = [
+  { code: "US", name: "United States", dialCode: "+1", flag: "🇺🇸" },
+  { code: "GB", name: "United Kingdom", dialCode: "+44", flag: "🇬🇧" },
+  { code: "CA", name: "Canada", dialCode: "+1", flag: "🇨🇦" },
+  { code: "AU", name: "Australia", dialCode: "+61", flag: "🇦🇺" },
+  { code: "DE", name: "Germany", dialCode: "+49", flag: "🇩🇪" },
+  { code: "FR", name: "France", dialCode: "+33", flag: "🇫🇷" },
+  { code: "IT", name: "Italy", dialCode: "+39", flag: "🇮🇹" },
+  { code: "ES", name: "Spain", dialCode: "+34", flag: "🇪🇸" },
+  { code: "NL", name: "Netherlands", dialCode: "+31", flag: "🇳🇱" },
+  { code: "SE", name: "Sweden", dialCode: "+46", flag: "🇸🇪" },
+  { code: "NO", name: "Norway", dialCode: "+47", flag: "🇳🇴" },
+  { code: "DK", name: "Denmark", dialCode: "+45", flag: "🇩🇰" },
+  { code: "FI", name: "Finland", dialCode: "+358", flag: "🇫🇮" },
+  { code: "PL", name: "Poland", dialCode: "+48", flag: "🇵🇱" },
+  { code: "IE", name: "Ireland", dialCode: "+353", flag: "🇮🇪" },
+  { code: "AT", name: "Austria", dialCode: "+43", flag: "🇦🇹" },
+  { code: "BE", name: "Belgium", dialCode: "+32", flag: "🇧🇪" },
+  { code: "CH", name: "Switzerland", dialCode: "+41", flag: "🇨🇭" },
+  { code: "PT", name: "Portugal", dialCode: "+351", flag: "🇵🇹" },
+  { code: "GR", name: "Greece", dialCode: "+30", flag: "🇬🇷" },
+  { code: "CZ", name: "Czech Republic", dialCode: "+420", flag: "🇨🇿" },
+  { code: "HU", name: "Hungary", dialCode: "+36", flag: "🇭🇺" },
+  { code: "RO", name: "Romania", dialCode: "+40", flag: "🇷🇴" },
+  { code: "BG", name: "Bulgaria", dialCode: "+359", flag: "🇧🇬" },
+  { code: "HR", name: "Croatia", dialCode: "+385", flag: "🇭🇷" },
+  { code: "JP", name: "Japan", dialCode: "+81", flag: "🇯🇵" },
+  { code: "KR", name: "South Korea", dialCode: "+82", flag: "🇰🇷" },
+  { code: "CN", name: "China", dialCode: "+86", flag: "🇨🇳" },
+  { code: "IN", name: "India", dialCode: "+91", flag: "🇮🇳" },
+  { code: "BR", name: "Brazil", dialCode: "+55", flag: "🇧🇷" },
+  { code: "MX", name: "Mexico", dialCode: "+52", flag: "🇲🇽" },
+  { code: "AR", name: "Argentina", dialCode: "+54", flag: "🇦🇷" },
+  { code: "CL", name: "Chile", dialCode: "+56", flag: "🇨🇱" },
+  { code: "CO", name: "Colombia", dialCode: "+57", flag: "🇨🇴" },
+  { code: "PE", name: "Peru", dialCode: "+51", flag: "🇵🇪" },
+  { code: "VE", name: "Venezuela", dialCode: "+58", flag: "🇻🇪" },
+  { code: "ZA", name: "South Africa", dialCode: "+27", flag: "🇿🇦" },
+  { code: "EG", name: "Egypt", dialCode: "+20", flag: "🇪🇬" },
+  { code: "NG", name: "Nigeria", dialCode: "+234", flag: "🇳🇬" },
+  { code: "KE", name: "Kenya", dialCode: "+254", flag: "🇰🇪" },
+  { code: "AE", name: "United Arab Emirates", dialCode: "+971", flag: "🇦🇪" },
+  { code: "SA", name: "Saudi Arabia", dialCode: "+966", flag: "🇸🇦" },
+  { code: "IL", name: "Israel", dialCode: "+972", flag: "🇮🇱" },
+  { code: "TR", name: "Turkey", dialCode: "+90", flag: "🇹🇷" },
+  { code: "RU", name: "Russia", dialCode: "+7", flag: "🇷🇺" },
+  { code: "UA", name: "Ukraine", dialCode: "+380", flag: "🇺🇦" },
+  { code: "SG", name: "Singapore", dialCode: "+65", flag: "🇸🇬" },
+  { code: "MY", name: "Malaysia", dialCode: "+60", flag: "🇲🇾" },
+  { code: "TH", name: "Thailand", dialCode: "+66", flag: "🇹🇭" },
+  { code: "VN", name: "Vietnam", dialCode: "+84", flag: "🇻🇳" },
+  { code: "PH", name: "Philippines", dialCode: "+63", flag: "🇵🇭" },
+  { code: "ID", name: "Indonesia", dialCode: "+62", flag: "🇮🇩" },
+  { code: "NZ", name: "New Zealand", dialCode: "+64", flag: "🇳🇿" },
+  { code: "PK", name: "Pakistan", dialCode: "+92", flag: "🇵🇰" },
+  { code: "BD", name: "Bangladesh", dialCode: "+880", flag: "🇧🇩" },
+];
+
+interface DivProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+type RootElement = React.ComponentRef<typeof PhoneInput>;
+type FieldElement = React.ComponentRef<typeof PhoneInputField>;
+
+interface StoreState {
+  value: string;
+  country: string;
+}
+
+interface Store {
+  subscribe: (callback: () => void) => () => void;
+  getState: () => StoreState;
+  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
+  notify: () => void;
+}
+
+const StoreContext = React.createContext<Store | null>(null);
+
+function useStoreContext(consumerName: string) {
+  const context = React.useContext(StoreContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
+
+function useStore<T>(
+  selector: (state: StoreState) => T,
+  ogStore?: Store | null,
+): T {
+  const contextStore = React.useContext(StoreContext);
+
+  const store = ogStore ?? contextStore;
+
+  if (!store) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
+
+  const getSnapshot = React.useCallback(
+    () => selector(store.getState()),
+    [store, selector],
+  );
+
+  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+}
+
+interface PhoneInputContextValue {
+  rootId: string;
+  inputId: string;
+  labelId: string;
+  countries: Country[];
+  placeholder: string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  invalid?: boolean;
+  showFlag: boolean;
+  showDialCode: boolean;
+}
+
+const PhoneInputContext = React.createContext<PhoneInputContextValue | null>(
+  null,
+);
+
+function usePhoneInputContext(consumerName: string) {
+  const context = React.useContext(PhoneInputContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+  }
+  return context;
+}
+
+interface PhoneInputProps extends DivProps {
+  id?: string;
+  defaultValue?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  defaultCountry?: string;
+  country?: string;
+  onCountryChange?: (country: string) => void;
+  countries?: Country[];
+  name?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
+  required?: boolean;
+  invalid?: boolean;
+  showFlag?: boolean;
+  showDialCode?: boolean;
+}
+
+function PhoneInput(props: PhoneInputProps) {
+  const {
+    value: valueProp,
+    defaultValue = "",
+    defaultCountry = "US",
+    country: countryProp,
+    onValueChange,
+    onCountryChange,
+    countries = DEFAULT_COUNTRIES,
+    name,
+    placeholder = "Enter phone number",
+    asChild,
+    disabled,
+    required,
+    readOnly,
+    invalid,
+    showFlag = true,
+    showDialCode = true,
+    className,
+    id,
+    ref,
+    ...rootProps
+  } = props;
+
+  const instanceId = React.useId();
+  const rootId = id ?? instanceId;
+
+  const inputId = React.useId();
+  const labelId = React.useId();
+
+  const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
+
+  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const stateRef = useLazyRef<StoreState>(() => ({
+    value: valueProp ?? defaultValue,
+    country: countryProp ?? defaultCountry,
+  }));
+
+  const propsRef = useAsRef({
+    onValueChange,
+    onCountryChange,
+  });
+
+  const store = React.useMemo<Store>(() => {
+    return {
+      subscribe: (cb) => {
+        listenersRef.current.add(cb);
+        return () => listenersRef.current.delete(cb);
+      },
+      getState: () => stateRef.current,
+      setState: (key, value) => {
+        if (Object.is(stateRef.current[key], value)) return;
+
+        if (key === "value" && typeof value === "string") {
+          stateRef.current.value = value;
+          propsRef.current.onValueChange?.(value);
+        } else if (key === "country" && typeof value === "string") {
+          stateRef.current.country = value;
+          propsRef.current.onCountryChange?.(value);
+        } else {
+          stateRef.current[key] = value;
+        }
+
+        store.notify();
+      },
+      notify: () => {
+        for (const cb of listenersRef.current) {
+          cb();
+        }
+      },
+    };
+  }, [listenersRef, stateRef, propsRef]);
+
+  const value = useStore((state) => state.value, store);
+  const selectedCountry = useStore((state) => state.country, store);
+
+  useIsomorphicLayoutEffect(() => {
+    if (valueProp !== undefined) {
+      store.setState("value", valueProp);
+    }
+  }, [valueProp]);
+
+  useIsomorphicLayoutEffect(() => {
+    if (countryProp !== undefined) {
+      store.setState("country", countryProp);
+    }
+  }, [countryProp]);
+
+  const contextValue = React.useMemo<PhoneInputContextValue>(
+    () => ({
+      rootId,
+      inputId,
+      labelId,
+      countries,
+      placeholder,
+      disabled,
+      readOnly,
+      required,
+      invalid,
+      showFlag,
+      showDialCode,
+    }),
+    [
+      rootId,
+      inputId,
+      labelId,
+      countries,
+      placeholder,
+      disabled,
+      required,
+      readOnly,
+      invalid,
+      showFlag,
+      showDialCode,
+    ],
+  );
+
+  const RootPrimitive = asChild ? Slot : "div";
+
+  const currentCountry = countries.find((c) => c.code === selectedCountry);
+  const fullValue = currentCountry
+    ? `${currentCountry.dialCode}${value}`
+    : value;
+
+  return (
+    <StoreContext.Provider value={store}>
+      <PhoneInputContext.Provider value={contextValue}>
+        <RootPrimitive
+          data-slot="phone-input"
+          {...rootProps}
+          id={id}
+          ref={composedRef}
+          className={cn("flex min-w-0 flex-col gap-2", className)}
+        />
+        {isFormControl && (
+          <VisuallyHiddenInput
+            type="hidden"
+            control={formTrigger}
+            name={name}
+            value={fullValue}
+            disabled={disabled}
+            readOnly={readOnly}
+            required={required}
+          />
+        )}
+      </PhoneInputContext.Provider>
+    </StoreContext.Provider>
+  );
+}
+
+interface PhoneInputLabelProps extends React.ComponentProps<"label"> {
+  asChild?: boolean;
+}
+
+function PhoneInputLabel(props: PhoneInputLabelProps) {
+  const { asChild, className, children, ref, ...labelProps } = props;
+  const context = usePhoneInputContext(LABEL_NAME);
+
+  const LabelPrimitive = asChild ? Slot : "label";
+
+  return (
+    <LabelPrimitive
+      data-disabled={context.disabled ? "" : undefined}
+      data-invalid={context.invalid ? "" : undefined}
+      data-required={context.required ? "" : undefined}
+      data-slot="phone-input-label"
+      {...labelProps}
+      ref={ref}
+      id={context.labelId}
+      htmlFor={context.inputId}
+      className={cn(
+        "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 data-required:after:ml-0.5 data-required:after:text-destructive data-required:after:content-['*']",
+        className,
+      )}
+    >
+      {children}
+    </LabelPrimitive>
+  );
+}
+
+interface PhoneInputCountrySelectProps {
+  children?: React.ReactNode;
+}
+
+function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
+  const context = usePhoneInputContext(COUNTRY_SELECT_NAME);
+  const store = useStoreContext(COUNTRY_SELECT_NAME);
+  const selectedCountry = useStore((state) => state.country);
+  const [open, setOpen] = React.useState(false);
+
+  const country = context.countries.find((c) => c.code === selectedCountry);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          role="combobox"
+          aria-expanded={open}
+          aria-haspopup="listbox"
+          aria-controls={`${context.rootId}-list`}
+          data-disabled={context.disabled ? "" : undefined}
+          data-readonly={context.readOnly ? "" : undefined}
+          data-slot="phone-input-country-select"
+          disabled={context.disabled}
+          className="flex items-center gap-2 rounded-l-md border border-input bg-background px-3 py-2 text-sm hover:bg-accent hover:text-accent-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+        >
+          {context.showFlag && country?.flag && (
+            <span className="text-lg leading-none">{country.flag}</span>
+          )}
+          {context.showDialCode && country?.dialCode && (
+            <span className="font-medium">{country.dialCode}</span>
+          )}
+          <ChevronDown className="size-4 opacity-50" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[300px] p-0" align="start">
+        <Command>
+          <CommandInput placeholder="Search country..." />
+          <CommandList>
+            <CommandEmpty>No country found.</CommandEmpty>
+            <CommandGroup>
+              {context.countries.map((countryItem) => (
+                <CommandItem
+                  key={countryItem.code}
+                  value={`${countryItem.name} ${countryItem.dialCode} ${countryItem.code}`}
+                  onSelect={() => {
+                    store.setState("country", countryItem.code);
+                    setOpen(false);
+                  }}
+                >
+                  {context.showFlag && countryItem.flag && (
+                    <span className="mr-2 text-lg">{countryItem.flag}</span>
+                  )}
+                  <span className="flex-1">{countryItem.name}</span>
+                  <span className="text-muted-foreground">
+                    {countryItem.dialCode}
+                  </span>
+                  <Check
+                    className={cn(
+                      "ml-2 size-4",
+                      selectedCountry === countryItem.code
+                        ? "opacity-100"
+                        : "opacity-0",
+                    )}
+                  />
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+interface PhoneInputFieldProps extends React.ComponentProps<"input"> {
+  asChild?: boolean;
+}
+
+function PhoneInputField(props: PhoneInputFieldProps) {
+  const {
+    onChange: onChangeProp,
+    asChild,
+    className,
+    disabled,
+    readOnly,
+    required,
+    ref,
+    ...inputProps
+  } = props;
+
+  const context = usePhoneInputContext(FIELD_NAME);
+  const store = useStoreContext(FIELD_NAME);
+  const value = useStore((state) => state.value);
+
+  const propsRef = useAsRef({ onChange: onChangeProp });
+
+  const isDisabled = disabled || context.disabled;
+  const isReadOnly = readOnly || context.readOnly;
+  const isRequired = required || context.required;
+
+  const onChange = React.useCallback(
+    (event: React.ChangeEvent<FieldElement>) => {
+      if (isDisabled || isReadOnly) return;
+
+      propsRef.current.onChange?.(event);
+      if (event.defaultPrevented) return;
+
+      // Only allow digits, spaces, dashes, and parentheses
+      const sanitized = event.target.value.replace(/[^\d\s()-]/g, "");
+      store.setState("value", sanitized);
+    },
+    [store, propsRef, isDisabled, isReadOnly],
+  );
+
+  const InputPrimitive = asChild ? Slot : "input";
+
+  return (
+    <InputPrimitive
+      type="tel"
+      inputMode="tel"
+      aria-required={isRequired}
+      aria-invalid={context.invalid}
+      data-slot="phone-input-field"
+      disabled={isDisabled}
+      readOnly={isReadOnly}
+      required={isRequired}
+      {...inputProps}
+      id={context.inputId}
+      aria-labelledby={context.labelId}
+      ref={ref}
+      placeholder={context.placeholder}
+      value={value}
+      onChange={onChange}
+      className={cn(
+        "flex h-10 w-full rounded-r-md border border-input border-l-0 bg-transparent px-3 py-2 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        className,
+      )}
+    />
+  );
+}
+
+export {
+  PhoneInput,
+  PhoneInputLabel,
+  PhoneInputCountrySelect,
+  PhoneInputField,
+  DEFAULT_COUNTRIES,
+  //
+  useStore as usePhoneInput,
+  //
+  type PhoneInputProps,
+};

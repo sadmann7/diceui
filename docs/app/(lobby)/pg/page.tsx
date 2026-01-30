@@ -2,6 +2,7 @@ import { Demo } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import { Button } from "@/components/ui/button";
 import ColorPickerDemo from "@/registry/default/examples/color-picker-demo";
+import PhoneInputDemo from "@/registry/default/examples/phone-input-demo";
 import ResponsiveDialogConfirmDemo from "@/registry/default/examples/responsive-dialog-confirm-demo";
 import ResponsiveDialogDemo from "@/registry/default/examples/responsive-dialog-demo";
 import SelectionToolbarDemo from "@/registry/default/examples/selection-toolbar-demo";
@@ -13,6 +14,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
+        <PhoneInputDemo />
         <ResponsiveDialogDemo />
         <ResponsiveDialogConfirmDemo />
         <SwapDemo />

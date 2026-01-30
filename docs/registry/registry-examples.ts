@@ -1298,6 +1298,40 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "phone-input-demo",
+    type: "registry:example",
+    registryDependencies: ["phone-input"],
+    files: [
+      {
+        path: "examples/phone-input-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "phone-input-form-demo",
+    type: "registry:example",
+    dependencies: ["@hookform/resolvers", "react-hook-form", "zod", "sonner"],
+    registryDependencies: ["phone-input", "button", "form"],
+    files: [
+      {
+        path: "examples/phone-input-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "phone-input-custom-countries-demo",
+    type: "registry:example",
+    registryDependencies: ["phone-input"],
+    files: [
+      {
+        path: "examples/phone-input-custom-countries-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "qr-code-demo",
     type: "registry:example",
     registryDependencies: ["qr-code"],
