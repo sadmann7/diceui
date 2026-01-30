@@ -1,0 +1,15 @@
+{
+  "name": "phone-input-no-auto-detect-demo",
+  "registryDependencies": [
+    "phone-input"
+  ],
+  "files": [
+    {
+      "path": "examples/phone-input-no-auto-detect-demo.tsx",
+      "content": "import * as React from \"react\";\nimport {\n  PhoneInput,\n  PhoneInputCountrySelect,\n  PhoneInputField,\n} from \"@/registry/default/ui/phone-input\";\n\nexport default function PhoneInputNoAutoDetectDemo() {\n  return (\n    <PhoneInput autoDetect={false}>\n      <PhoneInputCountrySelect />\n      <PhoneInputField placeholder=\"Select country first\" />\n    </PhoneInput>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

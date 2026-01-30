@@ -520,6 +520,38 @@
     "type": "registry:ui"
   },
   {
+    "name": "phone-input",
+    "dependencies": [
+      "@radix-ui/react-slot",
+      "@radix-ui/react-popover",
+      "lucide-react",
+      "cmdk"
+    ],
+    "registryDependencies": [
+      "command",
+      "input",
+      "popover",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "files": [
+      {
+        "path": "ui/phone-input.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "components/visually-hidden-input.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "type": "registry:ui"
+  },
+  {
     "name": "relative-time-card",
     "dependencies": [
       "@radix-ui/react-slot"

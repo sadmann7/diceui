@@ -544,6 +544,38 @@
       "type": "registry:ui"
     },
     {
+      "name": "phone-input",
+      "dependencies": [
+        "@radix-ui/react-slot",
+        "@radix-ui/react-popover",
+        "lucide-react",
+        "cmdk"
+      ],
+      "registryDependencies": [
+        "command",
+        "input",
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref"
+      ],
+      "files": [
+        {
+          "path": "ui/phone-input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "type": "registry:ui"
+    },
+    {
       "name": "relative-time-card",
       "dependencies": [
         "@radix-ui/react-slot"
@@ -2701,6 +2733,66 @@
       "files": [
         {
           "path": "examples/mention-custom-trigger-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "phone-input-demo",
+      "registryDependencies": [
+        "phone-input"
+      ],
+      "files": [
+        {
+          "path": "examples/phone-input-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "phone-input-form-demo",
+      "dependencies": [
+        "@hookform/resolvers",
+        "react-hook-form",
+        "zod",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "phone-input",
+        "button",
+        "form"
+      ],
+      "files": [
+        {
+          "path": "examples/phone-input-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "phone-input-custom-countries-demo",
+      "registryDependencies": [
+        "phone-input"
+      ],
+      "files": [
+        {
+          "path": "examples/phone-input-custom-countries-demo.tsx",
+          "type": "registry:example"
+        }
+      ],
+      "type": "registry:example"
+    },
+    {
+      "name": "phone-input-no-auto-detect-demo",
+      "registryDependencies": [
+        "phone-input"
+      ],
+      "files": [
+        {
+          "path": "examples/phone-input-no-auto-detect-demo.tsx",
           "type": "registry:example"
         }
       ],

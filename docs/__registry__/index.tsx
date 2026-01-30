@@ -417,6 +417,28 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+      files: [{
+        path: "registry/default/ui/phone-input.tsx",
+        type: "registry:ui",
+        target: ""
+      },{
+        path: "registry/default/components/visually-hidden-input.tsx",
+        type: "registry:component",
+        target: ""
+      },{
+        path: "registry/default/lib/compose-refs.ts",
+        type: "registry:lib",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/ui/phone-input.tsx")),
+      source: "",
+      chunks: []
+    },
     "relative-time-card": {
       name: "relative-time-card",
       description: "",
@@ -2338,6 +2360,62 @@ export const Index: Record<string, any> = {
         target: ""
       }],
       component: React.lazy(() => import("@/registry/default/examples/mention-custom-trigger-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "phone-input-demo": {
+      name: "phone-input-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["phone-input"],
+      files: [{
+        path: "registry/default/examples/phone-input-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/phone-input-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "phone-input-form-demo": {
+      name: "phone-input-form-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["phone-input","button","form"],
+      files: [{
+        path: "registry/default/examples/phone-input-form-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/phone-input-form-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "phone-input-custom-countries-demo": {
+      name: "phone-input-custom-countries-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["phone-input"],
+      files: [{
+        path: "registry/default/examples/phone-input-custom-countries-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/phone-input-custom-countries-demo.tsx")),
+      source: "",
+      chunks: []
+    },
+    "phone-input-no-auto-detect-demo": {
+      name: "phone-input-no-auto-detect-demo",
+      description: "",
+      type: "registry:example",
+      registryDependencies: ["phone-input"],
+      files: [{
+        path: "registry/default/examples/phone-input-no-auto-detect-demo.tsx",
+        type: "registry:example",
+        target: ""
+      }],
+      component: React.lazy(() => import("@/registry/default/examples/phone-input-no-auto-detect-demo.tsx")),
       source: "",
       chunks: []
     },
