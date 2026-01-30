@@ -630,7 +630,7 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const isLoading = useStore((state) => state.isLoading);
   const open = useStore((state) => state.open);
 
-  const isDisabled = disabled || disabled;
+  const isDisabled = disabledProp || disabled;
 
   const countryContext = countries.find((c) => c.code === country);
 
@@ -723,24 +723,25 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
   const {
     onChange: onChangeProp,
     className,
-    disabled,
-    readOnly,
-    required,
+    disabled: disabledProp,
+    readOnly: readOnlyProp,
+    required: requiredProp,
     ref,
     ...inputProps
   } = props;
 
-  const context = usePhoneInputContext(FIELD_NAME);
+  const { inputRef, disabled, invalid, readOnly, required, placeholder } =
+    usePhoneInputContext(FIELD_NAME);
   const store = useStoreContext(FIELD_NAME);
   const value = useStore((state) => state.value);
 
-  const composedRef = useComposedRefs(ref, context.inputRef);
+  const composedRef = useComposedRefs(ref, inputRef);
 
   const onChangeRef = useAsRef(onChangeProp);
 
-  const isDisabled = disabled || context.disabled;
-  const isReadOnly = readOnly || context.readOnly;
-  const isRequired = required || context.required;
+  const isDisabled = disabledProp || disabled;
+  const isReadOnly = readOnlyProp || readOnly;
+  const isRequired = requiredProp || required;
 
   const onChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -760,20 +761,20 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
       type="tel"
       inputMode="tel"
       aria-required={isRequired}
-      aria-invalid={context.invalid}
+      aria-invalid={invalid}
       data-slot="phone-input-field"
       disabled={isDisabled}
       readOnly={isReadOnly}
       required={isRequired}
       {...inputProps}
       ref={composedRef}
-      placeholder={context.placeholder}
-      value={value}
-      onChange={onChange}
       className={cn(
         "h-full flex-1 rounded-r-md rounded-l-none border-0 bg-transparent shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:bg-transparent aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:bg-transparent dark:aria-invalid:ring-destructive/40 dark:disabled:bg-transparent",
         className,
       )}
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
     />
   );
 }

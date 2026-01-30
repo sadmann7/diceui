@@ -1,3 +1,4 @@
+import type { Popover, PopoverTrigger } from "@/components/ui/popover";
 import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface Country {
@@ -127,7 +128,8 @@ export interface PhoneInputProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface PhoneInputCountrySelectProps
-  extends EmptyProps<"div">,
+  extends React.ComponentProps<typeof Popover>,
+    Pick<React.ComponentProps<typeof PopoverTrigger>, "disabled" | "className">,
     CompositionProps {}
 
 export interface PhoneInputFieldProps extends EmptyProps<"input"> {}
