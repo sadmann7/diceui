@@ -246,20 +246,9 @@ function PhoneInput(props: PhoneInputProps) {
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => {
-    let initialCountry = countryProp;
-
-    if (!initialCountry && autoDetect) {
-      // During SSR, skip locale detection and use defaultCountry or empty
-      // This prevents hydration mismatches between server and client
-      if (typeof window === "undefined") {
-        initialCountry = defaultCountry;
-      } else {
-        initialCountry =
-          defaultCountry ||
-          getCountryFromLocale(countries, locale) ||
-          countries[0]?.code;
-      }
-    }
+    // For SSR compatibility, always start with the same initial state
+    // Locale detection will happen in useEffect after hydration
+    const initialCountry = countryProp || defaultCountry;
 
     return {
       value: valueProp ?? defaultValue,
