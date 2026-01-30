@@ -93,10 +93,6 @@ const DEFAULT_COUNTRIES: Country[] = [
   { code: "BD", name: "Bangladesh", dialCode: "+880", flag: "🇧🇩" },
 ];
 
-interface DivProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
-
 type RootElement = React.ComponentRef<typeof PhoneInput>;
 
 interface StoreState {
@@ -166,8 +162,7 @@ function usePhoneInputContext(consumerName: string) {
   return context;
 }
 
-interface PhoneInputProps extends DivProps {
-  id?: string;
+interface PhoneInputProps extends React.ComponentProps<"div"> {
   defaultValue?: string;
   value?: string;
   onValueChange?: (value: string) => void;
@@ -177,6 +172,7 @@ interface PhoneInputProps extends DivProps {
   countries?: Country[];
   name?: string;
   placeholder?: string;
+  asChild?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
   required?: boolean;
@@ -345,11 +341,11 @@ function PhoneInput(props: PhoneInputProps) {
   );
 }
 
-interface PhoneInputCountrySelectProps {
-  children?: React.ReactNode;
-}
+function PhoneInputCountrySelect(
+  props: React.ComponentProps<typeof PopoverTrigger>,
+) {
+  const { className, ...countrySelectProps } = props;
 
-function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
   const context = usePhoneInputContext(COUNTRY_SELECT_NAME);
   const store = useStoreContext(COUNTRY_SELECT_NAME);
   const selectedCountry = useStore((state) => state.country);
@@ -362,7 +358,11 @@ function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
       <PopoverTrigger
         data-slot="phone-input-country-select"
         disabled={context.disabled}
-        className="flex h-full shrink-0 items-center gap-2 rounded-l-md border-input border-r bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
+        {...countrySelectProps}
+        className={cn(
+          "flex h-full shrink-0 items-center gap-2 rounded-l-md border-input border-r bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
+          className,
+        )}
       >
         {context.showFlag && country?.flag && (
           <span className="text-lg leading-none">{country.flag}</span>
@@ -385,7 +385,6 @@ function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
                   onSelect={() => {
                     store.setState("country", countryItem.code);
                     setOpen(false);
-                    // Focus the input field after country selection
                     requestAnimationFrame(() => {
                       context.inputRef.current?.focus();
                     });
@@ -416,9 +415,7 @@ function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
   );
 }
 
-interface PhoneInputFieldProps extends React.ComponentProps<"input"> {}
-
-function PhoneInputField(props: PhoneInputFieldProps) {
+function PhoneInputField(props: React.ComponentProps<"input">) {
   const {
     onChange: onChangeProp,
     className,
@@ -435,7 +432,7 @@ function PhoneInputField(props: PhoneInputFieldProps) {
 
   const composedRef = useComposedRefs(ref, context.inputRef);
 
-  const propsRef = useAsRef({ onChange: onChangeProp });
+  const onChangeRef = useAsRef(onChangeProp);
 
   const isDisabled = disabled || context.disabled;
   const isReadOnly = readOnly || context.readOnly;
@@ -445,14 +442,13 @@ function PhoneInputField(props: PhoneInputFieldProps) {
     (event: React.ChangeEvent<HTMLInputElement>) => {
       if (isDisabled || isReadOnly) return;
 
-      propsRef.current.onChange?.(event);
+      onChangeRef.current?.(event);
       if (event.defaultPrevented) return;
 
-      // Only allow digits, spaces, dashes, and parentheses
       const sanitized = event.target.value.replace(/[^\d\s()-]/g, "");
       store.setState("value", sanitized);
     },
-    [store, propsRef, isDisabled, isReadOnly],
+    [store, onChangeRef, isDisabled, isReadOnly],
   );
 
   return (
