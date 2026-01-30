@@ -485,9 +485,10 @@ export const ui: Registry["items"] = [
   {
     name: "phone-input",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "cmdk"],
+    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-popover", "lucide-react", "cmdk"],
     registryDependencies: [
       "command",
+      "input",
       "popover",
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",

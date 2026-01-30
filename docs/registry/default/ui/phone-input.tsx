@@ -11,6 +11,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -97,7 +98,6 @@ interface DivProps extends React.ComponentProps<"div"> {
 }
 
 type RootElement = React.ComponentRef<typeof PhoneInput>;
-type FieldElement = React.ComponentRef<typeof PhoneInputField>;
 
 interface StoreState {
   value: string;
@@ -319,7 +319,7 @@ function PhoneInput(props: PhoneInputProps) {
           id={id}
           ref={composedRef}
           className={cn(
-            "relative flex h-10 w-full items-center overflow-hidden rounded-md border border-input bg-background transition-colors has-[[data-slot=phone-input-field]:focus-visible]:outline-hidden has-[[data-slot=phone-input-field]:focus-visible]:ring-1 has-[[data-slot=phone-input-field]:focus-visible]:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50",
+            "relative flex h-10 w-full items-center rounded-md border border-input bg-background data-disabled:cursor-not-allowed data-disabled:opacity-50 dark:bg-input/30",
             className,
           )}
         >
@@ -358,7 +358,7 @@ function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
       <PopoverTrigger
         data-slot="phone-input-country-select"
         disabled={context.disabled}
-        className="flex h-full shrink-0 items-center gap-2 border-input border-r bg-transparent px-3 text-sm hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+        className="flex h-full shrink-0 items-center gap-2 rounded-l-md border-input border-r bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:outline-hidden focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40"
       >
         {context.showFlag && country?.flag && (
           <span className="text-lg leading-none">{country.flag}</span>
@@ -384,7 +384,7 @@ function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
                   }}
                 >
                   {context.showFlag && countryItem.flag && (
-                    <span className="mr-2 text-lg">{countryItem.flag}</span>
+                    <span className="text-lg">{countryItem.flag}</span>
                   )}
                   <span className="flex-1">{countryItem.name}</span>
                   <span className="text-muted-foreground">
@@ -392,7 +392,7 @@ function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
                   </span>
                   <Check
                     className={cn(
-                      "ml-2 size-4",
+                      "size-4",
                       selectedCountry === countryItem.code
                         ? "opacity-100"
                         : "opacity-0",
@@ -408,19 +408,15 @@ function PhoneInputCountrySelect(_props: PhoneInputCountrySelectProps) {
   );
 }
 
-interface PhoneInputFieldProps extends React.ComponentProps<"input"> {
-  asChild?: boolean;
-}
+interface PhoneInputFieldProps extends React.ComponentProps<"input"> {}
 
 function PhoneInputField(props: PhoneInputFieldProps) {
   const {
     onChange: onChangeProp,
-    asChild,
     className,
     disabled,
     readOnly,
     required,
-    ref,
     ...inputProps
   } = props;
 
@@ -435,7 +431,7 @@ function PhoneInputField(props: PhoneInputFieldProps) {
   const isRequired = required || context.required;
 
   const onChange = React.useCallback(
-    (event: React.ChangeEvent<FieldElement>) => {
+    (event: React.ChangeEvent<HTMLInputElement>) => {
       if (isDisabled || isReadOnly) return;
 
       propsRef.current.onChange?.(event);
@@ -448,10 +444,8 @@ function PhoneInputField(props: PhoneInputFieldProps) {
     [store, propsRef, isDisabled, isReadOnly],
   );
 
-  const InputPrimitive = asChild ? Slot : "input";
-
   return (
-    <InputPrimitive
+    <Input
       type="tel"
       inputMode="tel"
       aria-required={isRequired}
@@ -461,12 +455,11 @@ function PhoneInputField(props: PhoneInputFieldProps) {
       readOnly={isReadOnly}
       required={isRequired}
       {...inputProps}
-      ref={ref}
       placeholder={context.placeholder}
       value={value}
       onChange={onChange}
       className={cn(
-        "flex h-full w-full flex-1 bg-transparent px-3 py-2 text-base shadow-none outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed md:text-sm",
+        "h-full flex-1 rounded-r-md rounded-l-none border-0 bg-transparent shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:bg-transparent aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:bg-transparent dark:aria-invalid:ring-destructive/40 dark:disabled:bg-transparent",
         className,
       )}
     />
