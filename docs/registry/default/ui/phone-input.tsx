@@ -93,6 +93,24 @@ const DEFAULT_COUNTRIES: Country[] = [
   { code: "BD", name: "Bangladesh", dialCode: "+880", flag: "🇧🇩" },
 ];
 
+function getCountryFromLocale(
+  countries: Country[],
+  locale?: string,
+): string | undefined {
+  const userLocale =
+    locale || (typeof navigator !== "undefined" ? navigator.language : "");
+
+  if (!userLocale) return undefined;
+
+  const regionCode = userLocale.split("-")[1]?.toUpperCase();
+
+  if (regionCode && countries.some((c) => c.code === regionCode)) {
+    return regionCode;
+  }
+
+  return undefined;
+}
+
 type RootElement = React.ComponentRef<typeof PhoneInput>;
 
 interface StoreState {
@@ -170,6 +188,7 @@ interface PhoneInputProps extends React.ComponentProps<"div"> {
   country?: string;
   onCountryChange?: (country: string) => void;
   countries?: Country[];
+  locale?: string;
   name?: string;
   placeholder?: string;
   asChild?: boolean;
@@ -185,11 +204,12 @@ function PhoneInput(props: PhoneInputProps) {
   const {
     value: valueProp,
     defaultValue = "",
-    defaultCountry = "US",
+    defaultCountry,
     country: countryProp,
     onValueChange,
     onCountryChange,
     countries = DEFAULT_COUNTRIES,
+    locale,
     name,
     placeholder = "Enter phone number",
     asChild,
@@ -218,10 +238,14 @@ function PhoneInput(props: PhoneInputProps) {
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
-    value: valueProp ?? defaultValue,
-    country: countryProp ?? defaultCountry,
-  }));
+  const stateRef = useLazyRef<StoreState>(() => {
+    const detectedCountry =
+      defaultCountry || getCountryFromLocale(countries, locale);
+    return {
+      value: valueProp ?? defaultValue,
+      country: countryProp ?? detectedCountry ?? countries[0]?.code ?? "",
+    };
+  });
 
   const propsRef = useAsRef({
     onValueChange,

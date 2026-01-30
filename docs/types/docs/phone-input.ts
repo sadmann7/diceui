@@ -65,6 +65,13 @@ export interface PhoneInputProps extends EmptyProps<"div">, CompositionProps {
   countries?: Country[];
 
   /**
+   * The locale to use for automatic country detection.
+   * Uses the browser's locale if not provided.
+   * @example "en-US", "en-GB", "fr-FR"
+   */
+  locale?: string;
+
+  /**
    * The name of the phone input for form submission.
    */
   name?: string;

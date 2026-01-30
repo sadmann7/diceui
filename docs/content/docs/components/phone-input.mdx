@@ -72,6 +72,32 @@ return (
 )
 ```
 
+## Locale Detection
+
+The phone input automatically detects the user's country based on their browser locale. You can override this behavior by providing a `defaultCountry` or `locale` prop.
+
+```tsx
+// Automatically detects from browser locale (e.g., en-US → US)
+<PhoneInput>
+  <PhoneInputCountrySelect />
+  <PhoneInputField />
+</PhoneInput>
+
+// Override with a specific country
+<PhoneInput defaultCountry="GB">
+  <PhoneInputCountrySelect />
+  <PhoneInputField />
+</PhoneInput>
+
+// Use a specific locale for detection
+<PhoneInput locale="en-GB">
+  <PhoneInputCountrySelect />
+  <PhoneInputField />
+</PhoneInput>
+```
+
+If no country can be detected from the locale, it defaults to the first country in the `countries` list.
+
 ## Examples
 
 ### Custom Countries
