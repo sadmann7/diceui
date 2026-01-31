@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   PhoneInput,
   PhoneInputCountrySelect,
@@ -7,9 +6,9 @@ import {
 
 export default function PhoneInputDemo() {
   return (
-    <PhoneInput defaultValue="5551234" showFlag={true}>
+    <PhoneInput>
       <PhoneInputCountrySelect />
-      <PhoneInputField />
+      <PhoneInputField placeholder="12345667777" />
     </PhoneInput>
   );
 }

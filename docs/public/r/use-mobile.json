@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "hooks/use-mobile.ts",
-      "content": "import * as React from \"react\";\n\nconst MOBILE_BREAKPOINT = 768;\n\nfunction useIsMobile(breakpoint = MOBILE_BREAKPOINT) {\n  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(\n    undefined,\n  );\n\n  React.useEffect(() => {\n    const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);\n    const onChange = () => {\n      setIsMobile(window.innerWidth < breakpoint);\n    };\n    mql.addEventListener(\"change\", onChange);\n    setIsMobile(window.innerWidth < breakpoint);\n    return () => mql.removeEventListener(\"change\", onChange);\n  }, [breakpoint]);\n\n  return !!isMobile;\n}\n\nexport { useIsMobile };\n",
+      "content": "import * as React from \"react\";\r\n\r\nconst MOBILE_BREAKPOINT = 768;\r\n\r\nfunction useIsMobile(breakpoint = MOBILE_BREAKPOINT) {\r\n  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(\r\n    undefined,\r\n  );\r\n\r\n  React.useEffect(() => {\r\n    const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);\r\n    const onChange = () => {\r\n      setIsMobile(window.innerWidth < breakpoint);\r\n    };\r\n    mql.addEventListener(\"change\", onChange);\r\n    setIsMobile(window.innerWidth < breakpoint);\r\n    return () => mql.removeEventListener(\"change\", onChange);\r\n  }, [breakpoint]);\r\n\r\n  return !!isMobile;\r\n}\r\n\r\nexport { useIsMobile };\r\n",
       "type": "registry:hook",
       "target": ""
     }

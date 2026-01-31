@@ -1,12 +1,12 @@
 ---
 title: Phone Input
-description: An accessible phone input component with country code dropdown and international phone number support.
+description: An accessible phone input component with automatic country detection and international phone number formatting.
 preview: true
 links:
   api: /docs/components/phone-input#api-reference
 ---
 
-<ComponentTabs name="phone-input-demo" className="items-start justify-start [&>div]:pt-20"  />
+<ComponentTabs name="phone-input-demo" />
 
 ## Installation
 
@@ -72,57 +72,19 @@ return (
 )
 ```
 
-## Locale Detection
-
-The phone input automatically detects the user's country based on their browser locale. You can override this behavior by providing a `defaultCountry` or `locale` prop.
-
-```tsx
-// Automatically detects from browser locale (e.g., en-US → US)
-<PhoneInput>
-  <PhoneInputCountrySelect />
-  <PhoneInputField />
-</PhoneInput>
-
-// Override with a specific country
-<PhoneInput defaultCountry="GB">
-  <PhoneInputCountrySelect />
-  <PhoneInputField />
-</PhoneInput>
-
-// Use a specific locale for detection
-<PhoneInput locale="en-GB">
-  <PhoneInputCountrySelect />
-  <PhoneInputField />
-</PhoneInput>
-
-// Disable auto-detection, force users to select
-<PhoneInput autoDetect={false}>
-  <PhoneInputCountrySelect />
-  <PhoneInputField />
-</PhoneInput>
-```
-
-If no country can be detected from the locale, it defaults to the first country in the `countries` list.
-
 ## Examples
 
 ### Custom Countries
 
 Provide a custom list of countries to display in the dropdown.
 
-<ComponentTabs name="phone-input-custom-countries-demo" className="items-start justify-start [&>div]:pt-20" />
-
-### No Auto-Detection
-
-Disable automatic country detection to force users to explicitly select a country.
-
-<ComponentTabs name="phone-input-no-auto-detect-demo" className="items-start justify-start [&>div]:pt-20" />
+<ComponentTabs name="phone-input-custom-countries-demo" />
 
 ### With Form
 
 Use the phone input component in a form with validation.
 
-<ComponentTabs name="phone-input-form-demo" className="items-start justify-start [&>div]:pt-20" />
+<ComponentTabs name="phone-input-form-demo" />
 
 ## API Reference
 
@@ -149,10 +111,6 @@ The root container component that acts as both the wrapper and input group. Hand
       title: "[data-readonly]",
       value: "Present when the phone input is read-only",
     },
-    {
-      title: "[data-slot]",
-      value: "phone-input",
-    },
   ]}
 />
 
@@ -165,15 +123,6 @@ The button component that triggers the country dropdown. Uses Popover and Comman
   name="PhoneInputCountrySelectProps"
 />
 
-<DataAttributesTable
-  data={[
-    {
-      title: "[data-slot]",
-      value: "phone-input-country-select",
-    },
-  ]}
-/>
-
 ### PhoneInputField
 
 The input field component for entering the phone number.
@@ -182,28 +131,6 @@ The input field component for entering the phone number.
   path="./types/docs/phone-input.ts"
   name="PhoneInputFieldProps"
 />
-
-<DataAttributesTable
-  data={[
-    {
-      title: "[data-slot]",
-      value: "phone-input-field",
-    },
-  ]}
-/>
-
-### Country Type
-
-The country object type used throughout the component.
-
-```tsx
-interface Country {
-  code: string;        // ISO 3166-1 alpha-2 country code
-  name: string;        // Country name
-  dialCode: string;    // Country calling code (e.g., "+1")
-  flag?: string;       // Optional flag emoji
-}
-```
 
 ## Accessibility
 

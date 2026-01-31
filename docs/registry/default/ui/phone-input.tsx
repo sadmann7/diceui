@@ -310,26 +310,66 @@ function getCountries(): Country[] {
   }).sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function getCountryFromLocale(
+function detectCountryFromNumber(
+  value: string,
   countries: Country[],
-  locale?: string,
-): string | undefined {
-  if (typeof window === "undefined" && !locale) {
-    return undefined;
+): Country | undefined {
+  if (!value || !value.startsWith("+")) return undefined;
+
+  const digits = value.slice(1).replace(/\D/g, "");
+  if (!digits) return undefined;
+
+  const sorted = [...countries].sort(
+    (a, b) => b.dialCode.length - a.dialCode.length,
+  );
+
+  const matches: Country[] = [];
+  for (const country of sorted) {
+    const dialCode = country.dialCode.slice(1);
+    if (digits.startsWith(dialCode)) {
+      matches.push(country);
+    }
   }
 
-  const userLocale =
-    locale || (typeof navigator !== "undefined" ? navigator.language : "");
+  if (matches.length === 0) return undefined;
 
-  if (!userLocale) return undefined;
-
-  const regionCode = userLocale.split("-")[1]?.toUpperCase();
-
-  if (regionCode && countries.some((c) => c.code === regionCode)) {
-    return regionCode;
+  if (matches.length > 1 && matches[0]?.dialCode === "+1") {
+    const usCountry = matches.find((c) => c.code === "US");
+    if (usCountry) return usCountry;
   }
 
-  return undefined;
+  return matches[0];
+}
+
+function formatPhoneNumber(value: string, countries: Country[]): string {
+  if (!value) return "";
+
+  const normalized = value.startsWith("+") ? value : `+${value}`;
+
+  const digits = normalized.slice(1).replace(/\D/g, "");
+  if (!digits) return "+";
+
+  const detected = detectCountryFromNumber(`+${digits}`, countries);
+  const dialCodeLength = detected
+    ? detected.dialCode.slice(1).length
+    : Math.min(digits.length, 3);
+
+  const countryCode = digits.slice(0, dialCodeLength);
+  const rest = digits.slice(dialCodeLength);
+
+  let formatted = `+${countryCode}`;
+
+  if (rest) {
+    formatted += " ";
+    for (let i = 0; i < rest.length; i++) {
+      if (i > 0 && i % 3 === 0) {
+        formatted += " ";
+      }
+      formatted += rest[i];
+    }
+  }
+
+  return formatted;
 }
 
 type RootElement = React.ComponentRef<typeof PhoneInput>;
@@ -337,8 +377,8 @@ type RootElement = React.ComponentRef<typeof PhoneInput>;
 interface StoreState {
   value: string;
   country: string;
-  isLoading: boolean;
   open: boolean;
+  startsWithPlus: boolean;
 }
 
 interface Store {
@@ -387,7 +427,6 @@ interface PhoneInputContextValue {
   required?: boolean;
   invalid?: boolean;
   showFlag: boolean;
-  showDialCode: boolean;
   inputRef: React.RefObject<HTMLInputElement | null>;
 }
 
@@ -411,8 +450,6 @@ interface PhoneInputProps extends React.ComponentProps<"div"> {
   country?: string;
   onCountryChange?: (country: string) => void;
   countries?: Country[];
-  locale?: string;
-  autoDetect?: boolean;
   name?: string;
   placeholder?: string;
   asChild?: boolean;
@@ -421,7 +458,6 @@ interface PhoneInputProps extends React.ComponentProps<"div"> {
   required?: boolean;
   invalid?: boolean;
   showFlag?: boolean;
-  showDialCode?: boolean;
 }
 
 function PhoneInput(props: PhoneInputProps) {
@@ -433,8 +469,6 @@ function PhoneInput(props: PhoneInputProps) {
     onValueChange,
     onCountryChange,
     countries = getCountries(),
-    locale,
-    autoDetect = true,
     name,
     placeholder = "Enter phone number",
     asChild,
@@ -443,9 +477,7 @@ function PhoneInput(props: PhoneInputProps) {
     readOnly,
     invalid,
     showFlag = true,
-    showDialCode = false,
     className,
-    children,
     id,
     ref,
     ...rootProps
@@ -464,14 +496,14 @@ function PhoneInput(props: PhoneInputProps) {
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => {
-    const initialCountry = countryProp ?? defaultCountry;
-    const shouldAutoDetect = autoDetect && !initialCountry;
+    const initialValue = valueProp ?? defaultValue ?? "";
+    const initialCountry = countryProp ?? defaultCountry ?? "";
 
     return {
-      value: valueProp ?? defaultValue ?? "",
-      country: initialCountry ?? "",
-      isLoading: shouldAutoDetect,
+      value: initialValue,
+      country: initialCountry,
       open: false,
+      startsWithPlus: initialValue.startsWith("+"),
     };
   });
 
@@ -512,20 +544,6 @@ function PhoneInput(props: PhoneInputProps) {
 
   const value = useStore((state) => state.value, store);
   const country = useStore((state) => state.country, store);
-  const isLoading = useStore((state) => state.isLoading, store);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: Only run once on mount to detect locale, not on every state change
-  React.useEffect(() => {
-    if (!isLoading) return;
-
-    const detectedCountry =
-      getCountryFromLocale(countries, locale) || countries[0]?.code;
-
-    if (detectedCountry) {
-      store.setState("country", detectedCountry);
-    }
-    store.setState("isLoading", false);
-  }, []);
 
   useIsomorphicLayoutEffect(() => {
     if (valueProp !== undefined) {
@@ -539,6 +557,22 @@ function PhoneInput(props: PhoneInputProps) {
     }
   }, [countryProp]);
 
+  const startsWithPlus = useStore((state) => state.startsWithPlus, store);
+
+  React.useEffect(() => {
+    if (!value) return;
+
+    const digits = value.slice(1).replace(/\D/g, "");
+    const shouldDetect = startsWithPlus || digits.length >= 10;
+
+    if (!shouldDetect) return;
+
+    const detected = detectCountryFromNumber(value, countries);
+    if (detected && detected.code !== country) {
+      store.setState("country", detected.code);
+    }
+  }, [value, countries, country, store, startsWithPlus]);
+
   const contextValue = React.useMemo<PhoneInputContextValue>(
     () => ({
       rootId,
@@ -549,7 +583,6 @@ function PhoneInput(props: PhoneInputProps) {
       required,
       invalid,
       showFlag,
-      showDialCode,
       inputRef,
     }),
     [
@@ -561,16 +594,10 @@ function PhoneInput(props: PhoneInputProps) {
       readOnly,
       invalid,
       showFlag,
-      showDialCode,
     ],
   );
 
   const RootPrimitive = asChild ? Slot : "div";
-
-  const currentCountry = countries.find((c) => c.code === country);
-  const fullValue = currentCountry
-    ? `${currentCountry.dialCode}${value}`
-    : value;
 
   return (
     <StoreContext.Provider value={store}>
@@ -581,22 +608,20 @@ function PhoneInput(props: PhoneInputProps) {
           data-disabled={disabled ? "" : undefined}
           data-invalid={invalid ? "" : undefined}
           data-readonly={readOnly ? "" : undefined}
+          id={rootId}
           {...rootProps}
-          id={id}
           ref={composedRef}
           className={cn(
-            "relative flex h-10 w-full items-center overflow-hidden rounded-md border border-input bg-background transition-colors has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:ring-[3px] has-[[data-slot][aria-invalid=true]]:ring-destructive/20 data-disabled:cursor-not-allowed data-disabled:opacity-50 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40",
+            "relative flex h-10 w-full items-center rounded-md border border-input bg-background transition-colors has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:ring-[3px] has-[[data-slot][aria-invalid=true]]:ring-destructive/20 data-disabled:cursor-not-allowed data-disabled:opacity-50 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40",
             className,
           )}
-        >
-          {children}
-        </RootPrimitive>
+        />
         {isFormControl && (
           <VisuallyHiddenInput
             type="hidden"
             control={formTrigger}
             name={name}
-            value={fullValue}
+            value={value}
             disabled={disabled}
             readOnly={readOnly}
             required={required}
@@ -623,11 +648,10 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
     ...popoverProps
   } = props;
 
-  const { countries, inputRef, disabled, showDialCode, showFlag } =
+  const { countries, inputRef, disabled, showFlag } =
     usePhoneInputContext(COUNTRY_SELECT_NAME);
   const store = useStoreContext(COUNTRY_SELECT_NAME);
   const country = useStore((state) => state.country);
-  const isLoading = useStore((state) => state.isLoading);
   const open = useStore((state) => state.open);
 
   const isDisabled = disabledProp || disabled;
@@ -652,31 +676,15 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
           className,
         )}
       >
-        {isLoading || !countryContext ? (
-          <div
-            className={cn(
-              "h-4 rounded",
-              isLoading ? "animate-pulse bg-muted" : "bg-muted/50",
-              showFlag && showDialCode
-                ? "w-17"
-                : showDialCode
-                  ? "w-10"
-                  : showFlag
-                    ? "w-4.5"
-                    : "w-8",
-            )}
-          />
+        {!countryContext ? (
+          <div className="h-4 w-6 rounded bg-muted/50" />
         ) : (
-          <>
-            {showFlag && countryContext.flag && (
-              <span className="text-lg leading-none">
-                {countryContext.flag}
-              </span>
-            )}
-            {showDialCode && countryContext.dialCode && (
-              <span className="font-medium">{countryContext.dialCode}</span>
-            )}
-          </>
+          showFlag &&
+          countryContext.flag && (
+            <div className="w-6 text-lg leading-none">
+              {countryContext.flag}
+            </div>
+          )
         )}
         <ChevronDown className="size-4 opacity-50" />
       </PopoverTrigger>
@@ -730,8 +738,15 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
     ...inputProps
   } = props;
 
-  const { inputRef, disabled, invalid, readOnly, required, placeholder } =
-    usePhoneInputContext(FIELD_NAME);
+  const {
+    inputRef,
+    disabled,
+    invalid,
+    readOnly,
+    required,
+    placeholder,
+    countries,
+  } = usePhoneInputContext(FIELD_NAME);
   const store = useStoreContext(FIELD_NAME);
   const value = useStore((state) => state.value);
 
@@ -750,11 +765,20 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
       onChangeRef.current?.(event);
       if (event.defaultPrevented) return;
 
-      const sanitized = event.target.value.replace(/[^\d\s()-]/g, "");
-      store.setState("value", sanitized);
+      const inputValue = event.target.value;
+
+      const startsWithPlus = inputValue.startsWith("+");
+      const digits = inputValue.replace(/\D/g, "");
+      const newValue = digits ? `+${digits}` : startsWithPlus ? "+" : "";
+      store.setState("startsWithPlus", startsWithPlus);
+      store.setState("value", newValue);
     },
     [store, onChangeRef, isDisabled, isReadOnly],
   );
+
+  const displayValue = React.useMemo(() => {
+    return formatPhoneNumber(value, countries);
+  }, [value, countries]);
 
   return (
     <Input
@@ -773,7 +797,7 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
         className,
       )}
       placeholder={placeholder}
-      value={value}
+      value={displayValue}
       onChange={onChange}
     />
   );
