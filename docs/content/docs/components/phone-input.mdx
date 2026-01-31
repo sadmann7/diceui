@@ -72,33 +72,6 @@ return (
 )
 ```
 
-## Usage
-
-The phone input automatically detects the country from the typed number:
-
-- **Type with `+`**: Detects country immediately (e.g., `+1` → US 🇺🇸)
-- **Type digits only**: Detects country after 10+ digits (e.g., `12345678901` → +1 234 567 8901 with US 🇺🇸)
-
-You can also manually select a country from the dropdown before typing.
-
-```tsx
-// Basic usage with controlled state
-const [value, setValue] = React.useState("");
-
-<PhoneInput value={value} onValueChange={setValue}>
-  <PhoneInputCountrySelect />
-  <PhoneInputField placeholder="12345678901" />
-</PhoneInput>
-
-// With default country
-<PhoneInput defaultCountry="GB">
-  <PhoneInputCountrySelect />
-  <PhoneInputField />
-</PhoneInput>
-```
-
-The value is stored in E.164 format (e.g., `+12345678901`) for easy backend integration.
-
 ## Examples
 
 ### Custom Countries
@@ -137,10 +110,6 @@ The root container component that acts as both the wrapper and input group. Hand
     {
       title: "[data-readonly]",
       value: "Present when the phone input is read-only",
-    },
-    {
-      title: "[data-slot]",
-      value: "phone-input",
     },
   ]}
 />
