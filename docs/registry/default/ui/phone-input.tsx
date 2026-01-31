@@ -478,7 +478,6 @@ function PhoneInput(props: PhoneInputProps) {
     invalid,
     showFlag = true,
     className,
-    children,
     id,
     ref,
     ...rootProps
@@ -609,16 +608,14 @@ function PhoneInput(props: PhoneInputProps) {
           data-disabled={disabled ? "" : undefined}
           data-invalid={invalid ? "" : undefined}
           data-readonly={readOnly ? "" : undefined}
+          id={rootId}
           {...rootProps}
-          id={id}
           ref={composedRef}
           className={cn(
             "relative flex h-10 w-full items-center rounded-md border border-input bg-background transition-colors has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:ring-[3px] has-[[data-slot][aria-invalid=true]]:ring-destructive/20 data-disabled:cursor-not-allowed data-disabled:opacity-50 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40",
             className,
           )}
-        >
-          {children}
-        </RootPrimitive>
+        />
         {isFormControl && (
           <VisuallyHiddenInput
             type="hidden"
