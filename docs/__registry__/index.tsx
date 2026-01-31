@@ -2405,20 +2405,6 @@ export const Index: Record<string, any> = {
       source: "",
       chunks: []
     },
-    "phone-input-no-auto-detect-demo": {
-      name: "phone-input-no-auto-detect-demo",
-      description: "",
-      type: "registry:example",
-      registryDependencies: ["phone-input"],
-      files: [{
-        path: "registry/default/examples/phone-input-no-auto-detect-demo.tsx",
-        type: "registry:example",
-        target: ""
-      }],
-      component: React.lazy(() => import("@/registry/default/examples/phone-input-no-auto-detect-demo.tsx")),
-      source: "",
-      chunks: []
-    },
     "qr-code-demo": {
       name: "qr-code-demo",
       description: "",

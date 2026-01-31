@@ -1332,17 +1332,6 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "phone-input-no-auto-detect-demo",
-    type: "registry:example",
-    registryDependencies: ["phone-input"],
-    files: [
-      {
-        path: "examples/phone-input-no-auto-detect-demo.tsx",
-        type: "registry:example",
-      },
-    ],
-  },
-  {
     name: "qr-code-demo",
     type: "registry:example",
     registryDependencies: ["qr-code"],

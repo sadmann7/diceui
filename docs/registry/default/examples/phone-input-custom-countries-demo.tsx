@@ -15,12 +15,12 @@ const NORTH_AMERICAN_COUNTRIES: PhoneInputProps["countries"] = [
 export default function PhoneInputCustomCountriesDemo() {
   return (
     <PhoneInput
-      defaultValue="5551234"
+      defaultValue="+14085551234"
       defaultCountry="US"
       countries={NORTH_AMERICAN_COUNTRIES}
     >
       <PhoneInputCountrySelect />
-      <PhoneInputField />
+      <PhoneInputField placeholder="Type phone number" />
     </PhoneInput>
   );
 }

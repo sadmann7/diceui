@@ -6,7 +6,7 @@
   "files": [
     {
       "path": "examples/phone-input-demo.tsx",
-      "content": "import * as React from \"react\";\nimport {\n  PhoneInput,\n  PhoneInputCountrySelect,\n  PhoneInputField,\n} from \"@/registry/default/ui/phone-input\";\n\nexport default function PhoneInputDemo() {\n  return (\n    <PhoneInput defaultValue=\"5551234\" showFlag={true}>\n      <PhoneInputCountrySelect />\n      <PhoneInputField />\n    </PhoneInput>\n  );\n}\n",
+      "content": "\"use client\";\r\n\r\nimport * as React from \"react\";\r\nimport {\r\n  PhoneInput,\r\n  PhoneInputCountrySelect,\r\n  PhoneInputField,\r\n} from \"@/registry/default/ui/phone-input\";\r\n\r\nexport default function PhoneInputDemo() {\r\n  const [value, setValue] = React.useState(\"\");\r\n\r\n  return (\r\n    <div className=\"max-w-md space-y-4\">\r\n      <PhoneInput value={value} onValueChange={setValue}>\r\n        <PhoneInputCountrySelect />\r\n        <PhoneInputField placeholder=\"12345667777\" />\r\n      </PhoneInput>\r\n\r\n      <div className=\"space-y-1 text-sm\">\r\n        <p className=\"text-muted-foreground\">\r\n          Value: <span className=\"font-mono\">{value || \"empty\"}</span>\r\n        </p>\r\n        <p className=\"text-muted-foreground text-xs\">\r\n          Just start typing digits like \"12345667777\" and it formats to \"+1 234\r\n          566 7777\"\r\n        </p>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n",
       "type": "registry:example",
       "target": ""
     }
