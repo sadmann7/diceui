@@ -378,7 +378,7 @@ interface StoreState {
   value: string;
   country: string;
   open: boolean;
-  userTypedPlus: boolean;
+  startsWithPlus: boolean;
 }
 
 interface Store {
@@ -504,7 +504,7 @@ function PhoneInput(props: PhoneInputProps) {
       value: initialValue,
       country: initialCountry,
       open: false,
-      userTypedPlus: initialValue.startsWith("+"),
+      startsWithPlus: initialValue.startsWith("+"),
     };
   });
 
@@ -558,13 +558,13 @@ function PhoneInput(props: PhoneInputProps) {
     }
   }, [countryProp]);
 
-  const userTypedPlus = useStore((state) => state.userTypedPlus, store);
+  const startsWithPlus = useStore((state) => state.startsWithPlus, store);
 
   React.useEffect(() => {
     if (!value) return;
 
     const digits = value.slice(1).replace(/\D/g, "");
-    const shouldDetect = userTypedPlus || digits.length >= 10;
+    const shouldDetect = startsWithPlus || digits.length >= 10;
 
     if (!shouldDetect) return;
 
@@ -572,7 +572,7 @@ function PhoneInput(props: PhoneInputProps) {
     if (detected && detected.code !== country) {
       store.setState("country", detected.code);
     }
-  }, [value, countries, country, store, userTypedPlus]);
+  }, [value, countries, country, store, startsWithPlus]);
 
   const contextValue = React.useMemo<PhoneInputContextValue>(
     () => ({
@@ -770,10 +770,10 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
 
       const inputValue = event.target.value;
 
-      const userTypedPlus = inputValue.startsWith("+");
+      const startsWithPlus = inputValue.startsWith("+");
       const digits = inputValue.replace(/\D/g, "");
-      const newValue = digits ? `+${digits}` : userTypedPlus ? "+" : "";
-      store.setState("userTypedPlus", userTypedPlus);
+      const newValue = digits ? `+${digits}` : startsWithPlus ? "+" : "";
+      store.setState("startsWithPlus", startsWithPlus);
       store.setState("value", newValue);
     },
     [store, onChangeRef, isDisabled, isReadOnly],
