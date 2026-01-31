@@ -123,15 +123,6 @@ The button component that triggers the country dropdown. Uses Popover and Comman
   name="PhoneInputCountrySelectProps"
 />
 
-<DataAttributesTable
-  data={[
-    {
-      title: "[data-slot]",
-      value: "phone-input-country-select",
-    },
-  ]}
-/>
-
 ### PhoneInputField
 
 The input field component for entering the phone number.
@@ -140,28 +131,6 @@ The input field component for entering the phone number.
   path="./types/docs/phone-input.ts"
   name="PhoneInputFieldProps"
 />
-
-<DataAttributesTable
-  data={[
-    {
-      title: "[data-slot]",
-      value: "phone-input-field",
-    },
-  ]}
-/>
-
-### Country Type
-
-The country object type used throughout the component.
-
-```tsx
-interface Country {
-  code: string;        // ISO 3166-1 alpha-2 country code
-  name: string;        // Country name
-  dialCode: string;    // Country calling code (e.g., "+1")
-  flag?: string;       // Optional flag emoji
-}
-```
 
 ## Accessibility
 

@@ -559,6 +559,7 @@ function PhoneInput(props: PhoneInputProps) {
   }, [countryProp]);
 
   const userTypedPlus = useStore((state) => state.userTypedPlus, store);
+
   React.useEffect(() => {
     if (!value) return;
 
