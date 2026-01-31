@@ -470,7 +470,7 @@ function PhoneInput(props: PhoneInputProps) {
     onCountryChange,
     countries = getCountries(),
     name,
-    placeholder = "+1 234 567 8900",
+    placeholder = "Enter phone number",
     asChild,
     disabled,
     required,
