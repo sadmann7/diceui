@@ -21,34 +21,46 @@ const ComponentSource = dynamic(() =>
     default: mod.ComponentSource,
   })),
 );
+
 const ComponentTabs = dynamic(() =>
   import("@/components/component-tabs").then((mod) => ({
     default: mod.ComponentTabs,
   })),
 );
+
 const CSSVariablesTable = dynamic(() =>
   import("@/components/css-variables-table").then((mod) => ({
     default: mod.CSSVariablesTable,
   })),
 );
+
 const AutoTypeTable = dynamic(() =>
   import("@/components/auto-type-table").then((mod) => ({
     default: mod.AutoTypeTable,
   })),
 );
+
 const DataAttributesTable = dynamic(() =>
   import("@/components/data-attributes-table").then((mod) => ({
     default: mod.DataAttributesTable,
   })),
 );
+
 const PropsTable = dynamic(() =>
   import("@/components/props-table").then((mod) => ({
     default: mod.PropsTable,
   })),
 );
+
 const KeyboardShortcutsTable = dynamic(() =>
   import("@/components/keyboard-shortcuts-table").then((mod) => ({
     default: mod.KeyboardShortcutsTable,
+  })),
+);
+
+const ComponentList = dynamic(() =>
+  import("@/components/component-list").then((mod) => ({
+    default: mod.ComponentList,
   })),
 );
 
@@ -113,6 +125,7 @@ export function useMdxComponents(
     DataAttributesTable,
     PropsTable,
     KeyboardShortcutsTable,
+    ComponentList,
   };
 }
 

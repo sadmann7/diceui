@@ -76,6 +76,7 @@ export const { docs, meta } = defineDocs({
   docs: {
     schema: frontmatterSchema.extend({
       preview: z.boolean().optional(),
+      base: z.enum(["radix", "base"]).optional(),
       links: z
         .object({
           doc: z.string().optional(),
