@@ -1,6 +1,5 @@
 "use client";
 
-import { Direction as DirectionPrimitive, Slider as SliderPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import {
   AlertTriangleIcon,
   CaptionsOffIcon,
@@ -33,6 +32,11 @@ import {
   useMediaRef,
   useMediaSelector,
 } from "media-chrome/react/media-store";
+import {
+  Direction as DirectionPrimitive,
+  Slider as SliderPrimitive,
+  Slot as SlotPrimitive,
+} from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Badge } from "@/components/ui/badge";

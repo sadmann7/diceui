@@ -111,9 +111,7 @@ export const ui: Registry["items"] = [
   {
     name: "color-picker",
     type: "registry:ui",
-    dependencies: [
-      "radix-ui",
-    ],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "button",
       "input",
@@ -443,10 +441,7 @@ export const ui: Registry["items"] = [
   {
     name: "media-player",
     type: "registry:ui",
-    dependencies: [
-      "radix-ui",
-      "media-chrome",
-    ],
+    dependencies: ["radix-ui", "media-chrome"],
     registryDependencies: [
       "badge",
       "button",
@@ -820,10 +815,7 @@ export const ui: Registry["items"] = [
   {
     name: "tour",
     type: "registry:ui",
-    dependencies: [
-      "@floating-ui/react-dom",
-      "radix-ui",
-    ],
+    dependencies: ["@floating-ui/react-dom", "radix-ui"],
     registryDependencies: [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",

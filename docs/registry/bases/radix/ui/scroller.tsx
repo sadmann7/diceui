@@ -1,6 +1,5 @@
 "use client";
 
-import { Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import {
   ChevronDown,
@@ -8,6 +7,7 @@ import {
   ChevronRight,
   ChevronUp,
 } from "lucide-react";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";

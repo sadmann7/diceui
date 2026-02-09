@@ -1,7 +1,10 @@
 "use client";
 
-import { HoverCard as HoverCardPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
+import {
+  type HoverCard as HoverCardPrimitive,
+  Slot as SlotPrimitive,
+} from "radix-ui";
 import * as React from "react";
 import {
   HoverCard,
@@ -10,7 +13,10 @@ import {
 } from "@/components/ui/hover-card";
 
 type HoverCardProps = React.ComponentProps<typeof HoverCardPrimitive.Root>;
-type HoverCardContentProps = React.ComponentProps<typeof HoverCardPrimitive.Content>;
+type HoverCardContentProps = React.ComponentProps<
+  typeof HoverCardPrimitive.Content
+>;
+
 import { cn } from "@/lib/utils";
 
 function pluralize(n: number, word: string) {

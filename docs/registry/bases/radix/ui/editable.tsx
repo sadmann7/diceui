@@ -1,6 +1,9 @@
 "use client";
 
-import { Direction as DirectionPrimitive, Slot as SlotPrimitive } from "radix-ui";
+import {
+  Direction as DirectionPrimitive,
+  Slot as SlotPrimitive,
+} from "radix-ui";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";

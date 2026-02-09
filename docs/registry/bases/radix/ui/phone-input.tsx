@@ -1,7 +1,7 @@
 "use client";
 
-import { Slot as SlotPrimitive } from "radix-ui";
 import { Check, ChevronDown } from "lucide-react";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import {
   Command,

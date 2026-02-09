@@ -1,6 +1,5 @@
 "use client";
 
-import { Direction as DirectionPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import {
   FileArchiveIcon,
   FileAudioIcon,
@@ -10,6 +9,10 @@ import {
   FileTextIcon,
   FileVideoIcon,
 } from "lucide-react";
+import {
+  Direction as DirectionPrimitive,
+  Slot as SlotPrimitive,
+} from "radix-ui";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";

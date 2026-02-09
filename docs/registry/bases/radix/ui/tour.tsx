@@ -12,8 +12,11 @@ import {
   shift,
   useFloating,
 } from "@floating-ui/react-dom";
-import { Direction as DirectionPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import {
+  Direction as DirectionPrimitive,
+  Slot as SlotPrimitive,
+} from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";

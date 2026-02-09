@@ -1,7 +1,7 @@
 "use client";
 
-import { Slot as SlotPrimitive } from "radix-ui";
 import { PlusIcon, XIcon } from "lucide-react";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
