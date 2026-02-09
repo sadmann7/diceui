@@ -1,0 +1,16 @@
+{
+  "name": "mention-custom-filter-demo",
+  "dependencies": [
+    "@diceui/mention",
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "examples/mention-custom-filter-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Textarea } from \"@/components/ui/textarea\";\nimport {\n  Mention,\n  MentionContent,\n  MentionInput,\n  MentionItem,\n} from \"@/registry/bases/radix/ui/mention\";\n\nconst commands = [\n  {\n    id: \"1\",\n    name: \"help\",\n    description: \"Show available commands\",\n  },\n  {\n    id: \"2\",\n    name: \"clear\",\n    description: \"Clear the console\",\n  },\n  {\n    id: \"3\",\n    name: \"restart\",\n    description: \"Restart the application\",\n  },\n  {\n    id: \"4\",\n    name: \"reload\",\n    description: \"Reload the current page\",\n  },\n  {\n    id: \"5\",\n    name: \"quit\",\n    description: \"Exit the application\",\n  },\n];\n\nexport default function MentionCustomFilterDemo() {\n  const [value, setValue] = React.useState<string[]>([]);\n  const [inputValue, setInputValue] = React.useState(\"\");\n\n  // Custom filter that matches commands starting with the search term\n  function onFilter(options: string[], term: string) {\n    return options.filter((option) =>\n      option.toLowerCase().startsWith(term.toLowerCase()),\n    );\n  }\n\n  return (\n    <Mention\n      value={value}\n      onValueChange={setValue}\n      inputValue={inputValue}\n      onInputValueChange={setInputValue}\n      trigger=\"/\"\n      onFilter={onFilter}\n      className=\"w-full max-w-[400px]\"\n    >\n      <MentionInput placeholder=\"Type / to use a command...\" asChild>\n        <Textarea />\n      </MentionInput>\n      <MentionContent>\n        {commands.map((command) => (\n          <MentionItem\n            key={command.id}\n            label={command.name}\n            value={command.name}\n          >\n            <span className=\"font-mono text-sm\">{command.name}</span>\n            <span className=\"text-muted-foreground text-xs\">\n              {command.description}\n            </span>\n          </MentionItem>\n        ))}\n      </MentionContent>\n    </Mention>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

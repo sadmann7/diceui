@@ -1,5 +1,5 @@
-import { hooks } from "../registry/registry-hooks.js";
-import { ui } from "../registry/registry-ui.js";
+import { hooks } from "../registry/bases/radix/hooks/_registry.js";
+import { ui } from "../registry/bases/radix/ui/_registry.js";
 
 interface TestResult {
   success: boolean;

@@ -9,7 +9,13 @@ import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
 
 import { Index } from "@/__registry__";
-import { styles } from "@/registry/registry-styles";
+import { STYLES } from "@/registry/styles";
+
+// Default base for backward compatibility
+const DEFAULT_BASE = "radix";
+
+// Map styles for compatibility
+const styles = STYLES.map((s) => ({ name: s.name, label: s.title }));
 
 export function rehypeComponent() {
   return async (tree: UnistTree) => {
@@ -36,7 +42,16 @@ export function rehypeComponent() {
             if (srcPath) {
               src = srcPath;
             } else {
-              const component = Index[style.name][name];
+              // Use the multi-base index structure: Index[base][style][name]
+              const baseIndex = Index[DEFAULT_BASE];
+              if (!baseIndex) continue;
+
+              const styleIndex = baseIndex[style.name];
+              if (!styleIndex) continue;
+
+              const component = styleIndex[name];
+              if (!component) continue;
+
               src = fileName
                 ? component.files.find((file: string) => {
                     return (
@@ -54,6 +69,10 @@ export function rehypeComponent() {
             // Replace imports.
             // TODO: Use @swc/core and a visitor to replace this.
             // For now a simple regex should do.
+            source = source.replaceAll(
+              `@/registry/bases/${DEFAULT_BASE}/`,
+              "@/components/",
+            );
             source = source.replaceAll(
               `@/registry/${style.name}/`,
               "@/components/",
@@ -106,7 +125,16 @@ export function rehypeComponent() {
 
         try {
           for (const style of styles) {
-            const component = Index[style.name][name];
+            // Use the multi-base index structure: Index[base][style][name]
+            const baseIndex = Index[DEFAULT_BASE];
+            if (!baseIndex) continue;
+
+            const styleIndex = baseIndex[style.name];
+            if (!styleIndex) continue;
+
+            const component = styleIndex[name];
+            if (!component) continue;
+
             const src = component.files[0]?.path;
 
             // Read the source file.
@@ -116,6 +144,10 @@ export function rehypeComponent() {
             // Replace imports.
             // TODO: Use @swc/core and a visitor to replace this.
             // For now a simple regex should do.
+            source = source.replaceAll(
+              `@/registry/bases/${DEFAULT_BASE}/`,
+              "@/components/",
+            );
             source = source.replaceAll(
               `@/registry/${style.name}/`,
               "@/components/",

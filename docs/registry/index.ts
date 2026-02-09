@@ -1,58 +1,15 @@
-import type { Registry } from "shadcn/schema";
-import { blocks } from "@/registry/registry-blocks";
-import { components } from "@/registry/registry-components";
-import { examples } from "@/registry/registry-examples";
-import { hooks } from "@/registry/registry-hooks";
-import { internal } from "@/registry/registry-internal";
-import { lib } from "@/registry/registry-lib";
-import { ui } from "@/registry/registry-ui";
+import { registry as baseRegistry } from "./bases/base/registry";
+import { registry as radixRegistry } from "./bases/radix/registry";
 
-export const registry = {
-  name: "diceui/ui",
-  homepage: "https://diceui.com",
-  items: [
-    {
-      name: "index",
-      type: "registry:style",
-      dependencies: [
-        "tailwindcss-animate",
-        "class-variance-authority",
-        "lucide-react",
-      ],
-      registryDependencies: ["utils"],
-      tailwind: {
-        config: {
-          plugins: ['require("tailwindcss-animate")'],
-        },
-      },
-      cssVars: {},
-      files: [],
-    },
-    {
-      name: "style",
-      type: "registry:style",
-      dependencies: [
-        "tailwindcss-animate",
-        "class-variance-authority",
-        "lucide-react",
-      ],
-      registryDependencies: ["utils"],
-      tailwind: {
-        config: {
-          plugins: ['require("tailwindcss-animate")'],
-        },
-      },
-      cssVars: {},
-      files: [],
-    },
-    ...ui,
-    ...blocks,
-    ...lib,
-    ...hooks,
-    ...examples,
-    ...components,
+// Export both registries for multi-base support
+export const registries = {
+  radix: radixRegistry,
+  base: baseRegistry,
+} as const;
 
-    // Internal use only.
-    ...internal,
-  ],
-} satisfies Registry;
+export type RegistryBase = keyof typeof registries;
+
+// Helper to get registry by base name
+export function getRegistry(base: RegistryBase) {
+  return registries[base];
+}

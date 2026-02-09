@@ -6,7 +6,10 @@ import { Index } from "@/__registry__";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
-import { styles } from "@/registry/registry-styles";
+import { STYLES } from "@/registry/styles";
+
+// Map styles for compatibility
+const styles = STYLES.map((s) => ({ name: s.name, label: s.title }));
 
 interface ComponentTabsProps extends React.ComponentPropsWithoutRef<"div"> {
   name: string;
@@ -33,7 +36,34 @@ export function ComponentTabs({
   const Code = Codes[index];
 
   const Preview = React.useMemo(() => {
-    const Component = Index[config.style][name]?.component;
+    // Use the multi-base index structure: Index[base][style][name]
+    const baseIndex = Index[config.base];
+    if (!baseIndex) {
+      return (
+        <p className="text-muted-foreground text-sm">
+          Base{" "}
+          <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
+            {config.base}
+          </code>{" "}
+          not found in registry.
+        </p>
+      );
+    }
+
+    const styleIndex = baseIndex[config.style];
+    if (!styleIndex) {
+      return (
+        <p className="text-muted-foreground text-sm">
+          Style{" "}
+          <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
+            {config.style}
+          </code>{" "}
+          not found in registry.
+        </p>
+      );
+    }
+
+    const Component = styleIndex[name]?.component;
 
     if (!Component) {
       return (
@@ -48,7 +78,7 @@ export function ComponentTabs({
     }
 
     return <Component />;
-  }, [name, config.style]);
+  }, [name, config.base, config.style]);
 
   return (
     <Tabs items={["Preview", "Code"]} className="rounded-md">

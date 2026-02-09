@@ -16,7 +16,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Masonry, MasonryItem } from "@/registry/default/ui/masonry";
+import { Masonry, MasonryItem } from "@/registry/bases/radix/ui/masonry";
 
 const DEFAULT_ITEMS_PER_PAGE = 100;
 const DEFAULT_MAX_ITEM_COUNT = 5000;
