@@ -1,10 +1,6 @@
 "use client";
 
-import type {
-  HoverCardContentProps,
-  HoverCardProps,
-} from "@radix-ui/react-hover-card";
-import { Slot } from "@radix-ui/react-slot";
+import { HoverCard as HoverCardPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import {
@@ -12,6 +8,9 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+
+type HoverCardProps = React.ComponentProps<typeof HoverCardPrimitive.Root>;
+type HoverCardContentProps = React.ComponentProps<typeof HoverCardPrimitive.Content>;
 import { cn } from "@/lib/utils";
 
 function pluralize(n: number, word: string) {
@@ -191,7 +190,7 @@ function RelativeTimeCard(props: RelativeTimeCardProps) {
     return () => clearInterval(timer);
   }, [date, updateInterval]);
 
-  const TriggerPrimitive = asChild ? Slot : "button";
+  const TriggerPrimitive = asChild ? SlotPrimitive.Slot : "button";
 
   return (
     <HoverCard

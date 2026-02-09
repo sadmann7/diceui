@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { Check, ChevronDown } from "lucide-react";
 import * as React from "react";
 import {
@@ -597,7 +597,7 @@ function PhoneInput(props: PhoneInputProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>

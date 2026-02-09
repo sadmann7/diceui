@@ -1,8 +1,10 @@
 "use client";
 
-import { Slot, type SlotProps } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
+type SlotProps = React.ComponentProps<typeof SlotPrimitive.Slot>;
 
 interface PortalProps extends SlotProps {
   container?: Element | DocumentFragment | null;
@@ -20,7 +22,10 @@ function Portal(props: PortalProps) {
 
   if (!container) return null;
 
-  return ReactDOM.createPortal(<Slot {...portalProps} />, container);
+  return ReactDOM.createPortal(
+    <SlotPrimitive.Slot {...portalProps} />,
+    container,
+  );
 }
 
 export { Portal };

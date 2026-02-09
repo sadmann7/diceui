@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "components/direction-provider.tsx",
-      "content": "\"use client\";\n\nimport {\n  DirectionProvider as GlobalDirectionProvider,\n  useDirection,\n} from \"@radix-ui/react-direction\";\nimport type * as React from \"react\";\n\nfunction DirectionProvider(\n  props: React.ComponentProps<typeof GlobalDirectionProvider>,\n) {\n  return <GlobalDirectionProvider {...props} />;\n}\n\nexport {\n  DirectionProvider,\n  //\n  useDirection,\n};\n",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { Direction as DirectionPrimitive } from \"radix-ui\";\n\nfunction DirectionProvider({\n  dir,\n  direction,\n  children,\n}: React.ComponentProps<typeof DirectionPrimitive.DirectionProvider> & {\n  direction?: React.ComponentProps<\n    typeof DirectionPrimitive.DirectionProvider\n  >[\"dir\"];\n}) {\n  return (\n    <DirectionPrimitive.DirectionProvider dir={direction ?? dir}>\n      {children}\n    </DirectionPrimitive.DirectionProvider>\n  );\n}\n\nconst useDirection = DirectionPrimitive.useDirection;\n\nexport { DirectionProvider, useDirection };\n",
       "type": "registry:component",
       "target": ""
     }

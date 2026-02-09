@@ -1,4 +1,4 @@
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 import { cn } from "@/lib/utils";
@@ -34,7 +34,7 @@ interface StatusProps extends VariantProps<typeof statusVariants>, DivProps {
 function Status(props: StatusProps) {
   const { className, variant = "default", asChild, ...rootProps } = props;
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <RootPrimitive

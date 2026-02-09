@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { cva } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@/lib/utils";
@@ -170,7 +170,7 @@ function Stack(props: StackProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StackContext.Provider value={contextValue}>
@@ -313,13 +313,13 @@ function StackItemWrapper(props: StackItemWrapperProps) {
       }
       {...itemProps}
     >
-      <Slot
+      <SlotPrimitive.Slot
         data-index={index}
         data-position={isFront ? "front" : "back"}
         data-state={getDataState(isExpanded)}
       >
         {children}
-      </Slot>
+      </SlotPrimitive.Slot>
     </div>
   );
 }
@@ -331,7 +331,7 @@ interface StackItemProps extends React.ComponentProps<"div"> {
 function StackItem(props: StackItemProps) {
   const { asChild, className, ...itemProps } = props;
 
-  const ItemPrimitive = asChild ? Slot : "div";
+  const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <ItemPrimitive

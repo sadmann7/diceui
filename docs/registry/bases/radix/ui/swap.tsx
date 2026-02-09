@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
@@ -192,7 +192,7 @@ function Swap(props: SwapProps) {
     [propsRef, onToggle],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
@@ -224,7 +224,7 @@ function SwapOn(props: DivProps) {
 
   const swapped = useStore((state) => state.swapped);
 
-  const OnPrimitive = asChild ? Slot : "div";
+  const OnPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <OnPrimitive
@@ -247,7 +247,7 @@ function SwapOff(props: DivProps) {
 
   const swapped = useStore((state) => state.swapped);
 
-  const OffPrimitive = asChild ? Slot : "div";
+  const OffPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <OffPrimitive

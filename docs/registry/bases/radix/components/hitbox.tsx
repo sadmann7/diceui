@@ -1,4 +1,4 @@
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 
@@ -54,7 +54,7 @@ const hitboxVariants = cva(
 );
 
 interface HitboxProps
-  extends React.ComponentProps<typeof Slot>,
+  extends React.ComponentProps<typeof SlotPrimitive.Slot>,
     Omit<VariantProps<typeof hitboxVariants>, "size"> {
   size?: DynamicSize;
 }
@@ -73,7 +73,7 @@ function Hitbox(props: HitboxProps) {
   const isDynamicSize = size && !sizes.includes(size);
 
   return (
-    <Slot
+    <SlotPrimitive.Slot
       {...hitboxProps}
       className={cn(
         hitboxVariants({

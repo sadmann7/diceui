@@ -1,8 +1,6 @@
 "use client";
 
-import { useDirection } from "@radix-ui/react-direction";
-import * as SliderPrimitive from "@radix-ui/react-slider";
-import { Slot } from "@radix-ui/react-slot";
+import { Direction as DirectionPrimitive, Slider as SliderPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import { PipetteIcon } from "lucide-react";
 import * as React from "react";
@@ -639,7 +637,7 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
 
   const store = useStoreContext(ROOT_IMPL_NAME);
 
-  const dir = useDirection(dirProp);
+  const dir = DirectionPrimitive.useDirection(dirProp);
 
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
@@ -677,7 +675,7 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
   const value = useStore((state) => rgbToHex(state.color));
   const open = useStore((state) => state.open);
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   if (inline) {
     return (
@@ -732,7 +730,7 @@ function ColorPickerTrigger(
 
   const isDisabled = disabled || context.disabled;
 
-  const TriggerPrimitive = asChild ? Slot : Button;
+  const TriggerPrimitive = asChild ? SlotPrimitive.Slot : Button;
 
   return (
     <PopoverTrigger asChild disabled={isDisabled}>
@@ -749,7 +747,7 @@ function ColorPickerContent(
   const context = useColorPickerContext(CONTENT_NAME);
 
   if (context.inline) {
-    const ContentPrimitive = asChild ? Slot : "div";
+    const ContentPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
     return (
       <ContentPrimitive
@@ -863,7 +861,7 @@ function ColorPickerArea(props: DivProps) {
   const hue = hsv?.h ?? 0;
   const backgroundHue = hsvToRgb({ h: hue, s: 100, v: 100, a: 1 });
 
-  const AreaPrimitive = asChild ? Slot : "div";
+  const AreaPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <AreaPrimitive
@@ -1049,7 +1047,7 @@ function ColorPickerSwatch(props: DivProps) {
     ? "No color selected"
     : `Current color: ${colorToString(color, format)}`;
 
-  const SwatchPrimitive = asChild ? Slot : "div";
+  const SwatchPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <SwatchPrimitive

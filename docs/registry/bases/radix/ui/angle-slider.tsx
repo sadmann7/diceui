@@ -1,7 +1,6 @@
 "use client";
 
-import { useDirection } from "@radix-ui/react-direction";
-import { Slot } from "@radix-ui/react-slot";
+import { Direction as DirectionPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -391,7 +390,7 @@ function AngleSlider(props: AngleSliderProps) {
     inverted,
   ]);
 
-  const dir = useDirection(dirProp);
+  const dir = DirectionPrimitive.useDirection(dirProp);
 
   const [sliderElement, setSliderElement] = React.useState<RootElement | null>(
     null,
@@ -550,7 +549,7 @@ function AngleSlider(props: AngleSliderProps) {
     [propsRef, onSliderEnd],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
@@ -774,7 +773,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
     [props.onFocus, store, index],
   );
 
-  const ThumbPrimitive = asChild ? Slot : "div";
+  const ThumbPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   if (value === undefined) return null;
 
@@ -865,7 +864,7 @@ function AngleSliderValue(props: AngleSliderValueProps) {
     [center],
   );
 
-  const ValuePrimitive = asChild ? Slot : "div";
+  const ValuePrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <ValuePrimitive

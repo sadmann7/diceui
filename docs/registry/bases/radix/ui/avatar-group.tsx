@@ -1,4 +1,4 @@
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@/lib/utils";
@@ -77,7 +77,7 @@ function AvatarGroup(props: AvatarGroupProps) {
   const overflowCount = shouldTruncate ? itemCount - (max - 1) : 0;
   const totalRenderedItems = shouldTruncate ? max : itemCount;
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <RootPrimitive
@@ -123,7 +123,7 @@ function AvatarGroup(props: AvatarGroupProps) {
 }
 
 interface AvatarGroupItemProps
-  extends Omit<React.ComponentProps<typeof Slot>, "dir">,
+  extends Omit<React.ComponentProps<typeof SlotPrimitive.Slot>, "dir">,
     VariantProps<typeof avatarGroupVariants> {
   child: React.ReactNode;
   index: number;
@@ -200,7 +200,7 @@ function AvatarGroupItem(props: AvatarGroupItemProps) {
   }, [size, index, orientation, dir, reverse, itemCount]);
 
   return (
-    <Slot
+    <SlotPrimitive.Slot
       data-slot="avatar-group-item"
       className={cn(
         "size-full shrink-0 overflow-hidden rounded-full [&_img]:size-full",
@@ -213,7 +213,7 @@ function AvatarGroupItem(props: AvatarGroupItemProps) {
       {...itemProps}
     >
       {child}
-    </Slot>
+    </SlotPrimitive.Slot>
   );
 }
 

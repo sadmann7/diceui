@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -191,7 +191,7 @@ function CircularProgress(props: CircularProgressProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <CircularProgressContext.Provider value={contextValue}>
@@ -317,7 +317,7 @@ function CircularProgressValueText(props: CircularProgressValueTextProps) {
 
   const context = useCircularProgressContext(VALUE_TEXT_NAME);
 
-  const ValueTextPrimitive = asChild ? Slot : "span";
+  const ValueTextPrimitive = asChild ? SlotPrimitive.Slot : "span";
 
   return (
     <ValueTextPrimitive

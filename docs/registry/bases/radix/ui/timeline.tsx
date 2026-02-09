@@ -1,7 +1,6 @@
 "use client";
 
-import { useDirection } from "@radix-ui/react-direction";
-import { Slot } from "@radix-ui/react-slot";
+import { Direction as DirectionPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import { cva } from "class-variance-authority";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
@@ -165,7 +164,7 @@ function Timeline(props: TimelineProps) {
     ...rootProps
   } = props;
 
-  const dir = useDirection(dirProp);
+  const dir = DirectionPrimitive.useDirection(dirProp);
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
   const stateRef = useLazyRef<StoreState>(() => ({
@@ -225,7 +224,7 @@ function Timeline(props: TimelineProps) {
     [dir, orientation, variant, activeIndex],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
@@ -345,7 +344,7 @@ function TimelineItem(props: DivProps) {
     [itemId, status, isAlternateRight],
   );
 
-  const ItemPrimitive = asChild ? Slot : "div";
+  const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <TimelineItemContext.Provider value={itemContextValue}>
@@ -421,7 +420,7 @@ function TimelineContent(props: DivProps) {
   const { variant, orientation } = useTimelineContext(CONTENT_NAME);
   const { status, isAlternateRight } = useTimelineItemContext(CONTENT_NAME);
 
-  const ContentPrimitive = asChild ? Slot : "div";
+  const ContentPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <ContentPrimitive
@@ -508,7 +507,7 @@ function TimelineDot(props: DivProps) {
   const { orientation, variant } = useTimelineContext(DOT_NAME);
   const { status, isAlternateRight } = useTimelineItemContext(DOT_NAME);
 
-  const DotPrimitive = asChild ? Slot : "div";
+  const DotPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <DotPrimitive
@@ -613,7 +612,7 @@ function TimelineConnector(props: TimelineConnectorProps) {
   const isConnectorCompleted =
     nextItemStatus === "completed" || nextItemStatus === "active";
 
-  const ConnectorPrimitive = asChild ? Slot : "div";
+  const ConnectorPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <ConnectorPrimitive
@@ -639,7 +638,7 @@ function TimelineConnector(props: TimelineConnectorProps) {
 function TimelineHeader(props: DivProps) {
   const { asChild, className, ...headerProps } = props;
 
-  const HeaderPrimitive = asChild ? Slot : "div";
+  const HeaderPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <HeaderPrimitive
@@ -653,7 +652,7 @@ function TimelineHeader(props: DivProps) {
 function TimelineTitle(props: DivProps) {
   const { asChild, className, ...titleProps } = props;
 
-  const TitlePrimitive = asChild ? Slot : "div";
+  const TitlePrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <TitlePrimitive
@@ -667,7 +666,7 @@ function TimelineTitle(props: DivProps) {
 function TimelineDescription(props: DivProps) {
   const { asChild, className, ...descriptionProps } = props;
 
-  const DescriptionPrimitive = asChild ? Slot : "div";
+  const DescriptionPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <DescriptionPrimitive
@@ -685,7 +684,7 @@ interface TimelineTimeProps extends React.ComponentProps<"time"> {
 function TimelineTime(props: TimelineTimeProps) {
   const { asChild, className, ...timeProps } = props;
 
-  const TimePrimitive = asChild ? Slot : "time";
+  const TimePrimitive = asChild ? SlotPrimitive.Slot : "time";
 
   return (
     <TimePrimitive

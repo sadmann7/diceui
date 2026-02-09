@@ -1,8 +1,6 @@
 "use client";
 
-import { useDirection } from "@radix-ui/react-direction";
-import * as SliderPrimitive from "@radix-ui/react-slider";
-import { Slot } from "@radix-ui/react-slot";
+import { Direction as DirectionPrimitive, Slider as SliderPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import {
   AlertTriangleIcon,
   CaptionsOffIcon,
@@ -243,7 +241,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
   const fullscreenRef = useMediaFullscreenRef();
   const composedRef = useComposedRefs(ref, rootRef, fullscreenRef);
 
-  const dir = useDirection(dirProp);
+  const dir = DirectionPrimitive.useDirection(dirProp);
   const dispatch = useMediaDispatch();
   const mediaRef = React.useRef<HTMLVideoElement | HTMLAudioElement | null>(
     null,
@@ -731,7 +729,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <MediaPlayerContext.Provider value={contextValue}>
@@ -804,7 +802,7 @@ function MediaPlayerVideo(props: MediaPlayerVideoProps) {
     [dispatch, props.onClick],
   );
 
-  const VideoPrimitive = asChild ? Slot : "video";
+  const VideoPrimitive = asChild ? SlotPrimitive.Slot : "video";
 
   return (
     <VideoPrimitive
@@ -830,7 +828,7 @@ function MediaPlayerAudio(props: MediaPlayerAudioProps) {
   const mediaRefCallback = useMediaRef();
   const composedRef = useComposedRefs(ref, context.mediaRef, mediaRefCallback);
 
-  const AudioPrimitive = asChild ? Slot : "audio";
+  const AudioPrimitive = asChild ? SlotPrimitive.Slot : "audio";
 
   return (
     <AudioPrimitive
@@ -853,7 +851,7 @@ function MediaPlayerControls(props: DivProps) {
   );
   const controlsVisible = useStore((state) => state.controlsVisible);
 
-  const ControlsPrimitive = asChild ? Slot : "div";
+  const ControlsPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <ControlsPrimitive
@@ -924,7 +922,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
 
   if (!shouldRender) return null;
 
-  const LoadingPrimitive = asChild ? Slot : "div";
+  const LoadingPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <LoadingPrimitive
@@ -1055,7 +1053,7 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
 
   if (!error) return null;
 
-  const ErrorPrimitive = asChild ? Slot : "div";
+  const ErrorPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <ErrorPrimitive
@@ -1135,7 +1133,7 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
   const barCount = 10;
   const activeBarCount = Math.ceil(effectiveVolume * barCount);
 
-  const VolumeIndicatorPrimitive = asChild ? Slot : "div";
+  const VolumeIndicatorPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <VolumeIndicatorPrimitive
@@ -1192,7 +1190,7 @@ function MediaPlayerControlsOverlay(props: DivProps) {
   );
   const controlsVisible = useStore((state) => state.controlsVisible);
 
-  const OverlayPrimitive = asChild ? Slot : "div";
+  const OverlayPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <OverlayPrimitive
@@ -2330,7 +2328,7 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
     };
   }, [variant, mediaCurrentTime, seekableEnd]);
 
-  const TimePrimitive = asChild ? Slot : "div";
+  const TimePrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   if (variant === "remaining" || variant === "duration") {
     return (

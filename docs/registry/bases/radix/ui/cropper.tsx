@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
@@ -1273,7 +1273,7 @@ function CropperImpl(props: CropperImplProps) {
     };
   }, [onRefsCleanup, onCacheCleanup]);
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <RootPrimitive
@@ -1551,7 +1551,7 @@ function CropperImage(props: CropperImageProps) {
     }
   }, [context.rootRef, computeSizes]);
 
-  const ImagePrimitive = asChild ? Slot : "img";
+  const ImagePrimitive = asChild ? SlotPrimitive.Slot : "img";
 
   return (
     <ImagePrimitive
@@ -1678,7 +1678,7 @@ function CropperVideo(props: CropperVideoProps) {
     }
   }, [context.rootRef, computeSizes]);
 
-  const VideoPrimitive = asChild ? Slot : "video";
+  const VideoPrimitive = asChild ? SlotPrimitive.Slot : "video";
 
   return (
     <VideoPrimitive
@@ -1750,7 +1750,7 @@ function CropperArea(props: CropperAreaProps) {
 
   if (!cropSize) return null;
 
-  const AreaPrimitive = asChild ? Slot : "div";
+  const AreaPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <AreaPrimitive

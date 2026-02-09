@@ -1,7 +1,6 @@
 "use client";
 
-import { useDirection } from "@radix-ui/react-direction";
-import { Slot } from "@radix-ui/react-slot";
+import { Direction as DirectionPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { Input } from "@/components/ui/input";
@@ -59,7 +58,7 @@ function SegmentedInput(props: SegmentedInputProps) {
     ...rootProps
   } = props;
 
-  const dir = useDirection(dirProp);
+  const dir = DirectionPrimitive.useDirection(dirProp);
 
   const contextValue = React.useMemo<SegmentedInputContextValue>(
     () => ({
@@ -97,7 +96,7 @@ function SegmentedInput(props: SegmentedInputProps) {
     return child;
   });
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <SegmentedInputContext.Provider value={contextValue}>
@@ -179,7 +178,7 @@ function SegmentedInputItem(props: SegmentedInputItemProps) {
   const isDisabled = disabled ?? context.disabled;
   const isRequired = required ?? context.required;
 
-  const ItemPrimitive = asChild ? Slot : Input;
+  const ItemPrimitive = asChild ? SlotPrimitive.Slot : Input;
 
   return (
     <ItemPrimitive

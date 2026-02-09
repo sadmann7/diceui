@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -1462,7 +1462,7 @@ function MaskInput(props: MaskInputProps) {
     ],
   );
 
-  const InputPrimitive = asChild ? Slot : "input";
+  const InputPrimitive = asChild ? SlotPrimitive.Slot : "input";
 
   return (
     <InputPrimitive

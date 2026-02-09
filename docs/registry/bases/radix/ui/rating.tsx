@@ -1,7 +1,6 @@
 "use client";
 
-import { useDirection } from "@radix-ui/react-direction";
-import { Slot } from "@radix-ui/react-slot";
+import { Direction as DirectionPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import { Star } from "lucide-react";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
@@ -222,7 +221,7 @@ function Rating(props: RatingProps) {
     ...rootProps
   } = props;
 
-  const dir = useDirection(dirProp);
+  const dir = DirectionPrimitive.useDirection(dirProp);
   const instanceId = React.useId();
   const rootId = id ?? instanceId;
 
@@ -457,7 +456,7 @@ function Rating(props: RatingProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
@@ -878,7 +877,7 @@ function RatingItem(props: RatingItemProps) {
       ? "partial"
       : "empty";
 
-  const ItemPrimitive = asChild ? Slot : "button";
+  const ItemPrimitive = asChild ? SlotPrimitive.Slot : "button";
 
   return (
     <ItemPrimitive

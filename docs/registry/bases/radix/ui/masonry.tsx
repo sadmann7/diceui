@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
@@ -1320,7 +1320,7 @@ function Masonry(props: MasonryProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <MasonryContext.Provider value={contextValue}>
@@ -1528,7 +1528,7 @@ interface MasonryItemProps extends DivProps {
 function MasonryItem(props: MasonryItemProps) {
   const { asChild, ref, ...itemProps } = props;
 
-  const ItemPrimitive = asChild ? Slot : "div";
+  const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return <ItemPrimitive data-slot="masonry-item" {...itemProps} ref={ref} />;
 }

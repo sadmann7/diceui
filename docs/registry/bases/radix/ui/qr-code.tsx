@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -271,7 +271,7 @@ function QRCode(props: QRCodeProps) {
     }
   }, [generationKey, onQRCodeGenerate]);
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
@@ -304,7 +304,7 @@ function QRCodeCanvas(props: QRCodeCanvasProps) {
 
   const composedRef = useComposedRefs(ref, context.canvasRef);
 
-  const CanvasPrimitive = asChild ? Slot : "canvas";
+  const CanvasPrimitive = asChild ? SlotPrimitive.Slot : "canvas";
 
   return (
     <CanvasPrimitive
@@ -334,7 +334,7 @@ function QRCodeSvg(props: QRCodeSvgProps) {
 
   if (!svgString) return null;
 
-  const SvgPrimitive = asChild ? Slot : "div";
+  const SvgPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <SvgPrimitive
@@ -362,7 +362,7 @@ function QRCodeImage(props: QRCodeImageProps) {
 
   if (!dataUrl) return null;
 
-  const ImagePrimitive = asChild ? Slot : "img";
+  const ImagePrimitive = asChild ? SlotPrimitive.Slot : "img";
 
   return (
     <ImagePrimitive
@@ -428,7 +428,7 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
     [dataUrl, svgString, filename, format, buttonProps.onClick],
   );
 
-  const ButtonPrimitive = asChild ? Slot : "button";
+  const ButtonPrimitive = asChild ? SlotPrimitive.Slot : "button";
 
   return (
     <ButtonPrimitive
@@ -450,7 +450,7 @@ interface QRCodeOverlayProps extends React.ComponentProps<"div"> {
 function QRCodeOverlay(props: QRCodeOverlayProps) {
   const { asChild, className, ...overlayProps } = props;
 
-  const OverlayPrimitive = asChild ? Slot : "div";
+  const OverlayPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <OverlayPrimitive
@@ -480,7 +480,7 @@ function QRCodeSkeleton(props: QRCodeSkeletonProps) {
 
   if (isLoaded) return null;
 
-  const SkeletonPrimitive = asChild ? Slot : "div";
+  const SkeletonPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <SkeletonPrimitive

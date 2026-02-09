@@ -1,4 +1,4 @@
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import type * as React from "react";
 
 interface VisuallyHiddenProps extends React.ComponentProps<"div"> {
@@ -8,7 +8,7 @@ interface VisuallyHiddenProps extends React.ComponentProps<"div"> {
 function VisuallyHidden(props: VisuallyHiddenProps) {
   const { asChild, style, ...visuallyHiddenProps } = props;
 
-  const Comp = asChild ? Slot : "div";
+  const Comp = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <Comp

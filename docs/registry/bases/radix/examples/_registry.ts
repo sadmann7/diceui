@@ -2133,7 +2133,7 @@ export const examples: Registry["items"] = [
   {
     name: "tour-demo",
     type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: ["radix-ui", "lucide-react"],
     registryDependencies: ["button", "tour"],
     files: [
       {
@@ -2145,7 +2145,7 @@ export const examples: Registry["items"] = [
   {
     name: "tour-controlled-demo",
     type: "registry:example",
-    dependencies: ["@radix-ui/react-slot", "lucide-react"],
+    dependencies: ["radix-ui", "lucide-react"],
     registryDependencies: ["button", "tour"],
     files: [
       {

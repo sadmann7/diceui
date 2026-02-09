@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -266,7 +266,7 @@ function CompareSlider(props: CompareSliderProps) {
     [interaction, orientation],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
@@ -318,7 +318,7 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
     ? `inset(${value}% 0 0 0)`
     : `inset(0 0 0 ${value}%)`;
 
-  const BeforePrimitive = asChild ? Slot : "div";
+  const BeforePrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <BeforePrimitive
@@ -363,7 +363,7 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
     ? `inset(0 0 ${100 - value}% 0)`
     : `inset(0 ${100 - value}% 0 0)`;
 
-  const AfterPrimitive = asChild ? Slot : "div";
+  const AfterPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <AfterPrimitive
@@ -398,7 +398,7 @@ function CompareSliderHandle(props: DivProps) {
 
   const isVertical = orientation === "vertical";
 
-  const HandlePrimitive = asChild ? Slot : "div";
+  const HandlePrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <HandlePrimitive
@@ -462,7 +462,7 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
   const { orientation } = useCompareSliderContext(LABEL_NAME);
   const isVertical = orientation === "vertical";
 
-  const LabelPrimitive = asChild ? Slot : "div";
+  const LabelPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <LabelPrimitive

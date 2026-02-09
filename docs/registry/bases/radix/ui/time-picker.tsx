@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { Clock } from "lucide-react";
 import * as React from "react";
 import {
@@ -482,7 +482,7 @@ function TimePicker(props: TimePickerProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <>
@@ -525,7 +525,7 @@ function TimePickerLabel(props: TimePickerLabelProps) {
 
   const { labelId } = useTimePickerContext(LABEL_NAME);
 
-  const LabelPrimitive = asChild ? Slot : "label";
+  const LabelPrimitive = asChild ? SlotPrimitive.Slot : "label";
 
   return (
     <LabelPrimitive
@@ -708,7 +708,7 @@ function TimePickerInputGroup(props: DivProps) {
       [onInputRegister, onInputUnregister, getNextInput],
     );
 
-  const InputGroupPrimitive = asChild ? Slot : "div";
+  const InputGroupPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <TimePickerInputGroupContext.Provider value={inputGroupContextValue}>
@@ -1916,7 +1916,7 @@ function TimePickerHour(props: TimePickerHourProps) {
   const referenceHour = timeValue?.hour ?? now.getHours();
   const displayHour = is12Hour ? to12Hour(referenceHour).hour : referenceHour;
 
-  const HourPrimitive = asChild ? Slot : TimePickerColumn;
+  const HourPrimitive = asChild ? SlotPrimitive.Slot : TimePickerColumn;
 
   return (
     <HourPrimitive
@@ -1978,7 +1978,7 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
     [timeValue, showSeconds, store],
   );
 
-  const MinutePrimitive = asChild ? Slot : TimePickerColumn;
+  const MinutePrimitive = asChild ? SlotPrimitive.Slot : TimePickerColumn;
 
   const now = new Date();
   const referenceMinute = timeValue?.minute ?? now.getMinutes();
@@ -2043,7 +2043,7 @@ function TimePickerSecond(props: TimePickerSecondProps) {
     [timeValue, store],
   );
 
-  const SecondPrimitive = asChild ? Slot : TimePickerColumn;
+  const SecondPrimitive = asChild ? SlotPrimitive.Slot : TimePickerColumn;
 
   const now = new Date();
   const referenceSecond = timeValue?.second ?? now.getSeconds();
@@ -2111,7 +2111,7 @@ function TimePickerPeriod(props: DivProps) {
   const referenceHour = timeValue?.hour ?? now.getHours();
   const currentPeriod = to12Hour(referenceHour).period;
 
-  const PeriodPrimitive = asChild ? Slot : TimePickerColumn;
+  const PeriodPrimitive = asChild ? SlotPrimitive.Slot : TimePickerColumn;
 
   return (
     <PeriodPrimitive
@@ -2138,7 +2138,7 @@ interface TimePickerSeparatorProps extends React.ComponentProps<"span"> {
 function TimePickerSeparator(props: TimePickerSeparatorProps) {
   const { asChild, children, ...separatorProps } = props;
 
-  const SeparatorPrimitive = asChild ? Slot : "span";
+  const SeparatorPrimitive = asChild ? SlotPrimitive.Slot : "span";
 
   return (
     <SeparatorPrimitive
@@ -2177,7 +2177,7 @@ function TimePickerClear(props: ButtonProps) {
     [clearProps.onClick, disabled, readOnly, store],
   );
 
-  const ClearPrimitive = asChild ? Slot : "button";
+  const ClearPrimitive = asChild ? SlotPrimitive.Slot : "button";
 
   return (
     <ClearPrimitive

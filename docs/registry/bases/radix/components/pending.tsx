@@ -3,7 +3,7 @@
  * @see https://github.com/adobe/react-spectrum/blob/main/packages/react-aria-components/src/Button.tsx
  */
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 
 interface UsePendingOptions {
@@ -79,7 +79,7 @@ function usePending<T extends HTMLElement = HTMLElement>(
   }, [pendingProps, isPending]);
 }
 
-interface PendingProps extends React.ComponentProps<typeof Slot> {
+interface PendingProps extends React.ComponentProps<typeof SlotPrimitive.Slot> {
   isPending?: boolean;
   disabled?: boolean;
 }
@@ -87,7 +87,7 @@ interface PendingProps extends React.ComponentProps<typeof Slot> {
 function Pending({ id, isPending, disabled, ...props }: PendingProps) {
   const { pendingProps } = usePending({ id, isPending, disabled });
 
-  return <Slot {...props} {...pendingProps} />;
+  return <SlotPrimitive.Slot {...props} {...pendingProps} />;
 }
 
 export {

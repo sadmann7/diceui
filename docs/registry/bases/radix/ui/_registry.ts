@@ -4,7 +4,7 @@ export const ui: Registry["items"] = [
   {
     name: "action-bar",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "button",
       "@diceui/use-as-ref",
@@ -24,7 +24,7 @@ export const ui: Registry["items"] = [
   {
     name: "angle-slider",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
@@ -48,7 +48,7 @@ export const ui: Registry["items"] = [
   {
     name: "avatar-group",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "ui/avatar-group.tsx",
@@ -59,7 +59,7 @@ export const ui: Registry["items"] = [
   {
     name: "badge-overflow",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "ui/badge-overflow.tsx",
@@ -85,7 +85,7 @@ export const ui: Registry["items"] = [
   {
     name: "circular-progress",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     cssVars: {
       theme: {
         "--animate-spin-around": "spin-around 0.8s linear infinite",
@@ -112,9 +112,7 @@ export const ui: Registry["items"] = [
     name: "color-picker",
     type: "registry:ui",
     dependencies: [
-      "@radix-ui/react-slider",
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
+      "radix-ui",
     ],
     registryDependencies: [
       "button",
@@ -143,7 +141,7 @@ export const ui: Registry["items"] = [
   {
     name: "color-swatch",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "ui/color-swatch.tsx",
@@ -154,7 +152,7 @@ export const ui: Registry["items"] = [
   {
     name: "compare-slider",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
@@ -174,7 +172,7 @@ export const ui: Registry["items"] = [
   {
     name: "cropper",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
@@ -200,7 +198,7 @@ export const ui: Registry["items"] = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
-      "@radix-ui/react-slot",
+      "radix-ui",
     ],
     files: [
       {
@@ -212,7 +210,7 @@ export const ui: Registry["items"] = [
   {
     name: "editable",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
@@ -236,7 +234,7 @@ export const ui: Registry["items"] = [
   {
     name: "file-upload",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    dependencies: ["radix-ui"],
     registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
     files: [
       {
@@ -259,7 +257,7 @@ export const ui: Registry["items"] = [
   {
     name: "gauge",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "ui/gauge.tsx",
@@ -279,7 +277,7 @@ export const ui: Registry["items"] = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
-      "@radix-ui/react-slot",
+      "radix-ui",
     ],
     files: [
       {
@@ -295,7 +293,7 @@ export const ui: Registry["items"] = [
   {
     name: "key-value",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "button",
       "input",
@@ -333,7 +331,7 @@ export const ui: Registry["items"] = [
   {
     name: "marquee",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    dependencies: ["radix-ui"],
     cssVars: {
       theme: {
         "--animate-marquee-left":
@@ -414,7 +412,7 @@ export const ui: Registry["items"] = [
   {
     name: "mask-input",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "ui/mask-input.tsx",
@@ -429,7 +427,7 @@ export const ui: Registry["items"] = [
   {
     name: "masonry",
     type: "registry:ui",
-    dependencies: ["@diceui/masonry", "@radix-ui/react-slot"],
+    dependencies: ["@diceui/masonry", "radix-ui"],
     registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
     files: [
       {
@@ -446,8 +444,7 @@ export const ui: Registry["items"] = [
     name: "media-player",
     type: "registry:ui",
     dependencies: [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
+      "radix-ui",
       "media-chrome",
     ],
     registryDependencies: [
@@ -484,7 +481,7 @@ export const ui: Registry["items"] = [
   {
     name: "phone-input",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "command",
       "input",
@@ -511,7 +508,7 @@ export const ui: Registry["items"] = [
   {
     name: "relative-time-card",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     registryDependencies: ["hover-card"],
     files: [
       {
@@ -542,7 +539,7 @@ export const ui: Registry["items"] = [
   {
     name: "scroller",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "ui/scroller.tsx",
@@ -557,7 +554,7 @@ export const ui: Registry["items"] = [
   {
     name: "scroll-spy",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
@@ -577,7 +574,7 @@ export const ui: Registry["items"] = [
   {
     name: "segmented-input",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    dependencies: ["radix-ui"],
     registryDependencies: ["input"],
     files: [
       {
@@ -589,7 +586,7 @@ export const ui: Registry["items"] = [
   {
     name: "selection-toolbar",
     type: "registry:ui",
-    dependencies: ["@floating-ui/react-dom", "@radix-ui/react-slot"],
+    dependencies: ["@floating-ui/react-dom", "radix-ui"],
     registryDependencies: [
       "button",
       "@diceui/use-as-ref",
@@ -615,7 +612,7 @@ export const ui: Registry["items"] = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
-      "@radix-ui/react-slot",
+      "radix-ui",
     ],
     files: [
       {
@@ -631,7 +628,7 @@ export const ui: Registry["items"] = [
   {
     name: "speed-dial",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "button",
       "@diceui/use-as-ref",
@@ -652,7 +649,7 @@ export const ui: Registry["items"] = [
   {
     name: "stack",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "ui/stack.tsx",
@@ -675,7 +672,7 @@ export const ui: Registry["items"] = [
   {
     name: "status",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "ui/status.tsx",
@@ -686,7 +683,7 @@ export const ui: Registry["items"] = [
   {
     name: "stepper",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "button",
       "@diceui/use-as-ref",
@@ -707,7 +704,7 @@ export const ui: Registry["items"] = [
   {
     name: "swap",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
@@ -723,7 +720,7 @@ export const ui: Registry["items"] = [
   {
     name: "qr-code",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "qrcode"],
+    dependencies: ["radix-ui", "qrcode"],
     devDependencies: ["@types/qrcode"],
     registryDependencies: ["@diceui/use-lazy-ref"],
     files: [
@@ -736,7 +733,7 @@ export const ui: Registry["items"] = [
   {
     name: "rating",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
@@ -771,7 +768,7 @@ export const ui: Registry["items"] = [
   {
     name: "timeline",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot", "@radix-ui/react-direction"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
@@ -790,7 +787,7 @@ export const ui: Registry["items"] = [
   {
     name: "time-picker",
     type: "registry:ui",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     registryDependencies: [
       "popover",
       "@diceui/use-as-ref",
@@ -825,8 +822,7 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: [
       "@floating-ui/react-dom",
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
+      "radix-ui",
     ],
     registryDependencies: [
       "@diceui/use-as-ref",

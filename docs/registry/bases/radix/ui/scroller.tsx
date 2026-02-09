@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import {
   ChevronDown,
@@ -226,7 +226,7 @@ function Scroller(props: ScrollerProps) {
     return orientation === "vertical" ? ["up", "down"] : ["left", "right"];
   }, [orientation, withNavigation]);
 
-  const ScrollerPrimitive = asChild ? Slot : "div";
+  const ScrollerPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   const ScrollerImpl = (
     <ScrollerPrimitive

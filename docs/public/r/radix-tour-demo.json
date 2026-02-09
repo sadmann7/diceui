@@ -1,7 +1,7 @@
 {
   "name": "tour-demo",
   "dependencies": [
-    "@radix-ui/react-slot",
+    "radix-ui",
     "lucide-react"
   ],
   "registryDependencies": [

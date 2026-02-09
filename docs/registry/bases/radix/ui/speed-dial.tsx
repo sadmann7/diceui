@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -287,7 +287,7 @@ function SpeedDial(props: SpeedDialProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
@@ -792,7 +792,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     [gap, offset, transformOrigin, position, style],
   );
 
-  const ContentPrimitive = asChild ? Slot : "div";
+  const ContentPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   const shouldMount = forceMount || renderState.shouldRender;
 
@@ -914,7 +914,7 @@ function SpeedDialItem(props: DivProps) {
     [delay, style],
   );
 
-  const ItemPrimitive = asChild ? Slot : "div";
+  const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <SpeedDialItemContext.Provider value={contextValue}>
@@ -1027,7 +1027,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
 function SpeedDialLabel({ asChild, className, ...props }: DivProps) {
   const { labelId } = useSpeedDialItemContext(LABEL_NAME);
 
-  const LabelPrimitive = asChild ? Slot : "div";
+  const LabelPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <LabelPrimitive

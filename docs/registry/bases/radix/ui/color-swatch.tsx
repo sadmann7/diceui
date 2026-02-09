@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@/lib/utils";
@@ -97,7 +97,7 @@ function ColorSwatch({
     ? "No color selected"
     : `Color swatch: ${colorValue}`;
 
-  const Primitive = asChild ? Slot : "div";
+  const Primitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <Primitive

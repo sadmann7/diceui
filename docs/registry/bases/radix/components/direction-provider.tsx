@@ -1,19 +1,24 @@
 "use client";
 
-import {
-  DirectionProvider as GlobalDirectionProvider,
-  useDirection,
-} from "@radix-ui/react-direction";
-import type * as React from "react";
+import * as React from "react";
+import { Direction as DirectionPrimitive } from "radix-ui";
 
-function DirectionProvider(
-  props: React.ComponentProps<typeof GlobalDirectionProvider>,
-) {
-  return <GlobalDirectionProvider {...props} />;
+function DirectionProvider({
+  dir,
+  direction,
+  children,
+}: React.ComponentProps<typeof DirectionPrimitive.DirectionProvider> & {
+  direction?: React.ComponentProps<
+    typeof DirectionPrimitive.DirectionProvider
+  >["dir"];
+}) {
+  return (
+    <DirectionPrimitive.DirectionProvider dir={direction ?? dir}>
+      {children}
+    </DirectionPrimitive.DirectionProvider>
+  );
 }
 
-export {
-  DirectionProvider,
-  //
-  useDirection,
-};
+const useDirection = DirectionPrimitive.useDirection;
+
+export { DirectionProvider, useDirection };

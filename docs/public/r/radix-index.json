@@ -3,7 +3,7 @@
     "name": "action-bar",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "button",
@@ -25,8 +25,7 @@
     "name": "angle-slider",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-as-ref",
@@ -52,7 +51,7 @@
     "name": "avatar-group",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -65,7 +64,7 @@
     "name": "badge-overflow",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -95,7 +94,7 @@
     "name": "circular-progress",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "cssVars": {
       "theme": {
@@ -123,9 +122,7 @@
     "name": "color-picker",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slider",
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "registryDependencies": [
       "button",
@@ -155,7 +152,7 @@
     "name": "color-swatch",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -168,7 +165,7 @@
     "name": "compare-slider",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-as-ref",
@@ -190,7 +187,7 @@
     "name": "cropper",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-as-ref",
@@ -217,7 +214,7 @@
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -230,8 +227,7 @@
     "name": "editable",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-as-ref",
@@ -257,8 +253,7 @@
     "name": "file-upload",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-as-ref",
@@ -286,7 +281,7 @@
     "name": "gauge",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -307,7 +302,7 @@
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -324,7 +319,7 @@
     "name": "key-value",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "button",
@@ -366,8 +361,7 @@
     "name": "marquee",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "cssVars": {
       "theme": {
@@ -444,7 +438,7 @@
     "name": "mask-input",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -462,7 +456,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@diceui/masonry",
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-isomorphic-layout-effect"
@@ -482,8 +476,7 @@
     "name": "media-player",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction",
+      "radix-ui",
       "media-chrome"
     ],
     "registryDependencies": [
@@ -523,7 +516,7 @@
     "name": "phone-input",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "command",
@@ -552,7 +545,7 @@
     "name": "relative-time-card",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "hover-card"
@@ -589,7 +582,7 @@
     "name": "scroller",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -606,8 +599,7 @@
     "name": "scroll-spy",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-as-ref",
@@ -629,8 +621,7 @@
     "name": "segmented-input",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "registryDependencies": [
       "input"
@@ -647,7 +638,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@floating-ui/react-dom",
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "button",
@@ -674,7 +665,7 @@
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -691,7 +682,7 @@
     "name": "speed-dial",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "button",
@@ -714,7 +705,7 @@
     "name": "stack",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -741,7 +732,7 @@
     "name": "status",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "files": [
       {
@@ -754,8 +745,7 @@
     "name": "stepper",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "registryDependencies": [
       "button",
@@ -778,7 +768,7 @@
     "name": "swap",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-as-ref",
@@ -796,7 +786,7 @@
     "name": "qr-code",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
+      "radix-ui",
       "qrcode"
     ],
     "devDependencies": [
@@ -816,8 +806,7 @@
     "name": "rating",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-as-ref",
@@ -856,8 +845,7 @@
     "name": "timeline",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-isomorphic-layout-effect",
@@ -878,7 +866,7 @@
     "name": "time-picker",
     "type": "registry:ui",
     "dependencies": [
-      "@radix-ui/react-slot"
+      "radix-ui"
     ],
     "registryDependencies": [
       "popover",
@@ -914,8 +902,7 @@
     "type": "registry:ui",
     "dependencies": [
       "@floating-ui/react-dom",
-      "@radix-ui/react-slot",
-      "@radix-ui/react-direction"
+      "radix-ui"
     ],
     "registryDependencies": [
       "@diceui/use-as-ref",

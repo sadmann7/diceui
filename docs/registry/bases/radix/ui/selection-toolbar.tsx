@@ -12,7 +12,7 @@ import {
   size,
   useFloating,
 } from "@floating-ui/react-dom";
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Button } from "@/components/ui/button";
@@ -525,7 +525,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
 
   if (!portalContainer || !open) return null;
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
@@ -681,7 +681,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 function SelectionToolbarSeparator(props: DivProps) {
   const { asChild, className, ...separatorProps } = props;
 
-  const SeparatorPrimitive = asChild ? Slot : "div";
+  const SeparatorPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <SeparatorPrimitive

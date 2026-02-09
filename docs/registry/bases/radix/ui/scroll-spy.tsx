@@ -1,7 +1,6 @@
 "use client";
 
-import { useDirection } from "@radix-ui/react-direction";
-import { Slot } from "@radix-ui/react-slot";
+import { Direction as DirectionPrimitive, Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -116,7 +115,7 @@ function ScrollSpy(props: ScrollSpyProps) {
     ...rootProps
   } = props;
 
-  const dir = useDirection(dirProp);
+  const dir = DirectionPrimitive.useDirection(dirProp);
 
   const stateRef = useLazyRef<StoreState>(() => ({
     value: value ?? defaultValue ?? "",
@@ -306,7 +305,7 @@ function ScrollSpy(props: ScrollSpyProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
@@ -336,7 +335,7 @@ function ScrollSpyNav(props: ScrollSpyNavProps) {
 
   const { dir, orientation } = useScrollSpyContext(NAV_NAME);
 
-  const NavPrimitive = asChild ? Slot : "nav";
+  const NavPrimitive = asChild ? SlotPrimitive.Slot : "nav";
 
   return (
     <NavPrimitive
@@ -374,7 +373,7 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
     [linkValue, onClick, onScrollToSection],
   );
 
-  const LinkPrimitive = asChild ? Slot : "a";
+  const LinkPrimitive = asChild ? SlotPrimitive.Slot : "a";
 
   return (
     <LinkPrimitive
@@ -401,7 +400,7 @@ function ScrollSpyViewport(props: ScrollSpyViewportProps) {
 
   const { dir, orientation } = useScrollSpyContext(VIEWPORT_NAME);
 
-  const ViewportPrimitive = asChild ? Slot : "div";
+  const ViewportPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <ViewportPrimitive
@@ -438,7 +437,7 @@ function ScrollSpySection(props: ScrollSpySectionProps) {
     };
   }, [value, onSectionRegister, onSectionUnregister]);
 
-  const SectionPrimitive = asChild ? Slot : "div";
+  const SectionPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <SectionPrimitive

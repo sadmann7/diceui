@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -317,7 +317,7 @@ function Gauge(props: GaugeProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <GaugeContext.Provider value={contextValue}>
@@ -447,7 +447,7 @@ function GaugeValueText(props: DivProps) {
   const { valueTextId, state, arcCenterY, valueText } =
     useGaugeContext(VALUE_TEXT_NAME);
 
-  const ValueTextPrimitive = asChild ? Slot : "div";
+  const ValueTextPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <ValueTextPrimitive
@@ -473,7 +473,7 @@ function GaugeLabel(props: DivProps) {
 
   const { labelId, state } = useGaugeContext(LABEL_NAME);
 
-  const LabelPrimitive = asChild ? Slot : "div";
+  const LabelPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <LabelPrimitive

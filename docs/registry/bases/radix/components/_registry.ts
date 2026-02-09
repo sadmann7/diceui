@@ -24,7 +24,7 @@ export const components: Registry["items"] = [
   {
     name: "hitbox",
     type: "registry:component",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "components/hitbox.tsx",
@@ -45,7 +45,7 @@ export const components: Registry["items"] = [
   {
     name: "pending",
     type: "registry:component",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "components/pending.tsx",
@@ -66,7 +66,7 @@ export const components: Registry["items"] = [
   {
     name: "visually-hidden",
     type: "registry:component",
-    dependencies: ["@radix-ui/react-slot"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "components/visually-hidden.tsx",

@@ -1,6 +1,6 @@
 "use client";
 
-import { Slot } from "@radix-ui/react-slot";
+import { Slot as SlotPrimitive } from "radix-ui";
 import { PlusIcon, XIcon } from "lucide-react";
 import * as React from "react";
 import { Button } from "@/components/ui/button";
@@ -290,7 +290,7 @@ function KeyValue(props: KeyValueProps) {
     ],
   );
 
-  const RootPrimitive = asChild ? Slot : "div";
+  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <StoreContext.Provider value={store}>
@@ -330,7 +330,7 @@ function KeyValueList(props: KeyValueListProps) {
 
   const value = useStore((state) => state.value);
 
-  const ListPrimitive = asChild ? Slot : "div";
+  const ListPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <ListPrimitive
@@ -378,7 +378,7 @@ function KeyValueItem(props: KeyValueItemProps) {
 
   const focusedId = useStore((state) => state.focusedId);
 
-  const ItemPrimitive = asChild ? Slot : "div";
+  const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <ItemPrimitive
@@ -563,7 +563,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
     [context, store, itemData, propsRef],
   );
 
-  const KeyInputPrimitive = asChild ? Slot : Input;
+  const KeyInputPrimitive = asChild ? SlotPrimitive.Slot : Input;
 
   return (
     <KeyInputPrimitive
@@ -678,7 +678,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
     [store, itemData.id, context, propsRef],
   );
 
-  const ValueInputPrimitive = asChild ? Slot : Textarea;
+  const ValueInputPrimitive = asChild ? SlotPrimitive.Slot : Textarea;
 
   return (
     <ValueInputPrimitive
@@ -838,7 +838,7 @@ function KeyValueError(props: KeyValueErrorProps) {
 
   if (!error) return null;
 
-  const ErrorPrimitive = asChild ? Slot : "span";
+  const ErrorPrimitive = asChild ? SlotPrimitive.Slot : "span";
 
   return (
     <ErrorPrimitive
