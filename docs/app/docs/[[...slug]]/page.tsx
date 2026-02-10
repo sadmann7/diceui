@@ -73,7 +73,7 @@ export default async function DocPage(props: DocPageParams) {
           )}
           <ButtonGroup>
             <CopyMarkdownButton markdownUrl={`${page.url}.mdx`} />
-            <ButtonGroupSeparator />
+            <ButtonGroupSeparator className="my-1" />
             <ViewOptions
               markdownUrl={`${page.url}.mdx`}
               githubUrl={`https://github.com/sadmann7/diceui/blob/main/docs/content/docs/${page.path}`}
