@@ -43,7 +43,7 @@ export function Changelogs() {
             <Link href={page.url} className="no-underline hover:underline">
               <h2
                 id={slug}
-                className="not-prose font-semibold text-xl tracking-tight"
+                className="not-prose font-semibold text-2xl tracking-tight"
               >
                 {page.data.title}
               </h2>
