@@ -10,12 +10,26 @@ interface PortalProps extends SlotProps {
   container?: Element | DocumentFragment | null;
 }
 
+function subscribe() {
+  return () => {};
+}
+
+function getSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 function Portal(props: PortalProps) {
   const { container: containerProp, ...portalProps } = props;
 
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useLayoutEffect(() => setMounted(true), []);
+  const mounted = React.useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);

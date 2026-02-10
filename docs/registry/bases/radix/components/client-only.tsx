@@ -7,12 +7,24 @@ interface ClientOnlyProps {
   fallback?: React.ReactNode;
 }
 
-function ClientOnly({ children, fallback = null }: ClientOnlyProps) {
-  const [mounted, setMounted] = React.useState(false);
+function subscribe() {
+  return () => {};
+}
 
-  React.useLayoutEffect(() => {
-    setMounted(true);
-  }, []);
+function getSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
+function ClientOnly({ children, fallback = null }: ClientOnlyProps) {
+  const mounted = React.useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
   if (!mounted) return fallback;
 

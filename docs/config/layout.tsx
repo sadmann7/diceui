@@ -37,7 +37,6 @@ export const docsOptions: DocsLayoutProps = {
   tree: source.pageTree,
   sidebar: {
     defaultOpenLevel: 1,
-    component: null,
   },
   links: [githubLink],
 };

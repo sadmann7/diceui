@@ -6,7 +6,7 @@
   "files": [
     {
       "path": "examples/angle-slider-demo.tsx",
-      "content": "import {\n  AngleSlider,\n  AngleSliderRange,\n  AngleSliderThumb,\n  AngleSliderTrack,\n  AngleSliderValue,\n} from \"@/registry/bases/radix/ui/angle-slider\";\n\nexport default function AngleSliderDemo() {\n  return (\n    <AngleSlider defaultValue={[180]} max={360} min={0} step={1}>\n      <AngleSliderTrack>\n        <AngleSliderRange />\n      </AngleSliderTrack>\n      <AngleSliderThumb />\n      <AngleSliderValue />\n    </AngleSlider>\n  );\n}\n",
+      "content": "import {\r\n  AngleSlider,\r\n  AngleSliderRange,\r\n  AngleSliderThumb,\r\n  AngleSliderTrack,\r\n  AngleSliderValue,\r\n} from \"@/registry/bases/radix/ui/angle-slider\";\r\n\r\nexport default function AngleSliderDemo() {\r\n  return (\r\n    <AngleSlider defaultValue={[180]} max={360} min={0} step={1}>\r\n      <AngleSliderTrack>\r\n        <AngleSliderRange />\r\n      </AngleSliderTrack>\r\n      <AngleSliderThumb />\r\n      <AngleSliderValue />\r\n    </AngleSlider>\r\n  );\r\n}\r\n",
       "type": "registry:example",
       "target": ""
     }

@@ -1,3 +1,4 @@
+import type { Presence } from "@/registry/bases/radix/components/presence";
 import type { CompositionProps } from "@/types";
 
 export interface ClientOnlyProps {
@@ -82,24 +83,4 @@ export interface VisuallyHiddenInputProps {
   bubbles?: boolean;
 }
 
-export interface PresenceProps {
-  /** Whether the children should be present/mounted */
-  present: boolean;
-
-  /** The children to render. Can be a React element or a render function that receives the present state. */
-  children:
-    | React.ReactElement<{ ref?: React.Ref<HTMLElement> }>
-    | ((props: { present: boolean }) => React.ReactElement<{
-        ref?: React.Ref<HTMLElement>;
-      }>);
-
-  /**
-   * Whether to force mount the children regardless of the present state.
-   * Useful for controlling the presence of a component that is animating in or out.
-   * @default false
-   */
-  forceMount?: boolean;
-
-  /** Callback when all exit animations have completed. */
-  onExitComplete?: () => void;
-}
+export interface PresenceProps extends React.ComponentProps<typeof Presence> {}
