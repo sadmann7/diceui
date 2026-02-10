@@ -1,26 +1,7 @@
 import defaultComponents from "fumadocs-ui/mdx";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import { source } from "@/lib/source";
-
-export function getChangelogPages() {
-  return source
-    .getPages()
-    .filter(
-      (page) =>
-        page.url.startsWith("/docs/changelog/") &&
-        page.url !== "/docs/changelog",
-    )
-    .map((page) => ({
-      ...page,
-      date: page.data.date ? new Date(page.data.date) : null,
-    }))
-    .sort((a, b) => {
-      const dateA = a.date?.getTime() ?? 0;
-      const dateB = b.date?.getTime() ?? 0;
-      return dateB - dateA;
-    });
-}
+import { getChangelogPages } from "@/lib/changelog";
 
 export function Changelogs() {
   const pages = getChangelogPages();

@@ -6,7 +6,6 @@ import {
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getChangelogPages } from "@/components/changelogs";
 import { CopyMarkdownButton, ViewOptions } from "@/components/doc-actions";
 import { DynamicLink } from "@/components/dynamic-link";
 import { Mdx } from "@/components/mdx-components";
@@ -15,6 +14,7 @@ import {
   ButtonGroupSeparator,
 } from "@/components/ui/button-group";
 import { Separator } from "@/components/ui/separator";
+import { getChangelogToc } from "@/lib/changelog";
 import { source } from "@/lib/source";
 
 interface DocPageParams {
@@ -53,13 +53,7 @@ export default async function DocPage(props: DocPageParams) {
   const apiLink = page.data.links?.api;
 
   const toc =
-    page.url === "/docs/changelog"
-      ? getChangelogPages().map((entry) => ({
-          title: entry.data.title,
-          url: `#${entry.slugs[entry.slugs.length - 1]}`,
-          depth: 2,
-        }))
-      : page.data.toc;
+    page.url === "/docs/changelog" ? getChangelogToc() : page.data.toc;
 
   return (
     <DocsPage
