@@ -49,13 +49,13 @@ const COMPONENTS = [
   { name: "Tour", slug: "tour" },
 ] as const;
 
-interface ComponentListProps {
+interface ComponentsProps {
   base?: "radix" | "base";
 }
 
-export function ComponentList({ base = "radix" }: ComponentListProps) {
+export function Components({ base = "radix" }: ComponentsProps) {
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+    <div className="not-prose grid grid-cols-2 gap-4 sm:grid-cols-3">
       {COMPONENTS.map(({ name, slug }) => (
         <Link
           key={slug}

@@ -58,9 +58,15 @@ const KeyboardShortcutsTable = dynamic(() =>
   })),
 );
 
-const ComponentList = dynamic(() =>
-  import("@/components/component-list").then((mod) => ({
-    default: mod.ComponentList,
+const Components = dynamic(() =>
+  import("@/components/components").then((mod) => ({
+    default: mod.Components,
+  })),
+);
+
+const Changelogs = dynamic(() =>
+  import("@/components/changelogs").then((mod) => ({
+    default: mod.Changelogs,
   })),
 );
 
@@ -125,7 +131,8 @@ export function useMdxComponents(
     DataAttributesTable,
     PropsTable,
     KeyboardShortcutsTable,
-    ComponentList,
+    Components,
+    Changelogs,
   };
 }
 

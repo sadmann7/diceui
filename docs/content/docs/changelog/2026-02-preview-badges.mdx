@@ -1,0 +1,31 @@
+---
+title: February 2026 - Preview Badges and Component Optimizations
+description: Added preview badge support, flattened sidebar structure, and optimized utility components.
+date: 2026-02-10
+---
+
+We've shipped several improvements to DiceUI's documentation and component infrastructure.
+
+### Preview Badges
+
+Components can now display preview badges in the sidebar. We use Fumadocs loader plugins to automatically detect the `preview` frontmatter property and display a styled badge.
+
+The badge uses an amber color scheme that works in both light and dark modes, with a compact 10px font size that doesn't overwhelm the sidebar.
+
+### Flattened Component Structure
+
+We've simplified the component navigation by extracting radix and base components directly into the Components section. No more nested folders - all 49 components are now displayed at the same level for easier browsing.
+
+### Optimized Utility Components
+
+We've rewritten the `ClientOnly` and `Portal` components using `useSyncExternalStore` for better performance and proper SSR/hydration handling. This is the recommended React 18+ approach for these types of components.
+
+**Benefits:**
+- Better performance (no `useState` + `useLayoutEffect` pattern needed)
+- Proper SSR/Hydration with explicit server vs client snapshots
+- Cleaner, more declarative code
+- No hydration mismatches
+
+### Navigation Improvements
+
+Removed the redundant "Docs" link from the docs layout navbar while keeping it in the home layout for navigation. This creates a cleaner experience when you're already browsing the documentation.

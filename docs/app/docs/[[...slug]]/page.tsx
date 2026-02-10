@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import { CopyMarkdownButton, ViewOptions } from "@/components/doc-actions";
 import { DynamicLink } from "@/components/dynamic-link";
 import { Mdx } from "@/components/mdx-components";
+import { ButtonGroup } from "@/components/ui/button-group";
 import { Separator } from "@/components/ui/separator";
 import { source } from "@/lib/source";
 
@@ -67,11 +68,13 @@ export default async function DocPage(props: DocPageParams) {
               className="data-[orientation=vertical]:h-6"
             />
           )}
-          <CopyMarkdownButton markdownUrl={`${page.url}.mdx`} />
-          <ViewOptions
-            markdownUrl={`${page.url}.mdx`}
-            githubUrl={`https://github.com/sadmann7/diceui/blob/main/docs/content/docs/${page.path}`}
-          />
+          <ButtonGroup>
+            <CopyMarkdownButton markdownUrl={`${page.url}.mdx`} />
+            <ViewOptions
+              markdownUrl={`${page.url}.mdx`}
+              githubUrl={`https://github.com/sadmann7/diceui/blob/main/docs/content/docs/${page.path}`}
+            />
+          </ButtonGroup>
         </div>
       </div>
       <DocsBody>
