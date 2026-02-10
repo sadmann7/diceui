@@ -47,7 +47,9 @@ async function cleanupRegistry() {
     );
 
     if (orphanedDirs.length > 0) {
-      console.log(`\n🗑️  Removing ${orphanedDirs.length} orphaned style directories...`);
+      console.log(
+        `\n🗑️  Removing ${orphanedDirs.length} orphaned style directories...`,
+      );
       for (const dir of orphanedDirs) {
         const dirPath = path.join(STYLES_PATH, dir);
         await rimraf(dirPath);

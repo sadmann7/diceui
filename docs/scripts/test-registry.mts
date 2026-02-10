@@ -85,10 +85,7 @@ async function detectServer(): Promise<ServerInfo> {
   return { url: PROD_URL, local: false };
 }
 
-async function testItem(
-  item: RegistryItem,
-  url: string,
-): Promise<TestResult> {
+async function testItem(item: RegistryItem, url: string): Promise<TestResult> {
   const styleName = `${item.base}-${item.style}`;
   const itemUrl = `${url}/r/styles/${styleName}/${item.name}.json`;
 

@@ -1,3 +1,7 @@
+/**
+ * @see https://github.com/shadcn-ui/ui/blob/main/apps/v4/registry/fonts.ts
+ */
+
 import type { RegistryItem } from "shadcn/schema";
 
 export const fonts = [

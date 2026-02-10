@@ -1,16 +1,16 @@
-// Base UI library definitions for the registry
-export interface BaseDefinition {
-  name: string;
-  type: "registry:style";
-  title: string;
-  description: string;
-  dependencies: string[];
-  meta: {
-    logo: string;
-  };
-}
+/**
+ * @see https://github.com/shadcn-ui/ui/blob/main/apps/v4/registry/bases.ts
+ */
 
-export const BASES: BaseDefinition[] = [
+import type { RegistryItem } from "shadcn/schema";
+
+interface RegistryBaseItem
+  extends Pick<
+    RegistryItem,
+    "name" | "type" | "title" | "description" | "dependencies" | "meta"
+  > {}
+
+export const BASES: RegistryBaseItem[] = [
   {
     name: "radix",
     type: "registry:style",

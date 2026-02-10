@@ -1,3 +1,7 @@
+/**
+ * @see https://github.com/shadcn-ui/ui/blob/main/apps/v4/scripts/build-registry.mts
+ */
+
 import { existsSync, promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";

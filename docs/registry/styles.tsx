@@ -1,6 +1,16 @@
-import * as React from "react";
+/**
+ * @see https://github.com/shadcn-ui/ui/blob/main/apps/v4/registry/styles.tsx
+ */
 
-export const STYLES = [
+import * as React from "react";
+import type { RegistryItem } from "shadcn/schema";
+
+interface RegistryStyleItem
+  extends Pick<RegistryItem, "name" | "title" | "description"> {
+  icon: React.ReactNode;
+}
+
+export const STYLES: RegistryStyleItem[] = [
   {
     name: "default",
     title: "Default",

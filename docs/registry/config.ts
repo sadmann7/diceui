@@ -1,3 +1,7 @@
+/**
+ * @see https://github.com/shadcn-ui/ui/blob/main/apps/v4/registry/config.ts
+ */
+
 import { z } from "zod";
 
 import { BASE_COLORS, type BaseColor } from "@/registry/base-colors";
