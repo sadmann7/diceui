@@ -216,7 +216,7 @@ function ViewOptions({ markdownUrl, githubUrl }: ViewOptionsProps) {
           <ChevronDown />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="flex w-52 flex-col p-1">
+      <PopoverContent align="end" className="flex w-52 flex-col p-1">
         {items.map((item) => (
           <a
             key={item.href}
