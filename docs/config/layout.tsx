@@ -35,8 +35,6 @@ export const baseOptions: BaseLayoutProps = {
 export const docsOptions: DocsLayoutProps = {
   ...baseOptions,
   tree: source.pageTree,
-  sidebar: {
-    defaultOpenLevel: 1,
-  },
+  sidebar: { defaultOpenLevel: 1 },
   links: [githubLink],
 };

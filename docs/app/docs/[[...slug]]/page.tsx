@@ -85,6 +85,7 @@ export default async function DocPage(props: DocPageParams) {
           </ButtonGroup>
         </div>
       </div>
+      <Separator className="mt-2 mb-0.5" />
       <DocsBody>
         <Mdx page={page} />
       </DocsBody>
