@@ -8,7 +8,6 @@ import path from "node:path";
 import { cwd } from "node:process";
 import { rimraf } from "rimraf";
 import {
-  type Registry,
   registryItemSchema,
   type registryItemTypeSchema,
   registrySchema,
