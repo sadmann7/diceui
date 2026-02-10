@@ -210,10 +210,9 @@ function ViewOptions({ markdownUrl, githubUrl }: ViewOptionsProps) {
       <PopoverTrigger asChild>
         <Button
           variant="secondary"
-          size="sm"
-          className="h-7 text-xs [&_svg:not([class*='size-'])]:size-3"
+          size="icon-sm"
+          className="h-7 w-7 [&_svg:not([class*='size-'])]:size-3"
         >
-          Open
           <ChevronDown />
         </Button>
       </PopoverTrigger>
