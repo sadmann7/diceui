@@ -1,8 +1,16 @@
 import type { DocsLayoutProps } from "fumadocs-ui/layouts/docs";
-import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+import type { BaseLayoutProps, LinkItemType } from "fumadocs-ui/layouts/shared";
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 import { source } from "@/lib/source";
+
+const githubLink: LinkItemType = {
+  type: "icon",
+  url: siteConfig.links.github,
+  text: "Github",
+  icon: <Icons.gitHub className="size-4" />,
+  external: true,
+};
 
 export const baseOptions: BaseLayoutProps = {
   nav: {
@@ -20,13 +28,7 @@ export const baseOptions: BaseLayoutProps = {
       text: "Docs",
       url: "/docs",
     },
-    {
-      type: "icon",
-      url: siteConfig.links.github,
-      text: "Github",
-      icon: <Icons.gitHub className="size-4" />,
-      external: true,
-    },
+    githubLink,
   ],
 };
 
@@ -35,5 +37,7 @@ export const docsOptions: DocsLayoutProps = {
   tree: source.pageTree,
   sidebar: {
     defaultOpenLevel: 1,
+    component: null,
   },
+  links: [githubLink],
 };
