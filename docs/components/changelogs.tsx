@@ -1,5 +1,6 @@
-import Link from "next/link";
 import defaultComponents from "fumadocs-ui/mdx";
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 import { source } from "@/lib/source";
 
 export function getChangelogPages() {
@@ -38,11 +39,8 @@ export function Changelogs() {
           : null;
 
         return (
-          <article key={page.url} className="mb-12 border-b pb-12 last:border-b-0">
-            <Link
-              href={page.url}
-              className="no-underline hover:underline"
-            >
+          <article key={page.url} className="mb-12">
+            <Link href={page.url} className="no-underline hover:underline">
               <h2
                 id={slug}
                 className="not-prose font-semibold text-xl tracking-tight"
@@ -58,6 +56,7 @@ export function Changelogs() {
             <div className="prose dark:prose-invert mt-6 *:first:mt-0">
               <MDX components={defaultComponents} />
             </div>
+            <Separator className="mt-12" />
           </article>
         );
       })}

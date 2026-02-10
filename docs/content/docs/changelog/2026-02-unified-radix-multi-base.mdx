@@ -1,0 +1,33 @@
+---
+title: February 2026 - Unified Radix UI and Multi-Base Architecture
+description: Migrated to the unified radix-ui package, introduced multi-base component architecture, and optimized utility components.
+date: 2026-02-10
+---
+
+We've shipped several major improvements to DiceUI's component infrastructure and documentation.
+
+### Unified Radix UI Package
+
+All components have been migrated from individual `@radix-ui/react-*` packages to the unified [`radix-ui`](https://www.radix-ui.com/primitives/docs/overview/getting-started) package. This follows Radix UI's official consolidation effort and simplifies dependency management.
+
+```diff
+- import * as Dialog from "@radix-ui/react-dialog"
++ import { Dialog } from "radix-ui"
+```
+
+### Multi-Base Architecture
+
+DiceUI now supports multiple component bases. The registry has been restructured to allow components built on top of different primitive libraries — starting with **Radix UI** and **Base UI**. This sets the foundation for offering the same component patterns across different headless UI libraries.
+
+### Flattened Component Sidebar
+
+We've simplified the component navigation by extracting all components directly into the Components section. No more nested folders — all components are now displayed at the same level for easier browsing.
+
+### Optimized Utility Components
+
+The `ClientOnly` and `Portal` components have been rewritten using `useSyncExternalStore` for better performance and proper SSR/hydration handling.
+
+**Benefits:**
+- No `useState` + `useLayoutEffect` pattern needed
+- Proper SSR/Hydration with explicit server vs client snapshots
+- No hydration mismatches
