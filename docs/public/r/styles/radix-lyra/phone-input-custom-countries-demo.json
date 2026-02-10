@@ -1,0 +1,15 @@
+{
+  "name": "phone-input-custom-countries-demo",
+  "registryDependencies": [
+    "phone-input"
+  ],
+  "files": [
+    {
+      "path": "examples/phone-input-custom-countries-demo.tsx",
+      "content": "import type { PhoneInputProps } from \"@/registry/bases/radix/ui/phone-input\";\nimport {\n  PhoneInput,\n  PhoneInputCountrySelect,\n  PhoneInputField,\n} from \"@/registry/bases/radix/ui/phone-input\";\n\nconst NORTH_AMERICAN_COUNTRIES: PhoneInputProps[\"countries\"] = [\n  { code: \"US\", name: \"United States\", dialCode: \"+1\", flag: \"🇺🇸\" },\n  { code: \"CA\", name: \"Canada\", dialCode: \"+1\", flag: \"🇨🇦\" },\n  { code: \"MX\", name: \"Mexico\", dialCode: \"+52\", flag: \"🇲🇽\" },\n  { code: \"BR\", name: \"Brazil\", dialCode: \"+55\", flag: \"🇧🇷\" },\n];\n\nexport default function PhoneInputCustomCountriesDemo() {\n  return (\n    <PhoneInput\n      defaultValue=\"+14085551234\"\n      defaultCountry=\"US\"\n      countries={NORTH_AMERICAN_COUNTRIES}\n    >\n      <PhoneInputCountrySelect />\n      <PhoneInputField placeholder=\"Type phone number\" />\n    </PhoneInput>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

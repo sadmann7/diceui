@@ -16,6 +16,7 @@ import { STYLES } from "../registry/styles";
 import { fixImport } from "./fix-imports.mts";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
+const STYLES_PATH = path.join(REGISTRY_PATH, "styles");
 
 const REGISTRY_INDEX_WHITELIST: z.infer<typeof registryItemTypeSchema>[] = [
   "registry:ui",
@@ -34,6 +35,22 @@ const BASES: RegistryBase[] = ["radix", "base"];
 
 // Map styles for compatibility
 const styles = STYLES.map((s) => ({ name: s.name, label: s.title }));
+
+// Build all base-style combination names
+function getStylesToBuild() {
+  const stylesToBuild: { name: string; label: string; base: RegistryBase }[] =
+    [];
+  for (const baseName of BASES) {
+    for (const style of styles) {
+      stylesToBuild.push({
+        name: `${baseName}-${style.name}`,
+        label: `${style.label}`,
+        base: baseName,
+      });
+    }
+  }
+  return stylesToBuild;
+}
 
 const project = new Project({
   compilerOptions: {},
@@ -354,14 +371,18 @@ export const Index: Record<string, Record<string, any>> = {
 }
 
 // ----------------------------------------------------------------------------
-// Build registry/index.json and registry/registry.json for each base.
+// Build public/r/styles/{base}-{style}/registry.json and index.json.
 // ----------------------------------------------------------------------------
 async function buildRegistryJson() {
-  for (const baseName of BASES) {
+  const stylesToBuild = getStylesToBuild();
+
+  for (const { name: styleName, base: baseName } of stylesToBuild) {
     const registry = registries[baseName];
+    const outputDir = path.join(STYLES_PATH, styleName);
+    await fs.mkdir(outputDir, { recursive: true });
 
     // ----------------------------------------------------------------------------
-    // Build registry/index.json (UI components only).
+    // Build index.json (UI components only).
     // ----------------------------------------------------------------------------
     const uiItems = registry.items
       .filter((item) => ["registry:ui"].includes(item.type))
@@ -382,15 +403,10 @@ async function buildRegistryJson() {
         };
       });
     const indexJson = JSON.stringify(uiItems, null, 2);
-    rimraf.sync(path.join(REGISTRY_PATH, `${baseName}-index.json`));
-    await fs.writeFile(
-      path.join(REGISTRY_PATH, `${baseName}-index.json`),
-      indexJson,
-      "utf8",
-    );
+    await fs.writeFile(path.join(outputDir, "index.json"), indexJson, "utf8");
 
     // ----------------------------------------------------------------------------
-    // Build registry/registry.json (full registry object).
+    // Build registry.json (full registry object).
     // ----------------------------------------------------------------------------
     const allItems = registry.items
       .filter((item) => REGISTRY_INDEX_WHITELIST.includes(item.type))
@@ -417,9 +433,8 @@ async function buildRegistryJson() {
       items: allItems,
     };
     const registryJson = JSON.stringify(fullRegistry, null, 2);
-    rimraf.sync(path.join(REGISTRY_PATH, `${baseName}-registry.json`));
     await fs.writeFile(
-      path.join(REGISTRY_PATH, `${baseName}-registry.json`),
+      path.join(outputDir, "registry.json"),
       registryJson,
       "utf8",
     );
@@ -427,123 +442,190 @@ async function buildRegistryJson() {
 }
 
 // ----------------------------------------------------------------------------
-// Build registry/[name].json for each base.
+// Build public/r/styles/index.json listing all available styles.
+// ----------------------------------------------------------------------------
+async function buildStylesIndex() {
+  const stylesToBuild = getStylesToBuild();
+  const stylesIndex = stylesToBuild.map(({ name, label, base }) => ({
+    name,
+    label,
+    base,
+  }));
+
+  await fs.mkdir(STYLES_PATH, { recursive: true });
+  await fs.writeFile(
+    path.join(STYLES_PATH, "index.json"),
+    JSON.stringify(stylesIndex, null, 2),
+    "utf8",
+  );
+}
+
+// ----------------------------------------------------------------------------
+// Build public/r/index.json (top-level UI component listing, like shadcn).
+// Uses the default base ("radix") as the primary registry index.
+// ----------------------------------------------------------------------------
+async function buildRootIndex() {
+  const defaultBase: RegistryBase = "radix";
+  const registry = registries[defaultBase];
+
+  const uiItems = registry.items
+    .filter((item) => ["registry:ui"].includes(item.type))
+    .map((item) => {
+      // biome-ignore lint/suspicious/noExplicitAny: registry item types vary
+      const mapped: Record<string, any> = {
+        name: item.name,
+        type: item.type,
+      };
+
+      if (item.dependencies && item.dependencies.length > 0) {
+        mapped.dependencies = item.dependencies;
+      }
+
+      if (item.registryDependencies && item.registryDependencies.length > 0) {
+        mapped.registryDependencies = item.registryDependencies;
+      }
+
+      if (item.files) {
+        mapped.files = item.files.map((_file) => {
+          const file =
+            typeof _file === "string"
+              ? { path: _file, type: item.type }
+              : _file;
+          return { path: file.path, type: file.type };
+        });
+      }
+
+      return mapped;
+    });
+
+  await fs.writeFile(
+    path.join(REGISTRY_PATH, "index.json"),
+    JSON.stringify(uiItems, null, 2),
+    "utf8",
+  );
+}
+
+// ----------------------------------------------------------------------------
+// Build public/r/styles/{base}-{style}/[name].json for each base-style combo.
 // ----------------------------------------------------------------------------
 async function buildStyles() {
-  for (const baseName of BASES) {
+  const stylesToBuild = getStylesToBuild();
+
+  for (const { name: styleName, base: baseName } of stylesToBuild) {
     const registry = registries[baseName];
+    const outputDir = path.join(STYLES_PATH, styleName);
+    await fs.mkdir(outputDir, { recursive: true });
 
-    // biome-ignore lint/correctness/noUnusedVariables: style will be used when multi-style support is implemented
-    for (const style of styles) {
-      for (const item of registry.items) {
-        if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) {
-          continue;
-        }
+    for (const item of registry.items) {
+      if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) {
+        continue;
+      }
 
-        // Skip "index" item to avoid overwriting the UI component listing
-        if (item.name === "index") {
-          continue;
-        }
+      // Skip "index" item to avoid overwriting the UI component listing
+      if (item.name === "index") {
+        continue;
+      }
 
-        // biome-ignore lint/suspicious/noExplicitAny: files array can contain various registry item types
-        let files: any[] = [];
-        if (item.files) {
-          files = await Promise.all(
-            item.files.map(async (_file) => {
-              const file =
-                typeof _file === "string"
-                  ? {
-                      path: _file,
-                      type: item.type,
-                      content: "",
-                      target: "",
-                    }
-                  : _file;
+      // biome-ignore lint/suspicious/noExplicitAny: files array can contain various registry item types
+      let files: any[] = [];
+      if (item.files) {
+        files = await Promise.all(
+          item.files.map(async (_file) => {
+            const file =
+              typeof _file === "string"
+                ? {
+                    path: _file,
+                    type: item.type,
+                    content: "",
+                    target: "",
+                  }
+                : _file;
 
-              let content: string;
-              try {
-                content = await fs.readFile(
-                  path.join(
-                    process.cwd(),
-                    "registry",
-                    "bases",
-                    baseName,
-                    file.path,
-                  ),
-                  "utf8",
-                );
+            let content: string;
+            try {
+              content = await fs.readFile(
+                path.join(
+                  process.cwd(),
+                  "registry",
+                  "bases",
+                  baseName,
+                  file.path,
+                ),
+                "utf8",
+              );
 
-                // Only fix imports for v0- blocks.
-                if (item.name.startsWith("v0-")) {
-                  content = fixImport(content);
-                }
-              } catch (_error) {
-                return;
+              // Only fix imports for v0- blocks.
+              if (item.name.startsWith("v0-")) {
+                content = fixImport(content);
+              }
+            } catch (_error) {
+              return;
+            }
+
+            const tempFile = await createTempSourceFile(file.path);
+            const sourceFile = project.createSourceFile(tempFile, content, {
+              scriptKind: ScriptKind.TSX,
+            });
+
+            sourceFile.getVariableDeclaration("iframeHeight")?.remove();
+            sourceFile.getVariableDeclaration("containerClassName")?.remove();
+            sourceFile.getVariableDeclaration("description")?.remove();
+
+            let target = file.target || "";
+
+            if ((!target || target === "") && item.name.startsWith("v0-")) {
+              const fileName = file.path.split("/").pop();
+              if (
+                file.type === "registry:block" ||
+                file.type === "registry:component" ||
+                file.type === "registry:example"
+              ) {
+                target = `components/${fileName}`;
               }
 
-              const tempFile = await createTempSourceFile(file.path);
-              const sourceFile = project.createSourceFile(tempFile, content, {
-                scriptKind: ScriptKind.TSX,
-              });
-
-              sourceFile.getVariableDeclaration("iframeHeight")?.remove();
-              sourceFile.getVariableDeclaration("containerClassName")?.remove();
-              sourceFile.getVariableDeclaration("description")?.remove();
-
-              let target = file.target || "";
-
-              if ((!target || target === "") && item.name.startsWith("v0-")) {
-                const fileName = file.path.split("/").pop();
-                if (
-                  file.type === "registry:block" ||
-                  file.type === "registry:component" ||
-                  file.type === "registry:example"
-                ) {
-                  target = `components/${fileName}`;
-                }
-
-                if (file.type === "registry:ui") {
-                  target = `components/ui/${fileName}`;
-                }
-
-                if (file.type === "registry:hook") {
-                  target = `hooks/${fileName}`;
-                }
-
-                if (file.type === "registry:lib") {
-                  target = `lib/${fileName}`;
-                }
+              if (file.type === "registry:ui") {
+                target = `components/ui/${fileName}`;
               }
 
-              return {
-                path: file.path,
-                type: file.type,
-                content: sourceFile.getText(),
-                target,
-              };
-            }),
-          );
-        }
+              if (file.type === "registry:hook") {
+                target = `hooks/${fileName}`;
+              }
 
-        const payload = registryItemSchema.safeParse({
-          ...item,
-          files,
-        });
+              if (file.type === "registry:lib") {
+                target = `lib/${fileName}`;
+              }
+            }
 
-        if (payload.success) {
-          // Write to public/r/{base}-{name}.json
-          await fs.writeFile(
-            path.join(REGISTRY_PATH, `${baseName}-${item.name}.json`),
-            JSON.stringify(payload.data, null, 2),
-            "utf8",
-          );
-        }
+            return {
+              path: file.path,
+              type: file.type,
+              content: sourceFile.getText(),
+              target,
+            };
+          }),
+        );
+      }
+
+      const payload = registryItemSchema.safeParse({
+        ...item,
+        files,
+      });
+
+      if (payload.success) {
+        // Write to public/r/styles/{base}-{style}/{name}.json
+        await fs.writeFile(
+          path.join(outputDir, `${item.name}.json`),
+          JSON.stringify(payload.data, null, 2),
+          "utf8",
+        );
       }
     }
   }
 }
 
 try {
+  const totalStart = performance.now();
+
   // Validate all registries
   for (const baseName of BASES) {
     const registry = registries[baseName];
@@ -555,11 +637,33 @@ try {
     }
   }
 
+  // Clean styles output directory
+  console.log("🧹 Cleaning styles output directory...");
+  await rimraf(STYLES_PATH);
+  await fs.mkdir(STYLES_PATH, { recursive: true });
+
+  console.log("🏗️  Building __registry__/index.tsx...");
   await buildRegistry();
+
+  console.log("📦 Building styles index...");
+  await buildStylesIndex();
+
+  console.log("📋 Building public/r/index.json...");
+  await buildRootIndex();
+
+  const stylesToBuild = getStylesToBuild();
+  console.log(`💅 Building ${stylesToBuild.length} style variants...`);
+
+  // Build registry JSON and individual items for each style
   await buildRegistryJson();
   await buildStyles();
 
-  console.log("✅ Done!");
+  for (const style of stylesToBuild) {
+    console.log(`   ✅ ${style.name}`);
+  }
+
+  const elapsed = ((performance.now() - totalStart) / 1000).toFixed(2);
+  console.log(`\n✅ Build complete in ${elapsed}s!`);
 } catch (error) {
   console.error(error);
   process.exit(1);

@@ -1,0 +1,18 @@
+{
+  "name": "swap-demo",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "swap"
+  ],
+  "files": [
+    {
+      "path": "examples/swap-demo.tsx",
+      "content": "import { MoonIcon, SunIcon, Volume2Icon, VolumeXIcon } from \"lucide-react\";\nimport { Swap, SwapOff, SwapOn } from \"@/registry/bases/radix/ui/swap\";\n\nexport default function SwapDemo() {\n  return (\n    <div className=\"flex flex-col items-center gap-8\">\n      <div className=\"flex flex-col items-center gap-2\">\n        <span className=\"text-muted-foreground text-sm\">Click to swap</span>\n        <Swap className=\"size-12 rounded-lg border bg-muted/50 hover:bg-muted\">\n          <SwapOn>\n            <SunIcon className=\"size-6\" />\n          </SwapOn>\n          <SwapOff>\n            <MoonIcon className=\"size-6\" />\n          </SwapOff>\n        </Swap>\n      </div>\n\n      <div className=\"flex flex-col items-center gap-2\">\n        <span className=\"text-muted-foreground text-sm\">Hover to swap</span>\n        <Swap\n          activationMode=\"hover\"\n          className=\"size-12 rounded-lg border bg-muted/50\"\n        >\n          <SwapOn>\n            <Volume2Icon className=\"size-6\" />\n          </SwapOn>\n          <SwapOff>\n            <VolumeXIcon className=\"size-6\" />\n          </SwapOff>\n        </Swap>\n      </div>\n    </div>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

@@ -1,0 +1,20 @@
+{
+  "name": "tags-input-editable-demo",
+  "dependencies": [
+    "@diceui/tags-input",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "tags-input"
+  ],
+  "files": [
+    {
+      "path": "examples/tags-input-editable-demo.tsx",
+      "content": "\"use client\";\n\nimport { RefreshCcw } from \"lucide-react\";\nimport * as React from \"react\";\nimport { Button } from \"@/components/ui/button\";\nimport {\n  TagsInput,\n  TagsInputClear,\n  TagsInputInput,\n  TagsInputItem,\n  TagsInputLabel,\n  TagsInputList,\n} from \"@/registry/bases/radix/ui/tags-input\";\n\nexport default function TagsInputEditableDemo() {\n  const [tricks, setTricks] = React.useState([\n    \"Kickflip\",\n    \"Heelflip\",\n    \"FS 540\",\n  ]);\n\n  return (\n    <TagsInput value={tricks} onValueChange={setTricks} editable addOnPaste>\n      <TagsInputLabel>Tricks</TagsInputLabel>\n      <TagsInputList>\n        {tricks.map((trick) => (\n          <TagsInputItem key={trick} value={trick}>\n            {trick}\n          </TagsInputItem>\n        ))}\n        <TagsInputInput placeholder=\"Add trick...\" />\n      </TagsInputList>\n      <TagsInputClear asChild>\n        <Button variant=\"outline\">\n          <RefreshCcw className=\"h-4 w-4\" />\n          Clear\n        </Button>\n      </TagsInputClear>\n    </TagsInput>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

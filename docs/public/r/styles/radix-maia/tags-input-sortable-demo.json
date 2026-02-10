@@ -1,0 +1,24 @@
+{
+  "name": "tags-input-sortable-demo",
+  "dependencies": [
+    "@diceui/tags-input",
+    "@dnd-kit/core",
+    "@dnd-kit/modifiers",
+    "@dnd-kit/sortable",
+    "@dnd-kit/utilities",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "tags-input"
+  ],
+  "files": [
+    {
+      "path": "examples/tags-input-sortable-demo.tsx",
+      "content": "\"use client\";\n\nimport { MouseSensor, TouchSensor, useSensor, useSensors } from \"@dnd-kit/core\";\nimport * as React from \"react\";\n\nimport {\n  Sortable,\n  SortableContent,\n  SortableItem,\n  SortableOverlay,\n} from \"@/registry/bases/radix/ui/sortable\";\nimport {\n  TagsInput,\n  TagsInputInput,\n  TagsInputItem,\n  TagsInputLabel,\n  TagsInputList,\n} from \"@/registry/bases/radix/ui/tags-input\";\n\nexport default function TagsInputSortableDemo() {\n  const [tricks, setTricks] = React.useState([\"The 900\", \"FS 540\"]);\n\n  const sensors = useSensors(\n    useSensor(MouseSensor, {\n      activationConstraint: { distance: 8 },\n    }),\n    useSensor(TouchSensor, {\n      activationConstraint: { delay: 250, tolerance: 5 },\n    }),\n  );\n\n  return (\n    <Sortable\n      sensors={sensors}\n      value={tricks}\n      onValueChange={(items) => setTricks(items)}\n      orientation=\"mixed\"\n      flatCursor\n    >\n      <TagsInput value={tricks} onValueChange={setTricks} editable>\n        <TagsInputLabel>Sortable</TagsInputLabel>\n        <SortableContent>\n          <TagsInputList>\n            {tricks.map((trick) => (\n              <SortableItem\n                key={trick}\n                value={trick}\n                // to prevent tag item from being tabbable\n                tabIndex={-1}\n                asChild\n                asHandle\n              >\n                <TagsInputItem value={trick}>{trick}</TagsInputItem>\n              </SortableItem>\n            ))}\n            <TagsInputInput placeholder=\"Add trick...\" />\n          </TagsInputList>\n        </SortableContent>\n        <SortableOverlay>\n          <div className=\"size-full animate-pulse rounded-sm bg-primary/10\" />\n        </SortableOverlay>\n      </TagsInput>\n    </Sortable>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

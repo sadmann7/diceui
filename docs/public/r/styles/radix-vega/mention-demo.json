@@ -1,0 +1,16 @@
+{
+  "name": "mention-demo",
+  "dependencies": [
+    "@diceui/mention",
+    "lucide-react"
+  ],
+  "files": [
+    {
+      "path": "examples/mention-demo.tsx",
+      "content": "\"use client\";\n\nimport * as Mention from \"@diceui/mention\";\nimport * as React from \"react\";\n\nconst users = [\n  {\n    id: \"1\",\n    name: \"Olivia Martin\",\n    email: \"olivia@email.com\",\n  },\n  {\n    id: \"2\",\n    name: \"Isabella Nguyen\",\n    email: \"isabella@email.com\",\n  },\n  {\n    id: \"3\",\n    name: \"Emma Wilson\",\n    email: \"emma@email.com\",\n  },\n  {\n    id: \"4\",\n    name: \"Jackson Lee\",\n    email: \"jackson@email.com\",\n  },\n  {\n    id: \"5\",\n    name: \"William Kim\",\n    email: \"will@email.com\",\n  },\n];\n\nexport default function MentionDemo() {\n  return (\n    <Mention.MentionRoot className=\"w-full max-w-[400px] **:data-tag:rounded **:data-tag:bg-blue-200 **:data-tag:py-px **:data-tag:text-blue-950 dark:**:data-tag:bg-blue-800 dark:**:data-tag:text-blue-50\">\n      <Mention.MentionLabel className=\"font-medium text-sm text-zinc-950 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 dark:text-zinc-50\">\n        Mention users\n      </Mention.MentionLabel>\n      <Mention.MentionInput\n        placeholder=\"Type @ to mention someone...\"\n        className=\"flex min-h-[60px] w-full rounded-md border border-zinc-200 bg-transparent px-3 py-2 text-base shadow-xs placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-zinc-800 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm dark:border-zinc-800 dark:focus-visible:ring-zinc-300\"\n        asChild\n      >\n        <textarea />\n      </Mention.MentionInput>\n      <Mention.MentionPortal>\n        <Mention.MentionContent className=\"data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 relative z-50 min-w-[var(--dice-anchor-width)] overflow-hidden rounded-md border border-zinc-200 bg-white p-1 text-zinc-950 shadow-md data-[state=closed]:animate-out data-[state=open]:animate-in dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50\">\n          {users.map((user) => (\n            <Mention.MentionItem\n              key={user.id}\n              value={user.name}\n              className=\"relative flex w-full cursor-default select-none flex-col rounded-sm px-2 py-1.5 text-sm outline-hidden data-disabled:pointer-events-none data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 data-disabled:opacity-50 dark:data-highlighted:bg-zinc-800 dark:data-highlighted:text-zinc-50\"\n            >\n              <span className=\"text-sm\">{user.name}</span>\n              <span className=\"text-muted-foreground text-xs\">\n                {user.email}\n              </span>\n            </Mention.MentionItem>\n          ))}\n        </Mention.MentionContent>\n      </Mention.MentionPortal>\n    </Mention.MentionRoot>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

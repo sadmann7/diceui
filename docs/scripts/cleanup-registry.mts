@@ -3,96 +3,124 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { rimraf } from "rimraf";
 
-import { registry } from "../registry";
+import { registries } from "../registry";
+import { STYLES } from "../registry/styles";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const REGISTRY_PATH = path.resolve(__dirname, "../public/r");
+const STYLES_PATH = path.resolve(__dirname, "../public/r/styles");
 
-// Reserved registry item names that should never be removed
-const RESERVED_NAMES = new Set(["index", "style", "registry"]);
+// Define bases to match build-registry
+const BASES = Object.keys(registries) as Array<keyof typeof registries>;
+
+// Reserved file names within each style directory
+const RESERVED_NAMES = new Set(["index", "registry"]);
 
 async function cleanupRegistry() {
   console.log("🧹 Starting registry cleanup...");
 
   try {
-    // Get all registry item names from the TypeScript registry
-    const registryItemNames = new Set(
-      registry.items
-        .filter((item) => !RESERVED_NAMES.has(item.name))
-        .map((item) => item.name),
-    );
-
-    console.log(
-      `📋 Found ${registryItemNames.size} items in registry TypeScript files`,
-    );
-
-    // Get all JSON files in the registry directory
-    const registryFiles = await fs.readdir(REGISTRY_PATH);
-    const jsonFiles = registryFiles.filter((file) => file.endsWith(".json"));
-
-    console.log(
-      `📁 Found ${jsonFiles.length} JSON files in registry directory`,
-    );
-
-    // Find orphaned files (JSON files without corresponding registry items)
-    const orphanedFiles: string[] = [];
-    const validFiles: string[] = [];
-
-    for (const jsonFile of jsonFiles) {
-      const itemName = path.basename(jsonFile, ".json");
-
-      // Skip reserved files
-      if (RESERVED_NAMES.has(itemName)) {
-        validFiles.push(jsonFile);
-        continue;
-      }
-
-      if (registryItemNames.has(itemName)) {
-        validFiles.push(jsonFile);
-      } else {
-        orphanedFiles.push(jsonFile);
+    // Build expected style directory names
+    const expectedStyleDirs = new Set<string>();
+    for (const baseName of BASES) {
+      for (const style of STYLES) {
+        expectedStyleDirs.add(`${baseName}-${style.name}`);
       }
     }
 
-    console.log(`✅ Valid files: ${validFiles.length}`);
-    console.log(`🗑️  Orphaned files found: ${orphanedFiles.length}`);
-
-    if (orphanedFiles.length === 0) {
-      console.log("🎉 No orphaned files found! Registry is clean.");
+    // Check if styles directory exists
+    try {
+      await fs.access(STYLES_PATH);
+    } catch {
+      console.log("📁 No styles directory found. Nothing to clean.");
       return;
     }
 
-    // List orphaned files
-    console.log("\n📝 Orphaned files to be removed:");
-    for (const file of orphanedFiles) {
-      console.log(`  - ${file}`);
-    }
+    // Get all directories in styles/
+    const styleDirs = await fs.readdir(STYLES_PATH, { withFileTypes: true });
+    const existingDirs = styleDirs
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name);
 
-    // Remove orphaned files
-    console.log("\n🗑️  Removing orphaned files...");
-    let removedCount = 0;
+    // Find orphaned style directories
+    const orphanedDirs = existingDirs.filter(
+      (dir) => !expectedStyleDirs.has(dir),
+    );
 
-    for (const file of orphanedFiles) {
-      const filePath = path.join(REGISTRY_PATH, file);
-      try {
-        await rimraf(filePath);
-        console.log(`  ✓ Removed: ${file}`);
-        removedCount++;
-      } catch (error) {
-        console.error(`  ✗ Failed to remove ${file}:`, error);
+    if (orphanedDirs.length > 0) {
+      console.log(`\n🗑️  Removing ${orphanedDirs.length} orphaned style directories...`);
+      for (const dir of orphanedDirs) {
+        const dirPath = path.join(STYLES_PATH, dir);
+        await rimraf(dirPath);
+        console.log(`  ✓ Removed directory: ${dir}/`);
       }
     }
 
+    // Clean orphaned files within each valid style directory
+    let totalOrphaned = 0;
+    let totalValid = 0;
+
+    for (const baseName of BASES) {
+      const registry = registries[baseName];
+
+      // Build expected item names for this base
+      const expectedItems = new Set<string>();
+      for (const item of registry.items) {
+        if (!RESERVED_NAMES.has(item.name)) {
+          expectedItems.add(item.name);
+        }
+      }
+      // Add reserved file names
+      for (const name of RESERVED_NAMES) {
+        expectedItems.add(name);
+      }
+
+      for (const style of STYLES) {
+        const styleName = `${baseName}-${style.name}`;
+        const styleDir = path.join(STYLES_PATH, styleName);
+
+        try {
+          await fs.access(styleDir);
+        } catch {
+          continue; // Directory doesn't exist, skip
+        }
+
+        const files = await fs.readdir(styleDir);
+        const jsonFiles = files.filter((f) => f.endsWith(".json"));
+
+        for (const jsonFile of jsonFiles) {
+          const itemName = path.basename(jsonFile, ".json");
+
+          if (expectedItems.has(itemName)) {
+            totalValid++;
+          } else {
+            const filePath = path.join(styleDir, jsonFile);
+            await rimraf(filePath);
+            console.log(`  ✓ Removed: ${styleName}/${jsonFile}`);
+            totalOrphaned++;
+          }
+        }
+      }
+    }
+
+    // Also clean the styles/index.json if it exists but is orphaned
+    const indexPath = path.join(STYLES_PATH, "index.json");
+    try {
+      await fs.access(indexPath);
+      totalValid++;
+    } catch {
+      // index.json doesn't exist, that's fine
+    }
+
     console.log(
-      `\n🎉 Cleanup completed! Removed ${removedCount} orphaned files.`,
+      `\n🎉 Cleanup completed! Removed ${totalOrphaned + orphanedDirs.length} orphaned items.`,
     );
 
     // Summary
     console.log("\n📊 Summary:");
-    console.log(`  - Registry items in TypeScript: ${registryItemNames.size}`);
-    console.log(`  - Valid JSON files: ${validFiles.length}`);
-    console.log(`  - Orphaned files removed: ${removedCount}`);
-    console.log(`  - Remaining JSON files: ${jsonFiles.length - removedCount}`);
+    console.log(`  - Expected style directories: ${expectedStyleDirs.size}`);
+    console.log(`  - Orphaned directories removed: ${orphanedDirs.length}`);
+    console.log(`  - Valid JSON files: ${totalValid}`);
+    console.log(`  - Orphaned JSON files removed: ${totalOrphaned}`);
   } catch (error) {
     console.error("❌ Error during cleanup:", error);
     process.exit(1);

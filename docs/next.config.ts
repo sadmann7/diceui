@@ -33,14 +33,19 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/r/styles",
+        destination: "/r/styles/index.json",
+        permanent: true,
+      },
+      {
         source: "/r/index",
         destination: "/r/index.json",
         permanent: true,
       },
       {
-        source: "/r/registry",
-        destination: "/r/registry.json",
-        permanent: true,
+        source: "/r/:name((?!styles).*\\.json)",
+        destination: "/r/styles/radix-default/:name",
+        permanent: false,
       },
       {
         source: "/docs/:path*.mdx",

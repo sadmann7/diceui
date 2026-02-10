@@ -1,0 +1,15 @@
+{
+  "name": "listbox",
+  "dependencies": [
+    "@diceui/listbox"
+  ],
+  "files": [
+    {
+      "path": "ui/listbox.tsx",
+      "content": "import * as ListboxPrimitive from \"@diceui/listbox\";\nimport { Check } from \"lucide-react\";\nimport type * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\nconst Listbox = (({\n  className,\n  orientation = \"vertical\",\n  ...props\n}: React.ComponentProps<typeof ListboxPrimitive.Root>) => {\n  return (\n    <ListboxPrimitive.Root\n      data-slot=\"listbox\"\n      orientation={orientation}\n      className={cn(\n        \"flex gap-2 focus-visible:outline-none\",\n        orientation === \"vertical\" &&\n          \"flex-col *:data-[slot=listbox-group]:flex-col\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}) as ListboxPrimitive.ListboxRootComponentProps;\n\nfunction ListboxGroup({\n  className,\n  ...props\n}: React.ComponentProps<typeof ListboxPrimitive.Group>) {\n  return (\n    <ListboxPrimitive.Group\n      data-slot=\"listbox-group\"\n      className={cn(\"flex flex-col gap-2\", className)}\n      {...props}\n    />\n  );\n}\n\nfunction ListboxGroupLabel({\n  className,\n  ...props\n}: React.ComponentProps<typeof ListboxPrimitive.GroupLabel>) {\n  return (\n    <ListboxPrimitive.GroupLabel\n      data-slot=\"listbox-group-label\"\n      className={cn(\n        \"px-2 pt-1 font-medium text-muted-foreground text-sm\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction ListboxItem({\n  className,\n  ...props\n}: React.ComponentProps<typeof ListboxPrimitive.Item>) {\n  return (\n    <ListboxPrimitive.Item\n      data-slot=\"listbox-item\"\n      className={cn(\n        \"flex w-full cursor-default select-none items-center justify-between gap-2 rounded-md p-4 outline-hidden ring-1 ring-border focus-visible:ring-ring data-disabled:pointer-events-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:opacity-50\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nfunction ListboxItemIndicator({\n  ...props\n}: React.ComponentProps<typeof ListboxPrimitive.ItemIndicator>) {\n  return (\n    <ListboxPrimitive.ItemIndicator\n      data-slot=\"listbox-item-indicator\"\n      {...props}\n    >\n      <Check className=\"size-4\" />\n    </ListboxPrimitive.ItemIndicator>\n  );\n}\n\nexport {\n  Listbox,\n  ListboxGroup,\n  ListboxGroupLabel,\n  ListboxItem,\n  ListboxItemIndicator,\n};\n",
+      "type": "registry:ui",
+      "target": ""
+    }
+  ],
+  "type": "registry:ui"
+}

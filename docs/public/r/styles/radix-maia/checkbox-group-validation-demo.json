@@ -1,0 +1,19 @@
+{
+  "name": "checkbox-group-validation-demo",
+  "dependencies": [
+    "@diceui/checkbox-group",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "checkbox-group"
+  ],
+  "files": [
+    {
+      "path": "examples/checkbox-group-validation-demo.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport {\n  CheckboxGroup,\n  CheckboxGroupDescription,\n  CheckboxGroupItem,\n  CheckboxGroupLabel,\n  CheckboxGroupList,\n  CheckboxGroupMessage,\n} from \"@/registry/bases/radix/ui/checkbox-group\";\n\nexport default function CheckboxGroupValidationDemo() {\n  const [tricks, setTricks] = React.useState<string[]>([\"stalefish\", \"fs-540\"]);\n\n  return (\n    <CheckboxGroup\n      value={tricks}\n      onValueChange={setTricks}\n      onValidate={(value) =>\n        value.includes(\"indy\") ? \"Indy is not allowed\" : null\n      }\n    >\n      <CheckboxGroupLabel>Tricks</CheckboxGroupLabel>\n      <CheckboxGroupList>\n        <CheckboxGroupItem value=\"indy\">Indy</CheckboxGroupItem>\n        <CheckboxGroupItem value=\"stalefish\">Stalefish</CheckboxGroupItem>\n        <CheckboxGroupItem value=\"fs-540\">FS 540</CheckboxGroupItem>\n      </CheckboxGroupList>\n      <CheckboxGroupDescription hideOnError>\n        Select grab tricks\n      </CheckboxGroupDescription>\n      <CheckboxGroupMessage />\n    </CheckboxGroup>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

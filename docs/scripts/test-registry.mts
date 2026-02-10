@@ -1,5 +1,5 @@
-import { hooks } from "../registry/bases/radix/hooks/_registry.js";
-import { ui } from "../registry/bases/radix/ui/_registry.js";
+import { type RegistryBase, registries } from "../registry";
+import { STYLES } from "../registry/styles";
 
 interface TestResult {
   success: boolean;
@@ -12,27 +12,67 @@ interface ServerInfo {
   local: boolean;
 }
 
+interface RegistryItem {
+  base: RegistryBase;
+  style: string;
+  name: string;
+  type: string;
+}
+
 const PROD_URL = "https://diceui.com";
 const LOCAL_URLS = ["http://localhost:3000", "http://localhost:3001"];
 const VERBOSE = process.env.VERBOSE === "true";
+const BASES: RegistryBase[] = ["radix", "base"];
 
-// Extract hook names
-const HOOKS = hooks.map((h) => h.name);
+// Use the first style as default for testing
+const DEFAULT_STYLE = STYLES[0].name;
 
-// Extract components that have @diceui dependencies
-const COMPONENTS = ui
-  .filter((item) =>
-    item.registryDependencies?.some((dep) => dep.startsWith("@diceui/")),
-  )
-  .map((item) => item.name);
+// Extract hooks and components from all bases (using default style)
+const HOOKS: RegistryItem[] = [];
+const COMPONENTS: RegistryItem[] = [];
+
+for (const baseName of BASES) {
+  const registry = registries[baseName];
+
+  // Extract hooks
+  const baseHooks = registry.items
+    .filter((item) => item.type === "registry:hook")
+    .map((item) => ({
+      base: baseName,
+      style: DEFAULT_STYLE,
+      name: item.name,
+      type: item.type,
+    }));
+  HOOKS.push(...baseHooks);
+
+  // Extract components with @diceui dependencies
+  const baseComponents = registry.items
+    .filter(
+      (item) =>
+        item.type === "registry:ui" &&
+        item.registryDependencies?.some((dep) => dep.startsWith("@diceui/")),
+    )
+    .map((item) => ({
+      base: baseName,
+      style: DEFAULT_STYLE,
+      name: item.name,
+      type: item.type,
+    }));
+  COMPONENTS.push(...baseComponents);
+}
 
 async function detectServer(): Promise<ServerInfo> {
+  // Use the first hook or component to test server availability
+  const testStyleName = `${BASES[0]}-${DEFAULT_STYLE}`;
+  const testItemName = HOOKS[0]?.name ?? COMPONENTS[0]?.name ?? "utils";
+
   // Check local servers first
   for (const url of LOCAL_URLS) {
     try {
-      const response = await fetch(`${url}/r/use-as-ref.json`, {
-        signal: AbortSignal.timeout(1000),
-      });
+      const response = await fetch(
+        `${url}/r/styles/${testStyleName}/${testItemName}.json`,
+        { signal: AbortSignal.timeout(1000) },
+      );
       if (response.ok) {
         return { url, local: true };
       }
@@ -45,8 +85,12 @@ async function detectServer(): Promise<ServerInfo> {
   return { url: PROD_URL, local: false };
 }
 
-async function testItem(name: string, url: string): Promise<TestResult> {
-  const itemUrl = `${url}/r/${name}.json`;
+async function testItem(
+  item: RegistryItem,
+  url: string,
+): Promise<TestResult> {
+  const styleName = `${item.base}-${item.style}`;
+  const itemUrl = `${url}/r/styles/${styleName}/${item.name}.json`;
 
   try {
     const response = await fetch(itemUrl, {
@@ -104,14 +148,15 @@ async function main(): Promise<void> {
   console.log(`🔧 Testing Hooks (${HOOKS.length})...`);
   for (const hook of HOOKS) {
     const result = await testItem(hook, url);
+    const displayName = `${hook.base}-${hook.style}/${hook.name}`;
     if (result.success) {
       const suffix = VERBOSE && result.deps ? ` (${result.deps} deps)` : "";
-      console.log(`✅ ${hook}${suffix}`);
+      console.log(`✅ ${displayName}${suffix}`);
       passed++;
     } else {
-      console.log(`❌ ${hook} - ${result.error}`);
+      console.log(`❌ ${displayName} - ${result.error}`);
       failed++;
-      failedItems.push(hook);
+      failedItems.push(displayName);
     }
   }
 
@@ -119,14 +164,15 @@ async function main(): Promise<void> {
   console.log(`\n📦 Testing Components (${COMPONENTS.length})...`);
   for (const component of COMPONENTS) {
     const result = await testItem(component, url);
+    const displayName = `${component.base}-${component.style}/${component.name}`;
     if (result.success) {
       const suffix = VERBOSE && result.deps ? ` (${result.deps} deps)` : "";
-      console.log(`✅ ${component}${suffix}`);
+      console.log(`✅ ${displayName}${suffix}`);
       passed++;
     } else {
-      console.log(`❌ ${component} - ${result.error}`);
+      console.log(`❌ ${displayName} - ${result.error}`);
       failed++;
-      failedItems.push(component);
+      failedItems.push(displayName);
     }
   }
 

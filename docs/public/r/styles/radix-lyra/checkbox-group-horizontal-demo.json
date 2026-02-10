@@ -1,0 +1,19 @@
+{
+  "name": "checkbox-group-horizontal-demo",
+  "dependencies": [
+    "@diceui/checkbox-group",
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "checkbox-group"
+  ],
+  "files": [
+    {
+      "path": "examples/checkbox-group-horizontal-demo.tsx",
+      "content": "import {\n  CheckboxGroup,\n  CheckboxGroupDescription,\n  CheckboxGroupItem,\n  CheckboxGroupLabel,\n  CheckboxGroupList,\n} from \"@/registry/bases/radix/ui/checkbox-group\";\n\nexport default function CheckboxGroupHorizontalDemo() {\n  return (\n    <CheckboxGroup orientation=\"horizontal\">\n      <CheckboxGroupLabel>Tricks</CheckboxGroupLabel>\n      <CheckboxGroupList>\n        <CheckboxGroupItem value=\"indy\">Indy</CheckboxGroupItem>\n        <CheckboxGroupItem value=\"stalefish\">Stalefish</CheckboxGroupItem>\n        <CheckboxGroupItem value=\"pizza-guy\">Pizza Guy</CheckboxGroupItem>\n        <CheckboxGroupItem value=\"fs-540\">FS 540</CheckboxGroupItem>\n      </CheckboxGroupList>\n      <CheckboxGroupDescription>Select grab tricks</CheckboxGroupDescription>\n    </CheckboxGroup>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

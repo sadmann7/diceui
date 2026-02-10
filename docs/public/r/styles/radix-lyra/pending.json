@@ -1,0 +1,15 @@
+{
+  "name": "pending",
+  "dependencies": [
+    "radix-ui"
+  ],
+  "files": [
+    {
+      "path": "components/pending.tsx",
+      "content": "import { Slot as SlotPrimitive } from \"radix-ui\";\nimport * as React from \"react\";\n\ninterface UsePendingOptions {\n  id?: string;\n  isPending?: boolean;\n  disabled?: boolean;\n}\n\ninterface UsePendingReturn<T extends HTMLElement = HTMLElement> {\n  pendingProps: React.HTMLAttributes<T> & {\n    \"aria-busy\"?: \"true\";\n    \"aria-disabled\"?: \"true\";\n    \"data-pending\"?: true;\n    \"data-disabled\"?: true;\n  };\n  isPending: boolean;\n}\n\nfunction usePending<T extends HTMLElement = HTMLElement>(\n  options: UsePendingOptions = {},\n): UsePendingReturn<T> {\n  const { id, isPending = false, disabled = false } = options;\n\n  const instanceId = React.useId();\n  const pendingId = id || instanceId;\n\n  const pendingProps = React.useMemo(() => {\n    const props: React.HTMLAttributes<T> & {\n      \"aria-busy\"?: \"true\";\n      \"aria-disabled\"?: \"true\";\n      \"data-pending\"?: true;\n      \"data-disabled\"?: true;\n    } = {\n      id: pendingId,\n    };\n\n    if (isPending) {\n      props[\"aria-busy\"] = \"true\";\n      props[\"aria-disabled\"] = \"true\";\n      props[\"data-pending\"] = true;\n\n      function onEventPrevent(event: React.SyntheticEvent) {\n        event.preventDefault();\n      }\n\n      function onKeyEventPrevent(event: React.KeyboardEvent<T>) {\n        if (event.key === \"Enter\" || event.key === \" \") {\n          event.preventDefault();\n        }\n      }\n\n      props.onClick = onEventPrevent;\n      props.onPointerDown = onEventPrevent;\n      props.onPointerUp = onEventPrevent;\n      props.onMouseDown = onEventPrevent;\n      props.onMouseUp = onEventPrevent;\n      props.onKeyDown = onKeyEventPrevent;\n      props.onKeyUp = onKeyEventPrevent;\n    }\n\n    if (disabled) {\n      props[\"data-disabled\"] = true;\n    }\n\n    return props;\n  }, [isPending, disabled, pendingId]);\n\n  return React.useMemo(() => {\n    return {\n      pendingProps,\n      isPending,\n    };\n  }, [pendingProps, isPending]);\n}\n\ninterface PendingProps extends React.ComponentProps<typeof SlotPrimitive.Slot> {\n  isPending?: boolean;\n  disabled?: boolean;\n}\n\nfunction Pending({ id, isPending, disabled, ...props }: PendingProps) {\n  const { pendingProps } = usePending({ id, isPending, disabled });\n\n  return <SlotPrimitive.Slot {...props} {...pendingProps} />;\n}\n\nexport {\n  Pending,\n  //\n  usePending,\n};\n",
+      "type": "registry:component",
+      "target": ""
+    }
+  ],
+  "type": "registry:component"
+}

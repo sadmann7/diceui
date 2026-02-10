@@ -1,0 +1,15 @@
+{
+  "name": "visually-hidden",
+  "dependencies": [
+    "radix-ui"
+  ],
+  "files": [
+    {
+      "path": "components/visually-hidden.tsx",
+      "content": "import { Slot as SlotPrimitive } from \"radix-ui\";\nimport type * as React from \"react\";\n\ninterface VisuallyHiddenProps extends React.ComponentProps<\"div\"> {\n  asChild?: boolean;\n}\n\nfunction VisuallyHidden(props: VisuallyHiddenProps) {\n  const { asChild, style, ...visuallyHiddenProps } = props;\n\n  const Comp = asChild ? SlotPrimitive.Slot : \"div\";\n\n  return (\n    <Comp\n      {...visuallyHiddenProps}\n      style={{\n        border: 0,\n        clip: \"rect(0 0 0 0)\",\n        clipPath: \"inset(50%)\",\n        height: \"1px\",\n        margin: \"-1px\",\n        overflow: \"hidden\",\n        padding: 0,\n        position: \"absolute\",\n        whiteSpace: \"nowrap\",\n        width: \"1px\",\n        ...style,\n      }}\n    />\n  );\n}\n\nexport { VisuallyHidden };\n",
+      "type": "registry:component",
+      "target": ""
+    }
+  ],
+  "type": "registry:component"
+}

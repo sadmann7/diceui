@@ -1,0 +1,12 @@
+{
+  "name": "portal",
+  "files": [
+    {
+      "path": "components/portal.tsx",
+      "content": "\"use client\";\n\nimport { Slot as SlotPrimitive } from \"radix-ui\";\nimport * as React from \"react\";\nimport * as ReactDOM from \"react-dom\";\n\ntype SlotProps = React.ComponentProps<typeof SlotPrimitive.Slot>;\n\ninterface PortalProps extends SlotProps {\n  container?: Element | DocumentFragment | null;\n}\n\nfunction subscribe() {\n  return () => {};\n}\n\nfunction getSnapshot() {\n  return true;\n}\n\nfunction getServerSnapshot() {\n  return false;\n}\n\nfunction Portal(props: PortalProps) {\n  const { container: containerProp, ...portalProps } = props;\n\n  const mounted = React.useSyncExternalStore(\n    subscribe,\n    getSnapshot,\n    getServerSnapshot,\n  );\n\n  const container =\n    containerProp ?? (mounted ? globalThis.document?.body : null);\n\n  if (!container) return null;\n\n  return ReactDOM.createPortal(\n    <SlotPrimitive.Slot {...portalProps} />,\n    container,\n  );\n}\n\nexport { Portal };\n\nexport type { PortalProps };\n",
+      "type": "registry:component",
+      "target": ""
+    }
+  ],
+  "type": "registry:component"
+}

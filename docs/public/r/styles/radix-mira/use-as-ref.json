@@ -1,0 +1,15 @@
+{
+  "name": "use-as-ref",
+  "registryDependencies": [
+    "@diceui/use-isomorphic-layout-effect"
+  ],
+  "files": [
+    {
+      "path": "hooks/use-as-ref.ts",
+      "content": "import * as React from \"react\";\n\nimport { useIsomorphicLayoutEffect } from \"@/registry/bases/radix/hooks/use-isomorphic-layout-effect\";\n\nfunction useAsRef<T>(props: T) {\n  const ref = React.useRef<T>(props);\n\n  useIsomorphicLayoutEffect(() => {\n    ref.current = props;\n  });\n\n  return ref;\n}\n\nexport { useAsRef };\n",
+      "type": "registry:hook",
+      "target": ""
+    }
+  ],
+  "type": "registry:hook"
+}
