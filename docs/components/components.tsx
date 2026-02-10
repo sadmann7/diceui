@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { registries, type RegistryBase } from "@/registry";
+import { type RegistryBase, registries } from "@/registry";
 
 function slugToTitle(slug: string): string {
   const special: Record<string, string> = {
@@ -35,7 +35,7 @@ export function Components({ base = "radix" }: ComponentsProps) {
         <Link
           key={slug}
           href={`/docs/components/${base}/${slug}`}
-          className="text-muted-foreground transition-colors hover:text-foreground"
+          className="hover:underline hover:underline-offset-4"
         >
           {name}
         </Link>
