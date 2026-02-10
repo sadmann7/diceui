@@ -1,11 +1,10 @@
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
-
-import { cn } from "@/lib/utils"
-import { Separator } from "@/components/ui/separator"
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 const buttonGroupVariants = cva(
-  "flex w-fit items-stretch has-[>[data-slot=button-group]]:gap-2 [&>*]:focus-visible:relative [&>*]:focus-visible:z-10 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-md [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
+  "flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-md [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
   {
     variants: {
       orientation: {
@@ -18,8 +17,8 @@ const buttonGroupVariants = cva(
     defaultVariants: {
       orientation: "horizontal",
     },
-  }
-)
+  },
+);
 
 function ButtonGroup({
   className,
@@ -34,7 +33,7 @@ function ButtonGroup({
       className={cn(buttonGroupVariants({ orientation }), className)}
       {...props}
     />
-  )
+  );
 }
 
 function ButtonGroupText({
@@ -42,19 +41,19 @@ function ButtonGroupText({
   asChild = false,
   ...props
 }: React.ComponentProps<"div"> & {
-  asChild?: boolean
+  asChild?: boolean;
 }) {
-  const Comp = asChild ? Slot : "div"
+  const Comp = asChild ? Slot : "div";
 
   return (
     <Comp
       className={cn(
-        "bg-muted shadow-xs flex items-center gap-2 rounded-md border px-4 text-sm font-medium [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none",
-        className
+        "flex items-center gap-2 rounded-md border bg-muted px-4 font-medium text-sm shadow-xs [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none",
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function ButtonGroupSeparator({
@@ -67,12 +66,12 @@ function ButtonGroupSeparator({
       data-slot="button-group-separator"
       orientation={orientation}
       className={cn(
-        "bg-input relative !m-0 self-stretch data-[orientation=vertical]:h-auto",
-        className
+        "relative m-0! self-stretch bg-input data-[orientation=vertical]:h-auto",
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 export {
@@ -80,4 +79,4 @@ export {
   ButtonGroupSeparator,
   ButtonGroupText,
   buttonGroupVariants,
-}
+};
