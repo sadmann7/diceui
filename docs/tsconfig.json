@@ -40,5 +40,14 @@
     ".next/dev/types/**/*.ts",
     ".next\\dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "scripts/build-registry.mts", "__registry__"]
+  "exclude": [
+    "node_modules",
+    "scripts/build-registry.mts",
+    "__registry__",
+    ".next",
+    ".turbo",
+    "dist",
+    "build",
+    "public/r/**/*.json"
+  ]
 }
