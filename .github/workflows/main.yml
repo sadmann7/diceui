@@ -33,6 +33,9 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NODE_OPTIONS: --max-old-space-size=6144
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
