@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "hooks/use-lazy-ref.ts",
-      "content": "import * as React from \"react\";\n\nfunction useLazyRef<T>(fn: () => T) {\n  const ref = React.useRef<T | null>(null);\n\n  if (ref.current === null) {\n    ref.current = fn();\n  }\n\n  return ref as React.RefObject<T>;\n}\n\nexport { useLazyRef };\n",
+      "content": "import * as React from \"react\";\r\n\r\nfunction useLazyRef<T>(fn: () => T) {\r\n  const ref = React.useRef<T | null>(null);\r\n\r\n  if (ref.current === null) {\r\n    ref.current = fn();\r\n  }\r\n\r\n  return ref as React.RefObject<T>;\r\n}\r\n\r\nexport { useLazyRef };\r\n",
       "type": "registry:hook",
       "target": ""
     }

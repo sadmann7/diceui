@@ -6,7 +6,7 @@
   "files": [
     {
       "path": "examples/key-value-demo.tsx",
-      "content": "import {\n  KeyValue,\n  KeyValueAdd,\n  KeyValueItem,\n  KeyValueKeyInput,\n  KeyValueList,\n  KeyValueRemove,\n  KeyValueValueInput,\n} from \"@/registry/bases/radix/ui/key-value\";\n\nexport default function KeyValueDemo() {\n  return (\n    <KeyValue>\n      <KeyValueList>\n        <KeyValueItem>\n          <KeyValueKeyInput />\n          <KeyValueValueInput placeholder=\"Test\" />\n          <KeyValueRemove />\n        </KeyValueItem>\n      </KeyValueList>\n      <KeyValueAdd />\n    </KeyValue>\n  );\n}\n",
+      "content": "import {\r\n  KeyValue,\r\n  KeyValueAdd,\r\n  KeyValueItem,\r\n  KeyValueKeyInput,\r\n  KeyValueList,\r\n  KeyValueRemove,\r\n  KeyValueValueInput,\r\n} from \"@/registry/bases/radix/ui/key-value\";\r\n\r\nexport default function KeyValueDemo() {\r\n  return (\r\n    <KeyValue>\r\n      <KeyValueList>\r\n        <KeyValueItem>\r\n          <KeyValueKeyInput />\r\n          <KeyValueValueInput placeholder=\"Test\" />\r\n          <KeyValueRemove />\r\n        </KeyValueItem>\r\n      </KeyValueList>\r\n      <KeyValueAdd />\r\n    </KeyValue>\r\n  );\r\n}\r\n",
       "type": "registry:example",
       "target": ""
     }

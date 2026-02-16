@@ -6,7 +6,7 @@
   "files": [
     {
       "path": "hooks/use-as-ref.ts",
-      "content": "import * as React from \"react\";\n\nimport { useIsomorphicLayoutEffect } from \"@/registry/bases/radix/hooks/use-isomorphic-layout-effect\";\n\nfunction useAsRef<T>(props: T) {\n  const ref = React.useRef<T>(props);\n\n  useIsomorphicLayoutEffect(() => {\n    ref.current = props;\n  });\n\n  return ref;\n}\n\nexport { useAsRef };\n",
+      "content": "import * as React from \"react\";\r\n\r\nimport { useIsomorphicLayoutEffect } from \"@/registry/bases/radix/hooks/use-isomorphic-layout-effect\";\r\n\r\nfunction useAsRef<T>(props: T) {\r\n  const ref = React.useRef<T>(props);\r\n\r\n  useIsomorphicLayoutEffect(() => {\r\n    ref.current = props;\r\n  });\r\n\r\n  return ref;\r\n}\r\n\r\nexport { useAsRef };\r\n",
       "type": "registry:hook",
       "target": ""
     }

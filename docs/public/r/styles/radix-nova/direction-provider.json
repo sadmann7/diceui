@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "components/direction-provider.tsx",
-      "content": "\"use client\";\n\nimport { Direction as DirectionPrimitive } from \"radix-ui\";\nimport type * as React from \"react\";\n\nfunction DirectionProvider({\n  dir,\n  direction,\n  children,\n}: React.ComponentProps<typeof DirectionPrimitive.DirectionProvider> & {\n  direction?: React.ComponentProps<\n    typeof DirectionPrimitive.DirectionProvider\n  >[\"dir\"];\n}) {\n  return (\n    <DirectionPrimitive.DirectionProvider dir={direction ?? dir}>\n      {children}\n    </DirectionPrimitive.DirectionProvider>\n  );\n}\n\nconst useDirection = DirectionPrimitive.useDirection;\n\nexport { DirectionProvider, useDirection };\n",
+      "content": "\"use client\";\r\n\r\nimport { Direction as DirectionPrimitive } from \"radix-ui\";\r\nimport type * as React from \"react\";\r\n\r\nfunction DirectionProvider({\r\n  dir,\r\n  direction,\r\n  children,\r\n}: React.ComponentProps<typeof DirectionPrimitive.DirectionProvider> & {\r\n  direction?: React.ComponentProps<\r\n    typeof DirectionPrimitive.DirectionProvider\r\n  >[\"dir\"];\r\n}) {\r\n  return (\r\n    <DirectionPrimitive.DirectionProvider dir={direction ?? dir}>\r\n      {children}\r\n    </DirectionPrimitive.DirectionProvider>\r\n  );\r\n}\r\n\r\nconst useDirection = DirectionPrimitive.useDirection;\r\n\r\nexport { DirectionProvider, useDirection };\r\n",
       "type": "registry:component",
       "target": ""
     }

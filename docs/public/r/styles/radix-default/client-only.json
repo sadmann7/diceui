@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "components/client-only.tsx",
-      "content": "\"use client\";\n\nimport * as React from \"react\";\n\ninterface ClientOnlyProps {\n  children: React.ReactNode;\n  fallback?: React.ReactNode;\n}\n\nfunction subscribe() {\n  return () => {};\n}\n\nfunction getSnapshot() {\n  return true;\n}\n\nfunction getServerSnapshot() {\n  return false;\n}\n\nfunction ClientOnly({ children, fallback = null }: ClientOnlyProps) {\n  const mounted = React.useSyncExternalStore(\n    subscribe,\n    getSnapshot,\n    getServerSnapshot,\n  );\n\n  if (!mounted) return fallback;\n\n  return children;\n}\n\nexport { ClientOnly };\n",
+      "content": "\"use client\";\r\n\r\nimport * as React from \"react\";\r\n\r\ninterface ClientOnlyProps {\r\n  children: React.ReactNode;\r\n  fallback?: React.ReactNode;\r\n}\r\n\r\nfunction subscribe() {\r\n  return () => {};\r\n}\r\n\r\nfunction getSnapshot() {\r\n  return true;\r\n}\r\n\r\nfunction getServerSnapshot() {\r\n  return false;\r\n}\r\n\r\nfunction ClientOnly({ children, fallback = null }: ClientOnlyProps) {\r\n  const mounted = React.useSyncExternalStore(\r\n    subscribe,\r\n    getSnapshot,\r\n    getServerSnapshot,\r\n  );\r\n\r\n  if (!mounted) return fallback;\r\n\r\n  return children;\r\n}\r\n\r\nexport { ClientOnly };\r\n",
       "type": "registry:component",
       "target": ""
     }

@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "components/presence.tsx",
-      "content": "import { Presence as PresencePrimitive } from \"radix-ui/internal\";\n\nconst Presence = PresencePrimitive.Root;\n\nexport { Presence };\n",
+      "content": "import { Presence as PresencePrimitive } from \"radix-ui/internal\";\r\n\r\nconst Presence = PresencePrimitive.Root;\r\n\r\nexport { Presence };\r\n",
       "type": "registry:component",
       "target": ""
     }

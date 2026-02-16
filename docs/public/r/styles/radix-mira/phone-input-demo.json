@@ -6,7 +6,7 @@
   "files": [
     {
       "path": "examples/phone-input-demo.tsx",
-      "content": "import {\n  PhoneInput,\n  PhoneInputCountrySelect,\n  PhoneInputField,\n} from \"@/registry/bases/radix/ui/phone-input\";\n\nexport default function PhoneInputDemo() {\n  return (\n    <PhoneInput>\n      <PhoneInputCountrySelect />\n      <PhoneInputField placeholder=\"12345667777\" />\n    </PhoneInput>\n  );\n}\n",
+      "content": "import {\r\n  PhoneInput,\r\n  PhoneInputCountrySelect,\r\n  PhoneInputField,\r\n} from \"@/registry/bases/radix/ui/phone-input\";\r\n\r\nexport default function PhoneInputDemo() {\r\n  return (\r\n    <PhoneInput>\r\n      <PhoneInputCountrySelect />\r\n      <PhoneInputField placeholder=\"12345667777\" />\r\n    </PhoneInput>\r\n  );\r\n}\r\n",
       "type": "registry:example",
       "target": ""
     }

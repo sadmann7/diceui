@@ -6,7 +6,7 @@
   "files": [
     {
       "path": "examples/status-text-only-demo.tsx",
-      "content": "import { Status, StatusLabel } from \"@/registry/bases/radix/ui/status\";\n\nexport default function StatusTextOnlyDemo() {\n  return (\n    <div className=\"flex flex-wrap items-center gap-2.5\">\n      <Status variant=\"success\">\n        <StatusLabel>Active</StatusLabel>\n      </Status>\n\n      <Status variant=\"error\">\n        <StatusLabel>Inactive</StatusLabel>\n      </Status>\n\n      <Status variant=\"warning\">\n        <StatusLabel>Pending</StatusLabel>\n      </Status>\n\n      <Status variant=\"info\">\n        <StatusLabel>Processing</StatusLabel>\n      </Status>\n\n      <Status variant=\"default\">\n        <StatusLabel>Draft</StatusLabel>\n      </Status>\n    </div>\n  );\n}\n",
+      "content": "import { Status, StatusLabel } from \"@/registry/bases/radix/ui/status\";\r\n\r\nexport default function StatusTextOnlyDemo() {\r\n  return (\r\n    <div className=\"flex flex-wrap items-center gap-2.5\">\r\n      <Status variant=\"success\">\r\n        <StatusLabel>Active</StatusLabel>\r\n      </Status>\r\n\r\n      <Status variant=\"error\">\r\n        <StatusLabel>Inactive</StatusLabel>\r\n      </Status>\r\n\r\n      <Status variant=\"warning\">\r\n        <StatusLabel>Pending</StatusLabel>\r\n      </Status>\r\n\r\n      <Status variant=\"info\">\r\n        <StatusLabel>Processing</StatusLabel>\r\n      </Status>\r\n\r\n      <Status variant=\"default\">\r\n        <StatusLabel>Draft</StatusLabel>\r\n      </Status>\r\n    </div>\r\n  );\r\n}\r\n",
       "type": "registry:example",
       "target": ""
     }

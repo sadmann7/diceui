@@ -6,7 +6,7 @@
   "files": [
     {
       "path": "examples/qr-code-demo.tsx",
-      "content": "import {\n  QRCode,\n  QRCodeCanvas,\n  QRCodeSkeleton,\n} from \"@/registry/bases/radix/ui/qr-code\";\n\nexport default function QRCodeDemo() {\n  return (\n    <QRCode value=\"https://diceui.com\" size={200}>\n      <QRCodeSkeleton />\n      <QRCodeCanvas />\n    </QRCode>\n  );\n}\n",
+      "content": "import {\r\n  QRCode,\r\n  QRCodeCanvas,\r\n  QRCodeSkeleton,\r\n} from \"@/registry/bases/radix/ui/qr-code\";\r\n\r\nexport default function QRCodeDemo() {\r\n  return (\r\n    <QRCode value=\"https://diceui.com\" size={200}>\r\n      <QRCodeSkeleton />\r\n      <QRCodeCanvas />\r\n    </QRCode>\r\n  );\r\n}\r\n",
       "type": "registry:example",
       "target": ""
     }
