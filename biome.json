@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.0/schema.json",
   "assist": {
     "actions": {
       "source": {
@@ -38,7 +38,8 @@
         "noUnusedImports": "off",
         "noUnusedVariables": "warn",
         "useExhaustiveDependencies": "warn",
-        "useHookAtTopLevel": "warn"
+        "useHookAtTopLevel": "warn",
+        "noUnknownPseudoElement": "off"
       },
       "complexity": {
         "noBannedTypes": "off"
