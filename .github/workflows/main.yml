@@ -42,7 +42,7 @@ jobs:
           version: 10.22.0
       - uses: ./.github/setup
 
-      - name: Build packages (excluding docs)
+      - name: Build packages
         run: pnpm turbo build --filter=!docs
 
   lint:

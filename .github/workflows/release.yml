@@ -23,7 +23,7 @@ jobs:
       - uses: ./.github/setup
 
       - name: Build
-        run: pnpm build
+        run: pnpm turbo build --filter=!docs
 
       - name: Create Release
         id: changesets
