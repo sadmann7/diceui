@@ -284,9 +284,9 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
       enableColumnFilter: false,
     },
     enableRowSelection: true,
-    onRowSelectionChange: toggleSelected => {
-      setRowSelection(toggleSelected)
-      tableProps.onRowSelectionChange?.(toggleSelected)
+    onRowSelectionChange: (toggleSelected) => {
+      setRowSelection(toggleSelected);
+      tableProps.onRowSelectionChange?.(toggleSelected);
     },
     onPaginationChange,
     onSortingChange,
