@@ -189,15 +189,28 @@ function Component({ className, render, ...props }: ComponentProps) {
 #### Replace Direction Provider
 
 **Before (Radix UI):**
+
 ```tsx
+import { Direction as DirectionPrimitive } from "radix-ui";
+
 const dir = DirectionPrimitive.useDirection(dirProp);
 ```
 
 **After (Base UI):**
+
 ```tsx
-// Use prop directly, no provider needed
-const dir = dirProp ?? "ltr";
+import { useDirection } from "@/registry/bases/base/ui/direction";
+
+// useDirection reads from DirectionProvider context (no arguments)
+const contextDir = useDirection();
+const dir = dirProp ?? contextDir;
 ```
+
+**Note:** Base UI's `useDirection` hook reads from `DirectionProvider` context and doesn't accept arguments. You need to:
+
+1. Import from `@/registry/bases/base/ui/direction`
+2. Add `direction` to `registryDependencies` in `_registry.ts`
+3. Use the pattern: `const dir = dirProp ?? useDirection();`
 
 ### 5. Update Event Handling
 
