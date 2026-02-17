@@ -6,8 +6,8 @@ import {
   Slot as SlotPrimitive,
 } from "radix-ui";
 import * as React from "react";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Input } from "@/registry/bases/radix/ui/input";
 
 const ROOT_NAME = "SegmentedInput";
 const ITEM_NAME = "SegmentedInputItem";

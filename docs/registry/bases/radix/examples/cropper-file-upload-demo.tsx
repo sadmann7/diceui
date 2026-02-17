@@ -3,18 +3,7 @@
 import { CropIcon, UploadIcon, XIcon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Cropper,
   CropperArea,
@@ -23,6 +12,15 @@ import {
   type CropperPoint,
   type CropperProps,
 } from "@/registry/bases/radix/ui/cropper";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/registry/bases/radix/ui/dialog";
 import {
   FileUpload,
   FileUploadDropzone,
@@ -33,6 +31,8 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from "@/registry/bases/radix/ui/file-upload";
+import { Label } from "@/registry/bases/radix/ui/label";
+import { Slider } from "@/registry/bases/radix/ui/slider";
 
 async function createCroppedImage(
   imageSrc: string,

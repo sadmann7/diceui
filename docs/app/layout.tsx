@@ -1,10 +1,10 @@
 import { Providers } from "@/components/providers";
 import { ReactScan } from "@/components/react-scan";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
-import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/config/site";
 import { fontMono, fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
+import { Toaster } from "@/registry/bases/radix/ui/sonner";
 import "@/styles/globals.css";
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";

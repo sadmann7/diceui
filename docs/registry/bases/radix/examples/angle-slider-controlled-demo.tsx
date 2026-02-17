@@ -3,7 +3,6 @@
 import { RotateCcwIcon, ShuffleIcon } from "lucide-react";
 import { animate } from "motion/react";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
 import {
   AngleSlider,
   AngleSliderRange,
@@ -11,6 +10,7 @@ import {
   AngleSliderTrack,
   AngleSliderValue,
 } from "@/registry/bases/radix/ui/angle-slider";
+import { Button } from "@/registry/bases/radix/ui/button";
 
 export default function AngleSliderControlledDemo() {
   const [value, setValue] = React.useState([180]);

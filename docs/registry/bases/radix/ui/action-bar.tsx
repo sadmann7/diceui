@@ -6,11 +6,11 @@ import {
 } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
+import { Button } from "@/registry/bases/radix/ui/button";
 
 const ROOT_NAME = "ActionBar";
 const GROUP_NAME = "ActionBarGroup";
@@ -665,5 +665,6 @@ export {
   ActionBarItem,
   ActionBarClose,
   ActionBarSeparator,
+  //
   type ActionBarProps,
 };

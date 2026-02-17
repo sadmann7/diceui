@@ -1,5 +1,5 @@
 import type { ClientUploadedFileData } from "uploadthing/types";
-import type { Button } from "@/components/ui/button";
+import type { Button } from "@/registry/bases/radix/ui/button";
 
 export type ControlledProps<T extends React.ElementType> = Omit<
   React.ComponentProps<T>,

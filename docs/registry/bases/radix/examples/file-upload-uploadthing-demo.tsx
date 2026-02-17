@@ -4,8 +4,8 @@ import { Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 import { UploadThingError } from "uploadthing/server";
-import { Button } from "@/components/ui/button";
 import { uploadFiles } from "@/lib/uploadthing";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   FileUpload,
   FileUploadDropzone,

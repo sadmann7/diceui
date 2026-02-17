@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "@/registry/bases/radix/ui/badge";
 import { BadgeOverflow } from "@/registry/bases/radix/ui/badge-overflow";
 
 const technologies = [

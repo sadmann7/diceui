@@ -2,15 +2,15 @@
 
 import { RotateCcwIcon } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Cropper,
   CropperArea,
   CropperImage,
   type CropperPoint,
 } from "@/registry/bases/radix/ui/cropper";
+import { Label } from "@/registry/bases/radix/ui/label";
+import { Slider } from "@/registry/bases/radix/ui/slider";
 
 export default function CropperControlledDemo() {
   const id = React.useId();

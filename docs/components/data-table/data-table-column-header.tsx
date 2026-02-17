@@ -8,15 +8,14 @@ import {
   EyeOff,
   X,
 } from "lucide-react";
-
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+} from "@/registry/bases/radix/ui/dropdown-menu";
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.ComponentProps<typeof DropdownMenuTrigger> {

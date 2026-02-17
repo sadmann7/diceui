@@ -8,26 +8,26 @@ import {
   Slot as SlotPrimitive,
 } from "radix-ui";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { Button } from "@/registry/bases/radix/ui/button";
+import { Input } from "@/registry/bases/radix/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/registry/bases/radix/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/registry/bases/radix/ui/select";
 
 const ROOT_NAME = "ColorPicker";
 const ROOT_IMPL_NAME = "ColorPickerImpl";

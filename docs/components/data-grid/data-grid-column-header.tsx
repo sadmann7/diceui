@@ -16,7 +16,8 @@ import {
   XIcon,
 } from "lucide-react";
 import * as React from "react";
-
+import { getColumnVariant } from "@/lib/data-grid";
+import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -24,14 +25,12 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/registry/bases/radix/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { getColumnVariant } from "@/lib/data-grid";
-import { cn } from "@/lib/utils";
+} from "@/registry/bases/radix/ui/tooltip";
 
 interface DataGridColumnHeaderProps<TData, TValue>
   extends React.ComponentProps<typeof DropdownMenuTrigger> {

@@ -2,15 +2,7 @@
 
 import { GripVertical } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Sortable,
   SortableContent,
@@ -18,6 +10,14 @@ import {
   SortableItemHandle,
   SortableOverlay,
 } from "@/registry/bases/radix/ui/sortable";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/registry/bases/radix/ui/table";
 
 export default function SortableHandleDemo() {
   const [tricks, setTricks] = React.useState([

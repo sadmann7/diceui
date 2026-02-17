@@ -4,7 +4,7 @@ import type { RootProviderProps } from "fumadocs-ui/provider/base";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import { createStore, Provider as JotaiProvider } from "jotai";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/registry/bases/radix/ui/tooltip";
 
 const store = createStore();
 

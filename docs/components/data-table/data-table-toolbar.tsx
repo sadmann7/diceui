@@ -8,9 +8,9 @@ import { DataTableDateFilter } from "@/components/data-table/data-table-date-fil
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter";
 import { DataTableSliderFilter } from "@/components/data-table/data-table-slider-filter";
 import { DataTableViewOptions } from "@/components/data-table/data-table-view-options";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { Button } from "@/registry/bases/radix/ui/button";
+import { Input } from "@/registry/bases/radix/ui/input";
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<"div"> {
   table: Table<TData>;

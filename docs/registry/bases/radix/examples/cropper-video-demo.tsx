@@ -2,7 +2,7 @@
 
 import { PauseIcon, PlayIcon } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Cropper,
   CropperArea,

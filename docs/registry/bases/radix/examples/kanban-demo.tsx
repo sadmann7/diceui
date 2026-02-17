@@ -2,8 +2,8 @@
 
 import { GripVertical } from "lucide-react";
 import * as React from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/registry/bases/radix/ui/badge";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Kanban,
   KanbanBoard,

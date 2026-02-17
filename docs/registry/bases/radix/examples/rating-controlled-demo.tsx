@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/registry/bases/radix/ui/button";
 import { Rating, RatingItem } from "@/registry/bases/radix/ui/rating";
 
 export default function RatingControlledDemo() {

@@ -5,15 +5,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   ColorPicker,
   ColorPickerAlphaSlider,
@@ -26,6 +18,14 @@ import {
   ColorPickerSwatch,
   ColorPickerTrigger,
 } from "@/registry/bases/radix/ui/color-picker";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/registry/bases/radix/ui/form";
 
 const formSchema = z.object({
   primaryColor: z

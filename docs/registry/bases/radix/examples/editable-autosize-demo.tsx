@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Editable,
   EditableArea,

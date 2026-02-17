@@ -1,15 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import {
   Cropper,
   CropperArea,
@@ -19,6 +10,15 @@ import {
   type CropperProps,
   type CropperShape,
 } from "@/registry/bases/radix/ui/cropper";
+import { Label } from "@/registry/bases/radix/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/registry/bases/radix/ui/select";
+import { Switch } from "@/registry/bases/radix/ui/switch";
 
 const shapes: { label: string; value: CropperShape }[] = [
   { label: "Rectangle", value: "rectangle" },

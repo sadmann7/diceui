@@ -5,14 +5,13 @@
  */
 
 import * as React from "react";
-
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { cn } from "@/lib/utils";
+} from "@/registry/bases/radix/ui/collapsible";
 
 interface CodeBlockProps
   extends React.ComponentPropsWithoutRef<typeof Collapsible> {

@@ -6,16 +6,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   FileUpload,
   FileUploadDropzone,
@@ -26,6 +17,15 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from "@/registry/bases/radix/ui/file-upload";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/registry/bases/radix/ui/form";
 
 const formSchema = z.object({
   files: z

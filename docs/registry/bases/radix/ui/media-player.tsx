@@ -39,8 +39,11 @@ import {
 } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { useComposedRefs } from "@/lib/compose-refs";
+import { cn } from "@/lib/utils";
+import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { Badge } from "@/registry/bases/radix/ui/badge";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -50,15 +53,12 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/registry/bases/radix/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+} from "@/registry/bases/radix/ui/tooltip";
 
 const ROOT_NAME = "MediaPlayer";
 const SEEK_NAME = "MediaPlayerSeek";

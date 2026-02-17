@@ -1,5 +1,127 @@
 {
   "name": "diceui/base",
   "homepage": "https://diceui.com",
-  "items": []
+  "items": [
+    {
+      "name": "action-bar",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/action-bar.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect"
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "action-bar-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "action-bar",
+        "checkbox"
+      ],
+      "files": [
+        {
+          "path": "examples/action-bar-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "action-bar-position-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "action-bar",
+        "label",
+        "select",
+        "switch"
+      ],
+      "files": [
+        {
+          "path": "examples/action-bar-position-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "utils",
+      "type": "registry:lib",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ],
+      "files": [
+        {
+          "path": "lib/utils.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "compose-refs",
+      "type": "registry:lib",
+      "files": [
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "use-as-ref",
+      "type": "registry:hook",
+      "registryDependencies": [
+        "@diceui/use-isomorphic-layout-effect"
+      ],
+      "files": [
+        {
+          "path": "hooks/use-as-ref.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "use-isomorphic-layout-effect",
+      "type": "registry:hook",
+      "files": [
+        {
+          "path": "hooks/use-isomorphic-layout-effect.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "use-lazy-ref",
+      "type": "registry:hook",
+      "files": [
+        {
+          "path": "hooks/use-lazy-ref.ts",
+          "type": "registry:hook"
+        }
+      ]
+    },
+    {
+      "name": "use-mobile",
+      "type": "registry:hook",
+      "files": [
+        {
+          "path": "hooks/use-mobile.ts",
+          "type": "registry:hook"
+        }
+      ]
+    }
+  ]
 }

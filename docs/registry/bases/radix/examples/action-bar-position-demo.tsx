@@ -2,15 +2,6 @@
 
 import { Archive, Star, X } from "lucide-react";
 import * as React from "react";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import {
   ActionBar,
   ActionBarClose,
@@ -19,6 +10,15 @@ import {
   ActionBarSelection,
   ActionBarSeparator,
 } from "@/registry/bases/radix/ui/action-bar";
+import { Label } from "@/registry/bases/radix/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/registry/bases/radix/ui/select";
+import { Switch } from "@/registry/bases/radix/ui/switch";
 
 export default function ActionBarPositionDemo() {
   const [open, setOpen] = React.useState(false);

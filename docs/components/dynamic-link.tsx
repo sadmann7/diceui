@@ -1,7 +1,7 @@
 import { ArrowRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { cn, getIsExternalLink } from "@/lib/utils";
+import { Button } from "@/registry/bases/radix/ui/button";
 
 interface DynamicLinkProps
   extends Pick<React.ComponentProps<typeof Button>, "variant" | "size">,

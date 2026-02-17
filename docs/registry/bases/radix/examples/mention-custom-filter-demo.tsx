@@ -1,13 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Mention,
   MentionContent,
   MentionInput,
   MentionItem,
 } from "@/registry/bases/radix/ui/mention";
+import { Textarea } from "@/registry/bases/radix/ui/textarea";
 
 const commands = [
   {

@@ -1,5 +1,5 @@
-import { Skeleton } from "@/components/ui/skeleton";
 import { Masonry, MasonryItem } from "@/registry/bases/radix/ui/masonry";
+import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
 
 interface SkateboardTrick {
   id: string;

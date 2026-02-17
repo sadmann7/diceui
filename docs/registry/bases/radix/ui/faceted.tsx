@@ -2,8 +2,8 @@
 
 import { Check, ChevronsUpDown } from "lucide-react";
 import * as React from "react";
-
-import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/registry/bases/radix/ui/badge";
 import {
   Command,
   CommandEmpty,
@@ -12,13 +12,12 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/components/ui/command";
+} from "@/registry/bases/radix/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
+} from "@/registry/bases/radix/ui/popover";
 
 type FacetedValue<Multiple extends boolean> = Multiple extends true
   ? string[]

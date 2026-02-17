@@ -2,8 +2,8 @@
 
 import { Loader2 } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
 import { Pending } from "@/registry/bases/radix/components/pending";
+import { Button } from "@/registry/bases/radix/ui/button";
 
 export default function PendingWrapperDemo() {
   const [isSubmitting, setIsSubmitting] = React.useState(false);

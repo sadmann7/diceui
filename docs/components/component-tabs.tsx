@@ -3,9 +3,9 @@
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import * as React from "react";
 import { Index } from "@/__registry__";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
 import { STYLES } from "@/registry/styles";
 
 // Map styles for compatibility

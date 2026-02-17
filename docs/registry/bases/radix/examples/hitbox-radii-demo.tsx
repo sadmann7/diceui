@@ -1,5 +1,5 @@
-import { Checkbox } from "@/components/ui/checkbox";
 import { Hitbox } from "@/registry/bases/radix/components/hitbox";
+import { Checkbox } from "@/registry/bases/radix/ui/checkbox";
 
 export default function HitboxRadiiDemo() {
   return (

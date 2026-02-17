@@ -5,7 +5,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/registry/bases/radix/ui/table";
 
 interface DataAttributesTableProps {
   data?: {

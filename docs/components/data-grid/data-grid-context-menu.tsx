@@ -4,15 +4,15 @@ import type { ColumnDef, TableMeta } from "@tanstack/react-table";
 import { CopyIcon, EraserIcon, ScissorsIcon, Trash2Icon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
+import { useAsRef } from "@/hooks/use-as-ref";
+import { parseCellKey } from "@/lib/data-grid";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useAsRef } from "@/hooks/use-as-ref";
-import { parseCellKey } from "@/lib/data-grid";
+} from "@/registry/bases/radix/ui/dropdown-menu";
 import type { CellUpdate, ContextMenuState } from "@/types/data-grid";
 
 interface DataGridContextMenuProps<TData> {

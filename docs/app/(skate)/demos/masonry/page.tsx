@@ -2,7 +2,7 @@
 
 import { Check, ChevronDown, Loader } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,9 +14,9 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/registry/bases/radix/ui/dropdown-menu";
 import { Masonry, MasonryItem } from "@/registry/bases/radix/ui/masonry";
+import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
 
 const DEFAULT_ITEMS_PER_PAGE = 100;
 const DEFAULT_MAX_ITEM_COUNT = 5000;

@@ -1,5 +1,5 @@
 import { Clock } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/registry/bases/radix/ui/button";
 import { RelativeTimeCard } from "@/registry/bases/radix/ui/relative-time-card";
 
 export default function RelativeTimeCardVariantsDemo() {

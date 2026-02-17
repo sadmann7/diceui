@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { z } from "zod";
-import { Label } from "@/components/ui/label";
+import { Label } from "@/registry/bases/radix/ui/label";
 import {
   MaskInput,
   type MaskPattern,

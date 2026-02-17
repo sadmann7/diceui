@@ -1,4 +1,4 @@
-import { Kbd } from "@/components/ui/kbd";
+import { Kbd } from "@/registry/bases/radix/ui/kbd";
 import {
   Table,
   TableBody,
@@ -6,7 +6,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@/registry/bases/radix/ui/table";
 
 interface KeyboardShortcutsTableProps {
   data: {

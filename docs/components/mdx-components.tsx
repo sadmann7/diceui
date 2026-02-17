@@ -10,11 +10,20 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import type * as React from "react";
 import { CodeBlock } from "@/components/code-block";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Kbd } from "@/components/ui/kbd";
-import { Table, TableCell, TableHead, TableRow } from "@/components/ui/table";
 import type { source } from "@/lib/source";
 import { cn } from "@/lib/utils";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/registry/bases/radix/ui/alert";
+import { Kbd } from "@/registry/bases/radix/ui/kbd";
+import {
+  Table,
+  TableCell,
+  TableHead,
+  TableRow,
+} from "@/registry/bases/radix/ui/table";
 
 const ComponentSource = dynamic(() =>
   import("@/components/component-source").then((mod) => ({

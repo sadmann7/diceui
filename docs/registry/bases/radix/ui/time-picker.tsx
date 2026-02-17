@@ -3,18 +3,18 @@
 import { Clock } from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/registry/bases/radix/ui/popover";
 
 const ROOT_NAME = "TimePicker";
 const LABEL_NAME = "TimePickerLabel";

@@ -3,12 +3,12 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { Button } from "@/registry/bases/radix/ui/button";
 
 const ROOT_NAME = "SpeedDial";
 const TRIGGER_NAME = "SpeedDialTrigger";

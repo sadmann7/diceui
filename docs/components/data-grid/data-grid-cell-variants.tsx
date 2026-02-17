@@ -4,33 +4,6 @@ import { Check, Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 import { DataGridCellWrapper } from "@/components/data-grid/data-grid-cell-wrapper";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-} from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Textarea } from "@/components/ui/textarea";
 import { useBadgeOverflow } from "@/hooks/use-badge-overflow";
 import { useDebouncedCallback } from "@/hooks/use-debounced-callback";
 import {
@@ -44,6 +17,33 @@ import {
   parseLocalDate,
 } from "@/lib/data-grid";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/registry/bases/radix/ui/badge";
+import { Button } from "@/registry/bases/radix/ui/button";
+import { Calendar } from "@/registry/bases/radix/ui/calendar";
+import { Checkbox } from "@/registry/bases/radix/ui/checkbox";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "@/registry/bases/radix/ui/command";
+import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+} from "@/registry/bases/radix/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/registry/bases/radix/ui/select";
+import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
+import { Textarea } from "@/registry/bases/radix/ui/textarea";
 import type { DataGridCellProps, FileCellData } from "@/types/data-grid";
 
 export function ShortTextCell<TData>({

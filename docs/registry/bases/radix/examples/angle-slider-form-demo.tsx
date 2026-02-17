@@ -5,7 +5,14 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { Button } from "@/components/ui/button";
+import {
+  AngleSlider,
+  AngleSliderRange,
+  AngleSliderThumb,
+  AngleSliderTrack,
+  AngleSliderValue,
+} from "@/registry/bases/radix/ui/angle-slider";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Form,
   FormControl,
@@ -14,14 +21,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import {
-  AngleSlider,
-  AngleSliderRange,
-  AngleSliderThumb,
-  AngleSliderTrack,
-  AngleSliderValue,
-} from "@/registry/bases/radix/ui/angle-slider";
+} from "@/registry/bases/radix/ui/form";
 
 const formSchema = z.object({
   rotation: z.array(z.number()).length(1),

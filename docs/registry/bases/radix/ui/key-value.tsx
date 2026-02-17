@@ -3,15 +3,15 @@
 import { PlusIcon, XIcon } from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { Button } from "@/registry/bases/radix/ui/button";
+import { Input } from "@/registry/bases/radix/ui/input";
+import { Textarea } from "@/registry/bases/radix/ui/textarea";
 
 const ROOT_NAME = "KeyValue";
 const LIST_NAME = "KeyValueList";

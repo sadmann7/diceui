@@ -20863,16 +20863,772 @@ export const Index: Record<string, Record<string, any>> = {
     },
   },  "base": {
     "default": {
+      "action-bar": {
+        name: "action-bar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-demo": {
+        name: "action-bar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-position-demo": {
+        name: "action-bar-position-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","label","select","switch"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-position-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "utils": {
+        name: "utils",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/utils.ts")),
+        source: "",
+        chunks: []
+      },
+      "compose-refs": {
+        name: "compose-refs",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-as-ref": {
+        name: "use-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-as-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-isomorphic-layout-effect": {
+        name: "use-isomorphic-layout-effect",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-isomorphic-layout-effect.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-lazy-ref": {
+        name: "use-lazy-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-lazy-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-mobile": {
+        name: "use-mobile",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-mobile.ts")),
+        source: "",
+        chunks: []
+      },
     },
     "vega": {
+      "action-bar": {
+        name: "action-bar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-demo": {
+        name: "action-bar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-position-demo": {
+        name: "action-bar-position-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","label","select","switch"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-position-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "utils": {
+        name: "utils",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/utils.ts")),
+        source: "",
+        chunks: []
+      },
+      "compose-refs": {
+        name: "compose-refs",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-as-ref": {
+        name: "use-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-as-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-isomorphic-layout-effect": {
+        name: "use-isomorphic-layout-effect",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-isomorphic-layout-effect.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-lazy-ref": {
+        name: "use-lazy-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-lazy-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-mobile": {
+        name: "use-mobile",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-mobile.ts")),
+        source: "",
+        chunks: []
+      },
     },
     "nova": {
+      "action-bar": {
+        name: "action-bar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-demo": {
+        name: "action-bar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-position-demo": {
+        name: "action-bar-position-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","label","select","switch"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-position-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "utils": {
+        name: "utils",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/utils.ts")),
+        source: "",
+        chunks: []
+      },
+      "compose-refs": {
+        name: "compose-refs",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-as-ref": {
+        name: "use-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-as-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-isomorphic-layout-effect": {
+        name: "use-isomorphic-layout-effect",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-isomorphic-layout-effect.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-lazy-ref": {
+        name: "use-lazy-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-lazy-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-mobile": {
+        name: "use-mobile",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-mobile.ts")),
+        source: "",
+        chunks: []
+      },
     },
     "maia": {
+      "action-bar": {
+        name: "action-bar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-demo": {
+        name: "action-bar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-position-demo": {
+        name: "action-bar-position-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","label","select","switch"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-position-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "utils": {
+        name: "utils",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/utils.ts")),
+        source: "",
+        chunks: []
+      },
+      "compose-refs": {
+        name: "compose-refs",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-as-ref": {
+        name: "use-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-as-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-isomorphic-layout-effect": {
+        name: "use-isomorphic-layout-effect",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-isomorphic-layout-effect.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-lazy-ref": {
+        name: "use-lazy-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-lazy-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-mobile": {
+        name: "use-mobile",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-mobile.ts")),
+        source: "",
+        chunks: []
+      },
     },
     "lyra": {
+      "action-bar": {
+        name: "action-bar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-demo": {
+        name: "action-bar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-position-demo": {
+        name: "action-bar-position-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","label","select","switch"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-position-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "utils": {
+        name: "utils",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/utils.ts")),
+        source: "",
+        chunks: []
+      },
+      "compose-refs": {
+        name: "compose-refs",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-as-ref": {
+        name: "use-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-as-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-isomorphic-layout-effect": {
+        name: "use-isomorphic-layout-effect",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-isomorphic-layout-effect.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-lazy-ref": {
+        name: "use-lazy-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-lazy-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-mobile": {
+        name: "use-mobile",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-mobile.ts")),
+        source: "",
+        chunks: []
+      },
     },
     "mira": {
+      "action-bar": {
+        name: "action-bar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-demo": {
+        name: "action-bar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "action-bar-position-demo": {
+        name: "action-bar-position-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["action-bar","label","select","switch"],
+        files: [{
+          path: "registry/bases/base/examples/action-bar-position-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "utils": {
+        name: "utils",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/utils.ts")),
+        source: "",
+        chunks: []
+      },
+      "compose-refs": {
+        name: "compose-refs",
+        description: "",
+        type: "registry:lib",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-as-ref": {
+        name: "use-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-as-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-isomorphic-layout-effect": {
+        name: "use-isomorphic-layout-effect",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-isomorphic-layout-effect.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-lazy-ref": {
+        name: "use-lazy-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-lazy-ref.ts")),
+        source: "",
+        chunks: []
+      },
+      "use-mobile": {
+        name: "use-mobile",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/hooks/use-mobile.ts")),
+        source: "",
+        chunks: []
+      },
     },
   },
 }

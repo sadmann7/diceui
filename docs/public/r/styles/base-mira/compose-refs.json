@@ -1,0 +1,12 @@
+{
+  "name": "compose-refs",
+  "files": [
+    {
+      "path": "lib/compose-refs.ts",
+      "content": "import * as React from \"react\";\r\n\r\ntype PossibleRef<T> = React.Ref<T> | undefined;\r\n\r\n/**\r\n * Set a given ref to a given value\r\n * This utility takes care of different types of refs: callback refs and RefObject(s)\r\n */\r\nfunction setRef<T>(ref: PossibleRef<T>, value: T) {\r\n  if (typeof ref === \"function\") {\r\n    return ref(value);\r\n  }\r\n\r\n  if (ref !== null && ref !== undefined) {\r\n    ref.current = value;\r\n  }\r\n}\r\n\r\n/**\r\n * A utility to compose multiple refs together\r\n * Accepts callback refs and RefObject(s)\r\n */\r\nfunction composeRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {\r\n  return (node) => {\r\n    let hasCleanup = false;\r\n    const cleanups = refs.map((ref) => {\r\n      const cleanup = setRef(ref, node);\r\n      if (!hasCleanup && typeof cleanup === \"function\") {\r\n        hasCleanup = true;\r\n      }\r\n      return cleanup;\r\n    });\r\n\r\n    // React <19 will log an error to the console if a callback ref returns a\r\n    // value. We don't use ref cleanups internally so this will only happen if a\r\n    // user's ref callback returns a value, which we only expect if they are\r\n    // using the cleanup functionality added in React 19.\r\n    if (hasCleanup) {\r\n      return () => {\r\n        for (let i = 0; i < cleanups.length; i++) {\r\n          const cleanup = cleanups[i];\r\n          if (typeof cleanup === \"function\") {\r\n            cleanup();\r\n          } else {\r\n            setRef(refs[i], null);\r\n          }\r\n        }\r\n      };\r\n    }\r\n  };\r\n}\r\n\r\n/**\r\n * A custom hook that composes multiple refs\r\n * Accepts callback refs and RefObject(s)\r\n */\r\nfunction useComposedRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {\r\n  // biome-ignore lint/correctness/useExhaustiveDependencies: we want to memoize by all values\r\n  return React.useCallback(composeRefs(...refs), refs);\r\n}\r\n\r\nexport { composeRefs, useComposedRefs };\r\n",
+      "type": "registry:lib",
+      "target": ""
+    }
+  ],
+  "type": "registry:lib"
+}

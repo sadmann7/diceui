@@ -10,9 +10,8 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   MediaPlayer,
   MediaPlayerAudio,
@@ -23,6 +22,7 @@ import {
   MediaPlayerTooltip,
   MediaPlayerVolume,
 } from "@/registry/bases/radix/ui/media-player";
+import { ScrollArea } from "@/registry/bases/radix/ui/scroll-area";
 
 interface Track {
   id: string;

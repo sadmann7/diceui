@@ -15,12 +15,12 @@ import {
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Button } from "@/components/ui/button";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { Button } from "@/registry/bases/radix/ui/button";
 
 const ROOT_NAME = "SelectionToolbar";
 const ITEM_NAME = "SelectionToolbarItem";

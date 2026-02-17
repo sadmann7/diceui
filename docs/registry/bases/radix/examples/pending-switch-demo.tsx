@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Pending } from "@/registry/bases/radix/components/pending";
+import { Label } from "@/registry/bases/radix/ui/label";
+import { Switch } from "@/registry/bases/radix/ui/switch";
 
 export default function PendingSwitchDemo() {
   const [isEnabled, setIsEnabled] = React.useState(false);

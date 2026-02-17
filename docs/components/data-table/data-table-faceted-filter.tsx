@@ -3,9 +3,9 @@
 import type { Column } from "@tanstack/react-table";
 import { Check, PlusCircle, XCircle } from "lucide-react";
 import * as React from "react";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/registry/bases/radix/ui/badge";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -14,14 +14,13 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-} from "@/components/ui/command";
+} from "@/registry/bases/radix/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
+} from "@/registry/bases/radix/ui/popover";
+import { Separator } from "@/registry/bases/radix/ui/separator";
 import type { Option } from "@/types/data-table";
 
 interface DataTableFacetedFilterProps<TData, TValue> {

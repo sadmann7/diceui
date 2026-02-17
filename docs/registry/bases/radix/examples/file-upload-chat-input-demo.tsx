@@ -3,8 +3,7 @@
 import { ArrowUp, Paperclip, Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   FileUpload,
   FileUploadDropzone,
@@ -17,6 +16,7 @@ import {
   type FileUploadProps,
   FileUploadTrigger,
 } from "@/registry/bases/radix/ui/file-upload";
+import { Textarea } from "@/registry/bases/radix/ui/textarea";
 
 export default function FileUploadChatInputDemo() {
   const [input, setInput] = React.useState("");

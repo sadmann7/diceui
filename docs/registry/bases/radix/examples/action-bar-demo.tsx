@@ -2,8 +2,6 @@
 
 import { Copy, Trash2, X } from "lucide-react";
 import * as React from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import {
   ActionBar,
@@ -13,6 +11,8 @@ import {
   ActionBarSelection,
   ActionBarSeparator,
 } from "@/registry/bases/radix/ui/action-bar";
+import { Checkbox } from "@/registry/bases/radix/ui/checkbox";
+import { Label } from "@/registry/bases/radix/ui/label";
 
 interface Task {
   id: string;

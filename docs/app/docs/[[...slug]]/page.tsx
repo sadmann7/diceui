@@ -9,13 +9,13 @@ import { notFound } from "next/navigation";
 import { CopyMarkdownButton, ViewOptions } from "@/components/doc-actions";
 import { DynamicLink } from "@/components/dynamic-link";
 import { Mdx } from "@/components/mdx-components";
+import { getChangelogToc } from "@/lib/changelog";
+import { source } from "@/lib/source";
 import {
   ButtonGroup,
   ButtonGroupSeparator,
-} from "@/components/ui/button-group";
-import { Separator } from "@/components/ui/separator";
-import { getChangelogToc } from "@/lib/changelog";
-import { source } from "@/lib/source";
+} from "@/registry/bases/radix/ui/button-group";
+import { Separator } from "@/registry/bases/radix/ui/separator";
 
 interface DocPageParams {
   params: Promise<{

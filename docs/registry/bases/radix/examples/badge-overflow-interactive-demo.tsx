@@ -2,10 +2,10 @@
 
 import { X } from "lucide-react";
 import * as React from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/registry/bases/radix/ui/badge";
 import { BadgeOverflow } from "@/registry/bases/radix/ui/badge-overflow";
+import { Button } from "@/registry/bases/radix/ui/button";
+import { Input } from "@/registry/bases/radix/ui/input";
 
 interface Tag {
   label: string;

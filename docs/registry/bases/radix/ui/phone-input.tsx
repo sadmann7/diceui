@@ -3,6 +3,12 @@
 import { Check, ChevronDown } from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+import { useComposedRefs } from "@/lib/compose-refs";
+import { cn } from "@/lib/utils";
+import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
+import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import {
   Command,
   CommandEmpty,
@@ -10,19 +16,13 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { Input } from "@/components/ui/input";
+} from "@/registry/bases/radix/ui/command";
+import { Input } from "@/registry/bases/radix/ui/input";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
-import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+} from "@/registry/bases/radix/ui/popover";
 
 const ROOT_NAME = "PhoneInput";
 const COUNTRY_SELECT_NAME = "PhoneInputCountrySelect";

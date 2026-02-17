@@ -3,12 +3,12 @@
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { Check, ChevronDown, Copy, MessageCircleIcon } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@/registry/bases/radix/ui/popover";
 
 const markdownCache = new Map<string, string>();
 

@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/registry/bases/radix/ui/avatar";
 import { AvatarGroup } from "@/registry/bases/radix/ui/avatar-group";
 
 const avatars = [

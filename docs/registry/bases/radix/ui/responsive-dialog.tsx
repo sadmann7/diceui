@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
-
+import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
+import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
+import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useIsMobile } from "@/registry/bases/radix/hooks/use-mobile";
 import {
   Dialog,
   DialogClose,
@@ -13,7 +17,7 @@ import {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@/registry/bases/radix/ui/dialog";
 import {
   Drawer,
   DrawerClose,
@@ -25,12 +29,7 @@ import {
   DrawerPortal,
   DrawerTitle,
   DrawerTrigger,
-} from "@/components/ui/drawer";
-import { cn } from "@/lib/utils";
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
-import { useIsMobile } from "@/registry/bases/radix/hooks/use-mobile";
+} from "@/registry/bases/radix/ui/drawer";
 
 const ROOT_NAME = "ResponsiveDialog";
 

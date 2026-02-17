@@ -2,9 +2,9 @@
 
 import { Edit, Trash2 } from "lucide-react";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
+import { Button } from "@/registry/bases/radix/ui/button";
+import { Checkbox } from "@/registry/bases/radix/ui/checkbox";
 import {
   Editable,
   EditableArea,

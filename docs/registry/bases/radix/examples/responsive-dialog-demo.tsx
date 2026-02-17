@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/registry/bases/radix/ui/button";
+import { Input } from "@/registry/bases/radix/ui/input";
+import { Label } from "@/registry/bases/radix/ui/label";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,

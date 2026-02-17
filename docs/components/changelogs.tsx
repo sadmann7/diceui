@@ -1,7 +1,7 @@
 import defaultComponents from "fumadocs-ui/mdx";
 import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
 import { getChangelogPages } from "@/lib/changelog";
+import { Separator } from "@/registry/bases/radix/ui/separator";
 
 export function Changelogs() {
   const pages = getChangelogPages();

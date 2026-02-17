@@ -2,7 +2,9 @@
 
 import type { TableMeta } from "@tanstack/react-table";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
+import { useAsRef } from "@/hooks/use-as-ref";
+import { cn } from "@/lib/utils";
+import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,9 +12,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { useAsRef } from "@/hooks/use-as-ref";
-import { cn } from "@/lib/utils";
+} from "@/registry/bases/radix/ui/dialog";
 import type { PasteDialogState } from "@/types/data-grid";
 
 interface DataGridPasteDialogProps<TData> {

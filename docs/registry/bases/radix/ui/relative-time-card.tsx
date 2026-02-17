@@ -10,7 +10,7 @@ import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card";
+} from "@/registry/bases/radix/ui/hover-card";
 
 type HoverCardProps = React.ComponentProps<typeof HoverCardPrimitive.Root>;
 type HoverCardContentProps = React.ComponentProps<
