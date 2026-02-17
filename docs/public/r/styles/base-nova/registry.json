@@ -22,16 +22,6 @@
       ]
     },
     {
-      "name": "direction",
-      "type": "registry:ui",
-      "files": [
-        {
-          "path": "ui/direction.tsx",
-          "type": "registry:ui"
-        }
-      ]
-    },
-    {
       "name": "action-bar-demo",
       "type": "registry:example",
       "dependencies": [

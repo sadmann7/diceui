@@ -7,8 +7,7 @@ import type {
 import type { CompositionProps, EmptyProps } from "@/types";
 
 interface MediaPlayerDropdownMenuProps
-  extends
-    React.ComponentProps<typeof DropdownMenuTrigger>,
+  extends React.ComponentProps<typeof DropdownMenuTrigger>,
     React.ComponentProps<typeof Button>,
     Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {}
 
@@ -210,19 +209,24 @@ export interface MediaPlayerProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface MediaPlayerVideoProps
-  extends EmptyProps<"video">, CompositionProps {}
+  extends EmptyProps<"video">,
+    CompositionProps {}
 
 export interface MediaPlayerAudioProps
-  extends EmptyProps<"audio">, CompositionProps {}
+  extends EmptyProps<"audio">,
+    CompositionProps {}
 
 export interface MediaPlayerControlsProps
-  extends EmptyProps<"div">, CompositionProps {}
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
 export interface MediaPlayerControlsOverlayProps
-  extends EmptyProps<"div">, CompositionProps {}
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
 export interface MediaPlayerLoadingProps
-  extends EmptyProps<"div">, CompositionProps {
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The delay in milliseconds before showing the loading indicator.
    *
@@ -236,7 +240,8 @@ export interface MediaPlayerLoadingProps
 }
 
 export interface MediaPlayerErrorProps
-  extends EmptyProps<"div">, CompositionProps {
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The media error object. If not provided, will use the error from media state.
    *
@@ -296,13 +301,16 @@ export interface MediaPlayerErrorProps
 }
 
 export interface MediaPlayerVolumeIndicatorProps
-  extends EmptyProps<"div">, CompositionProps {}
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
 export interface MediaPlayerPlayProps
-  extends EmptyProps<"button">, CompositionProps {}
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
 export interface MediaPlayerSeekBackwardProps
-  extends EmptyProps<"button">, CompositionProps {
+  extends EmptyProps<"button">,
+    CompositionProps {
   /**
    * The number of seconds to seek backward.
    *
@@ -316,7 +324,8 @@ export interface MediaPlayerSeekBackwardProps
 }
 
 export interface MediaPlayerSeekForwardProps
-  extends EmptyProps<"button">, CompositionProps {
+  extends EmptyProps<"button">,
+    CompositionProps {
   /**
    * The number of seconds to seek forward.
    *
@@ -330,8 +339,7 @@ export interface MediaPlayerSeekForwardProps
 }
 
 export interface MediaPlayerSeekProps
-  extends
-    Omit<
+  extends Omit<
       React.ComponentProps<typeof Slider>,
       keyof React.ComponentProps<"div">
     >,
@@ -452,8 +460,7 @@ export interface MediaPlayerSeekProps
 }
 
 export interface MediaPlayerVolumeProps
-  extends
-    Omit<
+  extends Omit<
       React.ComponentProps<typeof Slider>,
       keyof React.ComponentProps<"div">
     >,
@@ -471,7 +478,8 @@ export interface MediaPlayerVolumeProps
 }
 
 export interface MediaPlayerTimeProps
-  extends EmptyProps<"div">, CompositionProps {
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The format variant for displaying time.
    * - `progress`: Shows "currentTime / duration" (e.g., "1:23 / 5:00").
@@ -488,8 +496,10 @@ export interface MediaPlayerTimeProps
 }
 
 export interface MediaPlayerPlaybackSpeedProps
-  extends
-    Omit<MediaPlayerDropdownMenuProps, keyof React.ComponentProps<"button">>,
+  extends Omit<
+      MediaPlayerDropdownMenuProps,
+      keyof React.ComponentProps<"button">
+    >,
     CompositionProps {
   /**
    * Whether the dropdown menu is open by default.
@@ -526,11 +536,11 @@ export interface MediaPlayerPlaybackSpeedProps
 }
 
 export interface MediaPlayerLoopProps
-  extends EmptyProps<"button">, CompositionProps {}
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
 export interface MediaPlayerPiPProps
-  extends
-    EmptyProps<"button">,
+  extends EmptyProps<"button">,
     CompositionProps,
     Pick<MediaPlayerProps, "onPipError"> {
   /**
@@ -561,17 +571,22 @@ export interface MediaPlayerPiPProps
 }
 
 export interface MediaPlayerFullscreenProps
-  extends EmptyProps<"button">, CompositionProps {}
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
 export interface MediaPlayerCaptionsProps
-  extends EmptyProps<"button">, CompositionProps {}
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
 export interface MediaPlayerDownloadProps
-  extends EmptyProps<"button">, CompositionProps {}
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
 export interface MediaPlayerSettingsProps
-  extends
-    Omit<MediaPlayerPlaybackSpeedProps, keyof React.ComponentProps<"button">>,
+  extends Omit<
+      MediaPlayerPlaybackSpeedProps,
+      keyof React.ComponentProps<"button">
+    >,
     CompositionProps {
   /**
    * The settings menu provides a unified interface for adjusting playback speed,

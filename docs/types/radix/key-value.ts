@@ -210,10 +210,12 @@ export interface KeyValueListProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface KeyValueItemProps
-  extends EmptyProps<"div">, CompositionProps {}
+  extends EmptyProps<"div">,
+    CompositionProps {}
 
 export interface KeyValueKeyInputProps
-  extends EmptyProps<"input">, CompositionProps {
+  extends EmptyProps<"input">,
+    CompositionProps {
   /**
    * The item data for this input.
    *
@@ -229,7 +231,8 @@ export interface KeyValueKeyInputProps
 }
 
 export interface KeyValueValueInputProps
-  extends EmptyProps<"textarea">, CompositionProps {
+  extends EmptyProps<"textarea">,
+    CompositionProps {
   /**
    * Maximum number of rows before the textarea starts scrolling.
    * Without it, the textarea expands infinitely with content.
@@ -240,17 +243,16 @@ export interface KeyValueValueInputProps
 }
 
 export interface KeyValueRemoveProps
-  extends
-    Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
 export interface KeyValueAddProps
-  extends
-    Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
 export interface KeyValueErrorProps
-  extends EmptyProps<"div">, CompositionProps {
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * The field that has the error.
    *

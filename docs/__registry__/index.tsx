@@ -20877,20 +20877,6 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
-      "direction": {
-        name: "direction",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/direction.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
-        source: "",
-        chunks: []
-      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21016,20 +21002,6 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
-        source: "",
-        chunks: []
-      },
-      "direction": {
-        name: "direction",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/direction.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
         source: "",
         chunks: []
       },
@@ -21161,20 +21133,6 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
-      "direction": {
-        name: "direction",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/direction.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
-        source: "",
-        chunks: []
-      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21300,20 +21258,6 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
-        source: "",
-        chunks: []
-      },
-      "direction": {
-        name: "direction",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/direction.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
         source: "",
         chunks: []
       },
@@ -21445,20 +21389,6 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
-      "direction": {
-        name: "direction",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/direction.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
-        source: "",
-        chunks: []
-      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21584,20 +21514,6 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
-        source: "",
-        chunks: []
-      },
-      "direction": {
-        name: "direction",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/direction.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
         source: "",
         chunks: []
       },

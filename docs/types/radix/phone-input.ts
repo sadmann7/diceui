@@ -111,8 +111,7 @@ export interface PhoneInputProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface PhoneInputCountrySelectProps
-  extends
-    React.ComponentProps<typeof Popover>,
+  extends React.ComponentProps<typeof Popover>,
     Pick<React.ComponentProps<typeof PopoverTrigger>, "disabled" | "className">,
     CompositionProps {}
 

@@ -255,7 +255,8 @@ export interface TourProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface TourSpotlightProps
-  extends EmptyProps<"div">, CompositionProps {
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * Whether to force mount the spotlight even when closed.
    *
@@ -265,7 +266,8 @@ export interface TourSpotlightProps
 }
 
 export interface TourSpotlightRingProps
-  extends EmptyProps<"div">, CompositionProps {
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * Whether to force mount the spotlight ring even when closed.
    *
@@ -405,19 +407,22 @@ export interface TourStepProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface TourCloseProps
-  extends EmptyProps<"button">, CompositionProps {}
+  extends EmptyProps<"button">,
+    CompositionProps {}
 
 export interface TourHeaderProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface TourTitleProps extends EmptyProps<"h2">, CompositionProps {}
 
 export interface TourDescriptionProps
-  extends EmptyProps<"p">, CompositionProps {}
+  extends EmptyProps<"p">,
+    CompositionProps {}
 
 export interface TourFooterProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface TourStepCounterProps
-  extends EmptyProps<"div">, CompositionProps {
+  extends EmptyProps<"div">,
+    CompositionProps {
   /**
    * Custom format function for the step counter.
    *
@@ -431,18 +436,15 @@ export interface TourStepCounterProps
 }
 
 export interface TourPrevProps
-  extends
-    Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
 export interface TourNextProps
-  extends
-    Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
 export interface TourSkipProps
-  extends
-    Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
 export interface TourArrowProps extends EmptyProps<"svg">, CompositionProps {
