@@ -14,9 +14,12 @@ Dice UI is organized into multiple packages and documentation:
   - `@diceui/shared` - Shared utilities and types
 - `/docs/*` - Documentation website
   - `/app/*` - Next.js App Router pages
-  - `/content/docs/*` - MDX documentation files
+  - `/content/docs/components/*` - MDX documentation files organized by base (radix/base)
   - `/components/*` - React components used in documentation
-  - `/registry/*` - Component examples and demos
+  - `/registry/bases/*` - Multi-base component registry
+    - `/radix/*` - Radix UI based components
+    - `/base/*` - Base UI based components
+  - `/types/*` - TypeScript type definitions organized by base
   - `/styles/*` - Global styles and Tailwind CSS configurations
 
 ## Development Setup
@@ -91,10 +94,13 @@ packages/your-component/
 
 - Navigate to the `/docs` directory
 - Add the package name into `package.json`, and run `pnpm install`
-- Create a new file in the `/types/` directory, and import the types from the component package
-- Place new documentation in the appropriate directory under `/content/docs/`
+- Create a new file in the appropriate `/types/[base]/` directory (radix or base)
+- Import the types from the component package
+- Place new documentation in the appropriate base directory under `/content/docs/components/[base]/`
+- Set the `base` frontmatter field to either "radix" or "base"
 - Use MDX format for documentation files
 - Include proper frontmatter with title, description, and other metadata
+- Update AutoTypeTable paths to reference `./types/[base]/[component-name].ts`
 - Follow the existing documentation style and structure
 
 ### Component Guidelines
@@ -146,12 +152,33 @@ packages/your-component/
 
 ### Component Registry
 
-When adding new component examples:
+DiceUI supports multiple UI base libraries (Radix UI and Base UI). When adding new components:
 
-1. Create a new file in `/registry/default/examples/`
-2. Add the component to the registry index
-3. Include proper documentation and types
-4. Test the component in isolation
+1. Choose the appropriate base library:
+   - **Radix UI**: Use for components built with `@radix-ui/react-*` primitives
+   - **Base UI**: Use for components built with `@base-ui/react` primitives
+
+2. Create component files in the appropriate base directory:
+   - UI components: `/registry/bases/[base]/ui/`
+   - Examples: `/registry/bases/[base]/examples/`
+   - Hooks: `/registry/bases/[base]/hooks/`
+   - Utilities: `/registry/bases/[base]/lib/`
+
+3. Update the respective `_registry.ts` files in each directory
+
+4. For Radix UI components:
+   - Use `asChild` prop pattern with Slot primitive
+   - Use `CompositionProps` and `EmptyProps` for type definitions
+   - Import utilities from `@/registry/bases/radix/`
+
+5. For Base UI components:
+   - Use `render` prop pattern with `useRender` hook
+   - Use `useRender.ComponentProps` and `EmptyProps` for type definitions
+   - Import utilities from `@/registry/bases/base/`
+
+6. Include proper documentation and types in `/types/[base]/`
+
+7. Test the component in isolation
 
 ### Style Guide
 

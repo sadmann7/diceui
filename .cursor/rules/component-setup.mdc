@@ -8,22 +8,31 @@ alwaysApply: false
 
 You are an expert in TypeScript, React, and DiceUI component architecture. When a user asks you to create a new component using the pattern "@setup-component [component-name]", follow this comprehensive pipeline:
 
+## Base Selection
+
+DiceUI supports multiple UI base libraries. When creating a component, specify which base to use:
+
+- **Radix UI** (default): `@docs/registry/bases/radix/`
+- **Base UI**: `@docs/registry/bases/base/`
+
 ## Steps
 
-### 1. Create Component Types (@docs/types/docs/[component-name].ts)
+### 1. Create Component Types (@docs/types/[base]/[component-name].ts)
 
-- Create TypeScript interfaces for all component parts
-- Follow the pattern from existing files like `editable.ts` and `stepper.ts`.
+- Create TypeScript interfaces for all component parts based on the base library
+- For Radix UI: Use `@docs/types/radix/[component-name].ts` with `CompositionProps` and `EmptyProps`
+- For Base UI: Use `@docs/types/base/[component-name].ts` with `useRender.ComponentProps` and `EmptyProps`
+- Follow the pattern from existing files like `action-bar.ts`
 - Include proper JSDoc comments with examples
 - Import necessary types from UI libraries and internal types
 - Define interfaces for Root, Content, Trigger, and any specific component parts
 - Include composition props and controlled/uncontrolled patterns
 
-Finalize the API design first. Once it’s been iterated on and completed, proceed to the other steps. This will minimize refactoring.
+Finalize the API design first. Once it's been iterated on and completed, proceed to the other steps. This will minimize refactoring.
 
-### 2. Create Examples (@docs/registry/default/examples/)
+### 2. Create Examples (@docs/registry/bases/[base]/examples/)
 
-Create these example files:
+Create these example files in the appropriate base folder:
 
 - `[component-name]-demo.tsx` - Basic usage example
 - `[component-name]-controlled-demo.tsx` - Controlled state example (if applicable)
@@ -32,18 +41,18 @@ Create these example files:
 
 ### 3. Update Registry Files
 
-Update these registry files:
+Update the registry files in `@docs/registry/bases/[base]/`:
 
-#### @docs/registry/registry-ui.ts
+#### UI Registry (@docs/registry/bases/[base]/ui/_registry.ts)
 
 Add UI component entry with:
 
 - Component name
-- Dependencies (external packages)
-- Registry dependencies (internal UI components)
-- File paths for UI component and any utilities
+- Dependencies (external packages like `@radix-ui/react-*` or `@base-ui/react`)
+- Registry dependencies (internal UI components, hooks, libs)
+- File paths for UI component
 
-#### @docs/registry/registry-examples.ts
+#### Examples Registry (@docs/registry/bases/[base]/examples/_registry.ts)
 
 Add example entries for each demo file created:
 
@@ -51,16 +60,21 @@ Add example entries for each demo file created:
 - Dependencies and registry dependencies
 - File paths
 
-### 4. Create Documentation (@docs/content/docs/components/[component-name].mdx)
+#### Hooks/Libs Registry (if needed)
+
+- Update `@docs/registry/bases/[base]/hooks/_registry.ts` for custom hooks
+- Update `@docs/registry/bases/[base]/lib/_registry.ts` for utility functions
+
+### 4. Create Documentation (@docs/content/docs/components/[base]/[component-name].mdx)
 
 Create comprehensive documentation including:
 
-- Title, description, and metadata
+- Title, description, and metadata with `base` field set to "radix" or "base"
 - ComponentTabs for demo preview
 - Installation instructions (CLI and manual)
 - Layout/composition examples
 - Multiple example sections
-- Complete API reference with AutoTypeTable for each interface
+- Complete API reference with AutoTypeTable for each interface using `./types/[base]/[component-name].ts`
 - Accessibility section with keyboard interactions
 - Any specific notes about browser support or limitations
 
@@ -70,13 +84,17 @@ Create comprehensive documentation including:
 
 - Use consistent naming: `RootProps`, `TriggerProps`, `ContentProps`, etc.
 - Extend from appropriate base components (Button, Input, etc.)
-- Include CompositionProps for all component interfaces
+- Use `EmptyProps` first to filter out standard HTML attributes
+- For Radix UI: Include `CompositionProps` for `asChild` support
+- For Base UI: Include `useRender.ComponentProps` for `render` prop support
 - Add proper JSDoc with `@default` values and `@example` usage
 - Support both controlled and uncontrolled patterns where applicable
 
 ### Example Components
 
-- Import from `@/registry/default/ui/[component-name]`
+- Import from `@/registry/bases/[base]/ui/[component-name]`
+- For Radix UI: Use `asChild` prop pattern with Slot primitive
+- For Base UI: Use `render` prop pattern with `useRender` hook
 - Use default export with descriptive function name
 - Show realistic usage scenarios
 - Include proper TypeScript typing
@@ -84,7 +102,7 @@ Create comprehensive documentation including:
 
 ### Registry Entries
 
-- Maintain alphabetical order in both registry files
+- Maintain alphabetical order in all registry files
 - Include all necessary dependencies
 - Use proper file paths relative to registry
 - Match naming conventions exactly
@@ -92,28 +110,32 @@ Create comprehensive documentation including:
 ### Documentation Structure
 
 - Follow the established MDX pattern from existing component docs
+- Set the `base` frontmatter to either "radix" or "base"
 - Use ComponentTabs for interactive previews
+- Update AutoTypeTable paths to use `./types/[base]/[component-name].ts`
 - Include comprehensive API documentation
 - Add accessibility considerations
-- Provide installation and setup instructions
+- Provide installation and setup instructions with correct dependencies
 
 ## Example Usage
 
-When user types: `@setup-component [component-name]`
+When user types: `@setup-component [component-name] --base=[radix|base]`
 
 You should:
 
-1. Create `docs/registry/default/ui/[component-name].tsx` with the component
-2. Create `/docs/types/docs/[component-name].ts` with proper interfaces
-3. Create example files like `[component-name]-demo.tsx`, `[component-name]-form-demo.tsx`
-4. Update `registry-ui.ts` with the component entry
-5. Update `registry-examples.ts` with example entries
-6. Create `[component-name].mdx` documentation
+1. Create `docs/registry/bases/[base]/ui/[component-name].tsx` with the component
+2. Create `docs/types/[base]/[component-name].ts` with proper interfaces
+3. Create example files like `[component-name]-demo.tsx` in `docs/registry/bases/[base]/examples/`
+4. Update `docs/registry/bases/[base]/ui/_registry.ts` with the component entry
+5. Update `docs/registry/bases/[base]/examples/_registry.ts` with example entries
+6. Create `docs/content/docs/components/[base]/[component-name].mdx` documentation
 
-And when user types: `@setup-only [component-name]`
+And when user types: `@setup-only [component-name] --base=[radix|base]`
 
-1. Create `docs/registry/default/ui/[component-name].tsx` with the component
-2. Create `docs/registry/default/examples/[component-name]-demo.tsx` with the demo
+1. Create `docs/registry/bases/[base]/ui/[component-name].tsx` with the component
+2. Create `docs/registry/bases/[base]/examples/[component-name]-demo.tsx` with the demo
+
+**Note:** If no `--base` flag is provided, default to Radix UI.
 
 ## Code Style
 
@@ -133,4 +155,4 @@ And when user types: `@setup-only [component-name]`
 - Maintain import path consistency
 - Use proper TypeScript module organization
 
-When implementing, create all files in the correct locations and ensure they follow the established patterns from existing components like editable, color-picker, etc.
+When implementing, create all files in the correct locations and ensure they follow the established patterns from existing components like action-bar, editable, color-picker, etc.
