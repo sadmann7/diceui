@@ -1,0 +1,460 @@
+---
+description: Guide for migrating DiceUI components from Radix UI to Base UI
+globs: 
+alwaysApply: false
+---
+
+# Base UI Migration Guide
+
+This guide helps you migrate existing Radix UI components to Base UI. Use this when converting components from `@docs/registry/bases/radix/` to `@docs/registry/bases/base/`.
+
+## Migration Status
+
+### Completed
+- ✅ action-bar
+
+### Pending
+All other components in `docs/registry/bases/radix/ui/` need to be migrated.
+
+## Key Differences: Radix UI vs Base UI
+
+### Composition Pattern
+
+**Radix UI (asChild):**
+```tsx
+import { Slot } from "radix-ui";
+
+<Button asChild>
+  <a href="/">Link</a>
+</Button>
+```
+
+**Base UI (render):**
+```tsx
+import { useRender } from "@base-ui/react/use-render";
+
+const element = useRender({
+  defaultTagName: "button",
+  props: mergeProps({ /* props */ }, otherProps),
+  render,
+  state: { slot: "button" }
+});
+
+return element;
+```
+
+### Type Definitions
+
+**Radix UI:**
+```tsx
+interface ComponentProps extends EmptyProps<"div">, CompositionProps {
+  // props
+}
+```
+
+**Base UI:**
+```tsx
+interface ComponentProps 
+  extends EmptyProps<"div">,
+    useRender.ComponentProps<"div"> {
+  // props
+}
+```
+
+### Dependencies
+
+**Radix UI:**
+- `radix-ui` (includes Slot, Direction primitives)
+- `@radix-ui/react-*` packages
+
+**Base UI:**
+- `@base-ui/react` (includes useRender, mergeProps)
+- `@base-ui/react/use-render`
+- `@base-ui/react/merge-props`
+
+## Migration Steps
+
+### 1. Copy Source Files
+
+```bash
+# Copy UI component
+cp docs/registry/bases/radix/ui/[component].tsx docs/registry/bases/base/ui/[component].tsx
+
+# Copy examples
+cp docs/registry/bases/radix/examples/[component]-*.tsx docs/registry/bases/base/examples/
+
+# Copy types
+cp docs/types/radix/[component].ts docs/types/base/[component].ts
+```
+
+### 2. Update Dependencies
+
+#### In Component File
+
+Replace:
+```tsx
+import { Slot as SlotPrimitive, Direction as DirectionPrimitive } from "radix-ui";
+```
+
+With:
+```tsx
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
+```
+
+#### In Registry (_registry.ts)
+
+Replace:
+```tsx
+dependencies: ["radix-ui", "@radix-ui/react-slot"],
+```
+
+With:
+```tsx
+dependencies: ["@base-ui/react", "react-dom"],
+```
+
+### 3. Update Type Definitions
+
+**Before (Radix UI):**
+```tsx
+import type { Button } from "@/registry/bases/radix/ui/button";
+import type { CompositionProps, EmptyProps } from "@/types";
+
+export interface ActionBarProps 
+  extends EmptyProps<"div">, 
+    CompositionProps {
+  // props
+}
+```
+
+**After (Base UI):**
+```tsx
+import type { useRender } from "@base-ui/react/use-render";
+import type { Button } from "@/registry/bases/base/ui/button";
+import type { EmptyProps } from "@/types";
+
+export interface ActionBarProps
+  extends EmptyProps<"div">,
+    useRender.ComponentProps<"div"> {
+  // props
+}
+```
+
+### 4. Convert Component Logic
+
+#### Remove asChild Pattern
+
+**Before (Radix UI):**
+```tsx
+interface ComponentProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
+
+function Component({ asChild, className, ...props }: ComponentProps) {
+  const Comp = asChild ? SlotPrimitive.Slot : "div";
+  
+  return (
+    <Comp
+      className={cn("styles", className)}
+      {...props}
+    />
+  );
+}
+```
+
+**After (Base UI):**
+```tsx
+interface ComponentProps 
+  extends useRender.ComponentProps<"div">,
+    React.ComponentProps<"div"> {}
+
+function Component({ className, render, ...props }: ComponentProps) {
+  return useRender({
+    defaultTagName: "div",
+    props: mergeProps<"div">(
+      {
+        className: cn("styles", className),
+      },
+      props
+    ),
+    render,
+    state: {
+      slot: "component-name",
+    },
+  });
+}
+```
+
+#### Replace Direction Provider
+
+**Before (Radix UI):**
+```tsx
+const dir = DirectionPrimitive.useDirection(dirProp);
+```
+
+**After (Base UI):**
+```tsx
+// Use prop directly, no provider needed
+const dir = dirProp ?? "ltr";
+```
+
+### 5. Update Event Handling
+
+Base UI uses custom event types. When wrapping Base UI components:
+
+**Before (Direct event handling):**
+```tsx
+const onClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  // handle
+};
+```
+
+**After (Pass to Base UI component):**
+```tsx
+import { Button } from "@/registry/bases/base/ui/button";
+
+// Define handlers
+const handleClick = (event: React.MouseEvent<ItemElement>) => {
+  // Custom logic
+};
+
+// Pass to Base UI component
+return (
+  <Button
+    onClick={handleClick}
+    // Button handles BaseUIEvent conversion internally
+  />
+);
+```
+
+### 6. Update Portal Logic
+
+**Before (Radix UI):**
+```tsx
+import * as ReactDOM from "react-dom";
+
+if (!portalContainer || !open) return null;
+
+return ReactDOM.createPortal(<Component />, portalContainer);
+```
+
+**After (Base UI with useRender):**
+```tsx
+import * as ReactDOM from "react-dom";
+
+const element = useRender({
+  defaultTagName: "div",
+  props: mergeProps({ /* props */ }, otherProps),
+  render,
+  state: { /* state */ },
+});
+
+// Check AFTER useRender call (hooks must be called unconditionally)
+if (!portalContainer || !open) return null;
+
+return ReactDOM.createPortal(element, portalContainer);
+```
+
+### 7. Update Dynamic Type References
+
+**Before:**
+```tsx
+// Define types before components (forward reference issue)
+type ItemElement = HTMLButtonElement;
+```
+
+**After:**
+```tsx
+// Define components first, then extract types
+function ActionBarItem() { /* ... */ }
+
+// Extract type after component definition
+type ItemElement = React.ComponentRef<typeof ActionBarItem>;
+```
+
+### 8. Update Hook Imports
+
+Replace relative imports with registry paths:
+
+**Before:**
+```tsx
+import { useAsRef } from "@/hooks/use-as-ref";
+```
+
+**After:**
+```tsx
+import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
+```
+
+### 9. Update Registry Files
+
+#### UI Registry (_registry.ts)
+
+```tsx
+{
+  name: "component-name",
+  type: "registry:ui",
+  dependencies: ["@base-ui/react", "react-dom"],
+  registryDependencies: [
+    "button", // Base UI shadcn components
+    "use-as-ref",
+    "use-isomorphic-layout-effect",
+  ],
+  files: [
+    {
+      path: "ui/component-name.tsx",
+      type: "registry:ui",
+    },
+  ],
+}
+```
+
+#### Examples Registry
+
+```tsx
+{
+  name: "component-name-demo",
+  type: "registry:example",
+  registryDependencies: ["component-name"],
+  files: [
+    {
+      path: "examples/component-name-demo.tsx",
+      type: "registry:example",
+    },
+  ],
+}
+```
+
+### 10. Update Documentation
+
+Create `docs/content/docs/components/base/[component].mdx`:
+
+```mdx
+---
+base: base
+title: Component Name
+description: Component description
+preview: false
+links:
+ api: /docs/components/base/component-name#api-reference
+---
+
+<ComponentTabs name="component-name-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add "@diceui/component-name"
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @base-ui/react
+     ```
+  </Step>
+  <!-- ... -->
+</Steps>
+
+## API Reference
+
+### Component
+
+<AutoTypeTable
+  path="./types/base/component-name.ts"
+  name="ComponentProps"
+/>
+```
+
+### 11. Build and Test
+
+```bash
+# Build registry
+pnpm --filter=docs build:registry
+
+# Generate content
+pnpm --filter=docs generate:content
+
+# Type check
+pnpm --filter=docs typecheck
+
+# Test in dev
+pnpm --filter=docs dev
+```
+
+## Common Patterns
+
+### React 19 Ref Forwarding
+
+No need for `forwardRef` in React 19:
+
+```tsx
+function Component({ ref, ...props }: ComponentProps) {
+  const internalRef = useRef(null);
+  const composedRef = useComposedRefs(ref, internalRef);
+  
+  return useRender({
+    props: mergeProps({ ref: composedRef }, props),
+    // ...
+  });
+}
+```
+
+### Conditional Rendering with Hooks
+
+Always call hooks unconditionally:
+
+```tsx
+// ❌ Wrong
+if (!open) return null;
+const element = useRender({ /* ... */ });
+
+// ✅ Correct
+const element = useRender({ /* ... */ });
+if (!open) return null;
+```
+
+## Checklist
+
+Use this checklist for each component migration:
+
+- [ ] Copy source files from radix to base
+- [ ] Update imports (useRender, mergeProps)
+- [ ] Replace asChild with render prop pattern
+- [ ] Update type definitions (remove CompositionProps, add useRender.ComponentProps)
+- [ ] Replace DirectionPrimitive with direct prop
+- [ ] Update event handlers for Base UI components
+- [ ] Fix hook call order (before early returns)
+- [ ] Update dynamic type references
+- [ ] Update hook imports to use registry paths
+- [ ] Update registry dependencies
+- [ ] Copy and update types to types/base/
+- [ ] Copy and update documentation to docs/components/base/
+- [ ] Update AutoTypeTable paths
+- [ ] Build registry
+- [ ] Type check
+- [ ] Test in browser
+
+## Reference: Action Bar Migration
+
+See the completed action-bar migration as reference:
+- Component: `docs/registry/bases/base/ui/action-bar.tsx`
+- Types: `docs/types/base/action-bar.ts`
+- Docs: `docs/content/docs/components/base/action-bar.mdx`
+- Examples: `docs/registry/bases/base/examples/action-bar-*.tsx`
+
+## Tips
+
+1. **Start with simpler components** - Components with fewer sub-components are easier to migrate first
+2. **Test incrementally** - Build and test after each major change
+3. **Refer to Base UI docs** - Check https://base-ui.com for API details
+4. **Use existing patterns** - Follow the action-bar implementation
+5. **Check for circular dependencies** - Define types after component definitions when needed
+6. **Watch for BaseUIEvent** - Let Base UI components handle their own event types
