@@ -20867,13 +20867,27 @@ export const Index: Record<string, Record<string, any>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
         source: "",
         chunks: []
       },
@@ -20995,13 +21009,27 @@ export const Index: Record<string, Record<string, any>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
         source: "",
         chunks: []
       },
@@ -21123,13 +21151,27 @@ export const Index: Record<string, Record<string, any>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
         source: "",
         chunks: []
       },
@@ -21251,13 +21293,27 @@ export const Index: Record<string, Record<string, any>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
         source: "",
         chunks: []
       },
@@ -21379,13 +21435,27 @@ export const Index: Record<string, Record<string, any>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
         source: "",
         chunks: []
       },
@@ -21507,13 +21577,27 @@ export const Index: Record<string, Record<string, any>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/action-bar.tsx")),
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/direction.tsx")),
         source: "",
         chunks: []
       },

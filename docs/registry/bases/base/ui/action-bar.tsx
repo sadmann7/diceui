@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { Button } from "@/registry/bases/base/ui/button";
+import { useDirection } from "@/registry/bases/base/ui/direction";
 
 const ROOT_NAME = "ActionBar";
 const GROUP_NAME = "ActionBarGroup";
@@ -129,7 +130,7 @@ function ActionBar(props: ActionBarProps) {
     align = "center",
     sideOffset = 16,
     portalContainer: portalContainerProp,
-    dir = "ltr",
+    dir: dirProp,
     orientation = "horizontal",
     loop = true,
     className,
@@ -148,6 +149,9 @@ function ActionBar(props: ActionBarProps) {
     onEscapeKeyDown,
     onOpenChange,
   });
+
+  const contextDir = useDirection();
+  const dir = dirProp ?? contextDir;
 
   React.useLayoutEffect(() => {
     setMounted(true);

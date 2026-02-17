@@ -12,9 +12,20 @@ export const ui: Registry["items"] = [
     ],
     registryDependencies: [
       "button",
+      "direction",
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
     ],
     dependencies: ["@base-ui/react"],
+  },
+  {
+    name: "direction",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/direction.tsx",
+        type: "registry:ui",
+      },
+    ],
   },
 ];

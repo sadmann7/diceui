@@ -1,0 +1,12 @@
+{
+  "name": "direction",
+  "files": [
+    {
+      "path": "ui/direction.tsx",
+      "content": "\"use client\";\r\n\r\nexport {\r\n  DirectionProvider,\r\n  useDirection,\r\n} from \"@base-ui/react/direction-provider\";\r\n",
+      "type": "registry:ui",
+      "target": ""
+    }
+  ],
+  "type": "registry:ui"
+}
