@@ -11,9 +11,11 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 ## Migration Status
 
 ### Completed
+
 - ✅ action-bar
 
 ### Pending
+
 All other components in `docs/registry/bases/radix/ui/` need to be migrated.
 
 ## Key Differences: Radix UI vs Base UI
@@ -64,10 +66,12 @@ interface ComponentProps
 ### Dependencies
 
 **Radix UI:**
+
 - `radix-ui` (includes Slot, Direction primitives)
 - `@radix-ui/react-*` packages
 
 **Base UI:**
+
 - `@base-ui/react` (includes useRender, mergeProps)
 - `@base-ui/react/use-render`
 - `@base-ui/react/merge-props`
@@ -467,7 +471,7 @@ See the completed action-bar migration as reference:
 
 1. **Start with simpler components** - Components with fewer sub-components are easier to migrate first
 2. **Test incrementally** - Build and test after each major change
-3. **Refer to Base UI docs** - Check https://base-ui.com for API details
+3. **Refer to Base UI docs** - Check <https://base-ui.com> for API details
 4. **Use existing patterns** - Follow the action-bar implementation
 5. **Check for circular dependencies** - Define types after component definitions when needed
 6. **Watch for BaseUIEvent** - Let Base UI components handle their own event types
