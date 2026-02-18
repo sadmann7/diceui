@@ -61,7 +61,7 @@ export default function StatDemo() {
       <Stat>
         <StatLabel>Conversion Rate</StatLabel>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger>
             <StatIndicator variant="action">
               <MoreHorizontal />
             </StatIndicator>
