@@ -4,7 +4,6 @@ import type { EmptyProps } from "@/types";
 export interface StatusProps
   extends Omit<EmptyProps<"div">, "color">,
     useRender.ComponentProps<"div"> {
-
   /**
    * The visual style and color theme of the status badge.
    *

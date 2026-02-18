@@ -1,11 +1,11 @@
 "use client";
 
-import { cva, type VariantProps } from "class-variance-authority";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
-import { useDirection } from "@/registry/bases/base/ui/direction";
 import { cn } from "@/lib/utils";
+import { useDirection } from "@/registry/bases/base/ui/direction";
 import { Input } from "@/registry/bases/base/ui/input";
 
 const ROOT_NAME = "SegmentedInput";
@@ -186,36 +186,40 @@ function SegmentedInputItem(props: SegmentedInputItemProps) {
   const isDisabled = disabled ?? context.disabled;
   const isRequired = required ?? context.required;
 
-  if (render) {
-    return useRender({
-      defaultTagName: "input",
-      props: mergeProps<"input">(
-        {
-          "aria-invalid": context.invalid,
-          "aria-required": isRequired,
-          disabled: isDisabled,
-          required: isRequired,
-          className: cn(
-            segmentedInputItemVariants({
-              position,
-              orientation: context.orientation,
-              size: context.size,
-              className,
-            }),
-          ),
-        },
-        inputProps,
-      ),
-      render,
-      state: {
-        slot: "segmented-input-item",
-        orientation: context.orientation,
-        position,
-        ...(isDisabled && { disabled: "" }),
-        ...(context.invalid && { invalid: "" }),
-        ...(isRequired && { required: "" }),
+  const itemClassName = cn(
+    segmentedInputItemVariants({
+      position,
+      orientation: context.orientation,
+      size: context.size,
+      className,
+    }),
+  );
+
+  const renderedElement = useRender({
+    defaultTagName: "input",
+    props: mergeProps<"input">(
+      {
+        "aria-invalid": context.invalid,
+        "aria-required": isRequired,
+        disabled: isDisabled,
+        required: isRequired,
+        className: itemClassName,
       },
-    });
+      inputProps,
+    ),
+    render,
+    state: {
+      slot: "segmented-input-item",
+      orientation: context.orientation,
+      position,
+      ...(isDisabled && { disabled: "" }),
+      ...(context.invalid && { invalid: "" }),
+      ...(isRequired && { required: "" }),
+    },
+  });
+
+  if (render) {
+    return renderedElement;
   }
 
   return (
@@ -231,14 +235,7 @@ function SegmentedInputItem(props: SegmentedInputItemProps) {
       disabled={isDisabled}
       required={isRequired}
       {...inputProps}
-      className={cn(
-        segmentedInputItemVariants({
-          position,
-          orientation: context.orientation,
-          size: context.size,
-          className,
-        }),
-      )}
+      className={itemClassName}
     />
   );
 }
