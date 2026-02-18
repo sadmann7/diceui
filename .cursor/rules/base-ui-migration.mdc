@@ -10,13 +10,44 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### Completed
+### ✅ Completed (12 components)
 
-- ✅ action-bar
+| Component | Docs | Examples | Notes |
+|-----------|------|----------|-------|
+| action-bar | ✅ | 2 | Direction hook, portal logic |
+| avatar-group | ✅ | 5 | Type-safe cloneElement pattern |
+| badge-overflow | ✅ | 3 | compose-refs hook |
+| circular-progress | ✅ | 3 | CSS animations included |
+| color-swatch | ✅ | 3 | data-* via state object |
+| fps | ✅ | 2 | Standalone, no deps |
+| gauge | ✅ | 4 | compose-refs hook |
+| scroller | ✅ | 4 | compose-refs, navigation |
+| segmented-input | ✅ | 4 | Direction hook, input dep |
+| stack | ✅ | 3 | Simplified item wrapper |
+| stat | ✅ | 3 | Separator dep |
+| status | ✅ | 4 | Simple variant system |
 
-### Pending
+**Last Updated:** 2026-02-18
 
-All other components in `docs/registry/bases/radix/ui/` need to be migrated.
+### 🔄 Pending (23 components)
+
+**Simple (Slot replacement):**
+- swap, qr-code, relative-time-card
+
+**Medium Complexity:**
+- angle-slider, compare-slider, cropper, editable, file-upload
+- marquee, mask-input, phone-input, rating, scroll-spy
+- stepper, time-picker, timeline
+
+**High Complexity:**
+- color-picker, key-value, masonry, media-player
+- responsive-dialog, selection-toolbar, speed-dial, tour
+
+**DnD Components:**
+- kanban, sortable
+
+**External Packages (evaluate if needed):**
+- checkbox-group, combobox, listbox, mention, tags-input
 
 ## Key Differences: Radix UI vs Base UI
 
@@ -459,13 +490,17 @@ Use this checklist for each component migration:
 - [ ] Type check
 - [ ] Test in browser
 
-## Reference: Action Bar Migration
+## Reference Migrations
 
-See the completed action-bar migration as reference:
-- Component: `docs/registry/bases/base/ui/action-bar.tsx`
-- Types: `docs/types/base/action-bar.ts`
-- Docs: `docs/content/docs/components/base/action-bar.mdx`
-- Examples: `docs/registry/bases/base/examples/action-bar-*.tsx`
+See completed migrations as reference:
+- **action-bar**: Direction hook, portal logic, custom refs
+- **avatar-group**: Type-safe `React.cloneElement` with generics
+- **badge-overflow**: compose-refs, dynamic rendering
+- **scroller**: Navigation buttons, scroll shadows
+- **segmented-input**: Direction hook, position detection
+- **circular-progress**: CSS animations, SVG rendering
+- **gauge**: Similar to circular-progress
+- **stack**: Transform animations, item positioning
 
 ## Tips
 
