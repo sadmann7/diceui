@@ -17,5 +17,177 @@
     "dependencies": [
       "@base-ui/react"
     ]
+  },
+  {
+    "name": "fps",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/fps.tsx",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "stat",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/stat.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "separator"
+    ]
+  },
+  {
+    "name": "avatar-group",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/avatar-group.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "color-swatch",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/color-swatch.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "status",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/status.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "scroller",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/scroller.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react",
+      "lucide-react"
+    ]
+  },
+  {
+    "name": "badge-overflow",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/badge-overflow.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "segmented-input",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/segmented-input.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "input",
+      "direction"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "circular-progress",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/circular-progress.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ],
+    "cssVars": {
+      "theme": {
+        "--animate-spin-around": "spin-around 0.8s linear infinite"
+      }
+    },
+    "css": {
+      "@keyframes spin-around": {
+        "0%": {
+          "transform": "rotate(-90deg)"
+        },
+        "100%": {
+          "transform": "rotate(270deg)"
+        }
+      }
+    }
+  },
+  {
+    "name": "stack",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/stack.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "gauge",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/gauge.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
   }
 ]

@@ -6,7 +6,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 const colorSwatchVariants = cva(
-  "box-border rounded-sm border shadow-sm [background-clip:padding-box] data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+  "box-border rounded-sm border bg-clip-padding shadow-sm data-disabled:pointer-events-none data-disabled:opacity-50",
   {
     variants: {
       size: {

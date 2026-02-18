@@ -3,8 +3,6 @@ import { Slot as SlotPrimitive } from "radix-ui";
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface DivProps extends React.ComponentProps<"div"> {}
-
 const statusVariants = cva(
   "inline-flex w-fit shrink-0 items-center gap-1.5 overflow-hidden whitespace-nowrap rounded-full border px-2.5 py-1 font-medium text-xs transition-colors",
   {
@@ -27,7 +25,9 @@ const statusVariants = cva(
   },
 );
 
-interface StatusProps extends VariantProps<typeof statusVariants>, DivProps {
+interface StatusProps
+  extends VariantProps<typeof statusVariants>,
+    React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
@@ -46,7 +46,7 @@ function Status(props: StatusProps) {
   );
 }
 
-function StatusIndicator(props: DivProps) {
+function StatusIndicator(props: React.ComponentProps<"div">) {
   const { className, ...indicatorProps } = props;
 
   return (
@@ -63,7 +63,7 @@ function StatusIndicator(props: DivProps) {
   );
 }
 
-function StatusLabel(props: DivProps) {
+function StatusLabel(props: React.ComponentProps<"div">) {
   const { className, ...labelProps } = props;
 
   return (

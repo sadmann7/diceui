@@ -20877,6 +20877,172 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "fps": {
+        name: "fps",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/fps.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat": {
+        name: "stat",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["separator"],
+        files: [{
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stat.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group": {
+        name: "avatar-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/avatar-group.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch": {
+        name: "color-swatch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-swatch.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status": {
+        name: "status",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/status.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller": {
+        name: "scroller",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroller.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow": {
+        name: "badge-overflow",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/badge-overflow.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input": {
+        name: "segmented-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["input","direction"],
+        files: [{
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/segmented-input.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress": {
+        name: "circular-progress",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/circular-progress.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack": {
+        name: "stack",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stack.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge": {
+        name: "gauge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/gauge.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -20902,6 +21068,538 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-demo": {
+        name: "avatar-group-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-truncation-demo": {
+        name: "avatar-group-truncation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-truncation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-truncation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-rtl-demo": {
+        name: "avatar-group-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-icons-demo": {
+        name: "avatar-group-icons-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-icons-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-icons-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-custom-overflow-demo": {
+        name: "avatar-group-custom-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-demo": {
+        name: "badge-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-multiline-demo": {
+        name: "badge-overflow-multiline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-multiline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-multiline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-interactive-demo": {
+        name: "badge-overflow-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow","button","input"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-demo": {
+        name: "circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-interactive-demo": {
+        name: "circular-progress-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-colors-demo": {
+        name: "circular-progress-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-demo": {
+        name: "color-swatch-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-sizes-demo": {
+        name: "color-swatch-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-transparency-demo": {
+        name: "color-swatch-transparency-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-transparency-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-demo": {
+        name: "fps-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-strategy-demo": {
+        name: "fps-strategy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-strategy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-strategy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-demo": {
+        name: "gauge-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-sizes-demo": {
+        name: "gauge-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-colors-demo": {
+        name: "gauge-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-variants-demo": {
+        name: "gauge-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-demo": {
+        name: "scroller-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-hidden-demo": {
+        name: "scroller-hidden-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-hidden-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-hidden-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-horizontal-demo": {
+        name: "scroller-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-navigation-demo": {
+        name: "scroller-navigation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-navigation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-demo": {
+        name: "segmented-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-form-demo": {
+        name: "segmented-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-rgb-demo": {
+        name: "segmented-input-rgb-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-rgb-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-rgb-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-vertical-demo": {
+        name: "segmented-input-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-demo": {
+        name: "stack-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-no-expand-demo": {
+        name: "stack-no-expand-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-no-expand-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-no-expand-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-side-demo": {
+        name: "stack-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-demo": {
+        name: "stat-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat","dropdown-menu"],
+        files: [{
+          path: "registry/bases/base/examples/stat-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-variants-demo": {
+        name: "stat-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-layout-demo": {
+        name: "stat-layout-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-layout-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-layout-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-demo": {
+        name: "status-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-variants-demo": {
+        name: "status-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-text-only-demo": {
+        name: "status-text-only-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-text-only-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-text-only-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-list-demo": {
+        name: "status-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -21005,6 +21703,172 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "fps": {
+        name: "fps",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/fps.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat": {
+        name: "stat",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["separator"],
+        files: [{
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stat.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group": {
+        name: "avatar-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/avatar-group.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch": {
+        name: "color-swatch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-swatch.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status": {
+        name: "status",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/status.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller": {
+        name: "scroller",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroller.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow": {
+        name: "badge-overflow",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/badge-overflow.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input": {
+        name: "segmented-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["input","direction"],
+        files: [{
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/segmented-input.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress": {
+        name: "circular-progress",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/circular-progress.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack": {
+        name: "stack",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stack.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge": {
+        name: "gauge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/gauge.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21030,6 +21894,538 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-demo": {
+        name: "avatar-group-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-truncation-demo": {
+        name: "avatar-group-truncation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-truncation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-truncation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-rtl-demo": {
+        name: "avatar-group-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-icons-demo": {
+        name: "avatar-group-icons-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-icons-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-icons-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-custom-overflow-demo": {
+        name: "avatar-group-custom-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-demo": {
+        name: "badge-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-multiline-demo": {
+        name: "badge-overflow-multiline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-multiline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-multiline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-interactive-demo": {
+        name: "badge-overflow-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow","button","input"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-demo": {
+        name: "circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-interactive-demo": {
+        name: "circular-progress-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-colors-demo": {
+        name: "circular-progress-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-demo": {
+        name: "color-swatch-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-sizes-demo": {
+        name: "color-swatch-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-transparency-demo": {
+        name: "color-swatch-transparency-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-transparency-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-demo": {
+        name: "fps-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-strategy-demo": {
+        name: "fps-strategy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-strategy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-strategy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-demo": {
+        name: "gauge-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-sizes-demo": {
+        name: "gauge-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-colors-demo": {
+        name: "gauge-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-variants-demo": {
+        name: "gauge-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-demo": {
+        name: "scroller-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-hidden-demo": {
+        name: "scroller-hidden-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-hidden-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-hidden-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-horizontal-demo": {
+        name: "scroller-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-navigation-demo": {
+        name: "scroller-navigation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-navigation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-demo": {
+        name: "segmented-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-form-demo": {
+        name: "segmented-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-rgb-demo": {
+        name: "segmented-input-rgb-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-rgb-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-rgb-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-vertical-demo": {
+        name: "segmented-input-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-demo": {
+        name: "stack-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-no-expand-demo": {
+        name: "stack-no-expand-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-no-expand-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-no-expand-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-side-demo": {
+        name: "stack-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-demo": {
+        name: "stat-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat","dropdown-menu"],
+        files: [{
+          path: "registry/bases/base/examples/stat-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-variants-demo": {
+        name: "stat-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-layout-demo": {
+        name: "stat-layout-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-layout-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-layout-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-demo": {
+        name: "status-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-variants-demo": {
+        name: "status-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-text-only-demo": {
+        name: "status-text-only-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-text-only-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-text-only-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-list-demo": {
+        name: "status-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -21133,6 +22529,172 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "fps": {
+        name: "fps",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/fps.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat": {
+        name: "stat",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["separator"],
+        files: [{
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stat.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group": {
+        name: "avatar-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/avatar-group.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch": {
+        name: "color-swatch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-swatch.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status": {
+        name: "status",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/status.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller": {
+        name: "scroller",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroller.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow": {
+        name: "badge-overflow",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/badge-overflow.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input": {
+        name: "segmented-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["input","direction"],
+        files: [{
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/segmented-input.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress": {
+        name: "circular-progress",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/circular-progress.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack": {
+        name: "stack",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stack.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge": {
+        name: "gauge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/gauge.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21158,6 +22720,538 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-demo": {
+        name: "avatar-group-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-truncation-demo": {
+        name: "avatar-group-truncation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-truncation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-truncation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-rtl-demo": {
+        name: "avatar-group-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-icons-demo": {
+        name: "avatar-group-icons-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-icons-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-icons-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-custom-overflow-demo": {
+        name: "avatar-group-custom-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-demo": {
+        name: "badge-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-multiline-demo": {
+        name: "badge-overflow-multiline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-multiline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-multiline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-interactive-demo": {
+        name: "badge-overflow-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow","button","input"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-demo": {
+        name: "circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-interactive-demo": {
+        name: "circular-progress-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-colors-demo": {
+        name: "circular-progress-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-demo": {
+        name: "color-swatch-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-sizes-demo": {
+        name: "color-swatch-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-transparency-demo": {
+        name: "color-swatch-transparency-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-transparency-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-demo": {
+        name: "fps-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-strategy-demo": {
+        name: "fps-strategy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-strategy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-strategy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-demo": {
+        name: "gauge-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-sizes-demo": {
+        name: "gauge-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-colors-demo": {
+        name: "gauge-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-variants-demo": {
+        name: "gauge-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-demo": {
+        name: "scroller-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-hidden-demo": {
+        name: "scroller-hidden-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-hidden-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-hidden-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-horizontal-demo": {
+        name: "scroller-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-navigation-demo": {
+        name: "scroller-navigation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-navigation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-demo": {
+        name: "segmented-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-form-demo": {
+        name: "segmented-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-rgb-demo": {
+        name: "segmented-input-rgb-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-rgb-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-rgb-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-vertical-demo": {
+        name: "segmented-input-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-demo": {
+        name: "stack-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-no-expand-demo": {
+        name: "stack-no-expand-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-no-expand-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-no-expand-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-side-demo": {
+        name: "stack-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-demo": {
+        name: "stat-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat","dropdown-menu"],
+        files: [{
+          path: "registry/bases/base/examples/stat-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-variants-demo": {
+        name: "stat-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-layout-demo": {
+        name: "stat-layout-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-layout-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-layout-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-demo": {
+        name: "status-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-variants-demo": {
+        name: "status-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-text-only-demo": {
+        name: "status-text-only-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-text-only-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-text-only-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-list-demo": {
+        name: "status-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -21261,6 +23355,172 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "fps": {
+        name: "fps",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/fps.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat": {
+        name: "stat",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["separator"],
+        files: [{
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stat.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group": {
+        name: "avatar-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/avatar-group.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch": {
+        name: "color-swatch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-swatch.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status": {
+        name: "status",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/status.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller": {
+        name: "scroller",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroller.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow": {
+        name: "badge-overflow",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/badge-overflow.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input": {
+        name: "segmented-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["input","direction"],
+        files: [{
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/segmented-input.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress": {
+        name: "circular-progress",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/circular-progress.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack": {
+        name: "stack",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stack.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge": {
+        name: "gauge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/gauge.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21286,6 +23546,538 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-demo": {
+        name: "avatar-group-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-truncation-demo": {
+        name: "avatar-group-truncation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-truncation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-truncation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-rtl-demo": {
+        name: "avatar-group-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-icons-demo": {
+        name: "avatar-group-icons-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-icons-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-icons-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-custom-overflow-demo": {
+        name: "avatar-group-custom-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-demo": {
+        name: "badge-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-multiline-demo": {
+        name: "badge-overflow-multiline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-multiline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-multiline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-interactive-demo": {
+        name: "badge-overflow-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow","button","input"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-demo": {
+        name: "circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-interactive-demo": {
+        name: "circular-progress-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-colors-demo": {
+        name: "circular-progress-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-demo": {
+        name: "color-swatch-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-sizes-demo": {
+        name: "color-swatch-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-transparency-demo": {
+        name: "color-swatch-transparency-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-transparency-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-demo": {
+        name: "fps-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-strategy-demo": {
+        name: "fps-strategy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-strategy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-strategy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-demo": {
+        name: "gauge-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-sizes-demo": {
+        name: "gauge-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-colors-demo": {
+        name: "gauge-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-variants-demo": {
+        name: "gauge-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-demo": {
+        name: "scroller-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-hidden-demo": {
+        name: "scroller-hidden-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-hidden-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-hidden-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-horizontal-demo": {
+        name: "scroller-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-navigation-demo": {
+        name: "scroller-navigation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-navigation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-demo": {
+        name: "segmented-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-form-demo": {
+        name: "segmented-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-rgb-demo": {
+        name: "segmented-input-rgb-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-rgb-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-rgb-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-vertical-demo": {
+        name: "segmented-input-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-demo": {
+        name: "stack-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-no-expand-demo": {
+        name: "stack-no-expand-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-no-expand-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-no-expand-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-side-demo": {
+        name: "stack-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-demo": {
+        name: "stat-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat","dropdown-menu"],
+        files: [{
+          path: "registry/bases/base/examples/stat-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-variants-demo": {
+        name: "stat-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-layout-demo": {
+        name: "stat-layout-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-layout-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-layout-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-demo": {
+        name: "status-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-variants-demo": {
+        name: "status-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-text-only-demo": {
+        name: "status-text-only-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-text-only-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-text-only-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-list-demo": {
+        name: "status-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -21389,6 +24181,172 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "fps": {
+        name: "fps",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/fps.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat": {
+        name: "stat",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["separator"],
+        files: [{
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stat.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group": {
+        name: "avatar-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/avatar-group.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch": {
+        name: "color-swatch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-swatch.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status": {
+        name: "status",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/status.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller": {
+        name: "scroller",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroller.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow": {
+        name: "badge-overflow",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/badge-overflow.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input": {
+        name: "segmented-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["input","direction"],
+        files: [{
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/segmented-input.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress": {
+        name: "circular-progress",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/circular-progress.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack": {
+        name: "stack",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stack.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge": {
+        name: "gauge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/gauge.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21414,6 +24372,538 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-demo": {
+        name: "avatar-group-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-truncation-demo": {
+        name: "avatar-group-truncation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-truncation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-truncation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-rtl-demo": {
+        name: "avatar-group-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-icons-demo": {
+        name: "avatar-group-icons-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-icons-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-icons-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-custom-overflow-demo": {
+        name: "avatar-group-custom-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-demo": {
+        name: "badge-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-multiline-demo": {
+        name: "badge-overflow-multiline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-multiline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-multiline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-interactive-demo": {
+        name: "badge-overflow-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow","button","input"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-demo": {
+        name: "circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-interactive-demo": {
+        name: "circular-progress-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-colors-demo": {
+        name: "circular-progress-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-demo": {
+        name: "color-swatch-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-sizes-demo": {
+        name: "color-swatch-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-transparency-demo": {
+        name: "color-swatch-transparency-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-transparency-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-demo": {
+        name: "fps-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-strategy-demo": {
+        name: "fps-strategy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-strategy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-strategy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-demo": {
+        name: "gauge-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-sizes-demo": {
+        name: "gauge-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-colors-demo": {
+        name: "gauge-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-variants-demo": {
+        name: "gauge-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-demo": {
+        name: "scroller-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-hidden-demo": {
+        name: "scroller-hidden-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-hidden-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-hidden-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-horizontal-demo": {
+        name: "scroller-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-navigation-demo": {
+        name: "scroller-navigation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-navigation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-demo": {
+        name: "segmented-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-form-demo": {
+        name: "segmented-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-rgb-demo": {
+        name: "segmented-input-rgb-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-rgb-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-rgb-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-vertical-demo": {
+        name: "segmented-input-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-demo": {
+        name: "stack-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-no-expand-demo": {
+        name: "stack-no-expand-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-no-expand-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-no-expand-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-side-demo": {
+        name: "stack-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-demo": {
+        name: "stat-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat","dropdown-menu"],
+        files: [{
+          path: "registry/bases/base/examples/stat-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-variants-demo": {
+        name: "stat-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-layout-demo": {
+        name: "stat-layout-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-layout-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-layout-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-demo": {
+        name: "status-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-variants-demo": {
+        name: "status-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-text-only-demo": {
+        name: "status-text-only-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-text-only-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-text-only-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-list-demo": {
+        name: "status-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -21517,6 +25007,172 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "fps": {
+        name: "fps",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/fps.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat": {
+        name: "stat",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["separator"],
+        files: [{
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stat.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group": {
+        name: "avatar-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/avatar-group.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch": {
+        name: "color-swatch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-swatch.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status": {
+        name: "status",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/status.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller": {
+        name: "scroller",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroller.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow": {
+        name: "badge-overflow",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/badge-overflow.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input": {
+        name: "segmented-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["input","direction"],
+        files: [{
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/segmented-input.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress": {
+        name: "circular-progress",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/circular-progress.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack": {
+        name: "stack",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stack.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge": {
+        name: "gauge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/gauge.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21542,6 +25198,538 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-demo": {
+        name: "avatar-group-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-truncation-demo": {
+        name: "avatar-group-truncation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-truncation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-truncation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-rtl-demo": {
+        name: "avatar-group-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-icons-demo": {
+        name: "avatar-group-icons-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-icons-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-icons-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "avatar-group-custom-overflow-demo": {
+        name: "avatar-group-custom-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["avatar","avatar-group"],
+        files: [{
+          path: "registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/avatar-group-custom-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-demo": {
+        name: "badge-overflow-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-multiline-demo": {
+        name: "badge-overflow-multiline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-multiline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-multiline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "badge-overflow-interactive-demo": {
+        name: "badge-overflow-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","badge-overflow","button","input"],
+        files: [{
+          path: "registry/bases/base/examples/badge-overflow-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/badge-overflow-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-demo": {
+        name: "circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-interactive-demo": {
+        name: "circular-progress-interactive-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-interactive-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-interactive-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "circular-progress-colors-demo": {
+        name: "circular-progress-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["circular-progress"],
+        files: [{
+          path: "registry/bases/base/examples/circular-progress-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/circular-progress-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-demo": {
+        name: "color-swatch-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-sizes-demo": {
+        name: "color-swatch-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-swatch-transparency-demo": {
+        name: "color-swatch-transparency-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-swatch"],
+        files: [{
+          path: "registry/bases/base/examples/color-swatch-transparency-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-demo": {
+        name: "fps-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "fps-strategy-demo": {
+        name: "fps-strategy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["fps"],
+        files: [{
+          path: "registry/bases/base/examples/fps-strategy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/fps-strategy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-demo": {
+        name: "gauge-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-sizes-demo": {
+        name: "gauge-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-sizes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-colors-demo": {
+        name: "gauge-colors-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-colors-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-colors-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "gauge-variants-demo": {
+        name: "gauge-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["gauge"],
+        files: [{
+          path: "registry/bases/base/examples/gauge-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/gauge-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-demo": {
+        name: "scroller-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-hidden-demo": {
+        name: "scroller-hidden-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-hidden-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-hidden-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-horizontal-demo": {
+        name: "scroller-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroller-navigation-demo": {
+        name: "scroller-navigation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroller"],
+        files: [{
+          path: "registry/bases/base/examples/scroller-navigation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-demo": {
+        name: "segmented-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-form-demo": {
+        name: "segmented-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-rgb-demo": {
+        name: "segmented-input-rgb-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-rgb-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-rgb-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "segmented-input-vertical-demo": {
+        name: "segmented-input-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["segmented-input"],
+        files: [{
+          path: "registry/bases/base/examples/segmented-input-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/segmented-input-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-demo": {
+        name: "stack-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-no-expand-demo": {
+        name: "stack-no-expand-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-no-expand-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-no-expand-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stack-side-demo": {
+        name: "stack-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stack"],
+        files: [{
+          path: "registry/bases/base/examples/stack-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-demo": {
+        name: "stat-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat","dropdown-menu"],
+        files: [{
+          path: "registry/bases/base/examples/stat-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-variants-demo": {
+        name: "stat-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stat-layout-demo": {
+        name: "stat-layout-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stat"],
+        files: [{
+          path: "registry/bases/base/examples/stat-layout-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stat-layout-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-demo": {
+        name: "status-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-variants-demo": {
+        name: "status-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-text-only-demo": {
+        name: "status-text-only-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-text-only-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-text-only-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "status-list-demo": {
+        name: "status-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["status"],
+        files: [{
+          path: "registry/bases/base/examples/status-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
         source: "",
         chunks: []
       },

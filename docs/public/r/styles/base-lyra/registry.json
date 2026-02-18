@@ -22,6 +22,178 @@
       ]
     },
     {
+      "name": "fps",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/fps.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
+      "name": "stat",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/stat.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "separator"
+      ]
+    },
+    {
+      "name": "avatar-group",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/avatar-group.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "color-swatch",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/color-swatch.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "status",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/status.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "scroller",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/scroller.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "lucide-react"
+      ]
+    },
+    {
+      "name": "badge-overflow",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/badge-overflow.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "segmented-input",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/segmented-input.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "input",
+        "direction"
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "circular-progress",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/circular-progress.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ],
+      "cssVars": {
+        "theme": {
+          "--animate-spin-around": "spin-around 0.8s linear infinite"
+        }
+      },
+      "css": {
+        "@keyframes spin-around": {
+          "0%": {
+            "transform": "rotate(-90deg)"
+          },
+          "100%": {
+            "transform": "rotate(270deg)"
+          }
+        }
+      }
+    },
+    {
+      "name": "stack",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/stack.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
+      "name": "gauge",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/gauge.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
       "name": "action-bar-demo",
       "type": "registry:example",
       "dependencies": [
@@ -53,6 +225,530 @@
       "files": [
         {
           "path": "examples/action-bar-position-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "avatar",
+        "avatar-group"
+      ],
+      "files": [
+        {
+          "path": "examples/avatar-group-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group-truncation-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "avatar",
+        "avatar-group"
+      ],
+      "files": [
+        {
+          "path": "examples/avatar-group-truncation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group-rtl-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "avatar",
+        "avatar-group"
+      ],
+      "files": [
+        {
+          "path": "examples/avatar-group-rtl-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group-icons-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "avatar-group"
+      ],
+      "files": [
+        {
+          "path": "examples/avatar-group-icons-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "avatar-group-custom-overflow-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "avatar",
+        "avatar-group"
+      ],
+      "files": [
+        {
+          "path": "examples/avatar-group-custom-overflow-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "badge-overflow-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "badge",
+        "badge-overflow"
+      ],
+      "files": [
+        {
+          "path": "examples/badge-overflow-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "badge-overflow-multiline-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "badge",
+        "badge-overflow"
+      ],
+      "files": [
+        {
+          "path": "examples/badge-overflow-multiline-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "badge-overflow-interactive-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "badge",
+        "badge-overflow",
+        "button",
+        "input"
+      ],
+      "files": [
+        {
+          "path": "examples/badge-overflow-interactive-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "circular-progress-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "circular-progress"
+      ],
+      "files": [
+        {
+          "path": "examples/circular-progress-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "circular-progress-interactive-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "circular-progress"
+      ],
+      "files": [
+        {
+          "path": "examples/circular-progress-interactive-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "circular-progress-colors-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "motion"
+      ],
+      "registryDependencies": [
+        "circular-progress"
+      ],
+      "files": [
+        {
+          "path": "examples/circular-progress-colors-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "color-swatch-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-swatch"
+      ],
+      "files": [
+        {
+          "path": "examples/color-swatch-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "color-swatch-sizes-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-swatch"
+      ],
+      "files": [
+        {
+          "path": "examples/color-swatch-sizes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "color-swatch-transparency-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-swatch"
+      ],
+      "files": [
+        {
+          "path": "examples/color-swatch-transparency-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "fps-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "fps"
+      ],
+      "files": [
+        {
+          "path": "examples/fps-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "fps-strategy-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "fps"
+      ],
+      "files": [
+        {
+          "path": "examples/fps-strategy-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "gauge-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "gauge"
+      ],
+      "files": [
+        {
+          "path": "examples/gauge-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "gauge-sizes-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "gauge"
+      ],
+      "files": [
+        {
+          "path": "examples/gauge-sizes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "gauge-colors-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "gauge"
+      ],
+      "files": [
+        {
+          "path": "examples/gauge-colors-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "gauge-variants-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "gauge"
+      ],
+      "files": [
+        {
+          "path": "examples/gauge-variants-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroller-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroller"
+      ],
+      "files": [
+        {
+          "path": "examples/scroller-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroller-hidden-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroller"
+      ],
+      "files": [
+        {
+          "path": "examples/scroller-hidden-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroller-horizontal-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroller"
+      ],
+      "files": [
+        {
+          "path": "examples/scroller-horizontal-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroller-navigation-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroller"
+      ],
+      "files": [
+        {
+          "path": "examples/scroller-navigation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "segmented-input-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "segmented-input"
+      ],
+      "files": [
+        {
+          "path": "examples/segmented-input-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "segmented-input-form-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "button",
+        "segmented-input"
+      ],
+      "files": [
+        {
+          "path": "examples/segmented-input-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "segmented-input-rgb-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "segmented-input"
+      ],
+      "files": [
+        {
+          "path": "examples/segmented-input-rgb-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "segmented-input-vertical-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "segmented-input"
+      ],
+      "files": [
+        {
+          "path": "examples/segmented-input-vertical-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stack-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "stack"
+      ],
+      "files": [
+        {
+          "path": "examples/stack-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stack-no-expand-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "stack"
+      ],
+      "files": [
+        {
+          "path": "examples/stack-no-expand-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stack-side-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "stack"
+      ],
+      "files": [
+        {
+          "path": "examples/stack-side-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stat-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "stat",
+        "dropdown-menu"
+      ],
+      "files": [
+        {
+          "path": "examples/stat-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stat-variants-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "stat"
+      ],
+      "files": [
+        {
+          "path": "examples/stat-variants-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "stat-layout-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "stat"
+      ],
+      "files": [
+        {
+          "path": "examples/stat-layout-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "status-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "status"
+      ],
+      "files": [
+        {
+          "path": "examples/status-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "status-variants-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "status"
+      ],
+      "files": [
+        {
+          "path": "examples/status-variants-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "status-text-only-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "status"
+      ],
+      "files": [
+        {
+          "path": "examples/status-text-only-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "status-list-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "status"
+      ],
+      "files": [
+        {
+          "path": "examples/status-list-demo.tsx",
           "type": "registry:example"
         }
       ]
