@@ -10,7 +10,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### ✅ Completed (16 components)
+### ✅ Completed (17 components)
 
 | Component | Docs | Examples | Notes |
 |-----------|------|----------|-------|
@@ -24,6 +24,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | hover-card | ✅ | — | Wraps PreviewCard from @base-ui/react/preview-card |
 | marquee | ✅ | 4 | Direction hook, CSS animations, useRender for content |
 | qr-code | ✅ | 4 | onError conflict resolved with Omit |
+| rating | ✅ | 4 | Direction hook, button useRender, visually-hidden-input dep |
 | relative-time-card | ✅ | 4 | Uses hover-card wrapper, render prop on trigger |
 | scroller | ✅ | 4 | compose-refs, navigation |
 | segmented-input | ✅ | 4 | Direction hook, input dep |
@@ -34,11 +35,11 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 **Last Updated:** 2026-02-19
 
-### 🔄 Pending (19 components)
+### 🔄 Pending (18 components)
 
 **Medium Complexity:**
 - angle-slider, compare-slider, cropper, editable, file-upload
-- mask-input, phone-input, rating, scroll-spy
+- mask-input, phone-input, scroll-spy
 - stepper, time-picker, timeline
 
 **High Complexity:**
@@ -461,8 +462,9 @@ return useRender({
 
 ### Resolving Custom Prop Conflicts with HTML Attributes
 
-When a component defines a custom prop (e.g., `onError`) that clashes with an identically named HTML event handler (`HTMLAttributes.onError`), use `Omit` on `useRender.ComponentProps` before extending:
+When a component defines a custom prop that clashes with an identically named HTML attribute, use `Omit` to resolve the conflict.
 
+**Single interface conflict** (e.g., `onError` on `div`):
 ```tsx
 // ❌ Error: 'onError' types are incompatible
 interface QRCodeProps extends useRender.ComponentProps<"div"> {
@@ -472,6 +474,22 @@ interface QRCodeProps extends useRender.ComponentProps<"div"> {
 // ✅ Omit the conflicting DOM attribute first
 interface QRCodeProps extends Omit<useRender.ComponentProps<"div">, "onError"> {
   onError?: (error: Error) => void;
+}
+```
+
+**Multi-interface conflict** (e.g., `children` as render prop on `button`):
+```tsx
+// ❌ Error: '(state: DataState) => ReactNode' not assignable to 'ReactNode'
+interface RatingItemProps
+  extends Omit<React.ComponentProps<"button">, "children">,
+    useRender.ComponentProps<"button"> {
+  children?: ReactNode | ((state: DataState) => ReactNode);
+}
+
+// ✅ Omit from the intersection of both interfaces
+interface RatingItemProps
+  extends Omit<React.ComponentProps<"button"> & useRender.ComponentProps<"button">, "children"> {
+  children?: ReactNode | ((state: DataState) => ReactNode);
 }
 ```
 
@@ -559,6 +577,7 @@ See completed migrations as reference:
 - **avatar-group**: Type-safe `React.cloneElement` with generics
 - **badge-overflow**: compose-refs, dynamic rendering
 - **marquee**: Direction hook, CSS animations, useRender inside Fragment (aria-hidden duplicate as plain div)
+- **rating**: `useRender` for `button` (defaultTagName: "button"), `visually-hidden-input` dep in base components, boolean presence attrs via conditional state spread
 - **scroller**: Navigation buttons, scroll shadows
 - **segmented-input**: Direction hook, position detection
 - **circular-progress**: CSS animations, SVG rendering

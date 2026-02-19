@@ -265,6 +265,31 @@
       ]
     },
     {
+      "name": "rating",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/rating.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "registryDependencies": [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "lucide-react"
+      ]
+    },
+    {
       "name": "marquee",
       "type": "registry:ui",
       "files": [
@@ -1053,6 +1078,70 @@
       ]
     },
     {
+      "name": "rating-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "rating"
+      ],
+      "files": [
+        {
+          "path": "examples/rating-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "rating-themes-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "rating"
+      ],
+      "files": [
+        {
+          "path": "examples/rating-themes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "rating-controlled-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "rating",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "examples/rating-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "rating-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers/zod",
+        "react-hook-form",
+        "zod",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "rating",
+        "button",
+        "form"
+      ],
+      "files": [
+        {
+          "path": "examples/rating-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "marquee-demo",
       "type": "registry:example",
       "registryDependencies": [
@@ -1125,6 +1214,16 @@
         {
           "path": "lib/compose-refs.ts",
           "type": "registry:lib"
+        }
+      ]
+    },
+    {
+      "name": "visually-hidden-input",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "components/visually-hidden-input.tsx",
+          "type": "registry:component"
         }
       ]
     },

@@ -21103,6 +21103,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating": {
+        name: "rating",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/rating.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -21821,6 +21839,62 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating-demo": {
+        name: "rating-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-themes-demo": {
+        name: "rating-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-controlled-demo": {
+        name: "rating-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button"],
+        files: [{
+          path: "registry/bases/base/examples/rating-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-form-demo": {
+        name: "rating-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/rating-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee-demo": {
         name: "marquee-demo",
         description: "",
@@ -21902,6 +21976,20 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "visually-hidden-input": {
+        name: "visually-hidden-input",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/components/visually-hidden-input.tsx")),
         source: "",
         chunks: []
       },
@@ -22203,6 +22291,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating": {
+        name: "rating",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/rating.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -22921,6 +23027,62 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating-demo": {
+        name: "rating-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-themes-demo": {
+        name: "rating-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-controlled-demo": {
+        name: "rating-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button"],
+        files: [{
+          path: "registry/bases/base/examples/rating-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-form-demo": {
+        name: "rating-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/rating-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee-demo": {
         name: "marquee-demo",
         description: "",
@@ -23002,6 +23164,20 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "visually-hidden-input": {
+        name: "visually-hidden-input",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/components/visually-hidden-input.tsx")),
         source: "",
         chunks: []
       },
@@ -23303,6 +23479,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating": {
+        name: "rating",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/rating.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -24021,6 +24215,62 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating-demo": {
+        name: "rating-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-themes-demo": {
+        name: "rating-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-controlled-demo": {
+        name: "rating-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button"],
+        files: [{
+          path: "registry/bases/base/examples/rating-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-form-demo": {
+        name: "rating-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/rating-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee-demo": {
         name: "marquee-demo",
         description: "",
@@ -24102,6 +24352,20 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "visually-hidden-input": {
+        name: "visually-hidden-input",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/components/visually-hidden-input.tsx")),
         source: "",
         chunks: []
       },
@@ -24403,6 +24667,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating": {
+        name: "rating",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/rating.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -25121,6 +25403,62 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating-demo": {
+        name: "rating-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-themes-demo": {
+        name: "rating-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-controlled-demo": {
+        name: "rating-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button"],
+        files: [{
+          path: "registry/bases/base/examples/rating-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-form-demo": {
+        name: "rating-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/rating-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee-demo": {
         name: "marquee-demo",
         description: "",
@@ -25202,6 +25540,20 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "visually-hidden-input": {
+        name: "visually-hidden-input",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/components/visually-hidden-input.tsx")),
         source: "",
         chunks: []
       },
@@ -25503,6 +25855,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating": {
+        name: "rating",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/rating.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -26221,6 +26591,62 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating-demo": {
+        name: "rating-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-themes-demo": {
+        name: "rating-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-controlled-demo": {
+        name: "rating-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button"],
+        files: [{
+          path: "registry/bases/base/examples/rating-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-form-demo": {
+        name: "rating-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/rating-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee-demo": {
         name: "marquee-demo",
         description: "",
@@ -26302,6 +26728,20 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "visually-hidden-input": {
+        name: "visually-hidden-input",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/components/visually-hidden-input.tsx")),
         source: "",
         chunks: []
       },
@@ -26603,6 +27043,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating": {
+        name: "rating",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/rating.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -27321,6 +27779,62 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "rating-demo": {
+        name: "rating-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-themes-demo": {
+        name: "rating-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating"],
+        files: [{
+          path: "registry/bases/base/examples/rating-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-controlled-demo": {
+        name: "rating-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button"],
+        files: [{
+          path: "registry/bases/base/examples/rating-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "rating-form-demo": {
+        name: "rating-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["rating","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/rating-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee-demo": {
         name: "marquee-demo",
         description: "",
@@ -27402,6 +27916,20 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/lib/compose-refs.ts")),
+        source: "",
+        chunks: []
+      },
+      "visually-hidden-input": {
+        name: "visually-hidden-input",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/components/visually-hidden-input.tsx")),
         source: "",
         chunks: []
       },

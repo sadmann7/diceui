@@ -223,6 +223,28 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "rating",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/rating.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+    registryDependencies: [
+      "direction",
+      "visually-hidden-input",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+    ],
+    dependencies: ["@base-ui/react", "lucide-react"],
+  },
+  {
     name: "marquee",
     type: "registry:ui",
     files: [
