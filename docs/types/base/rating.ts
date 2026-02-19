@@ -124,7 +124,10 @@ export interface RatingProps
 }
 
 export interface RatingItemProps
-  extends Omit<EmptyProps<"button"> & useRender.ComponentProps<"button">, "children"> {
+  extends Omit<
+    EmptyProps<"button"> & useRender.ComponentProps<"button">,
+    "children"
+  > {
   /**
    * The index of this rating item.
    * If not provided, it will be auto-calculated based on position.

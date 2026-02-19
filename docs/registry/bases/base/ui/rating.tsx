@@ -535,7 +535,10 @@ function Rating(props: RatingProps) {
 }
 
 interface RatingItemProps
-  extends Omit<React.ComponentProps<"button"> & useRender.ComponentProps<"button">, "children"> {
+  extends Omit<
+    React.ComponentProps<"button"> & useRender.ComponentProps<"button">,
+    "children"
+  > {
   index?: number;
   children?: React.ReactNode | ((dataState: DataState) => React.ReactNode);
 }
