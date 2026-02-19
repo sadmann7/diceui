@@ -449,4 +449,119 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "swap-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["swap"],
+    files: [
+      {
+        path: "examples/swap-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "swap-animations-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["swap"],
+    files: [
+      {
+        path: "examples/swap-animations-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "qr-code-demo",
+    type: "registry:example",
+    registryDependencies: ["qr-code"],
+    files: [
+      {
+        path: "examples/qr-code-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "qr-code-customization-demo",
+    type: "registry:example",
+    registryDependencies: ["qr-code"],
+    files: [
+      {
+        path: "examples/qr-code-customization-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "qr-code-overlay-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["qr-code"],
+    files: [
+      {
+        path: "examples/qr-code-overlay-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "qr-code-formats-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "qr-code"],
+    files: [
+      {
+        path: "examples/qr-code-formats-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "relative-time-card-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["button", "relative-time-card"],
+    files: [
+      {
+        path: "examples/relative-time-card-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "relative-time-card-basic-demo",
+    type: "registry:example",
+    registryDependencies: ["relative-time-card"],
+    files: [
+      {
+        path: "examples/relative-time-card-basic-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "relative-time-card-variants-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["button", "relative-time-card"],
+    files: [
+      {
+        path: "examples/relative-time-card-variants-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "relative-time-card-timezones-demo",
+    type: "registry:example",
+    registryDependencies: ["relative-time-card"],
+    files: [
+      {
+        path: "examples/relative-time-card-timezones-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];
