@@ -220,6 +220,6 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["hover-card"],
-    dependencies: ["@base-ui/react", "class-variance-authority"],
+    dependencies: ["@base-ui/react"],
   },
 ];

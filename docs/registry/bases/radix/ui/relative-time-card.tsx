@@ -1,23 +1,14 @@
 "use client";
 
 import { cva, type VariantProps } from "class-variance-authority";
-import {
-  type HoverCard as HoverCardPrimitive,
-  Slot as SlotPrimitive,
-} from "radix-ui";
+import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+import { cn } from "@/lib/utils";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/registry/bases/radix/ui/hover-card";
-
-type HoverCardProps = React.ComponentProps<typeof HoverCardPrimitive.Root>;
-type HoverCardContentProps = React.ComponentProps<
-  typeof HoverCardPrimitive.Content
->;
-
-import { cn } from "@/lib/utils";
 
 function pluralize(n: number, word: string) {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -131,9 +122,9 @@ const triggerVariants = cva(
 
 interface RelativeTimeCardProps
   extends React.ComponentProps<"button">,
-    HoverCardProps,
+    React.ComponentProps<typeof HoverCard>,
     Pick<
-      HoverCardContentProps,
+      React.ComponentProps<typeof HoverCardContent>,
       | "align"
       | "side"
       | "alignOffset"

@@ -44,7 +44,10 @@ export default function RelativeTimeCardDemo() {
       </div>
       <div className="flex flex-col gap-2">
         <span className="text-muted-foreground text-sm">Custom trigger</span>
-        <RelativeTimeCard date={now} render={<Button variant="outline" size="sm" />}>
+        <RelativeTimeCard
+          date={now}
+          render={<Button variant="outline" size="sm" />}
+        >
           <Clock />
           View time details
         </RelativeTimeCard>

@@ -15,7 +15,11 @@ export default function QRCodeFormatsDemo() {
       <div className="flex flex-col items-center gap-2">
         <QRCode value={value} size={120}>
           <QRCodeCanvas />
-          <QRCodeDownload format="png" filename="qr-canvas" render={<Button size="sm" />}>
+          <QRCodeDownload
+            format="png"
+            filename="qr-canvas"
+            render={<Button size="sm" />}
+          >
             Download PNG
           </QRCodeDownload>
         </QRCode>
@@ -25,7 +29,11 @@ export default function QRCodeFormatsDemo() {
       <div className="flex flex-col items-center gap-2">
         <QRCode value={value} size={120}>
           <QRCodeSvg />
-          <QRCodeDownload format="svg" filename="qr-svg" render={<Button size="sm" />}>
+          <QRCodeDownload
+            format="svg"
+            filename="qr-svg"
+            render={<Button size="sm" />}
+          >
             Download SVG
           </QRCodeDownload>
         </QRCode>
@@ -35,7 +43,11 @@ export default function QRCodeFormatsDemo() {
       <div className="flex flex-col items-center gap-2">
         <QRCode value={value} size={120}>
           <QRCodeImage alt="DiceUI QR Code" />
-          <QRCodeDownload format="png" filename="qr-image" render={<Button size="sm" />}>
+          <QRCodeDownload
+            format="png"
+            filename="qr-image"
+            render={<Button size="sm" />}
+          >
             Download PNG
           </QRCodeDownload>
         </QRCode>

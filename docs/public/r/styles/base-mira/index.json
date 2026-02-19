@@ -189,5 +189,76 @@
     "dependencies": [
       "@base-ui/react"
     ]
+  },
+  {
+    "name": "hover-card",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/hover-card.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "radix-ui"
+    ]
+  },
+  {
+    "name": "swap",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/swap.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "qr-code",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/qr-code.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "registryDependencies": [
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react",
+      "qrcode"
+    ],
+    "devDependencies": [
+      "@types/qrcode"
+    ]
+  },
+  {
+    "name": "relative-time-card",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/relative-time-card.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "hover-card"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
   }
 ]

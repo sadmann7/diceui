@@ -21043,6 +21043,66 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "hover-card": {
+        name: "hover-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/hover-card.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap": {
+        name: "swap",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/swap.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code": {
+        name: "qr-code",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/qr-code.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card": {
+        name: "relative-time-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["hover-card"],
+        files: [{
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/relative-time-card.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21600,6 +21660,146 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-demo": {
+        name: "swap-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-animations-demo": {
+        name: "swap-animations-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-animations-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-animations-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-demo": {
+        name: "qr-code-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-customization-demo": {
+        name: "qr-code-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-overlay-demo": {
+        name: "qr-code-overlay-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-overlay-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-overlay-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-formats-demo": {
+        name: "qr-code-formats-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-formats-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-formats-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-demo": {
+        name: "relative-time-card-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-basic-demo": {
+        name: "relative-time-card-basic-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-basic-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-basic-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-variants-demo": {
+        name: "relative-time-card-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-timezones-demo": {
+        name: "relative-time-card-timezones-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-timezones-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -21869,6 +22069,66 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "hover-card": {
+        name: "hover-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/hover-card.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap": {
+        name: "swap",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/swap.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code": {
+        name: "qr-code",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/qr-code.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card": {
+        name: "relative-time-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["hover-card"],
+        files: [{
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/relative-time-card.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -22426,6 +22686,146 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-demo": {
+        name: "swap-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-animations-demo": {
+        name: "swap-animations-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-animations-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-animations-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-demo": {
+        name: "qr-code-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-customization-demo": {
+        name: "qr-code-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-overlay-demo": {
+        name: "qr-code-overlay-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-overlay-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-overlay-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-formats-demo": {
+        name: "qr-code-formats-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-formats-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-formats-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-demo": {
+        name: "relative-time-card-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-basic-demo": {
+        name: "relative-time-card-basic-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-basic-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-basic-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-variants-demo": {
+        name: "relative-time-card-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-timezones-demo": {
+        name: "relative-time-card-timezones-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-timezones-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -22695,6 +23095,66 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "hover-card": {
+        name: "hover-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/hover-card.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap": {
+        name: "swap",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/swap.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code": {
+        name: "qr-code",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/qr-code.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card": {
+        name: "relative-time-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["hover-card"],
+        files: [{
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/relative-time-card.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -23252,6 +23712,146 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-demo": {
+        name: "swap-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-animations-demo": {
+        name: "swap-animations-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-animations-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-animations-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-demo": {
+        name: "qr-code-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-customization-demo": {
+        name: "qr-code-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-overlay-demo": {
+        name: "qr-code-overlay-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-overlay-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-overlay-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-formats-demo": {
+        name: "qr-code-formats-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-formats-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-formats-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-demo": {
+        name: "relative-time-card-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-basic-demo": {
+        name: "relative-time-card-basic-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-basic-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-basic-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-variants-demo": {
+        name: "relative-time-card-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-timezones-demo": {
+        name: "relative-time-card-timezones-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-timezones-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23521,6 +24121,66 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "hover-card": {
+        name: "hover-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/hover-card.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap": {
+        name: "swap",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/swap.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code": {
+        name: "qr-code",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/qr-code.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card": {
+        name: "relative-time-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["hover-card"],
+        files: [{
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/relative-time-card.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -24078,6 +24738,146 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-demo": {
+        name: "swap-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-animations-demo": {
+        name: "swap-animations-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-animations-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-animations-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-demo": {
+        name: "qr-code-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-customization-demo": {
+        name: "qr-code-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-overlay-demo": {
+        name: "qr-code-overlay-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-overlay-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-overlay-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-formats-demo": {
+        name: "qr-code-formats-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-formats-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-formats-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-demo": {
+        name: "relative-time-card-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-basic-demo": {
+        name: "relative-time-card-basic-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-basic-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-basic-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-variants-demo": {
+        name: "relative-time-card-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-timezones-demo": {
+        name: "relative-time-card-timezones-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-timezones-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -24347,6 +25147,66 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "hover-card": {
+        name: "hover-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/hover-card.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap": {
+        name: "swap",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/swap.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code": {
+        name: "qr-code",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/qr-code.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card": {
+        name: "relative-time-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["hover-card"],
+        files: [{
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/relative-time-card.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -24904,6 +25764,146 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-demo": {
+        name: "swap-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-animations-demo": {
+        name: "swap-animations-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-animations-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-animations-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-demo": {
+        name: "qr-code-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-customization-demo": {
+        name: "qr-code-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-overlay-demo": {
+        name: "qr-code-overlay-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-overlay-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-overlay-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-formats-demo": {
+        name: "qr-code-formats-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-formats-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-formats-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-demo": {
+        name: "relative-time-card-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-basic-demo": {
+        name: "relative-time-card-basic-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-basic-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-basic-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-variants-demo": {
+        name: "relative-time-card-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-timezones-demo": {
+        name: "relative-time-card-timezones-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-timezones-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -25173,6 +26173,66 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "hover-card": {
+        name: "hover-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/hover-card.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap": {
+        name: "swap",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/swap.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code": {
+        name: "qr-code",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/qr-code.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card": {
+        name: "relative-time-card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["hover-card"],
+        files: [{
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/relative-time-card.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -25730,6 +26790,146 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/status-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-demo": {
+        name: "swap-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "swap-animations-demo": {
+        name: "swap-animations-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["swap"],
+        files: [{
+          path: "registry/bases/base/examples/swap-animations-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/swap-animations-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-demo": {
+        name: "qr-code-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-customization-demo": {
+        name: "qr-code-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-overlay-demo": {
+        name: "qr-code-overlay-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-overlay-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-overlay-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "qr-code-formats-demo": {
+        name: "qr-code-formats-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","qr-code"],
+        files: [{
+          path: "registry/bases/base/examples/qr-code-formats-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/qr-code-formats-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-demo": {
+        name: "relative-time-card-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-basic-demo": {
+        name: "relative-time-card-basic-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-basic-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-basic-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-variants-demo": {
+        name: "relative-time-card-variants-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-variants-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-variants-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "relative-time-card-timezones-demo": {
+        name: "relative-time-card-timezones-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["relative-time-card"],
+        files: [{
+          path: "registry/bases/base/examples/relative-time-card-timezones-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
         source: "",
         chunks: []
       },

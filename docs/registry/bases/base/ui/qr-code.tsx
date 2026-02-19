@@ -300,7 +300,12 @@ interface QRCodeCanvasProps
   extends React.ComponentProps<"canvas">,
     useRender.ComponentProps<"canvas"> {}
 
-function QRCodeCanvas({ render, className, ref, ...canvasProps }: QRCodeCanvasProps) {
+function QRCodeCanvas({
+  render,
+  className,
+  ref,
+  ...canvasProps
+}: QRCodeCanvasProps) {
   const context = useQRCodeContext(CANVAS_NAME);
   const generationKey = useStore((state) => state.generationKey);
 
@@ -362,7 +367,12 @@ interface QRCodeImageProps
   alt?: string;
 }
 
-function QRCodeImage({ alt = "QR Code", render, className, ...imageProps }: QRCodeImageProps) {
+function QRCodeImage({
+  alt = "QR Code",
+  render,
+  className,
+  ...imageProps
+}: QRCodeImageProps) {
   const context = useQRCodeContext(IMAGE_NAME);
   const dataUrl = useStore((state) => state.dataUrl);
 
@@ -459,7 +469,11 @@ interface QRCodeOverlayProps
   extends React.ComponentProps<"div">,
     useRender.ComponentProps<"div"> {}
 
-function QRCodeOverlay({ render, className, ...overlayProps }: QRCodeOverlayProps) {
+function QRCodeOverlay({
+  render,
+  className,
+  ...overlayProps
+}: QRCodeOverlayProps) {
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
@@ -480,7 +494,12 @@ interface QRCodeSkeletonProps
   extends React.ComponentProps<"div">,
     useRender.ComponentProps<"div"> {}
 
-function QRCodeSkeleton({ render, className, style, ...skeletonProps }: QRCodeSkeletonProps) {
+function QRCodeSkeleton({
+  render,
+  className,
+  style,
+  ...skeletonProps
+}: QRCodeSkeletonProps) {
   const context = useQRCodeContext(SKELETON_NAME);
   const dataUrl = useStore((state) => state.dataUrl);
   const svgString = useStore((state) => state.svgString);
