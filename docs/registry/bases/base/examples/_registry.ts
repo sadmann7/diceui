@@ -659,4 +659,70 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "timeline-demo",
+    type: "registry:example",
+    registryDependencies: ["timeline"],
+    files: [
+      {
+        path: "examples/timeline-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "timeline-alternate-demo",
+    type: "registry:example",
+    registryDependencies: ["timeline"],
+    files: [
+      {
+        path: "examples/timeline-alternate-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "timeline-custom-dot-demo",
+    type: "registry:example",
+    registryDependencies: ["timeline"],
+    files: [
+      {
+        path: "examples/timeline-custom-dot-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "timeline-horizontal-demo",
+    type: "registry:example",
+    registryDependencies: ["timeline"],
+    files: [
+      {
+        path: "examples/timeline-horizontal-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "timeline-horizontal-alternate-demo",
+    type: "registry:example",
+    registryDependencies: ["timeline"],
+    files: [
+      {
+        path: "examples/timeline-horizontal-alternate-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "timeline-rtl-demo",
+    type: "registry:example",
+    registryDependencies: ["timeline"],
+    files: [
+      {
+        path: "examples/timeline-rtl-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

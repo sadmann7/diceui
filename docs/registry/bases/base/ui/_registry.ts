@@ -326,4 +326,24 @@ export const ui: Registry["items"] = [
       },
     },
   },
+  {
+    name: "timeline",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/timeline.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+    registryDependencies: [
+      "direction",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+    ],
+    dependencies: ["@base-ui/react", "class-variance-authority"],
+  },
 ];

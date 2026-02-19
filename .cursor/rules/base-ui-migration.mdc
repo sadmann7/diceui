@@ -10,7 +10,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### ✅ Completed (17 components)
+### ✅ Completed (18 components)
 
 | Component | Docs | Examples | Notes |
 |-----------|------|----------|-------|
@@ -32,15 +32,16 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | stat | ✅ | 3 | Separator dep |
 | status | ✅ | 4 | Simple variant system |
 | swap | ✅ | 2 | data-* via state object |
+| timeline | ✅ | 6 | Direction hook, store system, multiple item types |
 
 **Last Updated:** 2026-02-19
 
-### 🔄 Pending (18 components)
+### 🔄 Pending (17 components)
 
 **Medium Complexity:**
 - angle-slider, compare-slider, cropper, editable, file-upload
 - mask-input, phone-input, scroll-spy
-- stepper, time-picker, timeline
+- stepper, time-picker
 
 **High Complexity:**
 - color-picker, key-value, masonry, media-player
@@ -112,18 +113,33 @@ interface ComponentProps
 
 ## Migration Steps
 
-### 1. Copy Source Files
+### 1. Copy Source Files First
+
+**Always copy files first, then edit them in place.** This saves significant time and tokens compared to generating from scratch.
 
 ```bash
 # Copy UI component
 cp docs/registry/bases/radix/ui/[component].tsx docs/registry/bases/base/ui/[component].tsx
 
-# Copy examples
+# Copy ALL example files at once
 cp docs/registry/bases/radix/examples/[component]-*.tsx docs/registry/bases/base/examples/
 
-# Copy types
+# Copy types file
 cp docs/types/radix/[component].ts docs/types/base/[component].ts
+
+# Copy documentation (then edit base: field and paths)
+cp docs/content/docs/components/radix/[component].mdx docs/content/docs/components/base/[component].mdx
 ```
+
+**For examples and docs:** If the changes are minimal (just import path updates), copy them and make targeted edits instead of rewriting. Most examples only need:
+- Import path change: `@/registry/bases/radix/` → `@/registry/bases/base/`
+- Occasionally: Remove `asChild` props (if the component already renders the correct element)
+
+**For types:** Copy the radix types file, then:
+- Change: `CompositionProps` → `useRender.ComponentProps<"tagname">`
+- Add: `import type { useRender } from "@base-ui/react/use-render";`
+- Update: Import paths to base registry
+- Keep: All JSDoc comments and type structure
 
 ### 2. Update Dependencies
 
@@ -379,50 +395,20 @@ import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 
 ### 10. Update Documentation
 
-Create `docs/content/docs/components/base/[component].mdx`:
+**Copy the radix docs first**, then make minimal edits:
 
-```mdx
----
-base: base
-title: Component Name
-description: Component description
-preview: false
-links:
- api: /docs/components/base/component-name#api-reference
----
-
-<ComponentTabs name="component-name-demo" />
-
-## Installation
-
-### CLI
-
-```package-install
-npx shadcn@latest add "@diceui/component-name"
+```bash
+cp docs/content/docs/components/radix/[component].mdx docs/content/docs/components/base/[component].mdx
 ```
 
-### Manual
+Then update:
+- Change: `base: radix` → `base: base`
+- Change: `/docs/components/radix/` → `/docs/components/base/`
+- Change: `path="./types/radix/[component].ts"` → `path="./types/base/[component].ts"`
+- Update: Manual installation dependencies (`radix-ui` → `@base-ui/react`)
+- Update: Any Radix-specific API notes to Base UI equivalents (e.g., mention `useRender` composition)
 
-<Steps>
-  <Step>
-     Install the following dependencies:
-
-     ```package-install
-     @base-ui/react
-     ```
-  </Step>
-  <!-- ... -->
-</Steps>
-
-## API Reference
-
-### Component
-
-<AutoTypeTable
-  path="./types/base/component-name.ts"
-  name="ComponentProps"
-/>
-```
+**Keep everything else the same** - examples, features, accessibility sections, etc.
 
 ### 11. Build and Test
 
@@ -553,21 +539,43 @@ if (!open) return null;
 
 Use this checklist for each component migration:
 
-- [ ] Copy source files from radix to base
-- [ ] Update imports (useRender, mergeProps)
+**Phase 1: Copy Everything**
+- [ ] Copy UI component: `radix/ui/[name].tsx` → `base/ui/[name].tsx`
+- [ ] Copy ALL examples: `radix/examples/[name]-*.tsx` → `base/examples/[name]-*.tsx`
+- [ ] Copy types: `types/radix/[name].ts` → `types/base/[name].ts`
+- [ ] Copy docs: `components/radix/[name].mdx` → `components/base/[name].mdx`
+
+**Phase 2: Update Component (base/ui/[name].tsx)**
+- [ ] Update imports (useRender, mergeProps, useDirection)
 - [ ] Replace asChild with render prop pattern
-- [ ] Update type definitions (remove CompositionProps, add useRender.ComponentProps)
-- [ ] Replace DirectionPrimitive with direct prop
-- [ ] Update event handlers for Base UI components
+- [ ] Update Direction hook: `DirectionPrimitive.useDirection(dirProp)` → `dirProp ?? useDirection()`
 - [ ] Fix hook call order (before early returns)
-- [ ] Update dynamic type references
 - [ ] Update hook imports to use registry paths
-- [ ] Update registry dependencies
-- [ ] Copy and update types to types/base/
-- [ ] Copy and update documentation to docs/components/base/
-- [ ] Update AutoTypeTable paths
-- [ ] Build registry
-- [ ] Type check
+
+**Phase 3: Update Types (types/base/[name].ts)**
+- [ ] Add: `import type { useRender } from "@base-ui/react/use-render";`
+- [ ] Replace: `CompositionProps` → `useRender.ComponentProps<"tag">`
+- [ ] Update: Component import paths to base registry
+- [ ] Keep: All JSDoc comments as-is
+
+**Phase 4: Update Examples (base/examples/[name]-*.tsx)**
+- [ ] Update import paths: `radix/ui/` → `base/ui/`
+- [ ] Remove unnecessary `asChild` props (if any)
+
+**Phase 5: Update Docs (components/base/[name].mdx)**
+- [ ] Change: `base: radix` → `base: base`
+- [ ] Update: All `/radix/` paths → `/base/`
+- [ ] Update: `types/radix/` → `types/base/`
+- [ ] Update: Dependencies section (`radix-ui` → `@base-ui/react`)
+
+**Phase 6: Update Registries**
+- [ ] Add component to `base/ui/_registry.ts` (update dependencies)
+- [ ] Add examples to `base/examples/_registry.ts`
+- [ ] Update migration guide status
+
+**Phase 7: Verify**
+- [ ] Build registry: `pnpm --filter=docs build:registry`
+- [ ] Type check: `pnpm --filter=docs typecheck`
 - [ ] Test in browser
 
 ## Reference Migrations
@@ -576,6 +584,7 @@ See completed migrations as reference:
 - **action-bar**: Direction hook, portal logic, custom refs
 - **avatar-group**: Type-safe `React.cloneElement` with generics
 - **badge-overflow**: compose-refs, dynamic rendering
+- **timeline**: Direction hook, store system with React.useSyncExternalStore, multiple item types (Header, Title, Description, Time), cloneElement for ref attachment in TimelineItem
 - **marquee**: Direction hook, CSS animations, useRender inside Fragment (aria-hidden duplicate as plain div)
 - **rating**: `useRender` for `button` (defaultTagName: "button"), `visually-hidden-input` dep in base components, boolean presence attrs via conditional state spread
 - **scroller**: Navigation buttons, scroll shadows

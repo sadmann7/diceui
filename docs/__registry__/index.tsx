@@ -21139,6 +21139,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "timeline": {
+        name: "timeline",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/timeline.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21948,6 +21966,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-demo": {
+        name: "timeline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-alternate-demo": {
+        name: "timeline-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-custom-dot-demo": {
+        name: "timeline-custom-dot-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-custom-dot-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-custom-dot-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-demo": {
+        name: "timeline-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-alternate-demo": {
+        name: "timeline-horizontal-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-rtl-demo": {
+        name: "timeline-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -22327,6 +22429,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "timeline": {
+        name: "timeline",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/timeline.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -23136,6 +23256,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-demo": {
+        name: "timeline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-alternate-demo": {
+        name: "timeline-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-custom-dot-demo": {
+        name: "timeline-custom-dot-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-custom-dot-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-custom-dot-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-demo": {
+        name: "timeline-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-alternate-demo": {
+        name: "timeline-horizontal-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-rtl-demo": {
+        name: "timeline-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23515,6 +23719,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "timeline": {
+        name: "timeline",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/timeline.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -24324,6 +24546,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-demo": {
+        name: "timeline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-alternate-demo": {
+        name: "timeline-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-custom-dot-demo": {
+        name: "timeline-custom-dot-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-custom-dot-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-custom-dot-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-demo": {
+        name: "timeline-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-alternate-demo": {
+        name: "timeline-horizontal-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-rtl-demo": {
+        name: "timeline-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -24703,6 +25009,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "timeline": {
+        name: "timeline",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/timeline.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -25512,6 +25836,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-demo": {
+        name: "timeline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-alternate-demo": {
+        name: "timeline-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-custom-dot-demo": {
+        name: "timeline-custom-dot-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-custom-dot-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-custom-dot-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-demo": {
+        name: "timeline-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-alternate-demo": {
+        name: "timeline-horizontal-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-rtl-demo": {
+        name: "timeline-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -25891,6 +26299,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "timeline": {
+        name: "timeline",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/timeline.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -26700,6 +27126,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-demo": {
+        name: "timeline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-alternate-demo": {
+        name: "timeline-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-custom-dot-demo": {
+        name: "timeline-custom-dot-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-custom-dot-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-custom-dot-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-demo": {
+        name: "timeline-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-alternate-demo": {
+        name: "timeline-horizontal-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-rtl-demo": {
+        name: "timeline-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -27079,6 +27589,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "timeline": {
+        name: "timeline",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/timeline.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -27888,6 +28416,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-demo": {
+        name: "timeline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-alternate-demo": {
+        name: "timeline-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-custom-dot-demo": {
+        name: "timeline-custom-dot-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-custom-dot-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-custom-dot-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-demo": {
+        name: "timeline-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-horizontal-alternate-demo": {
+        name: "timeline-horizontal-alternate-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-horizontal-alternate-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "timeline-rtl-demo": {
+        name: "timeline-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["timeline"],
+        files: [{
+          path: "registry/bases/base/examples/timeline-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
         source: "",
         chunks: []
       },
