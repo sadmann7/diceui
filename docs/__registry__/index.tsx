@@ -21103,6 +21103,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "marquee": {
+        name: "marquee",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction"],
+        files: [{
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/marquee.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -21800,6 +21818,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-demo": {
+        name: "marquee-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-logo-demo": {
+        name: "marquee-logo-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-logo-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-logo-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-rtl-demo": {
+        name: "marquee-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-vertical-demo": {
+        name: "marquee-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -22129,6 +22203,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "marquee": {
+        name: "marquee",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction"],
+        files: [{
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/marquee.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -22826,6 +22918,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-demo": {
+        name: "marquee-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-logo-demo": {
+        name: "marquee-logo-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-logo-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-logo-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-rtl-demo": {
+        name: "marquee-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-vertical-demo": {
+        name: "marquee-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23155,6 +23303,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "marquee": {
+        name: "marquee",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction"],
+        files: [{
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/marquee.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -23852,6 +24018,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-demo": {
+        name: "marquee-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-logo-demo": {
+        name: "marquee-logo-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-logo-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-logo-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-rtl-demo": {
+        name: "marquee-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-vertical-demo": {
+        name: "marquee-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -24181,6 +24403,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "marquee": {
+        name: "marquee",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction"],
+        files: [{
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/marquee.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -24878,6 +25118,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-demo": {
+        name: "marquee-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-logo-demo": {
+        name: "marquee-logo-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-logo-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-logo-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-rtl-demo": {
+        name: "marquee-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-vertical-demo": {
+        name: "marquee-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -25207,6 +25503,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "marquee": {
+        name: "marquee",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction"],
+        files: [{
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/marquee.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -25904,6 +26218,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-demo": {
+        name: "marquee-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-logo-demo": {
+        name: "marquee-logo-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-logo-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-logo-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-rtl-demo": {
+        name: "marquee-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-vertical-demo": {
+        name: "marquee-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26233,6 +26603,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "marquee": {
+        name: "marquee",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction"],
+        files: [{
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/marquee.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -26930,6 +27318,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/relative-time-card-timezones-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-demo": {
+        name: "marquee-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-logo-demo": {
+        name: "marquee-logo-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-logo-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-logo-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-rtl-demo": {
+        name: "marquee-rtl-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-rtl-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "marquee-vertical-demo": {
+        name: "marquee-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["marquee"],
+        files: [{
+          path: "registry/bases/base/examples/marquee-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/marquee-vertical-demo.tsx")),
         source: "",
         chunks: []
       },

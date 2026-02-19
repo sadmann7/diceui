@@ -10,7 +10,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### ✅ Completed (15 components)
+### ✅ Completed (16 components)
 
 | Component | Docs | Examples | Notes |
 |-----------|------|----------|-------|
@@ -22,6 +22,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | fps | ✅ | 2 | Standalone, no deps |
 | gauge | ✅ | 4 | compose-refs hook |
 | hover-card | ✅ | — | Wraps PreviewCard from @base-ui/react/preview-card |
+| marquee | ✅ | 4 | Direction hook, CSS animations, useRender for content |
 | qr-code | ✅ | 4 | onError conflict resolved with Omit |
 | relative-time-card | ✅ | 4 | Uses hover-card wrapper, render prop on trigger |
 | scroller | ✅ | 4 | compose-refs, navigation |
@@ -33,11 +34,11 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 **Last Updated:** 2026-02-19
 
-### 🔄 Pending (20 components)
+### 🔄 Pending (19 components)
 
 **Medium Complexity:**
 - angle-slider, compare-slider, cropper, editable, file-upload
-- marquee, mask-input, phone-input, rating, scroll-spy
+- mask-input, phone-input, rating, scroll-spy
 - stepper, time-picker, timeline
 
 **High Complexity:**
@@ -557,6 +558,7 @@ See completed migrations as reference:
 - **action-bar**: Direction hook, portal logic, custom refs
 - **avatar-group**: Type-safe `React.cloneElement` with generics
 - **badge-overflow**: compose-refs, dynamic rendering
+- **marquee**: Direction hook, CSS animations, useRender inside Fragment (aria-hidden duplicate as plain div)
 - **scroller**: Navigation buttons, scroll shadows
 - **segmented-input**: Direction hook, position detection
 - **circular-progress**: CSS animations, SVG rendering
