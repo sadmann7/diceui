@@ -1,0 +1,12 @@
+{
+  "title": "Base",
+  "description": "Utility components and functions built on top of Base UI primitives.",
+  "pages": [
+    "client-only",
+    "composition",
+    "direction-provider",
+    "portal",
+    "visually-hidden",
+    "visually-hidden-input"
+  ]
+}

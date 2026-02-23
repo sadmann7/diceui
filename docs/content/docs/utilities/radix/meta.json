@@ -1,0 +1,15 @@
+{
+  "title": "Radix",
+  "description": "Utility components and functions built on top of Radix UI primitives.",
+  "pages": [
+    "client-only",
+    "composition",
+    "direction-provider",
+    "hitbox",
+    "pending",
+    "portal",
+    "presence",
+    "visually-hidden",
+    "visually-hidden-input"
+  ]
+}
