@@ -1,0 +1,59 @@
+---
+base: base
+title: Visually Hidden
+description: Hides content visually while keeping it accessible to screen readers.
+links:
+  api: /docs/utilities/base/visually-hidden#api-reference
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add @diceui/visually-hidden
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @base-ui/react
+     ```
+  </Step>
+
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/bases/base/components/visually-hidden.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+```tsx
+import { VisuallyHidden } from "@diceui/visually-hidden"
+
+export function IconButton() {
+  return (
+    <button>
+      <Icon />
+      <VisuallyHidden>Close menu</VisuallyHidden>
+    </button>
+  )
+}
+```
+
+## API Reference
+
+### VisuallyHidden
+
+Visually hides content while keeping it accessible.
+
+<AutoTypeTable
+  path="./types/base/utilities.ts"
+  name="VisuallyHiddenProps"
+/>

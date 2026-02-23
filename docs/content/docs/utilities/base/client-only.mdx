@@ -1,0 +1,50 @@
+---
+base: base
+title: Client Only
+description: Renders client-only components with hydration and fallback support.
+links:
+  api: /docs/utilities/base/client-only#api-reference
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add @diceui/client-only
+```
+
+### Manual
+
+<Steps>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/bases/base/components/client-only.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+```tsx
+import { ClientOnly } from "@/components/client-only"
+
+export default function App() {
+  return (
+    <ClientOnly fallback={<LoadingSpinner />}>
+      <ClientComponent />
+    </ClientOnly>
+  )
+}
+```
+
+## API Reference
+
+### ClientOnly
+
+A component that only renders its children on the client side.
+
+<AutoTypeTable
+  path="./types/base/utilities.ts"
+  name="ClientOnlyProps"
+/>

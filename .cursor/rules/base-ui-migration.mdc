@@ -56,26 +56,25 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Utilities Migration Status
 
-### ✅ Completed (1 utility)
+### ✅ Completed (6 utilities)
 
-| Utility | Notes |
-|---------|-------|
-| visually-hidden-input | Used by base components, already migrated |
+| Utility | Docs | Notes |
+|---------|------|-------|
+| client-only | ✅ | Standalone, no deps |
+| composition | ✅ | Ref utilities (composeRefs, useComposedRefs) |
+| direction-provider | ✅ | Re-exports from `@base-ui/react/direction-provider` |
+| portal | ✅ | useRender pattern, ReactDOM.createPortal |
+| visually-hidden | ✅ | useRender pattern, CSS-based hiding |
+| visually-hidden-input | ✅ | Form integration utility |
 
-### 🔄 Pending (7 utilities)
+### 🔄 Pending (3 utilities)
 
-**Core Utilities:**
-- direction-provider (Base UI provides this via `@base-ui/react/direction-provider`)
-- portal
-- visually-hidden
-- presence
+**Radix-Specific:**
+- presence (Radix animation primitive)
+- hitbox (may not need migration)
+- pending (may not need migration)
 
-**Other Utilities:**
-- client-only
-- hitbox
-- pending
-
-**Note:** `direction` is already available in base via re-export from `@base-ui/react/direction-provider` in `base/ui/direction.tsx`.
+**Note:** Utility docs now organized in `docs/content/docs/utilities/{radix,base}/` folders, matching component structure.
 
 ## Key Differences: Radix UI vs Base UI
 

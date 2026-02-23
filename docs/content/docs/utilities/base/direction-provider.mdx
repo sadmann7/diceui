@@ -1,0 +1,85 @@
+---
+base: base
+title: Direction Provider
+description: Provides bidirectional text support (RTL/LTR) across your application.
+links:
+  api: /docs/utilities/base/direction-provider#api-reference
+  docs: https://base-ui.com/react/api-reference/use-direction
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add @diceui/direction-provider
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @base-ui/react
+     ```
+  </Step>
+
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/bases/base/ui/direction.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+```tsx
+import { DirectionProvider, useDirection } from "@/components/ui/direction"
+
+export default function App() {
+  return (
+    <DirectionProvider dir="ltr">
+      <YourApp />
+    </DirectionProvider>
+  )
+}
+
+function YourApp() {
+  const dir = useDirection()
+  
+  return <div dir={dir}>Content respects direction</div>
+}
+```
+
+## API Reference
+
+### DirectionProvider
+
+Manages direction context for the `useDirection` hook. This is a re-export from `@base-ui/react/direction-provider`.
+
+<AutoTypeTable
+  path="./types/base/utilities.ts"
+  name="DirectionProviderProps"
+/>
+
+### useDirection
+
+A hook to access the current direction from the nearest `DirectionProvider`.
+
+```tsx
+import { useDirection } from "@/components/ui/direction"
+
+function Component() {
+  const dir = useDirection()
+  
+  return (
+    <Button dir={dir}>
+      Do a kickflip
+    </Button>
+  )
+}
+```
+
+**Note:** This is a direct re-export from Base UI's direction provider at `@base-ui/react/direction-provider`.
