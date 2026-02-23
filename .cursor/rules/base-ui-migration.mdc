@@ -54,6 +54,29 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 **External Packages (evaluate if needed):**
 - checkbox-group, combobox, listbox, mention, tags-input
 
+## Utilities Migration Status
+
+### ✅ Completed (1 utility)
+
+| Utility | Notes |
+|---------|-------|
+| visually-hidden-input | Used by base components, already migrated |
+
+### 🔄 Pending (7 utilities)
+
+**Core Utilities:**
+- direction-provider (Base UI provides this via `@base-ui/react/direction-provider`)
+- portal
+- visually-hidden
+- presence
+
+**Other Utilities:**
+- client-only
+- hitbox
+- pending
+
+**Note:** `direction` is already available in base via re-export from `@base-ui/react/direction-provider` in `base/ui/direction.tsx`.
+
 ## Key Differences: Radix UI vs Base UI
 
 ### Composition Pattern
@@ -112,7 +135,7 @@ interface ComponentProps
 - `@base-ui/react/use-render`
 - `@base-ui/react/merge-props`
 
-## Migration Steps
+## Component Migration Steps
 
 ### 1. Copy Source Files First
 
@@ -427,6 +450,44 @@ pnpm --filter=docs typecheck
 pnpm --filter=docs dev
 ```
 
+## Utilities Migration Steps
+
+Utilities (components in `docs/registry/bases/{radix,base}/components/`) also need migration. The process is similar but simpler than component migration.
+
+### When to Migrate Utilities
+
+- **direction-provider**: Base UI provides `DirectionProvider` via `@base-ui/react/direction-provider`, so we just re-export it in `base/ui/direction.tsx` (already done)
+- **visually-hidden-input**: Already migrated to base (no dependencies on Radix)
+- **portal**, **visually-hidden**, **presence**: Need migration when base components require them
+- **client-only**, **hitbox**, **pending**: Standalone utilities, migrate as needed
+
+### Utility Migration Process
+
+1. **Copy utility file:**
+   ```bash
+   cp docs/registry/bases/radix/components/[utility].tsx docs/registry/bases/base/components/[utility].tsx
+   ```
+
+2. **Update imports** - Replace Radix primitives with Base UI equivalents or remove if standalone
+
+3. **Update types** - Add utility types to `docs/types/base/utilities.ts`:
+   ```tsx
+   export interface PortalProps extends useRender.ComponentProps<"div"> {
+     container?: Element | DocumentFragment | null;
+   }
+   ```
+
+4. **Update documentation paths** - When utilities are migrated, update docs to reference base types:
+   ```mdx
+   path="./types/base/utilities.ts"  <!-- Instead of ./types/radix/utilities.ts -->
+   ```
+
+### Note on Type Organization
+
+- **`docs/types/radix/utilities.ts`**: Types for radix-based utilities
+- **`docs/types/base/utilities.ts`**: Types for base-migrated utilities
+- Each utility doc references the appropriate types file based on which base it uses
+
 ## Common Patterns
 
 ### data-* Attributes via state Object
@@ -597,6 +658,10 @@ See completed migrations as reference:
 - **qr-code**: `onError` conflict with `HTMLAttributes`, dynamic imports for SSR safety
 - **relative-time-card**: Wrapping a Base UI primitive (PreviewCard), render prop on trigger, delay props in context
 - **hover-card**: Direct Base UI primitive wrapper (no useRender), PreviewCard API mapping
+- **editable**: Direction hook, store system with useSyncExternalStore, `onSubmit` conflict resolved with `Omit<A & B, "onSubmit">`
+
+### Utilities
+- **visually-hidden-input**: Standalone utility, no Radix dependencies, used by many form components
 
 ## Tips
 
@@ -607,5 +672,7 @@ See completed migrations as reference:
 5. **Check for circular dependencies** - Define types after component definitions when needed
 6. **Watch for BaseUIEvent** - Let Base UI components handle their own event types
 7. **data-* always go in `state`** - Never put `data-*` directly in `mergeProps`; use the `state` object
-8. **Check for HTML attribute conflicts** - Custom props like `onError` may clash with `HTMLAttributes`; use `Omit` to resolve
+8. **Check for HTML attribute conflicts** - Custom props like `onError`, `onSubmit` may clash with `HTMLAttributes`; use `Omit` to resolve
 9. **Radix HoverCard ≠ Base UI HoverCard** - Base UI calls it `PreviewCard` with a structurally different API
+10. **Migrate utilities as needed** - When components depend on utilities (portal, presence, etc.), migrate those utilities first or use radix versions temporarily
+11. **Type organization** - Keep `types/radix/utilities.ts` and `types/base/utilities.ts` separate, update docs to reference the correct base
