@@ -6,8 +6,8 @@
     "composition",
     "direction-provider",
     "hitbox",
-    "pending",
     "portal",
+    "pending",
     "presence",
     "visually-hidden",
     "visually-hidden-input"

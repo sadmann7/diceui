@@ -1,0 +1,91 @@
+---
+base: base
+title: Presence
+description: Manages element mounting and unmounting with animation support.
+links:
+  api: /docs/utilities/base/presence#api-reference
+---
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add @diceui/presence
+```
+
+### Manual
+
+<Steps>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/bases/base/components/presence.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+```tsx
+import { Presence } from "@/components/presence"
+
+export default function AnimatedModal({ isOpen }: { isOpen: boolean }) {
+  return (
+    <Presence present={isOpen}>
+      <div className="animate-fade-in">
+        Modal content
+      </div>
+    </Presence>
+  )
+}
+```
+
+### With Render Function
+
+Access the present state for exit animations:
+
+```tsx
+import { Presence } from "@/components/presence"
+
+export default function FadeModal({ isOpen }: { isOpen: boolean }) {
+  return (
+    <Presence present={isOpen}>
+      {({ present }) => (
+        <div 
+          className={cn(
+            "transition-opacity duration-300",
+            present ? "opacity-100" : "opacity-0"
+          )}
+        >
+          Modal content
+        </div>
+      )}
+    </Presence>
+  )
+}
+```
+
+## API Reference
+
+### Presence
+
+Manages the mounting and unmounting of components with animation support.
+
+<AutoTypeTable
+  path="./types/base/utilities.ts"
+  name="PresenceProps"
+/>
+
+## How it Works
+
+The `Presence` component ensures that content remains mounted in the DOM during exit animations:
+
+1. When `present` becomes `true`, the element is immediately mounted
+2. When `present` becomes `false`, the element stays mounted to allow exit animations
+3. The render function receives the current `present` state for conditional styling
+
+This is essential for CSS animations and transitions that need the element to remain in the DOM while animating out.
+
+## Credits
+
+Inspired by [Radix UI's Presence primitive](https://github.com/radix-ui/primitives/tree/main/packages/react/presence).

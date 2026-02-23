@@ -5,7 +5,10 @@
     "client-only",
     "composition",
     "direction-provider",
+    "hitbox",
+    "pending",
     "portal",
+    "presence",
     "visually-hidden",
     "visually-hidden-input"
   ]

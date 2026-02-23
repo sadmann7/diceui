@@ -4,7 +4,7 @@ title: Direction Provider
 description: Provides bidirectional text support (RTL/LTR) across your application.
 links:
   api: /docs/utilities/base/direction-provider#api-reference
-  docs: https://base-ui.com/react/api-reference/use-direction
+  docs: https://base-ui.com/react/api-reference/direction-provider
 ---
 
 ## Installation
@@ -29,14 +29,14 @@ npx shadcn@latest add @diceui/direction-provider
   <Step>
     Copy and paste the following code into your project.
 
-    <ComponentSource src="./registry/bases/base/ui/direction.tsx" />
+    <ComponentSource src="./registry/bases/base/components/direction-provider.tsx" />
   </Step>
 </Steps>
 
 ## Usage
 
 ```tsx
-import { DirectionProvider, useDirection } from "@/components/ui/direction"
+import { DirectionProvider } from "@/components/direction-provider"
 
 export default function App() {
   return (
@@ -45,19 +45,13 @@ export default function App() {
     </DirectionProvider>
   )
 }
-
-function YourApp() {
-  const dir = useDirection()
-  
-  return <div dir={dir}>Content respects direction</div>
-}
 ```
 
 ## API Reference
 
 ### DirectionProvider
 
-Manages direction context for the `useDirection` hook. This is a re-export from `@base-ui/react/direction-provider`.
+Manages direction context for the `useDirection` hook.
 
 <AutoTypeTable
   path="./types/base/utilities.ts"
@@ -66,10 +60,10 @@ Manages direction context for the `useDirection` hook. This is a re-export from 
 
 ### useDirection
 
-A hook to access the current direction from the nearest `DirectionProvider`.
+A hook to access the current direction.
 
 ```tsx
-import { useDirection } from "@/components/ui/direction"
+import { useDirection } from "@/components/direction-provider"
 
 function Component() {
   const dir = useDirection()
@@ -82,4 +76,6 @@ function Component() {
 }
 ```
 
-**Note:** This is a direct re-export from Base UI's direction provider at `@base-ui/react/direction-provider`.
+## Notes
+
+This is a wrapper around Base UI's DirectionProvider for consistency with existing DiceUI APIs. It may be deprecated in future versions in favor of direct Base UI or shadcn/ui implementations.

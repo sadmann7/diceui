@@ -1,0 +1,114 @@
+---
+base: base
+title: Pending
+description: A utility component that disables interactions, maintains keyboard focus, and ensures proper accessibility for buttons, forms, links, switches, and any interactive element while they are pending.
+preview: true
+links:
+  api: /docs/utilities/base/pending#api-reference
+---
+
+<ComponentTabs name="pending-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add @diceui/pending
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @base-ui/react
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/bases/base/components/pending.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+### With Button
+
+```tsx
+import { Pending } from "@/components/pending"
+
+export function SubmitButton() {
+  const [isPending, startTransition] = useTransition()
+  
+  return (
+    <Pending isPending={isPending} render={<button />}>
+      Submit
+    </Pending>
+  )
+}
+```
+
+### Using the Hook
+
+```tsx
+import { usePending } from "@/components/pending"
+
+export function CustomButton() {
+  const [isPending] = useTransition()
+  const { pendingProps } = usePending({ isPending })
+  
+  return <button {...pendingProps}>Submit</button>
+}
+```
+
+## API Reference
+
+### Pending
+
+Component that manages pending state and interactions.
+
+<AutoTypeTable
+  path="./types/base/utilities.ts"
+  name="PendingProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-pending]",
+      value: "Present when the element is in pending state",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when the element is disabled",
+    },
+  ]}
+/>
+
+### usePending
+
+Hook that returns props for managing pending state.
+
+```tsx
+const { pendingProps, isPending } = usePending({
+  id: "submit-button",
+  isPending: true,
+  disabled: false
+})
+```
+
+## Accessibility
+
+When pending:
+- Sets `aria-busy="true"` to indicate loading state
+- Sets `aria-disabled="true"` to prevent interaction
+- Prevents all pointer and keyboard events
+- Maintains keyboard focus for better UX
+
+## Credits
+
+Based on [React Aria's Button implementation](https://github.com/adobe/react-spectrum/blob/main/packages/react-aria-components/src/Button.tsx).

@@ -1,0 +1,100 @@
+---
+base: base
+title: Hitbox
+description: A utility component that extends the clickable area of child elements for improved accessibility and user experience.
+preview: false
+links:
+  api: /docs/utilities/base/hitbox#api-reference
+---
+
+<ComponentTabs name="hitbox-demo" />
+
+## Installation
+
+### CLI
+
+```package-install
+npx shadcn@latest add @diceui/hitbox
+```
+
+### Manual
+
+<Steps>
+  <Step>
+     Install the following dependencies:
+
+     ```package-install
+     @base-ui/react class-variance-authority
+     ```
+  </Step>
+  <Step>
+    Copy and paste the following code into your project.
+
+    <ComponentSource src="./registry/bases/base/components/hitbox.tsx" />
+  </Step>
+</Steps>
+
+## Usage
+
+Wrap interactive elements to extend their clickable area:
+
+```tsx
+import { Hitbox } from "@/components/hitbox"
+
+export function IconButton() {
+  return (
+    <Hitbox size="lg">
+      <button className="p-1">
+        <Icon className="size-4" />
+      </button>
+    </Hitbox>
+  )
+}
+```
+
+## Examples
+
+### Custom Size
+
+Use a custom CSS value for the hitbox size:
+
+```tsx
+<Hitbox size="20px">
+  <button>Small button</button>
+</Hitbox>
+```
+
+### Positional Hitbox
+
+Apply hitbox only to specific sides:
+
+```tsx
+<Hitbox position="vertical" size="lg">
+  <button>Tall target</button>
+</Hitbox>
+```
+
+### Debug Mode
+
+Visualize the hitbox area during development:
+
+```tsx
+<Hitbox debug>
+  <button>Debug button</button>
+</Hitbox>
+```
+
+## API Reference
+
+### Hitbox
+
+Extends the clickable/tappable area of interactive elements.
+
+<AutoTypeTable
+  path="./types/base/utilities.ts"
+  name="HitboxProps"
+/>
+
+## Accessibility
+
+The hitbox is implemented using a CSS pseudo-element (`::after`) that extends the interactive area without affecting the visual layout or accessibility tree. Screen readers and keyboard navigation work normally.

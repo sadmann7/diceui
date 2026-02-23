@@ -56,23 +56,27 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Utilities Migration Status
 
-### ✅ Completed (6 utilities)
+**Total Utilities:** 9  
+**Completed:** 9  
+**Pending:** 0  
+
+### ✅ Completed (9 utilities)
 
 | Utility | Docs | Notes |
 |---------|------|-------|
 | client-only | ✅ | Standalone, no deps |
 | composition | ✅ | Ref utilities (composeRefs, useComposedRefs) |
 | direction-provider | ✅ | Re-exports from `@base-ui/react/direction-provider` |
+| hitbox | ✅ | Converted from Slot to useRender, CSS pseudo-element based |
+| pending | ✅ | Converted from Slot to useRender, manages loading states |
 | portal | ✅ | useRender pattern, ReactDOM.createPortal |
+| presence | ✅ | Custom implementation for animation mounting/unmounting |
 | visually-hidden | ✅ | useRender pattern, CSS-based hiding |
 | visually-hidden-input | ✅ | Form integration utility |
 
-### 🔄 Pending (3 utilities)
+### 🔄 Pending (0 utilities)
 
-**Radix-Specific:**
-- presence (Radix animation primitive)
-- hitbox (may not need migration)
-- pending (may not need migration)
+All utilities have been successfully migrated to Base UI!
 
 **Note:** Utility docs now organized in `docs/content/docs/utilities/{radix,base}/` folders, matching component structure.
 
