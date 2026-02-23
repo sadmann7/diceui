@@ -71,6 +71,26 @@
       ]
     },
     {
+      "name": "editable",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/editable.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
       "name": "status",
       "type": "registry:ui",
       "files": [
@@ -625,6 +645,82 @@
       "files": [
         {
           "path": "examples/color-swatch-transparency-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "editable-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "editable"
+      ],
+      "files": [
+        {
+          "path": "examples/editable-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "editable-double-click-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "editable"
+      ],
+      "files": [
+        {
+          "path": "examples/editable-double-click-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "editable-autosize-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "editable"
+      ],
+      "files": [
+        {
+          "path": "examples/editable-autosize-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "editable-todo-list-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "editable",
+        "checkbox"
+      ],
+      "files": [
+        {
+          "path": "examples/editable-todo-list-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "editable-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "react-hook-form",
+        "@hookform/resolvers",
+        "zod",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "editable",
+        "form"
+      ],
+      "files": [
+        {
+          "path": "examples/editable-form-demo.tsx",
           "type": "registry:example"
         }
       ]

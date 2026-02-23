@@ -10,7 +10,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### ✅ Completed (18 components)
+### ✅ Completed (19 components)
 
 | Component | Docs | Examples | Notes |
 |-----------|------|----------|-------|
@@ -19,6 +19,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | badge-overflow | ✅ | 3 | compose-refs hook |
 | circular-progress | ✅ | 3 | CSS animations included |
 | color-swatch | ✅ | 3 | data-* via state object |
+| editable | ✅ | 5 | Direction hook, store system, onSubmit conflict resolved with Omit |
 | fps | ✅ | 2 | Standalone, no deps |
 | gauge | ✅ | 4 | compose-refs hook |
 | hover-card | ✅ | — | Wraps PreviewCard from @base-ui/react/preview-card |
@@ -34,12 +35,12 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | swap | ✅ | 2 | data-* via state object |
 | timeline | ✅ | 6 | Direction hook, store system, multiple item types |
 
-**Last Updated:** 2026-02-19
+**Last Updated:** 2026-02-23
 
-### 🔄 Pending (17 components)
+### 🔄 Pending (16 components)
 
 **Medium Complexity:**
-- angle-slider, compare-slider, cropper, editable, file-upload
+- angle-slider, compare-slider, cropper, file-upload
 - mask-input, phone-input, scroll-spy
 - stepper, time-picker
 

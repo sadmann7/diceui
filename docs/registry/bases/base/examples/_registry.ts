@@ -183,6 +183,63 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "editable-demo",
+    type: "registry:example",
+    registryDependencies: ["editable"],
+    files: [
+      {
+        path: "examples/editable-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "editable-double-click-demo",
+    type: "registry:example",
+    registryDependencies: ["editable"],
+    files: [
+      {
+        path: "examples/editable-double-click-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "editable-autosize-demo",
+    type: "registry:example",
+    registryDependencies: ["editable"],
+    files: [
+      {
+        path: "examples/editable-autosize-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "editable-todo-list-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["editable", "checkbox"],
+    files: [
+      {
+        path: "examples/editable-todo-list-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "editable-form-demo",
+    type: "registry:example",
+    dependencies: ["react-hook-form", "@hookform/resolvers", "zod", "sonner"],
+    registryDependencies: ["editable", "form"],
+    files: [
+      {
+        path: "examples/editable-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "fps-demo",
     type: "registry:example",
     registryDependencies: ["fps"],

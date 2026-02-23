@@ -62,6 +62,24 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "editable",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/editable.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: [
+      "direction",
+      "visually-hidden-input",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+    ],
+    dependencies: ["@base-ui/react"],
+  },
+  {
     name: "status",
     type: "registry:ui",
     files: [

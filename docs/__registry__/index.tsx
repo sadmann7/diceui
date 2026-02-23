@@ -20933,6 +20933,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "editable": {
+        name: "editable",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/editable.tsx")),
+        source: "",
+        chunks: []
+      },
       "status": {
         name: "status",
         description: "",
@@ -21378,6 +21392,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-demo": {
+        name: "editable-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-double-click-demo": {
+        name: "editable-double-click-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-double-click-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-double-click-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-autosize-demo": {
+        name: "editable-autosize-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-autosize-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-autosize-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-todo-list-demo": {
+        name: "editable-todo-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/editable-todo-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-todo-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-form-demo": {
+        name: "editable-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","form"],
+        files: [{
+          path: "registry/bases/base/examples/editable-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -22223,6 +22307,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "editable": {
+        name: "editable",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/editable.tsx")),
+        source: "",
+        chunks: []
+      },
       "status": {
         name: "status",
         description: "",
@@ -22668,6 +22766,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-demo": {
+        name: "editable-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-double-click-demo": {
+        name: "editable-double-click-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-double-click-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-double-click-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-autosize-demo": {
+        name: "editable-autosize-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-autosize-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-autosize-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-todo-list-demo": {
+        name: "editable-todo-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/editable-todo-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-todo-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-form-demo": {
+        name: "editable-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","form"],
+        files: [{
+          path: "registry/bases/base/examples/editable-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23513,6 +23681,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "editable": {
+        name: "editable",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/editable.tsx")),
+        source: "",
+        chunks: []
+      },
       "status": {
         name: "status",
         description: "",
@@ -23958,6 +24140,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-demo": {
+        name: "editable-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-double-click-demo": {
+        name: "editable-double-click-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-double-click-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-double-click-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-autosize-demo": {
+        name: "editable-autosize-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-autosize-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-autosize-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-todo-list-demo": {
+        name: "editable-todo-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/editable-todo-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-todo-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-form-demo": {
+        name: "editable-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","form"],
+        files: [{
+          path: "registry/bases/base/examples/editable-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -24803,6 +25055,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "editable": {
+        name: "editable",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/editable.tsx")),
+        source: "",
+        chunks: []
+      },
       "status": {
         name: "status",
         description: "",
@@ -25248,6 +25514,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-demo": {
+        name: "editable-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-double-click-demo": {
+        name: "editable-double-click-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-double-click-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-double-click-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-autosize-demo": {
+        name: "editable-autosize-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-autosize-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-autosize-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-todo-list-demo": {
+        name: "editable-todo-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/editable-todo-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-todo-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-form-demo": {
+        name: "editable-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","form"],
+        files: [{
+          path: "registry/bases/base/examples/editable-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26093,6 +26429,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "editable": {
+        name: "editable",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/editable.tsx")),
+        source: "",
+        chunks: []
+      },
       "status": {
         name: "status",
         description: "",
@@ -26538,6 +26888,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-demo": {
+        name: "editable-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-double-click-demo": {
+        name: "editable-double-click-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-double-click-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-double-click-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-autosize-demo": {
+        name: "editable-autosize-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-autosize-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-autosize-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-todo-list-demo": {
+        name: "editable-todo-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/editable-todo-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-todo-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-form-demo": {
+        name: "editable-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","form"],
+        files: [{
+          path: "registry/bases/base/examples/editable-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -27383,6 +27803,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "editable": {
+        name: "editable",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/editable.tsx")),
+        source: "",
+        chunks: []
+      },
       "status": {
         name: "status",
         description: "",
@@ -27828,6 +28262,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-demo": {
+        name: "editable-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-double-click-demo": {
+        name: "editable-double-click-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-double-click-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-double-click-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-autosize-demo": {
+        name: "editable-autosize-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable"],
+        files: [{
+          path: "registry/bases/base/examples/editable-autosize-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-autosize-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-todo-list-demo": {
+        name: "editable-todo-list-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","checkbox"],
+        files: [{
+          path: "registry/bases/base/examples/editable-todo-list-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-todo-list-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "editable-form-demo": {
+        name: "editable-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["editable","form"],
+        files: [{
+          path: "registry/bases/base/examples/editable-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/editable-form-demo.tsx")),
         source: "",
         chunks: []
       },
