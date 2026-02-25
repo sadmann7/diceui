@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import {
@@ -11,11 +12,10 @@ import {
   FileTextIcon,
   FileVideoIcon,
 } from "lucide-react";
-import * as React from "react";
 import { cn } from "@/lib/utils";
-import { useDirection } from "@/registry/bases/base/ui/direction";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
+import { useDirection } from "@/registry/bases/base/ui/direction";
 
 const ROOT_NAME = "FileUpload";
 const DROPZONE_NAME = "FileUploadDropzone";
@@ -1044,13 +1044,11 @@ function FileUploadItem(props: FileUploadItemProps) {
     [id, fileState, statusId, nameId, sizeId, messageId],
   );
 
-  if (!fileState) return null;
-
-  const statusText = fileState.error
+  const statusText = fileState?.error
     ? `Error: ${fileState.error}`
-    : fileState.status === "uploading"
+    : fileState?.status === "uploading"
       ? `Uploading: ${fileState.progress}% complete`
-      : fileState.status === "success"
+      : fileState?.status === "success"
         ? "Upload complete"
         : "Ready to upload";
 
@@ -1063,7 +1061,7 @@ function FileUploadItem(props: FileUploadItemProps) {
         "aria-setsize": fileCount,
         "aria-posinset": fileIndex,
         "aria-describedby": `${nameId} ${sizeId} ${statusId} ${
-          fileState.error ? messageId : ""
+          fileState?.error ? messageId : ""
         }`,
         "aria-labelledby": nameId,
         dir: context.dir,
@@ -1261,136 +1259,111 @@ function FileUploadItemProgress(props: FileUploadItemProgressProps) {
 
   const itemContext = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
-  if (!itemContext.fileState) return null;
+  const shouldRender = forceMount || (itemContext.fileState?.progress !== 100 && itemContext.fileState?.progress !== undefined);
 
-  const shouldRender = forceMount || itemContext.fileState.progress !== 100;
+  let elementProps: React.ComponentProps<"div"> & { children?: React.ReactNode };
+  
+  if (variant === "circular") {
+    const circumference = 2 * Math.PI * ((size - 4) / 2);
+    const strokeDashoffset = itemContext.fileState
+      ? circumference - (itemContext.fileState.progress / 100) * circumference
+      : circumference;
 
-  if (!shouldRender) return null;
+    elementProps = {
+      role: "progressbar",
+      "aria-valuemin": 0,
+      "aria-valuemax": 100,
+      "aria-valuenow": itemContext.fileState?.progress ?? 0,
+      "aria-valuetext": `${itemContext.fileState?.progress ?? 0}%`,
+      "aria-labelledby": itemContext.nameId,
+      className: cn(
+        "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
+        className,
+      ),
+      children: (
+        <svg
+          className="-rotate-90 transform"
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          fill="none"
+          stroke="currentColor"
+        >
+          <circle
+            className="text-primary/20"
+            strokeWidth="2"
+            cx={size / 2}
+            cy={size / 2}
+            r={(size - 4) / 2}
+          />
+          <circle
+            className="text-primary transition-[stroke-dashoffset] duration-300 ease-linear"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={strokeDashoffset}
+            cx={size / 2}
+            cy={size / 2}
+            r={(size - 4) / 2}
+          />
+        </svg>
+      ),
+    };
+  } else if (variant === "fill") {
+    const progressPercentage = itemContext.fileState?.progress ?? 0;
+    const topInset = 100 - progressPercentage;
 
-  switch (variant) {
-    case "circular": {
-      const circumference = 2 * Math.PI * ((size - 4) / 2);
-      const strokeDashoffset =
-        circumference - (itemContext.fileState.progress / 100) * circumference;
-
-      return useRender({
-        defaultTagName: "div",
-        props: mergeProps<"div">(
-          {
-            role: "progressbar",
-            "aria-valuemin": 0,
-            "aria-valuemax": 100,
-            "aria-valuenow": itemContext.fileState.progress,
-            "aria-valuetext": `${itemContext.fileState.progress}%`,
-            "aria-labelledby": itemContext.nameId,
-            className: cn(
-              "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-              className,
-            ),
-            children: (
-              <svg
-                className="-rotate-90 transform"
-                width={size}
-                height={size}
-                viewBox={`0 0 ${size} ${size}`}
-                fill="none"
-                stroke="currentColor"
-              >
-                <circle
-                  className="text-primary/20"
-                  strokeWidth="2"
-                  cx={size / 2}
-                  cy={size / 2}
-                  r={(size - 4) / 2}
-                />
-                <circle
-                  className="text-primary transition-[stroke-dashoffset] duration-300 ease-linear"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeDasharray={circumference}
-                  strokeDashoffset={strokeDashoffset}
-                  cx={size / 2}
-                  cy={size / 2}
-                  r={(size - 4) / 2}
-                />
-              </svg>
-            ),
-          },
-          progressProps,
-        ),
-        render,
-        state: {
-          slot: "file-upload-progress",
-          variant,
-        },
-      });
-    }
-
-    case "fill": {
-      const progressPercentage = itemContext.fileState.progress;
-      const topInset = 100 - progressPercentage;
-
-      return useRender({
-        defaultTagName: "div",
-        props: mergeProps<"div">(
-          {
-            role: "progressbar",
-            "aria-valuemin": 0,
-            "aria-valuemax": 100,
-            "aria-valuenow": progressPercentage,
-            "aria-valuetext": `${progressPercentage}%`,
-            "aria-labelledby": itemContext.nameId,
-            className: cn(
-              "absolute inset-0 bg-primary/50 transition-[clip-path] duration-300 ease-linear",
-              className,
-            ),
-            style: {
-              clipPath: `inset(${topInset}% 0% 0% 0%)`,
-            },
-          },
-          progressProps,
-        ),
-        render,
-        state: {
-          slot: "file-upload-progress",
-          variant,
-        },
-      });
-    }
-
-    default:
-      return useRender({
-        defaultTagName: "div",
-        props: mergeProps<"div">(
-          {
-            role: "progressbar",
-            "aria-valuemin": 0,
-            "aria-valuemax": 100,
-            "aria-valuenow": itemContext.fileState.progress,
-            "aria-valuetext": `${itemContext.fileState.progress}%`,
-            "aria-labelledby": itemContext.nameId,
-            className: cn(
-              "relative h-1.5 w-full overflow-hidden rounded-full bg-primary/20",
-              className,
-            ),
-            children: (
-              <div
-                className="h-full w-full flex-1 bg-primary transition-transform duration-300 ease-linear"
-                style={{
-                  transform: `translateX(-${100 - itemContext.fileState.progress}%)`,
-                }}
-              />
-            ),
-          },
-          progressProps,
-        ),
-        render,
-        state: {
-          slot: "file-upload-progress",
-          variant,
-        },
-      });
+    elementProps = {
+      role: "progressbar",
+      "aria-valuemin": 0,
+      "aria-valuemax": 100,
+      "aria-valuenow": progressPercentage,
+      "aria-valuetext": `${progressPercentage}%`,
+      "aria-labelledby": itemContext.nameId,
+      className: cn(
+        "absolute inset-0 bg-primary/50 transition-[clip-path] duration-300 ease-linear",
+        className,
+      ),
+      style: {
+        clipPath: `inset(${topInset}% 0% 0% 0%)`,
+      },
+    };
+  } else {
+    elementProps = {
+      role: "progressbar",
+      "aria-valuemin": 0,
+      "aria-valuemax": 100,
+      "aria-valuenow": itemContext.fileState?.progress ?? 0,
+      "aria-valuetext": `${itemContext.fileState?.progress ?? 0}%`,
+      "aria-labelledby": itemContext.nameId,
+      className: cn(
+        "relative h-1.5 w-full overflow-hidden rounded-full bg-primary/20",
+        className,
+      ),
+      children: (
+        <div
+          className="h-full w-full flex-1 bg-primary transition-transform duration-300 ease-linear"
+          style={{
+            transform: `translateX(-${100 - (itemContext.fileState?.progress ?? 0)}%)`,
+          }}
+        />
+      ),
+    };
   }
+
+  const element = useRender({
+    defaultTagName: "div",
+    props: mergeProps<"div">(elementProps, progressProps),
+    render,
+    state: {
+      slot: "file-upload-progress",
+      variant,
+    },
+  });
+
+  if (!itemContext.fileState || !shouldRender) return null;
+
+  return element;
 }
 
 interface FileUploadItemDeleteProps
