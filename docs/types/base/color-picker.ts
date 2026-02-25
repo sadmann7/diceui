@@ -141,9 +141,9 @@ export interface ColorPickerProps
 
 export interface ColorPickerTriggerProps
   extends Omit<
-      React.ComponentProps<typeof PopoverTrigger>,
-      keyof React.ComponentProps<"button">
-    > {}
+    React.ComponentProps<typeof PopoverTrigger>,
+    keyof React.ComponentProps<"button">
+  > {}
 
 export interface ColorPickerContentProps
   extends Omit<
@@ -196,9 +196,9 @@ export interface ColorPickerFormatSelectProps
 
 export interface ColorPickerInputProps
   extends Omit<
-      React.ComponentProps<typeof Input>,
-      "value" | "onChange" | "color" | keyof React.ComponentProps<"input">
-    > {
+    React.ComponentProps<typeof Input>,
+    "value" | "onChange" | "color" | keyof React.ComponentProps<"input">
+  > {
   /**
    * When `true`, hides the alpha channel input.
    *

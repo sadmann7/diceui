@@ -5,16 +5,6 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { Button } from "@/registry/bases/radix/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/registry/bases/radix/ui/form";
-import { Input } from "@/registry/bases/radix/ui/input";
 import {
   Stepper,
   StepperContent,
@@ -29,6 +19,16 @@ import {
   StepperTitle,
   StepperTrigger,
 } from "@/registry/bases/base/ui/stepper";
+import { Button } from "@/registry/bases/radix/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/registry/bases/radix/ui/form";
+import { Input } from "@/registry/bases/radix/ui/input";
 import { Textarea } from "@/registry/bases/radix/ui/textarea";
 
 const formSchema = z.object({
@@ -244,14 +244,22 @@ export default function StepperValidationDemo() {
             </div>
           </StepperContent>
           <div className="flex justify-between">
-            <StepperPrev render={(props) => <Button type="button" variant="outline" {...props}>Previous</Button>} />
+            <StepperPrev
+              render={(props) => (
+                <Button type="button" variant="outline" {...props}>
+                  Previous
+                </Button>
+              )}
+            />
             <div className="text-muted-foreground text-sm">
               Step {stepIndex + 1} of {steps.length}
             </div>
             {stepIndex === steps.length - 1 ? (
               <Button type="submit">Complete Setup</Button>
             ) : (
-              <StepperNext render={(props) => <Button {...props}>Next</Button>} />
+              <StepperNext
+                render={(props) => <Button {...props}>Next</Button>}
+              />
             )}
           </div>
         </Stepper>

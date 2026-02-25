@@ -7,13 +7,13 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { PipetteIcon } from "lucide-react";
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
-import { useDirection } from "@/registry/bases/base/ui/direction";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
+import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { Button } from "@/registry/bases/base/ui/button";
+import { useDirection } from "@/registry/bases/base/ui/direction";
 import { Input } from "@/registry/bases/base/ui/input";
 import {
   Popover,

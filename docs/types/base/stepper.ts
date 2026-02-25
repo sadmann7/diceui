@@ -1,5 +1,5 @@
-import type * as React from "react";
 import type { useRender } from "@base-ui/react/use-render";
+import type * as React from "react";
 import type { ButtonProps, Direction, EmptyProps, Orientation } from "@/types";
 
 export interface StepperProps

@@ -460,10 +460,7 @@ export const ui: Registry["items"] = [
         type: "registry:lib",
       },
     ],
-    registryDependencies: [
-      "compose-refs",
-      "use-isomorphic-layout-effect",
-    ],
+    registryDependencies: ["compose-refs", "use-isomorphic-layout-effect"],
     dependencies: ["@base-ui/react"],
   },
   {

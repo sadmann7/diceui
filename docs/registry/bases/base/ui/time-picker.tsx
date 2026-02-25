@@ -1,9 +1,9 @@
 "use client";
 
-import * as React from "react";
-import { Clock } from "lucide-react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { Clock } from "lucide-react";
+import * as React from "react";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
