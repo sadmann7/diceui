@@ -19,6 +19,28 @@
     ]
   },
   {
+    "name": "angle-slider",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/angle-slider.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "compose-refs",
+      "direction",
+      "visually-hidden-input",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react",
+      "react-dom"
+    ]
+  },
+  {
     "name": "fps",
     "type": "registry:ui",
     "files": [

@@ -20877,6 +20877,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "angle-slider": {
+        name: "angle-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/angle-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -21196,6 +21210,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-demo": {
+        name: "angle-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-controlled-demo": {
+        name: "angle-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-range-demo": {
+        name: "angle-slider-range-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-range-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-range-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-themes-demo": {
+        name: "angle-slider-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-form-demo": {
+        name: "angle-slider-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -22251,6 +22335,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "angle-slider": {
+        name: "angle-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/angle-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -22570,6 +22668,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-demo": {
+        name: "angle-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-controlled-demo": {
+        name: "angle-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-range-demo": {
+        name: "angle-slider-range-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-range-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-range-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-themes-demo": {
+        name: "angle-slider-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-form-demo": {
+        name: "angle-slider-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23625,6 +23793,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "angle-slider": {
+        name: "angle-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/angle-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -23944,6 +24126,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-demo": {
+        name: "angle-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-controlled-demo": {
+        name: "angle-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-range-demo": {
+        name: "angle-slider-range-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-range-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-range-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-themes-demo": {
+        name: "angle-slider-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-form-demo": {
+        name: "angle-slider-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -24999,6 +25251,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "angle-slider": {
+        name: "angle-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/angle-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -25318,6 +25584,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-demo": {
+        name: "angle-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-controlled-demo": {
+        name: "angle-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-range-demo": {
+        name: "angle-slider-range-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-range-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-range-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-themes-demo": {
+        name: "angle-slider-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-form-demo": {
+        name: "angle-slider-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26373,6 +26709,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "angle-slider": {
+        name: "angle-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/angle-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -26692,6 +27042,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-demo": {
+        name: "angle-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-controlled-demo": {
+        name: "angle-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-range-demo": {
+        name: "angle-slider-range-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-range-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-range-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-themes-demo": {
+        name: "angle-slider-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-form-demo": {
+        name: "angle-slider-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -27747,6 +28167,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "angle-slider": {
+        name: "angle-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/angle-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -28066,6 +28500,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/action-bar-position-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-demo": {
+        name: "angle-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-controlled-demo": {
+        name: "angle-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-range-demo": {
+        name: "angle-slider-range-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-range-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-range-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-themes-demo": {
+        name: "angle-slider-themes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-themes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-themes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "angle-slider-form-demo": {
+        name: "angle-slider-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["angle-slider","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/angle-slider-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
         source: "",
         chunks: []
       },

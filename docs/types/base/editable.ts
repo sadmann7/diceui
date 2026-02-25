@@ -2,7 +2,10 @@ import type { useRender } from "@base-ui/react/use-render";
 import type { EmptyProps } from "@/types";
 
 export interface EditableProps
-  extends Omit<EmptyProps<"div"> & useRender.ComponentProps<"div">, "onSubmit"> {
+  extends Omit<
+    EmptyProps<"div"> & useRender.ComponentProps<"div">,
+    "onSubmit"
+  > {
   /**
    * The unique identifier for the editable component.
    * @default React.useId()

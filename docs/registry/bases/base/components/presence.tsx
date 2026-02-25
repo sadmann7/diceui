@@ -3,7 +3,9 @@
 import * as React from "react";
 
 interface PresenceProps {
-  children: React.ReactElement | ((props: { present: boolean }) => React.ReactElement);
+  children:
+    | React.ReactElement
+    | ((props: { present: boolean }) => React.ReactElement);
   present: boolean;
 }
 

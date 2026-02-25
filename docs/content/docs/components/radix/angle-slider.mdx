@@ -110,7 +110,7 @@ You can customize the appearance by targeting specific components:
 ### Track Theming
 Use `[&>[data-slot='angle-slider-track-rail']]` to style the background track:
 ```tsx
-<AngleSliderTrack className="[&>[data-slot='angle-slider-track-rail']]:stroke-green-100" />
+<AngleSliderTrack className="*:data-[slot='angle-slider-track-rail']:stroke-green-100" />
 ```
 
 ### Range Theming

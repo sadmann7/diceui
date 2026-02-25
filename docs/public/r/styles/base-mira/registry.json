@@ -22,6 +22,28 @@
       ]
     },
     {
+      "name": "angle-slider",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/angle-slider.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "compose-refs",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "react-dom"
+      ]
+    },
+    {
       "name": "fps",
       "type": "registry:ui",
       "files": [
@@ -444,6 +466,84 @@
       "files": [
         {
           "path": "examples/action-bar-position-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "angle-slider-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "angle-slider"
+      ],
+      "files": [
+        {
+          "path": "examples/angle-slider-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "angle-slider-controlled-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "motion",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "angle-slider",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "examples/angle-slider-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "angle-slider-range-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "angle-slider"
+      ],
+      "files": [
+        {
+          "path": "examples/angle-slider-range-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "angle-slider-themes-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "angle-slider"
+      ],
+      "files": [
+        {
+          "path": "examples/angle-slider-themes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "angle-slider-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers",
+        "react-hook-form",
+        "zod",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "angle-slider",
+        "button",
+        "form"
+      ],
+      "files": [
+        {
+          "path": "examples/angle-slider-form-demo.tsx",
           "type": "registry:example"
         }
       ]

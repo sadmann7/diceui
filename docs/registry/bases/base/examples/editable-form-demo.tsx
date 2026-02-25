@@ -81,7 +81,9 @@ export default function EditableFormDemo() {
                       <EditableInput />
                     </EditableArea>
                     <EditableTrigger
-                      render={<Button type="button" variant="outline" size="sm" />}
+                      render={
+                        <Button type="button" variant="outline" size="sm" />
+                      }
                     >
                       Edit
                     </EditableTrigger>
@@ -91,7 +93,9 @@ export default function EditableFormDemo() {
                       Save
                     </EditableSubmit>
                     <EditableCancel
-                      render={<Button type="button" variant="outline" size="sm" />}
+                      render={
+                        <Button type="button" variant="outline" size="sm" />
+                      }
                     >
                       Cancel
                     </EditableCancel>
@@ -123,7 +127,9 @@ export default function EditableFormDemo() {
                       <EditableInput />
                     </EditableArea>
                     <EditableTrigger
-                      render={<Button type="button" variant="outline" size="sm" />}
+                      render={
+                        <Button type="button" variant="outline" size="sm" />
+                      }
                     >
                       Edit
                     </EditableTrigger>
@@ -133,7 +139,9 @@ export default function EditableFormDemo() {
                       Save
                     </EditableSubmit>
                     <EditableCancel
-                      render={<Button type="button" variant="outline" size="sm" />}
+                      render={
+                        <Button type="button" variant="outline" size="sm" />
+                      }
                     >
                       Cancel
                     </EditableCancel>
