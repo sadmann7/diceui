@@ -83,4 +83,88 @@ export interface VisuallyHiddenInputProps {
   bubbles?: boolean;
 }
 
+export interface HitboxProps extends CompositionProps {
+  /**
+   * The size of the hitbox expansion.
+   * Can be a preset ("default" | "sm" | "lg") or a custom CSS value.
+   * @default "default"
+   */
+  size?: "default" | "sm" | "lg" | (string & {});
+
+  /**
+   * The position where the hitbox should be applied.
+   * @default "all"
+   */
+  position?: "all" | "top" | "bottom" | "left" | "right" | "vertical" | "horizontal";
+
+  /**
+   * The border radius of the hitbox.
+   * @default "none"
+   */
+  radius?: "none" | "sm" | "md" | "lg" | "full";
+
+  /**
+   * Whether to show debug visualization of the hitbox.
+   * @default false
+   */
+  debug?: boolean;
+}
+
+export interface UsePendingOptions {
+  /**
+   * The unique identifier for the pending element.
+   * @default React.useId()
+   */
+  id?: string;
+
+  /**
+   * Whether the element is in a pending state.
+   * @default false
+   */
+  isPending?: boolean;
+
+  /**
+   * Whether the element is disabled.
+   * @default false
+   */
+  disabled?: boolean;
+}
+
+export interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
+  /**
+   * Props to spread on the pending element.
+   */
+  pendingProps: React.HTMLAttributes<T> & {
+    "aria-busy"?: "true";
+    "aria-disabled"?: "true";
+    "data-pending"?: true;
+    "data-disabled"?: true;
+  };
+
+  /**
+   * Whether the element is in a pending state.
+   */
+  isPending: boolean;
+}
+
+export interface PendingProps extends CompositionProps {
+  /**
+   * The unique identifier for the pending element.
+   * @default React.useId()
+   */
+  id?: string;
+
+  /**
+   * Whether the element is in a pending state.
+   * @default false
+   */
+  isPending?: boolean;
+
+  /**
+   * Whether the element is disabled.
+   * @default false
+   */
+  disabled?: boolean;
+}
+
 export interface PresenceProps extends React.ComponentProps<typeof Presence> {}
