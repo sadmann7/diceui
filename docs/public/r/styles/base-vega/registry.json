@@ -348,6 +348,38 @@
       ]
     },
     {
+      "name": "key-value",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/key-value.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "textarea",
+        "compose-refs",
+        "visually-hidden-input",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "lucide-react"
+      ]
+    },
+    {
       "name": "hover-card",
       "type": "registry:ui",
       "files": [
@@ -1401,6 +1433,66 @@
       "files": [
         {
           "path": "examples/gauge-variants-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "key-value-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "key-value"
+      ],
+      "files": [
+        {
+          "path": "examples/key-value-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "key-value-paste-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "key-value"
+      ],
+      "files": [
+        {
+          "path": "examples/key-value-paste-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "key-value-validation-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "key-value"
+      ],
+      "files": [
+        {
+          "path": "examples/key-value-validation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "key-value-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers/zod",
+        "react-hook-form",
+        "zod"
+      ],
+      "registryDependencies": [
+        "key-value",
+        "button",
+        "form",
+        "input"
+      ],
+      "files": [
+        {
+          "path": "examples/key-value-form-demo.tsx",
           "type": "registry:example"
         }
       ]

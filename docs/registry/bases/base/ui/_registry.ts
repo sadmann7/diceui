@@ -303,6 +303,35 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "key-value",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/key-value.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+      {
+        path: "components/visually-hidden-input.tsx",
+        type: "registry:component",
+      },
+    ],
+    registryDependencies: [
+      "button",
+      "input",
+      "textarea",
+      "compose-refs",
+      "visually-hidden-input",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+    ],
+    dependencies: ["@base-ui/react", "lucide-react"],
+  },
+  {
     name: "hover-card",
     type: "registry:ui",
     files: [
