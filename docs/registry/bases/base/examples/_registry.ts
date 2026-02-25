@@ -184,6 +184,107 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "file-upload-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "sonner"],
+    registryDependencies: ["button", "file-upload"],
+    files: [
+      {
+        path: "examples/file-upload-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-chat-input-demo",
+    type: "registry:example",
+    dependencies: [
+      "lucide-react",
+      "sonner",
+      "uploadthing",
+      "@uploadthing/react",
+    ],
+    registryDependencies: ["button", "file-upload", "textarea"],
+    files: [
+      {
+        path: "examples/file-upload-chat-input-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-circular-progress-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["button", "file-upload"],
+    files: [
+      {
+        path: "examples/file-upload-circular-progress-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-direct-upload-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "sonner"],
+    registryDependencies: ["button", "file-upload"],
+    files: [
+      {
+        path: "examples/file-upload-direct-upload-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-fill-progress-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["button", "file-upload"],
+    files: [
+      {
+        path: "examples/file-upload-fill-progress-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-form-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "@hookform/resolvers/zod", "zod"],
+    registryDependencies: ["button", "file-upload", "form"],
+    files: [
+      {
+        path: "examples/file-upload-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-uploadthing-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "uploadthing", "@uploadthing/react"],
+    registryDependencies: ["button", "file-upload"],
+    files: [
+      {
+        path: "examples/file-upload-uploadthing-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "file-upload-validation-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react", "sonner"],
+    registryDependencies: ["button", "file-upload"],
+    files: [
+      {
+        path: "examples/file-upload-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "avatar-group-demo",
     type: "registry:example",
     registryDependencies: ["avatar", "avatar-group"],

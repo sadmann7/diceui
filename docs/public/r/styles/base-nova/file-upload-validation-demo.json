@@ -1,0 +1,20 @@
+{
+  "name": "file-upload-validation-demo",
+  "dependencies": [
+    "lucide-react",
+    "sonner"
+  ],
+  "registryDependencies": [
+    "button",
+    "file-upload"
+  ],
+  "files": [
+    {
+      "path": "examples/file-upload-validation-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport { Upload, X } from \"lucide-react\";\r\nimport * as React from \"react\";\r\nimport { toast } from \"sonner\";\r\nimport { Button } from \"@/registry/bases/base/ui/button\";\r\nimport {\r\n  FileUpload,\r\n  FileUploadDropzone,\r\n  FileUploadItem,\r\n  FileUploadItemDelete,\r\n  FileUploadItemMetadata,\r\n  FileUploadItemPreview,\r\n  FileUploadList,\r\n  FileUploadTrigger,\r\n} from \"@/registry/bases/base/ui/file-upload\";\r\n\r\nexport default function FileUploadValidationDemo() {\r\n  const [files, setFiles] = React.useState<File[]>([]);\r\n\r\n  const onFileValidate = React.useCallback(\r\n    (file: File): string | null => {\r\n      // Validate max files\r\n      if (files.length >= 2) {\r\n        return \"You can only upload up to 2 files\";\r\n      }\r\n\r\n      // Validate file type (only images)\r\n      if (!file.type.startsWith(\"image/\")) {\r\n        return \"Only image files are allowed\";\r\n      }\r\n\r\n      // Validate file size (max 2MB)\r\n      const MAX_SIZE = 2 * 1024 * 1024; // 2MB\r\n      if (file.size > MAX_SIZE) {\r\n        return `File size must be less than ${MAX_SIZE / (1024 * 1024)}MB`;\r\n      }\r\n\r\n      return null;\r\n    },\r\n    [files],\r\n  );\r\n\r\n  const onFileReject = React.useCallback((file: File, message: string) => {\r\n    toast(message, {\r\n      description: `\"${file.name.length > 20 ? `${file.name.slice(0, 20)}...` : file.name}\" has been rejected`,\r\n    });\r\n  }, []);\r\n\r\n  return (\r\n    <FileUpload\r\n      value={files}\r\n      onValueChange={setFiles}\r\n      onFileValidate={onFileValidate}\r\n      onFileReject={onFileReject}\r\n      accept=\"image/*\"\r\n      maxFiles={2}\r\n      className=\"w-full max-w-md\"\r\n      multiple\r\n    >\r\n      <FileUploadDropzone>\r\n        <div className=\"flex flex-col items-center gap-1\">\r\n          <div className=\"flex items-center justify-center rounded-full border p-2.5\">\r\n            <Upload className=\"size-6 text-muted-foreground\" />\r\n          </div>\r\n          <p className=\"font-medium text-sm\">Drag & drop files here</p>\r\n          <p className=\"text-muted-foreground text-xs\">\r\n            Or click to browse (max 2 files)\r\n          </p>\r\n        </div>\r\n        <FileUploadTrigger\r\n          render={(props) => (\r\n            <Button variant=\"outline\" size=\"sm\" className=\"mt-2 w-fit\" {...props}>\r\n              Browse files\r\n            </Button>\r\n          )}\r\n        />\r\n      </FileUploadDropzone>\r\n      <FileUploadList>\r\n        {files.map((file) => (\r\n          <FileUploadItem key={file.name} value={file}>\r\n            <FileUploadItemPreview />\r\n            <FileUploadItemMetadata />\r\n            <FileUploadItemDelete\r\n              render={(props) => (\r\n                <Button variant=\"ghost\" size=\"icon\" className=\"size-7\" {...props}>\r\n                  <X />\r\n                </Button>\r\n              )}\r\n            />\r\n          </FileUploadItem>\r\n        ))}\r\n      </FileUploadList>\r\n    </FileUpload>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

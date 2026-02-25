@@ -72,6 +72,22 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react", "react-dom", "lucide-react", "class-variance-authority"],
   },
   {
+    name: "file-upload",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/file-upload.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: [
+      "direction",
+      "@diceui/use-as-ref",
+      "@diceui/use-lazy-ref",
+    ],
+    dependencies: ["@base-ui/react", "react-dom", "lucide-react"],
+  },
+  {
     name: "fps",
     type: "registry:ui",
     files: [

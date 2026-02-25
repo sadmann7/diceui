@@ -20919,6 +20919,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "file-upload": {
+        name: "file-upload",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/file-upload.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -21434,6 +21448,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/cropper-video-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-demo": {
+        name: "file-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-chat-input-demo": {
+        name: "file-upload-chat-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-chat-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-chat-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-circular-progress-demo": {
+        name: "file-upload-circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-direct-upload-demo": {
+        name: "file-upload-direct-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-direct-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-direct-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-fill-progress-demo": {
+        name: "file-upload-fill-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-fill-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-fill-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-form-demo": {
+        name: "file-upload-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","form"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-uploadthing-demo": {
+        name: "file-upload-uploadthing-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-uploadthing-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-uploadthing-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-validation-demo": {
+        name: "file-upload-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-validation-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -22531,6 +22657,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "file-upload": {
+        name: "file-upload",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/file-upload.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -23046,6 +23186,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/cropper-video-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-demo": {
+        name: "file-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-chat-input-demo": {
+        name: "file-upload-chat-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-chat-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-chat-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-circular-progress-demo": {
+        name: "file-upload-circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-direct-upload-demo": {
+        name: "file-upload-direct-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-direct-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-direct-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-fill-progress-demo": {
+        name: "file-upload-fill-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-fill-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-fill-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-form-demo": {
+        name: "file-upload-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","form"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-uploadthing-demo": {
+        name: "file-upload-uploadthing-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-uploadthing-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-uploadthing-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-validation-demo": {
+        name: "file-upload-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-validation-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -24143,6 +24395,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "file-upload": {
+        name: "file-upload",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/file-upload.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -24658,6 +24924,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/cropper-video-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-demo": {
+        name: "file-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-chat-input-demo": {
+        name: "file-upload-chat-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-chat-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-chat-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-circular-progress-demo": {
+        name: "file-upload-circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-direct-upload-demo": {
+        name: "file-upload-direct-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-direct-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-direct-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-fill-progress-demo": {
+        name: "file-upload-fill-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-fill-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-fill-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-form-demo": {
+        name: "file-upload-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","form"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-uploadthing-demo": {
+        name: "file-upload-uploadthing-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-uploadthing-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-uploadthing-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-validation-demo": {
+        name: "file-upload-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-validation-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -25755,6 +26133,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "file-upload": {
+        name: "file-upload",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/file-upload.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -26270,6 +26662,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/cropper-video-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-demo": {
+        name: "file-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-chat-input-demo": {
+        name: "file-upload-chat-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-chat-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-chat-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-circular-progress-demo": {
+        name: "file-upload-circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-direct-upload-demo": {
+        name: "file-upload-direct-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-direct-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-direct-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-fill-progress-demo": {
+        name: "file-upload-fill-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-fill-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-fill-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-form-demo": {
+        name: "file-upload-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","form"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-uploadthing-demo": {
+        name: "file-upload-uploadthing-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-uploadthing-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-uploadthing-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-validation-demo": {
+        name: "file-upload-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-validation-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -27367,6 +27871,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "file-upload": {
+        name: "file-upload",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/file-upload.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -27882,6 +28400,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/cropper-video-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-demo": {
+        name: "file-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-chat-input-demo": {
+        name: "file-upload-chat-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-chat-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-chat-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-circular-progress-demo": {
+        name: "file-upload-circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-direct-upload-demo": {
+        name: "file-upload-direct-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-direct-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-direct-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-fill-progress-demo": {
+        name: "file-upload-fill-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-fill-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-fill-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-form-demo": {
+        name: "file-upload-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","form"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-uploadthing-demo": {
+        name: "file-upload-uploadthing-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-uploadthing-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-uploadthing-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-validation-demo": {
+        name: "file-upload-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-validation-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -28979,6 +29609,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "file-upload": {
+        name: "file-upload",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/file-upload.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -29494,6 +30138,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/cropper-video-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-demo": {
+        name: "file-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-chat-input-demo": {
+        name: "file-upload-chat-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-chat-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-chat-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-circular-progress-demo": {
+        name: "file-upload-circular-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-circular-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-circular-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-direct-upload-demo": {
+        name: "file-upload-direct-upload-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-direct-upload-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-direct-upload-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-fill-progress-demo": {
+        name: "file-upload-fill-progress-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-fill-progress-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-fill-progress-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-form-demo": {
+        name: "file-upload-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload","form"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-uploadthing-demo": {
+        name: "file-upload-uploadthing-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-uploadthing-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-uploadthing-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "file-upload-validation-demo": {
+        name: "file-upload-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","file-upload"],
+        files: [{
+          path: "registry/bases/base/examples/file-upload-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/file-upload-validation-demo.tsx")),
         source: "",
         chunks: []
       },

@@ -31,7 +31,7 @@ import {
   FileUploadItemPreview,
   FileUploadList,
   FileUploadTrigger,
-} from "@/registry/bases/radix/ui/file-upload";
+} from "@/registry/bases/base/ui/file-upload";
 import { Slider } from "@/registry/bases/radix/ui/slider";
 
 async function createCroppedImage(
@@ -233,11 +233,13 @@ export default function CropperFileUploadDemo() {
               PNG, JPG, WebP up to 10MB
             </p>
           </div>
-          <FileUploadTrigger asChild>
-            <Button variant="outline" size="sm">
-              Choose Files
-            </Button>
-          </FileUploadTrigger>
+          <FileUploadTrigger
+            render={(props) => (
+              <Button variant="outline" size="sm" {...props}>
+                Choose Files
+              </Button>
+            )}
+          />
         </div>
       </FileUploadDropzone>
       <FileUploadList className="max-h-96 overflow-y-auto">
@@ -247,7 +249,7 @@ export default function CropperFileUploadDemo() {
           return (
             <FileUploadItem key={file.name} value={file}>
               <FileUploadItemPreview
-                render={(
+                previewRender={(
                   originalFile: File,
                   fallback: () => React.ReactNode,
                 ) => {
@@ -340,15 +342,18 @@ export default function CropperFileUploadDemo() {
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
-                <FileUploadItemDelete asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-8 hover:bg-destructive/30 hover:text-destructive-foreground dark:hover:bg-destructive dark:hover:text-destructive-foreground"
-                  >
-                    <XIcon />
-                  </Button>
-                </FileUploadItemDelete>
+                <FileUploadItemDelete
+                  render={(props) => (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-8 hover:bg-destructive/30 hover:text-destructive-foreground dark:hover:bg-destructive dark:hover:text-destructive-foreground"
+                      {...props}
+                    >
+                      <XIcon />
+                    </Button>
+                  )}
+                />
               </div>
             </FileUploadItem>
           );

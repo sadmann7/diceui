@@ -87,6 +87,26 @@
       ]
     },
     {
+      "name": "file-upload",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/file-upload.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "react-dom",
+        "lucide-react"
+      ]
+    },
+    {
       "name": "fps",
       "type": "registry:ui",
       "files": [
@@ -728,6 +748,154 @@
       "files": [
         {
           "path": "examples/cropper-video-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "file-upload-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
+      "files": [
+        {
+          "path": "examples/file-upload-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "file-upload-chat-input-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "sonner",
+        "uploadthing",
+        "@uploadthing/react"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload",
+        "textarea"
+      ],
+      "files": [
+        {
+          "path": "examples/file-upload-chat-input-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "file-upload-circular-progress-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
+      "files": [
+        {
+          "path": "examples/file-upload-circular-progress-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "file-upload-direct-upload-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
+      "files": [
+        {
+          "path": "examples/file-upload-direct-upload-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "file-upload-fill-progress-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
+      "files": [
+        {
+          "path": "examples/file-upload-fill-progress-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "file-upload-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "@hookform/resolvers/zod",
+        "zod"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload",
+        "form"
+      ],
+      "files": [
+        {
+          "path": "examples/file-upload-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "file-upload-uploadthing-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "uploadthing",
+        "@uploadthing/react"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
+      "files": [
+        {
+          "path": "examples/file-upload-uploadthing-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "file-upload-validation-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "lucide-react",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "button",
+        "file-upload"
+      ],
+      "files": [
+        {
+          "path": "examples/file-upload-validation-demo.tsx",
           "type": "registry:example"
         }
       ]
