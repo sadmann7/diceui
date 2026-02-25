@@ -136,6 +136,28 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "color-picker",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/color-picker.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: [
+      "button",
+      "input",
+      "select",
+      "direction",
+      "visually-hidden-input",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+      "@diceui/compose-refs",
+    ],
+    dependencies: ["@base-ui/react"],
+  },
+  {
     name: "editable",
     type: "registry:ui",
     files: [

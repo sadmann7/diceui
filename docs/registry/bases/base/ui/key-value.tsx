@@ -5,11 +5,11 @@ import { useRender } from "@base-ui/react/use-render";
 import { PlusIcon, XIcon } from "lucide-react";
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
+import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { Button } from "@/registry/bases/base/ui/button";
 import { Input } from "@/registry/bases/base/ui/input";
 import { Textarea } from "@/registry/bases/base/ui/textarea";
@@ -333,12 +333,7 @@ interface KeyValueListProps extends DivProps {
 }
 
 function KeyValueList(props: KeyValueListProps) {
-  const {
-    orientation = "vertical",
-    className,
-    render,
-    ...listProps
-  } = props;
+  const { orientation = "vertical", className, render, ...listProps } = props;
 
   const value = useStore((state) => state.value);
 
@@ -734,7 +729,7 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
   const isDisabled = context.disabled || value.length <= context.minItems;
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+    (event: React.MouseEvent<RemoveElement>) => {
       const state = store.getState();
       if (state.value.length <= context.minItems) return;
 
@@ -749,7 +744,7 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
       store.setState("errors", newErrors);
 
       context.onRemove?.(itemToRemove);
-      
+
       if (onClickProp) {
         onClickProp(event as Parameters<typeof onClickProp>[0]);
       }
@@ -784,7 +779,7 @@ function KeyValueAdd(props: React.ComponentProps<typeof Button>) {
     (context.maxItems !== undefined && value.length >= context.maxItems);
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+    (event: React.MouseEvent<AddElement>) => {
       const state = store.getState();
       if (
         context.maxItems !== undefined &&
@@ -804,7 +799,7 @@ function KeyValueAdd(props: React.ComponentProps<typeof Button>) {
       store.setState("focusedId", newItem.id);
 
       context.onAdd?.(newItem);
-      
+
       if (onClickProp) {
         onClickProp(event as Parameters<typeof onClickProp>[0]);
       }

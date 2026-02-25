@@ -156,6 +156,30 @@
       ]
     },
     {
+      "name": "color-picker",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/color-picker.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "button",
+        "input",
+        "select",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/compose-refs"
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
       "name": "editable",
       "type": "registry:ui",
       "files": [
@@ -1279,6 +1303,67 @@
       "files": [
         {
           "path": "examples/color-swatch-transparency-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "color-picker-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-picker"
+      ],
+      "files": [
+        {
+          "path": "examples/color-picker-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "color-picker-inline-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-picker"
+      ],
+      "files": [
+        {
+          "path": "examples/color-picker-inline-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "color-picker-controlled-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "color-picker",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "examples/color-picker-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "color-picker-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers",
+        "react-hook-form",
+        "zod",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "color-picker",
+        "button",
+        "form"
+      ],
+      "files": [
+        {
+          "path": "examples/color-picker-form-demo.tsx",
           "type": "registry:example"
         }
       ]

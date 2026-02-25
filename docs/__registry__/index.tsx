@@ -20989,6 +20989,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "color-picker": {
+        name: "color-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "editable": {
         name: "editable",
         description: "",
@@ -21894,6 +21908,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-demo": {
+        name: "color-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-inline-demo": {
+        name: "color-picker-inline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-inline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-inline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-controlled-demo": {
+        name: "color-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-form-demo": {
+        name: "color-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23285,6 +23355,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "color-picker": {
+        name: "color-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "editable": {
         name: "editable",
         description: "",
@@ -24190,6 +24274,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-demo": {
+        name: "color-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-inline-demo": {
+        name: "color-picker-inline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-inline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-inline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-controlled-demo": {
+        name: "color-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-form-demo": {
+        name: "color-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -25581,6 +25721,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "color-picker": {
+        name: "color-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "editable": {
         name: "editable",
         description: "",
@@ -26486,6 +26640,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-demo": {
+        name: "color-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-inline-demo": {
+        name: "color-picker-inline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-inline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-inline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-controlled-demo": {
+        name: "color-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-form-demo": {
+        name: "color-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -27877,6 +28087,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "color-picker": {
+        name: "color-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "editable": {
         name: "editable",
         description: "",
@@ -28782,6 +29006,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-demo": {
+        name: "color-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-inline-demo": {
+        name: "color-picker-inline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-inline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-inline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-controlled-demo": {
+        name: "color-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-form-demo": {
+        name: "color-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -30173,6 +30453,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "color-picker": {
+        name: "color-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "editable": {
         name: "editable",
         description: "",
@@ -31078,6 +31372,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-demo": {
+        name: "color-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-inline-demo": {
+        name: "color-picker-inline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-inline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-inline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-controlled-demo": {
+        name: "color-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-form-demo": {
+        name: "color-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -32469,6 +32819,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "color-picker": {
+        name: "color-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/color-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "editable": {
         name: "editable",
         description: "",
@@ -33374,6 +33738,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/color-swatch-transparency-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-demo": {
+        name: "color-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-inline-demo": {
+        name: "color-picker-inline-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-inline-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-inline-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-controlled-demo": {
+        name: "color-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "color-picker-form-demo": {
+        name: "color-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["color-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/color-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/color-picker-form-demo.tsx")),
         source: "",
         chunks: []
       },

@@ -442,6 +442,51 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "color-picker-demo",
+    type: "registry:example",
+    registryDependencies: ["color-picker"],
+    files: [
+      {
+        path: "examples/color-picker-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "color-picker-inline-demo",
+    type: "registry:example",
+    registryDependencies: ["color-picker"],
+    files: [
+      {
+        path: "examples/color-picker-inline-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "color-picker-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["color-picker", "button"],
+    files: [
+      {
+        path: "examples/color-picker-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "color-picker-form-demo",
+    type: "registry:example",
+    dependencies: ["@hookform/resolvers", "react-hook-form", "zod", "sonner"],
+    registryDependencies: ["color-picker", "button", "form"],
+    files: [
+      {
+        path: "examples/color-picker-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "editable-demo",
     type: "registry:example",
     registryDependencies: ["editable"],
