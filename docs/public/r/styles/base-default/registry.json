@@ -207,6 +207,30 @@
       ]
     },
     {
+      "name": "scroll-spy",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/scroll-spy.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "registryDependencies": [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
       "name": "badge-overflow",
       "type": "registry:ui",
       "files": [
@@ -1353,6 +1377,46 @@
       "files": [
         {
           "path": "examples/scroller-navigation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroll-spy-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroll-spy"
+      ],
+      "files": [
+        {
+          "path": "examples/scroll-spy-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroll-spy-controlled-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroll-spy",
+        "button"
+      ],
+      "files": [
+        {
+          "path": "examples/scroll-spy-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "scroll-spy-vertical-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "scroll-spy"
+      ],
+      "files": [
+        {
+          "path": "examples/scroll-spy-vertical-demo.tsx",
           "type": "registry:example"
         }
       ]

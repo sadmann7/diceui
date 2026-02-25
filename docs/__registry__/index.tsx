@@ -21035,6 +21035,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "scroll-spy": {
+        name: "scroll-spy",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroll-spy.tsx")),
+        source: "",
+        chunks: []
+      },
       "badge-overflow": {
         name: "badge-overflow",
         description: "",
@@ -22006,6 +22024,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-demo": {
+        name: "scroll-spy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-controlled-demo": {
+        name: "scroll-spy-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy","button"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-vertical-demo": {
+        name: "scroll-spy-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -22925,6 +22985,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "scroll-spy": {
+        name: "scroll-spy",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroll-spy.tsx")),
+        source: "",
+        chunks: []
+      },
       "badge-overflow": {
         name: "badge-overflow",
         description: "",
@@ -23896,6 +23974,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-demo": {
+        name: "scroll-spy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-controlled-demo": {
+        name: "scroll-spy-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy","button"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-vertical-demo": {
+        name: "scroll-spy-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -24815,6 +24935,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "scroll-spy": {
+        name: "scroll-spy",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroll-spy.tsx")),
+        source: "",
+        chunks: []
+      },
       "badge-overflow": {
         name: "badge-overflow",
         description: "",
@@ -25786,6 +25924,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-demo": {
+        name: "scroll-spy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-controlled-demo": {
+        name: "scroll-spy-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy","button"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-vertical-demo": {
+        name: "scroll-spy-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26705,6 +26885,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "scroll-spy": {
+        name: "scroll-spy",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroll-spy.tsx")),
+        source: "",
+        chunks: []
+      },
       "badge-overflow": {
         name: "badge-overflow",
         description: "",
@@ -27676,6 +27874,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-demo": {
+        name: "scroll-spy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-controlled-demo": {
+        name: "scroll-spy-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy","button"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-vertical-demo": {
+        name: "scroll-spy-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -28595,6 +28835,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "scroll-spy": {
+        name: "scroll-spy",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroll-spy.tsx")),
+        source: "",
+        chunks: []
+      },
       "badge-overflow": {
         name: "badge-overflow",
         description: "",
@@ -29566,6 +29824,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-demo": {
+        name: "scroll-spy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-controlled-demo": {
+        name: "scroll-spy-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy","button"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-vertical-demo": {
+        name: "scroll-spy-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -30485,6 +30785,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "scroll-spy": {
+        name: "scroll-spy",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/scroll-spy.tsx")),
+        source: "",
+        chunks: []
+      },
       "badge-overflow": {
         name: "badge-overflow",
         description: "",
@@ -31456,6 +31774,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/scroller-navigation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-demo": {
+        name: "scroll-spy-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-controlled-demo": {
+        name: "scroll-spy-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy","button"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "scroll-spy-vertical-demo": {
+        name: "scroll-spy-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["scroll-spy"],
+        files: [{
+          path: "registry/bases/base/examples/scroll-spy-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/scroll-spy-vertical-demo.tsx")),
         source: "",
         chunks: []
       },

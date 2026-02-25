@@ -10,7 +10,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### ✅ Completed (25 components)
+### ✅ Completed (26 components)
 
 | Component | Docs | Examples | Notes |
 |-----------|------|----------|-------|
@@ -22,6 +22,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | file-upload | ✅ | 8 | Store system, drag & drop, 8 sub-components, previewRender renamed to avoid conflict with useRender, defaultValue conflict resolved with Omit, direction hook |
 | mask-input | ✅ | 5 | Predefined patterns, currency formatting, validation modes |
 | phone-input | ✅ | 3 | Store system, country detection, visually-hidden-input dep, popover/command deps still from radix |
+| scroll-spy | ✅ | 3 | Direction hook, store system, IntersectionObserver, 5 sub-components, LinkElement/SectionElement simplified to HTML types |
 | badge-overflow | ✅ | 3 | compose-refs hook |
 | circular-progress | ✅ | 3 | CSS animations included |
 | color-swatch | ✅ | 3 | data-* via state object |
@@ -41,12 +42,11 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | swap | ✅ | 2 | data-* via state object |
 | timeline | ✅ | 6 | Direction hook, store system, multiple item types |
 
-**Last Updated:** 2026-02-25 (phone-input completed)
+**Last Updated:** 2026-02-25 (scroll-spy completed)
 
-### 🔄 Pending (10 components)
+### 🔄 Pending (9 components)
 
 **Medium Complexity:**
-- scroll-spy
 - stepper, time-picker
 
 **High Complexity:**

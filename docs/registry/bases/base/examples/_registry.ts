@@ -609,6 +609,39 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "scroll-spy-demo",
+    type: "registry:example",
+    registryDependencies: ["scroll-spy"],
+    files: [
+      {
+        path: "examples/scroll-spy-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scroll-spy-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["scroll-spy", "button"],
+    files: [
+      {
+        path: "examples/scroll-spy-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "scroll-spy-vertical-demo",
+    type: "registry:example",
+    registryDependencies: ["scroll-spy"],
+    files: [
+      {
+        path: "examples/scroll-spy-vertical-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "segmented-input-demo",
     type: "registry:example",
     registryDependencies: ["segmented-input"],
