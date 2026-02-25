@@ -375,7 +375,10 @@ export interface FileUploadItemPreviewProps
    * />
    * ```
    */
-  previewRender?: (file: File, fallback: () => React.ReactNode) => React.ReactNode;
+  previewRender?: (
+    file: File,
+    fallback: () => React.ReactNode,
+  ) => React.ReactNode;
 }
 
 export interface FileUploadItemMetadataProps

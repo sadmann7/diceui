@@ -70,7 +70,12 @@ export default function FileUploadValidationDemo() {
         </div>
         <FileUploadTrigger
           render={(props) => (
-            <Button variant="outline" size="sm" className="mt-2 w-fit" {...props}>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2 w-fit"
+              {...props}
+            >
               Browse files
             </Button>
           )}
@@ -83,7 +88,12 @@ export default function FileUploadValidationDemo() {
             <FileUploadItemMetadata />
             <FileUploadItemDelete
               render={(props) => (
-                <Button variant="ghost" size="icon" className="size-7" {...props}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7"
+                  {...props}
+                >
                   <X />
                 </Button>
               )}

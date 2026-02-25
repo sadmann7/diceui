@@ -12,16 +12,6 @@ import {
   type CropperPoint,
   type CropperProps,
 } from "@/registry/bases/base/ui/cropper";
-import { Label } from "@/registry/bases/base/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/registry/bases/radix/ui/dialog";
 import {
   FileUpload,
   FileUploadDropzone,
@@ -32,6 +22,16 @@ import {
   FileUploadList,
   FileUploadTrigger,
 } from "@/registry/bases/base/ui/file-upload";
+import { Label } from "@/registry/bases/base/ui/label";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/registry/bases/radix/ui/dialog";
 import { Slider } from "@/registry/bases/radix/ui/slider";
 
 async function createCroppedImage(

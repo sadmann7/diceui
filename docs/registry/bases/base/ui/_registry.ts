@@ -69,7 +69,12 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "react-dom", "lucide-react", "class-variance-authority"],
+    dependencies: [
+      "@base-ui/react",
+      "react-dom",
+      "lucide-react",
+      "class-variance-authority",
+    ],
   },
   {
     name: "file-upload",

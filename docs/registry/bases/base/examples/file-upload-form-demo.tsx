@@ -96,7 +96,12 @@ export default function FileUploadFormDemo() {
                     Drag and drop or
                     <FileUploadTrigger
                       render={(props) => (
-                        <Button variant="link" size="sm" className="p-0" {...props}>
+                        <Button
+                          variant="link"
+                          size="sm"
+                          className="p-0"
+                          {...props}
+                        >
                           choose files
                         </Button>
                       )}

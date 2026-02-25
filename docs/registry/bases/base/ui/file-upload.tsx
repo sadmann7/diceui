@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import {
@@ -12,6 +11,7 @@ import {
   FileTextIcon,
   FileVideoIcon,
 } from "lucide-react";
+import * as React from "react";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
@@ -1259,10 +1259,15 @@ function FileUploadItemProgress(props: FileUploadItemProgressProps) {
 
   const itemContext = useFileUploadItemContext(ITEM_PROGRESS_NAME);
 
-  const shouldRender = forceMount || (itemContext.fileState?.progress !== 100 && itemContext.fileState?.progress !== undefined);
+  const shouldRender =
+    forceMount ||
+    (itemContext.fileState?.progress !== 100 &&
+      itemContext.fileState?.progress !== undefined);
 
-  let elementProps: React.ComponentProps<"div"> & { children?: React.ReactNode };
-  
+  let elementProps: React.ComponentProps<"div"> & {
+    children?: React.ReactNode;
+  };
+
   if (variant === "circular") {
     const circumference = 2 * Math.PI * ((size - 4) / 2);
     const strokeDashoffset = itemContext.fileState
