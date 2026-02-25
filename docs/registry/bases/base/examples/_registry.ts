@@ -719,6 +719,52 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "stepper-demo",
+    type: "registry:example",
+    registryDependencies: ["stepper"],
+    files: [
+      {
+        path: "examples/stepper-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stepper-form-demo",
+    type: "registry:example",
+    dependencies: ["zod", "react-hook-form", "@hookform/resolvers"],
+    registryDependencies: ["stepper", "button", "form", "input", "textarea"],
+    files: [
+      {
+        path: "examples/stepper-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stepper-validation-demo",
+    type: "registry:example",
+    dependencies: ["zod", "react-hook-form", "@hookform/resolvers"],
+    registryDependencies: ["stepper", "button", "form", "input", "textarea"],
+    files: [
+      {
+        path: "examples/stepper-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "stepper-vertical-demo",
+    type: "registry:example",
+    registryDependencies: ["stepper"],
+    files: [
+      {
+        path: "examples/stepper-vertical-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "stat-demo",
     type: "registry:example",
     dependencies: ["lucide-react"],

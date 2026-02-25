@@ -21113,6 +21113,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "stepper": {
+        name: "stepper",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stepper.tsx")),
+        source: "",
+        chunks: []
+      },
       "gauge": {
         name: "gauge",
         description: "",
@@ -22164,6 +22182,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-demo": {
+        name: "stepper-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-form-demo": {
+        name: "stepper-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-validation-demo": {
+        name: "stepper-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-validation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-vertical-demo": {
+        name: "stepper-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23063,6 +23137,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "stepper": {
+        name: "stepper",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stepper.tsx")),
+        source: "",
+        chunks: []
+      },
       "gauge": {
         name: "gauge",
         description: "",
@@ -24114,6 +24206,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-demo": {
+        name: "stepper-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-form-demo": {
+        name: "stepper-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-validation-demo": {
+        name: "stepper-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-validation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-vertical-demo": {
+        name: "stepper-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -25013,6 +25161,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "stepper": {
+        name: "stepper",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stepper.tsx")),
+        source: "",
+        chunks: []
+      },
       "gauge": {
         name: "gauge",
         description: "",
@@ -26064,6 +26230,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-demo": {
+        name: "stepper-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-form-demo": {
+        name: "stepper-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-validation-demo": {
+        name: "stepper-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-validation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-vertical-demo": {
+        name: "stepper-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26963,6 +27185,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "stepper": {
+        name: "stepper",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stepper.tsx")),
+        source: "",
+        chunks: []
+      },
       "gauge": {
         name: "gauge",
         description: "",
@@ -28014,6 +28254,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-demo": {
+        name: "stepper-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-form-demo": {
+        name: "stepper-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-validation-demo": {
+        name: "stepper-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-validation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-vertical-demo": {
+        name: "stepper-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -28913,6 +29209,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "stepper": {
+        name: "stepper",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stepper.tsx")),
+        source: "",
+        chunks: []
+      },
       "gauge": {
         name: "gauge",
         description: "",
@@ -29964,6 +30278,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-demo": {
+        name: "stepper-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-form-demo": {
+        name: "stepper-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-validation-demo": {
+        name: "stepper-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-validation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-vertical-demo": {
+        name: "stepper-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -30863,6 +31233,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "stepper": {
+        name: "stepper",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/stepper.tsx")),
+        source: "",
+        chunks: []
+      },
       "gauge": {
         name: "gauge",
         description: "",
@@ -31914,6 +32302,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/stack-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-demo": {
+        name: "stepper-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-form-demo": {
+        name: "stepper-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-validation-demo": {
+        name: "stepper-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper","button","form","input","textarea"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-validation-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "stepper-vertical-demo": {
+        name: "stepper-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["stepper"],
+        files: [{
+          path: "registry/bases/base/examples/stepper-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/stepper-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
