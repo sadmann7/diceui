@@ -117,6 +117,43 @@ export interface HitboxProps extends useRender.ComponentProps<"div"> {
   debug?: boolean;
 }
 
+export interface UsePendingOptions {
+  /**
+   * The unique identifier for the pending element.
+   * @default React.useId()
+   */
+  id?: string;
+
+  /**
+   * Whether the element is in a pending state.
+   * @default false
+   */
+  isPending?: boolean;
+
+  /**
+   * Whether the element is disabled.
+   * @default false
+   */
+  disabled?: boolean;
+}
+
+export interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
+  /**
+   * Props to spread on the pending element.
+   */
+  pendingProps: React.HTMLAttributes<T> & {
+    "aria-busy"?: "true";
+    "aria-disabled"?: "true";
+    "data-pending"?: true;
+    "data-disabled"?: true;
+  };
+
+  /**
+   * Whether the element is in a pending state.
+   */
+  isPending: boolean;
+}
+
 export interface PendingProps extends useRender.ComponentProps<"div"> {
   /**
    * The unique identifier for the pending element.

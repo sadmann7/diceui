@@ -91,7 +91,21 @@ Component that manages pending state and interactions.
 
 ### usePending
 
-Hook that returns props for managing pending state.
+Hook that manages pending state for interactive elements. Returns props to spread on your element and the current pending state.
+
+<AutoTypeTable
+  path="./types/base/utilities.ts"
+  name="UsePendingOptions"
+/>
+
+#### Returns
+
+<AutoTypeTable
+  path="./types/base/utilities.ts"
+  name="UsePendingReturn"
+/>
+
+**Usage:**
 
 ```tsx
 const { pendingProps, isPending } = usePending({
