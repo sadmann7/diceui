@@ -2,6 +2,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import {
+  PhoneInput,
+  PhoneInputCountrySelect,
+  PhoneInputField,
+} from "@/registry/bases/base/ui/phone-input";
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Form,
@@ -12,11 +17,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/registry/bases/radix/ui/form";
-import {
-  PhoneInput,
-  PhoneInputCountrySelect,
-  PhoneInputField,
-} from "@/registry/bases/base/ui/phone-input";
 
 const FormSchema = z.object({
   phone: z.string().min(1, {

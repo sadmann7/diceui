@@ -5,6 +5,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import { MaskInput } from "@/registry/bases/base/ui/mask-input";
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Form,
@@ -15,7 +16,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/registry/bases/radix/ui/form";
-import { MaskInput } from "@/registry/bases/base/ui/mask-input";
 
 const formSchema = z.object({
   phone: z.string().min(10, "Phone number must be at least 10 digits"),
