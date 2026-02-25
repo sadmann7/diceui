@@ -65,6 +65,28 @@
       ]
     },
     {
+      "name": "cropper",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/cropper.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "react-dom",
+        "lucide-react",
+        "class-variance-authority"
+      ]
+    },
+    {
       "name": "fps",
       "type": "registry:ui",
       "files": [
@@ -623,6 +645,89 @@
       "files": [
         {
           "path": "examples/compare-slider-vertical-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "cropper"
+      ],
+      "files": [
+        {
+          "path": "examples/cropper-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-controlled-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "cropper",
+        "button",
+        "label",
+        "slider"
+      ],
+      "files": [
+        {
+          "path": "examples/cropper-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-file-upload-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers",
+        "react-hook-form",
+        "zod"
+      ],
+      "registryDependencies": [
+        "cropper",
+        "button",
+        "dialog",
+        "label",
+        "slider"
+      ],
+      "files": [
+        {
+          "path": "examples/cropper-file-upload-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-shapes-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "cropper",
+        "label",
+        "select",
+        "switch"
+      ],
+      "files": [
+        {
+          "path": "examples/cropper-shapes-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "cropper-video-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "cropper",
+        "button",
+        "label",
+        "select"
+      ],
+      "files": [
+        {
+          "path": "examples/cropper-video-demo.tsx",
           "type": "registry:example"
         }
       ]

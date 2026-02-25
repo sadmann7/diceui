@@ -55,6 +55,23 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react", "react-dom", "lucide-react"],
   },
   {
+    name: "cropper",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/cropper.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: [
+      "compose-refs",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+    ],
+    dependencies: ["@base-ui/react", "react-dom", "lucide-react", "class-variance-authority"],
+  },
+  {
     name: "fps",
     type: "registry:ui",
     files: [

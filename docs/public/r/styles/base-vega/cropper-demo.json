@@ -1,0 +1,15 @@
+{
+  "name": "cropper-demo",
+  "registryDependencies": [
+    "cropper"
+  ],
+  "files": [
+    {
+      "path": "examples/cropper-demo.tsx",
+      "content": "\"use client\";\r\n\r\nimport * as React from \"react\";\r\nimport {\r\n  Cropper,\r\n  CropperArea,\r\n  CropperImage,\r\n  type CropperPoint,\r\n} from \"@/registry/bases/base/ui/cropper\";\r\n\r\nexport default function CropperDemo() {\r\n  const [crop, setCrop] = React.useState<CropperPoint>({ x: 0, y: 0 });\r\n  const [zoom, setZoom] = React.useState(1);\r\n\r\n  return (\r\n    <Cropper\r\n      aspectRatio={1}\r\n      crop={crop}\r\n      zoom={zoom}\r\n      onCropChange={setCrop}\r\n      onZoomChange={setZoom}\r\n      className=\"min-h-72\"\r\n    >\r\n      <CropperImage\r\n        src=\"https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80\"\r\n        alt=\"Profile picture\"\r\n        crossOrigin=\"anonymous\"\r\n      />\r\n      <CropperArea />\r\n    </Cropper>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

@@ -128,6 +128,62 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "cropper-demo",
+    type: "registry:example",
+    registryDependencies: ["cropper"],
+    files: [
+      {
+        path: "examples/cropper-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["cropper", "button", "label", "slider"],
+    files: [
+      {
+        path: "examples/cropper-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-file-upload-demo",
+    type: "registry:example",
+    dependencies: ["@hookform/resolvers", "react-hook-form", "zod"],
+    registryDependencies: ["cropper", "button", "dialog", "label", "slider"],
+    files: [
+      {
+        path: "examples/cropper-file-upload-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-shapes-demo",
+    type: "registry:example",
+    registryDependencies: ["cropper", "label", "select", "switch"],
+    files: [
+      {
+        path: "examples/cropper-shapes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "cropper-video-demo",
+    type: "registry:example",
+    registryDependencies: ["cropper", "button", "label", "select"],
+    files: [
+      {
+        path: "examples/cropper-video-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "avatar-group-demo",
     type: "registry:example",
     registryDependencies: ["avatar", "avatar-group"],
