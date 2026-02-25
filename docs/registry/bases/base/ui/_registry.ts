@@ -524,4 +524,31 @@ export const ui: Registry["items"] = [
     ],
     dependencies: ["@base-ui/react", "class-variance-authority"],
   },
+  {
+    name: "time-picker",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/time-picker.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "components/visually-hidden-input.tsx",
+        type: "registry:component",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+    registryDependencies: [
+      "popover",
+      "visually-hidden-input",
+      "compose-refs",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+      "@diceui/use-as-ref",
+    ],
+    dependencies: ["@base-ui/react", "lucide-react"],
+  },
 ];

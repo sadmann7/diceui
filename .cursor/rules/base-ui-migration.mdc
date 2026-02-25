@@ -10,7 +10,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### ✅ Completed (27 components)
+### ✅ Completed (28 components)
 
 | Component | Docs | Examples | Notes |
 |-----------|------|----------|-------|
@@ -41,14 +41,12 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | status | ✅ | 4 | Simple variant system |
 | stepper | ✅ | 4 | Direction hook, store system, 10 sub-components, focus management, keyboard navigation, validation support, custom children function in StepperIndicator resolved with Omit<children> |
 | swap | ✅ | 2 | data-* via state object |
+| time-picker | ✅ | 8 | Store system, 13 sub-components, locale-aware 12/24h format, conditional rendering for Hour/Minute/Second/Period resolved with unconditional useRender, popover dependency still from radix |
 | timeline | ✅ | 6 | Direction hook, store system, multiple item types |
 
-**Last Updated:** 2026-02-25 (stepper completed)
+**Last Updated:** 2026-02-25 (time-picker completed)
 
-### 🔄 Pending (8 components)
-
-**Medium Complexity:**
-- time-picker
+### 🔄 Pending (7 components)
 
 **High Complexity:**
 - color-picker, key-value, masonry, media-player

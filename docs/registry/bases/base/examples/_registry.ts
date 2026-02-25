@@ -1210,4 +1210,94 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "time-picker-demo",
+    type: "registry:example",
+    registryDependencies: ["time-picker", "label"],
+    files: [
+      {
+        path: "examples/time-picker-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-controlled-demo",
+    type: "registry:example",
+    dependencies: ["react"],
+    registryDependencies: ["time-picker", "label"],
+    files: [
+      {
+        path: "examples/time-picker-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-form-demo",
+    type: "registry:example",
+    dependencies: ["zod", "react-hook-form", "@hookform/resolvers"],
+    registryDependencies: ["time-picker", "button", "form"],
+    files: [
+      {
+        path: "examples/time-picker-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-input-group-click-action-demo",
+    type: "registry:example",
+    registryDependencies: ["time-picker", "label"],
+    files: [
+      {
+        path: "examples/time-picker-input-group-click-action-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-open-on-focus-demo",
+    type: "registry:example",
+    registryDependencies: ["time-picker", "label"],
+    files: [
+      {
+        path: "examples/time-picker-open-on-focus-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-placeholder-demo",
+    type: "registry:example",
+    registryDependencies: ["time-picker", "label"],
+    files: [
+      {
+        path: "examples/time-picker-placeholder-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-seconds-demo",
+    type: "registry:example",
+    registryDependencies: ["time-picker", "label"],
+    files: [
+      {
+        path: "examples/time-picker-seconds-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "time-picker-step-demo",
+    type: "registry:example",
+    registryDependencies: ["time-picker", "label"],
+    files: [
+      {
+        path: "examples/time-picker-step-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

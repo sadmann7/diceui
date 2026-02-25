@@ -21303,6 +21303,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "time-picker": {
+        name: "time-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
+        files: [{
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -22784,6 +22806,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-demo": {
+        name: "time-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-controlled-demo": {
+        name: "time-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-form-demo": {
+        name: "time-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-input-group-click-action-demo": {
+        name: "time-picker-input-group-click-action-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-open-on-focus-demo": {
+        name: "time-picker-open-on-focus-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-open-on-focus-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-open-on-focus-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-placeholder-demo": {
+        name: "time-picker-placeholder-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-placeholder-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-placeholder-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-seconds-demo": {
+        name: "time-picker-seconds-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-seconds-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-seconds-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-step-demo": {
+        name: "time-picker-step-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-step-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23327,6 +23461,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "time-picker": {
+        name: "time-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
+        files: [{
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -24808,6 +24964,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-demo": {
+        name: "time-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-controlled-demo": {
+        name: "time-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-form-demo": {
+        name: "time-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-input-group-click-action-demo": {
+        name: "time-picker-input-group-click-action-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-open-on-focus-demo": {
+        name: "time-picker-open-on-focus-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-open-on-focus-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-open-on-focus-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-placeholder-demo": {
+        name: "time-picker-placeholder-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-placeholder-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-placeholder-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-seconds-demo": {
+        name: "time-picker-seconds-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-seconds-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-seconds-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-step-demo": {
+        name: "time-picker-step-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-step-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -25351,6 +25619,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "time-picker": {
+        name: "time-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
+        files: [{
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -26832,6 +27122,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-demo": {
+        name: "time-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-controlled-demo": {
+        name: "time-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-form-demo": {
+        name: "time-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-input-group-click-action-demo": {
+        name: "time-picker-input-group-click-action-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-open-on-focus-demo": {
+        name: "time-picker-open-on-focus-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-open-on-focus-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-open-on-focus-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-placeholder-demo": {
+        name: "time-picker-placeholder-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-placeholder-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-placeholder-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-seconds-demo": {
+        name: "time-picker-seconds-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-seconds-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-seconds-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-step-demo": {
+        name: "time-picker-step-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-step-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -27375,6 +27777,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "time-picker": {
+        name: "time-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
+        files: [{
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -28856,6 +29280,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-demo": {
+        name: "time-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-controlled-demo": {
+        name: "time-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-form-demo": {
+        name: "time-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-input-group-click-action-demo": {
+        name: "time-picker-input-group-click-action-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-open-on-focus-demo": {
+        name: "time-picker-open-on-focus-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-open-on-focus-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-open-on-focus-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-placeholder-demo": {
+        name: "time-picker-placeholder-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-placeholder-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-placeholder-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-seconds-demo": {
+        name: "time-picker-seconds-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-seconds-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-seconds-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-step-demo": {
+        name: "time-picker-step-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-step-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -29399,6 +29935,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "time-picker": {
+        name: "time-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
+        files: [{
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -30880,6 +31438,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-demo": {
+        name: "time-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-controlled-demo": {
+        name: "time-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-form-demo": {
+        name: "time-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-input-group-click-action-demo": {
+        name: "time-picker-input-group-click-action-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-open-on-focus-demo": {
+        name: "time-picker-open-on-focus-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-open-on-focus-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-open-on-focus-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-placeholder-demo": {
+        name: "time-picker-placeholder-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-placeholder-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-placeholder-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-seconds-demo": {
+        name: "time-picker-seconds-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-seconds-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-seconds-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-step-demo": {
+        name: "time-picker-step-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-step-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -31423,6 +32093,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "time-picker": {
+        name: "time-picker",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
+        files: [{
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -32904,6 +33596,118 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/timeline-rtl-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-demo": {
+        name: "time-picker-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-controlled-demo": {
+        name: "time-picker-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-form-demo": {
+        name: "time-picker-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-input-group-click-action-demo": {
+        name: "time-picker-input-group-click-action-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-input-group-click-action-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-open-on-focus-demo": {
+        name: "time-picker-open-on-focus-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-open-on-focus-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-open-on-focus-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-placeholder-demo": {
+        name: "time-picker-placeholder-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-placeholder-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-placeholder-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-seconds-demo": {
+        name: "time-picker-seconds-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-seconds-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-seconds-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "time-picker-step-demo": {
+        name: "time-picker-step-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["time-picker","label"],
+        files: [{
+          path: "registry/bases/base/examples/time-picker-step-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
         source: "",
         chunks: []
       },
