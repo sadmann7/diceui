@@ -38,6 +38,23 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react", "react-dom"],
   },
   {
+    name: "compare-slider",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/compare-slider.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: [
+      "compose-refs",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+    ],
+    dependencies: ["@base-ui/react", "react-dom", "lucide-react"],
+  },
+  {
     name: "fps",
     type: "registry:ui",
     files: [

@@ -20891,6 +20891,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "compare-slider": {
+        name: "compare-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/compare-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -21280,6 +21294,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-demo": {
+        name: "compare-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-controlled-demo": {
+        name: "compare-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider","button","label","slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-customization-demo": {
+        name: "compare-slider-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-vertical-demo": {
+        name: "compare-slider-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -22349,6 +22419,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "compare-slider": {
+        name: "compare-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/compare-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -22738,6 +22822,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-demo": {
+        name: "compare-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-controlled-demo": {
+        name: "compare-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider","button","label","slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-customization-demo": {
+        name: "compare-slider-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-vertical-demo": {
+        name: "compare-slider-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23807,6 +23947,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "compare-slider": {
+        name: "compare-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/compare-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -24196,6 +24350,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-demo": {
+        name: "compare-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-controlled-demo": {
+        name: "compare-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider","button","label","slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-customization-demo": {
+        name: "compare-slider-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-vertical-demo": {
+        name: "compare-slider-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -25265,6 +25475,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "compare-slider": {
+        name: "compare-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/compare-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -25654,6 +25878,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-demo": {
+        name: "compare-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-controlled-demo": {
+        name: "compare-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider","button","label","slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-customization-demo": {
+        name: "compare-slider-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-vertical-demo": {
+        name: "compare-slider-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26723,6 +27003,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "compare-slider": {
+        name: "compare-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/compare-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -27112,6 +27406,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-demo": {
+        name: "compare-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-controlled-demo": {
+        name: "compare-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider","button","label","slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-customization-demo": {
+        name: "compare-slider-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-vertical-demo": {
+        name: "compare-slider-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-vertical-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -28181,6 +28531,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "compare-slider": {
+        name: "compare-slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/compare-slider.tsx")),
+        source: "",
+        chunks: []
+      },
       "fps": {
         name: "fps",
         description: "",
@@ -28570,6 +28934,62 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/angle-slider-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-demo": {
+        name: "compare-slider-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-controlled-demo": {
+        name: "compare-slider-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider","button","label","slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-customization-demo": {
+        name: "compare-slider-customization-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-customization-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-customization-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "compare-slider-vertical-demo": {
+        name: "compare-slider-vertical-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["compare-slider"],
+        files: [{
+          path: "registry/bases/base/examples/compare-slider-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/compare-slider-vertical-demo.tsx")),
         source: "",
         chunks: []
       },

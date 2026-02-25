@@ -10,13 +10,14 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### ✅ Completed (20 components)
+### ✅ Completed (21 components)
 
 | Component | Docs | Examples | Notes |
 |-----------|------|----------|-------|
 | action-bar | ✅ | 2 | Direction hook, portal logic |
 | angle-slider | ✅ | 5 | Direction hook, store system, circular slider, defaultValue conflict resolved with Omit |
 | avatar-group | ✅ | 5 | Type-safe cloneElement pattern |
+| compare-slider | ✅ | 4 | Store system, multiple sub-components, interaction modes |
 | badge-overflow | ✅ | 3 | compose-refs hook |
 | circular-progress | ✅ | 3 | CSS animations included |
 | color-swatch | ✅ | 3 | data-* via state object |
@@ -38,10 +39,10 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 **Last Updated:** 2026-02-25
 
-### 🔄 Pending (15 components)
+### 🔄 Pending (14 components)
 
 **Medium Complexity:**
-- compare-slider, cropper, file-upload
+- cropper, file-upload
 - mask-input, phone-input, scroll-spy
 - stepper, time-picker
 
@@ -664,6 +665,7 @@ See completed migrations as reference:
 - **hover-card**: Direct Base UI primitive wrapper (no useRender), PreviewCard API mapping
 - **editable**: Direction hook, store system with useSyncExternalStore, `onSubmit` conflict resolved with `Omit<A & B, "onSubmit">`
 - **angle-slider**: Direction hook, store system with useSyncExternalStore, circular slider with SVG track/range, `defaultValue` conflict resolved with `Omit<A & B, "defaultValue">`
+- **compare-slider**: Store system with useSyncExternalStore, multiple sub-components (Before, After, Handle, Label), interaction modes (hover/drag), orientation support (horizontal/vertical)
 
 ### Utilities
 - **visually-hidden-input**: Standalone utility, no Radix dependencies, used by many form components
