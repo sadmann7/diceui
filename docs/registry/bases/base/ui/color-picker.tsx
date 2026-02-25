@@ -432,9 +432,7 @@ const StoreContext = React.createContext<Store | null>(null);
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
   if (!context) {
-    throw new Error(
-      `\`${consumerName}\` must be used within \`ColorPickerRoot\``,
-    );
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
