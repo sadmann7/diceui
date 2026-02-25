@@ -397,6 +397,25 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "masonry",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/masonry.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+    registryDependencies: [
+      "compose-refs",
+      "use-isomorphic-layout-effect",
+    ],
+    dependencies: ["@base-ui/react"],
+  },
+  {
     name: "phone-input",
     type: "registry:ui",
     files: [

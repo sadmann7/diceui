@@ -1067,6 +1067,39 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "masonry-demo",
+    type: "registry:example",
+    registryDependencies: ["masonry", "skeleton"],
+    files: [
+      {
+        path: "examples/masonry-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "masonry-linear-demo",
+    type: "registry:example",
+    registryDependencies: ["masonry", "skeleton"],
+    files: [
+      {
+        path: "examples/masonry-linear-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "masonry-ssr-demo",
+    type: "registry:example",
+    registryDependencies: ["masonry", "skeleton"],
+    files: [
+      {
+        path: "examples/masonry-ssr-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "phone-input-demo",
     type: "registry:example",
     registryDependencies: ["phone-input"],

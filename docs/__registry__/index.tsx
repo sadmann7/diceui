@@ -21245,6 +21245,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "masonry": {
+        name: "masonry",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/masonry.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -22624,6 +22642,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-demo": {
+        name: "masonry-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-linear-demo": {
+        name: "masonry-linear-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-linear-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-linear-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-ssr-demo": {
+        name: "masonry-ssr-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-ssr-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-ssr-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23403,6 +23463,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "masonry": {
+        name: "masonry",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/masonry.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -24782,6 +24860,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-demo": {
+        name: "masonry-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-linear-demo": {
+        name: "masonry-linear-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-linear-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-linear-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-ssr-demo": {
+        name: "masonry-ssr-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-ssr-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-ssr-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -25561,6 +25681,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "masonry": {
+        name: "masonry",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/masonry.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -26940,6 +27078,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-demo": {
+        name: "masonry-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-linear-demo": {
+        name: "masonry-linear-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-linear-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-linear-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-ssr-demo": {
+        name: "masonry-ssr-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-ssr-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-ssr-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -27719,6 +27899,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "masonry": {
+        name: "masonry",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/masonry.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -29098,6 +29296,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-demo": {
+        name: "masonry-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-linear-demo": {
+        name: "masonry-linear-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-linear-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-linear-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-ssr-demo": {
+        name: "masonry-ssr-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-ssr-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-ssr-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -29877,6 +30117,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "masonry": {
+        name: "masonry",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/masonry.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -31256,6 +31514,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-demo": {
+        name: "masonry-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-linear-demo": {
+        name: "masonry-linear-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-linear-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-linear-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-ssr-demo": {
+        name: "masonry-ssr-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-ssr-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-ssr-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -32035,6 +32335,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "masonry": {
+        name: "masonry",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/masonry.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -33414,6 +33732,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-demo": {
+        name: "masonry-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-linear-demo": {
+        name: "masonry-linear-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-linear-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-linear-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "masonry-ssr-demo": {
+        name: "masonry-ssr-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["masonry","skeleton"],
+        files: [{
+          path: "registry/bases/base/examples/masonry-ssr-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/masonry-ssr-demo.tsx")),
         source: "",
         chunks: []
       },

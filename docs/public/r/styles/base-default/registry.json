@@ -464,6 +464,27 @@
       ]
     },
     {
+      "name": "masonry",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/masonry.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "registryDependencies": [
+        "compose-refs",
+        "use-isomorphic-layout-effect"
+      ],
+      "dependencies": [
+        "@base-ui/react"
+      ]
+    },
+    {
       "name": "phone-input",
       "type": "registry:ui",
       "files": [
@@ -2025,6 +2046,48 @@
       "files": [
         {
           "path": "examples/mask-input-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "masonry-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "masonry",
+        "skeleton"
+      ],
+      "files": [
+        {
+          "path": "examples/masonry-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "masonry-linear-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "masonry",
+        "skeleton"
+      ],
+      "files": [
+        {
+          "path": "examples/masonry-linear-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "masonry-ssr-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "masonry",
+        "skeleton"
+      ],
+      "files": [
+        {
+          "path": "examples/masonry-ssr-demo.tsx",
           "type": "registry:example"
         }
       ]
