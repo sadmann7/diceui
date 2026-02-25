@@ -337,6 +337,22 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react", "lucide-react"],
   },
   {
+    name: "mask-input",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/mask-input.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+    registryDependencies: ["compose-refs"],
+    dependencies: ["@base-ui/react"],
+  },
+  {
     name: "marquee",
     type: "registry:ui",
     files: [

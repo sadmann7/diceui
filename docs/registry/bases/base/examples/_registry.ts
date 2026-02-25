@@ -932,6 +932,62 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "mask-input-demo",
+    type: "registry:example",
+    registryDependencies: ["mask-input"],
+    files: [
+      {
+        path: "examples/mask-input-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mask-input-custom-pattern-demo",
+    type: "registry:example",
+    registryDependencies: ["label", "mask-input"],
+    files: [
+      {
+        path: "examples/mask-input-custom-pattern-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mask-input-validation-modes-demo",
+    type: "registry:example",
+    registryDependencies: ["badge", "card", "label", "mask-input"],
+    files: [
+      {
+        path: "examples/mask-input-validation-modes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mask-input-card-information-demo",
+    type: "registry:example",
+    registryDependencies: ["card", "label", "mask-input"],
+    files: [
+      {
+        path: "examples/mask-input-card-information-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mask-input-form-demo",
+    type: "registry:example",
+    dependencies: ["@hookform/resolvers/zod", "react-hook-form", "zod"],
+    registryDependencies: ["button", "form", "mask-input"],
+    files: [
+      {
+        path: "examples/mask-input-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "marquee-demo",
     type: "registry:example",
     registryDependencies: ["marquee"],

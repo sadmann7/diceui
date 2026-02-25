@@ -21191,6 +21191,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "mask-input": {
+        name: "mask-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/mask-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -22358,6 +22376,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-demo": {
+        name: "mask-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-custom-pattern-demo": {
+        name: "mask-input-custom-pattern-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-custom-pattern-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-custom-pattern-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-validation-modes-demo": {
+        name: "mask-input-validation-modes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-validation-modes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-validation-modes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-card-information-demo": {
+        name: "mask-input-card-information-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-card-information-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-card-information-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-form-demo": {
+        name: "mask-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","form","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -22929,6 +23017,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "mask-input": {
+        name: "mask-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/mask-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -24096,6 +24202,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-demo": {
+        name: "mask-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-custom-pattern-demo": {
+        name: "mask-input-custom-pattern-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-custom-pattern-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-custom-pattern-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-validation-modes-demo": {
+        name: "mask-input-validation-modes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-validation-modes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-validation-modes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-card-information-demo": {
+        name: "mask-input-card-information-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-card-information-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-card-information-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-form-demo": {
+        name: "mask-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","form","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -24667,6 +24843,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "mask-input": {
+        name: "mask-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/mask-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -25834,6 +26028,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-demo": {
+        name: "mask-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-custom-pattern-demo": {
+        name: "mask-input-custom-pattern-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-custom-pattern-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-custom-pattern-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-validation-modes-demo": {
+        name: "mask-input-validation-modes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-validation-modes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-validation-modes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-card-information-demo": {
+        name: "mask-input-card-information-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-card-information-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-card-information-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-form-demo": {
+        name: "mask-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","form","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26405,6 +26669,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "mask-input": {
+        name: "mask-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/mask-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -27572,6 +27854,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-demo": {
+        name: "mask-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-custom-pattern-demo": {
+        name: "mask-input-custom-pattern-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-custom-pattern-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-custom-pattern-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-validation-modes-demo": {
+        name: "mask-input-validation-modes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-validation-modes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-validation-modes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-card-information-demo": {
+        name: "mask-input-card-information-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-card-information-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-card-information-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-form-demo": {
+        name: "mask-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","form","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -28143,6 +28495,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "mask-input": {
+        name: "mask-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/mask-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -29310,6 +29680,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-demo": {
+        name: "mask-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-custom-pattern-demo": {
+        name: "mask-input-custom-pattern-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-custom-pattern-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-custom-pattern-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-validation-modes-demo": {
+        name: "mask-input-validation-modes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-validation-modes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-validation-modes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-card-information-demo": {
+        name: "mask-input-card-information-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-card-information-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-card-information-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-form-demo": {
+        name: "mask-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","form","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -29881,6 +30321,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "mask-input": {
+        name: "mask-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs"],
+        files: [{
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/mask-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -31048,6 +31506,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-demo": {
+        name: "mask-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-custom-pattern-demo": {
+        name: "mask-input-custom-pattern-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-custom-pattern-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-custom-pattern-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-validation-modes-demo": {
+        name: "mask-input-validation-modes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-validation-modes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-validation-modes-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-card-information-demo": {
+        name: "mask-input-card-information-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["card","label","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-card-information-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-card-information-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "mask-input-form-demo": {
+        name: "mask-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","form","mask-input"],
+        files: [{
+          path: "registry/bases/base/examples/mask-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
         source: "",
         chunks: []
       },
