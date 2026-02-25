@@ -21209,6 +21209,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "phone-input": {
+        name: "phone-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/phone-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -22446,6 +22468,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-demo": {
+        name: "phone-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-form-demo": {
+        name: "phone-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-custom-countries-demo": {
+        name: "phone-input-custom-countries-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-custom-countries-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-custom-countries-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23035,6 +23099,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "phone-input": {
+        name: "phone-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/phone-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -24272,6 +24358,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-demo": {
+        name: "phone-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-form-demo": {
+        name: "phone-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-custom-countries-demo": {
+        name: "phone-input-custom-countries-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-custom-countries-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-custom-countries-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -24861,6 +24989,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "phone-input": {
+        name: "phone-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/phone-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -26098,6 +26248,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-demo": {
+        name: "phone-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-form-demo": {
+        name: "phone-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-custom-countries-demo": {
+        name: "phone-input-custom-countries-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-custom-countries-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-custom-countries-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26687,6 +26879,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "phone-input": {
+        name: "phone-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/phone-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -27924,6 +28138,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-demo": {
+        name: "phone-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-form-demo": {
+        name: "phone-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-custom-countries-demo": {
+        name: "phone-input-custom-countries-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-custom-countries-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-custom-countries-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -28513,6 +28769,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "phone-input": {
+        name: "phone-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/phone-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -29750,6 +30028,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-demo": {
+        name: "phone-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-form-demo": {
+        name: "phone-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-custom-countries-demo": {
+        name: "phone-input-custom-countries-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-custom-countries-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-custom-countries-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -30339,6 +30659,28 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "phone-input": {
+        name: "phone-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        },{
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/phone-input.tsx")),
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -31576,6 +31918,48 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-demo": {
+        name: "phone-input-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-form-demo": {
+        name: "phone-input-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input","button","form"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "phone-input-custom-countries-demo": {
+        name: "phone-input-custom-countries-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["phone-input"],
+        files: [{
+          path: "registry/bases/base/examples/phone-input-custom-countries-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/phone-input-custom-countries-demo.tsx")),
         source: "",
         chunks: []
       },

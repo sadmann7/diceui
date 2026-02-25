@@ -412,6 +412,36 @@
     ]
   },
   {
+    "name": "phone-input",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/phone-input.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      },
+      {
+        "path": "components/visually-hidden-input.tsx",
+        "type": "registry:component"
+      }
+    ],
+    "registryDependencies": [
+      "compose-refs",
+      "visually-hidden-input",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react",
+      "react-dom",
+      "lucide-react"
+    ]
+  },
+  {
     "name": "marquee",
     "type": "registry:ui",
     "files": [

@@ -415,6 +415,36 @@
       ]
     },
     {
+      "name": "phone-input",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/phone-input.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        },
+        {
+          "path": "components/visually-hidden-input.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "registryDependencies": [
+        "compose-refs",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "react-dom",
+        "lucide-react"
+      ]
+    },
+    {
       "name": "marquee",
       "type": "registry:ui",
       "files": [
@@ -1806,6 +1836,53 @@
       "files": [
         {
           "path": "examples/mask-input-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "phone-input-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "phone-input"
+      ],
+      "files": [
+        {
+          "path": "examples/phone-input-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "phone-input-form-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@hookform/resolvers",
+        "react-hook-form",
+        "zod",
+        "sonner"
+      ],
+      "registryDependencies": [
+        "phone-input",
+        "button",
+        "form"
+      ],
+      "files": [
+        {
+          "path": "examples/phone-input-form-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "phone-input-custom-countries-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "phone-input"
+      ],
+      "files": [
+        {
+          "path": "examples/phone-input-custom-countries-demo.tsx",
           "type": "registry:example"
         }
       ]
