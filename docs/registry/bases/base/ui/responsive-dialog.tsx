@@ -163,15 +163,21 @@ function ResponsiveDialogTrigger({
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {
-    return (
-      <DrawerTrigger data-variant="drawer" render={render} {...props}>
+    return render ? (
+      <DrawerTrigger data-variant="drawer" asChild {...props}>
+        {render}
+      </DrawerTrigger>
+    ) : (
+      <DrawerTrigger data-variant="drawer" {...props}>
         {children}
       </DrawerTrigger>
     );
   }
 
-  return (
-    <DialogTrigger data-variant="dialog" render={render} {...props}>
+  return render && React.isValidElement(render) ? (
+    <DialogTrigger data-variant="dialog" render={render} {...props} />
+  ) : (
+    <DialogTrigger data-variant="dialog" {...props}>
       {children}
     </DialogTrigger>
   );
@@ -188,15 +194,21 @@ function ResponsiveDialogClose({
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {
-    return (
-      <DrawerClose data-variant="drawer" render={render} {...props}>
+    return render ? (
+      <DrawerClose data-variant="drawer" asChild {...props}>
+        {render}
+      </DrawerClose>
+    ) : (
+      <DrawerClose data-variant="drawer" {...props}>
         {children}
       </DrawerClose>
     );
   }
 
-  return (
-    <DialogClose data-variant="dialog" render={render} {...props}>
+  return render && React.isValidElement(render) ? (
+    <DialogClose data-variant="dialog" render={render} {...props} />
+  ) : (
+    <DialogClose data-variant="dialog" {...props}>
       {children}
     </DialogClose>
   );
