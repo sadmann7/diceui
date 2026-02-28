@@ -497,6 +497,27 @@
     ]
   },
   {
+    "name": "responsive-dialog",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/responsive-dialog.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "dialog",
+      "drawer",
+      "use-as-ref",
+      "use-isomorphic-layout-effect",
+      "use-lazy-ref",
+      "use-mobile"
+    ],
+    "dependencies": [
+      "vaul"
+    ]
+  },
+  {
     "name": "mask-input",
     "type": "registry:ui",
     "files": [

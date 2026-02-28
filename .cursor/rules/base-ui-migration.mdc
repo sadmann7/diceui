@@ -10,7 +10,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### ✅ Completed (32 components)
+### ✅ Completed (33 components)
 
 | Component | Docs | Examples | Notes |
 |-----------|------|----------|-------|
@@ -47,13 +47,14 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | key-value | ✅ | 4 | Store system, 8 sub-components, paste parsing (=/:/ /tab), validation, duplicate detection, Input/Textarea without render prop (shadcn wrappers), defaultValue/onPaste conflicts resolved with Omit |
 | color-picker | ✅ | 4 | Store system, HSV/RGB/HSL/HSB formats, eye dropper API, Base UI Slider (Control > Track > Indicator structure), inline mode, popover/select deps still from radix |
 | media-player | ✅ | 6 | 25+ sub-components, 3100+ lines, media-chrome store, Base UI Slider for seek/volume, useRender for root/video/audio/controls/overlay/loading/error/time/volume-indicator, dropdown-menu/tooltip deps still from radix |
+| responsive-dialog | ✅ | 2 | Adaptive dialog/drawer based on breakpoint, store system, wrapper around base dialog and drawer components |
 
-**Last Updated:** 2026-02-25 (media-player completed)
+**Last Updated:** 2026-02-25 (responsive-dialog completed)
 
-### 🔄 Pending (3 components)
+### 🔄 Pending (2 components)
 
 **High Complexity:**
-- responsive-dialog, selection-toolbar, speed-dial, tour
+- selection-toolbar, speed-dial, tour
 
 **DnD Components:**
 - kanban, sortable

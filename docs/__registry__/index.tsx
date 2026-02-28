@@ -21263,6 +21263,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "responsive-dialog": {
+        name: "responsive-dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
+        files: [{
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/responsive-dialog.tsx")),
+        source: "",
+        chunks: []
+      },
       "mask-input": {
         name: "mask-input",
         description: "",
@@ -22734,6 +22748,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-demo": {
+        name: "responsive-dialog-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","input","label","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-confirm-demo": {
+        name: "responsive-dialog-confirm-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-confirm-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-confirm-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23727,6 +23769,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "responsive-dialog": {
+        name: "responsive-dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
+        files: [{
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/responsive-dialog.tsx")),
+        source: "",
+        chunks: []
+      },
       "mask-input": {
         name: "mask-input",
         description: "",
@@ -25198,6 +25254,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-demo": {
+        name: "responsive-dialog-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","input","label","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-confirm-demo": {
+        name: "responsive-dialog-confirm-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-confirm-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-confirm-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26191,6 +26275,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "responsive-dialog": {
+        name: "responsive-dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
+        files: [{
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/responsive-dialog.tsx")),
+        source: "",
+        chunks: []
+      },
       "mask-input": {
         name: "mask-input",
         description: "",
@@ -27662,6 +27760,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-demo": {
+        name: "responsive-dialog-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","input","label","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-confirm-demo": {
+        name: "responsive-dialog-confirm-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-confirm-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-confirm-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -28655,6 +28781,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "responsive-dialog": {
+        name: "responsive-dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
+        files: [{
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/responsive-dialog.tsx")),
+        source: "",
+        chunks: []
+      },
       "mask-input": {
         name: "mask-input",
         description: "",
@@ -30126,6 +30266,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-demo": {
+        name: "responsive-dialog-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","input","label","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-confirm-demo": {
+        name: "responsive-dialog-confirm-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-confirm-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-confirm-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -31119,6 +31287,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "responsive-dialog": {
+        name: "responsive-dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
+        files: [{
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/responsive-dialog.tsx")),
+        source: "",
+        chunks: []
+      },
       "mask-input": {
         name: "mask-input",
         description: "",
@@ -32590,6 +32772,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-demo": {
+        name: "responsive-dialog-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","input","label","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-confirm-demo": {
+        name: "responsive-dialog-confirm-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-confirm-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-confirm-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -33583,6 +33793,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "responsive-dialog": {
+        name: "responsive-dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
+        files: [{
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/responsive-dialog.tsx")),
+        source: "",
+        chunks: []
+      },
       "mask-input": {
         name: "mask-input",
         description: "",
@@ -35054,6 +35278,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/rating-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-demo": {
+        name: "responsive-dialog-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","input","label","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "responsive-dialog-confirm-demo": {
+        name: "responsive-dialog-confirm-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","responsive-dialog"],
+        files: [{
+          path: "registry/bases/base/examples/responsive-dialog-confirm-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/responsive-dialog-confirm-demo.tsx")),
         source: "",
         chunks: []
       },
