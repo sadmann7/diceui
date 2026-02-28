@@ -14,7 +14,10 @@ interface MediaPlayerDropdownMenuProps
 
 export interface MediaPlayerProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+    Omit<
+      useRender.ComponentProps<"div">,
+      "onPlay" | "onPause" | "onEnded" | "onTimeUpdate" | "onVolumeChange"
+    > {
   /**
    * Callback function triggered when the media starts playing.
    *
@@ -307,11 +310,9 @@ export interface MediaPlayerVolumeIndicatorProps
   extends EmptyProps<"div">,
     useRender.ComponentProps<"div"> {}
 
-export interface MediaPlayerPlayProps
-  extends EmptyProps<"button"> {}
+export interface MediaPlayerPlayProps extends EmptyProps<"button"> {}
 
-export interface MediaPlayerSeekBackwardProps
-  extends EmptyProps<"button"> {
+export interface MediaPlayerSeekBackwardProps extends EmptyProps<"button"> {
   /**
    * The number of seconds to seek backward.
    *
@@ -324,8 +325,7 @@ export interface MediaPlayerSeekBackwardProps
   seconds?: number;
 }
 
-export interface MediaPlayerSeekForwardProps
-  extends EmptyProps<"button"> {
+export interface MediaPlayerSeekForwardProps extends EmptyProps<"button"> {
   /**
    * The number of seconds to seek forward.
    *
@@ -489,9 +489,9 @@ export interface MediaPlayerTimeProps
 
 export interface MediaPlayerPlaybackSpeedProps
   extends Omit<
-      MediaPlayerDropdownMenuProps,
-      keyof React.ComponentProps<"button">
-    > {
+    MediaPlayerDropdownMenuProps,
+    keyof React.ComponentProps<"button">
+  > {
   /**
    * Whether the dropdown menu is open by default.
    * @default false
@@ -526,8 +526,7 @@ export interface MediaPlayerPlaybackSpeedProps
   speeds?: number[];
 }
 
-export interface MediaPlayerLoopProps
-  extends EmptyProps<"button"> {}
+export interface MediaPlayerLoopProps extends EmptyProps<"button"> {}
 
 export interface MediaPlayerPiPProps
   extends EmptyProps<"button">,
@@ -559,20 +558,17 @@ export interface MediaPlayerPiPProps
     | ((isPictureInPicture: boolean) => React.ReactNode);
 }
 
-export interface MediaPlayerFullscreenProps
-  extends EmptyProps<"button"> {}
+export interface MediaPlayerFullscreenProps extends EmptyProps<"button"> {}
 
-export interface MediaPlayerCaptionsProps
-  extends EmptyProps<"button"> {}
+export interface MediaPlayerCaptionsProps extends EmptyProps<"button"> {}
 
-export interface MediaPlayerDownloadProps
-  extends EmptyProps<"button"> {}
+export interface MediaPlayerDownloadProps extends EmptyProps<"button"> {}
 
 export interface MediaPlayerSettingsProps
   extends Omit<
-      MediaPlayerPlaybackSpeedProps,
-      keyof React.ComponentProps<"button">
-    > {
+    MediaPlayerPlaybackSpeedProps,
+    keyof React.ComponentProps<"button">
+  > {
   /**
    * The settings menu provides a unified interface for adjusting playback speed,
    * video quality, and captions. It automatically detects available options

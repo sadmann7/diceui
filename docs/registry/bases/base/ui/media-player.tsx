@@ -1,5 +1,8 @@
 "use client";
 
+import { mergeProps } from "@base-ui/react/merge-props";
+import { Slider as SliderPrimitive } from "@base-ui/react/slider";
+import { useRender } from "@base-ui/react/use-render";
 import {
   AlertTriangleIcon,
   CaptionsOffIcon,
@@ -32,15 +35,12 @@ import {
   useMediaRef,
   useMediaSelector,
 } from "media-chrome/react/media-store";
-import { mergeProps } from "@base-ui/react/merge-props";
-import { Slider as SliderPrimitive } from "@base-ui/react/slider";
-import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { cn } from "@/lib/utils";
-import { useDirection } from "@/registry/bases/base/ui/direction";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
+import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
+import { useDirection } from "@/registry/bases/base/ui/direction";
 import { Badge } from "@/registry/bases/radix/ui/badge";
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
@@ -742,8 +742,6 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
             "aria-labelledby": labelId,
             "aria-describedby": descriptionId,
             "aria-disabled": disabled,
-            "data-disabled": disabled ? "" : undefined,
-            "data-controls-visible": controlsVisible ? "" : undefined,
             dir,
             tabIndex: disabled ? undefined : 0,
             ref: composedRef,
@@ -779,6 +777,8 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
         state: {
           slot: "media-player",
           state: isFullscreen ? "fullscreen" : "windowed",
+          disabled: disabled || undefined,
+          "controls-visible": controlsVisible || undefined,
         },
       })}
     </MediaPlayerContext.Provider>
@@ -872,8 +872,6 @@ function MediaPlayerControls(props: DivProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        "data-disabled": context.disabled ? "" : undefined,
-        "data-visible": controlsVisible ? "" : undefined,
         dir: context.dir,
         className: cn(
           "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 in-[:fullscreen]:px-6 px-4 in-[:fullscreen]:py-4 py-3 opacity-0 transition-opacity duration-200 data-visible:pointer-events-auto data-visible:opacity-100",
@@ -886,6 +884,8 @@ function MediaPlayerControls(props: DivProps) {
     state: {
       slot: "media-player-controls",
       state: isFullscreen ? "fullscreen" : "windowed",
+      disabled: context.disabled || undefined,
+      visible: controlsVisible || undefined,
     },
   });
 }
@@ -895,13 +895,7 @@ interface MediaPlayerLoadingProps extends DivProps {
 }
 
 function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
-  const {
-    delayMs = 500,
-    render,
-    className,
-    children,
-    ...loadingProps
-  } = props;
+  const { delayMs = 500, render, className, children, ...loadingProps } = props;
 
   const isLoading = useMediaSelector((state) => state.mediaLoading ?? false);
   const isPaused = useMediaSelector((state) => state.mediaPaused ?? true);
@@ -941,9 +935,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
     };
   }, [shouldShowLoading, loadingDelayMs]);
 
-  if (!shouldRender) return null;
-
-  return useRender({
+  const rendered = useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
@@ -962,6 +954,10 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
     render,
     state: { slot: "media-player-loading" },
   });
+
+  if (!shouldRender) return null;
+
+  return rendered;
 }
 
 interface MediaPlayerErrorProps extends DivProps {
@@ -1072,9 +1068,7 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
     return descriptionMap[error.code] ?? "An unknown error occurred";
   }, [description, error]);
 
-  if (!error) return null;
-
-  return useRender({
+  const rendered = useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
@@ -1136,6 +1130,10 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
       state: isFullscreen ? "fullscreen" : "windowed",
     },
   });
+
+  if (!error) return null;
+
+  return rendered;
 }
 
 function MediaPlayerVolumeIndicator(props: DivProps) {
@@ -1150,14 +1148,12 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
     (state) => state.volumeIndicatorVisible,
   );
 
-  if (!volumeIndicatorVisible) return null;
-
   const effectiveVolume = mediaMuted ? 0 : mediaVolume;
   const volumePercentage = Math.round(effectiveVolume * 100);
   const barCount = 10;
   const activeBarCount = Math.ceil(effectiveVolume * barCount);
 
-  return useRender({
+  const rendered = useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
@@ -1207,6 +1203,10 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
     render,
     state: { slot: "media-player-volume-indicator" },
   });
+
+  if (!volumeIndicatorVisible) return null;
+
+  return rendered;
 }
 
 function MediaPlayerControlsOverlay(props: DivProps) {
@@ -1221,7 +1221,6 @@ function MediaPlayerControlsOverlay(props: DivProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        "data-visible": controlsVisible ? "" : undefined,
         className: cn(
           "pointer-events-none absolute inset-0 -z-10 bg-linear-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-200 data-visible:opacity-100",
           className,
@@ -1233,6 +1232,7 @@ function MediaPlayerControlsOverlay(props: DivProps) {
     state: {
       slot: "media-player-controls-overlay",
       state: isFullscreen ? "fullscreen" : "windowed",
+      visible: controlsVisible || undefined,
     },
   });
 }
@@ -1421,8 +1421,7 @@ interface SeekState {
   hasInitialPosition: boolean;
 }
 
-interface MediaPlayerSeekProps
-  extends SliderPrimitive.Root.Props {
+interface MediaPlayerSeekProps extends SliderPrimitive.Root.Props {
   withTime?: boolean;
   withoutChapter?: boolean;
   withoutTooltip?: boolean;
@@ -2076,7 +2075,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         )}
         value={[displayValue]}
         onValueChange={onSeek}
-        onValueCommit={onSeekCommit}
+        onValueCommitted={onSeekCommit}
         onPointerEnter={onPointerEnter}
         onPointerLeave={onPointerLeave}
         onPointerMove={onPointerMove}
@@ -2191,8 +2190,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   return SeekSlider;
 }
 
-interface MediaPlayerVolumeProps
-  extends SliderPrimitive.Root.Props {
+interface MediaPlayerVolumeProps extends SliderPrimitive.Root.Props {
   expandable?: boolean;
 }
 
@@ -2311,7 +2309,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
         disabled={isDisabled}
         value={[effectiveVolume]}
         onValueChange={onVolumeChange}
-        onValueCommit={onVolumeCommit}
+        onValueCommitted={onVolumeCommit}
       >
         <SliderPrimitive.Control className="relative flex w-full items-center">
           <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-zinc-500">
@@ -2363,40 +2361,31 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
     };
   }, [variant, mediaCurrentTime, seekableEnd]);
 
-  if (variant === "remaining" || variant === "duration") {
-    return useRender({
-      defaultTagName: "div",
-      props: mergeProps<"div">(
-        {
-          dir: context.dir,
-          className: cn("text-foreground/80 text-sm tabular-nums", className),
-          children: times[variant],
-        },
-        timeProps,
-      ),
-      render,
-      state: { slot: "media-player-time", variant },
-    });
-  }
+  const isSingleValue = variant === "remaining" || variant === "duration";
+
+  const timeChildren = isSingleValue ? (
+    times[variant]
+  ) : (
+    <>
+      <span className="tabular-nums">{times.current}</span>
+      <span role="separator" aria-hidden="true" aria-valuenow={0} tabIndex={-1}>
+        /
+      </span>
+      <span className="tabular-nums">{times.duration}</span>
+    </>
+  );
+
+  const timeClassName = isSingleValue
+    ? cn("text-foreground/80 text-sm tabular-nums", className)
+    : cn("flex items-center gap-1 text-foreground/80 text-sm", className);
 
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
         dir: context.dir,
-        className: cn(
-          "flex items-center gap-1 text-foreground/80 text-sm",
-          className,
-        ),
-        children: (
-          <>
-            <span className="tabular-nums">{times.current}</span>
-            <span role="separator" aria-hidden="true" aria-valuenow={0} tabIndex={-1}>
-              /
-            </span>
-            <span className="tabular-nums">{times.duration}</span>
-          </>
-        ),
+        className: timeClassName,
+        children: timeChildren,
       },
       timeProps,
     ),

@@ -11,7 +11,6 @@ import {
 import * as React from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { Button } from "@/registry/bases/radix/ui/button";
 import {
   MediaPlayer,
   MediaPlayerAudio,
@@ -22,6 +21,7 @@ import {
   MediaPlayerTooltip,
   MediaPlayerVolume,
 } from "@/registry/bases/base/ui/media-player";
+import { Button } from "@/registry/bases/radix/ui/button";
 import { ScrollArea } from "@/registry/bases/radix/ui/scroll-area";
 
 interface Track {

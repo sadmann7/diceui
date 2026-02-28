@@ -22,9 +22,11 @@ import {
 export default function MediaPlayerHlsDemo() {
   return (
     <MediaPlayer autoHide>
-      <MediaPlayerVideo asChild>
-        <MuxVideo playbackId="A3VXy02VoUinw01pwyomEO3bHnG4P32xzV7u1j1FSzjNg" />
-      </MediaPlayerVideo>
+      <MediaPlayerVideo
+        render={
+          <MuxVideo playbackId="A3VXy02VoUinw01pwyomEO3bHnG4P32xzV7u1j1FSzjNg" />
+        }
+      />
       <MediaPlayerLoading />
       <MediaPlayerError />
       <MediaPlayerVolumeIndicator />

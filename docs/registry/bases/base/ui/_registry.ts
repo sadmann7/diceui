@@ -481,7 +481,12 @@ export const ui: Registry["items"] = [
       "@diceui/compose-refs",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "media-chrome", "react-dom", "lucide-react"],
+    dependencies: [
+      "@base-ui/react",
+      "media-chrome",
+      "react-dom",
+      "lucide-react",
+    ],
   },
   {
     name: "phone-input",
