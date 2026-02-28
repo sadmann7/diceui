@@ -14,7 +14,9 @@ import {
 export default function ResponsiveDialogDemo() {
   return (
     <ResponsiveDialog>
-      <ResponsiveDialogTrigger render={<Button variant="outline">Edit Profile</Button>} />
+      <ResponsiveDialogTrigger
+        render={<Button variant="outline">Edit Profile</Button>}
+      />
       <ResponsiveDialogContent>
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>Edit profile</ResponsiveDialogTitle>

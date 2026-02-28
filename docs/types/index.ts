@@ -11,6 +11,11 @@ export type EmptyProps<
   K extends PropertyKey = keyof React.ComponentProps<T>,
 > = Omit<React.ComponentProps<T>, K>;
 
+export type EmptyCompProps<
+  TComponent,
+  TBase extends React.ElementType,
+> = Omit<TComponent, keyof React.ComponentProps<TBase>>;
+
 export interface CompositionProps {
   /**
    * Whether to merge props with the immediate child.

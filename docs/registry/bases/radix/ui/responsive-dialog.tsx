@@ -239,7 +239,13 @@ function ResponsiveDialogFooter({
     return <DrawerFooter data-variant="drawer" {...props} />;
   }
 
-  return <DialogFooter data-variant="dialog" showCloseButton={showCloseButton} {...props} />;
+  return (
+    <DialogFooter
+      data-variant="dialog"
+      showCloseButton={showCloseButton}
+      {...props}
+    />
+  );
 }
 
 function ResponsiveDialogTitle({

@@ -44,7 +44,9 @@ export default function ResponsiveDialogConfirmDemo() {
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
         <ResponsiveDialogFooter>
-          <ResponsiveDialogClose render={<Button variant="outline">Cancel</Button>} />
+          <ResponsiveDialogClose
+            render={<Button variant="outline">Cancel</Button>}
+          />
           <Button
             variant="destructive"
             onClick={onDelete}

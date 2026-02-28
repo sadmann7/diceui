@@ -1,8 +1,9 @@
 import type * as DialogPrimitive from "@radix-ui/react-dialog";
-import type { EmptyProps } from "@/types";
+import type { EmptyCompProps, EmptyProps } from "@/types";
 
-export interface ResponsiveDialogProps
-  extends EmptyProps<typeof DialogPrimitive.Root> {
+export interface ResponsiveDialogProps extends EmptyProps<
+  typeof DialogPrimitive.Root
+> {
   /**
    * The breakpoint (in pixels) at which to switch between dialog and drawer.
    * Below this width, the drawer will be shown. Above it, the dialog will be shown.
@@ -28,26 +29,47 @@ export interface ResponsiveDialogProps
 }
 
 export interface ResponsiveDialogTriggerProps
-  extends EmptyProps<typeof DialogPrimitive.Trigger> {}
+  extends EmptyCompProps<
+    React.ComponentProps<typeof DialogPrimitive.Trigger>,
+    "button"
+  > {}
 
 export interface ResponsiveDialogCloseProps
-  extends EmptyProps<typeof DialogPrimitive.Close> {}
+  extends EmptyCompProps<
+    React.ComponentProps<typeof DialogPrimitive.Close>,
+    "button"
+  > {}
 
 export interface ResponsiveDialogPortalProps
-  extends EmptyProps<typeof DialogPrimitive.Portal> {}
+  extends EmptyCompProps<
+    React.ComponentProps<typeof DialogPrimitive.Portal>,
+    "div"
+  > {}
 
 export interface ResponsiveDialogOverlayProps
-  extends EmptyProps<typeof DialogPrimitive.Overlay> {}
+  extends EmptyCompProps<
+    React.ComponentProps<typeof DialogPrimitive.Overlay>,
+    "div"
+  > {}
 
 export interface ResponsiveDialogContentProps
-  extends EmptyProps<typeof DialogPrimitive.Content> {}
+  extends EmptyCompProps<
+    React.ComponentProps<typeof DialogPrimitive.Content>,
+    "div"
+  > {}
 
 export interface ResponsiveDialogHeaderProps extends EmptyProps<"div"> {}
 
 export interface ResponsiveDialogFooterProps extends EmptyProps<"div"> {}
 
 export interface ResponsiveDialogTitleProps
-  extends EmptyProps<typeof DialogPrimitive.Title> {}
+  extends EmptyCompProps<
+    React.ComponentProps<typeof DialogPrimitive.Title>,
+    "h2"
+  > {}
 
 export interface ResponsiveDialogDescriptionProps
-  extends EmptyProps<typeof DialogPrimitive.Description> {}
+  extends EmptyCompProps<
+    React.ComponentProps<typeof DialogPrimitive.Description>,
+    "p"
+  > {}
