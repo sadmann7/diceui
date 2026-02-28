@@ -11,10 +11,10 @@ export type EmptyProps<
   K extends PropertyKey = keyof React.ComponentProps<T>,
 > = Omit<React.ComponentProps<T>, K>;
 
-export type EmptyCompProps<
+export type EmptyCompProps<TComponent, TBase extends React.ElementType> = Omit<
   TComponent,
-  TBase extends React.ElementType,
-> = Omit<TComponent, keyof React.ComponentProps<TBase>>;
+  keyof React.ComponentProps<TBase>
+>;
 
 export interface CompositionProps {
   /**

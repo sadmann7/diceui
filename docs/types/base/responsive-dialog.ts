@@ -1,7 +1,17 @@
-import type { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
+import type {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
+} from "@/registry/bases/base/ui/dialog";
 import type { EmptyCompProps, EmptyProps } from "@/types";
 
-export interface ResponsiveDialogProps {
+export interface ResponsiveDialogProps
+  extends EmptyCompProps<React.ComponentProps<typeof Dialog>, "div"> {
   /**
    * The breakpoint (in pixels) at which to switch between dialog and drawer.
    * Below this width, the drawer will be shown. Above it, the dialog will be shown.
@@ -38,69 +48,46 @@ export interface ResponsiveDialogProps {
   children?: React.ReactNode;
 }
 
-export interface ResponsiveDialogTriggerProps extends EmptyCompProps<
-  DialogPrimitive.Trigger.Props,
-  "button"
-> {
-  /**
-   * The content of the trigger.
-   */
-  children?: React.ReactNode;
-
+export interface ResponsiveDialogTriggerProps extends EmptyProps<"button"> {
   /**
    * Render prop for custom trigger rendering.
    * Supports Base UI render pattern (desktop) and converts to asChild for Drawer (mobile).
    */
-  render?: DialogPrimitive.Trigger.Props["render"];
+  render?: React.ComponentProps<typeof DialogTrigger>["render"];
 }
 
-export interface ResponsiveDialogCloseProps extends EmptyCompProps<
-  DialogPrimitive.Close.Props,
-  "button"
-> {
-  /**
-   * The content of the close button.
-   */
-  children?: React.ReactNode;
-
+export interface ResponsiveDialogCloseProps extends EmptyProps<"button"> {
   /**
    * Render prop for custom close button rendering.
    * Supports Base UI render pattern (desktop) and converts to asChild for Drawer (mobile).
    */
-  render?: DialogPrimitive.Close.Props["render"];
+  render?: React.ComponentProps<typeof DialogClose>["render"];
 }
 
-export interface ResponsiveDialogPortalProps {
-  /**
-   * The content to render inside the portal.
-   */
-  children?: React.ReactNode;
-
+export interface ResponsiveDialogPortalProps
+  extends EmptyCompProps<React.ComponentProps<typeof DialogPortal>, "div"> {
   /**
    * The container element to portal into.
+   * @default document.body
    */
   container?: HTMLElement | null;
 }
 
-export interface ResponsiveDialogOverlayProps extends React.ComponentProps<"div"> {
+export interface ResponsiveDialogOverlayProps
+  extends EmptyCompProps<React.ComponentProps<typeof DialogOverlay>, "div"> {
   /**
    * Render prop for custom overlay rendering.
    * Only used on desktop (Dialog). Ignored on mobile (Drawer).
    */
-  render?: DialogPrimitive.Backdrop.Props["render"];
-
-  /**
-   * Whether to force render the overlay even when closed.
-   * Only used on desktop (Dialog). Ignored on mobile (Drawer).
-   */
-  forceRender?: boolean;
+  render?: React.ComponentProps<typeof DialogOverlay>["render"];
 }
 
-export interface ResponsiveDialogContentProps extends React.ComponentProps<"div"> {
+export interface ResponsiveDialogContentProps
+  extends EmptyCompProps<React.ComponentProps<typeof DialogContent>, "div"> {
   /**
    * Whether to show the close button in the top-right corner.
    * Only applies on desktop (Dialog). Ignored on mobile (Drawer).
-   * @default true for Dialog
+   * @default true
    */
   showCloseButton?: boolean;
 }
@@ -110,12 +97,14 @@ export interface ResponsiveDialogHeaderProps extends EmptyProps<"div"> {}
 export interface ResponsiveDialogFooterProps extends EmptyProps<"div"> {
   /**
    * Whether to show a close button in the footer.
-   * Applies to both Dialog and Drawer.
+   * Only applies on desktop (Dialog). Ignored on mobile (Drawer).
    * @default false
    */
   showCloseButton?: boolean;
 }
 
-export interface ResponsiveDialogTitleProps extends React.ComponentProps<"h2"> {}
+export interface ResponsiveDialogTitleProps
+  extends EmptyCompProps<React.ComponentProps<typeof DialogTitle>, "h2"> {}
 
-export interface ResponsiveDialogDescriptionProps extends React.ComponentProps<"p"> {}
+export interface ResponsiveDialogDescriptionProps
+  extends EmptyCompProps<React.ComponentProps<typeof DialogDescription>, "p"> {}

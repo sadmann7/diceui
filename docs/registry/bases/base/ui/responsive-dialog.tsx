@@ -151,9 +151,7 @@ function ResponsiveDialog({
   );
 }
 
-interface ResponsiveDialogTriggerProps
-  extends Omit<React.ComponentProps<"button">, "children"> {
-  children?: React.ReactNode;
+interface ResponsiveDialogTriggerProps extends React.ComponentProps<"button"> {
   render?: React.ComponentProps<typeof DialogTrigger>["render"];
 }
 
@@ -185,9 +183,7 @@ function ResponsiveDialogTrigger({
   );
 }
 
-interface ResponsiveDialogCloseProps
-  extends Omit<React.ComponentProps<"button">, "children"> {
-  children?: React.ReactNode;
+interface ResponsiveDialogCloseProps extends React.ComponentProps<"button"> {
   render?: React.ComponentProps<typeof DialogClose>["render"];
 }
 
@@ -220,8 +216,7 @@ function ResponsiveDialogClose({
 }
 
 interface ResponsiveDialogPortalProps
-  extends Omit<React.ComponentProps<typeof DialogPortal>, "children"> {
-  children?: React.ReactNode;
+  extends React.ComponentProps<typeof DialogPortal> {
   container?: HTMLElement | null;
 }
 
