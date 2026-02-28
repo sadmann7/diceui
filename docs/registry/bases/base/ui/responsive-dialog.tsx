@@ -33,6 +33,7 @@ import {
 
 const ROOT_NAME = "ResponsiveDialog";
 
+
 interface StoreState {
   open: boolean;
   isMobile: boolean;
@@ -66,12 +67,11 @@ function useStore<T>(
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-interface ResponsiveDialogProps {
+interface ResponsiveDialogProps extends React.ComponentProps<typeof Dialog> {
   breakpoint?: number;
-  open?: boolean;
-  defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   children?: React.ReactNode;
+  modal?: boolean;
 }
 
 function ResponsiveDialog({
@@ -152,18 +152,20 @@ function ResponsiveDialog({
   );
 }
 
+interface ResponsiveDialogTriggerProps extends Omit<React.ComponentProps<"button">, "children"> {
+  children?: React.ReactNode;
+  render?: React.ComponentProps<typeof DialogTrigger>["render"] ;
+}
+
 function ResponsiveDialogTrigger({
   render,
   children,
   ...props
-}: Omit<React.ComponentProps<"button">, "children"> & {
-  children?: React.ReactNode;
-  render?: React.ReactNode;
-}) {
+}: ResponsiveDialogTriggerProps) {
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {
-    return render ? (
+    return render && React.isValidElement(render) ? (
       <DrawerTrigger data-variant="drawer" asChild {...props}>
         {render}
       </DrawerTrigger>
@@ -174,7 +176,7 @@ function ResponsiveDialogTrigger({
     );
   }
 
-  return render && React.isValidElement(render) ? (
+  return render ? (
     <DialogTrigger data-variant="dialog" render={render} {...props} />
   ) : (
     <DialogTrigger data-variant="dialog" {...props}>
@@ -183,18 +185,18 @@ function ResponsiveDialogTrigger({
   );
 }
 
-function ResponsiveDialogClose({
-  render,
-  children,
-  ...props
-}: Omit<React.ComponentProps<"button">, "children"> & {
+interface ResponsiveDialogCloseProps extends Omit<React.ComponentProps<"button">, "children"> {
   children?: React.ReactNode;
-  render?: React.ReactNode;
-}) {
+  render?: React.ComponentProps<typeof DialogClose>["render"];
+}
+
+function ResponsiveDialogClose(
+  { render, children, ...props }: ResponsiveDialogCloseProps
+) {
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {
-    return render ? (
+    return render && React.isValidElement(render) ? (
       <DrawerClose data-variant="drawer" asChild {...props}>
         {render}
       </DrawerClose>
@@ -205,7 +207,7 @@ function ResponsiveDialogClose({
     );
   }
 
-  return render && React.isValidElement(render) ? (
+  return render ? (
     <DialogClose data-variant="dialog" render={render} {...props} />
   ) : (
     <DialogClose data-variant="dialog" {...props}>
@@ -214,13 +216,15 @@ function ResponsiveDialogClose({
   );
 }
 
+interface ResponsiveDialogPortalProps extends Omit<React.ComponentProps<typeof DialogPortal>, "children"> {
+  children?: React.ReactNode;
+  container?: HTMLElement | null;
+}
+
 function ResponsiveDialogPortal({
   children,
   container,
-}: {
-  children?: React.ReactNode;
-  container?: HTMLElement | null;
-}) {
+}: ResponsiveDialogPortalProps) {
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {
@@ -238,26 +242,34 @@ function ResponsiveDialogPortal({
   );
 }
 
+interface ResponsiveDialogOverlayProps extends Omit<React.ComponentProps<typeof DialogOverlay>, "children" | "className">, Pick<React.ComponentProps<typeof DialogOverlay>, "forceRender" | "render">  {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+
 function ResponsiveDialogOverlay({
+  forceRender,
+  render,
   ...props
-}: React.ComponentProps<"div">) {
+}: ResponsiveDialogOverlayProps) {
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {
     return <DrawerOverlay data-variant="drawer" {...props} />;
   }
 
-  return <DialogOverlay data-variant="dialog" {...props} />;
+  return <DialogOverlay data-variant="dialog" render={render} forceRender={forceRender} {...props} />;
 }
+
+
 
 function ResponsiveDialogContent({
   className,
   children,
   showCloseButton,
   ...props
-}: React.ComponentProps<"div"> & {
-  showCloseButton?: boolean;
-}) {
+}: React.ComponentProps<typeof DialogContent>) {
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {
@@ -286,7 +298,7 @@ function ResponsiveDialogContent({
 
 function ResponsiveDialogHeader({
   ...props
-}: React.ComponentProps<"div">) {
+}: React.ComponentProps<typeof DialogHeader>) {
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {
@@ -299,9 +311,7 @@ function ResponsiveDialogHeader({
 function ResponsiveDialogFooter({
   showCloseButton,
   ...props
-}: React.ComponentProps<"div"> & {
-  showCloseButton?: boolean;
-}) {
+}: React.ComponentProps<typeof DialogFooter>) {
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {

@@ -230,6 +230,7 @@ function ResponsiveDialogHeader({
 }
 
 function ResponsiveDialogFooter({
+  showCloseButton,
   ...props
 }: React.ComponentProps<typeof DialogFooter>) {
   const isMobile = useStore((state) => state.isMobile);
@@ -238,7 +239,7 @@ function ResponsiveDialogFooter({
     return <DrawerFooter data-variant="drawer" {...props} />;
   }
 
-  return <DialogFooter data-variant="dialog" {...props} />;
+  return <DialogFooter data-variant="dialog" showCloseButton={showCloseButton} {...props} />;
 }
 
 function ResponsiveDialogTitle({

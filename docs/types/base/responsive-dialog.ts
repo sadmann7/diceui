@@ -1,3 +1,4 @@
+import type { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import type { EmptyProps } from "@/types";
 
 export interface ResponsiveDialogProps {
@@ -33,13 +34,13 @@ export interface ResponsiveDialogProps {
 export interface ResponsiveDialogTriggerProps
   extends Omit<React.ComponentProps<"button">, "children"> {
   children?: React.ReactNode;
-  render?: React.ReactNode;
+  render?: DialogPrimitive.Trigger.Props["render"];
 }
 
 export interface ResponsiveDialogCloseProps
   extends Omit<React.ComponentProps<"button">, "children"> {
   children?: React.ReactNode;
-  render?: React.ReactNode;
+  render?: DialogPrimitive.Close.Props["render"];
 }
 
 export interface ResponsiveDialogPortalProps {
