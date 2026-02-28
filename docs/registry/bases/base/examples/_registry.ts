@@ -1157,6 +1157,74 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "media-player-demo",
+    type: "registry:example",
+    registryDependencies: ["media-player"],
+    files: [
+      {
+        path: "examples/media-player-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "media-player-audio-demo",
+    type: "registry:example",
+    registryDependencies: ["media-player"],
+    files: [
+      {
+        path: "examples/media-player-audio-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "media-player-error-demo",
+    type: "registry:example",
+    registryDependencies: ["media-player"],
+    files: [
+      {
+        path: "examples/media-player-error-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "media-player-hls-demo",
+    type: "registry:example",
+    dependencies: ["hls.js"],
+    registryDependencies: ["media-player"],
+    files: [
+      {
+        path: "examples/media-player-hls-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "media-player-playlist-demo",
+    type: "registry:example",
+    registryDependencies: ["media-player", "button", "scroll-area"],
+    files: [
+      {
+        path: "examples/media-player-playlist-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "media-player-settings-demo",
+    type: "registry:example",
+    dependencies: ["hls.js"],
+    registryDependencies: ["media-player"],
+    files: [
+      {
+        path: "examples/media-player-settings-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "masonry-demo",
     type: "registry:example",
     registryDependencies: ["masonry", "skeleton"],

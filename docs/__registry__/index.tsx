@@ -21299,6 +21299,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "media-player": {
+        name: "media-player",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/media-player.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -22790,6 +22804,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-demo": {
+        name: "media-player-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-audio-demo": {
+        name: "media-player-audio-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-audio-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-audio-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-error-demo": {
+        name: "media-player-error-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-error-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-error-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-hls-demo": {
+        name: "media-player-hls-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-hls-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-hls-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-playlist-demo": {
+        name: "media-player-playlist-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player","button","scroll-area"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-playlist-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-playlist-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-settings-demo": {
+        name: "media-player-settings-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-settings-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-settings-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23665,6 +23763,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "media-player": {
+        name: "media-player",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/media-player.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -25156,6 +25268,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-demo": {
+        name: "media-player-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-audio-demo": {
+        name: "media-player-audio-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-audio-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-audio-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-error-demo": {
+        name: "media-player-error-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-error-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-error-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-hls-demo": {
+        name: "media-player-hls-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-hls-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-hls-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-playlist-demo": {
+        name: "media-player-playlist-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player","button","scroll-area"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-playlist-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-playlist-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-settings-demo": {
+        name: "media-player-settings-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-settings-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-settings-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26031,6 +26227,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "media-player": {
+        name: "media-player",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/media-player.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -27522,6 +27732,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-demo": {
+        name: "media-player-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-audio-demo": {
+        name: "media-player-audio-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-audio-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-audio-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-error-demo": {
+        name: "media-player-error-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-error-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-error-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-hls-demo": {
+        name: "media-player-hls-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-hls-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-hls-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-playlist-demo": {
+        name: "media-player-playlist-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player","button","scroll-area"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-playlist-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-playlist-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-settings-demo": {
+        name: "media-player-settings-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-settings-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-settings-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -28397,6 +28691,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "media-player": {
+        name: "media-player",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/media-player.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -29888,6 +30196,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-demo": {
+        name: "media-player-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-audio-demo": {
+        name: "media-player-audio-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-audio-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-audio-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-error-demo": {
+        name: "media-player-error-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-error-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-error-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-hls-demo": {
+        name: "media-player-hls-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-hls-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-hls-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-playlist-demo": {
+        name: "media-player-playlist-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player","button","scroll-area"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-playlist-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-playlist-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-settings-demo": {
+        name: "media-player-settings-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-settings-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-settings-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -30763,6 +31155,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "media-player": {
+        name: "media-player",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/media-player.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -32254,6 +32660,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-demo": {
+        name: "media-player-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-audio-demo": {
+        name: "media-player-audio-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-audio-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-audio-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-error-demo": {
+        name: "media-player-error-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-error-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-error-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-hls-demo": {
+        name: "media-player-hls-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-hls-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-hls-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-playlist-demo": {
+        name: "media-player-playlist-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player","button","scroll-area"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-playlist-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-playlist-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-settings-demo": {
+        name: "media-player-settings-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-settings-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-settings-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -33129,6 +33619,20 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "media-player": {
+        name: "media-player",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/media-player.tsx")),
+        source: "",
+        chunks: []
+      },
       "phone-input": {
         name: "phone-input",
         description: "",
@@ -34620,6 +35124,90 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/mask-input-form-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-demo": {
+        name: "media-player-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-audio-demo": {
+        name: "media-player-audio-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-audio-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-audio-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-error-demo": {
+        name: "media-player-error-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-error-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-error-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-hls-demo": {
+        name: "media-player-hls-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-hls-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-hls-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-playlist-demo": {
+        name: "media-player-playlist-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player","button","scroll-area"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-playlist-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-playlist-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "media-player-settings-demo": {
+        name: "media-player-settings-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["media-player"],
+        files: [{
+          path: "registry/bases/base/examples/media-player-settings-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/media-player-settings-demo.tsx")),
         source: "",
         chunks: []
       },

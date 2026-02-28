@@ -464,6 +464,26 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "media-player",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/media-player.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: [
+      "badge",
+      "button",
+      "dropdown-menu",
+      "tooltip",
+      "direction",
+      "@diceui/compose-refs",
+      "@diceui/use-lazy-ref",
+    ],
+    dependencies: ["@base-ui/react", "media-chrome", "react-dom", "lucide-react"],
+  },
+  {
     name: "phone-input",
     type: "registry:ui",
     files: [
