@@ -1,8 +1,8 @@
 "use client";
 
-import { cva, type VariantProps } from "class-variance-authority";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
@@ -564,7 +564,10 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   } = useSpeedDialContext(CONTENT_NAME);
 
   const contentRef = React.useRef<ContentElement | null>(null);
-  const composedRef: React.RefCallback<ContentElement> = useComposedRefs(ref, contentRef);
+  const composedRef: React.RefCallback<ContentElement> = useComposedRefs(
+    ref,
+    contentRef,
+  );
 
   const propsRef = useAsRef({
     onMouseEnter: onMouseEnterProp,
@@ -811,11 +814,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     [gap, offset, transformOrigin, position, style],
   );
 
-  const shouldMount = forceMount || renderState.shouldRender;
-
-  if (!mounted || !shouldMount) return null;
-
-  const processedChildren = (() => {
+  const processedChildren = React.useMemo(() => {
     const totalChildren = React.Children.count(children);
     return React.Children.map(children, (child, index) => {
       if (!React.isValidElement(child)) return child;
@@ -834,9 +833,9 @@ function SpeedDialContent(props: SpeedDialContentProps) {
         </SpeedDialItemImpl>
       );
     });
-  })();
+  }, [children, renderState.animating]);
 
-  return useRender({
+  const element = useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
@@ -860,6 +859,12 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       side,
     },
   });
+
+  const shouldMount = forceMount || renderState.shouldRender;
+
+  if (!mounted || !shouldMount) return null;
+
+  return element;
 }
 
 const speedDialItemVariants = cva(
