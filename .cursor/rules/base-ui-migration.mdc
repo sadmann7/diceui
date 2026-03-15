@@ -10,7 +10,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### ✅ Completed (34 components)
+### ✅ Completed (35 components)
 
 | Component | Docs | Examples | Notes |
 |-----------|------|----------|-------|
@@ -49,13 +49,14 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | media-player | ✅ | 6 | 25+ sub-components, 3100+ lines, media-chrome store, Base UI Slider for seek/volume, useRender for root/video/audio/controls/overlay/loading/error/time/volume-indicator, dropdown-menu/tooltip deps still from radix |
 | responsive-dialog | ✅ | 2 | Adaptive dialog/drawer based on breakpoint, store system, wrapper around base dialog and drawer components |
 | selection-toolbar | ✅ | 2 | Store system, floating UI positioning, text selection monitoring, portal rendering, custom event system for item selection, React event handlers override BaseUIEvent types |
+| speed-dial | ✅ | 5 | Store system, fab-style action menu, hover/click modes, side positioning, animation delays, interact outside detection, React event handlers override BaseUIEvent types |
 
-**Last Updated:** 2026-03-15 (selection-toolbar completed)
+**Last Updated:** 2026-03-15 (speed-dial completed)
 
-### 🔄 Pending (2 components)
+### 🔄 Pending (1 component)
 
 **High Complexity:**
-- speed-dial, tour
+- tour
 
 **DnD Components:**
 - kanban, sortable

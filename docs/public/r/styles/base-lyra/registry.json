@@ -776,6 +776,30 @@
       ]
     },
     {
+      "name": "speed-dial",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/speed-dial.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "registryDependencies": [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "react-dom"
+      ]
+    },
+    {
       "name": "action-bar-demo",
       "type": "registry:example",
       "dependencies": [
@@ -2786,6 +2810,86 @@
       "files": [
         {
           "path": "examples/selection-toolbar-info-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "speed-dial-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "speed-dial"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/speed-dial-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "speed-dial-controlled-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "speed-dial"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/speed-dial-controlled-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "speed-dial-hover-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "speed-dial"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/speed-dial-hover-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "speed-dial-labels-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "speed-dial"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/speed-dial-labels-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "speed-dial-side-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "speed-dial"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/speed-dial-side-demo.tsx",
           "type": "registry:example"
         }
       ]

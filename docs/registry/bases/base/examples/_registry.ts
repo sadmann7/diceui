@@ -1538,4 +1538,64 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "speed-dial-demo",
+    type: "registry:example",
+    registryDependencies: ["speed-dial"],
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/speed-dial-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "speed-dial-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["speed-dial"],
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/speed-dial-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "speed-dial-hover-demo",
+    type: "registry:example",
+    registryDependencies: ["speed-dial"],
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/speed-dial-hover-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "speed-dial-labels-demo",
+    type: "registry:example",
+    registryDependencies: ["speed-dial"],
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/speed-dial-labels-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "speed-dial-side-demo",
+    type: "registry:example",
+    registryDependencies: ["speed-dial"],
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/speed-dial-side-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

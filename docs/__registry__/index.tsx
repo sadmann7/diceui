@@ -21425,6 +21425,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "speed-dial": {
+        name: "speed-dial",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/speed-dial.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -23312,6 +23330,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-demo": {
+        name: "speed-dial-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-controlled-demo": {
+        name: "speed-dial-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-hover-demo": {
+        name: "speed-dial-hover-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-hover-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-hover-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-labels-demo": {
+        name: "speed-dial-labels-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-labels-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-labels-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-side-demo": {
+        name: "speed-dial-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23977,6 +24065,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "speed-dial": {
+        name: "speed-dial",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/speed-dial.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -25864,6 +25970,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-demo": {
+        name: "speed-dial-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-controlled-demo": {
+        name: "speed-dial-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-hover-demo": {
+        name: "speed-dial-hover-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-hover-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-hover-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-labels-demo": {
+        name: "speed-dial-labels-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-labels-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-labels-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-side-demo": {
+        name: "speed-dial-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26529,6 +26705,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "speed-dial": {
+        name: "speed-dial",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/speed-dial.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -28416,6 +28610,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-demo": {
+        name: "speed-dial-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-controlled-demo": {
+        name: "speed-dial-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-hover-demo": {
+        name: "speed-dial-hover-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-hover-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-hover-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-labels-demo": {
+        name: "speed-dial-labels-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-labels-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-labels-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-side-demo": {
+        name: "speed-dial-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -29081,6 +29345,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "speed-dial": {
+        name: "speed-dial",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/speed-dial.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -30968,6 +31250,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-demo": {
+        name: "speed-dial-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-controlled-demo": {
+        name: "speed-dial-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-hover-demo": {
+        name: "speed-dial-hover-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-hover-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-hover-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-labels-demo": {
+        name: "speed-dial-labels-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-labels-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-labels-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-side-demo": {
+        name: "speed-dial-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -31633,6 +31985,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "speed-dial": {
+        name: "speed-dial",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/speed-dial.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -33520,6 +33890,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-demo": {
+        name: "speed-dial-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-controlled-demo": {
+        name: "speed-dial-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-hover-demo": {
+        name: "speed-dial-hover-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-hover-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-hover-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-labels-demo": {
+        name: "speed-dial-labels-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-labels-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-labels-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-side-demo": {
+        name: "speed-dial-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -34185,6 +34625,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "speed-dial": {
+        name: "speed-dial",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/speed-dial.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -36072,6 +36530,76 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-demo": {
+        name: "speed-dial-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-controlled-demo": {
+        name: "speed-dial-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-controlled-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-hover-demo": {
+        name: "speed-dial-hover-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-hover-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-hover-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-labels-demo": {
+        name: "speed-dial-labels-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-labels-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-labels-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "speed-dial-side-demo": {
+        name: "speed-dial-side-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["speed-dial"],
+        files: [{
+          path: "registry/bases/base/examples/speed-dial-side-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
         source: "",
         chunks: []
       },

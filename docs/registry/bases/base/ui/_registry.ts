@@ -685,4 +685,25 @@ export const ui: Registry["items"] = [
     ],
     dependencies: ["@base-ui/react", "@floating-ui/react-dom"],
   },
+  {
+    name: "speed-dial",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/speed-dial.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+    registryDependencies: [
+      "button",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+    ],
+    dependencies: ["@base-ui/react", "react-dom"],
+  },
 ];
