@@ -49,12 +49,14 @@ export default function ColorPickerControlledDemo() {
           onOpenChange={setIsOpen}
           defaultFormat="hex"
         >
-          <ColorPickerTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
-              <ColorPickerSwatch className="size-4" />
-              Pick Color
-            </Button>
-          </ColorPickerTrigger>
+          <ColorPickerTrigger
+            render={
+              <Button variant="outline" className="flex items-center gap-2">
+                <ColorPickerSwatch className="size-4" />
+                Pick Color
+              </Button>
+            }
+          />
           <ColorPickerContent>
             <ColorPickerArea />
             <div className="flex items-center gap-2">

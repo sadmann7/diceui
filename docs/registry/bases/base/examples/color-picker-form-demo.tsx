@@ -92,15 +92,17 @@ export default function ColorPickerFormDemo() {
                   defaultFormat="hex"
                 >
                   <div className="flex items-center gap-3">
-                    <ColorPickerTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="flex items-center gap-2 px-3"
-                      >
-                        <ColorPickerSwatch className="size-4" />
-                        {field.value}
-                      </Button>
-                    </ColorPickerTrigger>
+                    <ColorPickerTrigger
+                      render={
+                        <Button
+                          variant="outline"
+                          className="flex items-center gap-2 px-3"
+                        >
+                          <ColorPickerSwatch className="size-4" />
+                          {field.value}
+                        </Button>
+                      }
+                    />
                   </div>
                   <ColorPickerContent>
                     <ColorPickerArea />
@@ -135,15 +137,17 @@ export default function ColorPickerFormDemo() {
                   defaultFormat="hex"
                 >
                   <div className="flex items-center gap-3">
-                    <ColorPickerTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="flex items-center gap-2 px-3"
-                      >
-                        <ColorPickerSwatch className="size-4" />
-                        {field.value}
-                      </Button>
-                    </ColorPickerTrigger>
+                    <ColorPickerTrigger
+                      render={
+                        <Button
+                          variant="outline"
+                          className="flex items-center gap-2 px-3"
+                        >
+                          <ColorPickerSwatch className="size-4" />
+                          {field.value}
+                        </Button>
+                      }
+                    />
                   </div>
                   <ColorPickerContent>
                     <ColorPickerArea />
@@ -178,15 +182,17 @@ export default function ColorPickerFormDemo() {
                   defaultFormat="hex"
                 >
                   <div className="flex items-center gap-3">
-                    <ColorPickerTrigger asChild>
-                      <Button
-                        variant="outline"
-                        className="flex items-center gap-2 px-3"
-                      >
-                        <ColorPickerSwatch className="size-4" />
-                        {field.value}
-                      </Button>
-                    </ColorPickerTrigger>
+                    <ColorPickerTrigger
+                      render={
+                        <Button
+                          variant="outline"
+                          className="flex items-center gap-2 px-3"
+                        >
+                          <ColorPickerSwatch className="size-4" />
+                          {field.value}
+                        </Button>
+                      }
+                    />
                   </div>
                   <ColorPickerContent>
                     <ColorPickerArea />

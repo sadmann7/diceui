@@ -653,6 +653,7 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const store = useStoreContext(COUNTRY_SELECT_NAME);
   const country = useStore((state) => state.country);
   const open = useStore((state) => state.open);
+  const onOpenChangeRef = useAsRef(onOpenChangeProp);
 
   const isDisabled = disabledProp || disabled;
 
@@ -661,9 +662,9 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const onOpenChange = React.useCallback(
     (open: boolean) => {
       store.setState("open", open);
-      onOpenChangeProp?.(open);
+      onOpenChangeRef.current?.(open);
     },
-    [store, onOpenChangeProp],
+    [store, onOpenChangeRef],
   );
 
   return (

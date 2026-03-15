@@ -1,6 +1,7 @@
 "use client";
 
 import { mergeProps } from "@base-ui/react/merge-props";
+import type { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
 import { Check, ChevronDown } from "lucide-react";
 import * as React from "react";
@@ -11,6 +12,11 @@ import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomo
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/registry/bases/base/ui/popover";
+import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -19,11 +25,6 @@ import {
   CommandList,
 } from "@/registry/bases/radix/ui/command";
 import { Input } from "@/registry/bases/radix/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/registry/bases/radix/ui/popover";
 
 const ROOT_NAME = "PhoneInput";
 const COUNTRY_SELECT_NAME = "PhoneInputCountrySelect";
@@ -663,18 +664,20 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const store = useStoreContext(COUNTRY_SELECT_NAME);
   const country = useStore((state) => state.country);
   const open = useStore((state) => state.open);
+  const onOpenChangeRef = useAsRef(onOpenChangeProp);
 
   const isDisabled = disabledProp || disabled;
 
   const countryContext = countries.find((c) => c.code === country);
 
-  const onOpenChange = React.useCallback(
-    (open: boolean) => {
-      store.setState("open", open);
-      onOpenChangeProp?.(open);
-    },
-    [store, onOpenChangeProp],
-  );
+  const onOpenChange: NonNullable<PopoverPrimitive.Root.Props["onOpenChange"]> =
+    React.useCallback(
+      (open, eventDetails) => {
+        store.setState("open", open);
+        onOpenChangeRef.current?.(open, eventDetails);
+      },
+      [store, onOpenChangeRef],
+    );
 
   return (
     <Popover open={open} onOpenChange={onOpenChange} {...popoverProps}>

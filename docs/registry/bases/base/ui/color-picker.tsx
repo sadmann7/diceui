@@ -1,6 +1,7 @@
 "use client";
 
 import { mergeProps } from "@base-ui/react/merge-props";
+import type { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -19,7 +20,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/registry/bases/radix/ui/popover";
+} from "@/registry/bases/base/ui/popover";
 import {
   Select,
   SelectContent,
@@ -49,6 +50,8 @@ interface DivProps
 type RootElement = HTMLDivElement;
 type AreaElement = HTMLDivElement;
 type InputElement = HTMLInputElement;
+
+type PopoverChangeEventDetails = PopoverPrimitive.Root.ChangeEventDetails;
 
 type ColorFormat = (typeof colorFormats)[number];
 
@@ -422,7 +425,7 @@ interface Store {
   getState: () => StoreState;
   setColor: (value: ColorValue) => void;
   setHsv: (value: HSVColorValue) => void;
-  setOpen: (value: boolean) => void;
+  setOpen: (value: boolean, eventDetails?: PopoverChangeEventDetails) => void;
   setFormat: (value: ColorFormat) => void;
   notify: () => void;
 }
@@ -472,11 +475,15 @@ interface ColorPickerProps
   extends Omit<DivProps, "onValueChange">,
     Pick<
       React.ComponentProps<typeof Popover>,
-      "defaultOpen" | "open" | "onOpenChange" | "modal"
+      "defaultOpen" | "open" | "modal"
     > {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
+  onOpenChange?: (
+    open: boolean,
+    eventDetails?: PopoverChangeEventDetails,
+  ) => void;
   dir?: Direction;
   format?: ColorFormat;
   defaultFormat?: ColorFormat;
@@ -561,13 +568,13 @@ function ColorPicker(props: ColorPickerProps) {
 
         store.notify();
       },
-      setOpen: (value: boolean) => {
+      setOpen: (value: boolean, eventDetails?: PopoverChangeEventDetails) => {
         if (Object.is(stateRef.current.open, value)) return;
 
         stateRef.current.open = value;
 
         if (propsRef.current.onOpenChange) {
-          propsRef.current.onOpenChange(value);
+          propsRef.current.onOpenChange(value, eventDetails);
         }
 
         store.notify();
@@ -661,7 +668,7 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
     if (openProp !== undefined) {
       store.setOpen(openProp);
     }
-  }, [openProp]);
+  }, [openProp, store]);
 
   const contextValue = React.useMemo<ColorPickerContextValue>(
     () => ({
@@ -733,16 +740,20 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
 function ColorPickerTrigger(
   props: React.ComponentProps<typeof PopoverTrigger>,
 ) {
-  const { disabled, ...triggerProps } = props;
+  const { disabled, render, ...triggerProps } = props;
 
   const context = useColorPickerContext(TRIGGER_NAME);
 
   const isDisabled = disabled || context.disabled;
 
   return (
-    <PopoverTrigger asChild disabled={isDisabled}>
-      <Button data-slot="color-picker-trigger" {...triggerProps} />
-    </PopoverTrigger>
+    <PopoverTrigger
+      disabled={isDisabled}
+      nativeButton={false}
+      data-slot="color-picker-trigger"
+      render={render ?? <Button />}
+      {...triggerProps}
+    />
   );
 }
 

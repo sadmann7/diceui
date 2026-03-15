@@ -167,6 +167,7 @@
       "registryDependencies": [
         "button",
         "input",
+        "popover",
         "select",
         "direction",
         "visually-hidden-input",
@@ -604,6 +605,7 @@
         }
       ],
       "registryDependencies": [
+        "popover",
         "compose-refs",
         "visually-hidden-input",
         "@diceui/use-as-ref",
@@ -747,6 +749,30 @@
       "dependencies": [
         "@base-ui/react",
         "lucide-react"
+      ]
+    },
+    {
+      "name": "selection-toolbar",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/selection-toolbar.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "registryDependencies": [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "@floating-ui/react-dom"
       ]
     },
     {
@@ -2728,6 +2754,38 @@
       "files": [
         {
           "path": "examples/time-picker-step-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "selection-toolbar-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "selection-toolbar"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/selection-toolbar-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "selection-toolbar-info-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "selection-toolbar"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/selection-toolbar-info-demo.tsx",
           "type": "registry:example"
         }
       ]

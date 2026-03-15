@@ -147,6 +147,7 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "button",
       "input",
+      "popover",
       "select",
       "direction",
       "visually-hidden-input",
@@ -525,6 +526,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: [
+      "popover",
       "compose-refs",
       "visually-hidden-input",
       "@diceui/use-as-ref",
@@ -661,5 +663,26 @@ export const ui: Registry["items"] = [
       "@diceui/use-as-ref",
     ],
     dependencies: ["@base-ui/react", "lucide-react"],
+  },
+  {
+    name: "selection-toolbar",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/selection-toolbar.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+    registryDependencies: [
+      "button",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+    ],
+    dependencies: ["@base-ui/react", "@floating-ui/react-dom"],
   },
 ];

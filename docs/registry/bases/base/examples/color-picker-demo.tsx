@@ -14,9 +14,7 @@ import {
 export default function ColorPickerDemo() {
   return (
     <ColorPicker defaultFormat="hex" defaultValue="#3b82f6">
-      <ColorPickerTrigger asChild>
-        <ColorPickerSwatch />
-      </ColorPickerTrigger>
+      <ColorPickerTrigger render={<ColorPickerSwatch />} />
       <ColorPickerContent>
         <ColorPickerArea />
         <div className="flex items-center gap-2">

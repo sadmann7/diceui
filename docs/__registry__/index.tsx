@@ -20993,7 +20993,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -21331,7 +21331,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -21404,6 +21404,24 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar": {
+        name: "selection-toolbar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/selection-toolbar.tsx")),
         source: "",
         chunks: []
       },
@@ -23266,6 +23284,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-demo": {
+        name: "selection-toolbar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-info-demo": {
+        name: "selection-toolbar-info-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-info-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -23499,7 +23545,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -23837,7 +23883,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -23910,6 +23956,24 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar": {
+        name: "selection-toolbar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/selection-toolbar.tsx")),
         source: "",
         chunks: []
       },
@@ -25772,6 +25836,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-demo": {
+        name: "selection-toolbar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-info-demo": {
+        name: "selection-toolbar-info-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-info-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26005,7 +26097,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -26343,7 +26435,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -26416,6 +26508,24 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar": {
+        name: "selection-toolbar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/selection-toolbar.tsx")),
         source: "",
         chunks: []
       },
@@ -28278,6 +28388,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-demo": {
+        name: "selection-toolbar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-info-demo": {
+        name: "selection-toolbar-info-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-info-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -28511,7 +28649,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -28849,7 +28987,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -28922,6 +29060,24 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar": {
+        name: "selection-toolbar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/selection-toolbar.tsx")),
         source: "",
         chunks: []
       },
@@ -30784,6 +30940,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-demo": {
+        name: "selection-toolbar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-info-demo": {
+        name: "selection-toolbar-info-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-info-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -31017,7 +31201,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -31355,7 +31539,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -31428,6 +31612,24 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar": {
+        name: "selection-toolbar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/selection-toolbar.tsx")),
         source: "",
         chunks: []
       },
@@ -33290,6 +33492,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-demo": {
+        name: "selection-toolbar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-info-demo": {
+        name: "selection-toolbar-info-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-info-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -33523,7 +33753,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -33861,7 +34091,7 @@ export const Index: Record<string, Record<string, any>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -33934,6 +34164,24 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/ui/time-picker.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar": {
+        name: "selection-toolbar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/selection-toolbar.tsx")),
         source: "",
         chunks: []
       },
@@ -35796,6 +36044,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/time-picker-step-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-demo": {
+        name: "selection-toolbar-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "selection-toolbar-info-demo": {
+        name: "selection-toolbar-info-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["selection-toolbar"],
+        files: [{
+          path: "registry/bases/base/examples/selection-toolbar-info-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/selection-toolbar-info-demo.tsx")),
         source: "",
         chunks: []
       },

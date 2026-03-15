@@ -1,3 +1,4 @@
+import type { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import type { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import type { useRender } from "@base-ui/react/use-render";
 import type * as React from "react";
@@ -5,7 +6,7 @@ import type { Input } from "@/registry/bases/base/ui/input";
 import type {
   PopoverContent,
   PopoverTrigger,
-} from "@/registry/bases/radix/ui/popover";
+} from "@/registry/bases/base/ui/popover";
 import type { Select, SelectTrigger } from "@/registry/bases/radix/ui/select";
 import type { ButtonProps, ControlledProps, Direction } from "@/types";
 
@@ -123,12 +124,16 @@ export interface ColorPickerProps
    * Event handler called when the open state of the color picker changes.
    *
    * ```ts
-   * onOpenChange={(open) => {
+   * onOpenChange={(open, eventDetails) => {
    *   console.log("Color picker open:", open)
+   *   console.log("Event reason:", eventDetails?.reason)
    * }}
    * ```
    */
-  onOpenChange?: (open: boolean) => void;
+  onOpenChange?: (
+    open: boolean,
+    eventDetails?: PopoverPrimitive.Root.ChangeEventDetails,
+  ) => void;
 
   /**
    * The modality of the color picker. When set to `true`, interaction with outside elements
@@ -146,11 +151,7 @@ export interface ColorPickerTriggerProps
   > {}
 
 export interface ColorPickerContentProps
-  extends Omit<
-      React.ComponentProps<typeof PopoverContent>,
-      keyof React.ComponentProps<"div">
-    >,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<typeof PopoverContent> {}
 
 export interface ColorPickerAreaProps
   extends React.ComponentProps<"div">,

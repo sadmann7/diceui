@@ -10,7 +10,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 
 ## Migration Status
 
-### ✅ Completed (33 components)
+### ✅ Completed (34 components)
 
 | Component | Docs | Examples | Notes |
 |-----------|------|----------|-------|
@@ -21,7 +21,7 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | cropper | ✅ | 5 | Store system, image/video cropping, complex interactions, RootElement simplified to HTMLDivElement |
 | file-upload | ✅ | 8 | Store system, drag & drop, 8 sub-components, previewRender renamed to avoid conflict with useRender, defaultValue conflict resolved with Omit, direction hook |
 | mask-input | ✅ | 5 | Predefined patterns, currency formatting, validation modes |
-| phone-input | ✅ | 3 | Store system, country detection, visually-hidden-input dep, popover/command deps still from radix |
+| phone-input | ✅ | 3 | Store system, country detection, visually-hidden-input dep, now uses Base UI popover, command dep still from radix |
 | scroll-spy | ✅ | 3 | Direction hook, store system, IntersectionObserver, 5 sub-components, LinkElement/SectionElement simplified to HTML types |
 | badge-overflow | ✅ | 3 | compose-refs hook |
 | circular-progress | ✅ | 3 | CSS animations included |
@@ -41,20 +41,21 @@ This guide helps you migrate existing Radix UI components to Base UI. Use this w
 | status | ✅ | 4 | Simple variant system |
 | stepper | ✅ | 4 | Direction hook, store system, 10 sub-components, focus management, keyboard navigation, validation support, custom children function in StepperIndicator resolved with Omit<children> |
 | swap | ✅ | 2 | data-* via state object |
-| time-picker | ✅ | 8 | Store system, 13 sub-components, locale-aware 12/24h format, conditional rendering for Hour/Minute/Second/Period resolved with unconditional useRender, popover dependency still from radix |
+| time-picker | ✅ | 8 | Store system, 13 sub-components, locale-aware 12/24h format, conditional rendering for Hour/Minute/Second/Period resolved with unconditional useRender, popover dependency still from radix (needs onOpenAutoFocus/onInteractOutside props not available in Base UI) |
 | timeline | ✅ | 6 | Direction hook, store system, multiple item types |
 | masonry | ✅ | 3 | Virtualized layout, interval tree positioning, resize observer, linear/optimal modes, SSR support |
 | key-value | ✅ | 4 | Store system, 8 sub-components, paste parsing (=/:/ /tab), validation, duplicate detection, Input/Textarea without render prop (shadcn wrappers), defaultValue/onPaste conflicts resolved with Omit |
-| color-picker | ✅ | 4 | Store system, HSV/RGB/HSL/HSB formats, eye dropper API, Base UI Slider (Control > Track > Indicator structure), inline mode, popover/select deps still from radix |
+| color-picker | ✅ | 4 | Store system, HSV/RGB/HSL/HSB formats, eye dropper API, Base UI Slider (Control > Track > Indicator structure), inline mode, now uses Base UI popover with render prop, onOpenChange signature adapted (1 arg not picked from Popover), select dep still from radix |
 | media-player | ✅ | 6 | 25+ sub-components, 3100+ lines, media-chrome store, Base UI Slider for seek/volume, useRender for root/video/audio/controls/overlay/loading/error/time/volume-indicator, dropdown-menu/tooltip deps still from radix |
 | responsive-dialog | ✅ | 2 | Adaptive dialog/drawer based on breakpoint, store system, wrapper around base dialog and drawer components |
+| selection-toolbar | ✅ | 2 | Store system, floating UI positioning, text selection monitoring, portal rendering, custom event system for item selection, React event handlers override BaseUIEvent types |
 
-**Last Updated:** 2026-02-25 (responsive-dialog completed)
+**Last Updated:** 2026-03-15 (selection-toolbar completed)
 
 ### 🔄 Pending (2 components)
 
 **High Complexity:**
-- selection-toolbar, speed-dial, tour
+- speed-dial, tour
 
 **DnD Components:**
 - kanban, sortable
@@ -672,6 +673,8 @@ See completed migrations as reference:
 - **editable**: Direction hook, store system with useSyncExternalStore, `onSubmit` conflict resolved with `Omit<A & B, "onSubmit">`
 - **angle-slider**: Direction hook, store system with useSyncExternalStore, circular slider with SVG track/range, `defaultValue` conflict resolved with `Omit<A & B, "defaultValue">`
 - **compare-slider**: Store system with useSyncExternalStore, multiple sub-components (Before, After, Handle, Label), interaction modes (hover/drag), orientation support (horizontal/vertical)
+- **selection-toolbar**: Store system with useSyncExternalStore, floating-ui positioning, portal rendering, text selection monitoring with window.getSelection(), custom event system, wrapping Base UI Button requires explicit React event handler types (onClick, onPointerDown, onPointerUp) to override BaseUIEvent types
+- **color-picker with Base UI popover**: When using Base UI Popover.Root, its onOpenChange expects `(open: boolean, eventDetails: ChangeEventDetails) => void`, but component's callback is `(open: boolean) => void`. Solution: don't Pick onOpenChange from Popover props, define it separately with simpler signature. Also wrap the store callback: `onOpenChange={(open) => store.setOpen(open)}`
 
 ### Utilities
 - **visually-hidden-input**: Standalone utility, no Radix dependencies, used by many form components

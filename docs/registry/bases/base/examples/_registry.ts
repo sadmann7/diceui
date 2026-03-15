@@ -1514,4 +1514,28 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "selection-toolbar-demo",
+    type: "registry:example",
+    registryDependencies: ["selection-toolbar"],
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/selection-toolbar-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "selection-toolbar-info-demo",
+    type: "registry:example",
+    registryDependencies: ["selection-toolbar"],
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/selection-toolbar-info-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];
