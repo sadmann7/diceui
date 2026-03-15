@@ -800,6 +800,33 @@
       ]
     },
     {
+      "name": "tour",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/tour.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "registryDependencies": [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "@floating-ui/react-dom",
+        "lucide-react",
+        "react-dom"
+      ]
+    },
+    {
       "name": "action-bar-demo",
       "type": "registry:example",
       "dependencies": [
@@ -2890,6 +2917,38 @@
       "files": [
         {
           "path": "examples/speed-dial-side-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tour-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "tour"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/tour-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "tour-controlled-demo",
+      "type": "registry:example",
+      "registryDependencies": [
+        "tour"
+      ],
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "examples/tour-controlled-demo.tsx",
           "type": "registry:example"
         }
       ]

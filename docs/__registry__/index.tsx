@@ -21443,6 +21443,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "tour": {
+        name: "tour",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/tour.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -23400,6 +23418,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-demo": {
+        name: "tour-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-controlled-demo": {
+        name: "tour-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-controlled-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -24083,6 +24129,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "tour": {
+        name: "tour",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/tour.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -26040,6 +26104,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-demo": {
+        name: "tour-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-controlled-demo": {
+        name: "tour-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-controlled-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -26723,6 +26815,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "tour": {
+        name: "tour",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/tour.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -28680,6 +28790,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-demo": {
+        name: "tour-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-controlled-demo": {
+        name: "tour-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-controlled-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -29363,6 +29501,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "tour": {
+        name: "tour",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/tour.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -31320,6 +31476,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-demo": {
+        name: "tour-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-controlled-demo": {
+        name: "tour-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-controlled-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -32003,6 +32187,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "tour": {
+        name: "tour",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/tour.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -33960,6 +34162,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-demo": {
+        name: "tour-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-controlled-demo": {
+        name: "tour-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-controlled-demo.tsx")),
         source: "",
         chunks: []
       },
@@ -34643,6 +34873,24 @@ export const Index: Record<string, Record<string, any>> = {
         source: "",
         chunks: []
       },
+      "tour": {
+        name: "tour",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/ui/tour.tsx")),
+        source: "",
+        chunks: []
+      },
       "action-bar-demo": {
         name: "action-bar-demo",
         description: "",
@@ -36600,6 +36848,34 @@ export const Index: Record<string, Record<string, any>> = {
           target: ""
         }],
         component: React.lazy(() => import("@/registry/bases/base/examples/speed-dial-side-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-demo": {
+        name: "tour-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-demo.tsx")),
+        source: "",
+        chunks: []
+      },
+      "tour-controlled-demo": {
+        name: "tour-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["tour"],
+        files: [{
+          path: "registry/bases/base/examples/tour-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        component: React.lazy(() => import("@/registry/bases/base/examples/tour-controlled-demo.tsx")),
         source: "",
         chunks: []
       },

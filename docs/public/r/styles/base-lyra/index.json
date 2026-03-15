@@ -795,5 +795,32 @@
       "@base-ui/react",
       "react-dom"
     ]
+  },
+  {
+    "name": "tour",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/tour.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "registryDependencies": [
+      "button",
+      "direction",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react",
+      "@floating-ui/react-dom",
+      "lucide-react",
+      "react-dom"
+    ]
   }
 ]

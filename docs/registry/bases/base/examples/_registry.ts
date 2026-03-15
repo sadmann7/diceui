@@ -1598,4 +1598,28 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "tour-demo",
+    type: "registry:example",
+    registryDependencies: ["tour"],
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/tour-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tour-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["tour"],
+    dependencies: ["lucide-react"],
+    files: [
+      {
+        path: "examples/tour-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];
