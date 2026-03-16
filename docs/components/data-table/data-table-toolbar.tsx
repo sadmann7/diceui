@@ -35,6 +35,7 @@ export function DataTableToolbar<TData>({
 
   return (
     <div
+      data-slot="data-table-toolbar"
       role="toolbar"
       aria-orientation="horizontal"
       className={cn(
