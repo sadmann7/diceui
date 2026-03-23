@@ -6,9 +6,11 @@ import {
 } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { BaseSwitcher } from "@/components/base-switcher";
 import { CopyMarkdownButton, ViewOptions } from "@/components/doc-actions";
 import { DynamicLink } from "@/components/dynamic-link";
 import { Mdx } from "@/components/mdx-components";
+import { getHasBothBases } from "@/lib/base";
 import { getChangelogToc } from "@/lib/changelog";
 import { source } from "@/lib/source";
 import {
@@ -51,6 +53,13 @@ export default async function DocPage(props: DocPageParams) {
 
   const docLink = page.data.links?.doc;
   const apiLink = page.data.links?.api;
+  const base = page.data.base;
+
+  const showBaseSwitcher = getHasBothBases({
+    url: page.url,
+    base,
+    allPages: source.getPages(),
+  });
 
   const toc =
     page.url === "/docs/changelog" ? getChangelogToc() : page.data.toc;
@@ -67,6 +76,15 @@ export default async function DocPage(props: DocPageParams) {
           {page.data.description}
         </DocsDescription>
         <div className="flex items-center gap-2">
+          {showBaseSwitcher && base ? (
+            <>
+              <BaseSwitcher base={base} pathname={page.url} />
+              <Separator
+                orientation="vertical"
+                className="data-[orientation=vertical]:h-6"
+              />
+            </>
+          ) : null}
           {docLink ? <DynamicLink href={docLink}>Docs</DynamicLink> : null}
           {apiLink ? <DynamicLink href={apiLink}>API</DynamicLink> : null}
           {(docLink || apiLink) && (

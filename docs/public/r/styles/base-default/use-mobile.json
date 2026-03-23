@@ -3,7 +3,7 @@
   "files": [
     {
       "path": "hooks/use-mobile.ts",
-      "content": "import * as React from \"react\";\n\nconst MOBILE_BREAKPOINT = 768;\n\nfunction getServerSnapshot() {\n  return false;\n}\n\nfunction useIsMobile(breakpoint = MOBILE_BREAKPOINT) {\n  const getSnapshot = React.useCallback(\n    () => window.innerWidth < breakpoint,\n    [breakpoint],\n  );\n\n  const subscribe = React.useCallback(\n    (callback: () => void) => {\n      const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);\n      mql.addEventListener(\"change\", callback);\n      return () => mql.removeEventListener(\"change\", callback);\n    },\n    [breakpoint],\n  );\n\n  return React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);\n}\n\nexport { useIsMobile };\n",
+      "content": "import * as React from \"react\";\n\nexport function useIsMobile(mobileBreakpoint = 768) {\n  const [isMobile, setIsMobile] = React.useState<boolean | undefined>(\n    undefined,\n  );\n\n  React.useEffect(() => {\n    const mql = window.matchMedia(`(max-width: ${mobileBreakpoint - 1}px)`);\n    const onChange = () => {\n      setIsMobile(window.innerWidth < mobileBreakpoint);\n    };\n    mql.addEventListener(\"change\", onChange);\n    setIsMobile(window.innerWidth < mobileBreakpoint);\n    return () => mql.removeEventListener(\"change\", onChange);\n  }, [mobileBreakpoint]);\n\n  return !!isMobile;\n}\n",
       "type": "registry:hook",
       "target": ""
     }
