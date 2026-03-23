@@ -114,6 +114,10 @@ function ResponsiveDialog({
     };
   }, [listenersRef, stateRef, onOpenChangeRef]);
 
+  if (stateRef.current.isMobile !== isMobile) {
+    stateRef.current.isMobile = isMobile;
+  }
+
   const open = useStore((state) => state.open, store);
 
   useIsomorphicLayoutEffect(() => {
@@ -121,10 +125,6 @@ function ResponsiveDialog({
       store.setState("open", openProp);
     }
   }, [openProp]);
-
-  useIsomorphicLayoutEffect(() => {
-    store.setState("isMobile", isMobile);
-  }, [isMobile]);
 
   const onOpenChange = React.useCallback(
     (value: boolean) => {

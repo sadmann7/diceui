@@ -77,7 +77,13 @@ export interface SpeedDialProps
 }
 
 export interface SpeedDialTriggerProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button"> | "onClick" | "onMouseEnter" | "onMouseLeave"> {
+  extends Omit<
+    ButtonProps,
+    | keyof React.ComponentProps<"button">
+    | "onClick"
+    | "onMouseEnter"
+    | "onMouseLeave"
+  > {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onMouseLeave?: (event: React.MouseEvent<HTMLButtonElement>) => void;

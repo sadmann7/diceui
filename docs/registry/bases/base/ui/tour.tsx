@@ -1,5 +1,8 @@
 "use client";
 
+import { useDirection } from "@base-ui/react/direction-provider";
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import {
   autoUpdate,
   flip,
@@ -13,9 +16,6 @@ import {
   useFloating,
 } from "@floating-ui/react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
-import { useDirection } from "@base-ui/react/direction-provider";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { useComposedRefs } from "@/lib/compose-refs";
@@ -1279,7 +1279,9 @@ function TourStep(props: TourStepProps) {
   }
 
   return (
-    <StepContext.Provider value={stepContextValue}>{element}</StepContext.Provider>
+    <StepContext.Provider value={stepContextValue}>
+      {element}
+    </StepContext.Provider>
   );
 }
 
@@ -1576,7 +1578,7 @@ interface TourPrevProps
 }
 
 function TourPrev(props: TourPrevProps) {
-  const { children, onClick: onClickProp, ...prevButtonProps} = props;
+  const { children, onClick: onClickProp, ...prevButtonProps } = props;
 
   const store = useStoreContext(PREV_NAME);
   const value = useStore((state) => state.value);

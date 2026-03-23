@@ -726,6 +726,11 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "@floating-ui/react-dom", "lucide-react", "react-dom"],
+    dependencies: [
+      "@base-ui/react",
+      "@floating-ui/react-dom",
+      "lucide-react",
+      "react-dom",
+    ],
   },
 ];
