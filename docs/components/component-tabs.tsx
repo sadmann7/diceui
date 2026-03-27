@@ -2,7 +2,7 @@
 
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import * as React from "react";
-import { Index } from "@/__registry__";
+import { ExamplesIndex } from "@/examples/__index__";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
@@ -36,8 +36,8 @@ export function ComponentTabs({
   const Code = Codes[index];
 
   const Preview = React.useMemo(() => {
-    // Use the multi-base index structure: Index[base][style][name]
-    const baseIndex = Index[config.base];
+    // Use ExamplesIndex[base][name] - examples are keyed by base only
+    const baseIndex = ExamplesIndex[config.base];
     if (!baseIndex) {
       return (
         <p className="text-muted-foreground text-sm">
@@ -50,20 +50,7 @@ export function ComponentTabs({
       );
     }
 
-    const styleIndex = baseIndex[config.style];
-    if (!styleIndex) {
-      return (
-        <p className="text-muted-foreground text-sm">
-          Style{" "}
-          <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
-            {config.style}
-          </code>{" "}
-          not found in registry.
-        </p>
-      );
-    }
-
-    const Component = styleIndex[name]?.component;
+    const Component = baseIndex[name]?.component;
 
     if (!Component) {
       return (
@@ -78,7 +65,7 @@ export function ComponentTabs({
     }
 
     return <Component />;
-  }, [name, config.base, config.style]);
+  }, [name, config.base]);
 
   return (
     <Tabs items={["Preview", "Code"]} className="rounded-md">

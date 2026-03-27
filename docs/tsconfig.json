@@ -43,7 +43,8 @@
   "exclude": [
     "node_modules",
     "scripts/build-registry.mts",
-    "__registry__",
+    "registry/__index__.tsx",
+    "examples/__index__.tsx",
     ".next",
     ".turbo",
     "dist",

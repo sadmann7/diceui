@@ -7,8 +7,8 @@ import path from "node:path";
 import type { UnistNode, UnistTree } from "types/unist";
 import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
-
-import { Index } from "@/__registry__";
+import { ExamplesIndex } from "@/examples/__index__";
+import { Index } from "@/registry/__index__";
 import { STYLES } from "@/registry/styles";
 
 // Default base for backward compatibility
@@ -42,11 +42,9 @@ export function rehypeComponent() {
             if (srcPath) {
               src = srcPath;
             } else {
-              // Use the multi-base index structure: Index[base][style][name]
-              const baseIndex = Index[DEFAULT_BASE];
-              if (!baseIndex) continue;
-
-              const styleIndex = baseIndex[style.name];
+              // Use the new Index[styleName][name] structure
+              const styleName = `${DEFAULT_BASE}-${style.name}`;
+              const styleIndex = Index[styleName];
               if (!styleIndex) continue;
 
               const component = styleIndex[name];
@@ -125,14 +123,11 @@ export function rehypeComponent() {
 
         try {
           for (const style of styles) {
-            // Use the multi-base index structure: Index[base][style][name]
-            const baseIndex = Index[DEFAULT_BASE];
+            // Use ExamplesIndex[base][name] - examples are keyed by base only
+            const baseIndex = ExamplesIndex[DEFAULT_BASE];
             if (!baseIndex) continue;
 
-            const styleIndex = baseIndex[style.name];
-            if (!styleIndex) continue;
-
-            const component = styleIndex[name];
+            const component = baseIndex[name];
             if (!component) continue;
 
             const src = component.files[0]?.path;
