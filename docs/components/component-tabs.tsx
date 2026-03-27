@@ -2,7 +2,6 @@
 
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import * as React from "react";
-import { ExamplesIndex } from "@/examples/__index__";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
@@ -20,6 +19,25 @@ interface ComponentTabsProps extends React.ComponentPropsWithoutRef<"div"> {
   fullPreview?: boolean;
 }
 
+// Load a registry example lazily. Uses conditional branches (not a single
+// template literal) so Turbopack creates one bounded context chunk per base
+// rather than a single catch-all chunk across the entire registry tree.
+function getExampleComponent(base: string, name: string) {
+  if (base === "base") {
+    return React.lazy(() =>
+      import(`@/registry/bases/base/examples/${name}`).then((mod) => ({
+        default: mod.default,
+      })),
+    );
+  }
+  // Default to radix
+  return React.lazy(() =>
+    import(`@/registry/bases/radix/examples/${name}`).then((mod) => ({
+      default: mod.default,
+    })),
+  );
+}
+
 export function ComponentTabs({
   name,
   children,
@@ -35,37 +53,11 @@ export function ComponentTabs({
   const Codes = React.Children.toArray(children) as React.ReactElement[];
   const Code = Codes[index];
 
-  const Preview = React.useMemo(() => {
-    // Use ExamplesIndex[base][name] - examples are keyed by base only
-    const baseIndex = ExamplesIndex[config.base];
-    if (!baseIndex) {
-      return (
-        <p className="text-muted-foreground text-sm">
-          Base{" "}
-          <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
-            {config.base}
-          </code>{" "}
-          not found in registry.
-        </p>
-      );
-    }
-
-    const Component = baseIndex[name]?.component;
-
-    if (!Component) {
-      return (
-        <p className="text-muted-foreground text-sm">
-          Component{" "}
-          <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
-            {name}
-          </code>{" "}
-          not found in registry.
-        </p>
-      );
-    }
-
-    return <Component />;
-  }, [name, config.base]);
+  // Stable lazy component — only recreated when base or name changes.
+  const Component = React.useMemo(
+    () => getExampleComponent(config.base, name),
+    [config.base, name],
+  );
 
   return (
     <Tabs items={["Preview", "Code"]} className="rounded-md">
@@ -92,7 +84,7 @@ export function ComponentTabs({
           )}
         >
           <React.Suspense fallback={<Skeleton className="size-full" />}>
-            {Preview}
+            <Component />
           </React.Suspense>
         </div>
       </Tab>
