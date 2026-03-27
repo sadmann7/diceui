@@ -1,0 +1,16 @@
+{
+  "name": "qr-code-formats-demo",
+  "registryDependencies": [
+    "button",
+    "qr-code"
+  ],
+  "files": [
+    {
+      "path": "examples/qr-code-formats-demo.tsx",
+      "content": "import { Button } from \"@/registry/bases/base/ui/button\";\r\nimport {\r\n  QRCode,\r\n  QRCodeCanvas,\r\n  QRCodeDownload,\r\n  QRCodeImage,\r\n  QRCodeSvg,\r\n} from \"@/registry/bases/base/ui/qr-code\";\r\n\r\nconst value = \"https://diceui.com\";\r\n\r\nexport default function QRCodeFormatsDemo() {\r\n  return (\r\n    <div className=\"grid grid-cols-2 gap-4 sm:grid-cols-3\">\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode value={value} size={120}>\r\n          <QRCodeCanvas />\r\n          <QRCodeDownload\r\n            format=\"png\"\r\n            filename=\"qr-canvas\"\r\n            render={<Button size=\"sm\" />}\r\n          >\r\n            Download PNG\r\n          </QRCodeDownload>\r\n        </QRCode>\r\n        <p className=\"text-muted-foreground text-sm\">Rendered as canvas</p>\r\n      </div>\r\n\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode value={value} size={120}>\r\n          <QRCodeSvg />\r\n          <QRCodeDownload\r\n            format=\"svg\"\r\n            filename=\"qr-svg\"\r\n            render={<Button size=\"sm\" />}\r\n          >\r\n            Download SVG\r\n          </QRCodeDownload>\r\n        </QRCode>\r\n        <p className=\"text-muted-foreground text-sm\">Rendered as SVG</p>\r\n      </div>\r\n\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode value={value} size={120}>\r\n          <QRCodeImage alt=\"DiceUI QR Code\" />\r\n          <QRCodeDownload\r\n            format=\"png\"\r\n            filename=\"qr-image\"\r\n            render={<Button size=\"sm\" />}\r\n          >\r\n            Download PNG\r\n          </QRCodeDownload>\r\n        </QRCode>\r\n        <p className=\"text-muted-foreground text-sm\">Rendered as image</p>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

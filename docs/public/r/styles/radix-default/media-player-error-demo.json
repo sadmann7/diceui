@@ -1,0 +1,22 @@
+{
+  "name": "media-player-error-demo",
+  "dependencies": [
+    "lucide-react",
+    "media-chrome"
+  ],
+  "registryDependencies": [
+    "button",
+    "media-player",
+    "slider",
+    "tooltip"
+  ],
+  "files": [
+    {
+      "path": "examples/media-player-error-demo.tsx",
+      "content": "import {\r\n  MediaPlayer,\r\n  MediaPlayerControls,\r\n  MediaPlayerControlsOverlay,\r\n  MediaPlayerError,\r\n  MediaPlayerFullscreen,\r\n  MediaPlayerPiP,\r\n  MediaPlayerPlay,\r\n  MediaPlayerPlaybackSpeed,\r\n  MediaPlayerSeek,\r\n  MediaPlayerSeekBackward,\r\n  MediaPlayerSeekForward,\r\n  MediaPlayerTime,\r\n  MediaPlayerVideo,\r\n  MediaPlayerVolume,\r\n} from \"@/registry/bases/radix/ui/media-player\";\r\n\r\nexport default function MediaPlayerErrorDemo() {\r\n  return (\r\n    <MediaPlayer>\r\n      <MediaPlayerVideo\r\n        src=\"/assets/nonexistent-video.mp4\"\r\n        playsInline\r\n        crossOrigin=\"\"\r\n      />\r\n      <MediaPlayerError />\r\n      <MediaPlayerControls className=\"flex-col items-start gap-2.5\">\r\n        <MediaPlayerControlsOverlay />\r\n        <MediaPlayerSeek />\r\n        <div className=\"flex w-full items-center gap-2\">\r\n          <div className=\"flex flex-1 items-center gap-2\">\r\n            <MediaPlayerPlay />\r\n            <MediaPlayerSeekBackward />\r\n            <MediaPlayerSeekForward />\r\n            <MediaPlayerVolume expandable />\r\n            <MediaPlayerTime />\r\n          </div>\r\n          <div className=\"flex items-center gap-2\">\r\n            <MediaPlayerPlaybackSpeed />\r\n            <MediaPlayerPiP />\r\n            <MediaPlayerFullscreen />\r\n          </div>\r\n        </div>\r\n      </MediaPlayerControls>\r\n    </MediaPlayer>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

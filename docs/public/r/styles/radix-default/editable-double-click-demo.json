@@ -1,0 +1,16 @@
+{
+  "name": "editable-double-click-demo",
+  "registryDependencies": [
+    "button",
+    "editable"
+  ],
+  "files": [
+    {
+      "path": "examples/editable-double-click-demo.tsx",
+      "content": "import * as React from \"react\";\r\nimport { Button } from \"@/registry/bases/radix/ui/button\";\r\nimport {\r\n  Editable,\r\n  EditableArea,\r\n  EditableCancel,\r\n  EditableInput,\r\n  EditableLabel,\r\n  EditablePreview,\r\n  EditableSubmit,\r\n  EditableToolbar,\r\n} from \"@/registry/bases/radix/ui/editable\";\r\n\r\nexport default function EditableDoubleClickDemo() {\r\n  return (\r\n    <div className=\"flex flex-col gap-4\">\r\n      <Editable\r\n        defaultValue=\"Double click to edit\"\r\n        placeholder=\"Enter your text here\"\r\n        triggerMode=\"dblclick\"\r\n      >\r\n        <EditableLabel>Fruit</EditableLabel>\r\n        <EditableArea>\r\n          <EditablePreview />\r\n          <EditableInput />\r\n        </EditableArea>\r\n        <EditableToolbar>\r\n          <EditableSubmit asChild>\r\n            <Button size=\"sm\">Save</Button>\r\n          </EditableSubmit>\r\n          <EditableCancel asChild>\r\n            <Button variant=\"outline\" size=\"sm\">\r\n              Cancel\r\n            </Button>\r\n          </EditableCancel>\r\n        </EditableToolbar>\r\n      </Editable>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

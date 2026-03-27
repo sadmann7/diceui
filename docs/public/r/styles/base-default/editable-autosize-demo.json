@@ -1,0 +1,15 @@
+{
+  "name": "editable-autosize-demo",
+  "registryDependencies": [
+    "editable"
+  ],
+  "files": [
+    {
+      "path": "examples/editable-autosize-demo.tsx",
+      "content": "import { Button } from \"@/registry/bases/base/ui/button\";\r\nimport {\r\n  Editable,\r\n  EditableArea,\r\n  EditableCancel,\r\n  EditableInput,\r\n  EditableLabel,\r\n  EditablePreview,\r\n  EditableSubmit,\r\n  EditableToolbar,\r\n} from \"@/registry/bases/base/ui/editable\";\r\n\r\nexport default function EditableAutosizeDemo() {\r\n  return (\r\n    <Editable\r\n      defaultValue=\"Adjust the size of the input with the text inside.\"\r\n      autosize\r\n    >\r\n      <EditableLabel>Autosize editable</EditableLabel>\r\n      <EditableArea>\r\n        <EditablePreview className=\"whitespace-pre-wrap\" />\r\n        <EditableInput />\r\n      </EditableArea>\r\n      <EditableToolbar>\r\n        <EditableSubmit render={<Button size=\"sm\" />}>Save</EditableSubmit>\r\n        <EditableCancel render={<Button variant=\"outline\" size=\"sm\" />}>\r\n          Cancel\r\n        </EditableCancel>\r\n      </EditableToolbar>\r\n    </Editable>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

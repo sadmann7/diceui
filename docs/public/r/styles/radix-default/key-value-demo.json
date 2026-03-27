@@ -1,0 +1,15 @@
+{
+  "name": "key-value-demo",
+  "registryDependencies": [
+    "key-value"
+  ],
+  "files": [
+    {
+      "path": "examples/key-value-demo.tsx",
+      "content": "import {\r\n  KeyValue,\r\n  KeyValueAdd,\r\n  KeyValueItem,\r\n  KeyValueKeyInput,\r\n  KeyValueList,\r\n  KeyValueRemove,\r\n  KeyValueValueInput,\r\n} from \"@/registry/bases/radix/ui/key-value\";\r\n\r\nexport default function KeyValueDemo() {\r\n  return (\r\n    <KeyValue>\r\n      <KeyValueList>\r\n        <KeyValueItem>\r\n          <KeyValueKeyInput />\r\n          <KeyValueValueInput placeholder=\"Test\" />\r\n          <KeyValueRemove />\r\n        </KeyValueItem>\r\n      </KeyValueList>\r\n      <KeyValueAdd />\r\n    </KeyValue>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

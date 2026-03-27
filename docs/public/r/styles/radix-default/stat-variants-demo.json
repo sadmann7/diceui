@@ -1,0 +1,18 @@
+{
+  "name": "stat-variants-demo",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "stat"
+  ],
+  "files": [
+    {
+      "path": "examples/stat-variants-demo.tsx",
+      "content": "import { DollarSign, TrendingUp } from \"lucide-react\";\r\nimport {\r\n  Stat,\r\n  StatIndicator,\r\n  StatLabel,\r\n  StatTrend,\r\n  StatValue,\r\n} from \"@/registry/bases/radix/ui/stat\";\r\n\r\nexport default function StatVariantsDemo() {\r\n  return (\r\n    <div className=\"grid gap-4 sm:grid-cols-2\">\r\n      <Stat>\r\n        <StatLabel>Default Indicator</StatLabel>\r\n        <StatValue>2,350</StatValue>\r\n        <StatIndicator>\r\n          <TrendingUp />\r\n        </StatIndicator>\r\n      </Stat>\r\n\r\n      <Stat>\r\n        <StatLabel>Icon Variant</StatLabel>\r\n        <StatValue>$45,231</StatValue>\r\n        <StatIndicator variant=\"icon\" color=\"success\">\r\n          <DollarSign />\r\n        </StatIndicator>\r\n      </Stat>\r\n\r\n      <Stat>\r\n        <StatLabel>Badge Variant</StatLabel>\r\n        <StatValue>1,234</StatValue>\r\n        <StatIndicator variant=\"badge\" color=\"info\">\r\n          +24\r\n        </StatIndicator>\r\n      </Stat>\r\n\r\n      <Stat>\r\n        <StatLabel>Warning Color</StatLabel>\r\n        <StatValue>89%</StatValue>\r\n        <StatIndicator variant=\"icon\" color=\"warning\">\r\n          <TrendingUp />\r\n        </StatIndicator>\r\n        <StatTrend trend=\"down\">Capacity threshold reached</StatTrend>\r\n      </Stat>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

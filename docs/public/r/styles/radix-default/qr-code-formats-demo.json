@@ -1,0 +1,16 @@
+{
+  "name": "qr-code-formats-demo",
+  "registryDependencies": [
+    "button",
+    "qr-code"
+  ],
+  "files": [
+    {
+      "path": "examples/qr-code-formats-demo.tsx",
+      "content": "import { Button } from \"@/registry/bases/radix/ui/button\";\r\nimport {\r\n  QRCode,\r\n  QRCodeCanvas,\r\n  QRCodeDownload,\r\n  QRCodeImage,\r\n  QRCodeSvg,\r\n} from \"@/registry/bases/radix/ui/qr-code\";\r\n\r\nconst value = \"https://diceui.com\";\r\n\r\nexport default function QRCodeFormatsDemo() {\r\n  return (\r\n    <div className=\"grid grid-cols-2 gap-4 sm:grid-cols-3\">\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode value={value} size={120}>\r\n          <QRCodeCanvas />\r\n          <QRCodeDownload format=\"png\" filename=\"qr-canvas\" asChild>\r\n            <Button size=\"sm\">Download PNG</Button>\r\n          </QRCodeDownload>\r\n        </QRCode>\r\n        <p className=\"text-muted-foreground text-sm\">Rendered as canvas</p>\r\n      </div>\r\n\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode value={value} size={120}>\r\n          <QRCodeSvg />\r\n          <QRCodeDownload format=\"svg\" filename=\"qr-svg\" asChild>\r\n            <Button size=\"sm\">Download SVG</Button>\r\n          </QRCodeDownload>\r\n        </QRCode>\r\n        <p className=\"text-muted-foreground text-sm\">Rendered as SVG</p>\r\n      </div>\r\n\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode value={value} size={120}>\r\n          <QRCodeImage alt=\"DiceUI QR Code\" />\r\n          <QRCodeDownload format=\"png\" filename=\"qr-image\" asChild>\r\n            <Button size=\"sm\">Download PNG</Button>\r\n          </QRCodeDownload>\r\n        </QRCode>\r\n        <p className=\"text-muted-foreground text-sm\">Rendered as image</p>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

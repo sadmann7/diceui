@@ -1,0 +1,15 @@
+{
+  "name": "status-demo",
+  "registryDependencies": [
+    "status"
+  ],
+  "files": [
+    {
+      "path": "examples/status-demo.tsx",
+      "content": "import {\r\n  Status,\r\n  StatusIndicator,\r\n  StatusLabel,\r\n} from \"@/registry/bases/radix/ui/status\";\r\n\r\nexport default function StatusDemo() {\r\n  return (\r\n    <div className=\"flex flex-wrap items-center gap-2.5\">\r\n      <Status variant=\"success\">\r\n        <StatusIndicator />\r\n        <StatusLabel>Online</StatusLabel>\r\n      </Status>\r\n\r\n      <Status variant=\"error\">\r\n        <StatusIndicator />\r\n        <StatusLabel>Offline</StatusLabel>\r\n      </Status>\r\n\r\n      <Status variant=\"warning\">\r\n        <StatusIndicator />\r\n        <StatusLabel>Away</StatusLabel>\r\n      </Status>\r\n\r\n      <Status variant=\"info\">\r\n        <StatusIndicator />\r\n        <StatusLabel>Idle</StatusLabel>\r\n      </Status>\r\n\r\n      <Status variant=\"default\">\r\n        <StatusIndicator />\r\n        <StatusLabel>Unknown</StatusLabel>\r\n      </Status>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

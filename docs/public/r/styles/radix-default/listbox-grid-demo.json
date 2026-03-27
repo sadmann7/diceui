@@ -1,0 +1,15 @@
+{
+  "name": "listbox-grid-demo",
+  "registryDependencies": [
+    "listbox"
+  ],
+  "files": [
+    {
+      "path": "examples/listbox-grid-demo.tsx",
+      "content": "import {\r\n  Listbox,\r\n  ListboxItem,\r\n  ListboxItemIndicator,\r\n} from \"@/registry/bases/radix/ui/listbox\";\r\n\r\nconst tricks = [\r\n  { label: \"Kickflip\", description: \"Flip the board 360° along its long axis\" },\r\n  {\r\n    label: \"Heelflip\",\r\n    description:\r\n      \"Flip the board 360° along its long axis in the opposite direction of a kickflip\",\r\n  },\r\n  {\r\n    label: \"Tre Flip\",\r\n    description:\r\n      \"Flip the board 360° along its long axis in the opposite direction of a kickflip\",\r\n  },\r\n  {\r\n    label: \"FS 540\",\r\n    description: \"Flip the board 540° along its long axis\",\r\n  },\r\n  {\r\n    label: \"360 Varial McTwist\",\r\n    description: \"A 540° inverted aerial with a 360° board rotation\",\r\n  },\r\n  {\r\n    label: \"The 900\",\r\n    description: \"Legendary 900° aerial rotation pioneered by Tony Hawk\",\r\n  },\r\n];\r\n\r\nexport default function ListboxGridDemo() {\r\n  return (\r\n    <Listbox orientation=\"mixed\" className=\"grid w-full gap-2 sm:grid-cols-3\">\r\n      {tricks.map((trick) => (\r\n        <ListboxItem\r\n          key={trick.label}\r\n          value={trick.label}\r\n          className=\"items-start\"\r\n        >\r\n          <div className=\"flex flex-col gap-px\">\r\n            <div className=\"font-medium\">{trick.label}</div>\r\n            <div className=\"line-clamp-2 text-muted-foreground text-sm\">\r\n              {trick.description}\r\n            </div>\r\n          </div>\r\n          <ListboxItemIndicator />\r\n        </ListboxItem>\r\n      ))}\r\n    </Listbox>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

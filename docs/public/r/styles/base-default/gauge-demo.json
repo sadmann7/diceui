@@ -1,0 +1,15 @@
+{
+  "name": "gauge-demo",
+  "registryDependencies": [
+    "gauge"
+  ],
+  "files": [
+    {
+      "path": "examples/gauge-demo.tsx",
+      "content": "import {\r\n  Gauge,\r\n  GaugeIndicator,\r\n  GaugeLabel,\r\n  GaugeRange,\r\n  GaugeTrack,\r\n  GaugeValueText,\r\n} from \"@/registry/bases/base/ui/gauge\";\r\n\r\nexport default function GaugeDemo() {\r\n  return (\r\n    <Gauge value={85} size={180} thickness={12}>\r\n      <GaugeIndicator>\r\n        <GaugeTrack />\r\n        <GaugeRange />\r\n      </GaugeIndicator>\r\n      <GaugeValueText />\r\n      <GaugeLabel className=\"sr-only\">Performance</GaugeLabel>\r\n    </Gauge>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

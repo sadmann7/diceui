@@ -1,0 +1,15 @@
+{
+  "name": "fps-demo",
+  "registryDependencies": [
+    "fps"
+  ],
+  "files": [
+    {
+      "path": "examples/fps-demo.tsx",
+      "content": "import { Fps } from \"@/registry/bases/base/ui/fps\";\r\n\r\nexport default function FpsDemo() {\r\n  return (\r\n    <div className=\"relative h-80 w-full rounded-lg border bg-muted/50\">\r\n      <Fps strategy=\"absolute\" position=\"top-right\" />\r\n      <div className=\"flex size-full flex-col items-center justify-center gap-1\">\r\n        <div>Absolute positioning</div>\r\n        <div className=\"text-muted-foreground text-sm\">\r\n          Relative to this container without a portal\r\n        </div>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

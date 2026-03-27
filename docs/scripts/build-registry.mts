@@ -21,36 +21,45 @@ import { fixImport } from "./fix-imports.mts";
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
 const STYLES_PATH = path.join(REGISTRY_PATH, "styles");
 
-// Types included in the public registry (downloadable via CLI).
-// registry:example is intentionally excluded — examples are docs-only previews,
-// not installable components, so they should not generate per-style JSON files.
+// Types included in the per-style public registry (downloadable via CLI).
+// registry:example is handled separately — written only for the default style,
+// not duplicated across all style variants.
 const REGISTRY_INDEX_WHITELIST: z.infer<typeof registryItemTypeSchema>[] = [
   "registry:ui",
   "registry:lib",
   "registry:hook",
   "registry:theme",
   "registry:block",
+  "registry:example",
   "registry:component",
   "registry:internal",
   "registry:style",
 ];
 
+// The style name considered "default" — examples are only written for this style.
+const DEFAULT_STYLE = "default";
+
 // Define bases to build
 const BASES: RegistryBase[] = ["radix", "base"];
 
 // Map styles for compatibility
-const styles = STYLES.map((s) => ({ name: s.name, label: s.title }));
+const styles = STYLES.map((s) => ({ name: s.name, label: s.title ?? s.name }));
 
 // Build all base-style combination names
 function getStylesToBuild() {
-  const stylesToBuild: { name: string; label: string; base: RegistryBase }[] =
-    [];
+  const stylesToBuild: {
+    name: string;
+    label: string;
+    base: RegistryBase;
+    style: { name: string; label: string };
+  }[] = [];
   for (const baseName of BASES) {
     for (const style of styles) {
       stylesToBuild.push({
         name: `${baseName}-${style.name}`,
         label: `${style.label}`,
         base: baseName,
+        style,
       });
     }
   }
@@ -416,10 +425,12 @@ export const ExamplesIndex: Record<string, Record<string, any>> = {
 async function buildRegistryJson() {
   const stylesToBuild = getStylesToBuild();
 
-  for (const { name: styleName, base: baseName } of stylesToBuild) {
+  for (const { name: styleName, base: baseName, style } of stylesToBuild) {
     const registry = registries[baseName];
     const outputDir = path.join(STYLES_PATH, styleName);
     await fs.mkdir(outputDir, { recursive: true });
+
+    const isDefaultStyle = style.name === DEFAULT_STYLE;
 
     // ----------------------------------------------------------------------------
     // Build index.json (UI components only).
@@ -451,6 +462,10 @@ async function buildRegistryJson() {
     const allItems = registry.items
       .filter((item) => REGISTRY_INDEX_WHITELIST.includes(item.type))
       .filter((item) => item.name !== "index") // Skip index item
+      // Examples don't change across style variants — only include for default style
+      .filter(
+        (item) => item.type !== "registry:example" || isDefaultStyle,
+      )
       .map((item) => {
         return {
           ...item,
@@ -551,10 +566,12 @@ async function buildRootIndex() {
 async function buildStyles() {
   const stylesToBuild = getStylesToBuild();
 
-  for (const { name: styleName, base: baseName } of stylesToBuild) {
+  for (const { name: styleName, base: baseName, style } of stylesToBuild) {
     const registry = registries[baseName];
     const outputDir = path.join(STYLES_PATH, styleName);
     await fs.mkdir(outputDir, { recursive: true });
+
+    const isDefaultStyle = style.name === DEFAULT_STYLE;
 
     for (const item of registry.items) {
       if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) {
@@ -563,6 +580,12 @@ async function buildStyles() {
 
       // Skip "index" item to avoid overwriting the UI component listing
       if (item.name === "index") {
+        continue;
+      }
+
+      // Examples don't change across style variants — only write them for the
+      // default style to avoid duplicating identical files across all 12 variants.
+      if (item.type === "registry:example" && !isDefaultStyle) {
         continue;
       }
 

@@ -1,0 +1,19 @@
+{
+  "name": "hitbox-radii-demo",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "checkbox",
+    "hitbox"
+  ],
+  "files": [
+    {
+      "path": "examples/hitbox-radii-demo.tsx",
+      "content": "import { Hitbox } from \"@/registry/bases/radix/components/hitbox\";\r\nimport { Checkbox } from \"@/registry/bases/radix/ui/checkbox\";\r\n\r\nexport default function HitboxRadiiDemo() {\r\n  return (\r\n    <div className=\"flex items-center gap-8\">\r\n      <div className=\"flex flex-col items-center gap-4\">\r\n        <Hitbox radius=\"none\" debug>\r\n          <Checkbox />\r\n        </Hitbox>\r\n        <p className=\"text-muted-foreground text-sm\">none</p>\r\n      </div>\r\n      <div className=\"flex flex-col items-center gap-4\">\r\n        <Hitbox radius=\"sm\" debug>\r\n          <Checkbox />\r\n        </Hitbox>\r\n        <p className=\"text-muted-foreground text-sm\">sm</p>\r\n      </div>\r\n      <div className=\"flex flex-col items-center gap-4\">\r\n        <Hitbox radius=\"md\" debug>\r\n          <Checkbox />\r\n        </Hitbox>\r\n        <p className=\"text-muted-foreground text-sm\">md</p>\r\n      </div>\r\n      <div className=\"flex flex-col items-center gap-4\">\r\n        <Hitbox radius=\"lg\" debug>\r\n          <Checkbox />\r\n        </Hitbox>\r\n        <p className=\"text-muted-foreground text-sm\">lg</p>\r\n      </div>\r\n      <div className=\"flex flex-col items-center gap-4\">\r\n        <Hitbox radius=\"full\" debug>\r\n          <Checkbox />\r\n        </Hitbox>\r\n        <p className=\"text-muted-foreground text-sm\">full</p>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

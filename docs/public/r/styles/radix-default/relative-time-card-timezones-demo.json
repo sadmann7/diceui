@@ -1,0 +1,16 @@
+{
+  "name": "relative-time-card-timezones-demo",
+  "registryDependencies": [
+    "hover-card",
+    "relative-time-card"
+  ],
+  "files": [
+    {
+      "path": "examples/relative-time-card-timezones-demo.tsx",
+      "content": "import { RelativeTimeCard } from \"@/registry/bases/radix/ui/relative-time-card\";\r\n\r\nexport default function RelativeTimeCardTimezonesDemo() {\r\n  const now = new Date();\r\n\r\n  return (\r\n    <div className=\"flex flex-col gap-4\">\r\n      <RelativeTimeCard\r\n        date={now}\r\n        timezones={[\r\n          \"America/Los_Angeles\",\r\n          \"America/New_York\",\r\n          \"Europe/London\",\r\n          \"Asia/Singapore\",\r\n          \"Asia/Tokyo\",\r\n        ]}\r\n      />\r\n      <RelativeTimeCard\r\n        date={now}\r\n        timezones={[\r\n          \"America/Chicago\",\r\n          \"Europe/Paris\",\r\n          \"Asia/Dubai\",\r\n          \"Australia/Sydney\",\r\n        ]}\r\n      />\r\n      <RelativeTimeCard date={now} timezones={[\"UTC\"]} />\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

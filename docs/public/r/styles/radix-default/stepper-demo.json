@@ -1,0 +1,15 @@
+{
+  "name": "stepper-demo",
+  "registryDependencies": [
+    "stepper"
+  ],
+  "files": [
+    {
+      "path": "examples/stepper-demo.tsx",
+      "content": "import {\r\n  Stepper,\r\n  StepperContent,\r\n  StepperIndicator,\r\n  StepperItem,\r\n  StepperList,\r\n  StepperSeparator,\r\n  StepperTrigger,\r\n} from \"@/registry/bases/radix/ui/stepper\";\r\n\r\nconst steps = [\r\n  {\r\n    value: \"account\",\r\n    title: \"Account Setup\",\r\n    description: \"Create your account and verify email\",\r\n  },\r\n  {\r\n    value: \"profile\",\r\n    title: \"Profile Information\",\r\n    description: \"Add your personal details and preferences\",\r\n  },\r\n  {\r\n    value: \"payment\",\r\n    title: \"Payment Details\",\r\n    description: \"Set up billing and payment methods\",\r\n  },\r\n  {\r\n    value: \"complete\",\r\n    title: \"Complete Setup\",\r\n    description: \"Review and finish your account setup\",\r\n  },\r\n];\r\n\r\nexport default function StepperDemo() {\r\n  return (\r\n    <Stepper defaultValue=\"account\" className=\"w-full max-w-md\">\r\n      <StepperList>\r\n        {steps.map((step) => (\r\n          <StepperItem key={step.value} value={step.value}>\r\n            <StepperTrigger>\r\n              <StepperIndicator />\r\n            </StepperTrigger>\r\n            <StepperSeparator />\r\n          </StepperItem>\r\n        ))}\r\n      </StepperList>\r\n      {steps.map((step) => (\r\n        <StepperContent\r\n          key={step.value}\r\n          value={step.value}\r\n          className=\"flex flex-col items-center gap-4 rounded-md border bg-card p-4 text-card-foreground\"\r\n        >\r\n          <div className=\"flex flex-col items-center gap-px text-center\">\r\n            <h3 className=\"font-semibold text-lg\">{step.title}</h3>\r\n            <p className=\"text-muted-foreground\">{step.description}</p>\r\n          </div>\r\n          <p className=\"text-sm\">Content for {step.title} goes here.</p>\r\n        </StepperContent>\r\n      ))}\r\n    </Stepper>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

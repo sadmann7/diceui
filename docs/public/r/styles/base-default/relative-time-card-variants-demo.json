@@ -1,0 +1,19 @@
+{
+  "name": "relative-time-card-variants-demo",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "button",
+    "relative-time-card"
+  ],
+  "files": [
+    {
+      "path": "examples/relative-time-card-variants-demo.tsx",
+      "content": "import { Clock } from \"lucide-react\";\r\nimport { Button } from \"@/registry/bases/base/ui/button\";\r\nimport { RelativeTimeCard } from \"@/registry/bases/base/ui/relative-time-card\";\r\n\r\nexport default function RelativeTimeCardVariantsDemo() {\r\n  const now = new Date();\r\n\r\n  return (\r\n    <div className=\"flex flex-col gap-6\">\r\n      <div className=\"flex flex-col gap-2\">\r\n        <span className=\"text-muted-foreground text-sm\">Style variants</span>\r\n        <div className=\"flex items-center gap-4\">\r\n          <RelativeTimeCard date={now} variant=\"default\" />\r\n          <RelativeTimeCard date={now} variant=\"muted\" />\r\n          <RelativeTimeCard date={now} variant=\"ghost\" />\r\n        </div>\r\n      </div>\r\n      <div className=\"flex flex-col gap-2\">\r\n        <span className=\"text-muted-foreground text-sm\">Custom styling</span>\r\n        <div className=\"flex items-center gap-4\">\r\n          <RelativeTimeCard\r\n            date={now}\r\n            className=\"text-blue-500 hover:text-blue-700\"\r\n          />\r\n          <RelativeTimeCard\r\n            date={now}\r\n            className=\"font-semibold text-green-600 hover:text-green-800\"\r\n          />\r\n          <RelativeTimeCard\r\n            date={now}\r\n            className=\"text-purple-500 italic hover:text-purple-700\"\r\n          />\r\n        </div>\r\n      </div>\r\n      <div className=\"flex flex-col gap-2\">\r\n        <span className=\"text-muted-foreground text-sm\">\r\n          Hover card positions\r\n        </span>\r\n        <div className=\"flex items-center gap-4\">\r\n          <RelativeTimeCard date={now} side=\"top\" align=\"start\" sideOffset={10}>\r\n            Top aligned\r\n          </RelativeTimeCard>\r\n          <RelativeTimeCard\r\n            date={now}\r\n            side=\"right\"\r\n            align=\"center\"\r\n            sideOffset={10}\r\n          >\r\n            Right aligned\r\n          </RelativeTimeCard>\r\n          <RelativeTimeCard\r\n            date={now}\r\n            side=\"bottom\"\r\n            align=\"end\"\r\n            sideOffset={10}\r\n          >\r\n            Bottom aligned\r\n          </RelativeTimeCard>\r\n        </div>\r\n      </div>\r\n      <div className=\"flex flex-col gap-2\">\r\n        <span className=\"text-muted-foreground text-sm\">Custom trigger</span>\r\n        <div className=\"flex items-center gap-4\">\r\n          <RelativeTimeCard\r\n            date={now}\r\n            render={<Button variant=\"outline\" size=\"sm\" />}\r\n          >\r\n            <Clock />\r\n            Time details\r\n          </RelativeTimeCard>\r\n          <RelativeTimeCard date={now}>\r\n            <div className=\"flex items-center gap-2 text-emerald-600\">\r\n              <span className=\"i-lucide-calendar h-4 w-4\" />\r\n              <span>View date</span>\r\n            </div>\r\n          </RelativeTimeCard>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

@@ -1,0 +1,15 @@
+{
+  "name": "qr-code-customization-demo",
+  "registryDependencies": [
+    "qr-code"
+  ],
+  "files": [
+    {
+      "path": "examples/qr-code-customization-demo.tsx",
+      "content": "import {\r\n  QRCode,\r\n  QRCodeCanvas,\r\n  QRCodeSkeleton,\r\n} from \"@/registry/bases/radix/ui/qr-code\";\r\n\r\nexport default function QRCodeCustomizationDemo() {\r\n  return (\r\n    <div className=\"grid grid-cols-1 gap-6 sm:grid-cols-2\">\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode\r\n          value=\"https://diceui.com\"\r\n          size={150}\r\n          foregroundColor=\"#3b82f6\"\r\n          backgroundColor=\"#f1f5f9\"\r\n        >\r\n          <QRCodeCanvas />\r\n          <QRCodeSkeleton />\r\n        </QRCode>\r\n        <p className=\"text-muted-foreground text-sm\">Custom Colors</p>\r\n      </div>\r\n\r\n      <div className=\"flex flex-col items-center gap-2\">\r\n        <QRCode\r\n          value=\"https://diceui.com\"\r\n          size={150}\r\n          level=\"H\"\r\n          foregroundColor=\"#dc2626\"\r\n        >\r\n          <QRCodeCanvas />\r\n          <QRCodeSkeleton />\r\n        </QRCode>\r\n        <p className=\"text-muted-foreground text-sm\">High Error Correction</p>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}
