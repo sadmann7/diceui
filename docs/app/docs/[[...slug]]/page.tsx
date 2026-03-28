@@ -55,11 +55,7 @@ export default async function DocPage(props: DocPageParams) {
   const apiLink = page.data.links?.api;
   const base = page.data.base;
 
-  const showBaseSwitcher = getHasBothBases({
-    url: page.url,
-    base,
-    allPages: source.getPages(),
-  });
+  const showBaseSwitcher = getHasBothBases({ url: page.url, base });
 
   const toc =
     page.url === "/docs/changelog" ? getChangelogToc() : page.data.toc;
