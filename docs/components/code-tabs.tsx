@@ -3,12 +3,7 @@
 import * as React from "react";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/registry/bases/radix/ui/tabs";
+import { Tabs } from "@/registry/bases/radix/ui/tabs";
 
 export function CodeTabs({
   children,
@@ -22,12 +17,17 @@ export function CodeTabs({
     [config.installationType],
   );
 
+  const onValueChange = React.useCallback(
+    (value: string) => {
+      setConfig({ ...config, installationType: value as "cli" | "manual" });
+    },
+    [config, setConfig],
+  );
+
   return (
     <Tabs
       value={installationType}
-      onValueChange={(value) =>
-        setConfig({ ...config, installationType: value as "cli" | "manual" })
-      }
+      onValueChange={onValueChange}
       className={cn(
         "not-prose relative mt-6 w-full *:data-[slot=tabs-list]:gap-6",
         className,

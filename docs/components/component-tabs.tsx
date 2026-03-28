@@ -81,7 +81,7 @@ export function ComponentTabs({
       </Tab>
       <Tab
         value="Code"
-        className="rounded-none py-0 **:[figure]:rounded-none **:[pre]:h-[424.5px] **:[pre]:px-4"
+        className="rounded-none py-0 **:[figure]:my-0 **:[figure]:rounded-none **:[pre]:h-[424.5px] **:[pre]:px-4"
       >
         {code}
       </Tab>

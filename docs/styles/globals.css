@@ -342,8 +342,12 @@
 }
 
 @layer components {
-  [data-rehype-pretty-code-figure] {
+  [data-rehype-pretty-code-figure]:not([data-component-source]) {
     @apply my-0!;
+  }
+
+  [data-component-source] {
+    @apply my-4!;
   }
 
   [data-rehype-pretty-code-figure] figure {
