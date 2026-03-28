@@ -1,8 +1,8 @@
 "use client";
 
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
+import { useParams } from "next/navigation";
 import * as React from "react";
-import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
 
@@ -42,14 +42,15 @@ export function ComponentTabs({
   fullPreview,
   className,
 }: ComponentTabsProps) {
-  const [config] = useConfig();
+  const params = useParams<{ slug?: string[] }>();
+  const base = params.slug?.[1] === "base" ? "base" : "radix";
 
   // rehypeComponent injects a single <pre> block as the first child.
   const code = React.Children.toArray(children)[0] as React.ReactElement;
 
   const Component = React.useMemo(
-    () => getExampleComponent(config.base, name),
-    [config.base, name],
+    () => getExampleComponent(base, name),
+    [base, name],
   );
 
   return (
