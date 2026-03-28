@@ -21,10 +21,7 @@ export function BaseSwitcher({
   return (
     <div
       role="tablist"
-      className={cn(
-        "inline-flex h-9 items-center gap-6 border-border border-b",
-        className,
-      )}
+      className={cn("inline-flex h-9 items-center gap-6", className)}
       {...props}
     >
       {bases.map((baseItem) => {
@@ -41,10 +38,8 @@ export function BaseSwitcher({
             role="tab"
             aria-selected={isActive}
             className={cn(
-              "-mb-px inline-flex items-center justify-center whitespace-nowrap border-b-2 pb-2 font-medium text-sm transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-              isActive
-                ? "border-foreground text-foreground"
-                : "border-transparent text-muted-foreground hover:text-foreground",
+              "inline-flex items-center justify-center whitespace-nowrap border-b-2 pb-1.5 font-medium text-sm transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50",
+              "not-aria-selected:border-transparent not-aria-selected:text-muted-foreground not-aria-selected:hover:text-foreground aria-selected:border-foreground aria-selected:text-foreground",
             )}
           >
             {baseItem.label}

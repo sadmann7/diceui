@@ -7,16 +7,12 @@ import {
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BaseSwitcher } from "@/components/base-switcher";
-import { CopyMarkdownButton, ViewOptions } from "@/components/doc-actions";
+import { DocActions } from "@/components/doc-actions";
 import { DynamicLink } from "@/components/dynamic-link";
 import { Mdx } from "@/components/mdx-components";
 import { getHasBothBases } from "@/lib/base";
 import { getChangelogToc } from "@/lib/changelog";
 import { source } from "@/lib/source";
-import {
-  ButtonGroup,
-  ButtonGroupSeparator,
-} from "@/registry/bases/radix/ui/button-group";
 import { Separator } from "@/registry/bases/radix/ui/separator";
 
 interface DocPageParams {
@@ -65,22 +61,16 @@ export default async function DocPage(props: DocPageParams) {
       toc={toc}
       tableOfContent={{ style: "clerk" }}
       full={page.data.full}
+      breadcrumb={{ enabled: false }}
     >
-      <div className="flex flex-col gap-2">
-        <DocsTitle>{page.data.title}</DocsTitle>
-        <DocsDescription className="mb-2.5">
-          {page.data.description}
-        </DocsDescription>
-        <div className="flex items-center gap-2">
-          {showBaseSwitcher && base ? (
-            <>
-              <BaseSwitcher base={base} pathname={page.url} />
-              <Separator
-                orientation="vertical"
-                className="data-[orientation=vertical]:h-6"
-              />
-            </>
-          ) : null}
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-col gap-1.5">
+          <DocsTitle>{page.data.title}</DocsTitle>
+          <DocsDescription className="mb-2.5">
+            {page.data.description}
+          </DocsDescription>
+        </div>
+        <div className="flex shrink-0 items-center gap-2 pt-1.5">
           {docLink ? <DynamicLink href={docLink}>Docs</DynamicLink> : null}
           {apiLink ? <DynamicLink href={apiLink}>API</DynamicLink> : null}
           {(docLink || apiLink) && (
@@ -89,18 +79,13 @@ export default async function DocPage(props: DocPageParams) {
               className="data-[orientation=vertical]:h-6"
             />
           )}
-          <ButtonGroup>
-            <CopyMarkdownButton markdownUrl={`${page.url}.mdx`} />
-            <ButtonGroupSeparator />
-            <ViewOptions
-              markdownUrl={`${page.url}.mdx`}
-              githubUrl={`https://github.com/sadmann7/diceui/blob/main/docs/content/docs/${page.path}`}
-            />
-          </ButtonGroup>
+          <DocActions url={page.url} path={page.path} />
         </div>
       </div>
-      <Separator className="mt-2 mb-0.5" />
-      <DocsBody>
+      {showBaseSwitcher && base ? (
+        <BaseSwitcher base={base} pathname={page.url} />
+      ) : null}
+      <DocsBody className={showBaseSwitcher ? "pt-6" : "pt-2"}>
         <Mdx page={page} />
       </DocsBody>
     </DocsPage>

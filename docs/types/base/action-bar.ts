@@ -1,3 +1,4 @@
+import type React from "react";
 import type { Button } from "@/registry/bases/base/ui/button";
 import type { RenderProps } from "@/types";
 
@@ -87,7 +88,10 @@ export interface ActionBarSelectionProps extends RenderProps {}
 export interface ActionBarGroupProps extends RenderProps {}
 
 export interface ActionBarItemProps
-  extends Omit<React.ComponentProps<typeof Button>, "onSelect"> {
+  extends Omit<
+    React.ComponentProps<typeof Button>,
+    keyof React.ComponentProps<"button">
+  > {
   /**
    * Event handler called when the item is selected.
    * When provided, the action bar will automatically close after selection

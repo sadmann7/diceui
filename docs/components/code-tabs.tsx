@@ -1,9 +1,10 @@
 "use client";
 
-import * as React from "react";
+import type * as React from "react";
+import { MdxTabs } from "@/components/mdx-tabs";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
-import { Tabs } from "@/registry/bases/radix/ui/tabs";
+import type { Tabs } from "@/registry/bases/radix/ui/tabs";
 
 export function CodeTabs({
   children,
@@ -12,22 +13,13 @@ export function CodeTabs({
 }: React.ComponentProps<typeof Tabs>) {
   const [config, setConfig] = useConfig();
 
-  const installationType = React.useMemo(
-    () => config.installationType ?? "cli",
-    [config.installationType],
-  );
-
-  const onValueChange = React.useCallback(
-    (value: string) => {
-      setConfig({ ...config, installationType: value as "cli" | "manual" });
-    },
-    [config, setConfig],
-  );
-
   return (
-    <Tabs
-      value={installationType}
-      onValueChange={onValueChange}
+    <MdxTabs
+      variant="line"
+      value={config.installationType ?? "cli"}
+      onValueChange={(value) =>
+        setConfig({ ...config, installationType: value as "cli" | "manual" })
+      }
       className={cn(
         "not-prose relative mt-6 w-full *:data-[slot=tabs-list]:gap-6",
         className,
@@ -35,6 +27,6 @@ export function CodeTabs({
       {...props}
     >
       {children}
-    </Tabs>
+    </MdxTabs>
   );
 }

@@ -1,33 +1,10 @@
-import {
-  Dice4,
-  FileCodeIcon,
-  FileIcon,
-  FileJsonIcon,
-  FileText,
-  Loader,
-} from "lucide-react";
+import { Dice4, Loader } from "lucide-react";
 
-export type IconProps = React.HTMLAttributes<SVGElement>;
-
-export function getIconForLanguageExtension(language: string) {
-  switch (language) {
-    case "json":
-      return <Icons.json className="size-3.5" />;
-    case "css":
-      return <Icons.css className="size-3.5 fill-foreground" />;
-    case "js":
-    case "jsx":
-    case "ts":
-    case "tsx":
-    case "typescript":
-      return <Icons.ts className="size-3.5 fill-foreground" />;
-    default:
-      return <FileIcon className="size-3.5" />;
-  }
-}
+export type IconProps = React.ComponentProps<"svg">;
 
 export const Icons = {
   logo: Dice4,
+  spinner: Loader,
   gitHub: (props: IconProps) => (
     <svg viewBox="0 0 438.549 438.549" {...props}>
       <path
@@ -36,7 +13,6 @@ export const Icons = {
       />
     </svg>
   ),
-  spinner: Loader,
   json: (props: IconProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" {...props}>
       <path

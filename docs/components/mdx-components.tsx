@@ -3,7 +3,6 @@ import { Callout } from "fumadocs-ui/components/callout";
 import { Pre } from "fumadocs-ui/components/codeblock";
 import { Heading } from "fumadocs-ui/components/heading";
 import { Step, Steps } from "fumadocs-ui/components/steps";
-import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import defaultComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import dynamic from "next/dynamic";
@@ -11,6 +10,15 @@ import Link from "next/link";
 import type * as React from "react";
 import { CodeBlock } from "@/components/code-block";
 import { CodeTabs } from "@/components/code-tabs";
+import {
+  MdxTabsContent,
+  MdxTabsList,
+  MdxTabsTrigger,
+} from "@/components/mdx-tabs";
+import {
+  PackageManagerTabs,
+  PackageManagerTabsList,
+} from "@/components/package-manager-tabs";
 import type { source } from "@/lib/source";
 import { cn } from "@/lib/utils";
 import {
@@ -25,11 +33,7 @@ import {
   TableHead,
   TableRow,
 } from "@/registry/bases/radix/ui/table";
-import {
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/registry/bases/radix/ui/tabs";
+import { Tabs } from "@/registry/bases/radix/ui/tabs";
 
 const ComponentSource = dynamic(() =>
   import("@/components/component-source").then((mod) => ({
@@ -127,51 +131,20 @@ export function useMdxComponents(
     ),
     AlertTitle,
     AlertDescription,
-    Tabs: ({ className, ...props }: React.ComponentProps<typeof Tabs>) => {
-      return (
-        <Tabs className={cn("relative mt-6 w-full", className)} {...props} />
-      );
-    },
-    TabsList: ({
-      className,
-      ...props
-    }: React.ComponentProps<typeof TabsList>) => (
-      <TabsList
-        className={cn(
-          "justify-start gap-4 rounded-none bg-transparent px-0",
-          className,
-        )}
+    Tabs: ({ className, ...props }: React.ComponentProps<typeof Tabs>) => (
+      <Tabs
+        className={cn("not-prose relative mt-6 w-full", className)}
         {...props}
       />
     ),
-    TabsTrigger: ({
-      className,
-      ...props
-    }: React.ComponentProps<typeof TabsTrigger>) => (
-      <TabsTrigger
-        className={cn(
-          "rounded-none border-0 border-transparent border-b-2 bg-transparent px-0 pb-3 text-base text-muted-foreground hover:text-primary data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none! dark:data-[state=active]:border-primary dark:data-[state=active]:bg-transparent",
-          className,
-        )}
-        {...props}
-      />
-    ),
-    TabsContent: ({
-      className,
-      ...props
-    }: React.ComponentProps<typeof TabsContent>) => (
-      <TabsContent
-        className={cn(
-          "relative [&>.steps]:mt-6 [&_h3.font-heading]:font-medium [&_h3.font-heading]:text-base *:[figure]:first:mt-0",
-          className,
-        )}
-        {...props}
-      />
-    ),
-    Tab: ({ className, ...props }: React.ComponentProps<"div">) => (
-      <div className={cn(className)} {...props} />
-    ),
+    CodeBlockTabs: PackageManagerTabs,
+    CodeBlockTabsList: PackageManagerTabsList,
+    CodeBlockTabsTrigger: MdxTabsTrigger,
+    CodeBlockTab: MdxTabsContent,
     CodeTabs,
+    TabsList: MdxTabsList,
+    TabsTrigger: MdxTabsTrigger,
+    TabsContent: MdxTabsContent,
     Kbd: ({ className, ...props }: React.ComponentProps<typeof Kbd>) => (
       <Kbd className={cn("not-prose", className)} {...props} />
     ),

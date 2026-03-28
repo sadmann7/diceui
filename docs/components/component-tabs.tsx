@@ -1,8 +1,13 @@
 "use client";
 
-import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { useParams } from "next/navigation";
 import * as React from "react";
+import {
+  MdxTabs,
+  MdxTabsContent,
+  MdxTabsList,
+  MdxTabsTrigger,
+} from "@/components/mdx-tabs";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
 
@@ -51,12 +56,22 @@ export function ComponentTabs({
   );
 
   return (
-    <Tabs items={["Preview", "Code"]} className="rounded-md">
-      <Tab
+    <MdxTabs
+      variant="default"
+      defaultValue="Preview"
+      className="not-prose gap-0 overflow-hidden rounded-xl border"
+    >
+      <div className="flex items-center border-b bg-secondary/50 px-3 py-1.5">
+        <MdxTabsList>
+          <MdxTabsTrigger value="Preview">Preview</MdxTabsTrigger>
+          <MdxTabsTrigger value="Code">Code</MdxTabsTrigger>
+        </MdxTabsList>
+      </div>
+      <MdxTabsContent
         value="Preview"
         tabIndex={preventPreviewFocus ? -1 : 0}
         className={cn(
-          "not-prose relative rounded-none",
+          "not-prose relative",
           preventPreviewFocus &&
             "focus-visible:outline-hidden focus-visible:ring-0",
         )}
@@ -78,13 +93,13 @@ export function ComponentTabs({
             <Component />
           </React.Suspense>
         </div>
-      </Tab>
-      <Tab
+      </MdxTabsContent>
+      <MdxTabsContent
         value="Code"
-        className="rounded-none py-0 **:[figure]:my-0 **:[figure]:rounded-none **:[pre]:h-[424.5px] **:[pre]:px-4"
+        className="py-0 **:[figure]:my-0 **:[figure]:rounded-none **:[pre]:h-[424.5px] **:[pre]:px-4"
       >
         {code}
-      </Tab>
-    </Tabs>
+      </MdxTabsContent>
+    </MdxTabs>
   );
 }

@@ -155,7 +155,10 @@ export interface ColorPickerTriggerProps
   > {}
 
 export interface ColorPickerContentProps
-  extends React.ComponentProps<typeof PopoverContent> {}
+  extends Omit<
+    React.ComponentProps<typeof PopoverContent>,
+    keyof React.ComponentProps<"div">
+  > {}
 
 export interface ColorPickerAreaProps
   extends React.ComponentProps<"div">,
