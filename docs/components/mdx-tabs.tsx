@@ -26,7 +26,7 @@ function MdxTabs({
 }: MdxTabsProps) {
   return (
     <MdxTabsContext value={variant}>
-      <Tabs className={cn(className)} {...props}>
+      <Tabs className={cn("flex-col", className)} {...props}>
         {children}
       </Tabs>
     </MdxTabsContext>
@@ -37,10 +37,9 @@ function MdxTabsList({ className, ...props }: ComponentProps<typeof TabsList>) {
   const variant = React.use(MdxTabsContext);
   return (
     <TabsList
+      variant={variant}
       className={cn(
-        variant === "line"
-          ? "justify-start gap-4 rounded-none bg-transparent px-0"
-          : "h-auto rounded-none bg-transparent p-0",
+        variant === "default" && "h-auto rounded-none bg-transparent p-0",
         className,
       )}
       {...props}
@@ -53,17 +52,11 @@ function MdxTabsTrigger({
   ...props
 }: ComponentProps<typeof TabsTrigger>) {
   const variant = React.use(MdxTabsContext);
-  return (
-    <TabsTrigger
-      className={cn(
-        variant === "line"
-          ? "rounded-none border-0 border-transparent border-b-2 bg-transparent px-0 pb-3 text-base text-muted-foreground hover:text-primary data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none! dark:data-[state=active]:border-primary dark:data-[state=active]:bg-transparent"
-          : "h-7 rounded-md border border-transparent px-2 py-0.5 text-muted-foreground text-xs shadow-none! data-[state=active]:border-input data-[state=active]:bg-background data-[state=active]:text-foreground",
-        className,
-      )}
-      {...props}
-    />
-  );
+  if (variant === "line") {
+    return <TabsTrigger className={cn("px-0", className)} {...props} />;
+  }
+
+  return <TabsTrigger className={cn("h-7 text-xs", className)} {...props} />;
 }
 
 function MdxTabsContent({

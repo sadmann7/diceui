@@ -46,14 +46,13 @@ export function ComponentSourceImpl({
   return (
     <figure
       data-rehype-pretty-code-figure=""
-      data-component-source=""
       className={cn("my-4 overflow-hidden rounded-xl border", className)}
       {...props}
     >
       <figcaption
         data-rehype-pretty-code-title=""
         data-language={language}
-        className="flex items-center gap-1.5 border-b bg-accent px-4 py-2 text-muted-foreground text-sm [&_svg]:opacity-70"
+        className="flex items-center gap-1.5 border-b bg-secondary/50 px-4 py-2 text-muted-foreground text-sm [&_svg]:opacity-70"
       >
         {getLanguageIcon(language)}
         <span className="flex-1 truncate">{title}</span>
@@ -82,16 +81,20 @@ export function ComponentSourceImpl({
         )}
       >
         <div
-          className="[&>pre]:max-h-none [&>pre]:overflow-visible [&>pre]:bg-fd-background [&>pre]:px-4 [&>pre]:py-4 [&>pre]:text-sm"
+          className="[&>pre]:max-h-none [&>pre]:overflow-visible [&>pre]:bg-secondary/50 [&>pre]:px-4 [&>pre]:py-4 [&>pre]:text-sm"
           dangerouslySetInnerHTML={{ __html: highlightedCode }}
         />
         {!open && (
-          <button
-            type="button"
-            aria-label="Expand code"
-            className="absolute inset-x-0 bottom-0 h-16 w-full cursor-pointer bg-linear-to-b from-transparent to-background"
-            onClick={() => setOpen(true)}
-          />
+          <div className="absolute inset-x-0 bottom-0 flex h-16 items-center justify-center bg-linear-to-b from-transparent to-background">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 gap-1.5 px-3 text-xs"
+              onClick={() => setOpen(true)}
+            >
+              Expand
+            </Button>
+          </div>
         )}
       </div>
     </figure>

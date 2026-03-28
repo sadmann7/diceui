@@ -38,7 +38,7 @@ export function PackageManagerTabs({
         setConfig({ ...config, packageManager: value as PackageManager })
       }
       className={cn(
-        "not-prose relative my-4 w-full gap-0 overflow-hidden rounded-xl border",
+        "not-prose relative mt-4 in-[.fd-steps]:mb-4 w-full gap-0 overflow-hidden rounded-xl border",
         className,
       )}
       {...props}
@@ -55,9 +55,6 @@ export function PackageManagerTabsList({
 }: ComponentProps<typeof TabsList>) {
   return (
     <div className="flex items-center gap-2 border-b bg-secondary/50 px-3 py-1.5">
-      <div className="flex size-4 shrink-0 items-center justify-center bg-foreground opacity-70">
-        <SquareTerminalIcon className="size-3 text-background" />
-      </div>
       <MdxTabsList className={cn(className)} {...props}>
         {children}
       </MdxTabsList>
