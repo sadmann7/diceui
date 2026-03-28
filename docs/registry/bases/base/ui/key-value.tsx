@@ -333,7 +333,13 @@ interface KeyValueListProps extends DivProps {
 }
 
 function KeyValueList(props: KeyValueListProps) {
-  const { orientation = "vertical", className, render, children, ...listProps } = props;
+  const {
+    orientation = "vertical",
+    className,
+    render,
+    children,
+    ...listProps
+  } = props;
 
   const value = useStore((state) => state.value);
 
@@ -349,11 +355,11 @@ function KeyValueList(props: KeyValueListProps) {
           className,
         ),
         children: value.map((item) => {
-          const children = React.Children.toArray(props.children);
+          const keyValueItemChildren = React.Children.toArray(children);
 
           return (
             <KeyValueItemContext.Provider key={item.id} value={item}>
-              {children}
+              {keyValueItemChildren}
             </KeyValueItemContext.Provider>
           );
         }),
