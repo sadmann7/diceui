@@ -13,7 +13,6 @@ import { Mdx } from "@/components/mdx-components";
 import { getHasBothBases } from "@/lib/base";
 import { getChangelogToc } from "@/lib/changelog";
 import { source } from "@/lib/source";
-import { Separator } from "@/registry/bases/radix/ui/separator";
 
 interface DocPageParams {
   params: Promise<{
@@ -73,12 +72,6 @@ export default async function DocPage(props: DocPageParams) {
         <div className="flex shrink-0 items-center gap-2 pt-1.5">
           {docLink ? <DynamicLink href={docLink}>Docs</DynamicLink> : null}
           {apiLink ? <DynamicLink href={apiLink}>API</DynamicLink> : null}
-          {(docLink || apiLink) && (
-            <Separator
-              orientation="vertical"
-              className="data-[orientation=vertical]:h-6"
-            />
-          )}
           <DocActions url={page.url} path={page.path} />
         </div>
       </div>
