@@ -1,3 +1,4 @@
+import type * as React from "react";
 import { ComponentSourceImpl } from "@/components/component-source-impl";
 import { highlightCode } from "@/lib/highlight-code";
 import { readFileFromRoot } from "@/lib/read-file";

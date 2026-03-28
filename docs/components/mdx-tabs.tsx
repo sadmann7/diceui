@@ -1,6 +1,5 @@
 "use client";
 
-import type { ComponentProps } from "react";
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -14,7 +13,15 @@ type MdxTabsVariant = "line" | "default";
 
 const MdxTabsContext = React.createContext<MdxTabsVariant>("default");
 
-interface MdxTabsProps extends ComponentProps<typeof Tabs> {
+function useMdxTabsContext(consumerName: string) {
+  const context = React.useContext(MdxTabsContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`MdxTabs\``);
+  }
+  return context;
+}
+
+interface MdxTabsProps extends React.ComponentProps<typeof Tabs> {
   variant?: MdxTabsVariant;
 }
 
@@ -33,8 +40,12 @@ function MdxTabs({
   );
 }
 
-function MdxTabsList({ className, ...props }: ComponentProps<typeof TabsList>) {
-  const variant = React.use(MdxTabsContext);
+function MdxTabsList({
+  className,
+  ...props
+}: React.ComponentProps<typeof TabsList>) {
+  const variant = useMdxTabsContext("MdxTabsList");
+
   return (
     <TabsList
       variant={variant}
@@ -50,8 +61,9 @@ function MdxTabsList({ className, ...props }: ComponentProps<typeof TabsList>) {
 function MdxTabsTrigger({
   className,
   ...props
-}: ComponentProps<typeof TabsTrigger>) {
-  const variant = React.use(MdxTabsContext);
+}: React.ComponentProps<typeof TabsTrigger>) {
+  const variant = useMdxTabsContext("MdxTabsTrigger");
+
   if (variant === "line") {
     return <TabsTrigger className={cn("px-0", className)} {...props} />;
   }
@@ -62,8 +74,9 @@ function MdxTabsTrigger({
 function MdxTabsContent({
   className,
   ...props
-}: ComponentProps<typeof TabsContent>) {
-  const variant = React.use(MdxTabsContext);
+}: React.ComponentProps<typeof TabsContent>) {
+  const variant = useMdxTabsContext("MdxTabsContent");
+
   return (
     <TabsContent
       className={cn(
@@ -77,4 +90,4 @@ function MdxTabsContent({
   );
 }
 
-export { MdxTabs, MdxTabsList, MdxTabsTrigger, MdxTabsContent };
+export { MdxTabs, MdxTabsContent, MdxTabsList, MdxTabsTrigger };

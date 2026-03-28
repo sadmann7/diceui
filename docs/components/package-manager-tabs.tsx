@@ -1,13 +1,7 @@
 "use client";
 
-import { SquareTerminalIcon } from "lucide-react";
-import type { ComponentProps } from "react";
-import {
-  MdxTabs,
-  MdxTabsContent,
-  MdxTabsList,
-  MdxTabsTrigger,
-} from "@/components/mdx-tabs";
+import type * as React from "react";
+import { MdxTabs, MdxTabsList } from "@/components/mdx-tabs";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
 import type { Tabs, TabsList } from "@/registry/bases/radix/ui/tabs";
@@ -16,7 +10,7 @@ const PACKAGE_MANAGERS = ["npm", "pnpm", "yarn", "bun"] as const;
 
 type PackageManager = (typeof PACKAGE_MANAGERS)[number];
 
-interface PackageManagerTabsProps extends ComponentProps<typeof Tabs> {
+interface PackageManagerTabsProps extends React.ComponentProps<typeof Tabs> {
   groupId?: string;
   persist?: boolean;
 }
@@ -52,7 +46,7 @@ export function PackageManagerTabsList({
   className,
   children,
   ...props
-}: ComponentProps<typeof TabsList>) {
+}: React.ComponentProps<typeof TabsList>) {
   return (
     <div className="flex items-center gap-2 border-b bg-secondary/50 px-3 py-1.5">
       <MdxTabsList className={cn(className)} {...props}>
