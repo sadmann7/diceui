@@ -2,12 +2,8 @@ import type { Node, Root } from "fumadocs-core/page-tree";
 import { source } from "@/lib/source";
 import type { RegistryBase } from "@/registry";
 
-// Computed once per server process — source pages are static build-time data.
-// O(1) lookup vs O(n) .some() on every page render.
 const pageUrls = new Set(source.getPages().map((p) => p.url));
 
-// Only two possible filtered trees ("radix" | "base"). Memoize both after
-// the first request for each so subsequent renders skip the tree walk.
 const treeCache = new Map<string, Root>();
 
 export function filterTreeForBase(tree: Root, base: string): Root {
