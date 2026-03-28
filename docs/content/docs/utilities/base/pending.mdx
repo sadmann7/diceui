@@ -21,11 +21,11 @@ npx shadcn@latest add @diceui/pending
 
 <Steps>
   <Step>
-     Install the following dependencies:
+    Install the following dependencies:
 
-     ```package-install
-     @base-ui/react
-     ```
+    ```package-install
+    @base-ui/react
+    ```
   </Step>
   <Step>
     Copy and paste the following code into your project.
@@ -34,64 +34,65 @@ npx shadcn@latest add @diceui/pending
   </Step>
 </Steps>
 
-## Usage
+## Layout
 
-### With Button
+Import the utility and use it with your interactive elements.
 
 ```tsx
-import { Pending } from "@/components/pending"
+import { usePending, Pending } from "@/components/pending";
+import { Button } from "@/components/ui/button";
 
-export function SubmitButton() {
-  const [isPending, startTransition] = useTransition()
-  
+// Using the hook
+function SubmitButton() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { pendingProps, isPending } = usePending({ isPending: isSubmitting });
+
+  return <Button {...pendingProps}>Submit</Button>;
+}
+
+// Using the wrapper component
+function SubmitButton() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   return (
-    <Pending isPending={isPending} render={<button />}>
-      Submit
+    <Pending isPending={isSubmitting}>
+      <Button>Submit</Button>
     </Pending>
-  )
+  );
 }
 ```
 
-### Using the Hook
+## Examples
 
-```tsx
-import { usePending } from "@/components/pending"
+### Wrapper Component
 
-export function CustomButton() {
-  const [isPending] = useTransition()
-  const { pendingProps } = usePending({ isPending })
-  
-  return <button {...pendingProps}>Submit</button>
-}
-```
+Use the `Pending` wrapper component to easily apply pending state to any interactive element.
+
+<ComponentTabs name="pending-wrapper-demo" />
+
+### Form with Pending State
+
+Handle form submissions with proper pending state management and user feedback.
+
+<ComponentTabs name="pending-form-demo" />
+
+### Navigation Links
+
+Apply pending states to links during async navigation or route transitions.
+
+<ComponentTabs name="pending-link-demo" />
+
+### Toggle Switches
+
+Show pending states on switches that save settings to an API or perform async updates.
+
+<ComponentTabs name="pending-switch-demo" />
 
 ## API Reference
 
-### Pending
-
-Component that manages pending state and interactions.
-
-<AutoTypeTable
-  path="./types/base/utilities.ts"
-  name="PendingProps"
-/>
-
-<DataAttributesTable
-  data={[
-    {
-      title: "[data-pending]",
-      value: "Present when the element is in pending state",
-    },
-    {
-      title: "[data-disabled]",
-      value: "Present when the element is disabled",
-    },
-  ]}
-/>
-
 ### usePending
 
-Hook that manages pending state for interactive elements. Returns props to spread on your element and the current pending state.
+A hook that manages pending state for interactive elements. Returns props to spread on your element and the current pending state.
 
 <AutoTypeTable
   path="./types/base/utilities.ts"
@@ -105,24 +106,63 @@ Hook that manages pending state for interactive elements. Returns props to sprea
   name="UsePendingReturn"
 />
 
-**Usage:**
+### Pending
 
-```tsx
-const { pendingProps, isPending } = usePending({
-  id: "submit-button",
-  isPending: true,
-  disabled: false
-})
-```
+A wrapper component that applies pending state behavior to its child.
+
+<AutoTypeTable
+  path="./types/base/utilities.ts"
+  name="PendingProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-pending]",
+      value: ["true"],
+    },
+    {
+      title: "[data-disabled]",
+      value: ["true"],
+    },
+  ]}
+/>
 
 ## Accessibility
 
-When pending:
-- Sets `aria-busy="true"` to indicate loading state
-- Sets `aria-disabled="true"` to prevent interaction
-- Prevents all pointer and keyboard events
-- Maintains keyboard focus for better UX
+The Pending utility follows best practices for accessible pending states:
+
+- Uses `aria-busy="true"` to indicate loading/pending state to screen readers
+- Uses `aria-disabled="true"` to indicate the element is not currently interactive
+- Maintains focus ability—users can still Tab to the element
+- Prevents all interaction events (click, pointer, keyboard) when pending
+- Screen readers announce the changed button content (e.g., "Submitting...")
+- Provides `data-pending` attribute for custom styling
+
+## Use Cases
+
+The Pending utility works with **any interactive element**, not just buttons:
+
+- **Buttons** - Form submissions, actions
+- **Links** - Navigation with async route transitions
+- **Cards** - Clickable cards that load content
+- **Menu Items** - Actions like export, sync, archive
+- **Switches/Toggles** - Settings that save to an API
+- **Form Fields** - Inputs with async validation
+- **Tabs** - Tab switches that load content
+- **Select Options** - Dropdowns with async actions
+- **Icon Buttons** - Icon-only interactive elements
+- **List Items** - Navigation items in sidebars
+
+## Notes
+
+- **Choose your API**: Use the `usePending` hook for more control, or the `Pending` wrapper for convenience
+- **Focus management**: Elements remain focusable but don't respond to interactions when pending
+- **Event prevention**: All pointer and keyboard events are prevented during pending state
+- **Styling**: Use the `data-pending` attribute to style elements based on their pending state
+- **Accessibility**: Screen readers announce both `aria-busy` (loading state) and `aria-disabled` (not interactive)
+- **Hook usage**: When using the hook directly, spread `pendingProps` **last** to ensure event prevention works correctly
 
 ## Credits
 
-Based on [React Aria's Button implementation](https://github.com/adobe/react-spectrum/blob/main/packages/react-aria-components/src/Button.tsx).
+- [React Aria's Button component](https://github.com/adobe/react-spectrum/blob/main/packages/react-aria-components/src/Button.tsx) - For the pending state management patterns (Apache License 2.0).
