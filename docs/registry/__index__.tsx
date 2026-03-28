@@ -3,9142 +3,11991 @@
 
 export const Index: Record<string, Record<string, unknown>> = {
   "radix-default": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "checkbox-group": {
-        name: "checkbox-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/checkbox-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "combobox": {
-        name: "combobox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/combobox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "kanban": {
-        name: "kanban",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/kanban.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "listbox": {
-        name: "listbox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/listbox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mention": {
-        name: "mention",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mention.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/radix/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-mobile"],
-        files: [{
-          path: "registry/bases/radix/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input"],
-        files: [{
-          path: "registry/bases/radix/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "sortable": {
-        name: "sortable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/sortable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/radix/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tags-input": {
-        name: "tags-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/tags-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "client-only": {
-        name: "client-only",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/client-only.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "direction-provider": {
-        name: "direction-provider",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/direction-provider.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hitbox": {
-        name: "hitbox",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/hitbox.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "portal": {
-        name: "portal",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/portal.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "pending": {
-        name: "pending",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/pending.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "presence": {
-        name: "presence",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/presence.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden": {
-        name: "visually-hidden",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "radix-vega": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "checkbox-group": {
-        name: "checkbox-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/checkbox-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "combobox": {
-        name: "combobox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/combobox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "kanban": {
-        name: "kanban",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/kanban.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "listbox": {
-        name: "listbox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/listbox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mention": {
-        name: "mention",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mention.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/radix/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-mobile"],
-        files: [{
-          path: "registry/bases/radix/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input"],
-        files: [{
-          path: "registry/bases/radix/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "sortable": {
-        name: "sortable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/sortable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/radix/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tags-input": {
-        name: "tags-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/tags-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "client-only": {
-        name: "client-only",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/client-only.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "direction-provider": {
-        name: "direction-provider",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/direction-provider.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hitbox": {
-        name: "hitbox",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/hitbox.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "portal": {
-        name: "portal",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/portal.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "pending": {
-        name: "pending",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/pending.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "presence": {
-        name: "presence",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/presence.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden": {
-        name: "visually-hidden",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "radix-nova": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "checkbox-group": {
-        name: "checkbox-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/checkbox-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "combobox": {
-        name: "combobox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/combobox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "kanban": {
-        name: "kanban",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/kanban.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "listbox": {
-        name: "listbox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/listbox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mention": {
-        name: "mention",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mention.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/radix/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-mobile"],
-        files: [{
-          path: "registry/bases/radix/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input"],
-        files: [{
-          path: "registry/bases/radix/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "sortable": {
-        name: "sortable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/sortable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/radix/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tags-input": {
-        name: "tags-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/tags-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "client-only": {
-        name: "client-only",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/client-only.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "direction-provider": {
-        name: "direction-provider",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/direction-provider.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hitbox": {
-        name: "hitbox",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/hitbox.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "portal": {
-        name: "portal",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/portal.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "pending": {
-        name: "pending",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/pending.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "presence": {
-        name: "presence",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/presence.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden": {
-        name: "visually-hidden",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "radix-maia": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "checkbox-group": {
-        name: "checkbox-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/checkbox-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "combobox": {
-        name: "combobox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/combobox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "kanban": {
-        name: "kanban",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/kanban.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "listbox": {
-        name: "listbox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/listbox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mention": {
-        name: "mention",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mention.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/radix/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-mobile"],
-        files: [{
-          path: "registry/bases/radix/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input"],
-        files: [{
-          path: "registry/bases/radix/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "sortable": {
-        name: "sortable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/sortable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/radix/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tags-input": {
-        name: "tags-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/tags-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "client-only": {
-        name: "client-only",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/client-only.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "direction-provider": {
-        name: "direction-provider",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/direction-provider.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hitbox": {
-        name: "hitbox",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/hitbox.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "portal": {
-        name: "portal",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/portal.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "pending": {
-        name: "pending",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/pending.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "presence": {
-        name: "presence",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/presence.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden": {
-        name: "visually-hidden",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "radix-lyra": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "checkbox-group": {
-        name: "checkbox-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/checkbox-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "combobox": {
-        name: "combobox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/combobox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "kanban": {
-        name: "kanban",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/kanban.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "listbox": {
-        name: "listbox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/listbox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mention": {
-        name: "mention",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mention.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/radix/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-mobile"],
-        files: [{
-          path: "registry/bases/radix/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input"],
-        files: [{
-          path: "registry/bases/radix/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "sortable": {
-        name: "sortable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/sortable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/radix/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tags-input": {
-        name: "tags-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/tags-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "client-only": {
-        name: "client-only",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/client-only.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "direction-provider": {
-        name: "direction-provider",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/direction-provider.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hitbox": {
-        name: "hitbox",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/hitbox.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "portal": {
-        name: "portal",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/portal.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "pending": {
-        name: "pending",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/pending.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "presence": {
-        name: "presence",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/presence.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden": {
-        name: "visually-hidden",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "radix-mira": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "checkbox-group": {
-        name: "checkbox-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/checkbox-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "combobox": {
-        name: "combobox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/combobox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "kanban": {
-        name: "kanban",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/kanban.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "listbox": {
-        name: "listbox",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/listbox.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mention": {
-        name: "mention",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/mention.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/radix/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-mobile"],
-        files: [{
-          path: "registry/bases/radix/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input"],
-        files: [{
-          path: "registry/bases/radix/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "sortable": {
-        name: "sortable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/sortable.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/radix/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tags-input": {
-        name: "tags-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/ui/tags-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/radix/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "client-only": {
-        name: "client-only",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/client-only.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "direction-provider": {
-        name: "direction-provider",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/direction-provider.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hitbox": {
-        name: "hitbox",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/hitbox.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "portal": {
-        name: "portal",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/portal.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "pending": {
-        name: "pending",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/pending.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "presence": {
-        name: "presence",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/presence.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden": {
-        name: "visually-hidden",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/radix/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/radix/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "base-default": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/base/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input","direction"],
-        files: [{
-          path: "registry/bases/base/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","compose-refs","visually-hidden-input","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hover-card": {
-        name: "hover-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/hover-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/base/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
-        files: [{
-          path: "registry/bases/base/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction"],
-        files: [{
-          path: "registry/bases/base/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
-        files: [{
-          path: "registry/bases/base/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "base-vega": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/base/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input","direction"],
-        files: [{
-          path: "registry/bases/base/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","compose-refs","visually-hidden-input","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hover-card": {
-        name: "hover-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/hover-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/base/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
-        files: [{
-          path: "registry/bases/base/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction"],
-        files: [{
-          path: "registry/bases/base/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
-        files: [{
-          path: "registry/bases/base/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "base-nova": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/base/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input","direction"],
-        files: [{
-          path: "registry/bases/base/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","compose-refs","visually-hidden-input","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hover-card": {
-        name: "hover-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/hover-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/base/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
-        files: [{
-          path: "registry/bases/base/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction"],
-        files: [{
-          path: "registry/bases/base/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
-        files: [{
-          path: "registry/bases/base/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "base-maia": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/base/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input","direction"],
-        files: [{
-          path: "registry/bases/base/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","compose-refs","visually-hidden-input","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hover-card": {
-        name: "hover-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/hover-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/base/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
-        files: [{
-          path: "registry/bases/base/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction"],
-        files: [{
-          path: "registry/bases/base/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
-        files: [{
-          path: "registry/bases/base/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "base-lyra": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/base/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input","direction"],
-        files: [{
-          path: "registry/bases/base/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","compose-refs","visually-hidden-input","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hover-card": {
-        name: "hover-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/hover-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/base/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
-        files: [{
-          path: "registry/bases/base/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction"],
-        files: [{
-          path: "registry/bases/base/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
-        files: [{
-          path: "registry/bases/base/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-    },  "base-mira": {
-      "action-bar": {
-        name: "action-bar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/action-bar.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "angle-slider": {
-        name: "angle-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/angle-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compare-slider": {
-        name: "compare-slider",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/compare-slider.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "cropper": {
-        name: "cropper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/cropper.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "file-upload": {
-        name: "file-upload",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/file-upload.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "fps": {
-        name: "fps",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/fps.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stat": {
-        name: "stat",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["separator"],
-        files: [{
-          path: "registry/bases/base/ui/stat.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "avatar-group": {
-        name: "avatar-group",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/avatar-group.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-swatch": {
-        name: "color-swatch",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/color-swatch.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "color-picker": {
-        name: "color-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/color-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "editable": {
-        name: "editable",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/editable.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "status": {
-        name: "status",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/status.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroller": {
-        name: "scroller",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/scroller.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "scroll-spy": {
-        name: "scroll-spy",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/scroll-spy.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "badge-overflow": {
-        name: "badge-overflow",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/badge-overflow.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "segmented-input": {
-        name: "segmented-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["input","direction"],
-        files: [{
-          path: "registry/bases/base/ui/segmented-input.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "circular-progress": {
-        name: "circular-progress",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/circular-progress.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stack": {
-        name: "stack",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/stack.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "stepper": {
-        name: "stepper",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","compose-refs","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/stepper.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "gauge": {
-        name: "gauge",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/gauge.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "key-value": {
-        name: "key-value",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","input","textarea","compose-refs","visually-hidden-input","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/key-value.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "hover-card": {
-        name: "hover-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/ui/hover-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "swap": {
-        name: "swap",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/swap.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "qr-code": {
-        name: "qr-code",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/qr-code.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "relative-time-card": {
-        name: "relative-time-card",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["hover-card"],
-        files: [{
-          path: "registry/bases/base/ui/relative-time-card.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "rating": {
-        name: "rating",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/rating.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "responsive-dialog": {
-        name: "responsive-dialog",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["dialog","drawer","use-as-ref","use-isomorphic-layout-effect","use-lazy-ref","use-mobile"],
-        files: [{
-          path: "registry/bases/base/ui/responsive-dialog.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "mask-input": {
-        name: "mask-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs"],
-        files: [{
-          path: "registry/bases/base/ui/mask-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "masonry": {
-        name: "masonry",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["compose-refs","use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/ui/masonry.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "media-player": {
-        name: "media-player",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/media-player.tsx",
-          type: "registry:ui",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "phone-input": {
-        name: "phone-input",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/phone-input.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "marquee": {
-        name: "marquee",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction"],
-        files: [{
-          path: "registry/bases/base/ui/marquee.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "timeline": {
-        name: "timeline",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/timeline.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "time-picker": {
-        name: "time-picker",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["popover","visually-hidden-input","compose-refs","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/use-as-ref"],
-        files: [{
-          path: "registry/bases/base/ui/time-picker.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "selection-toolbar": {
-        name: "selection-toolbar",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/selection-toolbar.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "speed-dial": {
-        name: "speed-dial",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/speed-dial.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "tour": {
-        name: "tour",
-        description: "",
-        type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
-        files: [{
-          path: "registry/bases/base/ui/tour.tsx",
-          type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "utils": {
-        name: "utils",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/utils.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "compose-refs": {
-        name: "compose-refs",
-        description: "",
-        type: "registry:lib",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "visually-hidden-input": {
-        name: "visually-hidden-input",
-        description: "",
-        type: "registry:component",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/components/visually-hidden-input.tsx",
-          type: "registry:component",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-as-ref": {
-        name: "use-as-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-        files: [{
-          path: "registry/bases/base/hooks/use-as-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-isomorphic-layout-effect": {
-        name: "use-isomorphic-layout-effect",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-lazy-ref": {
-        name: "use-lazy-ref",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-lazy-ref.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
-      "use-mobile": {
-        name: "use-mobile",
-        description: "",
-        type: "registry:hook",
-        registryDependencies: undefined,
-        files: [{
-          path: "registry/bases/base/hooks/use-mobile.ts",
-          type: "registry:hook",
-          target: ""
-        }],
-        source: "",
-        chunks: []
-      },
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
     },
-}
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "checkbox-group": {
+      name: "checkbox-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    combobox: {
+      name: "combobox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/combobox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    kanban: {
+      name: "kanban",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/kanban.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    listbox: {
+      name: "listbox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/listbox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "select",
+        "slider",
+        "tooltip",
+        "dropdown-menu",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    mention: {
+      name: "mention",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mention.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "command",
+        "input",
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    sortable: {
+      name: "sortable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/sortable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "tags-input": {
+      name: "tags-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/tags-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "client-only": {
+      name: "client-only",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/client-only.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "direction-provider": {
+      name: "direction-provider",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/direction-provider.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    hitbox: {
+      name: "hitbox",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/hitbox.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    portal: {
+      name: "portal",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/portal.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    pending: {
+      name: "pending",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/pending.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    presence: {
+      name: "presence",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/presence.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden": {
+      name: "visually-hidden",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "radix-vega": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "checkbox-group": {
+      name: "checkbox-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    combobox: {
+      name: "combobox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/combobox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    kanban: {
+      name: "kanban",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/kanban.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    listbox: {
+      name: "listbox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/listbox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "select",
+        "slider",
+        "tooltip",
+        "dropdown-menu",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    mention: {
+      name: "mention",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mention.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "command",
+        "input",
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    sortable: {
+      name: "sortable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/sortable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "tags-input": {
+      name: "tags-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/tags-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "client-only": {
+      name: "client-only",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/client-only.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "direction-provider": {
+      name: "direction-provider",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/direction-provider.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    hitbox: {
+      name: "hitbox",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/hitbox.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    portal: {
+      name: "portal",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/portal.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    pending: {
+      name: "pending",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/pending.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    presence: {
+      name: "presence",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/presence.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden": {
+      name: "visually-hidden",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "radix-nova": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "checkbox-group": {
+      name: "checkbox-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    combobox: {
+      name: "combobox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/combobox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    kanban: {
+      name: "kanban",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/kanban.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    listbox: {
+      name: "listbox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/listbox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "select",
+        "slider",
+        "tooltip",
+        "dropdown-menu",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    mention: {
+      name: "mention",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mention.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "command",
+        "input",
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    sortable: {
+      name: "sortable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/sortable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "tags-input": {
+      name: "tags-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/tags-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "client-only": {
+      name: "client-only",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/client-only.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "direction-provider": {
+      name: "direction-provider",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/direction-provider.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    hitbox: {
+      name: "hitbox",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/hitbox.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    portal: {
+      name: "portal",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/portal.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    pending: {
+      name: "pending",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/pending.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    presence: {
+      name: "presence",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/presence.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden": {
+      name: "visually-hidden",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "radix-maia": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "checkbox-group": {
+      name: "checkbox-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    combobox: {
+      name: "combobox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/combobox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    kanban: {
+      name: "kanban",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/kanban.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    listbox: {
+      name: "listbox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/listbox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "select",
+        "slider",
+        "tooltip",
+        "dropdown-menu",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    mention: {
+      name: "mention",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mention.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "command",
+        "input",
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    sortable: {
+      name: "sortable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/sortable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "tags-input": {
+      name: "tags-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/tags-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "client-only": {
+      name: "client-only",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/client-only.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "direction-provider": {
+      name: "direction-provider",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/direction-provider.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    hitbox: {
+      name: "hitbox",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/hitbox.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    portal: {
+      name: "portal",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/portal.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    pending: {
+      name: "pending",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/pending.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    presence: {
+      name: "presence",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/presence.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden": {
+      name: "visually-hidden",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "radix-lyra": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "checkbox-group": {
+      name: "checkbox-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    combobox: {
+      name: "combobox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/combobox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    kanban: {
+      name: "kanban",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/kanban.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    listbox: {
+      name: "listbox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/listbox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "select",
+        "slider",
+        "tooltip",
+        "dropdown-menu",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    mention: {
+      name: "mention",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mention.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "command",
+        "input",
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    sortable: {
+      name: "sortable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/sortable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "tags-input": {
+      name: "tags-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/tags-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "client-only": {
+      name: "client-only",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/client-only.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "direction-provider": {
+      name: "direction-provider",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/direction-provider.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    hitbox: {
+      name: "hitbox",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/hitbox.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    portal: {
+      name: "portal",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/portal.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    pending: {
+      name: "pending",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/pending.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    presence: {
+      name: "presence",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/presence.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden": {
+      name: "visually-hidden",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "radix-mira": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "checkbox-group": {
+      name: "checkbox-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    combobox: {
+      name: "combobox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/combobox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    kanban: {
+      name: "kanban",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/kanban.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    listbox: {
+      name: "listbox",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/listbox.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "select",
+        "slider",
+        "tooltip",
+        "dropdown-menu",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    mention: {
+      name: "mention",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/mention.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "command",
+        "input",
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    sortable: {
+      name: "sortable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/sortable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/radix/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "tags-input": {
+      name: "tags-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/ui/tags-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/radix/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "client-only": {
+      name: "client-only",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/client-only.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "direction-provider": {
+      name: "direction-provider",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/direction-provider.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    hitbox: {
+      name: "hitbox",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/hitbox.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    portal: {
+      name: "portal",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/portal.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    pending: {
+      name: "pending",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/pending.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    presence: {
+      name: "presence",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/presence.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden": {
+      name: "visually-hidden",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "base-default": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/compose-refs",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input", "direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "compose-refs",
+        "visually-hidden-input",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "hover-card": {
+      name: "hover-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+        "use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs"],
+      files: [
+        {
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs", "use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "dropdown-menu",
+        "tooltip",
+        "direction",
+        "@diceui/compose-refs",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "compose-refs",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "visually-hidden-input",
+        "compose-refs",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-as-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "base-vega": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/compose-refs",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input", "direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "compose-refs",
+        "visually-hidden-input",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "hover-card": {
+      name: "hover-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+        "use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs"],
+      files: [
+        {
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs", "use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "dropdown-menu",
+        "tooltip",
+        "direction",
+        "@diceui/compose-refs",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "compose-refs",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "visually-hidden-input",
+        "compose-refs",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-as-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "base-nova": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/compose-refs",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input", "direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "compose-refs",
+        "visually-hidden-input",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "hover-card": {
+      name: "hover-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+        "use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs"],
+      files: [
+        {
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs", "use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "dropdown-menu",
+        "tooltip",
+        "direction",
+        "@diceui/compose-refs",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "compose-refs",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "visually-hidden-input",
+        "compose-refs",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-as-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "base-maia": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/compose-refs",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input", "direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "compose-refs",
+        "visually-hidden-input",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "hover-card": {
+      name: "hover-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+        "use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs"],
+      files: [
+        {
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs", "use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "dropdown-menu",
+        "tooltip",
+        "direction",
+        "@diceui/compose-refs",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "compose-refs",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "visually-hidden-input",
+        "compose-refs",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-as-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "base-lyra": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/compose-refs",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input", "direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "compose-refs",
+        "visually-hidden-input",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "hover-card": {
+      name: "hover-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+        "use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs"],
+      files: [
+        {
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs", "use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "dropdown-menu",
+        "tooltip",
+        "direction",
+        "@diceui/compose-refs",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "compose-refs",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "visually-hidden-input",
+        "compose-refs",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-as-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+  "base-mira": {
+    "action-bar": {
+      name: "action-bar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/action-bar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "angle-slider": {
+      name: "angle-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/angle-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compare-slider": {
+      name: "compare-slider",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/compare-slider.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    cropper: {
+      name: "cropper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/cropper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "file-upload": {
+      name: "file-upload",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/file-upload.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    fps: {
+      name: "fps",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/fps.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stat: {
+      name: "stat",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["separator"],
+      files: [
+        {
+          path: "registry/bases/base/ui/stat.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "avatar-group": {
+      name: "avatar-group",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/avatar-group.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-swatch": {
+      name: "color-swatch",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "color-picker": {
+      name: "color-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "popover",
+        "select",
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/compose-refs",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/color-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    editable: {
+      name: "editable",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/editable.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    status: {
+      name: "status",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/status.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    scroller: {
+      name: "scroller",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/scroller.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "scroll-spy": {
+      name: "scroll-spy",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/scroll-spy.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "badge-overflow": {
+      name: "badge-overflow",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/badge-overflow.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "segmented-input": {
+      name: "segmented-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["input", "direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/segmented-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "circular-progress": {
+      name: "circular-progress",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/circular-progress.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stack: {
+      name: "stack",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/stack.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    stepper: {
+      name: "stepper",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "compose-refs",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/stepper.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    gauge: {
+      name: "gauge",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/gauge.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "key-value": {
+      name: "key-value",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "input",
+        "textarea",
+        "compose-refs",
+        "visually-hidden-input",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/key-value.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "hover-card": {
+      name: "hover-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/ui/hover-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    swap: {
+      name: "swap",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/swap.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "qr-code": {
+      name: "qr-code",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["@diceui/use-lazy-ref"],
+      files: [
+        {
+          path: "registry/bases/base/ui/qr-code.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "relative-time-card": {
+      name: "relative-time-card",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["hover-card"],
+      files: [
+        {
+          path: "registry/bases/base/ui/relative-time-card.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    rating: {
+      name: "rating",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/rating.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "responsive-dialog": {
+      name: "responsive-dialog",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "dialog",
+        "drawer",
+        "use-as-ref",
+        "use-isomorphic-layout-effect",
+        "use-lazy-ref",
+        "use-mobile",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/responsive-dialog.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "mask-input": {
+      name: "mask-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs"],
+      files: [
+        {
+          path: "registry/bases/base/ui/mask-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    masonry: {
+      name: "masonry",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["compose-refs", "use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/ui/masonry.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "media-player": {
+      name: "media-player",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "badge",
+        "button",
+        "dropdown-menu",
+        "tooltip",
+        "direction",
+        "@diceui/compose-refs",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "phone-input": {
+      name: "phone-input",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "compose-refs",
+        "visually-hidden-input",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/phone-input.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    marquee: {
+      name: "marquee",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: ["direction"],
+      files: [
+        {
+          path: "registry/bases/base/ui/marquee.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    timeline: {
+      name: "timeline",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "direction",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "time-picker": {
+      name: "time-picker",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "popover",
+        "visually-hidden-input",
+        "compose-refs",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+        "@diceui/use-as-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/time-picker.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "selection-toolbar": {
+      name: "selection-toolbar",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "speed-dial": {
+      name: "speed-dial",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/speed-dial.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    tour: {
+      name: "tour",
+      description: "",
+      type: "registry:ui",
+      registryDependencies: [
+        "button",
+        "direction",
+        "@diceui/use-as-ref",
+        "@diceui/use-isomorphic-layout-effect",
+        "@diceui/use-lazy-ref",
+      ],
+      files: [
+        {
+          path: "registry/bases/base/ui/tour.tsx",
+          type: "registry:ui",
+          target: "",
+        },
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    utils: {
+      name: "utils",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/utils.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "compose-refs": {
+      name: "compose-refs",
+      description: "",
+      type: "registry:lib",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "visually-hidden-input": {
+      name: "visually-hidden-input",
+      description: "",
+      type: "registry:component",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/components/visually-hidden-input.tsx",
+          type: "registry:component",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-as-ref": {
+      name: "use-as-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-as-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-isomorphic-layout-effect": {
+      name: "use-isomorphic-layout-effect",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-isomorphic-layout-effect.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-lazy-ref": {
+      name: "use-lazy-ref",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-lazy-ref.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+    "use-mobile": {
+      name: "use-mobile",
+      description: "",
+      type: "registry:hook",
+      registryDependencies: undefined,
+      files: [
+        {
+          path: "registry/bases/base/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: "",
+        },
+      ],
+      source: "",
+      chunks: [],
+    },
+  },
+};

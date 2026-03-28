@@ -41,10 +41,10 @@ export function BaseSwitcher({
             role="tab"
             aria-selected={isActive}
             className={cn(
-              "relative inline-flex items-center justify-center whitespace-nowrap pb-2 font-medium text-sm transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+              "-mb-px inline-flex items-center justify-center whitespace-nowrap border-b-2 pb-2 font-medium text-sm transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               isActive
-                ? "text-foreground after:absolute after:right-0 after:bottom-0 after:left-0 after:h-0.5 after:bg-foreground"
-                : "text-muted-foreground hover:text-foreground",
+                ? "border-foreground text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground",
             )}
           >
             {baseItem.label}

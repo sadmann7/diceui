@@ -342,6 +342,10 @@
 }
 
 @layer components {
+  [data-rehype-pretty-code-figure] {
+    @apply my-0!;
+  }
+
   [data-rehype-pretty-code-figure] figure {
     @apply border-none bg-secondary/50!;
   }

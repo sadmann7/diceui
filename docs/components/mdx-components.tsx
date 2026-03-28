@@ -110,7 +110,7 @@ export function useMdxComponents(
     ),
     pre: ({ children, ...props }: React.ComponentProps<typeof CodeBlock>) => (
       <CodeBlock {...props}>
-        <Pre>{children}</Pre>
+        <Pre className="px-4">{children}</Pre>
       </CodeBlock>
     ),
     Link: ({ className, ...props }: React.ComponentProps<typeof Link>) => (

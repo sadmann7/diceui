@@ -9,7 +9,8 @@ import type * as React from "react";
 import { CodeBlockWrapper } from "@/components/code-block-wrapper";
 import { cn } from "@/lib/utils";
 
-interface ComponentSourceProps extends React.HTMLAttributes<HTMLDivElement> {
+interface ComponentSourceProps
+  extends React.ComponentProps<typeof CodeBlockWrapper> {
   src?: string;
 }
 

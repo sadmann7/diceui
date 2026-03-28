@@ -15,9 +15,6 @@ interface ComponentTabsProps extends React.ComponentPropsWithoutRef<"div"> {
   fullPreview?: boolean;
 }
 
-// Load a registry example lazily. Conditional branches (one per base) create
-// bounded context modules so Turbopack compiles each base's examples as a
-// separate chunk rather than one monolithic catch-all bundle.
 function getExampleComponent(base: string, name: string) {
   if (base === "base") {
     return React.lazy(() =>
@@ -26,6 +23,7 @@ function getExampleComponent(base: string, name: string) {
       })),
     );
   }
+
   return React.lazy(() =>
     import(`@/registry/bases/radix/examples/${name}`).then((mod) => ({
       default: mod.default,
@@ -45,7 +43,6 @@ export function ComponentTabs({
   const params = useParams<{ slug?: string[] }>();
   const base = params.slug?.[1] === "base" ? "base" : "radix";
 
-  // rehypeComponent injects a single <pre> block as the first child.
   const code = React.Children.toArray(children)[0] as React.ReactElement;
 
   const Component = React.useMemo(
