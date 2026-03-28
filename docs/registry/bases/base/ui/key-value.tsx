@@ -333,7 +333,7 @@ interface KeyValueListProps extends DivProps {
 }
 
 function KeyValueList(props: KeyValueListProps) {
-  const { orientation = "vertical", className, render, ...listProps } = props;
+  const { orientation = "vertical", className, render, children, ...listProps } = props;
 
   const value = useStore((state) => state.value);
 
