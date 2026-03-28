@@ -5,10 +5,6 @@ import * as React from "react";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
-import { STYLES } from "@/registry/styles";
-
-// Map styles for compatibility
-const styles = STYLES.map((s) => ({ name: s.name, label: s.title }));
 
 interface ComponentTabsProps extends React.ComponentPropsWithoutRef<"div"> {
   name: string;
@@ -19,9 +15,9 @@ interface ComponentTabsProps extends React.ComponentPropsWithoutRef<"div"> {
   fullPreview?: boolean;
 }
 
-// Load a registry example lazily. Uses conditional branches (not a single
-// template literal) so Turbopack creates one bounded context chunk per base
-// rather than a single catch-all chunk across the entire registry tree.
+// Load a registry example lazily. Conditional branches (one per base) create
+// bounded context modules so Turbopack compiles each base's examples as a
+// separate chunk rather than one monolithic catch-all bundle.
 function getExampleComponent(base: string, name: string) {
   if (base === "base") {
     return React.lazy(() =>
@@ -30,7 +26,6 @@ function getExampleComponent(base: string, name: string) {
       })),
     );
   }
-  // Default to radix
   return React.lazy(() =>
     import(`@/registry/bases/radix/examples/${name}`).then((mod) => ({
       default: mod.default,
@@ -48,12 +43,10 @@ export function ComponentTabs({
   className,
 }: ComponentTabsProps) {
   const [config] = useConfig();
-  const index = styles.findIndex((style) => style.name === config.style);
 
-  const Codes = React.Children.toArray(children) as React.ReactElement[];
-  const Code = Codes[index];
+  // rehypeComponent injects a single <pre> block as the first child.
+  const code = React.Children.toArray(children)[0] as React.ReactElement;
 
-  // Stable lazy component — only recreated when base or name changes.
   const Component = React.useMemo(
     () => getExampleComponent(config.base, name),
     [config.base, name],
@@ -92,7 +85,7 @@ export function ComponentTabs({
         value="Code"
         className="rounded-none py-0 **:[figure]:rounded-none **:[pre]:h-[424.5px] **:[pre]:px-4"
       >
-        {Code}
+        {code}
       </Tab>
     </Tabs>
   );

@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
-export interface MasonryProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface MasonryProps extends EmptyProps<"div">, RenderProps {
   /**
    * The width of each column in pixels.
    * @default 200
@@ -99,6 +96,4 @@ export interface MasonryProps
   linear?: boolean;
 }
 
-export interface MasonryItemProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface MasonryItemProps extends EmptyProps<"div">, RenderProps {}

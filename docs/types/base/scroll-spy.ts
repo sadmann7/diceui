@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { Direction, EmptyProps, Orientation } from "@/types";
+import type { Direction, EmptyProps, Orientation, RenderProps } from "@/types";
 
-export interface ScrollSpyProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface ScrollSpyProps extends EmptyProps<"div">, RenderProps {
   /**
    * The currently active section ID.
    * Use for controlled behavior.
@@ -119,13 +116,9 @@ export interface ScrollSpyProps
   scrollContainer?: HTMLElement | null;
 }
 
-export interface ScrollSpyNavProps
-  extends EmptyProps<"nav">,
-    useRender.ComponentProps<"nav"> {}
+export interface ScrollSpyNavProps extends EmptyProps<"nav">, RenderProps {}
 
-export interface ScrollSpyLinkProps
-  extends EmptyProps<"a">,
-    useRender.ComponentProps<"a"> {
+export interface ScrollSpyLinkProps extends EmptyProps<"a">, RenderProps {
   /**
    * The unique value that links the link with the section.
    *
@@ -138,11 +131,9 @@ export interface ScrollSpyLinkProps
 
 export interface ScrollSpyViewportProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
-export interface ScrollSpySectionProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface ScrollSpySectionProps extends EmptyProps<"div">, RenderProps {
   /**
    * The unique value that links the section with the link.
    *

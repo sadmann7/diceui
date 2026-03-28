@@ -24,6 +24,21 @@ export interface CompositionProps {
   asChild?: boolean;
 }
 
+export interface RenderProps {
+  /**
+   * Allows you to replace the component's HTML element
+   * with a different tag, or compose it with another component.
+   *
+   * Accepts a `ReactElement` or a function that returns the element to render.
+   */
+  render?:
+    | React.ReactElement
+    | ((
+        props: Record<string, unknown>,
+        state: Record<string, unknown>,
+      ) => React.ReactElement);
+}
+
 export type Direction = "ltr" | "rtl";
 export type Orientation = "horizontal" | "vertical";
 export type Align = "start" | "center" | "end";

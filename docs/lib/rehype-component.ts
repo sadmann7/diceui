@@ -1,5 +1,9 @@
 /**
  * @see https://github.com/shadcn-ui/ui/blob/main/apps/www/lib/rehype-component.ts
+ *
+ * Resolves component source files using path conventions rather than importing
+ * the generated registry index files. This keeps registry metadata out of the
+ * Turbopack build graph entirely.
  */
 
 import fs from "node:fs";
@@ -7,20 +11,59 @@ import path from "node:path";
 import type { UnistNode, UnistTree } from "types/unist";
 import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
-import { ExamplesIndex } from "@/examples/__index__";
-import { Index } from "@/registry/__index__";
-import { STYLES } from "@/registry/styles";
 
-// Default base for backward compatibility
 const DEFAULT_BASE = "radix";
 
-// Map styles for compatibility
-const styles = STYLES.map((s) => ({ name: s.name, label: s.title }));
+// Ordered list of subdirectories to try when resolving a component by name.
+const SOURCE_DIRS = ["ui", "components", "lib", "hooks", "internal"];
+const SOURCE_EXTENSIONS = [".tsx", ".ts"];
+
+function resolveSourcePath(
+  name: string,
+  base: string = DEFAULT_BASE,
+  fileName?: string,
+): string | null {
+  const cwd = process.cwd();
+
+  // If a specific fileName is given, treat it as a direct path hint.
+  if (fileName) {
+    const candidates = SOURCE_EXTENSIONS.flatMap((ext) =>
+      SOURCE_DIRS.map((dir) =>
+        path.join(cwd, `registry/bases/${base}/${dir}/${fileName}${ext}`),
+      ),
+    );
+    const hit = candidates.find((p) => fs.existsSync(p));
+    if (hit) return hit;
+  }
+
+  const candidates = SOURCE_EXTENSIONS.flatMap((ext) =>
+    SOURCE_DIRS.map((dir) =>
+      path.join(cwd, `registry/bases/${base}/${dir}/${name}${ext}`),
+    ),
+  );
+  return candidates.find((p) => fs.existsSync(p)) ?? null;
+}
+
+function resolveExamplePath(
+  name: string,
+  base: string = DEFAULT_BASE,
+): string | null {
+  const p = path.join(
+    process.cwd(),
+    `registry/bases/${base}/examples/${name}.tsx`,
+  );
+  return fs.existsSync(p) ? p : null;
+}
+
+function normalizeSource(source: string, base: string = DEFAULT_BASE): string {
+  return source
+    .replaceAll(`@/registry/bases/${base}/`, "@/components/")
+    .replaceAll("export default", "export");
+}
 
 export function rehypeComponent() {
   return async (tree: UnistTree) => {
     visit(tree, (node: UnistNode) => {
-      // src prop overrides both name and fileName.
       const srcPath = getNodeAttributeByName(node, "src")?.value as
         | string
         | undefined;
@@ -31,84 +74,41 @@ export function rehypeComponent() {
           | string
           | undefined;
 
-        if (!name && !srcPath) {
-          return null;
-        }
+        if (!name && !srcPath) return null;
 
         try {
-          for (const style of styles) {
-            let src: string;
+          const filePath = srcPath
+            ? fs.existsSync(srcPath)
+              ? srcPath
+              : path.join(process.cwd(), srcPath)
+            : resolveSourcePath(name, DEFAULT_BASE, fileName);
 
-            if (srcPath) {
-              src = srcPath;
-            } else {
-              // Use the new Index[styleName][name] structure
-              const styleName = `${DEFAULT_BASE}-${style.name}`;
-              const styleIndex = Index[styleName];
-              if (!styleIndex) continue;
-
-              const component = styleIndex[name];
-              if (!component) continue;
-
-              src = fileName
-                ? component.files.find((file: string) => {
-                    return (
-                      file.endsWith(`${fileName}.tsx`) ||
-                      file.endsWith(`${fileName}.ts`)
-                    );
-                  }) || component.files[0]?.path
-                : component.files[0]?.path;
-            }
-
-            // Read the source file.
-            const filePath = src;
-            let source = fs.readFileSync(filePath, "utf8");
-
-            // Replace imports.
-            // TODO: Use @swc/core and a visitor to replace this.
-            // For now a simple regex should do.
-            source = source.replaceAll(
-              `@/registry/bases/${DEFAULT_BASE}/`,
-              "@/components/",
+          if (!filePath) {
+            console.warn(
+              `[rehype-component] Could not resolve source for "${name}"`,
             );
-            source = source.replaceAll(
-              `@/registry/${style.name}/`,
-              "@/components/",
-            );
-            source = source.replaceAll("export default", "export");
-
-            // Add code as children so that rehype can take over at build time.
-            node.children?.push(
-              u("element", {
-                tagName: "pre",
-                properties: {
-                  __src__: src,
-                  __style__: style.name,
-                },
-                attributes: [
-                  {
-                    name: "styleName",
-                    type: "mdxJsxAttribute",
-                    value: style.name,
-                  },
-                ],
-                children: [
-                  u("element", {
-                    tagName: "code",
-                    properties: {
-                      className: ["language-tsx"],
-                    },
-                    children: [
-                      {
-                        type: "text",
-                        value: source,
-                      },
-                    ],
-                  }),
-                ],
-              }),
-            );
+            return null;
           }
+
+          const raw = fs.readFileSync(filePath, "utf8");
+          const source = normalizeSource(raw);
+
+          node.children?.push(
+            u("element", {
+              tagName: "pre",
+              properties: {
+                __src__: filePath,
+                __style__: DEFAULT_BASE,
+              },
+              children: [
+                u("element", {
+                  tagName: "code",
+                  properties: { className: ["language-tsx"] },
+                  children: [{ type: "text", value: source }],
+                }),
+              ],
+            }),
+          );
         } catch (error) {
           console.error(error);
         }
@@ -116,63 +116,33 @@ export function rehypeComponent() {
 
       if (node.name === "ComponentTabs") {
         const name = getNodeAttributeByName(node, "name")?.value as string;
-
-        if (!name) {
-          return null;
-        }
+        if (!name) return null;
 
         try {
-          for (const style of styles) {
-            // Use ExamplesIndex[base][name] - examples are keyed by base only
-            const baseIndex = ExamplesIndex[DEFAULT_BASE];
-            if (!baseIndex) continue;
-
-            const component = baseIndex[name];
-            if (!component) continue;
-
-            const src = component.files[0]?.path;
-
-            // Read the source file.
-            const filePath = src;
-            let source = fs.readFileSync(filePath, "utf8");
-
-            // Replace imports.
-            // TODO: Use @swc/core and a visitor to replace this.
-            // For now a simple regex should do.
-            source = source.replaceAll(
-              `@/registry/bases/${DEFAULT_BASE}/`,
-              "@/components/",
+          const filePath = resolveExamplePath(name, DEFAULT_BASE);
+          if (!filePath) {
+            console.warn(
+              `[rehype-component] Could not resolve example "${name}"`,
             );
-            source = source.replaceAll(
-              `@/registry/${style.name}/`,
-              "@/components/",
-            );
-            source = source.replaceAll("export default", "export");
-
-            // Add code as children so that rehype can take over at build time.
-            node.children?.push(
-              u("element", {
-                tagName: "pre",
-                properties: {
-                  __src__: src,
-                },
-                children: [
-                  u("element", {
-                    tagName: "code",
-                    properties: {
-                      className: ["language-tsx"],
-                    },
-                    children: [
-                      {
-                        type: "text",
-                        value: source,
-                      },
-                    ],
-                  }),
-                ],
-              }),
-            );
+            return null;
           }
+
+          const raw = fs.readFileSync(filePath, "utf8");
+          const source = normalizeSource(raw);
+
+          node.children?.push(
+            u("element", {
+              tagName: "pre",
+              properties: { __src__: filePath },
+              children: [
+                u("element", {
+                  tagName: "code",
+                  properties: { className: ["language-tsx"] },
+                  children: [{ type: "text", value: source }],
+                }),
+              ],
+            }),
+          );
         } catch (error) {
           console.error(error);
         }
@@ -187,14 +157,7 @@ function getNodeAttributeByName(node: UnistNode, name: string) {
 
 export function getComponentSourceFileContent(node: UnistNode) {
   const src = getNodeAttributeByName(node, "src")?.value as string;
-
-  if (!src) {
-    return null;
-  }
-
-  // Read the source file.
+  if (!src) return null;
   const filePath = path.join(process.cwd(), src);
-  const source = fs.readFileSync(filePath, "utf8");
-
-  return source;
+  return fs.readFileSync(filePath, "utf8");
 }

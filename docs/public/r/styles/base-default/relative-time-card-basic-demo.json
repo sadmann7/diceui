@@ -6,7 +6,7 @@
   "files": [
     {
       "path": "examples/relative-time-card-basic-demo.tsx",
-      "content": "import { RelativeTimeCard } from \"@/registry/bases/base/ui/relative-time-card\";\r\n\r\nexport default function RelativeTimeCardBasicDemo() {\r\n  const now = new Date();\r\n  const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);\r\n  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);\r\n  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);\r\n\r\n  return (\r\n    <div className=\"flex flex-col gap-4\">\r\n      <RelativeTimeCard date={fiveMinutesAgo} />\r\n      <RelativeTimeCard date={oneHourAgo} />\r\n      <RelativeTimeCard date={oneDayAgo} />\r\n    </div>\r\n  );\r\n}\r\n",
+      "content": "import { RelativeTimeCard } from \"@/registry/bases/base/ui/relative-time-card\";\n\nexport default function RelativeTimeCardBasicDemo() {\n  const now = new Date();\n  const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);\n  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);\n  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);\n\n  return (\n    <div className=\"flex flex-col gap-4\">\n      <RelativeTimeCard date={fiveMinutesAgo} />\n      <RelativeTimeCard date={oneHourAgo} />\n      <RelativeTimeCard date={oneDayAgo} />\n    </div>\n  );\n}\n",
       "type": "registry:example",
       "target": ""
     }

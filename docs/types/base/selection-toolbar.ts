@@ -1,10 +1,9 @@
-import type { useRender } from "@base-ui/react/use-render";
 import type React from "react";
-import type { ButtonProps, EmptyProps } from "@/types";
+import type { ButtonProps, EmptyProps, RenderProps } from "@/types";
 
 export interface SelectionToolbarProps
   extends Omit<EmptyProps<"div">, "open">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * Whether the toolbar is open.
    * Use this prop to control the component externally.
@@ -186,4 +185,4 @@ export interface SelectionToolbarItemProps
 
 export interface SelectionToolbarSeparatorProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}

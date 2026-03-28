@@ -1,9 +1,8 @@
-import type { useRender } from "@base-ui/react/use-render";
 import type {
   Popover,
   PopoverTrigger,
 } from "@/registry/bases/radix/ui/popover";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 export interface Country {
   /**
@@ -24,9 +23,7 @@ export interface Country {
   flag?: string;
 }
 
-export interface PhoneInputProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface PhoneInputProps extends EmptyProps<"div">, RenderProps {
   /**
    * The unique identifier for the phone input component.
    * @default React.useId()

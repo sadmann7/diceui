@@ -10,7 +10,7 @@ import { CodeBlockWrapper } from "@/components/code-block-wrapper";
 import { cn } from "@/lib/utils";
 
 interface ComponentSourceProps extends React.HTMLAttributes<HTMLDivElement> {
-  src: string;
+  src?: string;
 }
 
 export function ComponentSource({

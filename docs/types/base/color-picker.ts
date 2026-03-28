@@ -1,6 +1,5 @@
 import type { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import type { Slider as SliderPrimitive } from "@base-ui/react/slider";
-import type { useRender } from "@base-ui/react/use-render";
 import type * as React from "react";
 import type { Input } from "@/registry/bases/base/ui/input";
 import type {
@@ -8,7 +7,12 @@ import type {
   PopoverTrigger,
 } from "@/registry/bases/base/ui/popover";
 import type { Select, SelectTrigger } from "@/registry/bases/radix/ui/select";
-import type { ButtonProps, ControlledProps, Direction } from "@/types";
+import type {
+  ButtonProps,
+  ControlledProps,
+  Direction,
+  RenderProps,
+} from "@/types";
 
 type ColorFormat = "hex" | "rgb" | "hsl" | "hsb";
 
@@ -18,7 +22,7 @@ type SliderProps = SliderPrimitive.Root.Props;
 
 export interface ColorPickerProps
   extends Omit<React.ComponentProps<"div">, keyof ControlledProps<"div">>,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * The current color value as a string.
    *
@@ -155,7 +159,7 @@ export interface ColorPickerContentProps
 
 export interface ColorPickerAreaProps
   extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
 export interface ColorPickerHueSliderProps
   extends Omit<SliderProps, keyof React.ComponentProps<"span">> {}
@@ -165,7 +169,7 @@ export interface ColorPickerAlphaSliderProps
 
 export interface ColorPickerSwatchProps
   extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
 export interface ColorPickerEyeDropperProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">> {

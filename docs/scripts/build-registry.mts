@@ -395,10 +395,7 @@ export const ExamplesIndex: Record<string, Record<string, any>> = {
 
   // Write main index to registry/__index__.ts (non-examples, keyed by styleName)
   rimraf.sync(path.join(process.cwd(), "registry/__index__.ts"));
-  await fs.writeFile(
-    path.join(process.cwd(), "registry/__index__.ts"),
-    index,
-  );
+  await fs.writeFile(path.join(process.cwd(), "registry/__index__.ts"), index);
 
   // Write examples index to examples/__index__.ts (examples only, keyed by base)
   await fs.mkdir(path.join(process.cwd(), "examples"), { recursive: true });
@@ -453,9 +450,7 @@ async function buildRegistryJson() {
       .filter((item) => REGISTRY_INDEX_WHITELIST.includes(item.type))
       .filter((item) => item.name !== "index") // Skip index item
       // Examples don't change across style variants — only include for default style
-      .filter(
-        (item) => item.type !== "registry:example" || isDefaultStyle,
-      )
+      .filter((item) => item.type !== "registry:example" || isDefaultStyle)
       .map((item) => {
         return {
           ...item,
@@ -695,7 +690,9 @@ try {
   await rimraf(STYLES_PATH);
   await fs.mkdir(STYLES_PATH, { recursive: true });
 
-  console.log("🏗️  Building registry/__index__.tsx and examples/__index__.tsx...");
+  console.log(
+    "🏗️  Building registry/__index__.tsx and examples/__index__.tsx...",
+  );
   await buildRegistry();
 
   console.log("📦 Building styles index...");

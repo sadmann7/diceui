@@ -1,5 +1,5 @@
-import type { useRender } from "@base-ui/react/use-render";
 import type { Presence } from "@/registry/bases/base/components/presence";
+import type { RenderProps } from "@/types";
 
 export interface ClientOnlyProps {
   /**
@@ -45,7 +45,7 @@ export interface DirectionProviderProps {
   dir: "ltr" | "rtl";
 }
 
-export interface PortalProps extends useRender.ComponentProps<"div"> {
+export interface PortalProps extends RenderProps {
   /**
    * The container to mount the portal into.
    * @default document.body
@@ -53,7 +53,7 @@ export interface PortalProps extends useRender.ComponentProps<"div"> {
   container?: Element | DocumentFragment | null;
 }
 
-export interface VisuallyHiddenProps extends useRender.ComponentProps<"span"> {}
+export interface VisuallyHiddenProps extends RenderProps {}
 
 export interface VisuallyHiddenInputProps {
   /**
@@ -83,7 +83,7 @@ export interface VisuallyHiddenInputProps {
   bubbles?: boolean;
 }
 
-export interface HitboxProps extends useRender.ComponentProps<"div"> {
+export interface HitboxProps extends RenderProps {
   /**
    * The size of the hitbox expansion.
    * Can be a preset ("default" | "sm" | "lg") or a custom CSS value.
@@ -154,7 +154,7 @@ export interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
   isPending: boolean;
 }
 
-export interface PendingProps extends useRender.ComponentProps<"div"> {
+export interface PendingProps extends RenderProps {
   /**
    * The unique identifier for the pending element.
    * @default React.useId()

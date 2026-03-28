@@ -1,11 +1,8 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 type Side = "left" | "right" | "top" | "bottom";
 
-export interface MarqueeProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface MarqueeProps extends EmptyProps<"div">, RenderProps {
   /**
    * The direction of the marquee animation.
    * @default "left"
@@ -70,17 +67,11 @@ export interface MarqueeProps
   reverse?: boolean;
 }
 
-export interface MarqueeContentProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface MarqueeContentProps extends EmptyProps<"div">, RenderProps {}
 
-export interface MarqueeItemProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface MarqueeItemProps extends EmptyProps<"div">, RenderProps {}
 
-export interface MarqueeEdgeProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface MarqueeEdgeProps extends EmptyProps<"div">, RenderProps {
   /**
    * Which side to apply the edge gradient effect.
    *

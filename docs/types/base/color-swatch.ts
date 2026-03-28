@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
-export interface ColorSwatchProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface ColorSwatchProps extends EmptyProps<"div">, RenderProps {
   /**
    * The color value to display. Can be any valid CSS color value.
    * @default undefined

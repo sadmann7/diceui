@@ -1,8 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
-export interface QRCodeProps
-  extends Omit<useRender.ComponentProps<"div">, "onError"> {
+export interface QRCodeProps extends Omit<RenderProps, "onError"> {
   /**
    * The data to encode in the QR code.
    * @example "https://example.com"
@@ -68,9 +66,7 @@ export interface QRCodeProps
   onGenerated?: () => void;
 }
 
-export interface QRCodeImageProps
-  extends EmptyProps<"img">,
-    useRender.ComponentProps<"img"> {
+export interface QRCodeImageProps extends EmptyProps<"img">, RenderProps {
   /**
    * Alternative text for the QR code image.
    *
@@ -83,25 +79,15 @@ export interface QRCodeImageProps
   alt?: string;
 }
 
-export interface QRCodeCanvasProps
-  extends EmptyProps<"canvas">,
-    useRender.ComponentProps<"canvas"> {}
+export interface QRCodeCanvasProps extends EmptyProps<"canvas">, RenderProps {}
 
-export interface QRCodeSvgProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface QRCodeSvgProps extends EmptyProps<"div">, RenderProps {}
 
-export interface QRCodeOverlayProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface QRCodeOverlayProps extends EmptyProps<"div">, RenderProps {}
 
-export interface QRCodeSkeletonProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface QRCodeSkeletonProps extends EmptyProps<"div">, RenderProps {}
 
-export interface QRCodeDownloadProps
-  extends EmptyProps<"button">,
-    useRender.ComponentProps<"button"> {
+export interface QRCodeDownloadProps extends EmptyProps<"button">, RenderProps {
   /**
    * The filename for the downloaded QR code.
    *

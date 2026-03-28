@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
-export interface RatingProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface RatingProps extends EmptyProps<"div">, RenderProps {
   /**
    * The current rating value.
    *
@@ -124,10 +121,7 @@ export interface RatingProps
 }
 
 export interface RatingItemProps
-  extends Omit<
-    EmptyProps<"button"> & useRender.ComponentProps<"button">,
-    "children"
-  > {
+  extends Omit<EmptyProps<"button"> & RenderProps, "children"> {
   /**
    * The index of this rating item.
    * If not provided, it will be auto-calculated based on position.

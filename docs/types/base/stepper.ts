@@ -1,10 +1,13 @@
-import type { useRender } from "@base-ui/react/use-render";
 import type * as React from "react";
-import type { ButtonProps, Direction, EmptyProps, Orientation } from "@/types";
+import type {
+  ButtonProps,
+  Direction,
+  EmptyProps,
+  Orientation,
+  RenderProps,
+} from "@/types";
 
-export interface StepperProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface StepperProps extends EmptyProps<"div">, RenderProps {
   /**
    * The current active step value.
    *
@@ -132,13 +135,9 @@ export interface StepperProps
   nonInteractive?: boolean;
 }
 
-export interface StepperListProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface StepperListProps extends EmptyProps<"div">, RenderProps {}
 
-export interface StepperItemProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface StepperItemProps extends EmptyProps<"div">, RenderProps {
   /**
    * The unique value that links the item with the content.
    *
@@ -165,11 +164,11 @@ export interface StepperItemProps
 
 export interface StepperTriggerProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
-    useRender.ComponentProps<"button"> {}
+    RenderProps {}
 
 export interface StepperIndicatorProps
   extends EmptyProps<"div">,
-    Omit<useRender.ComponentProps<"div">, "children"> {
+    Omit<RenderProps, "children"> {
   /**
    * The display content for the indicator (e.g., step number).
    *
@@ -185,21 +184,15 @@ export interface StepperIndicatorProps
     | ((dataState: "inactive" | "active" | "completed") => React.ReactNode);
 }
 
-export interface StepperSeparatorProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface StepperSeparatorProps extends EmptyProps<"div">, RenderProps {}
 
-export interface StepperTitleProps
-  extends EmptyProps<"span">,
-    useRender.ComponentProps<"span"> {}
+export interface StepperTitleProps extends EmptyProps<"span">, RenderProps {}
 
 export interface StepperDescriptionProps
   extends EmptyProps<"span">,
-    useRender.ComponentProps<"span"> {}
+    RenderProps {}
 
-export interface StepperContentProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface StepperContentProps extends EmptyProps<"div">, RenderProps {
   /**
    * The unique value that links the content with the item.
    *
@@ -218,10 +211,6 @@ export interface StepperContentProps
   forceMount?: boolean;
 }
 
-export interface StepperPrevProps
-  extends EmptyProps<"button">,
-    useRender.ComponentProps<"button"> {}
+export interface StepperPrevProps extends EmptyProps<"button">, RenderProps {}
 
-export interface StepperNextProps
-  extends EmptyProps<"button">,
-    useRender.ComponentProps<"button"> {}
+export interface StepperNextProps extends EmptyProps<"button">, RenderProps {}

@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
-export interface TimePickerProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface TimePickerProps extends EmptyProps<"div">, RenderProps {
   /**
    * The unique identifier for the time picker component.
    * @default React.useId()
@@ -220,19 +217,17 @@ export interface TimePickerProps
 
 export interface TimePickerLabelProps
   extends EmptyProps<"label">,
-    useRender.ComponentProps<"label"> {}
+    RenderProps {}
 
 export interface TimePickerInputGroupProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
 export interface TimePickerTriggerProps
   extends EmptyProps<"button">,
-    useRender.ComponentProps<"button"> {}
+    RenderProps {}
 
-export interface TimePickerContentProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface TimePickerContentProps extends EmptyProps<"div">, RenderProps {
   /**
    * The preferred side of the trigger to render against when open.
    * @default "bottom"
@@ -252,9 +247,7 @@ export interface TimePickerContentProps
   sideOffset?: number;
 }
 
-export interface TimePickerHourProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface TimePickerHourProps extends EmptyProps<"div">, RenderProps {
   /**
    * The format for displaying hours.
    * @default "numeric"
@@ -262,9 +255,7 @@ export interface TimePickerHourProps
   format?: "numeric" | "2-digit";
 }
 
-export interface TimePickerMinuteProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface TimePickerMinuteProps extends EmptyProps<"div">, RenderProps {
   /**
    * The format for displaying minutes.
    * @default "2-digit"
@@ -272,9 +263,7 @@ export interface TimePickerMinuteProps
   format?: "numeric" | "2-digit";
 }
 
-export interface TimePickerSecondProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface TimePickerSecondProps extends EmptyProps<"div">, RenderProps {
   /**
    * The format for displaying seconds.
    * @default "2-digit"
@@ -282,17 +271,15 @@ export interface TimePickerSecondProps
   format?: "numeric" | "2-digit";
 }
 
-export interface TimePickerPeriodProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface TimePickerPeriodProps extends EmptyProps<"div">, RenderProps {}
 
 export interface TimePickerSeparatorProps
   extends EmptyProps<"span">,
-    useRender.ComponentProps<"span"> {}
+    RenderProps {}
 
 export interface TimePickerClearProps
   extends EmptyProps<"button">,
-    useRender.ComponentProps<"button"> {}
+    RenderProps {}
 
 export interface TimePickerInputProps extends EmptyProps<"input"> {
   /**

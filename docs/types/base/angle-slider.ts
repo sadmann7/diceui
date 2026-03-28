@@ -1,11 +1,7 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { Direction, EmptyProps } from "@/types";
+import type { Direction, EmptyProps, RenderProps } from "@/types";
 
 export interface AngleSliderProps
-  extends Omit<
-    EmptyProps<"div"> & useRender.ComponentProps<"div">,
-    "defaultValue"
-  > {
+  extends Omit<EmptyProps<"div"> & RenderProps, "defaultValue"> {
   /**
    * The controlled values of the slider.
    */
@@ -109,18 +105,14 @@ export interface AngleSliderTrackProps extends EmptyProps<"div"> {}
 
 export interface AngleSliderRangeProps extends EmptyProps<"div"> {}
 
-export interface AngleSliderThumbProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface AngleSliderThumbProps extends EmptyProps<"div">, RenderProps {
   /**
    * The index of the thumb.
    */
   index?: number;
 }
 
-export interface AngleSliderValueProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface AngleSliderValueProps extends EmptyProps<"div">, RenderProps {
   /**
    * The unit to display after the value(s).
    *

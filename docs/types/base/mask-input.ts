@@ -1,5 +1,4 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 export interface TransformOptions {
   /**
@@ -96,9 +95,7 @@ export type ValidationMode =
   | "onTouched" // Validate on first blur, then on every change
   | "all"; // Validate on both blur and change events
 
-export interface MaskInputProps
-  extends EmptyProps<"input">,
-    useRender.ComponentProps<"input"> {
+export interface MaskInputProps extends EmptyProps<"input">, RenderProps {
   /** Controlled value */
   value?: string;
 

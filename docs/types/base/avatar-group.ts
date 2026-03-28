@@ -1,10 +1,7 @@
-import type { useRender } from "@base-ui/react/use-render";
 import type * as React from "react";
-import type { Direction, EmptyProps, Orientation } from "@/types";
+import type { Direction, EmptyProps, Orientation, RenderProps } from "@/types";
 
-export interface AvatarGroupProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface AvatarGroupProps extends EmptyProps<"div">, RenderProps {
   /**
    * The orientation of the avatar group.
    *

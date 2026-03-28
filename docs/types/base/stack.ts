@@ -1,12 +1,9 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 /**
  * Props for the Stack root component.
  */
-export interface StackProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface StackProps extends EmptyProps<"div">, RenderProps {
   /**
    * Direction from which items stack.
    * - "top": Items stack upward from the top
@@ -57,6 +54,4 @@ export interface StackProps
 /**
  * Props for individual Stack items.
  */
-export interface StackItemProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface StackItemProps extends EmptyProps<"div">, RenderProps {}

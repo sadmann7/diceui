@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { Direction, EmptyProps, Orientation } from "@/types";
+import type { Direction, EmptyProps, Orientation, RenderProps } from "@/types";
 
-export interface SegmentedInputProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface SegmentedInputProps extends EmptyProps<"div">, RenderProps {
   /**
    * The size of all inputs in the segment.
    * @default "default"
@@ -43,7 +40,7 @@ export interface SegmentedInputProps
 
 export interface SegmentedInputItemProps
   extends EmptyProps<"input">,
-    useRender.ComponentProps<"input"> {
+    RenderProps {
   /**
    * The position of the input within the segment.
    * Controls the visual styling and borders.

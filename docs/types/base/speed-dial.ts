@@ -1,14 +1,14 @@
-import type { useRender } from "@base-ui/react/use-render";
 import type {
   ButtonProps,
   EmptyProps,
   PointerDownOutsideEvent,
+  RenderProps,
   Side,
 } from "@/types";
 
 export interface SpeedDialProps
   extends Omit<EmptyProps<"div">, "children">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * The controlled open state of the speed dial.
    */
@@ -91,7 +91,7 @@ export interface SpeedDialTriggerProps
 
 export interface SpeedDialContentProps
   extends Omit<EmptyProps<"div">, "children">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * The distance in pixels from the trigger.
    * @default 8
@@ -140,7 +140,7 @@ export interface SpeedDialContentProps
 
 export interface SpeedDialItemProps
   extends Omit<EmptyProps<"div">, "children">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
 export interface SpeedDialActionProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button"> | "onClick"> {
@@ -161,4 +161,4 @@ export interface SpeedDialActionProps
 
 export interface SpeedDialLabelProps
   extends Omit<EmptyProps<"div">, "children">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}

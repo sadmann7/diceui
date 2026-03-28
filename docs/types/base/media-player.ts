@@ -1,11 +1,10 @@
 import type { Slider as SliderPrimitive } from "@base-ui/react/slider";
-import type { useRender } from "@base-ui/react/use-render";
 import type { Button } from "@/registry/bases/radix/ui/button";
 import type {
   DropdownMenu,
   DropdownMenuTrigger,
 } from "@/registry/bases/radix/ui/dropdown-menu";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 interface MediaPlayerDropdownMenuProps
   extends React.ComponentProps<typeof DropdownMenuTrigger>,
@@ -15,7 +14,7 @@ interface MediaPlayerDropdownMenuProps
 export interface MediaPlayerProps
   extends EmptyProps<"div">,
     Omit<
-      useRender.ComponentProps<"div">,
+      RenderProps,
       "onPlay" | "onPause" | "onEnded" | "onTimeUpdate" | "onVolumeChange"
     > {
   /**
@@ -216,23 +215,23 @@ export interface MediaPlayerProps
 
 export interface MediaPlayerVideoProps
   extends EmptyProps<"video">,
-    useRender.ComponentProps<"video"> {}
+    RenderProps {}
 
 export interface MediaPlayerAudioProps
   extends EmptyProps<"audio">,
-    useRender.ComponentProps<"audio"> {}
+    RenderProps {}
 
 export interface MediaPlayerControlsProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
 export interface MediaPlayerControlsOverlayProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
 export interface MediaPlayerLoadingProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * The delay in milliseconds before showing the loading indicator.
    *
@@ -245,9 +244,7 @@ export interface MediaPlayerLoadingProps
   delay?: number;
 }
 
-export interface MediaPlayerErrorProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface MediaPlayerErrorProps extends EmptyProps<"div">, RenderProps {
   /**
    * The media error object. If not provided, will use the error from media state.
    *
@@ -308,7 +305,7 @@ export interface MediaPlayerErrorProps
 
 export interface MediaPlayerVolumeIndicatorProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
 export interface MediaPlayerPlayProps extends EmptyProps<"button"> {}
 
@@ -469,9 +466,7 @@ export interface MediaPlayerVolumeProps
   expandable?: boolean;
 }
 
-export interface MediaPlayerTimeProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface MediaPlayerTimeProps extends EmptyProps<"div">, RenderProps {
   /**
    * The format variant for displaying time.
    * - `progress`: Shows "currentTime / duration" (e.g., "1:23 / 5:00").

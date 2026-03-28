@@ -1,11 +1,7 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 export interface EditableProps
-  extends Omit<
-    EmptyProps<"div"> & useRender.ComponentProps<"div">,
-    "onSubmit"
-  > {
+  extends Omit<EmptyProps<"div"> & RenderProps, "onSubmit"> {
   /**
    * The unique identifier for the editable component.
    * @default React.useId()
@@ -121,25 +117,17 @@ export interface EditableProps
   invalid?: boolean;
 }
 
-export interface EditableLabelProps
-  extends EmptyProps<"label">,
-    useRender.ComponentProps<"label"> {}
+export interface EditableLabelProps extends EmptyProps<"label">, RenderProps {}
 
-export interface EditableAreaProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface EditableAreaProps extends EmptyProps<"div">, RenderProps {}
 
-export interface EditablePreviewProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface EditablePreviewProps extends EmptyProps<"div">, RenderProps {}
 
-export interface EditableInputProps
-  extends EmptyProps<"input">,
-    useRender.ComponentProps<"input"> {}
+export interface EditableInputProps extends EmptyProps<"input">, RenderProps {}
 
 export interface EditableTriggerProps
   extends EmptyProps<"button">,
-    useRender.ComponentProps<"button"> {
+    RenderProps {
   /**
    * Whether to force mount the trigger.
    * @default false
@@ -147,9 +135,7 @@ export interface EditableTriggerProps
   forceMount?: boolean;
 }
 
-export interface EditableToolbarProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface EditableToolbarProps extends EmptyProps<"div">, RenderProps {
   /**
    * The orientation of the toolbar.
    * @default "horizontal"
@@ -159,8 +145,8 @@ export interface EditableToolbarProps
 
 export interface EditableSubmitProps
   extends EmptyProps<"button">,
-    useRender.ComponentProps<"button"> {}
+    RenderProps {}
 
 export interface EditableCancelProps
   extends EmptyProps<"button">,
-    useRender.ComponentProps<"button"> {}
+    RenderProps {}

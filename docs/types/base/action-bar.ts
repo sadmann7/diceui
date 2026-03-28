@@ -1,10 +1,7 @@
-import type { useRender } from "@base-ui/react/use-render";
 import type { Button } from "@/registry/bases/base/ui/button";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
-export interface ActionBarProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface ActionBarProps extends EmptyProps<"div">, RenderProps {
   /**
    * Whether the action bar is open/visible.
    * @default false
@@ -87,11 +84,9 @@ export interface ActionBarProps
 
 export interface ActionBarSelectionProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
-export interface ActionBarGroupProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface ActionBarGroupProps extends EmptyProps<"div">, RenderProps {}
 
 export interface ActionBarItemProps
   extends Omit<React.ComponentProps<typeof Button>, "onSelect"> {
@@ -111,11 +106,11 @@ export interface ActionBarItemProps
 
 export interface ActionBarCloseProps
   extends EmptyProps<"button">,
-    useRender.ComponentProps<"button"> {}
+    RenderProps {}
 
 export interface ActionBarSeparatorProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * The orientation of the separator.
    */

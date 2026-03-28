@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
-export interface SwapProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface SwapProps extends EmptyProps<"div">, RenderProps {
   /**
    * Whether the swap is in the swapped state (controlled).
    */
@@ -49,10 +46,6 @@ export interface SwapProps
   disabled?: boolean;
 }
 
-export interface SwapOnProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface SwapOnProps extends EmptyProps<"div">, RenderProps {}
 
-export interface SwapOffProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface SwapOffProps extends EmptyProps<"div">, RenderProps {}

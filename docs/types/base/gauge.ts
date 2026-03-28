@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
-export interface GaugeProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface GaugeProps extends EmptyProps<"div">, RenderProps {
   /**
    * The current gauge value as a number between the min and max values.
    * Set to `null` or `undefined` for indeterminate state.
@@ -103,10 +100,6 @@ export interface GaugeTrackProps extends EmptyProps<"path"> {}
 
 export interface GaugeRangeProps extends EmptyProps<"path"> {}
 
-export interface GaugeValueTextProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface GaugeValueTextProps extends EmptyProps<"div">, RenderProps {}
 
-export interface GaugeLabelProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface GaugeLabelProps extends EmptyProps<"div">, RenderProps {}

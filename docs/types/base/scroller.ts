@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
-export interface ScrollerProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface ScrollerProps extends EmptyProps<"div">, RenderProps {
   /**
    * The scroll direction of the container.
    * @default "vertical"

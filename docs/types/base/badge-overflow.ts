@@ -1,9 +1,8 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 export interface BadgeOverflowProps<T = string>
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * Array of items to display as badges.
    *

@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { Direction, EmptyProps, Orientation } from "@/types";
+import type { Direction, EmptyProps, Orientation, RenderProps } from "@/types";
 
-export interface TimelineProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface TimelineProps extends EmptyProps<"div">, RenderProps {
   /**
    * The orientation of the timeline.
    *
@@ -43,29 +40,19 @@ export interface TimelineProps
   activeIndex?: number;
 }
 
-export interface TimelineItemProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface TimelineItemProps extends EmptyProps<"div">, RenderProps {}
 
-export interface TimelineHeaderProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface TimelineHeaderProps extends EmptyProps<"div">, RenderProps {}
 
-export interface TimelineTitleProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface TimelineTitleProps extends EmptyProps<"div">, RenderProps {}
 
 export interface TimelineDescriptionProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
-export interface TimelineContentProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface TimelineContentProps extends EmptyProps<"div">, RenderProps {}
 
-export interface TimelineTimeProps
-  extends EmptyProps<"time">,
-    useRender.ComponentProps<"time"> {
+export interface TimelineTimeProps extends EmptyProps<"time">, RenderProps {
   /**
    * The datetime attribute for the time element.
    *
@@ -76,13 +63,9 @@ export interface TimelineTimeProps
   dateTime?: string;
 }
 
-export interface TimelineDotProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface TimelineDotProps extends EmptyProps<"div">, RenderProps {}
 
-export interface TimelineConnectorProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface TimelineConnectorProps extends EmptyProps<"div">, RenderProps {
   /**
    * When `true`, forces the connector to be rendered even if it's the last item.
    * Useful for controlling animations with external animation libraries.

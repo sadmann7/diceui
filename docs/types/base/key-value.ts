@@ -1,6 +1,5 @@
-import type { useRender } from "@base-ui/react/use-render";
 import type { Button } from "@/registry/bases/base/ui/button";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 interface KeyValueItemData {
   id: string;
@@ -11,10 +10,7 @@ interface KeyValueItemData {
 type ButtonProps = React.ComponentProps<typeof Button>;
 
 export interface KeyValueProps
-  extends Omit<
-    EmptyProps<"div"> & useRender.ComponentProps<"div">,
-    "defaultValue" | "onPaste"
-  > {
+  extends Omit<EmptyProps<"div"> & RenderProps, "defaultValue" | "onPaste"> {
   /**
    * The unique identifier for the key-value component.
    *
@@ -205,9 +201,7 @@ export interface KeyValueProps
   stripQuotes?: boolean;
 }
 
-export interface KeyValueListProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface KeyValueListProps extends EmptyProps<"div">, RenderProps {
   /**
    * The orientation of the list.
    *
@@ -216,9 +210,7 @@ export interface KeyValueListProps
   orientation?: "vertical" | "horizontal";
 }
 
-export interface KeyValueItemProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+export interface KeyValueItemProps extends EmptyProps<"div">, RenderProps {}
 
 export interface KeyValueKeyInputProps extends EmptyProps<"input"> {
   /**
@@ -251,9 +243,7 @@ export interface KeyValueRemoveProps
 export interface KeyValueAddProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">> {}
 
-export interface KeyValueErrorProps
-  extends EmptyProps<"span">,
-    useRender.ComponentProps<"span"> {
+export interface KeyValueErrorProps extends EmptyProps<"span">, RenderProps {
   /**
    * The field that has the error.
    *

@@ -1,9 +1,8 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps, Orientation } from "@/types";
+import type { EmptyProps, Orientation, RenderProps } from "@/types";
 
 export interface CompareSliderProps
   extends EmptyProps<"div", "defaultValue" | "value" | "onValueChange">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * The position of the slider as a percentage (0-100).
    * @default 50
@@ -44,7 +43,7 @@ export interface CompareSliderProps
 
 export interface CompareSliderBeforeProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * Label for the "before" side.
    *
@@ -57,7 +56,7 @@ export interface CompareSliderBeforeProps
 
 export interface CompareSliderAfterProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * Label for the "after" side.
    *
@@ -70,11 +69,11 @@ export interface CompareSliderAfterProps
 
 export interface CompareSliderHandleProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {}
+    RenderProps {}
 
 export interface CompareSliderLabelProps
   extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * The side this label is for.
    *

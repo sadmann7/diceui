@@ -1,9 +1,6 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
-export interface CircularProgressProps
-  extends EmptyProps<"div">,
-    useRender.ComponentProps<"div"> {
+export interface CircularProgressProps extends EmptyProps<"div">, RenderProps {
   /**
    * The current progress value as a number between the min and max values.
    * Set to `null` or `undefined` for indeterminate progress.
@@ -62,4 +59,4 @@ export interface CircularProgressRangeProps extends EmptyProps<"circle"> {}
 
 export interface CircularProgressValueTextProps
   extends EmptyProps<"span">,
-    useRender.ComponentProps<"span"> {}
+    RenderProps {}

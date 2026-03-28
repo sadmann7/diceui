@@ -1,9 +1,8 @@
-import type { useRender } from "@base-ui/react/use-render";
-import type { EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 export interface StatusProps
   extends Omit<EmptyProps<"div">, "color">,
-    useRender.ComponentProps<"div"> {
+    RenderProps {
   /**
    * The visual style and color theme of the status badge.
    *
