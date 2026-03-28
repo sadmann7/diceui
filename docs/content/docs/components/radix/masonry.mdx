@@ -11,41 +11,50 @@ links:
 
 ## Installation
 
-### CLI
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
 
 ```package-install
 npx shadcn@latest add @diceui/masonry
 ```
 
-### Manual
+</TabsContent>
 
-<Steps>
-  <Step>
-     Install the following dependencies:
+<TabsContent value="manual">
 
-     ```package-install
-     @radix-ui/react-slot
-     ```
-  </Step>
-  <Step>
-    Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.
+<Steps className="pt-2">
 
-    <ComponentSource name="compose-refs" />
-  </Step>
-  <Step>
-    Copy and paste the following hook into your `hooks` directory.
+<Step>Install the following dependencies:</Step>
 
-    <ComponentSource name="use-isomorphic-layout-effect" />
-  </Step>
-  <Step>
-    Copy and paste the following code into your project.
+```package-install
+@radix-ui/react-slot
+```
 
-    <ComponentSource name="masonry" />
-  </Step>
-  <Step>
-    Update the import paths to match your project setup.
-  </Step>
+<Step>Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.</Step>
+
+<ComponentSource name="compose-refs" />
+
+<Step>Copy and paste the following hook into your `hooks` directory.</Step>
+
+<ComponentSource name="use-isomorphic-layout-effect" />
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="masonry" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
 </Steps>
+
+</TabsContent>
+
+</CodeTabs>
 
 ## Layout
 

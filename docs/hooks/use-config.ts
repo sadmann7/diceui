@@ -1,21 +1,16 @@
 import { useAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import type { RegistryBase } from "@/registry";
-import type { Style } from "@/registry/styles";
-
 interface Config {
-  base: RegistryBase;
-  style: Style["name"];
-  theme: string;
-  radius: number;
+  style: "new-york-v4";
+  packageManager: "npm" | "yarn" | "pnpm" | "bun";
+  installationType: "cli" | "manual";
 }
 
 const configAtom = atomWithStorage<Config>("config", {
-  base: "radix",
-  style: "default",
-  theme: "zinc",
-  radius: 0.5,
+  style: "new-york-v4",
+  packageManager: "pnpm",
+  installationType: "cli",
 });
 
 export function useConfig() {

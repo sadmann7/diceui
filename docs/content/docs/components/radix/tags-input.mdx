@@ -17,28 +17,40 @@ links:
 
 ## Installation with shadcn/ui
 
-### CLI
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
 
 ```package-install
 npx shadcn@latest add @diceui/tags-input
 ```
 
-### Manual
+</TabsContent>
 
-<Steps>
-  <Step>
-     Install the following dependencies:
+<TabsContent value="manual">
 
-     ```package-install
-     @diceui/tags-input
-     ```
-  </Step>
-  <Step>
-    Copy and paste the following code into your project.
+<Steps className="pt-2">
 
-    <ComponentSource name="tags-input" />
-  </Step>
+<Step>Install the following dependencies:</Step>
+
+```package-install
+@diceui/tags-input
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="tags-input" />
+
 </Steps>
+
+</TabsContent>
+
+</CodeTabs>
 
 ## Layout
 

@@ -11,45 +11,54 @@ links:
 
 ## Installation
 
-### CLI
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
 
 ```package-install
 npx shadcn@latest add @diceui/responsive-dialog
 ```
 
-### Manual
+</TabsContent>
 
-<Steps>
-  <Step>
-     Install the following dependencies:
+<TabsContent value="manual">
 
-     ```package-install
-     vaul
-     ```
-  </Step>
-  <Step>
-    Copy and paste the following hooks into your `hooks` directory.
+<Steps className="pt-2">
 
-    <ComponentSource name="use-as-ref" />
-    <ComponentSource name="use-isomorphic-layout-effect" />
-    <ComponentSource name="use-lazy-ref" />
-    <ComponentSource name="use-mobile" />
-  </Step>
-  <Step>
-    Copy and paste the dialog and drawer components into your project.
+<Step>Install the following dependencies:</Step>
 
-    <ComponentSource name="dialog" />
-    <ComponentSource name="drawer" />
-  </Step>
-  <Step>
-    Copy and paste the following code into your project.
+```package-install
+vaul
+```
 
-    <ComponentSource name="responsive-dialog" />
-  </Step>
-  <Step>
-    Update the import paths to match your project setup.
-  </Step>
+<Step>Copy and paste the following hooks into your `hooks` directory.</Step>
+
+<ComponentSource name="use-as-ref" />
+<ComponentSource name="use-isomorphic-layout-effect" />
+<ComponentSource name="use-lazy-ref" />
+<ComponentSource name="use-mobile" />
+
+<Step>Copy and paste the dialog and drawer components into your project.</Step>
+
+<ComponentSource name="dialog" />
+<ComponentSource name="drawer" />
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="responsive-dialog" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
 </Steps>
+
+</TabsContent>
+
+</CodeTabs>
 
 ## Layout
 

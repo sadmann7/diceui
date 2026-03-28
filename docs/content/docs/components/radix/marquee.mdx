@@ -11,96 +11,107 @@ links:
 
 ## Installation
 
-### CLI
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
 
 ```package-install
 npx shadcn@latest add @diceui/marquee
 ```
 
-### Manual
+</TabsContent>
 
-<Steps>
-  <Step>
-     Install the following dependencies:
+<TabsContent value="manual">
 
-     ```package-install
-     @radix-ui/react-slot
-     ```
-  </Step>
-  <Step>
-    Copy and paste the following code into your project.
+<Steps className="pt-2">
 
-    <ComponentSource name="marquee" />
-  </Step>
-  <Step>
-    Add the following CSS animations to your `globals.css` file:
+<Step>Install the following dependencies:</Step>
 
-    ```css
-    :root {
-      --animate-marquee-left: marquee-left var(--marquee-duration) linear var(--marquee-loop-count);
-      --animate-marquee-right: marquee-right var(--marquee-duration) linear var(--marquee-loop-count);
-      --animate-marquee-left-rtl: marquee-left-rtl var(--marquee-duration) linear var(--marquee-loop-count);
-      --animate-marquee-right-rtl: marquee-right-rtl var(--marquee-duration) linear var(--marquee-loop-count);
-      --animate-marquee-up: marquee-up var(--marquee-duration) linear var(--marquee-loop-count);
-      --animate-marquee-down: marquee-down var(--marquee-duration) linear var(--marquee-loop-count);
+```package-install
+@radix-ui/react-slot
+```
 
-    @keyframes marquee-left {
-      0% {
-        transform: translateX(0%);
-      }
-      100% {
-        transform: translateX(calc(-100% - var(--marquee-gap)));
-      }
-    }
+<Step>Copy and paste the following code into your project.</Step>
 
-    @keyframes marquee-right {
-      0% {
-        transform: translateX(calc(-100% - var(--marquee-gap)));
-      }
-      100% {
-        transform: translateX(0%);
-      }
-    }
+<ComponentSource name="marquee" />
 
-    @keyframes marquee-up {
-      0% {
-        transform: translateY(0%);
-      }
-      100% {
-        transform: translateY(calc(-100% - var(--marquee-gap)));
-      }
-    }
+<Step>Add the following CSS animations to your `globals.css` file:</Step>
 
-    @keyframes marquee-down {
-      0% {
-        transform: translateY(calc(-100% - var(--marquee-gap)));
-      }
-      100% {
-        transform: translateY(0%);
-      }
-    }
+```css
+:root {
+  --animate-marquee-left: marquee-left var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-right: marquee-right var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-left-rtl: marquee-left-rtl var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-right-rtl: marquee-right-rtl var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-up: marquee-up var(--marquee-duration) linear var(--marquee-loop-count);
+  --animate-marquee-down: marquee-down var(--marquee-duration) linear var(--marquee-loop-count);
 
-    @keyframes marquee-left-rtl {
-      0% {
-        transform: translateX(0%);
-      }
-      100% {
-        transform: translateX(calc(100% + var(--marquee-gap)));
-      }
-    }
+@keyframes marquee-left {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(calc(-100% - var(--marquee-gap)));
+  }
+}
 
-    @keyframes marquee-right-rtl {
-      0% {
-        transform: translateX(calc(100% + var(--marquee-gap)));
-      }
-      100% {
-        transform: translateX(0%);
-      }
-    }
-    }
-    ```
-  </Step>
+@keyframes marquee-right {
+  0% {
+    transform: translateX(calc(-100% - var(--marquee-gap)));
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes marquee-up {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(calc(-100% - var(--marquee-gap)));
+  }
+}
+
+@keyframes marquee-down {
+  0% {
+    transform: translateY(calc(-100% - var(--marquee-gap)));
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+@keyframes marquee-left-rtl {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(calc(100% + var(--marquee-gap)));
+  }
+}
+
+@keyframes marquee-right-rtl {
+  0% {
+    transform: translateX(calc(100% + var(--marquee-gap)));
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+}
+```
+
 </Steps>
+
+</TabsContent>
+
+</CodeTabs>
 
 ## Layout
 

@@ -11,28 +11,40 @@ links:
 
 ## Installation
 
-### CLI
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
 
 ```package-install
 npx shadcn@latest add @diceui/pending
 ```
 
-### Manual
+</TabsContent>
 
-<Steps>
-  <Step>
-    Install the following dependencies:
+<TabsContent value="manual">
 
-    ```package-install
-    @base-ui/react
-    ```
-  </Step>
-  <Step>
-    Copy and paste the following code into your project.
+<Steps className="pt-2">
 
-    <ComponentSource src="./registry/bases/base/components/pending.tsx" />
-  </Step>
+<Step>Install the following dependencies:</Step>
+
+```package-install
+@base-ui/react
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource src="./registry/bases/base/components/pending.tsx" />
+
 </Steps>
+
+</TabsContent>
+
+</CodeTabs>
 
 ## Layout
 

@@ -17,28 +17,40 @@ links:
 
 ## Installation with shadcn/ui
 
-### CLI
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
 
 ```package-install
 npx shadcn@latest add @diceui/listbox
 ```
 
-### Manual
+</TabsContent>
 
-<Steps>
-  <Step>
-     Install the following dependencies:
+<TabsContent value="manual">
 
-     ```package-install
-     @diceui/listbox
-     ```
-  </Step>
-  <Step>
-    Copy and paste the following code into your project.
+<Steps className="pt-2">
 
-    <ComponentSource name="listbox" />
-  </Step>
+<Step>Install the following dependencies:</Step>
+
+```package-install
+@diceui/listbox
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="listbox" />
+
 </Steps>
+
+</TabsContent>
+
+</CodeTabs>
 
 ## Layout
 

@@ -11,46 +11,57 @@ links:
 
 ## Installation
 
-### CLI
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
 
 ```package-install
 npx shadcn@latest add @diceui/circular-progress
 ```
 
-### Manual
+</TabsContent>
 
-<Steps>
-  <Step>
-     Install the following dependencies:
+<TabsContent value="manual">
 
-     ```package-install
-     @radix-ui/react-slot
-     ```
-  </Step>
-  <Step>
-    Copy and paste the following code into your project.
+<Steps className="pt-2">
 
-    <ComponentSource name="circular-progress" />
-  </Step>
-  <Step>
-    Add the following CSS animations to your `globals.css` file:
+<Step>Install the following dependencies:</Step>
 
-    ```css
-    @theme {
-      --animate-spin-around: spin-around 0.8s linear infinite;
+```package-install
+@radix-ui/react-slot
+```
 
-      @keyframes spin-around {
-        0% {
-          transform: rotate(-90deg);
-        }
-        100% {
-          transform: rotate(270deg);
-        }
-      }
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="circular-progress" />
+
+<Step>Add the following CSS animations to your `globals.css` file:</Step>
+
+```css
+@theme {
+  --animate-spin-around: spin-around 0.8s linear infinite;
+
+  @keyframes spin-around {
+    0% {
+      transform: rotate(-90deg);
     }
-    ```
-  </Step>
+    100% {
+      transform: rotate(270deg);
+    }
+  }
+}
+```
+
 </Steps>
+
+</TabsContent>
+
+</CodeTabs>
 
 ## Layout
 

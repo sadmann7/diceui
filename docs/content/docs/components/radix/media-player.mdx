@@ -52,7 +52,14 @@ links:
   </Step>
 </Steps>
 
-### CLI
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
 
 <Steps>
   <Step>
@@ -64,35 +71,37 @@ links:
   </Step>
 </Steps>
 
-### Manual
+</TabsContent>
 
-<Steps>
-  <Step>
-     After completing the prerequisite component updates, install the required dependencies:
+<TabsContent value="manual">
 
-     ```package-install
-     @radix-ui/react-slot @radix-ui/react-slider @radix-ui/react-tooltip lucide-react
-     ```
-  </Step>
-  <Step>
-    Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.
+<Steps className="pt-2">
 
-    <ComponentSource name="compose-refs" />
-  </Step>
-  <Step>
-    Copy and paste the following hook into your `hooks` directory.
+<Step>After completing the prerequisite component updates, install the required dependencies:</Step>
 
-    <ComponentSource name="use-lazy-ref" />
-  </Step>
-  <Step>
-    Copy and paste the following code into your project.
+```package-install
+@radix-ui/react-slot @radix-ui/react-slider @radix-ui/react-tooltip lucide-react
+```
 
-    <ComponentSource name="media-player" />
-  </Step>
-  <Step>
-    Update the import paths to match your project setup.
-  </Step>
+<Step>Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.</Step>
+
+<ComponentSource name="compose-refs" />
+
+<Step>Copy and paste the following hook into your `hooks` directory.</Step>
+
+<ComponentSource name="use-lazy-ref" />
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="media-player" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
 </Steps>
+
+</TabsContent>
+
+</CodeTabs>
 
 ## Layout
 

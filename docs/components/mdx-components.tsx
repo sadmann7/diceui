@@ -10,6 +10,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import type * as React from "react";
 import { CodeBlock } from "@/components/code-block";
+import { CodeTabs } from "@/components/code-tabs";
 import type { source } from "@/lib/source";
 import { cn } from "@/lib/utils";
 import {
@@ -24,6 +25,11 @@ import {
   TableHead,
   TableRow,
 } from "@/registry/bases/radix/ui/table";
+import {
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/registry/bases/radix/ui/tabs";
 
 const ComponentSource = dynamic(() =>
   import("@/components/component-source").then((mod) => ({
@@ -102,12 +108,6 @@ export function useMdxComponents(
     tr: TableRow,
     th: TableHead,
     td: TableCell,
-    Tabs: ({ className, ...props }: React.ComponentProps<typeof Tabs>) => (
-      <Tabs className={cn("rounded-md", className)} {...props} />
-    ),
-    Tab: ({ className, ...props }: React.ComponentProps<typeof Tab>) => (
-      <Tab className={cn("rounded-none", className)} {...props} />
-    ),
     pre: ({ children, ...props }: React.ComponentProps<typeof CodeBlock>) => (
       <CodeBlock {...props}>
         <Pre className="px-4">{children}</Pre>
@@ -125,11 +125,56 @@ export function useMdxComponents(
         {...props}
       />
     ),
+    AlertTitle,
+    AlertDescription,
+    Tabs: ({ className, ...props }: React.ComponentProps<typeof Tabs>) => {
+      return (
+        <Tabs className={cn("relative mt-6 w-full", className)} {...props} />
+      );
+    },
+    TabsList: ({
+      className,
+      ...props
+    }: React.ComponentProps<typeof TabsList>) => (
+      <TabsList
+        className={cn(
+          "justify-start gap-4 rounded-none bg-transparent px-0",
+          className,
+        )}
+        {...props}
+      />
+    ),
+    TabsTrigger: ({
+      className,
+      ...props
+    }: React.ComponentProps<typeof TabsTrigger>) => (
+      <TabsTrigger
+        className={cn(
+          "rounded-none border-0 border-transparent border-b-2 bg-transparent px-0 pb-3 text-base text-muted-foreground hover:text-primary data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none! dark:data-[state=active]:border-primary dark:data-[state=active]:bg-transparent",
+          className,
+        )}
+        {...props}
+      />
+    ),
+    TabsContent: ({
+      className,
+      ...props
+    }: React.ComponentProps<typeof TabsContent>) => (
+      <TabsContent
+        className={cn(
+          "relative [&>.steps]:mt-6 [&_h3.font-heading]:font-medium [&_h3.font-heading]:text-base *:[figure]:first:mt-0",
+          className,
+        )}
+        {...props}
+      />
+    ),
+    Tab: ({ className, ...props }: React.ComponentProps<"div">) => (
+      <div className={cn(className)} {...props} />
+    ),
+    CodeTabs,
     Kbd: ({ className, ...props }: React.ComponentProps<typeof Kbd>) => (
       <Kbd className={cn("not-prose", className)} {...props} />
     ),
-    AlertTitle,
-    AlertDescription,
     Callout,
     ComponentTabs,
     ComponentSource,
