@@ -88,7 +88,8 @@
       "!**/.turbo",
       "!**/.next",
       "!**/.source",
-      "!**/__registry__"
+      "!**/__registry__",
+      "!**/__index__.tsx"
     ]
   }
 }
