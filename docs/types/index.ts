@@ -30,6 +30,10 @@ export interface RenderProps {
    * with a different tag, or compose it with another component.
    *
    * Accepts a `ReactElement` or a function that returns the element to render.
+   *
+   * ```ts
+   * render={(renderProps) => <div {...renderProps} />}
+   * ```
    */
   render?:
     | React.ReactElement

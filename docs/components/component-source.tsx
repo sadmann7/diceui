@@ -8,8 +8,10 @@ function deriveTitle(
   name: string | undefined,
   src: string | undefined,
   explicit: string | undefined,
+  registryPath: string | undefined,
 ): string | undefined {
   if (explicit) return explicit;
+  if (registryPath) return registryPath;
   if (name) return `${name}.tsx`;
   if (src) return src.split("/").pop();
   return undefined;
@@ -37,9 +39,12 @@ export async function ComponentSource({
   if (!name && !src) return null;
 
   let code: string | undefined;
+  let registryPath: string | undefined;
 
   if (name) {
-    code = getRegistryItem(name, base)?.files?.[0]?.content;
+    const item = getRegistryItem(name, base);
+    code = item?.files?.[0]?.content;
+    registryPath = item?.files?.[0]?.path;
   }
 
   if (src) {
@@ -56,7 +61,7 @@ export async function ComponentSource({
     code = code.split("\n").slice(0, maxLines).join("\n");
   }
 
-  const title = deriveTitle(name, src, explicitTitle);
+  const title = deriveTitle(name, src, explicitTitle, registryPath);
   const lang = language ?? title?.split(".").pop() ?? "tsx";
   const highlightedCode = await highlightCode(code, lang);
 

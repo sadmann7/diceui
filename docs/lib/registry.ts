@@ -39,13 +39,17 @@ export function getRegistryItem(
   name: string,
   base = "radix",
   fileName?: string,
-): { files: { content: string }[] } | null {
+): { files: [{ content: string; path: string }] } | null {
   const filePath = resolveSourcePath(name, base, fileName);
   if (!filePath) return null;
 
   try {
     const raw = fs.readFileSync(filePath, "utf-8");
-    return { files: [{ content: normalizeSource(raw, base) }] };
+    const cwd = process.cwd();
+    const relative = filePath
+      .replace(path.join(cwd, `registry/bases/${base}/`), "")
+      .replaceAll("\\", "/");
+    return { files: [{ content: normalizeSource(raw, base), path: relative }] };
   } catch {
     return null;
   }
