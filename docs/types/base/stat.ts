@@ -5,7 +5,7 @@ export interface StatProps extends EmptyProps<"div"> {}
 
 export interface StatLabelProps extends EmptyProps<"div"> {}
 
-export interface StatIndicatorProps extends Omit<EmptyProps<"div">, "color"> {
+export interface StatIndicatorProps {
   /**
    * The visual style of the indicator.
    *

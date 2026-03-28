@@ -1,6 +1,6 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
-export interface ColorSwatchProps extends EmptyProps<"div">, RenderProps {
+export interface ColorSwatchProps extends RenderProps {
   /**
    * The color value to display. Can be any valid CSS color value.
    * @default undefined

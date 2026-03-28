@@ -9,8 +9,7 @@ interface KeyValueItemData {
 
 type ButtonProps = React.ComponentProps<typeof Button>;
 
-export interface KeyValueProps
-  extends Omit<EmptyProps<"div"> & RenderProps, "defaultValue" | "onPaste"> {
+export interface KeyValueProps extends RenderProps {
   /**
    * The unique identifier for the key-value component.
    *
@@ -201,7 +200,7 @@ export interface KeyValueProps
   stripQuotes?: boolean;
 }
 
-export interface KeyValueListProps extends EmptyProps<"div">, RenderProps {
+export interface KeyValueListProps extends RenderProps {
   /**
    * The orientation of the list.
    *
@@ -210,7 +209,7 @@ export interface KeyValueListProps extends EmptyProps<"div">, RenderProps {
   orientation?: "vertical" | "horizontal";
 }
 
-export interface KeyValueItemProps extends EmptyProps<"div">, RenderProps {}
+export interface KeyValueItemProps extends RenderProps {}
 
 export interface KeyValueKeyInputProps extends EmptyProps<"input"> {
   /**
@@ -243,7 +242,7 @@ export interface KeyValueRemoveProps
 export interface KeyValueAddProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">> {}
 
-export interface KeyValueErrorProps extends EmptyProps<"span">, RenderProps {
+export interface KeyValueErrorProps extends RenderProps {
   /**
    * The field that has the error.
    *

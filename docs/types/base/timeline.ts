@@ -1,6 +1,6 @@
-import type { Direction, EmptyProps, Orientation, RenderProps } from "@/types";
+import type { Direction, Orientation, RenderProps } from "@/types";
 
-export interface TimelineProps extends EmptyProps<"div">, RenderProps {
+export interface TimelineProps extends RenderProps {
   /**
    * The orientation of the timeline.
    *
@@ -40,19 +40,17 @@ export interface TimelineProps extends EmptyProps<"div">, RenderProps {
   activeIndex?: number;
 }
 
-export interface TimelineItemProps extends EmptyProps<"div">, RenderProps {}
+export interface TimelineItemProps extends RenderProps {}
 
-export interface TimelineHeaderProps extends EmptyProps<"div">, RenderProps {}
+export interface TimelineHeaderProps extends RenderProps {}
 
-export interface TimelineTitleProps extends EmptyProps<"div">, RenderProps {}
+export interface TimelineTitleProps extends RenderProps {}
 
-export interface TimelineDescriptionProps
-  extends EmptyProps<"div">,
-    RenderProps {}
+export interface TimelineDescriptionProps extends RenderProps {}
 
-export interface TimelineContentProps extends EmptyProps<"div">, RenderProps {}
+export interface TimelineContentProps extends RenderProps {}
 
-export interface TimelineTimeProps extends EmptyProps<"time">, RenderProps {
+export interface TimelineTimeProps extends RenderProps {
   /**
    * The datetime attribute for the time element.
    *
@@ -63,9 +61,9 @@ export interface TimelineTimeProps extends EmptyProps<"time">, RenderProps {
   dateTime?: string;
 }
 
-export interface TimelineDotProps extends EmptyProps<"div">, RenderProps {}
+export interface TimelineDotProps extends RenderProps {}
 
-export interface TimelineConnectorProps extends EmptyProps<"div">, RenderProps {
+export interface TimelineConnectorProps extends RenderProps {
   /**
    * When `true`, forces the connector to be rendered even if it's the last item.
    * Useful for controlling animations with external animation libraries.

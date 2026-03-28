@@ -1,8 +1,8 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
 type Side = "left" | "right" | "top" | "bottom";
 
-export interface MarqueeProps extends EmptyProps<"div">, RenderProps {
+export interface MarqueeProps extends RenderProps {
   /**
    * The direction of the marquee animation.
    * @default "left"
@@ -67,11 +67,11 @@ export interface MarqueeProps extends EmptyProps<"div">, RenderProps {
   reverse?: boolean;
 }
 
-export interface MarqueeContentProps extends EmptyProps<"div">, RenderProps {}
+export interface MarqueeContentProps extends RenderProps {}
 
-export interface MarqueeItemProps extends EmptyProps<"div">, RenderProps {}
+export interface MarqueeItemProps extends RenderProps {}
 
-export interface MarqueeEdgeProps extends EmptyProps<"div">, RenderProps {
+export interface MarqueeEdgeProps extends RenderProps {
   /**
    * Which side to apply the edge gradient effect.
    *

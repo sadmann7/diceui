@@ -1,7 +1,6 @@
 import type { Direction, EmptyProps, RenderProps } from "@/types";
 
-export interface AngleSliderProps
-  extends Omit<EmptyProps<"div"> & RenderProps, "defaultValue"> {
+export interface AngleSliderProps extends RenderProps {
   /**
    * The controlled values of the slider.
    */
@@ -101,18 +100,18 @@ export interface AngleSliderProps
   inverted?: boolean;
 }
 
-export interface AngleSliderTrackProps extends EmptyProps<"div"> {}
+export interface AngleSliderTrackProps extends EmptyProps<"svg"> {}
 
-export interface AngleSliderRangeProps extends EmptyProps<"div"> {}
+export interface AngleSliderRangeProps extends EmptyProps<"path"> {}
 
-export interface AngleSliderThumbProps extends EmptyProps<"div">, RenderProps {
+export interface AngleSliderThumbProps extends RenderProps {
   /**
    * The index of the thumb.
    */
   index?: number;
 }
 
-export interface AngleSliderValueProps extends EmptyProps<"div">, RenderProps {
+export interface AngleSliderValueProps extends RenderProps {
   /**
    * The unit to display after the value(s).
    *

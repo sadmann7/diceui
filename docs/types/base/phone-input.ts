@@ -23,7 +23,7 @@ export interface Country {
   flag?: string;
 }
 
-export interface PhoneInputProps extends EmptyProps<"div">, RenderProps {
+export interface PhoneInputProps extends RenderProps {
   /**
    * The unique identifier for the phone input component.
    * @default React.useId()

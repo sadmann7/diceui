@@ -1,4 +1,4 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
 export interface Point {
   x: number;
@@ -32,7 +32,7 @@ export type ObjectFit =
   | "horizontal-cover"
   | "vertical-cover";
 
-export interface CropperProps extends EmptyProps<"div">, RenderProps {
+export interface CropperProps extends RenderProps {
   /**
    * The current crop position.
    *
@@ -177,7 +177,7 @@ export interface CropperProps extends EmptyProps<"div">, RenderProps {
   onWheelZoom?: (event: WheelEvent) => void;
 }
 
-export interface CropperImageProps extends EmptyProps<"img">, RenderProps {
+export interface CropperImageProps extends RenderProps {
   /**
    * How the image should fit within the container.
    * Overrides the root objectFit prop if provided.
@@ -192,7 +192,7 @@ export interface CropperImageProps extends EmptyProps<"img">, RenderProps {
   snapPixels?: boolean;
 }
 
-export interface CropperVideoProps extends EmptyProps<"video">, RenderProps {
+export interface CropperVideoProps extends RenderProps {
   /**
    * How the video should fit within the container.
    * Overrides the root objectFit prop if provided.
@@ -207,7 +207,7 @@ export interface CropperVideoProps extends EmptyProps<"video">, RenderProps {
   snapPixels?: boolean;
 }
 
-export interface CropperAreaProps extends EmptyProps<"div">, RenderProps {
+export interface CropperAreaProps extends RenderProps {
   /**
    * The shape of the crop area.
    * Overrides the root shape prop if provided.

@@ -1,6 +1,6 @@
 import type { EmptyProps, RenderProps } from "@/types";
 
-export interface CircularProgressProps extends EmptyProps<"div">, RenderProps {
+export interface CircularProgressProps extends RenderProps {
   /**
    * The current progress value as a number between the min and max values.
    * Set to `null` or `undefined` for indeterminate progress.
@@ -57,6 +57,4 @@ export interface CircularProgressTrackProps extends EmptyProps<"circle"> {}
 
 export interface CircularProgressRangeProps extends EmptyProps<"circle"> {}
 
-export interface CircularProgressValueTextProps
-  extends EmptyProps<"span">,
-    RenderProps {}
+export interface CircularProgressValueTextProps extends RenderProps {}

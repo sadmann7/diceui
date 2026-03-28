@@ -1,7 +1,6 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
-export interface FileUploadProps
-  extends Omit<EmptyProps<"div"> & RenderProps, "defaultValue"> {
+export interface FileUploadProps extends RenderProps {
   /**
    * The array of files currently being managed.
    * Use this prop to control the component.
@@ -272,15 +271,11 @@ export interface FileUploadProps
   required?: boolean;
 }
 
-export interface FileUploadDropzoneProps
-  extends EmptyProps<"div">,
-    RenderProps {}
+export interface FileUploadDropzoneProps extends RenderProps {}
 
-export interface FileUploadTriggerProps
-  extends EmptyProps<"button">,
-    RenderProps {}
+export interface FileUploadTriggerProps extends RenderProps {}
 
-export interface FileUploadListProps extends EmptyProps<"div">, RenderProps {
+export interface FileUploadListProps extends RenderProps {
   /**
    * The orientation of the file list.
    *
@@ -316,7 +311,7 @@ export interface FileUploadListProps extends EmptyProps<"div">, RenderProps {
   forceMount?: boolean;
 }
 
-export interface FileUploadItemProps extends EmptyProps<"div">, RenderProps {
+export interface FileUploadItemProps extends RenderProps {
   /**
    * The file to display in the item.
    *
@@ -331,9 +326,7 @@ export interface FileUploadItemProps extends EmptyProps<"div">, RenderProps {
   value: File;
 }
 
-export interface FileUploadItemPreviewProps
-  extends EmptyProps<"div">,
-    RenderProps {
+export interface FileUploadItemPreviewProps extends RenderProps {
   /**
    * The custom render function for the preview.
    * Override the default preview with access to fallback behavior.
@@ -373,9 +366,7 @@ export interface FileUploadItemPreviewProps
   ) => React.ReactNode;
 }
 
-export interface FileUploadItemMetadataProps
-  extends EmptyProps<"div">,
-    RenderProps {
+export interface FileUploadItemMetadataProps extends RenderProps {
   /**
    * The visual density of the displayed file metadata (name and size).
    *
@@ -387,9 +378,7 @@ export interface FileUploadItemMetadataProps
   size?: "default" | "sm";
 }
 
-export interface FileUploadItemProgressProps
-  extends EmptyProps<"div">,
-    RenderProps {
+export interface FileUploadItemProgressProps extends RenderProps {
   /**
    * The visual style of the progress indicator.
    *
@@ -437,13 +426,9 @@ export interface FileUploadItemProgressProps
   forceMount?: boolean;
 }
 
-export interface FileUploadItemDeleteProps
-  extends EmptyProps<"button">,
-    RenderProps {}
+export interface FileUploadItemDeleteProps extends RenderProps {}
 
-export interface FileUploadClearProps
-  extends EmptyProps<"button">,
-    RenderProps {
+export interface FileUploadClearProps extends RenderProps {
   /**
    * Whether to force mount the clear button even if there are no files.
    * Useful for animating the clear button with animation libraries.

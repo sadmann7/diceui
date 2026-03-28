@@ -1,8 +1,6 @@
 import type { EmptyProps, RenderProps } from "@/types";
 
-export interface StatusProps
-  extends Omit<EmptyProps<"div">, "color">,
-    RenderProps {
+export interface StatusProps extends RenderProps {
   /**
    * The visual style and color theme of the status badge.
    *

@@ -41,9 +41,7 @@ export interface CompareSliderProps
   step?: number;
 }
 
-export interface CompareSliderBeforeProps
-  extends EmptyProps<"div">,
-    RenderProps {
+export interface CompareSliderBeforeProps extends RenderProps {
   /**
    * Label for the "before" side.
    *
@@ -54,9 +52,7 @@ export interface CompareSliderBeforeProps
   label?: string;
 }
 
-export interface CompareSliderAfterProps
-  extends EmptyProps<"div">,
-    RenderProps {
+export interface CompareSliderAfterProps extends RenderProps {
   /**
    * Label for the "after" side.
    *
@@ -67,13 +63,9 @@ export interface CompareSliderAfterProps
   label?: string;
 }
 
-export interface CompareSliderHandleProps
-  extends EmptyProps<"div">,
-    RenderProps {}
+export interface CompareSliderHandleProps extends RenderProps {}
 
-export interface CompareSliderLabelProps
-  extends EmptyProps<"div">,
-    RenderProps {
+export interface CompareSliderLabelProps extends RenderProps {
   /**
    * The side this label is for.
    *

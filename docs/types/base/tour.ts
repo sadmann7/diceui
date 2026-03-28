@@ -11,9 +11,7 @@ import type {
 
 interface ButtonProps extends React.ComponentProps<typeof Button> {}
 
-export interface TourProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {
+export interface TourProps extends RenderProps {
   /**
    * Whether the tour is open.
    *
@@ -256,9 +254,7 @@ export interface TourProps
   stepFooter?: React.ReactElement;
 }
 
-export interface TourSpotlightProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {
+export interface TourSpotlightProps extends RenderProps {
   /**
    * Whether to force mount the spotlight even when closed.
    *
@@ -267,9 +263,7 @@ export interface TourSpotlightProps
   forceMount?: boolean;
 }
 
-export interface TourSpotlightRingProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {
+export interface TourSpotlightRingProps extends RenderProps {
   /**
    * Whether to force mount the spotlight ring even when closed.
    *
@@ -278,9 +272,7 @@ export interface TourSpotlightRingProps
   forceMount?: boolean;
 }
 
-export interface TourStepProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {
+export interface TourStepProps extends RenderProps {
   /**
    * The target element selector or element reference for this step.
    *
@@ -410,29 +402,17 @@ export interface TourStepProps
   onStepLeave?: () => void;
 }
 
-export interface TourCloseProps
-  extends Omit<EmptyProps<"button">, "children">,
-    RenderProps {}
+export interface TourCloseProps extends RenderProps {}
 
-export interface TourHeaderProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {}
+export interface TourHeaderProps extends RenderProps {}
 
-export interface TourTitleProps
-  extends Omit<EmptyProps<"h2">, "children">,
-    RenderProps {}
+export interface TourTitleProps extends RenderProps {}
 
-export interface TourDescriptionProps
-  extends Omit<EmptyProps<"p">, "children">,
-    RenderProps {}
+export interface TourDescriptionProps extends RenderProps {}
 
-export interface TourFooterProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {}
+export interface TourFooterProps extends RenderProps {}
 
-export interface TourStepCounterProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {
+export interface TourStepCounterProps extends RenderProps {
   /**
    * Custom format function for the step counter.
    *

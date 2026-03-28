@@ -1,8 +1,6 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
-export interface BadgeOverflowProps<T = string>
-  extends EmptyProps<"div">,
-    RenderProps {
+export interface BadgeOverflowProps<T = string> extends RenderProps {
   /**
    * Array of items to display as badges.
    *

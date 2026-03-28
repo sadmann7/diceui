@@ -1,6 +1,6 @@
 import type { EmptyProps, RenderProps } from "@/types";
 
-export interface GaugeProps extends EmptyProps<"div">, RenderProps {
+export interface GaugeProps extends RenderProps {
   /**
    * The current gauge value as a number between the min and max values.
    * Set to `null` or `undefined` for indeterminate state.
@@ -100,6 +100,6 @@ export interface GaugeTrackProps extends EmptyProps<"path"> {}
 
 export interface GaugeRangeProps extends EmptyProps<"path"> {}
 
-export interface GaugeValueTextProps extends EmptyProps<"div">, RenderProps {}
+export interface GaugeValueTextProps extends RenderProps {}
 
-export interface GaugeLabelProps extends EmptyProps<"div">, RenderProps {}
+export interface GaugeLabelProps extends RenderProps {}

@@ -100,9 +100,9 @@ export interface AngleSliderProps extends EmptyProps<"div">, CompositionProps {
   inverted?: boolean;
 }
 
-export interface AngleSliderTrackProps extends EmptyProps<"div"> {}
+export interface AngleSliderTrackProps extends EmptyProps<"svg"> {}
 
-export interface AngleSliderRangeProps extends EmptyProps<"div"> {}
+export interface AngleSliderRangeProps extends EmptyProps<"path"> {}
 
 export interface AngleSliderThumbProps
   extends EmptyProps<"div">,

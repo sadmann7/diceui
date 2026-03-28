@@ -1,6 +1,6 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
-export interface SwapProps extends EmptyProps<"div">, RenderProps {
+export interface SwapProps extends RenderProps {
   /**
    * Whether the swap is in the swapped state (controlled).
    */
@@ -46,6 +46,6 @@ export interface SwapProps extends EmptyProps<"div">, RenderProps {
   disabled?: boolean;
 }
 
-export interface SwapOnProps extends EmptyProps<"div">, RenderProps {}
+export interface SwapOnProps extends RenderProps {}
 
-export interface SwapOffProps extends EmptyProps<"div">, RenderProps {}
+export interface SwapOffProps extends RenderProps {}

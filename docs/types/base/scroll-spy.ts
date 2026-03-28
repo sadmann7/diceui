@@ -1,6 +1,6 @@
-import type { Direction, EmptyProps, Orientation, RenderProps } from "@/types";
+import type { Direction, Orientation, RenderProps } from "@/types";
 
-export interface ScrollSpyProps extends EmptyProps<"div">, RenderProps {
+export interface ScrollSpyProps extends RenderProps {
   /**
    * The currently active section ID.
    * Use for controlled behavior.
@@ -116,9 +116,9 @@ export interface ScrollSpyProps extends EmptyProps<"div">, RenderProps {
   scrollContainer?: HTMLElement | null;
 }
 
-export interface ScrollSpyNavProps extends EmptyProps<"nav">, RenderProps {}
+export interface ScrollSpyNavProps extends RenderProps {}
 
-export interface ScrollSpyLinkProps extends EmptyProps<"a">, RenderProps {
+export interface ScrollSpyLinkProps extends RenderProps {
   /**
    * The unique value that links the link with the section.
    *
@@ -129,11 +129,9 @@ export interface ScrollSpyLinkProps extends EmptyProps<"a">, RenderProps {
   value: string;
 }
 
-export interface ScrollSpyViewportProps
-  extends EmptyProps<"div">,
-    RenderProps {}
+export interface ScrollSpyViewportProps extends RenderProps {}
 
-export interface ScrollSpySectionProps extends EmptyProps<"div">, RenderProps {
+export interface ScrollSpySectionProps extends RenderProps {
   /**
    * The unique value that links the section with the link.
    *

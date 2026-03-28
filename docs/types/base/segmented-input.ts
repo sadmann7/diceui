@@ -1,6 +1,6 @@
-import type { Direction, EmptyProps, Orientation, RenderProps } from "@/types";
+import type { Direction, Orientation, RenderProps } from "@/types";
 
-export interface SegmentedInputProps extends EmptyProps<"div">, RenderProps {
+export interface SegmentedInputProps extends RenderProps {
   /**
    * The size of all inputs in the segment.
    * @default "default"
@@ -38,9 +38,7 @@ export interface SegmentedInputProps extends EmptyProps<"div">, RenderProps {
   required?: boolean;
 }
 
-export interface SegmentedInputItemProps
-  extends EmptyProps<"input">,
-    RenderProps {
+export interface SegmentedInputItemProps extends RenderProps {
   /**
    * The position of the input within the segment.
    * Controls the visual styling and borders.

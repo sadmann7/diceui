@@ -7,7 +7,7 @@ import type {
   RenderProps,
 } from "@/types";
 
-export interface StepperProps extends EmptyProps<"div">, RenderProps {
+export interface StepperProps extends RenderProps {
   /**
    * The current active step value.
    *
@@ -135,9 +135,9 @@ export interface StepperProps extends EmptyProps<"div">, RenderProps {
   nonInteractive?: boolean;
 }
 
-export interface StepperListProps extends EmptyProps<"div">, RenderProps {}
+export interface StepperListProps extends RenderProps {}
 
-export interface StepperItemProps extends EmptyProps<"div">, RenderProps {
+export interface StepperItemProps extends RenderProps {
   /**
    * The unique value that links the item with the content.
    *
@@ -166,9 +166,7 @@ export interface StepperTriggerProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     RenderProps {}
 
-export interface StepperIndicatorProps
-  extends EmptyProps<"div">,
-    Omit<RenderProps, "children"> {
+export interface StepperIndicatorProps extends Omit<RenderProps, "children"> {
   /**
    * The display content for the indicator (e.g., step number).
    *
@@ -184,15 +182,13 @@ export interface StepperIndicatorProps
     | ((dataState: "inactive" | "active" | "completed") => React.ReactNode);
 }
 
-export interface StepperSeparatorProps extends EmptyProps<"div">, RenderProps {}
+export interface StepperSeparatorProps extends RenderProps {}
 
-export interface StepperTitleProps extends EmptyProps<"span">, RenderProps {}
+export interface StepperTitleProps extends RenderProps {}
 
-export interface StepperDescriptionProps
-  extends EmptyProps<"span">,
-    RenderProps {}
+export interface StepperDescriptionProps extends RenderProps {}
 
-export interface StepperContentProps extends EmptyProps<"div">, RenderProps {
+export interface StepperContentProps extends RenderProps {
   /**
    * The unique value that links the content with the item.
    *
@@ -211,6 +207,6 @@ export interface StepperContentProps extends EmptyProps<"div">, RenderProps {
   forceMount?: boolean;
 }
 
-export interface StepperPrevProps extends EmptyProps<"button">, RenderProps {}
+export interface StepperPrevProps extends RenderProps {}
 
-export interface StepperNextProps extends EmptyProps<"button">, RenderProps {}
+export interface StepperNextProps extends RenderProps {}

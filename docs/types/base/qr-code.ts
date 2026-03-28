@@ -1,4 +1,4 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
 export interface QRCodeProps extends Omit<RenderProps, "onError"> {
   /**
@@ -66,7 +66,7 @@ export interface QRCodeProps extends Omit<RenderProps, "onError"> {
   onGenerated?: () => void;
 }
 
-export interface QRCodeImageProps extends EmptyProps<"img">, RenderProps {
+export interface QRCodeImageProps extends RenderProps {
   /**
    * Alternative text for the QR code image.
    *
@@ -79,15 +79,15 @@ export interface QRCodeImageProps extends EmptyProps<"img">, RenderProps {
   alt?: string;
 }
 
-export interface QRCodeCanvasProps extends EmptyProps<"canvas">, RenderProps {}
+export interface QRCodeCanvasProps extends RenderProps {}
 
-export interface QRCodeSvgProps extends EmptyProps<"div">, RenderProps {}
+export interface QRCodeSvgProps extends RenderProps {}
 
-export interface QRCodeOverlayProps extends EmptyProps<"div">, RenderProps {}
+export interface QRCodeOverlayProps extends RenderProps {}
 
-export interface QRCodeSkeletonProps extends EmptyProps<"div">, RenderProps {}
+export interface QRCodeSkeletonProps extends RenderProps {}
 
-export interface QRCodeDownloadProps extends EmptyProps<"button">, RenderProps {
+export interface QRCodeDownloadProps extends RenderProps {
   /**
    * The filename for the downloaded QR code.
    *

@@ -6,9 +6,7 @@ import type {
   Side,
 } from "@/types";
 
-export interface SpeedDialProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {
+export interface SpeedDialProps extends RenderProps {
   /**
    * The controlled open state of the speed dial.
    */
@@ -89,9 +87,7 @@ export interface SpeedDialTriggerProps
   onMouseLeave?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export interface SpeedDialContentProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {
+export interface SpeedDialContentProps extends RenderProps {
   /**
    * The distance in pixels from the trigger.
    * @default 8
@@ -138,9 +134,7 @@ export interface SpeedDialContentProps
   onInteractOutside?: (event: PointerDownOutsideEvent) => void;
 }
 
-export interface SpeedDialItemProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {}
+export interface SpeedDialItemProps extends RenderProps {}
 
 export interface SpeedDialActionProps
   extends Omit<ButtonProps, keyof React.ComponentProps<"button"> | "onClick"> {
@@ -159,6 +153,4 @@ export interface SpeedDialActionProps
   onSelect?: (event: Event) => void;
 }
 
-export interface SpeedDialLabelProps
-  extends Omit<EmptyProps<"div">, "children">,
-    RenderProps {}
+export interface SpeedDialLabelProps extends RenderProps {}

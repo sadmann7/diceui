@@ -1,6 +1,6 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
-export interface ScrollerProps extends EmptyProps<"div">, RenderProps {
+export interface ScrollerProps extends RenderProps {
   /**
    * The scroll direction of the container.
    * @default "vertical"

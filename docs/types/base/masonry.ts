@@ -1,6 +1,6 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
-export interface MasonryProps extends EmptyProps<"div">, RenderProps {
+export interface MasonryProps extends RenderProps {
   /**
    * The width of each column in pixels.
    * @default 200
@@ -96,4 +96,4 @@ export interface MasonryProps extends EmptyProps<"div">, RenderProps {
   linear?: boolean;
 }
 
-export interface MasonryItemProps extends EmptyProps<"div">, RenderProps {}
+export interface MasonryItemProps extends RenderProps {}

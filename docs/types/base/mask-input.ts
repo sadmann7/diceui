@@ -1,4 +1,4 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
 export interface TransformOptions {
   /**
@@ -95,7 +95,7 @@ export type ValidationMode =
   | "onTouched" // Validate on first blur, then on every change
   | "all"; // Validate on both blur and change events
 
-export interface MaskInputProps extends EmptyProps<"input">, RenderProps {
+export interface MaskInputProps extends RenderProps {
   /** Controlled value */
   value?: string;
 

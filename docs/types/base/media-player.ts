@@ -12,11 +12,10 @@ interface MediaPlayerDropdownMenuProps
     Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {}
 
 export interface MediaPlayerProps
-  extends EmptyProps<"div">,
-    Omit<
-      RenderProps,
-      "onPlay" | "onPause" | "onEnded" | "onTimeUpdate" | "onVolumeChange"
-    > {
+  extends Omit<
+    RenderProps,
+    "onPlay" | "onPause" | "onEnded" | "onTimeUpdate" | "onVolumeChange"
+  > {
   /**
    * Callback function triggered when the media starts playing.
    *
@@ -213,25 +212,15 @@ export interface MediaPlayerProps
   withoutTooltip?: boolean;
 }
 
-export interface MediaPlayerVideoProps
-  extends EmptyProps<"video">,
-    RenderProps {}
+export interface MediaPlayerVideoProps extends RenderProps {}
 
-export interface MediaPlayerAudioProps
-  extends EmptyProps<"audio">,
-    RenderProps {}
+export interface MediaPlayerAudioProps extends RenderProps {}
 
-export interface MediaPlayerControlsProps
-  extends EmptyProps<"div">,
-    RenderProps {}
+export interface MediaPlayerControlsProps extends RenderProps {}
 
-export interface MediaPlayerControlsOverlayProps
-  extends EmptyProps<"div">,
-    RenderProps {}
+export interface MediaPlayerControlsOverlayProps extends RenderProps {}
 
-export interface MediaPlayerLoadingProps
-  extends EmptyProps<"div">,
-    RenderProps {
+export interface MediaPlayerLoadingProps extends RenderProps {
   /**
    * The delay in milliseconds before showing the loading indicator.
    *
@@ -244,7 +233,7 @@ export interface MediaPlayerLoadingProps
   delay?: number;
 }
 
-export interface MediaPlayerErrorProps extends EmptyProps<"div">, RenderProps {
+export interface MediaPlayerErrorProps extends RenderProps {
   /**
    * The media error object. If not provided, will use the error from media state.
    *
@@ -303,9 +292,7 @@ export interface MediaPlayerErrorProps extends EmptyProps<"div">, RenderProps {
   onReload?: () => void;
 }
 
-export interface MediaPlayerVolumeIndicatorProps
-  extends EmptyProps<"div">,
-    RenderProps {}
+export interface MediaPlayerVolumeIndicatorProps extends RenderProps {}
 
 export interface MediaPlayerPlayProps extends EmptyProps<"button"> {}
 
@@ -466,7 +453,7 @@ export interface MediaPlayerVolumeProps
   expandable?: boolean;
 }
 
-export interface MediaPlayerTimeProps extends EmptyProps<"div">, RenderProps {
+export interface MediaPlayerTimeProps extends RenderProps {
   /**
    * The format variant for displaying time.
    * - `progress`: Shows "currentTime / duration" (e.g., "1:23 / 5:00").
@@ -524,8 +511,7 @@ export interface MediaPlayerPlaybackSpeedProps
 export interface MediaPlayerLoopProps extends EmptyProps<"button"> {}
 
 export interface MediaPlayerPiPProps
-  extends EmptyProps<"button">,
-    Pick<MediaPlayerProps, "onPipError"> {
+  extends Pick<MediaPlayerProps, "onPipError"> {
   /**
    * The content to render inside the picture-in-picture button.
    * Can be a React node or a function that receives the current PiP state.

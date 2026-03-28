@@ -1,9 +1,9 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
 /**
  * Props for the Stack root component.
  */
-export interface StackProps extends EmptyProps<"div">, RenderProps {
+export interface StackProps extends RenderProps {
   /**
    * Direction from which items stack.
    * - "top": Items stack upward from the top
@@ -54,4 +54,4 @@ export interface StackProps extends EmptyProps<"div">, RenderProps {
 /**
  * Props for individual Stack items.
  */
-export interface StackItemProps extends EmptyProps<"div">, RenderProps {}
+export interface StackItemProps extends RenderProps {}

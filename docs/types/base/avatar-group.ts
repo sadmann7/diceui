@@ -1,7 +1,7 @@
 import type * as React from "react";
-import type { Direction, EmptyProps, Orientation, RenderProps } from "@/types";
+import type { Direction, Orientation, RenderProps } from "@/types";
 
-export interface AvatarGroupProps extends EmptyProps<"div">, RenderProps {
+export interface AvatarGroupProps extends RenderProps {
   /**
    * The orientation of the avatar group.
    *

@@ -1,6 +1,6 @@
-import type { EmptyProps, RenderProps } from "@/types";
+import type { RenderProps } from "@/types";
 
-export interface RatingProps extends EmptyProps<"div">, RenderProps {
+export interface RatingProps extends RenderProps {
   /**
    * The current rating value.
    *
@@ -120,8 +120,7 @@ export interface RatingProps extends EmptyProps<"div">, RenderProps {
   name?: string;
 }
 
-export interface RatingItemProps
-  extends Omit<EmptyProps<"button"> & RenderProps, "children"> {
+export interface RatingItemProps extends RenderProps {
   /**
    * The index of this rating item.
    * If not provided, it will be auto-calculated based on position.
