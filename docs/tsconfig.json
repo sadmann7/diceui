@@ -1,33 +1,41 @@
 {
   "compilerOptions": {
-    /* Base Options: */
-    "esModuleInterop": true,
-    "target": "es2022",
+    /* Base Options */
+    "target": "ES2022",
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "allowJs": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "esModuleInterop": true,
+
     /* Strictness */
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
-    /* Bundled projects */
-    "lib": ["dom", "dom.iterable", "ES2022"],
-    "noEmit": true,
+
+    /* Module Resolution */
     "module": "ESNext",
     "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+
+    /* Next.js */
     "jsx": "react-jsx",
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "incremental": true,
-    /* Path Aliases */
+
+    /* Paths & Types */
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "types": ["node"]
   },
   "include": [
     "next-env.d.ts",
@@ -39,15 +47,5 @@
     ".next/dev/types/**/*.ts",
     ".next\\dev/types/**/*.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "scripts/build-registry.mts",
-    "registry/__index__.tsx",
-    "examples/__index__.tsx",
-    ".next",
-    ".turbo",
-    "dist",
-    "build",
-    "public/r/**/*.json"
-  ]
+  "exclude": ["node_modules", "scripts/**/*"]
 }

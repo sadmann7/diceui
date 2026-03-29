@@ -1,13 +1,32 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "target": "es6",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    /* Base Options */
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": false,
+    "verbatimModuleSyntax": true,
     "esModuleInterop": true,
-    "isolatedModules": false
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+
+    /* Module Resolution */
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+
+    /* Paths & Types */
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "types": ["node"]
   },
-  "include": ["src/scripts/**/*.ts"],
+  "include": ["scripts/**/*.ts", "scripts/**/*.mts"],
   "exclude": ["node_modules"]
 }
