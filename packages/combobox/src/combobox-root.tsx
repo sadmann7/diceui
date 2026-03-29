@@ -450,6 +450,5 @@ ComboboxRoot.displayName = ROOT_NAME;
 
 const Root = ComboboxRoot;
 
-export { ComboboxRoot, Root, getDataState, useComboboxContext };
-
-export type { ComboboxRootProps, ComboboxRootComponentProps };
+export type { ComboboxRootComponentProps, ComboboxRootProps };
+export { ComboboxRoot, getDataState, Root, useComboboxContext };

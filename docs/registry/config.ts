@@ -10,11 +10,17 @@ import { fonts } from "@/registry/fonts";
 import { STYLES, type Style } from "@/registry/styles";
 import { THEMES, type Theme } from "@/registry/themes";
 
-export { BASES, type Base };
-export { STYLES, type Style };
-export { THEMES, type Theme };
-export { BASE_COLORS, type BaseColor };
-export { fonts };
+export {
+  BASE_COLORS,
+  BASES,
+  type Base,
+  type BaseColor,
+  fonts,
+  STYLES,
+  type Style,
+  THEMES,
+  type Theme,
+};
 
 export type BaseName = Base["name"];
 export type StyleName = Style["name"];

@@ -109,9 +109,9 @@ function CheckboxGroupMessage({
 
 export {
   CheckboxGroup,
+  CheckboxGroupDescription,
+  CheckboxGroupItem,
   CheckboxGroupLabel,
   CheckboxGroupList,
-  CheckboxGroupItem,
-  CheckboxGroupDescription,
   CheckboxGroupMessage,
 };

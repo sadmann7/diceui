@@ -42,6 +42,5 @@ function Portal(props: PortalProps) {
   );
 }
 
-export { Portal };
-
 export type { PortalProps };
+export { Portal };

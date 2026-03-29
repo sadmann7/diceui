@@ -38,6 +38,5 @@ ComboboxSeparator.displayName = SEPARATOR_NAME;
 
 const Separator = ComboboxSeparator;
 
-export { ComboboxSeparator, Separator };
-
 export type { ComboboxSeparatorProps };
+export { ComboboxSeparator, Separator };

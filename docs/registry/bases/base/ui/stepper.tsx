@@ -1320,18 +1320,18 @@ function StepperNext(props: ButtonProps) {
 
 export {
   Stepper,
-  StepperList,
-  StepperItem,
-  StepperTrigger,
-  StepperIndicator,
-  StepperSeparator,
-  StepperTitle,
-  StepperDescription,
   StepperContent,
-  StepperPrev,
+  StepperDescription,
+  StepperIndicator,
+  StepperItem,
+  StepperList,
   StepperNext,
-  //
-  useStore as useStepper,
+  StepperPrev,
   //
   type StepperProps,
+  StepperSeparator,
+  StepperTitle,
+  StepperTrigger,
+  //
+  useStore as useStepper,
 };

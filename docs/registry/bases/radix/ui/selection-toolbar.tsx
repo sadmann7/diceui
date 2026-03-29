@@ -698,9 +698,9 @@ function SelectionToolbarSeparator(props: DivProps) {
 export {
   SelectionToolbar,
   SelectionToolbarItem,
+  //
+  type SelectionToolbarProps,
   SelectionToolbarSeparator,
   //
   useStore as useSelectionToolbar,
-  //
-  type SelectionToolbarProps,
 };

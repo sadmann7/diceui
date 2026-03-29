@@ -69,6 +69,5 @@ ComboboxArrow.displayName = ARROW_NAME;
 
 const Arrow = ComboboxArrow;
 
-export { ComboboxArrow, Arrow };
-
 export type { ComboboxArrowProps };
+export { Arrow, ComboboxArrow };

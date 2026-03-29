@@ -26,6 +26,5 @@ MentionLabel.displayName = LABEL_NAME;
 
 const Label = MentionLabel;
 
-export { MentionLabel, Label };
-
 export type { MentionLabelProps };
+export { Label, MentionLabel };

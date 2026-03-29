@@ -26,6 +26,5 @@ ComboboxLabel.displayName = LABEL_NAME;
 
 const Label = ComboboxLabel;
 
-export { ComboboxLabel, Label };
-
 export type { ComboboxLabelProps };
+export { ComboboxLabel, Label };

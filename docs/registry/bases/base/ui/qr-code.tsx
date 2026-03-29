@@ -535,13 +535,13 @@ function QRCodeSkeleton({
 export {
   QRCode,
   QRCodeCanvas,
-  QRCodeSvg,
+  QRCodeDownload,
   QRCodeImage,
   QRCodeOverlay,
-  QRCodeSkeleton,
-  QRCodeDownload,
-  //
-  useStore as useQRCode,
   //
   type QRCodeProps,
+  QRCodeSkeleton,
+  QRCodeSvg,
+  //
+  useStore as useQRCode,
 };

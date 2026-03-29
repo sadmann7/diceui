@@ -870,17 +870,17 @@ function KeyValueError(props: KeyValueErrorProps) {
 }
 
 export {
+  type ItemData as KeyValueItemData,
   KeyValue,
-  KeyValueList,
-  KeyValueItem,
-  KeyValueKeyInput,
-  KeyValueValueInput,
-  KeyValueRemove,
   KeyValueAdd,
   KeyValueError,
-  //
-  useStore as useKeyValueStore,
+  KeyValueItem,
+  KeyValueKeyInput,
+  KeyValueList,
   //
   type KeyValueProps,
-  type ItemData as KeyValueItemData,
+  KeyValueRemove,
+  KeyValueValueInput,
+  //
+  useStore as useKeyValueStore,
 };

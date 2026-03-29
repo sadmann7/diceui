@@ -25,6 +25,5 @@ MentionPortal.displayName = PORTAL_NAME;
 
 const Portal = MentionPortal;
 
-export { MentionPortal, Portal };
-
 export type { MentionPortalProps };
+export { MentionPortal, Portal };

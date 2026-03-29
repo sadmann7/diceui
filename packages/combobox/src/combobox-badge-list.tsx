@@ -70,6 +70,5 @@ ComboboxBadgeList.displayName = BADGE_LIST_NAME;
 
 const BadgeList = ComboboxBadgeList;
 
+export type { ComboboxBadgeListContextValue, ComboboxBadgeListProps };
 export { BadgeList, ComboboxBadgeList, useComboboxBadgeListContext };
-
-export type { ComboboxBadgeListProps, ComboboxBadgeListContextValue };

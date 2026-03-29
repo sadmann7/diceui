@@ -28,6 +28,5 @@ ComboboxItemText.displayName = ITEM_TEXT_NAME;
 
 const ItemText = ComboboxItemText;
 
-export { ComboboxItemText, ItemText };
-
 export type { ComboboxItemTextProps, ItemTextElement };
+export { ComboboxItemText, ItemText };

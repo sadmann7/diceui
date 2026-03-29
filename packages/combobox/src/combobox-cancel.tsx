@@ -71,6 +71,5 @@ ComboboxCancel.displayName = CANCEL_NAME;
 
 const Cancel = ComboboxCancel;
 
-export { Cancel, ComboboxCancel };
-
 export type { ComboboxCancelProps };
+export { Cancel, ComboboxCancel };

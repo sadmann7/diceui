@@ -1756,20 +1756,20 @@ function TourFooter(props: DivProps) {
 
 export {
   Tour,
+  TourArrow,
+  TourClose,
+  TourDescription,
+  TourFooter,
+  TourHeader,
+  TourNext,
   TourPortal,
+  TourPrev,
+  //
+  type TourProps,
+  TourSkip,
   TourSpotlight,
   TourSpotlightRing,
   TourStep,
-  TourArrow,
-  TourHeader,
-  TourTitle,
-  TourDescription,
-  TourClose,
-  TourPrev,
-  TourNext,
-  TourSkip,
   TourStepCounter,
-  TourFooter,
-  //
-  type TourProps,
+  TourTitle,
 };

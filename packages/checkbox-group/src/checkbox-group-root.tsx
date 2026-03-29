@@ -189,6 +189,5 @@ CheckboxGroupRoot.displayName = ROOT_NAME;
 
 const Root = CheckboxGroupRoot;
 
-export { CheckboxGroupRoot, Root, useCheckboxGroup };
-
 export type { CheckboxGroupRootProps };
+export { CheckboxGroupRoot, Root, useCheckboxGroup };

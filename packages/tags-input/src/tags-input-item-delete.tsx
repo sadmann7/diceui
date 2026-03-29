@@ -42,6 +42,5 @@ TagsInputItemDelete.displayName = ITEM_DELETE_NAME;
 
 const ItemDelete = TagsInputItemDelete;
 
-export { TagsInputItemDelete, ItemDelete };
-
 export type { TagsInputItemDeleteProps };
+export { ItemDelete, TagsInputItemDelete };

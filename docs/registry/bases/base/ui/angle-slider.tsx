@@ -913,12 +913,12 @@ function AngleSliderValue(props: AngleSliderValueProps) {
 
 export {
   AngleSlider,
-  AngleSliderTrack,
+  //
+  type AngleSliderProps,
   AngleSliderRange,
   AngleSliderThumb,
+  AngleSliderTrack,
   AngleSliderValue,
   //
   useStore as useAngleSlider,
-  //
-  type AngleSliderProps,
 };

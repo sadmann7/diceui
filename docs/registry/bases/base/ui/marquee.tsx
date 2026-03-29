@@ -707,8 +707,8 @@ function MarqueeEdge({
 export {
   Marquee,
   MarqueeContent,
-  MarqueeItem,
   MarqueeEdge,
+  MarqueeItem,
   //
   type MarqueeProps,
 };

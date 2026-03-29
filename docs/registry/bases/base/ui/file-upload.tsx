@@ -1476,17 +1476,17 @@ function FileUploadClear(props: FileUploadClearProps) {
 
 export {
   FileUpload,
-  FileUploadDropzone,
-  FileUploadTrigger,
-  FileUploadList,
-  FileUploadItem,
-  FileUploadItemPreview,
-  FileUploadItemMetadata,
-  FileUploadItemProgress,
-  FileUploadItemDelete,
   FileUploadClear,
-  //
-  useStore as useFileUpload,
+  FileUploadDropzone,
+  FileUploadItem,
+  FileUploadItemDelete,
+  FileUploadItemMetadata,
+  FileUploadItemPreview,
+  FileUploadItemProgress,
+  FileUploadList,
   //
   type FileUploadProps,
+  FileUploadTrigger,
+  //
+  useStore as useFileUpload,
 };

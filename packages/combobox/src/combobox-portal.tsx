@@ -25,6 +25,5 @@ ComboboxPortal.displayName = PORTAL_NAME;
 
 const Portal = ComboboxPortal;
 
-export { ComboboxPortal, Portal };
-
 export type { ComboboxPortalProps };
+export { ComboboxPortal, Portal };

@@ -31,6 +31,5 @@ ComboboxItemIndicator.displayName = ITEM_INDICATOR_NAME;
 
 const ItemIndicator = ComboboxItemIndicator;
 
-export { ComboboxItemIndicator, ItemIndicator };
-
 export type { ComboboxItemIndicatorProps };
+export { ComboboxItemIndicator, ItemIndicator };

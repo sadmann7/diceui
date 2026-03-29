@@ -26,6 +26,5 @@ TagsInputLabel.displayName = LABEL_NAME;
 
 const Label = TagsInputLabel;
 
-export { TagsInputLabel, Label };
-
 export type { TagsInputLabelProps };
+export { Label, TagsInputLabel };

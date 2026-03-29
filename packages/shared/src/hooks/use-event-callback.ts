@@ -68,4 +68,4 @@ function useEvent<T extends AnyFunction>(callback: T): T {
   }, []) as T;
 }
 
-export { useEventCallback, useEvent };
+export { useEvent, useEventCallback };

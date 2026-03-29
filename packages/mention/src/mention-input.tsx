@@ -1021,6 +1021,5 @@ MentionInput.displayName = INPUT_NAME;
 
 const Input = MentionInput;
 
-export { Input, MentionInput };
-
 export type { InputElement, MentionInputProps };
+export { Input, MentionInput };

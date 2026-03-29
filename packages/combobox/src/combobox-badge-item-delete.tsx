@@ -69,6 +69,5 @@ ComboboxBadgeItemDelete.displayName = BADGE_ITEM_DELETE_NAME;
 
 const BadgeItemDelete = ComboboxBadgeItemDelete;
 
-export { BadgeItemDelete, ComboboxBadgeItemDelete };
-
 export type { ComboboxBadgeItemDeleteProps };
+export { BadgeItemDelete, ComboboxBadgeItemDelete };

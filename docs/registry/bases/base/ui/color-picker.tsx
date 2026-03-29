@@ -1691,17 +1691,17 @@ function HsbInput(props: HsbInputProps) {
 
 export {
   ColorPicker,
-  ColorPickerTrigger,
-  ColorPickerContent,
-  ColorPickerArea,
-  ColorPickerHueSlider,
   ColorPickerAlphaSlider,
-  ColorPickerSwatch,
+  ColorPickerArea,
+  ColorPickerContent,
   ColorPickerEyeDropper,
   ColorPickerFormatSelect,
+  ColorPickerHueSlider,
   ColorPickerInput,
   //
-  useStore as useColorPicker,
-  //
   type ColorPickerProps,
+  ColorPickerSwatch,
+  ColorPickerTrigger,
+  //
+  useStore as useColorPicker,
 };

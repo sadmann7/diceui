@@ -158,6 +158,5 @@ ComboboxContent.displayName = CONTENT_NAME;
 
 const Content = ComboboxContent;
 
-export { ComboboxContent, Content, useComboboxContentContext };
-
 export type { ComboboxContentProps, ContentElement };
+export { ComboboxContent, Content, useComboboxContentContext };

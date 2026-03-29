@@ -1501,17 +1501,17 @@ function MaskInput(props: MaskInputProps) {
 }
 
 export {
-  MaskInput,
-  //
-  MASK_PATTERNS,
+  applyCurrencyMask,
   //
   applyMask,
-  applyCurrencyMask,
   applyPercentageMask,
-  getUnmaskedValue,
-  toUnmaskedIndex,
   fromUnmaskedIndex,
+  getUnmaskedValue,
+  //
+  MASK_PATTERNS,
+  MaskInput,
+  type MaskInputProps,
   //
   type MaskPattern,
-  type MaskInputProps,
+  toUnmaskedIndex,
 };

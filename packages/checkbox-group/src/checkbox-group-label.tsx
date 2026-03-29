@@ -27,6 +27,5 @@ CheckboxGroupLabel.displayName = LABEL_NAME;
 
 const Label = CheckboxGroupLabel;
 
-export { CheckboxGroupLabel, Label };
-
 export type { CheckboxGroupLabelProps };
+export { CheckboxGroupLabel, Label };

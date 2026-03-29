@@ -178,6 +178,5 @@ function getAnimationName(styles?: CSSStyleDeclaration) {
   return styles?.animationName ?? "none";
 }
 
-export { Presence };
-
 export type { PresenceProps };
+export { Presence };

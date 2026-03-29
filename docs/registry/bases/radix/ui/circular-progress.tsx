@@ -348,11 +348,11 @@ function CircularProgressCombined(props: CircularProgressProps) {
 
 export {
   CircularProgress,
-  CircularProgressIndicator,
-  CircularProgressTrack,
-  CircularProgressRange,
-  CircularProgressValueText,
   CircularProgressCombined,
+  CircularProgressIndicator,
   //
   type CircularProgressProps,
+  CircularProgressRange,
+  CircularProgressTrack,
+  CircularProgressValueText,
 };

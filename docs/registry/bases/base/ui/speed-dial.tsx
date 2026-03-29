@@ -1085,11 +1085,11 @@ function SpeedDialLabel({ render, className, ...props }: DivProps) {
 
 export {
   SpeedDial,
-  SpeedDialTrigger,
+  SpeedDialAction,
   SpeedDialContent,
   SpeedDialItem,
-  SpeedDialAction,
   SpeedDialLabel,
   //
   type SpeedDialProps,
+  SpeedDialTrigger,
 };

@@ -90,6 +90,5 @@ ComboboxBadgeItem.displayName = BADGE_ITEM_NAME;
 
 const BadgeItem = ComboboxBadgeItem;
 
+export type { ComboboxBadgeItemContextValue, ComboboxBadgeItemProps };
 export { BadgeItem, ComboboxBadgeItem, useComboboxBadgeItemContext };
-
-export type { ComboboxBadgeItemProps, ComboboxBadgeItemContextValue };

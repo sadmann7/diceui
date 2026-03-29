@@ -821,7 +821,7 @@ export {
   PhoneInputCountrySelect,
   PhoneInputField,
   //
-  useStore as usePhoneInput,
-  //
   type PhoneInputProps,
+  //
+  useStore as usePhoneInput,
 };

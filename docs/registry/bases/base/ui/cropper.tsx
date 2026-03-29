@@ -1807,17 +1807,17 @@ function CropperArea(props: CropperAreaProps) {
 }
 
 export {
+  type Area as CropperAreaData,
   Cropper,
-  CropperImage,
-  CropperVideo,
   CropperArea,
-  //
-  useStore as useCropper,
+  CropperImage,
   //
   type CropperProps,
-  type Point as CropperPoint,
-  type Size as CropperSize,
-  type Area as CropperAreaData,
-  type Shape as CropperShape,
+  CropperVideo,
   type ObjectFit as CropperObjectFit,
+  type Point as CropperPoint,
+  type Shape as CropperShape,
+  type Size as CropperSize,
+  //
+  useStore as useCropper,
 };

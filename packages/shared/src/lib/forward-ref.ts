@@ -26,6 +26,5 @@ function forwardRef<T, P = {}>(
   );
 }
 
-export { forwardRef };
-
 export type { ForwardRefComponent, WithDisplayName, WithForwardedRef };
+export { forwardRef };

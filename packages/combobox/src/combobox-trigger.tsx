@@ -87,6 +87,5 @@ ComboboxTrigger.displayName = TRIGGER_NAME;
 
 const Trigger = ComboboxTrigger;
 
-export { ComboboxTrigger, Trigger };
-
 export type { ComboboxTriggerProps };
+export { ComboboxTrigger, Trigger };

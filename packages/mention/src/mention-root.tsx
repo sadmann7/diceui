@@ -428,6 +428,5 @@ MentionRoot.displayName = ROOT_NAME;
 
 const Root = MentionRoot;
 
-export { MentionRoot, Root, getDataState, useMentionContext };
-
 export type { ItemData, Mention, MentionRootProps };
+export { getDataState, MentionRoot, Root, useMentionContext };

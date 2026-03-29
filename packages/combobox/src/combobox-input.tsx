@@ -398,6 +398,5 @@ ComboboxInput.displayName = INPUT_NAME;
 
 const Input = ComboboxInput;
 
-export { ComboboxInput, Input };
-
 export type { ComboboxInputProps, InputElement };
+export { ComboboxInput, Input };

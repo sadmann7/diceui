@@ -1,17 +1,13 @@
 /**
- * @see https://github.com/shadcn-ui/ui/blob/main/apps/www/lib/rehype-component.ts
- *
- * Injects example source code as children of ComponentTabs nodes so
- * rehype-pretty-code can syntax-highlight them at build time.
+ * @see https://github.com/shadcn-ui/ui/blob/main/apps/v4/lib/rehype.ts
  */
 
 import fs from "node:fs";
 import path from "node:path";
-import type { UnistNode, UnistTree } from "types/unist";
 import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
-
-const DEFAULT_BASE = "radix";
+import { DEFAULT_BASE } from "@/lib/constants";
+import type { UnistNode, UnistTree } from "@/types/unist";
 
 function resolveExamplePath(
   name: string,

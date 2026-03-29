@@ -83,6 +83,5 @@ ComboboxAnchor.displayName = ANCHOR_NAME;
 
 const Anchor = ComboboxAnchor;
 
+export type { AnchorElement, ComboboxAnchorProps };
 export { Anchor, ComboboxAnchor };
-
-export type { ComboboxAnchorProps, AnchorElement };

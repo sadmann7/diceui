@@ -61,4 +61,4 @@ function useStore<T>(initialState: T) {
   return store;
 }
 
-export { useStore, useStoreSelector, type Store };
+export { type Store, useStore, useStoreSelector };

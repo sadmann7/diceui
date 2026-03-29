@@ -41,6 +41,5 @@ ComboboxEmpty.displayName = EMPTY_NAME;
 
 const Empty = ComboboxEmpty;
 
-export { ComboboxEmpty, Empty };
-
 export type { ComboboxEmptyProps };
+export { ComboboxEmpty, Empty };

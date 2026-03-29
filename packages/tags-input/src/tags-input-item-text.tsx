@@ -111,6 +111,5 @@ function TagsInputEditableItemText() {
   );
 }
 
-export { TagsInputItemText, ItemText };
-
 export type { TagsInputItemTextProps };
+export { ItemText, TagsInputItemText };

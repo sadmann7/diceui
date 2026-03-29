@@ -2198,19 +2198,19 @@ function TimePickerClear(props: ButtonProps) {
 
 export {
   TimePicker,
-  TimePickerLabel,
-  TimePickerInputGroup,
-  TimePickerInput,
-  TimePickerTrigger,
+  TimePickerClear,
   TimePickerContent,
   TimePickerHour,
+  TimePickerInput,
+  TimePickerInputGroup,
+  TimePickerLabel,
   TimePickerMinute,
-  TimePickerSecond,
   TimePickerPeriod,
-  TimePickerSeparator,
-  TimePickerClear,
-  //
-  useStore as useTimePicker,
   //
   type TimePickerProps,
+  TimePickerSecond,
+  TimePickerSeparator,
+  TimePickerTrigger,
+  //
+  useStore as useTimePicker,
 };

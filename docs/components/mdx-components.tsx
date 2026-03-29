@@ -145,21 +145,51 @@ export function useMdxComponents(
     TabsList: MdxTabsList,
     TabsTrigger: MdxTabsTrigger,
     TabsContent: MdxTabsContent,
+    Steps,
+    Step,
+    Callout,
     Kbd: ({ className, ...props }: React.ComponentProps<typeof Kbd>) => (
       <Kbd className={cn("not-prose", className)} {...props} />
     ),
-    Callout,
-    ComponentTabs,
-    ComponentSource,
-    Steps,
-    Step,
-    AutoTypeTable,
-    CSSVariablesTable,
-    DataAttributesTable,
-    PropsTable,
-    KeyboardShortcutsTable,
-    Components,
-    Changelogs,
+    ComponentTabs: ({
+      ...props
+    }: React.ComponentProps<typeof ComponentTabs>) => (
+      <ComponentTabs {...props} />
+    ),
+    ComponentSource: ({
+      ...props
+    }: React.ComponentProps<typeof ComponentSource>) => (
+      <ComponentSource {...props} />
+    ),
+    AutoTypeTable: ({
+      ...props
+    }: React.ComponentProps<typeof AutoTypeTable>) => (
+      <AutoTypeTable {...props} />
+    ),
+    CSSVariablesTable: ({
+      ...props
+    }: React.ComponentProps<typeof CSSVariablesTable>) => (
+      <CSSVariablesTable {...props} />
+    ),
+    DataAttributesTable: ({
+      ...props
+    }: React.ComponentProps<typeof DataAttributesTable>) => (
+      <DataAttributesTable {...props} />
+    ),
+    PropsTable: ({ ...props }: React.ComponentProps<typeof PropsTable>) => (
+      <PropsTable {...props} />
+    ),
+    KeyboardShortcutsTable: ({
+      ...props
+    }: React.ComponentProps<typeof KeyboardShortcutsTable>) => (
+      <KeyboardShortcutsTable {...props} />
+    ),
+    Components: ({ ...props }: React.ComponentProps<typeof Components>) => (
+      <Components {...props} />
+    ),
+    Changelogs: ({ ...props }: React.ComponentProps<typeof Changelogs>) => (
+      <Changelogs {...props} />
+    ),
   };
 }
 

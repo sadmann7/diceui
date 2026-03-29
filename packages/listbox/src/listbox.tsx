@@ -1111,25 +1111,24 @@ const ItemIndicator = ListboxItemIndicator;
 const Group = ListboxGroup;
 const GroupLabel = ListboxGroupLabel;
 
+export type {
+  ListboxGroupLabelProps,
+  ListboxGroupProps,
+  ListboxItemIndicatorProps,
+  ListboxItemProps,
+  ListboxRootComponentProps,
+  ListboxRootProps,
+};
 export {
-  ListboxRoot,
-  ListboxGroup,
-  ListboxGroupLabel,
-  ListboxItem,
-  ListboxItemIndicator,
-  //
-  Root,
   Group,
   GroupLabel,
   Item,
   ItemIndicator,
-};
-
-export type {
-  ListboxRootProps,
-  ListboxRootComponentProps,
-  ListboxGroupProps,
-  ListboxGroupLabelProps,
-  ListboxItemProps,
-  ListboxItemIndicatorProps,
+  ListboxGroup,
+  ListboxGroupLabel,
+  ListboxItem,
+  ListboxItemIndicator,
+  ListboxRoot,
+  //
+  Root,
 };

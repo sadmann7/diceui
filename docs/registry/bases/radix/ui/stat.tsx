@@ -128,10 +128,10 @@ function StatDescription({ className, ...props }: React.ComponentProps<"div">) {
 
 export {
   Stat,
-  StatLabel,
-  StatIndicator,
-  StatValue,
-  StatTrend,
-  StatSeparator,
   StatDescription,
+  StatIndicator,
+  StatLabel,
+  StatSeparator,
+  StatTrend,
+  StatValue,
 };

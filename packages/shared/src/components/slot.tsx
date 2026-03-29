@@ -152,6 +152,5 @@ const Slottable = React.memo(function Slottable({ children }: SlottableProps) {
 
 Slottable.displayName = "Slottable";
 
-export { Slot, Slottable };
-
 export type { SlotProps };
+export { Slot, Slottable };

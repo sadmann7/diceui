@@ -502,12 +502,12 @@ function GaugeCombined(props: GaugeProps) {
 
 export {
   Gauge,
-  GaugeIndicator,
-  GaugeTrack,
-  GaugeRange,
-  GaugeValueText,
-  GaugeLabel,
   GaugeCombined,
+  GaugeIndicator,
+  GaugeLabel,
   //
   type GaugeProps,
+  GaugeRange,
+  GaugeTrack,
+  GaugeValueText,
 };

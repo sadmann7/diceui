@@ -282,10 +282,10 @@ function SwapOff({ render, className, ...props }: SwapOffProps) {
 
 export {
   Swap,
-  SwapOn,
   SwapOff,
-  //
-  useStore as useSwap,
+  SwapOn,
   //
   type SwapProps,
+  //
+  useStore as useSwap,
 };

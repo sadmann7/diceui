@@ -22,6 +22,5 @@ ComboboxGroupLabel.displayName = GROUP_LABEL_NAME;
 
 const GroupLabel = ComboboxGroupLabel;
 
-export { ComboboxGroupLabel, GroupLabel };
-
 export type { ComboboxGroupLabelProps };
+export { ComboboxGroupLabel, GroupLabel };

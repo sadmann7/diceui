@@ -25,7 +25,7 @@ function trackEvent(input: Event) {
 }
 
 export {
-  trackEvent,
   //
   type Event,
+  trackEvent,
 };

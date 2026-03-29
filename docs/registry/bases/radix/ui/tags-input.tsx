@@ -93,9 +93,9 @@ function TagsInputClear({
 
 export {
   TagsInput,
-  TagsInputLabel,
-  TagsInputList,
+  TagsInputClear,
   TagsInputInput,
   TagsInputItem,
-  TagsInputClear,
+  TagsInputLabel,
+  TagsInputList,
 };

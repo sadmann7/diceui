@@ -457,8 +457,8 @@ export {
   ScrollSpy,
   ScrollSpyLink,
   ScrollSpyNav,
-  ScrollSpySection,
-  ScrollSpyViewport,
   //
   type ScrollSpyProps,
+  ScrollSpySection,
+  ScrollSpyViewport,
 };

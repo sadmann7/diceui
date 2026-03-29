@@ -48,6 +48,5 @@ CheckboxGroupDescription.displayName = DESCRIPTION_NAME;
 
 const Description = CheckboxGroupDescription;
 
-export { CheckboxGroupDescription, Description };
-
 export type { CheckboxGroupDescriptionProps };
+export { CheckboxGroupDescription, Description };

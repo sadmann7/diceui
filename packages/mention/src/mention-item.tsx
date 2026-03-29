@@ -136,6 +136,5 @@ MentionItem.displayName = ITEM_NAME;
 
 const Item = MentionItem;
 
-export { Item, MentionItem, useMentionItemContext };
-
 export type { ItemElement, MentionItemProps };
+export { Item, MentionItem, useMentionItemContext };

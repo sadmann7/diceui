@@ -863,16 +863,16 @@ function EditableSubmit(props: EditableSubmitProps) {
 
 export {
   Editable,
-  EditableLabel,
   EditableArea,
-  EditablePreview,
-  EditableInput,
-  EditableTrigger,
-  EditableToolbar,
   EditableCancel,
-  EditableSubmit,
-  //
-  useStore as useEditable,
+  EditableInput,
+  EditableLabel,
+  EditablePreview,
   //
   type EditableProps,
+  EditableSubmit,
+  EditableToolbar,
+  EditableTrigger,
+  //
+  useStore as useEditable,
 };

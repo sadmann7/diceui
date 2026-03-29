@@ -172,6 +172,5 @@ function useFilterStore<
   };
 }
 
-export { useFilterStore };
-
 export type { FilterStore };
+export { useFilterStore };

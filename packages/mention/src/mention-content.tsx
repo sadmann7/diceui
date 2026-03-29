@@ -173,6 +173,5 @@ MentionContent.displayName = CONTENT_NAME;
 
 const Content = MentionContent;
 
-export { MentionContent, Content, useMentionContentContext };
-
-export type { MentionContentProps, ContentElement };
+export type { ContentElement, MentionContentProps };
+export { Content, MentionContent, useMentionContentContext };

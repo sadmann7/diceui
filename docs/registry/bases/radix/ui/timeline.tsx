@@ -700,14 +700,14 @@ function TimelineTime(props: TimelineTimeProps) {
 
 export {
   Timeline,
-  TimelineItem,
-  TimelineDot,
   TimelineConnector,
   TimelineContent,
-  TimelineHeader,
-  TimelineTitle,
   TimelineDescription,
-  TimelineTime,
+  TimelineDot,
+  TimelineHeader,
+  TimelineItem,
   //
   type TimelineProps,
+  TimelineTime,
+  TimelineTitle,
 };

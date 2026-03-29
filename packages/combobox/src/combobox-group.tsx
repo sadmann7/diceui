@@ -54,6 +54,5 @@ ComboboxGroup.displayName = GROUP_NAME;
 
 const Group = ComboboxGroup;
 
-export { ComboboxGroup, Group, useComboboxGroupContext };
-
 export type { ComboboxGroupProps };
+export { ComboboxGroup, Group, useComboboxGroupContext };

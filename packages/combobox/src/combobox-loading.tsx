@@ -46,6 +46,5 @@ ComboboxLoading.displayName = LOADING_NAME;
 
 const Loading = ComboboxLoading;
 
-export { ComboboxLoading, Loading };
-
 export type { ComboboxLoadingProps };
+export { ComboboxLoading, Loading };

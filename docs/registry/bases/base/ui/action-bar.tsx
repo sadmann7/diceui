@@ -675,11 +675,11 @@ function ActionBarSeparator({
 
 export {
   ActionBar,
-  ActionBarSelection,
+  ActionBarClose,
   ActionBarGroup,
   ActionBarItem,
-  ActionBarClose,
-  ActionBarSeparator,
   //
   type ActionBarProps,
+  ActionBarSelection,
+  ActionBarSeparator,
 };

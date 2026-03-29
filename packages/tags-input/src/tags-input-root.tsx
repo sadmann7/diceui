@@ -595,6 +595,5 @@ TagsInputRoot.displayName = ROOT_NAME;
 
 const Root = TagsInputRoot;
 
-export { Root, TagsInputRoot, useTagsInput };
-
 export type { InputValue, TagsInputRootProps };
+export { Root, TagsInputRoot, useTagsInput };

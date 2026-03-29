@@ -45,6 +45,5 @@ function Portal(props: PortalProps) {
   return ReactDOM.createPortal(element, container);
 }
 
-export { Portal };
-
 export type { PortalProps };
+export { Portal };

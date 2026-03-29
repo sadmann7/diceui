@@ -223,6 +223,5 @@ ComboboxItem.displayName = ITEM_NAME;
 
 const Item = ComboboxItem;
 
-export { ComboboxItem, Item, useComboboxItemContext, ITEM_SELECT_EVENT };
-
-export type { ItemElement, ComboboxItemProps };
+export type { ComboboxItemProps, ItemElement };
+export { ComboboxItem, ITEM_SELECT_EVENT, Item, useComboboxItemContext };

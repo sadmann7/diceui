@@ -78,4 +78,4 @@ function useProgress({
   };
 }
 
-export { useProgress, getProgressState };
+export { getProgressState, useProgress };

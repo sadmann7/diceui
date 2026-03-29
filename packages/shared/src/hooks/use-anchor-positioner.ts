@@ -482,6 +482,5 @@ function useAnchorPositioner({
   return positionerContext;
 }
 
-export { useAnchorPositioner };
-
 export type { AnchorPositionerProps };
+export { useAnchorPositioner };
