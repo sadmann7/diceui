@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { DEFAULT_BASE } from "@/lib/constants";
 
 const SOURCE_DIRS = ["ui", "components", "lib", "hooks", "internal"];
 const SOURCE_EXTENSIONS = [".tsx", ".ts"];
@@ -37,7 +38,7 @@ function resolveSourcePath(
 
 export function getRegistryItem(
   name: string,
-  base = "radix",
+  base = DEFAULT_BASE,
   fileName?: string,
 ): { files: [{ content: string; path: string }] } | null {
   const filePath = resolveSourcePath(name, base, fileName);

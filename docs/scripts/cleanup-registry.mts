@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { rimraf } from "rimraf";
 
-import { registries } from "../registry";
+import { registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

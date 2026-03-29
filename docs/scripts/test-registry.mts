@@ -1,4 +1,5 @@
-import { type RegistryBase, registries } from "../registry";
+import type { RegistryBase } from "../registry/registry";
+import { registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
 
 interface TestResult {
@@ -25,7 +26,7 @@ const VERBOSE = process.env.VERBOSE === "true";
 const BASES: RegistryBase[] = ["radix", "base"];
 
 // Use the first style as default for testing
-const DEFAULT_STYLE = STYLES[0].name;
+const DEFAULT_STYLE = STYLES[0]?.name ?? "default";
 
 // Extract hooks and components from all bases (using default style)
 const HOOKS: RegistryItem[] = [];

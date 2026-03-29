@@ -14,6 +14,7 @@ import {
 } from "shadcn/schema";
 import { Project, ScriptKind, SyntaxKind } from "ts-morph";
 import type { z } from "zod";
+import { DEFAULT_BASE } from "../lib/constants";
 import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
 import { fixImport } from "./fix-imports.mts";
@@ -512,8 +513,7 @@ async function buildStylesIndex() {
 // Uses the default base ("radix") as the primary registry index.
 // ----------------------------------------------------------------------------
 async function buildRootIndex() {
-  const defaultBase: RegistryBase = "radix";
-  const registry = registries[defaultBase];
+  const registry = registries[DEFAULT_BASE];
 
   const uiItems = registry.items
     .filter((item) => ["registry:ui"].includes(item.type))

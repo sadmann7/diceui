@@ -44,6 +44,9 @@
     "**/*.mdx",
     "*.js",
     "scripts/build-registry.mts",
+    "scripts/validate-registry.mts",
+    "scripts/cleanup-registry.mts",
+    "scripts/test-registry.mts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     ".next\\dev/types/**/*.ts"

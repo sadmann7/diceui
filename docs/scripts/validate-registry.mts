@@ -1,7 +1,7 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { registrySchema } from "shadcn/schema";
-import { type RegistryBase, registries } from "../registry";
+import type { RegistryBase } from "../registry/registry";
 import { STYLES } from "../registry/styles";
 
 const BASES: RegistryBase[] = ["radix", "base"];
