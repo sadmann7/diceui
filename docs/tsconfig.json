@@ -22,7 +22,7 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
 
-    /* Next.js */
+    /* Framework Options */
     "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
@@ -43,9 +43,10 @@
     "**/*.ts",
     "**/*.mdx",
     "*.js",
+    "scripts/build-registry.mts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     ".next\\dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules", "scripts/**/*"]
+  "exclude": ["node_modules"]
 }

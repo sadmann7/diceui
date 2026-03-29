@@ -2,8 +2,6 @@
  * @see https://github.com/shadcn-ui/ui/blob/main/apps/v4/scripts/build-registry.mts
  */
 
-/// <reference types="node" />
-
 import { existsSync, promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -16,7 +14,7 @@ import {
 } from "shadcn/schema";
 import { Project, ScriptKind, SyntaxKind } from "ts-morph";
 import type { z } from "zod";
-import { type RegistryBase, registries } from "../registry";
+import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
 import { fixImport } from "./fix-imports.mts";
 

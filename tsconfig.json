@@ -17,7 +17,7 @@
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
 
-    /* Module System */
+    /* Module Resolution */
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
     "noEmit": true,
     "module": "ESNext",

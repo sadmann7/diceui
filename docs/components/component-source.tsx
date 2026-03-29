@@ -3,7 +3,7 @@ import { ComponentSourceImpl } from "@/components/component-source-impl";
 import { highlightCode } from "@/lib/highlight-code";
 import { readFileFromRoot } from "@/lib/read-file";
 import { getRegistryItem } from "@/lib/registry";
-import type { RegistryBase } from "@/registry";
+import type { RegistryBase } from "@/registry/registry";
 
 function deriveTitle(
   name: string | undefined,

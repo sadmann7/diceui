@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { type RegistryBase, registries } from "@/registry";
+import { type RegistryBase, registries } from "@/registry/registry";
 
 function slugToTitle(slug: string): string {
   const special: Record<string, string> = {

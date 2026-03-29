@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type * as React from "react";
 import { cn } from "@/lib/utils";
-import type { RegistryBase } from "@/registry";
+import type { RegistryBase } from "@/registry/registry";
 
 const bases: { label: string; value: RegistryBase }[] = [
   { label: "Radix UI", value: "radix" },
