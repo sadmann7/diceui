@@ -22,11 +22,11 @@ function getComponents(base: RegistryBase) {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-interface ComponentsProps {
+interface ComponentListProps {
   base?: RegistryBase;
 }
 
-export function Components({ base = "radix" }: ComponentsProps) {
+export function ComponentList({ base = "radix" }: ComponentListProps) {
   const components = getComponents(base);
 
   return (

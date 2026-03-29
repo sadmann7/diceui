@@ -77,9 +77,9 @@ const KeyboardShortcutsTable = dynamic(() =>
   })),
 );
 
-const Components = dynamic(() =>
-  import("@/components/components").then((mod) => ({
-    default: mod.Components,
+const ComponentList = dynamic(() =>
+  import("@/components/component-list").then((mod) => ({
+    default: mod.ComponentList,
   })),
 );
 
@@ -184,8 +184,10 @@ export function useMdxComponents(
     }: React.ComponentProps<typeof KeyboardShortcutsTable>) => (
       <KeyboardShortcutsTable {...props} />
     ),
-    Components: ({ ...props }: React.ComponentProps<typeof Components>) => (
-      <Components {...props} />
+    ComponentList: ({
+      ...props
+    }: React.ComponentProps<typeof ComponentList>) => (
+      <ComponentList {...props} />
     ),
     Changelogs: ({ ...props }: React.ComponentProps<typeof Changelogs>) => (
       <Changelogs {...props} />
