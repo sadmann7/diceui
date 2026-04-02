@@ -4,6 +4,7 @@ import type { RootProviderProps } from "fumadocs-ui/provider/base";
 import { RootProvider } from "fumadocs-ui/provider/next";
 import { createStore, Provider as JotaiProvider } from "jotai";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { DocSearchDialog } from "@/components/doc-search-dialog";
 import { TooltipProvider } from "@/registry/bases/radix/ui/tooltip";
 
 const store = createStore();
@@ -14,7 +15,12 @@ interface ProvidersProps extends RootProviderProps {
 
 export function Providers({ children, ...props }: ProvidersProps) {
   return (
-    <RootProvider {...props}>
+    <RootProvider
+      {...props}
+      search={{
+        SearchDialog: DocSearchDialog,
+      }}
+    >
       <NuqsAdapter>
         <JotaiProvider store={store}>
           <TooltipProvider delayDuration={240}>{children}</TooltipProvider>
