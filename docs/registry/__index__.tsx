@@ -71,6 +71,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "banner": {
+        name: "banner",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/radix/ui/banner.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "checkbox-group": {
         name: "checkbox-group",
         description: "",
@@ -936,6 +949,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/lib/compose-refs.ts",
           type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "banner": {
+        name: "banner",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/radix/ui/banner.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",
@@ -1811,6 +1837,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "banner": {
+        name: "banner",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/radix/ui/banner.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "checkbox-group": {
         name: "checkbox-group",
         description: "",
@@ -2676,6 +2715,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/lib/compose-refs.ts",
           type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "banner": {
+        name: "banner",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/radix/ui/banner.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",
@@ -3551,6 +3603,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "banner": {
+        name: "banner",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/radix/ui/banner.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "checkbox-group": {
         name: "checkbox-group",
         description: "",
@@ -4416,6 +4481,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/lib/compose-refs.ts",
           type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "banner": {
+        name: "banner",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        files: [{
+          path: "registry/bases/radix/ui/banner.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",

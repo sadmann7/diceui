@@ -173,6 +173,30 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "banner-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["banner", "button"],
+    files: [
+      {
+        path: "examples/banner-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "banner-stacked-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["banner", "button"],
+    files: [
+      {
+        path: "examples/banner-stacked-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "checkbox-group-demo",
     type: "registry:example",
     dependencies: ["@diceui/checkbox-group", "lucide-react"],

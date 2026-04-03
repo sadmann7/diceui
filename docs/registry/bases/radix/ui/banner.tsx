@@ -323,20 +323,13 @@ const bannerVariants = cva(
   },
 );
 
-interface QueuedBannerProps extends React.ComponentProps<"div"> {
+interface QueuedBannerProps {
   banner: QueuedBannerItem;
   index: number;
   side: BannerSide;
 }
 
-function QueuedBanner({
-  banner,
-  index,
-  side,
-  className,
-  style,
-  ...props
-}: QueuedBannerProps) {
+function QueuedBanner({ banner, index, side }: QueuedBannerProps) {
   const store = useStoreContext("QueuedBanner");
   const removing = useStore(store, (state) => state.removing.has(banner.id));
   const banners = useStore(store, (state) => state.banners);
@@ -436,7 +429,7 @@ function QueuedBanner({
         data-front={index === 0}
         data-index={index}
         ref={bannerRef}
-        className={cn(bannerVariants({ variant: banner.variant, className }))}
+        className={bannerVariants({ variant: banner.variant })}
         style={{
           position: "absolute",
           [isTop ? "top" : "bottom"]: 0,
@@ -446,9 +439,7 @@ function QueuedBanner({
           transform: getTransform(),
           opacity: mounted && !removing ? 1 : 0,
           transition: `transform ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1), opacity ${removing ? BANNER_ANIMATION_DURATION / 2 : BANNER_ANIMATION_DURATION}ms ease`,
-          ...style,
         }}
-        {...props}
       >
         {typeof banner.content === "function"
           ? banner.content(renderProps)
