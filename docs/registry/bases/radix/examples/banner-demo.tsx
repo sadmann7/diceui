@@ -1,6 +1,13 @@
 "use client";
 
-import { AlertCircle, AlertTriangle, CheckCircle, Info } from "lucide-react";
+import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  ServerCrash,
+  Sparkles,
+} from "lucide-react";
 import * as React from "react";
 import {
   Banner,
@@ -15,46 +22,46 @@ import {
 } from "@/registry/bases/radix/ui/banner";
 import { Button } from "@/registry/bases/radix/ui/button";
 
-function BannerDemo() {
+export default function BannerDemo() {
   return (
     <Banners>
       <div className="flex w-full flex-col gap-6">
         <SimpleExample />
         <StackedExample />
+        <PriorityExample />
       </div>
     </Banners>
   );
 }
 
 function SimpleExample() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
 
   return (
     <div className="flex flex-col gap-4">
       <h3 className="font-semibold text-base">Simple Banner</h3>
-      {open ? (
-        <Banner variant="info" open={open} onOpenChange={setOpen}>
-          <BannerIcon>
-            <Info />
-          </BannerIcon>
-          <BannerContent>
-            <BannerTitle>New update available</BannerTitle>
-            <BannerDescription>
-              A new version of the app is available. Update now to get the
-              latest features.
-            </BannerDescription>
-          </BannerContent>
-          <BannerActions>
-            <Button size="sm" variant="ghost">
-              Later
-            </Button>
-            <Button size="sm" variant="default">
-              Update Now
-            </Button>
-          </BannerActions>
-          <BannerClose />
-        </Banner>
-      ) : (
+      <Banner variant="info" open={open} onOpenChange={setOpen}>
+        <BannerIcon>
+          <Info />
+        </BannerIcon>
+        <BannerContent>
+          <BannerTitle>New update available</BannerTitle>
+          <BannerDescription>
+            A new version of the app is available. Update now to get the latest
+            features.
+          </BannerDescription>
+        </BannerContent>
+        <BannerActions>
+          <Button size="sm" variant="ghost">
+            Later
+          </Button>
+          <Button size="sm" variant="default">
+            Update Now
+          </Button>
+        </BannerActions>
+        <BannerClose />
+      </Banner>
+      {!open && (
         <Button onClick={() => setOpen(true)} variant="outline">
           Show Banner
         </Button>
@@ -191,4 +198,73 @@ function StackedExample() {
   );
 }
 
-export default BannerDemo;
+function PriorityExample() {
+  const { onBannerAdd, banners } = useBanners();
+
+  const onAddAppVersionBanner = React.useCallback(() => {
+    onBannerAdd({
+      variant: "info",
+      priority: 0,
+      dismissible: true,
+      content: (
+        <>
+          <BannerIcon>
+            <Sparkles />
+          </BannerIcon>
+          <BannerContent>
+            <BannerTitle>New version available</BannerTitle>
+            <BannerDescription>
+              Version 2.0 is now available with exciting new features.
+            </BannerDescription>
+          </BannerContent>
+          <BannerActions>
+            <Button size="sm" variant="default">
+              Update
+            </Button>
+          </BannerActions>
+        </>
+      ),
+    });
+  }, [onBannerAdd]);
+
+  const onAddSystemHealthBanner = React.useCallback(() => {
+    onBannerAdd({
+      variant: "destructive",
+      priority: 10,
+      dismissible: true,
+      content: (
+        <>
+          <BannerIcon>
+            <ServerCrash />
+          </BannerIcon>
+          <BannerContent>
+            <BannerTitle>System outage</BannerTitle>
+            <BannerDescription>
+              Some services are currently unavailable. We&apos;re working on it.
+            </BannerDescription>
+          </BannerContent>
+        </>
+      ),
+    });
+  }, [onBannerAdd]);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <h3 className="font-semibold text-base">
+        Priority ({banners.length} in queue)
+      </h3>
+      <div className="flex flex-wrap gap-2">
+        <Button onClick={onAddAppVersionBanner} variant="outline" size="sm">
+          Add App Version (priority: 0)
+        </Button>
+        <Button onClick={onAddSystemHealthBanner} variant="outline" size="sm">
+          Add System Health (priority: 10)
+        </Button>
+      </div>
+      <p className="text-muted-foreground text-sm">
+        Higher priority banners jump ahead in the queue. Try adding version
+        first, then system health - system health will show first.
+      </p>
+    </div>
+  );
+}

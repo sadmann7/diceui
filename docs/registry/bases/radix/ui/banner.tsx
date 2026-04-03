@@ -33,17 +33,18 @@ type BannerContent =
   | React.ReactNode
   | ((props: BannerRenderProps) => React.ReactNode);
 
-interface BannerQueueItem {
+interface QueuedBannerItem {
   id: string;
   content: BannerContent;
   variant?: BannerVariant;
+  priority?: number;
   dismissible?: boolean;
   duration?: number;
   onDismiss?: () => void;
 }
 
 interface StoreState {
-  banners: BannerQueueItem[];
+  banners: QueuedBannerItem[];
   removing: Set<string>;
 }
 
@@ -52,7 +53,7 @@ interface Store {
   getState: () => StoreState;
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
   notify: () => void;
-  onBannerAdd: (banner: Omit<BannerQueueItem, "id">) => string;
+  onBannerAdd: (banner: Omit<QueuedBannerItem, "id">) => string;
   onBannerRemove: (id: string) => void;
   onBannersClear: () => void;
   onRemovingChange: (id: string, value: boolean) => void;
@@ -162,9 +163,21 @@ function Banners({
       },
       onBannerAdd: (banner) => {
         const id = crypto.randomUUID();
-        const newBanner: BannerQueueItem = { ...banner, id };
+        const newBanner: QueuedBannerItem = { ...banner, id };
+        const priority = banner.priority ?? 0;
 
-        stateRef.current.banners = [...stateRef.current.banners, newBanner];
+        const banners = [...stateRef.current.banners];
+        const insertIndex = banners.findIndex(
+          (b) => (b.priority ?? 0) < priority,
+        );
+
+        if (insertIndex === -1) {
+          banners.push(newBanner);
+        } else {
+          banners.splice(insertIndex, 0, newBanner);
+        }
+
+        stateRef.current.banners = banners;
         store.notify();
 
         if (banner.duration && banner.duration > 0) {
@@ -231,10 +244,10 @@ function Banners({
         ReactDOM.createPortal(
           <div
             data-slot="banner-container"
-            className="fixed top-0 right-0 left-0 z-50 flex flex-col"
+            className="fixed top-0 right-0 left-0 isolate z-50 flex flex-col"
           >
-            {visibleBanners.map((banner) => (
-              <QueuedBannerItem key={banner.id} banner={banner} />
+            {visibleBanners.map((banner, index) => (
+              <QueuedBanner key={banner.id} banner={banner} index={index} />
             ))}
           </div>,
           container,
@@ -278,13 +291,22 @@ const bannerVariants = cva(
   },
 );
 
-interface QueuedBannerItemProps {
-  banner: BannerQueueItem;
+interface QueuedBannerProps {
+  banner: QueuedBannerItem;
+  index: number;
 }
 
-function QueuedBannerItem({ banner }: QueuedBannerItemProps) {
-  const store = useStoreContext("QueuedBannerItem");
+function QueuedBanner({ banner, index }: QueuedBannerProps) {
+  const store = useStoreContext("QueuedBanner");
   const removing = useStore((state) => state.removing.has(banner.id));
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      setMounted(true);
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
   const onClose = React.useCallback(() => {
     store.onRemovingChange(banner.id, true);
@@ -294,11 +316,14 @@ function QueuedBannerItem({ banner }: QueuedBannerItemProps) {
     store.onBannerRemove(banner.id);
   }, [store, banner.id]);
 
-  const onAnimationEnd = React.useCallback(() => {
-    if (removing) {
-      store.onBannerRemove(banner.id);
-    }
-  }, [removing, store, banner.id]);
+  const onTransitionEnd = React.useCallback(
+    (event: React.TransitionEvent) => {
+      if (event.propertyName === "opacity" && removing) {
+        store.onBannerRemove(banner.id);
+      }
+    },
+    [removing, store, banner.id],
+  );
 
   const contextValue = React.useMemo<BannerContextValue>(
     () => ({
@@ -324,19 +349,24 @@ function QueuedBannerItem({ banner }: QueuedBannerItemProps) {
       ? banner.content(renderProps)
       : banner.content;
 
+  const isVisible = mounted && !removing;
+
   return (
     <BannerContext.Provider value={contextValue}>
       <div
         role="status"
         aria-live="polite"
+        data-slot="queued-banner"
         data-state={removing ? "closed" : "open"}
-        onAnimationEnd={onAnimationEnd}
-        className={cn(
-          bannerVariants({ variant: banner.variant }),
-          "fade-in-0 slide-in-from-top-full animate-in duration-300",
-          removing &&
-            "fade-out-0 slide-out-to-top-full animate-out duration-200",
-        )}
+        data-index={index}
+        onTransitionEnd={onTransitionEnd}
+        className={cn(bannerVariants({ variant: banner.variant }))}
+        style={{
+          transform: isVisible ? "translateY(0)" : "translateY(-100%)",
+          opacity: isVisible ? 1 : 0,
+          transition:
+            "transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease",
+        }}
       >
         {content}
         {banner.dismissible && (
@@ -372,13 +402,12 @@ function Banner({
   ...props
 }: BannerProps) {
   const isControlled = openProp !== undefined;
-  const openRef = useLazyRef(() => openProp ?? defaultOpen ?? false);
+  const openRef = useLazyRef(() => openProp ?? defaultOpen ?? true);
+  const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
 
   if (isControlled) {
     openRef.current = openProp;
   }
-
-  const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
 
   const subscribe = React.useCallback(
     (cb: () => void) => {
