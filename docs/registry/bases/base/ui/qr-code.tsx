@@ -538,10 +538,8 @@ export {
   QRCodeDownload,
   QRCodeImage,
   QRCodeOverlay,
-  //
   type QRCodeProps,
   QRCodeSkeleton,
   QRCodeSvg,
-  //
   useStore as useQRCode,
 };

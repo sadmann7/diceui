@@ -1533,9 +1533,4 @@ function MasonryItem(props: MasonryItemProps) {
   return <ItemPrimitive data-slot="masonry-item" {...itemProps} ref={ref} />;
 }
 
-export {
-  Masonry,
-  MasonryItem,
-  //
-  type MasonryProps,
-};
+export { Masonry, MasonryItem, type MasonryProps };

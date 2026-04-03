@@ -706,7 +706,6 @@ export {
   TimelineDot,
   TimelineHeader,
   TimelineItem,
-  //
   type TimelineProps,
   TimelineTime,
   TimelineTitle,

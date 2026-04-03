@@ -345,9 +345,4 @@ function StackItem(props: StackItemProps) {
   );
 }
 
-export {
-  Stack,
-  StackItem,
-  //
-  type StackProps,
-};
+export { Stack, StackItem, type StackProps };

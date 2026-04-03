@@ -572,6 +572,5 @@ export {
   SortableItem,
   SortableItemHandle,
   SortableOverlay,
-  //
   type SortableProps,
 };

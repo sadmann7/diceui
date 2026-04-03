@@ -1089,7 +1089,6 @@ export {
   SpeedDialContent,
   SpeedDialItem,
   SpeedDialLabel,
-  //
   type SpeedDialProps,
   SpeedDialTrigger,
 };

@@ -240,9 +240,4 @@ function SegmentedInputItem(props: SegmentedInputItemProps) {
   );
 }
 
-export {
-  SegmentedInput,
-  SegmentedInputItem,
-  //
-  type SegmentedInputProps,
-};
+export { SegmentedInput, SegmentedInputItem, type SegmentedInputProps };

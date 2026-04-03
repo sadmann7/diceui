@@ -530,6 +530,5 @@ export {
   CompareSliderBefore,
   CompareSliderHandle,
   CompareSliderLabel,
-  //
   type CompareSliderProps,
 };

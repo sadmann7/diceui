@@ -350,7 +350,6 @@ export {
   CircularProgress,
   CircularProgressCombined,
   CircularProgressIndicator,
-  //
   type CircularProgressProps,
   CircularProgressRange,
   CircularProgressTrack,

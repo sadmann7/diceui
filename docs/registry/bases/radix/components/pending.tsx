@@ -90,8 +90,4 @@ function Pending({ id, isPending, disabled, ...props }: PendingProps) {
   return <SlotPrimitive.Slot {...props} {...pendingProps} />;
 }
 
-export {
-  Pending,
-  //
-  usePending,
-};
+export { Pending, usePending };

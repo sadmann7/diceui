@@ -75,10 +75,4 @@ function StatusLabel(props: React.ComponentProps<"div">) {
   );
 }
 
-export {
-  Status,
-  StatusIndicator,
-  StatusLabel,
-  //
-  statusVariants,
-};
+export { Status, StatusIndicator, StatusLabel, statusVariants };

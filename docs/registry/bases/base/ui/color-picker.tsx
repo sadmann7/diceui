@@ -1698,10 +1698,8 @@ export {
   ColorPickerFormatSelect,
   ColorPickerHueSlider,
   ColorPickerInput,
-  //
   type ColorPickerProps,
   ColorPickerSwatch,
   ColorPickerTrigger,
-  //
   useStore as useColorPicker,
 };

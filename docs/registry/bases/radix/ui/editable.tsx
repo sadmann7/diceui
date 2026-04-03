@@ -820,11 +820,9 @@ export {
   EditableInput,
   EditableLabel,
   EditablePreview,
-  //
   type EditableProps,
   EditableSubmit,
   EditableToolbar,
   EditableTrigger,
-  //
   useStore as useEditable,
 };

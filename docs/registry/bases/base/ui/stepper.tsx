@@ -1327,11 +1327,9 @@ export {
   StepperList,
   StepperNext,
   StepperPrev,
-  //
   type StepperProps,
   StepperSeparator,
   StepperTitle,
   StepperTrigger,
-  //
   useStore as useStepper,
 };

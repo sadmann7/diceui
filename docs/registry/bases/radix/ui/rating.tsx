@@ -930,9 +930,4 @@ function RatingItem(props: RatingItemProps) {
   );
 }
 
-export {
-  Rating,
-  RatingItem,
-  //
-  useStore as useRating,
-};
+export { Rating, RatingItem, useStore as useRating };

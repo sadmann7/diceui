@@ -2206,11 +2206,9 @@ export {
   TimePickerLabel,
   TimePickerMinute,
   TimePickerPeriod,
-  //
   type TimePickerProps,
   TimePickerSecond,
   TimePickerSeparator,
   TimePickerTrigger,
-  //
   useStore as useTimePicker,
 };

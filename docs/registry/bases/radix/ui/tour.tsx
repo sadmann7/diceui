@@ -1691,7 +1691,6 @@ export {
   TourNext,
   TourPortal,
   TourPrev,
-  //
   type TourProps,
   TourSkip,
   TourSpotlight,

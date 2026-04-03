@@ -1811,13 +1811,11 @@ export {
   Cropper,
   CropperArea,
   CropperImage,
-  //
   type CropperProps,
   CropperVideo,
   type ObjectFit as CropperObjectFit,
   type Point as CropperPoint,
   type Shape as CropperShape,
   type Size as CropperSize,
-  //
   useStore as useCropper,
 };

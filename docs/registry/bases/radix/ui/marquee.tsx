@@ -671,11 +671,4 @@ function MarqueeEdge(props: MarqueeEdgeProps) {
   );
 }
 
-export {
-  Marquee,
-  MarqueeContent,
-  MarqueeEdge,
-  MarqueeItem,
-  //
-  type MarqueeProps,
-};
+export { Marquee, MarqueeContent, MarqueeEdge, MarqueeItem, type MarqueeProps };

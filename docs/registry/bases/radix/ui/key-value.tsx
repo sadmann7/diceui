@@ -860,10 +860,8 @@ export {
   KeyValueItem,
   KeyValueKeyInput,
   KeyValueList,
-  //
   type KeyValueProps,
   KeyValueRemove,
   KeyValueValueInput,
-  //
   useStore as useKeyValueStore,
 };

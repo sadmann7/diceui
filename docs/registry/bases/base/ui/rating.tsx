@@ -953,9 +953,4 @@ function RatingItem(props: RatingItemProps) {
   return element;
 }
 
-export {
-  Rating,
-  RatingItem,
-  //
-  useStore as useRating,
-};
+export { Rating, RatingItem, useStore as useRating };

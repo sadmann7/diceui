@@ -1484,9 +1484,7 @@ export {
   FileUploadItemPreview,
   FileUploadItemProgress,
   FileUploadList,
-  //
   type FileUploadProps,
   FileUploadTrigger,
-  //
   useStore as useFileUpload,
 };

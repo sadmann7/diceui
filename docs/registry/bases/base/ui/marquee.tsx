@@ -704,11 +704,4 @@ function MarqueeEdge({
   });
 }
 
-export {
-  Marquee,
-  MarqueeContent,
-  MarqueeEdge,
-  MarqueeItem,
-  //
-  type MarqueeProps,
-};
+export { Marquee, MarqueeContent, MarqueeEdge, MarqueeItem, type MarqueeProps };

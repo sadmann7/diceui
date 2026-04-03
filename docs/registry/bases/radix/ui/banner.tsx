@@ -14,14 +14,14 @@ const BANNER_ANIMATION_DURATION = 400;
 const DEFAULT_BANNER_PRIORITY = 0;
 const DEFAULT_BANNER_DISMISSIBLE = true;
 
+type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
+type BannerSide = "top" | "bottom";
+
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
 type CloseElement = React.ComponentRef<typeof BannerClose>;
-
-type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
-type BannerSide = "top" | "bottom";
 
 interface BannerRenderProps {
   id: string;

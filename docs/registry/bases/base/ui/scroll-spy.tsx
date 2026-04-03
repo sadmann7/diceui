@@ -484,7 +484,6 @@ export {
   ScrollSpy,
   ScrollSpyLink,
   ScrollSpyNav,
-  //
   type ScrollSpyProps,
   ScrollSpySection,
   ScrollSpyViewport,

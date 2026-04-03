@@ -820,8 +820,6 @@ export {
   PhoneInput,
   PhoneInputCountrySelect,
   PhoneInputField,
-  //
   type PhoneInputProps,
-  //
   useStore as usePhoneInput,
 };

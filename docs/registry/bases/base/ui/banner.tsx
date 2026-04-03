@@ -18,6 +18,10 @@ const DEFAULT_BANNER_DISMISSIBLE = true;
 type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
 type BannerSide = "top" | "bottom";
 
+interface DivProps
+  extends useRender.ComponentProps<"div">,
+    React.ComponentProps<"div"> {}
+
 interface BannerRenderProps {
   id: string;
   variant?: BannerVariant;
@@ -444,10 +448,7 @@ function BannerImpl(props: BannerImplProps) {
   );
 }
 
-interface BannerProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div">,
-    VariantProps<typeof bannerVariants> {
+interface BannerProps extends DivProps, VariantProps<typeof bannerVariants> {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -581,11 +582,7 @@ function Banner(props: BannerProps) {
   );
 }
 
-interface BannerIconProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
-
-function BannerIcon(props: BannerIconProps) {
+function BannerIcon(props: DivProps) {
   const { className, render, ...iconProps } = props;
 
   return useRender({
@@ -603,11 +600,7 @@ function BannerIcon(props: BannerIconProps) {
   });
 }
 
-interface BannerContentProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
-
-function BannerContent(props: BannerContentProps) {
+function BannerContent(props: DivProps) {
   const { className, render, ...contentProps } = props;
 
   return useRender({
@@ -649,11 +642,7 @@ function BannerDescription(props: React.ComponentProps<"div">) {
   );
 }
 
-interface BannerActionsProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
-
-function BannerActions(props: BannerActionsProps) {
+function BannerActions(props: DivProps) {
   const { className, render, ...actionsProps } = props;
 
   return useRender({

@@ -1543,9 +1543,4 @@ function MasonryItem(props: MasonryItemProps) {
   });
 }
 
-export {
-  Masonry,
-  MasonryItem,
-  //
-  type MasonryProps,
-};
+export { Masonry, MasonryItem, type MasonryProps };

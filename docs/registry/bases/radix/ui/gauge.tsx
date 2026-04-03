@@ -505,7 +505,6 @@ export {
   GaugeCombined,
   GaugeIndicator,
   GaugeLabel,
-  //
   type GaugeProps,
   GaugeRange,
   GaugeTrack,
