@@ -12,6 +12,9 @@ import { Button } from "@/registry/bases/radix/ui/button";
 const BANNERS_NAME = "Banners";
 const BANNER_NAME = "Banner";
 
+const BANNER_ANIMATION_DURATION = 400;
+const DEFAULT_BANNER_PRIORITY = 0;
+
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
@@ -25,6 +28,7 @@ type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
 interface BannerRenderProps {
   id: string;
   variant?: BannerVariant;
+  dismissible: boolean;
   onClose: () => void;
   onRemove: () => void;
 }
@@ -84,6 +88,7 @@ function useStore<T>(store: Store, selector: (state: StoreState) => T): T {
 interface BannerContextValue {
   id?: string;
   variant?: BannerVariant;
+  dismissible?: boolean;
   onClose?: () => void;
 }
 
@@ -100,9 +105,8 @@ function useBannerContext(consumerName: string) {
 }
 
 function useBanner() {
-  const bannerContext = useBannerContext("useBanner");
+  const { id, variant, dismissible, onClose } = useBannerContext("useBanner");
   const storeContext = React.useContext(StoreContext);
-  const { id, variant, onClose } = bannerContext;
 
   return React.useMemo(() => {
     const onRemove =
@@ -111,10 +115,11 @@ function useBanner() {
     return {
       id,
       variant,
+      dismissible,
       onClose,
       onRemove,
     };
-  }, [id, variant, onClose, storeContext]);
+  }, [id, variant, dismissible, onClose, storeContext]);
 }
 
 interface BannersProps {
@@ -153,11 +158,11 @@ function Banners({
       onBannerAdd: (banner) => {
         const id = crypto.randomUUID();
         const newBanner: QueuedBannerItem = { ...banner, id };
-        const priority = banner.priority ?? 0;
+        const priority = banner.priority ?? DEFAULT_BANNER_PRIORITY;
 
         const banners = [...stateRef.current.banners];
         const insertIndex = banners.findIndex(
-          (b) => (b.priority ?? 0) < priority,
+          (b) => (b.priority ?? DEFAULT_BANNER_PRIORITY) < priority,
         );
 
         if (insertIndex === -1) {
@@ -261,7 +266,7 @@ function Banners({
             className="pointer-events-none fixed top-0 right-0 left-0 isolate z-50"
             style={{
               height: totalHeight > 0 ? totalHeight : "auto",
-              transition: `height ${ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1)`,
+              transition: `height ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1)`,
             }}
           >
             {visibleBanners.map((banner, index) => (
@@ -288,8 +293,6 @@ function useBanners() {
     [store, banners],
   );
 }
-
-const ANIMATION_DURATION = 400;
 
 const bannerVariants = cva(
   "pointer-events-auto relative flex w-full items-center gap-3 border-b px-4 py-3 text-sm motion-reduce:transition-none",
@@ -355,7 +358,7 @@ function QueuedBanner({ banner, index }: QueuedBannerProps) {
     store.onHeightRemove(banner.id);
     const timeoutId = setTimeout(
       () => store.onBannerRemove(banner.id),
-      ANIMATION_DURATION,
+      BANNER_ANIMATION_DURATION,
     );
     return () => clearTimeout(timeoutId);
   }, [removing, store, banner.id]);
@@ -370,20 +373,23 @@ function QueuedBanner({ banner, index }: QueuedBannerProps) {
     [store, banner.id],
   );
 
+  const dismissible = banner.dismissible ?? true;
+
   const contextValue = React.useMemo<BannerContextValue>(
-    () => ({ id: banner.id, variant: banner.variant, onClose }),
-    [banner.id, banner.variant, onClose],
+    () => ({ id: banner.id, variant: banner.variant, dismissible, onClose }),
+    [banner.id, banner.variant, dismissible, onClose],
   );
 
   const renderProps = React.useMemo<BannerRenderProps>(
-    () => ({ id: banner.id, variant: banner.variant, onClose, onRemove }),
-    [banner.id, banner.variant, onClose, onRemove],
+    () => ({
+      id: banner.id,
+      variant: banner.variant,
+      dismissible,
+      onClose,
+      onRemove,
+    }),
+    [banner.id, banner.variant, dismissible, onClose, onRemove],
   );
-
-  const content =
-    typeof banner.content === "function"
-      ? banner.content(renderProps)
-      : banner.content;
 
   const currentOffset = removing ? offsetBeforeRemoveRef.current : offset;
   const transform = !mounted
@@ -413,10 +419,12 @@ function QueuedBanner({ banner, index }: QueuedBannerProps) {
           zIndex: removing ? 0 : 50 - index,
           transform,
           opacity: mounted && !removing ? 1 : 0,
-          transition: `transform ${ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1), opacity ${removing ? ANIMATION_DURATION / 2 : ANIMATION_DURATION}ms ease`,
+          transition: `transform ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1), opacity ${removing ? BANNER_ANIMATION_DURATION / 2 : BANNER_ANIMATION_DURATION}ms ease`,
         }}
       >
-        {content}
+        {typeof banner.content === "function"
+          ? banner.content(renderProps)
+          : banner.content}
         {banner.dismissible && (
           <Button
             variant="ghost"
@@ -509,6 +517,7 @@ function Banner({
 
 function BannerIcon({ className, children, asChild, ...props }: DivProps) {
   const IconPrimitive = asChild ? SlotPrimitive.Slot : "div";
+
   return (
     <IconPrimitive
       data-slot="banner-icon"
@@ -568,33 +577,36 @@ function BannerActions({ className, asChild, ...props }: DivProps) {
 }
 
 function BannerClose({
+  onClick: onClickProp,
   className,
   children,
   asChild,
-  onClick,
+  disabled,
   ...props
 }: ButtonProps) {
-  const context = useBannerContext("BannerClose");
+  const { dismissible, onClose } = useBannerContext("BannerClose");
   const ClosePrimitive = asChild ? SlotPrimitive.Slot : "button";
+  const isDisabled = disabled ?? dismissible ?? true;
 
-  const onClickHandler = React.useCallback(
+  const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
-      onClick?.(event);
-      context.onClose?.();
+      if (isDisabled) return;
+      onClickProp?.(event);
+      onClose?.();
     },
-    [onClick, context],
+    [isDisabled, onClickProp, onClose],
   );
 
   return (
     <ClosePrimitive
-      data-slot="banner-close"
       type="button"
-      onClick={onClickHandler}
+      data-slot="banner-close"
+      onClick={onClick}
       className={cn(
-        "shrink-0 rounded-md p-1 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+        "shrink-0 rounded-md p-1 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
-      aria-label="Dismiss banner"
+      disabled={!dismissible}
       {...props}
     >
       {children ?? <X className="size-3.5" />}
