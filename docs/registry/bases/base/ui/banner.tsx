@@ -119,18 +119,20 @@ function useBanner() {
 }
 
 interface BannersProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   maxVisible?: number;
   side?: BannerSide;
   container?: Element | DocumentFragment | null;
 }
 
-function Banners({
-  children,
-  maxVisible = 1,
-  side = "top",
-  container: containerProp,
-}: BannersProps) {
+function Banners(props: BannersProps) {
+  const {
+    children,
+    maxVisible = 1,
+    side = "top",
+    container: containerProp,
+  } = props;
+
   const stateRef = useLazyRef<StoreState>(() => ({
     banners: [],
     removing: new Set(),
@@ -327,7 +329,9 @@ interface BannerImplProps {
   index: number;
 }
 
-function BannerImpl({ banner, side, index }: BannerImplProps) {
+function BannerImpl(props: BannerImplProps) {
+  const { banner, side, index } = props;
+
   const store = useStoreContext("BannerImpl");
   const removing = useStore(store, (state) => state.removing.has(banner.id));
   const banners = useStore(store, (state) => state.banners);
@@ -629,25 +633,26 @@ function BannerContent(props: BannerContentProps) {
   });
 }
 
-function BannerTitle({ className, ...props }: React.ComponentProps<"div">) {
+function BannerTitle(props: React.ComponentProps<"div">) {
+  const { className, ...titleProps } = props;
+
   return (
     <div
       data-slot="banner-title"
       className={cn("font-medium text-sm leading-none", className)}
-      {...props}
+      {...titleProps}
     />
   );
 }
 
-function BannerDescription({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function BannerDescription(props: React.ComponentProps<"div">) {
+  const { className, ...descriptionProps } = props;
+
   return (
     <div
       data-slot="banner-description"
       className={cn("text-xs opacity-90", className)}
-      {...props}
+      {...descriptionProps}
     />
   );
 }
@@ -674,11 +679,9 @@ function BannerActions(props: BannerActionsProps) {
   });
 }
 
-function BannerClose({
-  disabled,
-  children,
-  ...props
-}: React.ComponentProps<typeof Button>) {
+function BannerClose(props: React.ComponentProps<typeof Button>) {
+  const { disabled, children, ...closeProps } = props;
+
   const { dismissible = DEFAULT_BANNER_DISMISSIBLE, onClose } =
     useBannerContext("BannerClose");
 
@@ -694,7 +697,7 @@ function BannerClose({
         onClose?.();
       }}
       disabled={isDisabled}
-      {...props}
+      {...closeProps}
     >
       {children ?? <X className="size-3.5" />}
     </Button>

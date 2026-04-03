@@ -1,12 +1,9 @@
-import type { VariantProps } from "class-variance-authority";
 import type { Button } from "@/registry/bases/radix/ui/button";
 import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface BannersProps {
-  /**
-   * The children content within the banners provider.
-   */
-  children: React.ReactNode;
+  /** The children content within the banners provider. */
+  children?: React.ReactNode;
 
   /**
    * Maximum number of banners visible at once.

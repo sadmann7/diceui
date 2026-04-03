@@ -2,10 +2,8 @@ import type { Button } from "@/registry/bases/base/ui/button";
 import type { RenderProps } from "@/types";
 
 export interface BannersProps {
-  /**
-   * The children content within the banners provider.
-   */
-  children: React.ReactNode;
+  /** The children content within the banners provider. */
+  children?: React.ReactNode;
 
   /**
    * Maximum number of banners visible at once.
