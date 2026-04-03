@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 import { MdxTabs } from "@/components/mdx-tabs";
-import { useConfig } from "@/hooks/use-config";
+import { type Config, useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
 import type { Tabs } from "@/registry/bases/radix/ui/tabs";
 
@@ -18,7 +18,10 @@ export function CodeTabs({
       variant="line"
       value={config.installationType ?? "cli"}
       onValueChange={(value) =>
-        setConfig({ ...config, installationType: value as "cli" | "manual" })
+        setConfig({
+          ...config,
+          installationType: value as Config["installationType"],
+        })
       }
       className={cn(
         "not-prose relative mt-6 w-full *:data-[slot=tabs-list]:gap-6",

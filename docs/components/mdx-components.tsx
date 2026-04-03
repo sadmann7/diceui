@@ -19,6 +19,7 @@ import {
   PackageManagerTabs,
   PackageManagerTabsList,
 } from "@/components/package-manager-tabs";
+import { DEFAULT_BASE } from "@/lib/constants";
 import type { source } from "@/lib/source";
 import { cn } from "@/lib/utils";
 import {
@@ -34,6 +35,7 @@ import {
   TableRow,
 } from "@/registry/bases/radix/ui/table";
 import { Tabs } from "@/registry/bases/radix/ui/tabs";
+import type { RegistryBase } from "@/registry/registry";
 
 const ComponentSource = dynamic(() =>
   import("@/components/component-source").then((mod) => ({
@@ -91,6 +93,7 @@ const Changelogs = dynamic(() =>
 
 export function useMdxComponents(
   components: Partial<MDXComponents>,
+  base: RegistryBase,
 ): MDXComponents {
   const headings = Object.fromEntries(
     ["h1", "h2", "h3", "h4", "h5", "h6"].map((level) => [
@@ -154,12 +157,12 @@ export function useMdxComponents(
     ComponentTabs: ({
       ...props
     }: React.ComponentProps<typeof ComponentTabs>) => (
-      <ComponentTabs {...props} />
+      <ComponentTabs {...props} base={base} />
     ),
     ComponentSource: ({
       ...props
     }: React.ComponentProps<typeof ComponentSource>) => (
-      <ComponentSource {...props} />
+      <ComponentSource {...props} base={base} />
     ),
     AutoTypeTable: ({
       ...props
@@ -202,7 +205,9 @@ interface MdxProps {
 
 export function Mdx({ page, components = {} }: MdxProps) {
   const Comp = page.data.body;
-  const mdxComponents = useMdxComponents(components);
+  const base = page.data.base;
+
+  const mdxComponents = useMdxComponents(components, base ?? DEFAULT_BASE);
 
   return <Comp components={mdxComponents} />;
 }

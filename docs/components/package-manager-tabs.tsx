@@ -32,7 +32,7 @@ export function PackageManagerTabs({
         setConfig({ ...config, packageManager: value as PackageManager })
       }
       className={cn(
-        "not-prose relative mt-4 in-[.fd-steps]:mb-4 w-full gap-0 overflow-hidden rounded-xl border",
+        "not-prose relative mt-4 in-[.fd-steps]:mb-4 w-full gap-0 overflow-hidden rounded-xl border [&_pre]:px-3.5",
         className,
       )}
       {...props}
@@ -43,15 +43,11 @@ export function PackageManagerTabs({
 }
 
 export function PackageManagerTabsList({
-  className,
-  children,
   ...props
 }: React.ComponentProps<typeof TabsList>) {
   return (
-    <div className="flex items-center gap-2 border-b bg-secondary/50 px-3 py-1.5">
-      <MdxTabsList className={cn(className)} {...props}>
-        {children}
-      </MdxTabsList>
+    <div className="flex items-center gap-2 border-b bg-secondary/50 px-2.5 py-1">
+      <MdxTabsList {...props} />
     </div>
   );
 }

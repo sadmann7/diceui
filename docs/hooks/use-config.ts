@@ -13,6 +13,8 @@ const configAtom = atomWithStorage<Config>("config", {
   installationType: "cli",
 });
 
-export function useConfig() {
+function useConfig() {
   return useAtom(configAtom);
 }
+
+export { type Config, useConfig };

@@ -466,7 +466,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
 
     function onSelectionChange() {
       const selection = window.getSelection();
-      if (!selection || !selection.toString().trim()) {
+      if (!selection?.toString().trim()) {
         closeToolbar();
       }
     }

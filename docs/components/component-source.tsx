@@ -19,7 +19,10 @@ function deriveTitle(
 }
 
 interface ComponentSourceProps
-  extends Omit<React.ComponentProps<typeof ComponentSourceImpl>, "language"> {
+  extends Omit<
+    React.ComponentProps<typeof ComponentSourceImpl>,
+    "code" | "language" | "highlightedCode"
+  > {
   name?: string;
   src?: string;
   base?: RegistryBase;
@@ -33,9 +36,9 @@ export async function ComponentSource({
   title: explicitTitle,
   language,
   collapsible = true,
-  className,
-  base = "radix",
+  base,
   maxLines,
+  ...props
 }: ComponentSourceProps) {
   if (!name && !src) return null;
 
@@ -73,7 +76,7 @@ export async function ComponentSource({
       language={lang}
       title={title}
       collapsible={collapsible}
-      className={className}
+      {...props}
     />
   );
 }

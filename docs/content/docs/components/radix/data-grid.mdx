@@ -396,12 +396,12 @@ const { table, ...dataGridProps } = useDataGrid({
 Wrap the grid in a `DirectionProvider` and the language direction will be automatically detected.
 
 ```tsx
-import { DirectionProvider } from "@radix-ui/react-direction";
+import { Direction } from "radix-ui";
 
 return (
-  <DirectionProvider dir="rtl">
+  <Direction.DirectionProvider dir="rtl">
     <DataGridImpl />
-  </DirectionProvider>
+  </Direction.DirectionProvider>
 )
 
 function DataGridImpl() {

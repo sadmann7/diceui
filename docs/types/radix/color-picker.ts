@@ -1,4 +1,4 @@
-import type { Slider } from "@radix-ui/react-slider";
+import type { Slider } from "radix-ui";
 import type * as React from "react";
 import type { Input } from "@/registry/bases/radix/ui/input";
 import type {
@@ -17,7 +17,7 @@ type ColorFormat = "hex" | "rgb" | "hsl" | "hsb";
 
 type SelectTriggerProps = React.ComponentProps<typeof SelectTrigger>;
 
-type SliderProps = React.ComponentProps<typeof Slider>;
+type SliderProps = React.ComponentProps<typeof Slider.Root>;
 
 export interface ColorPickerProps
   extends Omit<React.ComponentProps<"div">, keyof ControlledProps<"div">>,

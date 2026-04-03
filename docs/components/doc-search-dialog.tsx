@@ -15,7 +15,7 @@ import {
 
 export function DocSearchDialog(props: SharedProps) {
   const { search, setSearch, query } = useDocsSearch({
-    type: "fetch",
+    type: "static",
   });
 
   return (
