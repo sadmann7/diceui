@@ -454,10 +454,10 @@ interface BannerProps extends DivProps, VariantProps<typeof bannerVariants> {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  onDismiss?: () => void;
   priority?: number;
   dismissible?: boolean;
   duration?: number;
-  onDismiss?: () => void;
 }
 
 function Banner({
@@ -466,10 +466,10 @@ function Banner({
   open: openProp,
   defaultOpen,
   onOpenChange,
+  onDismiss,
   priority,
   dismissible = DEFAULT_BANNER_DISMISSIBLE,
   duration,
-  onDismiss,
   children,
   asChild,
   ...props

@@ -454,10 +454,10 @@ interface BannerProps
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  onDismiss?: () => void;
   priority?: number;
   dismissible?: boolean;
   duration?: number;
-  onDismiss?: () => void;
 }
 
 function Banner(props: BannerProps) {
@@ -467,10 +467,10 @@ function Banner(props: BannerProps) {
     open: openProp,
     defaultOpen,
     onOpenChange,
+    onDismiss,
     priority,
     dismissible = DEFAULT_BANNER_DISMISSIBLE,
     duration,
-    onDismiss,
     children,
     render,
     ...rootProps
