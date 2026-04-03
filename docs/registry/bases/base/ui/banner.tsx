@@ -11,9 +11,6 @@ import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/base/ui/button";
 
-const BANNERS_NAME = "Banners";
-const BANNER_NAME = "Banner";
-
 const BANNER_ANIMATION_DURATION = 400;
 const DEFAULT_BANNER_PRIORITY = 0;
 const DEFAULT_BANNER_DISMISSIBLE = true;
@@ -66,9 +63,7 @@ const StoreContext = React.createContext<Store | null>(null);
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
   if (!context) {
-    throw new Error(
-      `\`${consumerName}\` must be used within \`${BANNERS_NAME}\``,
-    );
+    throw new Error(`\`${consumerName}\` must be used within \`Banners\``);
   }
   return context;
 }
@@ -93,9 +88,7 @@ const BannerContext = React.createContext<BannerContextValue | null>(null);
 function useBannerContext(consumerName: string) {
   const context = React.useContext(BannerContext);
   if (!context) {
-    throw new Error(
-      `\`${consumerName}\` must be used within \`${BANNER_NAME}\``,
-    );
+    throw new Error(`\`${consumerName}\` must be used within \`Banner\``);
   }
   return context;
 }
@@ -593,14 +586,13 @@ interface BannerIconProps
     useRender.ComponentProps<"div"> {}
 
 function BannerIcon(props: BannerIconProps) {
-  const { className, children, render, ...iconProps } = props;
+  const { className, render, ...iconProps } = props;
 
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
         className: cn("flex shrink-0 items-center [&>svg]:size-4", className),
-        children,
       },
       iconProps,
     ),
@@ -680,22 +672,29 @@ function BannerActions(props: BannerActionsProps) {
 }
 
 function BannerClose(props: React.ComponentProps<typeof Button>) {
-  const { disabled, children, ...closeProps } = props;
+  const { onClick: onClickProp, disabled, children, ...closeProps } = props;
 
   const { dismissible = DEFAULT_BANNER_DISMISSIBLE, onClose } =
     useBannerContext("BannerClose");
 
   const isDisabled = disabled ?? !dismissible;
 
+  const onClick: React.ComponentProps<typeof BannerClose>["onClick"] =
+    React.useCallback(
+      (event) => {
+        onClickProp?.(event);
+        if (event.defaultPrevented || isDisabled) return;
+        onClose?.();
+      },
+      [onClickProp, isDisabled, onClose],
+    );
+
   return (
     <Button
       data-slot="banner-close"
       variant="ghost"
       size="icon-sm"
-      onClick={() => {
-        if (isDisabled) return;
-        onClose?.();
-      }}
+      onClick={onClick}
       disabled={isDisabled}
       {...closeProps}
     >
@@ -713,7 +712,6 @@ export {
   BannerIcon,
   Banners,
   BannerTitle,
-  //
   useBanner,
   useBanners,
 };

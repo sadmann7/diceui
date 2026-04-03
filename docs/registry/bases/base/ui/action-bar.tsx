@@ -23,9 +23,12 @@ const EVENT_OPTIONS = { bubbles: false, cancelable: true };
 type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
 
+interface DivProps
+  extends useRender.ComponentProps<"div">,
+    React.ComponentProps<"div"> {}
+
 type RootElement = React.ComponentRef<typeof ActionBar>;
 type ItemElement = React.ComponentRef<typeof ActionBarItem>;
-type CloseElement = React.ComponentRef<typeof ActionBarClose>;
 
 function focusFirst(
   candidates: React.RefObject<HTMLElement | null>[],
@@ -104,9 +107,7 @@ function useFocusContext(consumerName: string) {
   return context;
 }
 
-interface ActionBarProps
-  extends useRender.ComponentProps<"div">,
-    React.ComponentProps<"div"> {
+interface ActionBarProps extends DivProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
@@ -237,11 +238,9 @@ function ActionBar(props: ActionBarProps) {
   );
 }
 
-function ActionBarSelection({
-  className,
-  render,
-  ...props
-}: useRender.ComponentProps<"div"> & React.ComponentProps<"div">) {
+function ActionBarSelection(props: DivProps) {
+  const { className, render, ...selectionProps } = props;
+
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
@@ -251,7 +250,7 @@ function ActionBarSelection({
           className,
         ),
       },
-      props,
+      selectionProps,
     ),
     render,
     state: {
@@ -260,15 +259,17 @@ function ActionBarSelection({
   });
 }
 
-function ActionBarGroup({
-  onBlur: onBlurProp,
-  onFocus: onFocusProp,
-  onMouseDown: onMouseDownProp,
-  className,
-  render,
-  ref,
-  ...props
-}: useRender.ComponentProps<"div"> & React.ComponentProps<"div">) {
+function ActionBarGroup(props: DivProps) {
+  const {
+    onBlur: onBlurProp,
+    onFocus: onFocusProp,
+    onMouseDown: onMouseDownProp,
+    className,
+    render,
+    ref,
+    ...groupProps
+  } = props;
+
   const [tabStopId, setTabStopId] = React.useState<string | null>(null);
   const [isTabbingBackOut, setIsTabbingBackOut] = React.useState(false);
   const [focusableItemCount, setFocusableItemCount] = React.useState(0);
@@ -416,7 +417,7 @@ function ActionBarGroup({
         onFocus,
         onMouseDown,
       },
-      props,
+      groupProps,
     ),
     render,
     state: {
@@ -440,11 +441,13 @@ interface ActionBarItemProps
 function ActionBarItem(props: ActionBarItemProps) {
   const {
     onSelect,
+    onClick: onClickProp,
+    onFocus: onFocusProp,
+    onKeyDown: onKeyDownProp,
+    onMouseDown: onMouseDownProp,
     className,
     disabled,
     ref,
-    variant = "secondary",
-    size = "sm",
     ...itemProps
   } = props;
 
@@ -478,8 +481,9 @@ function ActionBarItem(props: ActionBarItemProps) {
     };
   }, [focusContext, itemId, disabled]);
 
-  const onClick = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
+  const onClick: ActionBarItemProps["onClick"] = React.useCallback(
+    (event) => {
+      onClickProp?.(event);
       if (event.defaultPrevented) return;
 
       const item = itemRef.current;
@@ -500,21 +504,23 @@ function ActionBarItem(props: ActionBarItemProps) {
         onOpenChange?.(false);
       }
     },
-    [onOpenChange, onSelect],
+    [onClickProp, onOpenChange, onSelect],
   );
 
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<ItemElement>) => {
+  const onFocus: ActionBarItemProps["onFocus"] = React.useCallback(
+    (event) => {
+      onFocusProp?.(event);
       if (event.defaultPrevented) return;
 
       focusContext.onItemFocus(itemId);
       isMouseClickRef.current = false;
     },
-    [focusContext, itemId],
+    [onFocusProp, focusContext, itemId],
   );
 
-  const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<ItemElement>) => {
+  const onKeyDown: ActionBarItemProps["onKeyDown"] = React.useCallback(
+    (event) => {
+      onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
       if (event.key === "Tab" && event.shiftKey) {
@@ -562,11 +568,12 @@ function ActionBarItem(props: ActionBarItemProps) {
         queueMicrotask(() => focusFirst(candidateRefs));
       }
     },
-    [focusContext, dir, orientation, loop],
+    [onKeyDownProp, focusContext, dir, orientation, loop],
   );
 
-  const onMouseDown = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
+  const onMouseDown: ActionBarItemProps["onMouseDown"] = React.useCallback(
+    (event) => {
+      onMouseDownProp?.(event);
       if (event.defaultPrevented) return;
 
       isMouseClickRef.current = true;
@@ -577,15 +584,15 @@ function ActionBarItem(props: ActionBarItemProps) {
         focusContext.onItemFocus(itemId);
       }
     },
-    [focusContext, itemId, disabled],
+    [onMouseDownProp, focusContext, itemId, disabled],
   );
 
   return (
     <Button
       type="button"
       data-slot="action-bar-item"
-      variant={variant}
-      size={size}
+      variant="secondary"
+      size="sm"
       disabled={disabled}
       tabIndex={isTabStop ? 0 : -1}
       {...itemProps}
@@ -599,17 +606,20 @@ function ActionBarItem(props: ActionBarItemProps) {
   );
 }
 
+interface ActionBarCloseProps
+  extends useRender.ComponentProps<"button">,
+    React.ComponentProps<"button"> {}
+
 function ActionBarClose({
   render,
   className,
   onClick,
   ...props
-}: useRender.ComponentProps<"button"> &
-  React.ComponentProps<"button">): React.ReactElement {
+}: ActionBarCloseProps) {
   const { onOpenChange } = useActionBarContext(CLOSE_NAME);
 
-  const onCloseClick = React.useCallback(
-    (event: React.MouseEvent<CloseElement>) => {
+  const onCloseClick: ActionBarCloseProps["onClick"] = React.useCallback(
+    (event) => {
       onClick?.(event);
       if (event.defaultPrevented) return;
 
@@ -638,15 +648,18 @@ function ActionBarClose({
   });
 }
 
-function ActionBarSeparator({
-  orientation: orientationProp,
-  render,
-  className,
-  ...props
-}: useRender.ComponentProps<"div"> &
-  React.ComponentProps<"div"> & {
-    orientation?: Orientation;
-  }) {
+interface ActionBarSeparatorProps extends DivProps {
+  orientation?: Orientation;
+}
+
+function ActionBarSeparator(props: ActionBarSeparatorProps) {
+  const {
+    orientation: orientationProp,
+    render,
+    className,
+    ...separatorProps
+  } = props;
+
   const context = useActionBarContext(SEPARATOR_NAME);
   const orientation = orientationProp ?? context.orientation;
 
@@ -663,7 +676,7 @@ function ActionBarSeparator({
           className,
         ),
       },
-      props,
+      separatorProps,
     ),
     render,
     state: {
@@ -678,7 +691,6 @@ export {
   ActionBarClose,
   ActionBarGroup,
   ActionBarItem,
-  //
   type ActionBarProps,
   ActionBarSelection,
   ActionBarSeparator,

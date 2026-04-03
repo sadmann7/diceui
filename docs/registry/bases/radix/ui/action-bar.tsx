@@ -663,7 +663,6 @@ export {
   ActionBarClose,
   ActionBarGroup,
   ActionBarItem,
-  //
   type ActionBarProps,
   ActionBarSelection,
   ActionBarSeparator,

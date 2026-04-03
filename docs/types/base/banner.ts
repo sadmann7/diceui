@@ -2,7 +2,7 @@ import type { Button } from "@/registry/bases/base/ui/button";
 import type { RenderProps } from "@/types";
 
 export interface BannersProps {
-  /** The children content within the banners provider. */
+  /** The content that can trigger and manage banners via `useBanners` hook. */
   children?: React.ReactNode;
 
   /**

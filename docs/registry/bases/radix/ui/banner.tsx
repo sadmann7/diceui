@@ -10,9 +10,6 @@ import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 
-const BANNERS_NAME = "Banners";
-const BANNER_NAME = "Banner";
-
 const BANNER_ANIMATION_DURATION = 400;
 const DEFAULT_BANNER_PRIORITY = 0;
 const DEFAULT_BANNER_DISMISSIBLE = true;
@@ -20,6 +17,8 @@ const DEFAULT_BANNER_DISMISSIBLE = true;
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
+
+type CloseElement = React.ComponentRef<typeof BannerClose>;
 
 type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
 type BannerSide = "top" | "bottom";
@@ -69,9 +68,7 @@ const StoreContext = React.createContext<Store | null>(null);
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
   if (!context) {
-    throw new Error(
-      `\`${consumerName}\` must be used within \`${BANNERS_NAME}\``,
-    );
+    throw new Error(`\`${consumerName}\` must be used within \`Banners\``);
   }
   return context;
 }
@@ -96,9 +93,7 @@ const BannerContext = React.createContext<BannerContextValue | null>(null);
 function useBannerContext(consumerName: string) {
   const context = React.useContext(BannerContext);
   if (!context) {
-    throw new Error(
-      `\`${consumerName}\` must be used within \`${BANNER_NAME}\``,
-    );
+    throw new Error(`\`${consumerName}\` must be used within \`Banner\``);
   }
   return context;
 }
@@ -656,12 +651,12 @@ function BannerClose(props: React.ComponentProps<typeof Button>) {
   const isDisabled = disabled ?? !dismissible;
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      if (isDisabled) return;
+    (event: React.MouseEvent<CloseElement>) => {
       onClickProp?.(event);
+      if (event.defaultPrevented || isDisabled) return;
       onClose?.();
     },
-    [isDisabled, onClickProp, onClose],
+    [onClickProp, isDisabled, onClose],
   );
 
   return (
@@ -687,7 +682,6 @@ export {
   BannerIcon,
   Banners,
   BannerTitle,
-  //
   useBanner,
   useBanners,
 };
