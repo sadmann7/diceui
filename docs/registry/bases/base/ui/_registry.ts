@@ -35,7 +35,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "react-dom"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "compare-slider",
@@ -52,7 +52,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "react-dom", "lucide-react"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "cropper",
@@ -69,12 +69,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: [
-      "@base-ui/react",
-      "react-dom",
-      "lucide-react",
-      "class-variance-authority",
-    ],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "file-upload",
@@ -90,7 +85,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-as-ref",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "react-dom", "lucide-react"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "fps",
@@ -200,7 +195,7 @@ export const ui: Registry["items"] = [
         type: "registry:lib",
       },
     ],
-    dependencies: ["@base-ui/react", "lucide-react"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "scroll-spy",
@@ -308,7 +303,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "lucide-react"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "gauge",
@@ -352,7 +347,7 @@ export const ui: Registry["items"] = [
       "use-isomorphic-layout-effect",
       "use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "lucide-react"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "hover-card",
@@ -430,7 +425,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "lucide-react"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "responsive-dialog",
@@ -501,12 +496,7 @@ export const ui: Registry["items"] = [
       "@diceui/compose-refs",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: [
-      "@base-ui/react",
-      "media-chrome",
-      "react-dom",
-      "lucide-react",
-    ],
+    dependencies: ["@base-ui/react", "media-chrome"],
   },
   {
     name: "phone-input",
@@ -533,7 +523,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "react-dom", "lucide-react"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "marquee",
@@ -635,7 +625,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "class-variance-authority"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "time-picker",
@@ -662,7 +652,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-lazy-ref",
       "@diceui/use-as-ref",
     ],
-    dependencies: ["@base-ui/react", "lucide-react"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "selection-toolbar",
@@ -704,7 +694,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "react-dom"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "tour",
@@ -726,11 +716,6 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: [
-      "@base-ui/react",
-      "@floating-ui/react-dom",
-      "lucide-react",
-      "react-dom",
-    ],
+    dependencies: ["@base-ui/react", "@floating-ui/react-dom"],
   },
 ];

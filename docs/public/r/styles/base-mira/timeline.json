@@ -1,8 +1,7 @@
 {
   "name": "timeline",
   "dependencies": [
-    "@base-ui/react",
-    "class-variance-authority"
+    "@base-ui/react"
   ],
   "registryDependencies": [
     "direction",

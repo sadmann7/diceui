@@ -2,9 +2,7 @@
   "name": "tour",
   "dependencies": [
     "@base-ui/react",
-    "@floating-ui/react-dom",
-    "lucide-react",
-    "react-dom"
+    "@floating-ui/react-dom"
   ],
   "registryDependencies": [
     "button",

@@ -1,6 +1,5 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import * as React from "react";
 import {
   MdxTabs,
@@ -10,15 +9,7 @@ import {
 } from "@/components/mdx-tabs";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
-
-interface ComponentTabsProps extends React.ComponentPropsWithoutRef<"div"> {
-  name: string;
-  children: React.ReactNode;
-  align?: "start" | "center" | "end";
-  preventPreviewFocus?: boolean;
-  scalePreview?: boolean;
-  fullPreview?: boolean;
-}
+import type { RegistryBase } from "@/registry/registry";
 
 function getExampleComponent(base: string, name: string) {
   if (base === "base") {
@@ -36,18 +27,26 @@ function getExampleComponent(base: string, name: string) {
   );
 }
 
+interface ComponentTabsProps extends React.ComponentProps<typeof MdxTabs> {
+  name: string;
+  base: RegistryBase;
+  align?: "start" | "center" | "end";
+  preventPreviewFocus?: boolean;
+  scalePreview?: boolean;
+  fullPreview?: boolean;
+}
+
 export function ComponentTabs({
   name,
+  base,
   children,
   align = "center",
   preventPreviewFocus,
   scalePreview,
   fullPreview,
   className,
+  ...props
 }: ComponentTabsProps) {
-  const params = useParams<{ slug?: string[] }>();
-  const base = params.slug?.[1] === "base" ? "base" : "radix";
-
   const code = React.Children.toArray(children)[0] as React.ReactElement;
 
   const Component = React.useMemo(
@@ -60,6 +59,7 @@ export function ComponentTabs({
       variant="default"
       defaultValue="Preview"
       className="not-prose gap-0 overflow-hidden rounded-xl border"
+      {...props}
     >
       <div className="flex items-center border-b bg-secondary/50 px-3 py-1.5">
         <MdxTabsList>

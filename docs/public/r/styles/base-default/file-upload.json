@@ -1,9 +1,7 @@
 {
   "name": "file-upload",
   "dependencies": [
-    "@base-ui/react",
-    "react-dom",
-    "lucide-react"
+    "@base-ui/react"
   ],
   "registryDependencies": [
     "direction",

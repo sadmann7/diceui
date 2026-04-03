@@ -36,8 +36,7 @@
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "react-dom"
+      "@base-ui/react"
     ]
   },
   {
@@ -56,9 +55,7 @@
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "react-dom",
-      "lucide-react"
+      "@base-ui/react"
     ]
   },
   {
@@ -77,10 +74,7 @@
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "react-dom",
-      "lucide-react",
-      "class-variance-authority"
+      "@base-ui/react"
     ]
   },
   {
@@ -98,9 +92,7 @@
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "react-dom",
-      "lucide-react"
+      "@base-ui/react"
     ]
   },
   {
@@ -224,8 +216,7 @@
       }
     ],
     "dependencies": [
-      "@base-ui/react",
-      "lucide-react"
+      "@base-ui/react"
     ]
   },
   {
@@ -348,8 +339,7 @@
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "lucide-react"
+      "@base-ui/react"
     ]
   },
   {
@@ -397,8 +387,7 @@
       "use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "lucide-react"
+      "@base-ui/react"
     ]
   },
   {
@@ -493,8 +482,7 @@
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "lucide-react"
+      "@base-ui/react"
     ]
   },
   {
@@ -579,9 +567,7 @@
     ],
     "dependencies": [
       "@base-ui/react",
-      "media-chrome",
-      "react-dom",
-      "lucide-react"
+      "media-chrome"
     ]
   },
   {
@@ -610,9 +596,7 @@
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "react-dom",
-      "lucide-react"
+      "@base-ui/react"
     ]
   },
   {
@@ -714,8 +698,7 @@
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "class-variance-authority"
+      "@base-ui/react"
     ]
   },
   {
@@ -744,8 +727,7 @@
       "@diceui/use-as-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "lucide-react"
+      "@base-ui/react"
     ]
   },
   {
@@ -792,8 +774,7 @@
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react",
-      "react-dom"
+      "@base-ui/react"
     ]
   },
   {
@@ -818,9 +799,7 @@
     ],
     "dependencies": [
       "@base-ui/react",
-      "@floating-ui/react-dom",
-      "lucide-react",
-      "react-dom"
+      "@floating-ui/react-dom"
     ]
   }
 ]
