@@ -12,6 +12,7 @@ import {
   Banners,
   BannerTitle,
   useBanner,
+  useBanners,
 } from "@/registry/bases/radix/ui/banner";
 import { Button } from "@/registry/bases/radix/ui/button";
 
@@ -63,11 +64,37 @@ function SimpleExample() {
   );
 }
 
+function WarningBannerContent() {
+  const { onClose } = useBanner();
+
+  return (
+    <>
+      <BannerIcon>
+        <AlertTriangle />
+      </BannerIcon>
+      <BannerContent>
+        <BannerTitle>Warning</BannerTitle>
+        <BannerDescription>
+          Please review your changes before continuing.
+        </BannerDescription>
+      </BannerContent>
+      <BannerActions>
+        <Button size="sm" variant="ghost" onClick={onClose}>
+          Skip
+        </Button>
+        <Button size="sm" variant="default">
+          Review
+        </Button>
+      </BannerActions>
+    </>
+  );
+}
+
 function StackedExample() {
-  const { addBanner, banners } = useBanner();
+  const { onBannerAdd, banners } = useBanners();
 
   const onAddInfoBanner = React.useCallback(() => {
-    addBanner({
+    onBannerAdd({
       variant: "info",
       dismissible: true,
       content: (
@@ -84,10 +111,10 @@ function StackedExample() {
         </>
       ),
     });
-  }, [addBanner]);
+  }, [onBannerAdd]);
 
   const onAddSuccessBanner = React.useCallback(() => {
-    addBanner({
+    onBannerAdd({
       variant: "success",
       dismissible: true,
       duration: 5000,
@@ -105,35 +132,17 @@ function StackedExample() {
         </>
       ),
     });
-  }, [addBanner]);
+  }, [onBannerAdd]);
 
   const onAddWarningBanner = React.useCallback(() => {
-    addBanner({
+    onBannerAdd({
       variant: "warning",
-      dismissible: true,
-      content: (
-        <>
-          <BannerIcon>
-            <AlertTriangle />
-          </BannerIcon>
-          <BannerContent>
-            <BannerTitle>Warning</BannerTitle>
-            <BannerDescription>
-              Please review your changes before continuing.
-            </BannerDescription>
-          </BannerContent>
-          <BannerActions>
-            <Button size="sm" variant="default">
-              Review
-            </Button>
-          </BannerActions>
-        </>
-      ),
+      content: <WarningBannerContent />,
     });
-  }, [addBanner]);
+  }, [onBannerAdd]);
 
   const onAddDestructiveBanner = React.useCallback(() => {
-    addBanner({
+    onBannerAdd({
       variant: "destructive",
       dismissible: true,
       content: (
@@ -148,9 +157,11 @@ function StackedExample() {
             </BannerDescription>
           </BannerContent>
           <BannerActions>
-            <Button size="sm" variant="ghost">
-              Dismiss
-            </Button>
+            <BannerClose asChild>
+              <Button size="sm" variant="ghost">
+                Dismiss
+              </Button>
+            </BannerClose>
             <Button size="sm" variant="destructive">
               Save Now
             </Button>
@@ -158,7 +169,7 @@ function StackedExample() {
         </>
       ),
     });
-  }, [addBanner]);
+  }, [onBannerAdd]);
 
   return (
     <div className="flex flex-col gap-4">

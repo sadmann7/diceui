@@ -41,10 +41,10 @@ interface Store {
   getState: () => StoreState;
   setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
   notify: () => void;
-  addBanner: (banner: Omit<BannerQueueItem, "id">) => string;
-  removeBanner: (id: string) => void;
-  clearBanners: () => void;
-  setRemoving: (id: string, value: boolean) => void;
+  onBannerAdd: (banner: Omit<BannerQueueItem, "id">) => string;
+  onBannerRemove: (id: string) => void;
+  onBannersClear: () => void;
+  onRemovingChange: (id: string, value: boolean) => void;
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -77,6 +77,7 @@ function useStore<T>(
 }
 
 interface BannerContextValue {
+  id?: string;
   variant?: BannerVariant;
   onClose?: () => void;
 }
@@ -91,6 +92,24 @@ function useBannerContext(consumerName: string) {
     );
   }
   return context;
+}
+
+function useBanner() {
+  const bannerContext = useBannerContext("useBanner");
+  const storeContext = React.useContext(StoreContext);
+  const { id, variant, onClose } = bannerContext;
+
+  return React.useMemo(() => {
+    const onRemove =
+      id && storeContext ? () => storeContext.onBannerRemove(id) : undefined;
+
+    return {
+      id,
+      variant,
+      onClose,
+      onRemove,
+    };
+  }, [id, variant, onClose, storeContext]);
 }
 
 interface BannersProps {
@@ -130,7 +149,7 @@ function Banners({
           listener();
         }
       },
-      addBanner: (banner) => {
+      onBannerAdd: (banner) => {
         const id = crypto.randomUUID();
         const newBanner: BannerQueueItem = { ...banner, id };
 
@@ -139,7 +158,7 @@ function Banners({
 
         if (banner.duration && banner.duration > 0) {
           const timeoutId = setTimeout(() => {
-            store.setRemoving(id, true);
+            store.onRemovingChange(id, true);
             timeoutsRef.current.delete(id);
           }, banner.duration);
           timeoutsRef.current.set(id, timeoutId);
@@ -147,7 +166,7 @@ function Banners({
 
         return id;
       },
-      removeBanner: (id) => {
+      onBannerRemove: (id) => {
         const banner = stateRef.current.banners.find((b) => b.id === id);
         if (!banner) return;
 
@@ -166,7 +185,7 @@ function Banners({
         );
         store.notify();
       },
-      clearBanners: () => {
+      onBannersClear: () => {
         for (const timeoutId of timeoutsRef.current.values()) {
           clearTimeout(timeoutId);
         }
@@ -175,7 +194,7 @@ function Banners({
         stateRef.current.banners = [];
         store.notify();
       },
-      setRemoving: (id, value) => {
+      onRemovingChange: (id, value) => {
         const newSet = new Set(stateRef.current.removing);
         if (value) {
           newSet.add(id);
@@ -213,15 +232,15 @@ function Banners({
   );
 }
 
-function useBanner() {
-  const store = useStoreContext("useBanner");
+function useBanners() {
+  const store = useStoreContext("useBanners");
   const banners = useStore((state) => state.banners);
 
   return React.useMemo(
     () => ({
-      addBanner: store.addBanner,
-      removeBanner: store.removeBanner,
-      clearBanners: store.clearBanners,
+      onBannerAdd: store.onBannerAdd,
+      onBannerRemove: store.onBannerRemove,
+      onBannersClear: store.onBannersClear,
       banners,
     }),
     [store, banners],
@@ -257,21 +276,22 @@ function QueuedBannerItem({ banner }: QueuedBannerItemProps) {
   const removing = useStore((state) => state.removing.has(banner.id));
 
   const onClose = React.useCallback(() => {
-    store.setRemoving(banner.id, true);
+    store.onRemovingChange(banner.id, true);
   }, [store, banner.id]);
 
   const onAnimationEnd = React.useCallback(() => {
     if (removing) {
-      store.removeBanner(banner.id);
+      store.onBannerRemove(banner.id);
     }
   }, [removing, store, banner.id]);
 
   const contextValue = React.useMemo<BannerContextValue>(
     () => ({
+      id: banner.id,
       variant: banner.variant,
       onClose,
     }),
-    [banner.variant, onClose],
+    [banner.id, banner.variant, onClose],
   );
 
   return (
@@ -315,14 +335,14 @@ function Banner({
   className,
   variant = "default",
   open: openProp,
-  defaultOpen = true,
+  defaultOpen,
   onOpenChange,
   children,
   asChild,
   ...props
 }: BannerProps) {
   const isControlled = openProp !== undefined;
-  const openRef = useLazyRef(() => openProp ?? defaultOpen);
+  const openRef = useLazyRef(() => openProp ?? defaultOpen ?? false);
 
   if (isControlled) {
     openRef.current = openProp;
@@ -483,4 +503,5 @@ export {
   Banners,
   BannerTitle,
   useBanner,
+  useBanners,
 };
