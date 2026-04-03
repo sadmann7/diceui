@@ -1,4 +1,4 @@
-import type { Slider } from "@radix-ui/react-slider";
+import type { Slider } from "radix-ui";
 import type { Button } from "@/registry/bases/radix/ui/button";
 import type {
   DropdownMenu,
@@ -340,7 +340,7 @@ export interface MediaPlayerSeekForwardProps
 
 export interface MediaPlayerSeekProps
   extends Omit<
-      React.ComponentProps<typeof Slider>,
+      React.ComponentProps<typeof Slider.Root>,
       keyof React.ComponentProps<"div">
     >,
     CompositionProps {
@@ -461,7 +461,7 @@ export interface MediaPlayerSeekProps
 
 export interface MediaPlayerVolumeProps
   extends Omit<
-      React.ComponentProps<typeof Slider>,
+      React.ComponentProps<typeof Slider.Root>,
       keyof React.ComponentProps<"div">
     >,
     CompositionProps {

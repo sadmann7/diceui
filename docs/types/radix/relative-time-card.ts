@@ -1,8 +1,9 @@
-import type {
-  HoverCardContentProps,
-  HoverCardProps,
-} from "@radix-ui/react-hover-card";
+import type { HoverCard } from "radix-ui";
+import type * as React from "react";
 import type { CompositionProps, EmptyProps } from "@/types";
+
+type HoverCardProps = React.ComponentProps<typeof HoverCard.Root>;
+type HoverCardContentProps = React.ComponentProps<typeof HoverCard.Content>;
 
 export interface RelativeTimeCardProps
   extends EmptyProps<"button">,

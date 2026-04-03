@@ -1,10 +1,10 @@
-import type { Slot } from "@radix-ui/react-slot";
+import type { Slot } from "radix-ui";
 import type * as React from "react";
 import type { CompositionProps } from "@/types";
 
 export interface HitboxProps
   extends Omit<
-      React.ComponentProps<typeof Slot>,
+      React.ComponentProps<typeof Slot.Root>,
       keyof React.ComponentProps<"div">
     >,
     CompositionProps {

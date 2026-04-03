@@ -1,4 +1,4 @@
-import type { Separator } from "@radix-ui/react-separator";
+import type { Separator } from "radix-ui";
 import type { EmptyProps } from "@/types";
 
 export interface StatProps extends EmptyProps<"div"> {}
@@ -66,7 +66,7 @@ export interface StatTrendProps extends EmptyProps<"div"> {
 
 export interface StatSeparatorProps
   extends Omit<
-    React.ComponentProps<typeof Separator>,
+    React.ComponentProps<typeof Separator.Root>,
     keyof React.ComponentProps<"div">
   > {}
 
