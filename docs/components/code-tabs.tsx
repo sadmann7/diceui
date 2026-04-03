@@ -18,7 +18,10 @@ export function CodeTabs({
       variant="line"
       value={config.installationType ?? "cli"}
       onValueChange={(value) =>
-        setConfig({ ...config, installationType: value as "cli" | "manual" })
+        setConfig({
+          ...config,
+          installationType: value as typeof config.installationType,
+        })
       }
       className={cn(
         "not-prose relative mt-6 w-full *:data-[slot=tabs-list]:gap-6",
