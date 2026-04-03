@@ -78,7 +78,7 @@ export default async function DocPage(props: DocPageParams) {
       {showBaseSwitcher && base ? (
         <BaseSwitcher base={base} pathname={page.url} />
       ) : null}
-      <DocsBody className={showBaseSwitcher ? "pt-6" : "pt-2"}>
+      <DocsBody className="pt-2">
         <Mdx page={page} />
       </DocsBody>
     </DocsPage>

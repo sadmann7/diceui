@@ -75,7 +75,11 @@ export const ui: Registry["items"] = [
     name: "banner",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["button", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "button",
+      "@diceui/use-as-ref",
+      "@diceui/use-lazy-ref",
+    ],
     files: [
       {
         path: "ui/banner.tsx",

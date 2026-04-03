@@ -85,6 +85,7 @@
     ],
     "registryDependencies": [
       "button",
+      "@diceui/use-as-ref",
       "@diceui/use-lazy-ref"
     ],
     "files": [

@@ -75,7 +75,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -958,7 +958,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -1841,7 +1841,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -2724,7 +2724,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -3607,7 +3607,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -4490,7 +4490,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -5512,7 +5512,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -6178,7 +6178,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -6844,7 +6844,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -7510,7 +7510,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -8176,7 +8176,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -8842,7 +8842,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",

@@ -6,6 +6,7 @@ import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { cn } from "@/lib/utils";
+import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 
@@ -35,7 +36,7 @@ type BannerContent =
   | React.ReactNode
   | ((props: BannerRenderProps) => React.ReactNode);
 
-interface QueuedBannerItem {
+interface BannerData {
   id: string;
   content: BannerContent;
   variant?: BannerVariant;
@@ -46,7 +47,7 @@ interface QueuedBannerItem {
 }
 
 interface StoreState {
-  banners: QueuedBannerItem[];
+  banners: BannerData[];
   removing: Set<string>;
   heights: Map<string, number>;
 }
@@ -55,7 +56,7 @@ interface Store {
   subscribe: (callback: () => void) => () => void;
   getState: () => StoreState;
   notify: () => void;
-  onBannerAdd: (banner: Omit<QueuedBannerItem, "id">) => string;
+  onBannerAdd: (banner: Omit<BannerData, "id">) => string;
   onBannerRemove: (id: string) => void;
   onBannersClear: () => void;
   onRemovingChange: (id: string, value: boolean) => void;
@@ -157,7 +158,7 @@ function Banners({
       },
       onBannerAdd: (banner) => {
         const id = crypto.randomUUID();
-        const newBanner: QueuedBannerItem = { ...banner, id };
+        const newBanner: BannerData = { ...banner, id };
         const priority = banner.priority ?? DEFAULT_BANNER_PRIORITY;
 
         const banners = [...stateRef.current.banners];
@@ -274,11 +275,11 @@ function Banners({
             }}
           >
             {visibleBanners.map((banner, index) => (
-              <QueuedBanner
+              <BannerImpl
                 key={banner.id}
                 banner={banner}
-                index={index}
                 side={side}
+                index={index}
               />
             ))}
           </div>,
@@ -323,14 +324,14 @@ const bannerVariants = cva(
   },
 );
 
-interface QueuedBannerProps {
-  banner: QueuedBannerItem;
-  index: number;
+interface BannerImplProps {
+  banner: BannerData;
   side: BannerSide;
+  index: number;
 }
 
-function QueuedBanner({ banner, index, side }: QueuedBannerProps) {
-  const store = useStoreContext("QueuedBanner");
+function BannerImpl({ banner, side, index }: BannerImplProps) {
+  const store = useStoreContext("BannerImpl");
   const removing = useStore(store, (state) => state.removing.has(banner.id));
   const banners = useStore(store, (state) => state.banners);
   const heights = useStore(store, (state) => state.heights);
@@ -474,12 +475,15 @@ function Banner({
   ...props
 }: BannerProps) {
   const store = React.useContext(StoreContext);
-  const isInsideStore = store !== null;
 
+  const isInsideStore = store !== null;
   const isControlled = openProp !== undefined;
+
   const openRef = useLazyRef(() => openProp ?? defaultOpen ?? true);
   const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
   const bannerIdRef = React.useRef<string | null>(null);
+  const onDismissRef = useAsRef(onDismiss);
+  const onOpenChangeRef = useAsRef(onOpenChange);
 
   if (isControlled) {
     openRef.current = openProp;
@@ -507,8 +511,8 @@ function Banner({
       dismissible,
       duration,
       onDismiss: () => {
-        onDismiss?.();
-        onOpenChange?.(false);
+        onDismissRef.current?.();
+        onOpenChangeRef.current?.(false);
       },
     });
     bannerIdRef.current = id;
@@ -528,8 +532,8 @@ function Banner({
     priority,
     dismissible,
     duration,
-    onDismiss,
-    onOpenChange,
+    onDismissRef,
+    onOpenChangeRef,
   ]);
 
   const onClose = React.useCallback(() => {
@@ -539,8 +543,8 @@ function Banner({
         listener();
       }
     }
-    onOpenChange?.(false);
-  }, [isControlled, openRef, listenersRef, onOpenChange]);
+    onOpenChangeRef.current?.(false);
+  }, [isControlled, openRef, listenersRef, onOpenChangeRef]);
 
   const contextValue = React.useMemo<BannerContextValue>(
     () => ({
@@ -562,7 +566,7 @@ function Banner({
         aria-live="polite"
         data-slot="banner"
         data-state="open"
-        className={cn(bannerVariants({ variant }), className)}
+        className={cn(bannerVariants({ variant, className }))}
         {...props}
       >
         {children}
@@ -571,7 +575,7 @@ function Banner({
   );
 }
 
-function BannerIcon({ className, children, asChild, ...props }: DivProps) {
+function BannerIcon({ className, asChild, ...props }: DivProps) {
   const IconPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
@@ -579,9 +583,7 @@ function BannerIcon({ className, children, asChild, ...props }: DivProps) {
       data-slot="banner-icon"
       className={cn("flex shrink-0 items-center [&>svg]:size-4", className)}
       {...props}
-    >
-      {children}
-    </IconPrimitive>
+    />
   );
 }
 
