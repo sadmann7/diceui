@@ -2723,7 +2723,7 @@ function MediaPlayerDownload(props: React.ComponentProps<typeof Button>) {
 
       const mediaElement = context.mediaRef.current;
 
-      if (!mediaElement || !mediaElement.currentSrc) return;
+      if (!mediaElement?.currentSrc) return;
 
       const link = document.createElement("a");
       link.href = mediaElement.currentSrc;

@@ -316,7 +316,7 @@ function detectCountryFromNumber(
   value: string,
   countries: Country[],
 ): Country | undefined {
-  if (!value || !value.startsWith("+")) return undefined;
+  if (!value?.startsWith("+")) return undefined;
 
   const digits = value.slice(1).replace(/\D/g, "");
   if (!digits) return undefined;
