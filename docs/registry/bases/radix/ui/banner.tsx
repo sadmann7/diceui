@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 
-const ROOT_NAME = "Banners";
+const BANNERS_NAME = "Banners";
 const BANNER_NAME = "Banner";
 
 interface DivProps extends React.ComponentProps<"div"> {
@@ -43,21 +43,15 @@ interface QueuedBannerItem {
   onDismiss?: () => void;
 }
 
-interface BannerHeight {
-  id: string;
-  height: number;
-}
-
 interface StoreState {
   banners: QueuedBannerItem[];
   removing: Set<string>;
-  heights: BannerHeight[];
+  heights: Map<string, number>;
 }
 
 interface Store {
   subscribe: (callback: () => void) => () => void;
   getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
   notify: () => void;
   onBannerAdd: (banner: Omit<QueuedBannerItem, "id">) => string;
   onBannerRemove: (id: string) => void;
@@ -72,28 +66,19 @@ const StoreContext = React.createContext<Store | null>(null);
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
   if (!context) {
-    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(
+      `\`${consumerName}\` must be used within \`${BANNERS_NAME}\``,
+    );
   }
   return context;
 }
 
-function useStore<T>(
-  selector: (state: StoreState) => T,
-  ogStore?: Store | null,
-): T {
-  const contextStore = React.useContext(StoreContext);
-  const store = ogStore ?? contextStore;
-
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
-  }
-
-  const getSnapshot = React.useCallback(
+function useStore<T>(store: Store, selector: (state: StoreState) => T): T {
+  return React.useSyncExternalStore(
+    store.subscribe,
     () => selector(store.getState()),
-    [store, selector],
+    () => selector(store.getState()),
   );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
 interface BannerContextValue {
@@ -146,7 +131,7 @@ function Banners({
   const stateRef = useLazyRef<StoreState>(() => ({
     banners: [],
     removing: new Set(),
-    heights: [],
+    heights: new Map(),
   }));
   const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
   const timeoutsRef = useLazyRef<Map<string, ReturnType<typeof setTimeout>>>(
@@ -160,11 +145,6 @@ function Banners({
         return () => listenersRef.current.delete(cb);
       },
       getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
-        stateRef.current[key] = value;
-        store.notify();
-      },
       notify: () => {
         for (const listener of listenersRef.current) {
           listener();
@@ -209,8 +189,9 @@ function Banners({
           timeoutsRef.current.delete(id);
         }
 
-        stateRef.current.removing = new Set(stateRef.current.removing);
-        stateRef.current.removing.delete(id);
+        const newRemoving = new Set(stateRef.current.removing);
+        newRemoving.delete(id);
+        stateRef.current.removing = newRemoving;
 
         banner.onDismiss?.();
         stateRef.current.banners = stateRef.current.banners.filter(
@@ -224,7 +205,7 @@ function Banners({
         }
         timeoutsRef.current.clear();
         stateRef.current.removing = new Set();
-        stateRef.current.heights = [];
+        stateRef.current.heights = new Map();
         stateRef.current.banners = [];
         store.notify();
       },
@@ -239,42 +220,34 @@ function Banners({
         store.notify();
       },
       onHeightChange: (id, height) => {
-        const existing = stateRef.current.heights.find((h) => h.id === id);
-        if (existing) {
-          if (existing.height === height) return;
-          stateRef.current.heights = stateRef.current.heights.map((h) =>
-            h.id === id ? { ...h, height } : h,
-          );
-        } else {
-          stateRef.current.heights = [
-            { id, height },
-            ...stateRef.current.heights,
-          ];
-        }
+        if (stateRef.current.heights.get(id) === height) return;
+        const newHeights = new Map(stateRef.current.heights);
+        newHeights.set(id, height);
+        stateRef.current.heights = newHeights;
         store.notify();
       },
       onHeightRemove: (id) => {
-        const existing = stateRef.current.heights.find((h) => h.id === id);
-        if (!existing) return;
-        stateRef.current.heights = stateRef.current.heights.filter(
-          (h) => h.id !== id,
-        );
+        if (!stateRef.current.heights.has(id)) return;
+        const newHeights = new Map(stateRef.current.heights);
+        newHeights.delete(id);
+        stateRef.current.heights = newHeights;
         store.notify();
       },
     }),
     [stateRef, listenersRef, timeoutsRef],
   );
 
-  const banners = useStore((state) => state.banners, store);
-  const heights = useStore((state) => state.heights, store);
+  const banners = useStore(store, (state) => state.banners);
+  const heights = useStore(store, (state) => state.heights);
   const visibleBanners = banners.slice(0, maxVisible);
   const container = containerProp ?? globalThis.document?.body ?? null;
 
   const totalHeight = React.useMemo(() => {
-    return visibleBanners.reduce((acc, banner) => {
-      const height = heights.find((h) => h.id === banner.id)?.height ?? 0;
-      return acc + height;
-    }, 0);
+    let total = 0;
+    for (const banner of visibleBanners) {
+      total += heights.get(banner.id) ?? 0;
+    }
+    return total;
   }, [visibleBanners, heights]);
 
   return (
@@ -303,7 +276,7 @@ function Banners({
 
 function useBanners() {
   const store = useStoreContext("useBanners");
-  const banners = useStore((state) => state.banners);
+  const banners = useStore(store, (state) => state.banners);
 
   return React.useMemo(
     () => ({
@@ -338,91 +311,72 @@ const bannerVariants = cva(
   },
 );
 
-interface QueuedBannerProps extends React.ComponentProps<"div"> {
+interface QueuedBannerProps {
   banner: QueuedBannerItem;
   index: number;
 }
 
-function QueuedBanner({
-  banner,
-  index,
-  className,
-  style,
-  ...props
-}: QueuedBannerProps) {
+function QueuedBanner({ banner, index }: QueuedBannerProps) {
   const store = useStoreContext("QueuedBanner");
-  const removing = useStore((state) => state.removing.has(banner.id));
-  const heights = useStore((state) => state.heights);
+  const removing = useStore(store, (state) => state.removing.has(banner.id));
+  const banners = useStore(store, (state) => state.banners);
+  const heights = useStore(store, (state) => state.heights);
+
   const [mounted, setMounted] = React.useState(false);
   const bannerRef = React.useRef<HTMLDivElement>(null);
   const offsetBeforeRemoveRef = React.useRef(0);
 
-  const heightIndex = React.useMemo(
-    () => heights.findIndex((h) => h.id === banner.id),
-    [heights, banner.id],
-  );
-
   const offset = React.useMemo(() => {
-    if (heightIndex === -1) return 0;
-    return heights.slice(0, heightIndex).reduce((acc, h) => acc + h.height, 0);
-  }, [heights, heightIndex]);
-
-  React.useEffect(() => {
-    if (!removing) {
-      offsetBeforeRemoveRef.current = offset;
+    let total = 0;
+    for (const b of banners) {
+      if (b.id === banner.id) break;
+      total += heights.get(b.id) ?? 0;
     }
-  }, [offset, removing]);
+    return total;
+  }, [banners, heights, banner.id]);
+
+  if (!removing) {
+    offsetBeforeRemoveRef.current = offset;
+  }
 
   React.useEffect(() => {
-    const frame = requestAnimationFrame(() => {
-      setMounted(true);
-    });
+    const frame = requestAnimationFrame(() => setMounted(true));
     return () => cancelAnimationFrame(frame);
   }, []);
 
   React.useLayoutEffect(() => {
-    if (bannerRef.current && !removing) {
-      const height = bannerRef.current.getBoundingClientRect().height;
-      store.onHeightChange(banner.id, height);
-    }
+    if (!bannerRef.current || removing) return;
+    const height = bannerRef.current.getBoundingClientRect().height;
+    store.onHeightChange(banner.id, height);
   }, [store, banner.id, removing]);
 
   React.useEffect(() => {
     if (!removing) return;
-
     store.onHeightRemove(banner.id);
-
-    const timeoutId = setTimeout(() => {
-      store.onBannerRemove(banner.id);
-    }, ANIMATION_DURATION);
-
+    const timeoutId = setTimeout(
+      () => store.onBannerRemove(banner.id),
+      ANIMATION_DURATION,
+    );
     return () => clearTimeout(timeoutId);
   }, [removing, store, banner.id]);
 
-  const onClose = React.useCallback(() => {
-    store.onRemovingChange(banner.id, true);
-  }, [store, banner.id]);
+  const onClose = React.useCallback(
+    () => store.onRemovingChange(banner.id, true),
+    [store, banner.id],
+  );
 
-  const onRemove = React.useCallback(() => {
-    store.onBannerRemove(banner.id);
-  }, [store, banner.id]);
+  const onRemove = React.useCallback(
+    () => store.onBannerRemove(banner.id),
+    [store, banner.id],
+  );
 
   const contextValue = React.useMemo<BannerContextValue>(
-    () => ({
-      id: banner.id,
-      variant: banner.variant,
-      onClose,
-    }),
+    () => ({ id: banner.id, variant: banner.variant, onClose }),
     [banner.id, banner.variant, onClose],
   );
 
   const renderProps = React.useMemo<BannerRenderProps>(
-    () => ({
-      id: banner.id,
-      variant: banner.variant,
-      onClose,
-      onRemove,
-    }),
+    () => ({ id: banner.id, variant: banner.variant, onClose, onRemove }),
     [banner.id, banner.variant, onClose, onRemove],
   );
 
@@ -431,45 +385,36 @@ function QueuedBanner({
       ? banner.content(renderProps)
       : banner.content;
 
-  const isFront = index === 0;
   const currentOffset = removing ? offsetBeforeRemoveRef.current : offset;
-
-  const getTransform = React.useCallback(() => {
-    if (!mounted) return "translateY(-100%)";
-    if (removing) return `translateY(calc(${currentOffset}px - 100%))`;
-    return `translateY(${currentOffset}px)`;
-  }, [mounted, removing, currentOffset]);
+  const transform = !mounted
+    ? "translateY(-100%)"
+    : removing
+      ? `translateY(calc(${currentOffset}px - 100%))`
+      : `translateY(${currentOffset}px)`;
 
   return (
     <BannerContext.Provider value={contextValue}>
       <div
-        ref={bannerRef}
         role="status"
         aria-live="polite"
         data-slot="queued-banner"
         data-state={removing ? "closed" : "open"}
         data-mounted={mounted}
         data-removed={removing}
-        data-front={isFront}
+        data-front={index === 0}
         data-index={index}
-        className={cn(bannerVariants({ variant: banner.variant, className }))}
-        style={
-          {
-            "--offset": currentOffset,
-            "--opacity": mounted && !removing ? 1 : 0,
-            "--index": index,
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            zIndex: removing ? 0 : 50 - index,
-            transform: getTransform(),
-            opacity: "var(--opacity)",
-            transition: `transform ${ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1), opacity ${removing ? ANIMATION_DURATION / 2 : ANIMATION_DURATION}ms ease`,
-            ...style,
-          } as React.CSSProperties
-        }
-        {...props}
+        ref={bannerRef}
+        className={cn(bannerVariants({ variant: banner.variant }))}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: removing ? 0 : 50 - index,
+          transform,
+          opacity: mounted && !removing ? 1 : 0,
+          transition: `transform ${ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1), opacity ${removing ? ANIMATION_DURATION / 2 : ANIMATION_DURATION}ms ease`,
+        }}
       >
         {content}
         {banner.dismissible && (

@@ -144,7 +144,7 @@ function StackedExample() {
   const onAddDestructiveBanner = React.useCallback(() => {
     onBannerAdd({
       variant: "destructive",
-      dismissible: true,
+      dismissible: false,
       content: (
         <>
           <BannerIcon>
