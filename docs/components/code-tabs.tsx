@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 import { MdxTabs } from "@/components/mdx-tabs";
-import { useConfig } from "@/hooks/use-config";
+import { type Config, useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
 import type { Tabs } from "@/registry/bases/radix/ui/tabs";
 
@@ -20,7 +20,7 @@ export function CodeTabs({
       onValueChange={(value) =>
         setConfig({
           ...config,
-          installationType: value as typeof config.installationType,
+          installationType: value as Config["installationType"],
         })
       }
       className={cn(
