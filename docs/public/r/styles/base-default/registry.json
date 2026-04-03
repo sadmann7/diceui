@@ -286,10 +286,7 @@
         "@diceui/use-lazy-ref"
       ],
       "dependencies": [
-        "@base-ui/react",
-        "react-dom",
-        "class-variance-authority",
-        "lucide-react"
+        "@base-ui/react"
       ]
     },
     {

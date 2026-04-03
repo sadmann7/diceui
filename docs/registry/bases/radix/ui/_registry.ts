@@ -74,7 +74,7 @@ export const ui: Registry["items"] = [
   {
     name: "banner",
     type: "registry:ui",
-    dependencies: ["radix-ui", "class-variance-authority", "lucide-react"],
+    dependencies: ["radix-ui"],
     registryDependencies: ["button", "@diceui/use-lazy-ref"],
     files: [
       {

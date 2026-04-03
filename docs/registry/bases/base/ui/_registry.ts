@@ -249,12 +249,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["button", "@diceui/use-lazy-ref"],
-    dependencies: [
-      "@base-ui/react",
-      "react-dom",
-      "class-variance-authority",
-      "lucide-react",
-    ],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "segmented-input",

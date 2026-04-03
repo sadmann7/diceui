@@ -48,7 +48,8 @@ Update the registry files in `@docs/registry/bases/[base]/`:
 Add UI component entry with:
 
 - Component name
-- Dependencies (external packages like `@radix-ui/react-*` or `@base-ui/react`)
+- Dependencies (only the main UI library: `radix-ui` or `@base-ui/react`)
+  - Do NOT include `class-variance-authority`, `lucide-react`, or `react-dom` - these are already part of the project setup
 - Registry dependencies (internal UI components, hooks, libs)
 - File paths for UI component
 
@@ -77,6 +78,21 @@ Create comprehensive documentation including:
 - Complete API reference with AutoTypeTable for each interface using `./types/[base]/[component-name].ts`
 - Accessibility section with keyboard interactions
 - Any specific notes about browser support or limitations
+
+### 5. Update Navigation Meta (@docs/content/docs/components/[base]/meta.json)
+
+Add the component name to the `pages` array in alphabetical order:
+
+```json
+{
+  "pages": [
+    "action-bar",
+    "angle-slider",
+    "[component-name]",  // Insert alphabetically
+    ...
+  ]
+}
+```
 
 ## Implementation Guidelines
 
@@ -129,6 +145,7 @@ You should:
 4. Update `docs/registry/bases/[base]/ui/_registry.ts` with the component entry
 5. Update `docs/registry/bases/[base]/examples/_registry.ts` with example entries
 6. Create `docs/content/docs/components/[base]/[component-name].mdx` documentation
+7. Update `docs/content/docs/components/[base]/meta.json` to add the component to navigation
 
 And when user types: `@setup-only [component-name] --base=[radix|base]`
 

@@ -81,9 +81,7 @@
     "name": "banner",
     "type": "registry:ui",
     "dependencies": [
-      "radix-ui",
-      "class-variance-authority",
-      "lucide-react"
+      "radix-ui"
     ],
     "registryDependencies": [
       "button",
