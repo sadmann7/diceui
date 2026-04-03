@@ -34,6 +34,23 @@ export default function BannerDemo() {
       <Banners side="top">
         <PriorityExample />
       </Banners>
+      <Banners side="top">
+        <Banner variant="info" defaultOpen>
+          <BannerIcon>
+            <Info />
+          </BannerIcon>
+          <BannerContent>
+            <BannerTitle>New update available</BannerTitle>
+          </BannerContent>
+          <BannerActions>
+            <BannerClose size="sm">Later</BannerClose>
+            <Button size="sm" variant="default">
+              Update Now
+            </Button>
+          </BannerActions>
+          <BannerClose />
+        </Banner>
+      </Banners>
     </>
   );
 }
@@ -90,6 +107,7 @@ function StackedExample() {
               This is an informational message.
             </BannerDescription>
           </BannerContent>
+          <BannerClose />
         </>
       ),
     });
@@ -111,6 +129,7 @@ function StackedExample() {
               Your changes have been saved successfully.
             </BannerDescription>
           </BannerContent>
+          <BannerClose />
         </>
       ),
     });
@@ -137,6 +156,7 @@ function StackedExample() {
             <Button size="sm" variant="default">
               Review
             </Button>
+            <BannerClose />
           </BannerActions>
         </>
       ),
@@ -159,12 +179,9 @@ function StackedExample() {
               Your session is about to expire. Please save your work.
             </BannerDescription>
           </BannerContent>
-          <BannerActions>
-            <BannerClose size="sm">Dismiss</BannerClose>
-            <Button size="sm" variant="destructive">
-              Save Now
-            </Button>
-          </BannerActions>
+          <Button size="sm" variant="destructive">
+            Save Now
+          </Button>
         </>
       ),
     });
@@ -220,6 +237,7 @@ function PriorityExample() {
             <Button size="sm" variant="default">
               Update
             </Button>
+            <BannerClose />
           </BannerActions>
         </>
       ),
@@ -242,6 +260,7 @@ function PriorityExample() {
               Some services are currently unavailable. We&apos;re working on it.
             </BannerDescription>
           </BannerContent>
+          <BannerClose />
         </>
       ),
     });

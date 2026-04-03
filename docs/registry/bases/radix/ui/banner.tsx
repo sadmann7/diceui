@@ -85,7 +85,7 @@ function useStore<T>(store: Store, selector: (state: StoreState) => T): T {
 
 interface BannerContextValue {
   id?: string;
-  variant?: BannerVariant;
+  variant?: BannerVariant | null;
   dismissible?: boolean;
   onClose?: () => void;
 }
@@ -322,12 +322,18 @@ const bannerVariants = cva(
   },
 );
 
-interface QueuedBannerProps {
+interface QueuedBannerProps extends React.ComponentProps<"div"> {
   banner: QueuedBannerItem;
   index: number;
 }
 
-function QueuedBanner({ banner, index }: QueuedBannerProps) {
+function QueuedBanner({
+  banner,
+  index,
+  className,
+  style,
+  ...props
+}: QueuedBannerProps) {
   const store = useStoreContext("QueuedBanner");
   const side = React.useContext(SideContext);
   const removing = useStore(store, (state) => state.removing.has(banner.id));
@@ -428,7 +434,7 @@ function QueuedBanner({ banner, index }: QueuedBannerProps) {
         data-front={index === 0}
         data-index={index}
         ref={bannerRef}
-        className={cn(bannerVariants({ variant: banner.variant }))}
+        className={cn(bannerVariants({ variant: banner.variant, className }))}
         style={{
           position: "absolute",
           [isTop ? "top" : "bottom"]: 0,
@@ -438,22 +444,13 @@ function QueuedBanner({ banner, index }: QueuedBannerProps) {
           transform: getTransform(),
           opacity: mounted && !removing ? 1 : 0,
           transition: `transform ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1), opacity ${removing ? BANNER_ANIMATION_DURATION / 2 : BANNER_ANIMATION_DURATION}ms ease`,
+          ...style,
         }}
+        {...props}
       >
         {typeof banner.content === "function"
           ? banner.content(renderProps)
           : banner.content}
-        {banner.dismissible && (
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={onClose}
-            className="shrink-0"
-            aria-label="Dismiss banner"
-          >
-            <X className="size-3.5" />
-          </Button>
-        )}
       </div>
     </BannerContext.Provider>
   );
@@ -463,6 +460,10 @@ interface BannerProps extends DivProps, VariantProps<typeof bannerVariants> {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  priority?: number;
+  dismissible?: boolean;
+  duration?: number;
+  onDismiss?: () => void;
 }
 
 function Banner({
@@ -471,13 +472,21 @@ function Banner({
   open: openProp,
   defaultOpen,
   onOpenChange,
+  priority,
+  dismissible = DEFAULT_BANNER_DISMISSIBLE,
+  duration,
+  onDismiss,
   children,
   asChild,
   ...props
 }: BannerProps) {
+  const store = React.useContext(StoreContext);
+  const isInsideStore = store !== null;
+
   const isControlled = openProp !== undefined;
   const openRef = useLazyRef(() => openProp ?? defaultOpen ?? true);
   const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
+  const bannerIdRef = React.useRef<string | null>(null);
 
   if (isControlled) {
     openRef.current = openProp;
@@ -495,6 +504,41 @@ function Banner({
 
   const open = React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
 
+  React.useEffect(() => {
+    if (!isInsideStore || !store || !open) return;
+
+    const id = store.onBannerAdd({
+      content: children,
+      variant: variant ?? undefined,
+      priority,
+      dismissible,
+      duration,
+      onDismiss: () => {
+        onDismiss?.();
+        onOpenChange?.(false);
+      },
+    });
+    bannerIdRef.current = id;
+
+    return () => {
+      if (bannerIdRef.current) {
+        store.onBannerRemove(bannerIdRef.current);
+        bannerIdRef.current = null;
+      }
+    };
+  }, [
+    isInsideStore,
+    store,
+    open,
+    children,
+    variant,
+    priority,
+    dismissible,
+    duration,
+    onDismiss,
+    onOpenChange,
+  ]);
+
   const onClose = React.useCallback(() => {
     if (!isControlled) {
       openRef.current = false;
@@ -503,18 +547,18 @@ function Banner({
       }
     }
     onOpenChange?.(false);
-  }, [isControlled, onOpenChange, openRef, listenersRef]);
+  }, [isControlled, openRef, listenersRef, onOpenChange]);
 
   const contextValue = React.useMemo<BannerContextValue>(
     () => ({
-      variant: variant ?? undefined,
-      dismissible: DEFAULT_BANNER_DISMISSIBLE,
+      variant,
+      dismissible,
       onClose,
     }),
-    [variant, onClose],
+    [variant, dismissible, onClose],
   );
 
-  if (!open) return null;
+  if (!open || isInsideStore) return null;
 
   const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
