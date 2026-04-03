@@ -24,7 +24,7 @@ import { Button } from "@/registry/bases/radix/ui/button";
 
 export default function BannerDemo() {
   return (
-    <Banners>
+    <Banners maxVisible={4}>
       <div className="flex w-full flex-col gap-6">
         <SimpleExample />
         <StackedExample />
