@@ -40,8 +40,8 @@ interface BannerData {
   content: BannerContent;
   variant?: BannerVariant;
   priority?: number;
-  dismissible?: boolean;
   duration?: number;
+  dismissible?: boolean;
   onDismiss?: () => void;
 }
 
@@ -455,8 +455,8 @@ interface BannerProps extends DivProps, VariantProps<typeof bannerVariants> {
   onOpenChange?: (open: boolean) => void;
   onDismiss?: () => void;
   priority?: number;
-  dismissible?: boolean;
   duration?: number;
+  dismissible?: boolean;
 }
 
 function Banner(props: BannerProps) {
@@ -468,8 +468,8 @@ function Banner(props: BannerProps) {
     onOpenChange,
     onDismiss,
     priority,
-    dismissible = DEFAULT_BANNER_DISMISSIBLE,
     duration,
+    dismissible = DEFAULT_BANNER_DISMISSIBLE,
     children,
     asChild,
     ...rootProps

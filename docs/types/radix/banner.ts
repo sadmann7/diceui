@@ -2,7 +2,10 @@ import type { Button } from "@/registry/bases/radix/ui/button";
 import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface BannersProps {
-  /** The children content within the banners provider. */
+  /**
+   * The Content with access to the banner queue via `useBanners`.
+   * Banners wrapped in this component will be portaled into the container.
+   */
   children?: React.ReactNode;
 
   /**
@@ -58,18 +61,21 @@ export interface BannerProps
   onOpenChange?: (open: boolean) => void;
 
   /**
+   * Callback when the banner is dismissed.
+   * ```ts
+   * onDismiss={() => {
+   *   console.log("Banner dismissed")
+   * }}
+   * ```
+   */
+  onDismiss?: () => void;
+
+  /**
    * Priority level for queue ordering.
    * Higher priority banners are shown first.
    * @default 0
    */
   priority?: number;
-
-  /**
-   * Whether the banner can be dismissed by the user.
-   * When false, the close button is disabled.
-   * @default true
-   */
-  dismissible?: boolean;
 
   /**
    * Auto-dismiss duration in milliseconds.
@@ -78,9 +84,11 @@ export interface BannerProps
   duration?: number;
 
   /**
-   * Callback when the banner is dismissed.
+   * Whether the banner can be dismissed by the user.
+   * When false, the close button is disabled.
+   * @default true
    */
-  onDismiss?: () => void;
+  dismissible?: boolean;
 }
 
 export interface BannerIconProps extends EmptyProps<"div">, CompositionProps {}

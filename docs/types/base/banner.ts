@@ -2,7 +2,10 @@ import type { Button } from "@/registry/bases/base/ui/button";
 import type { RenderProps } from "@/types";
 
 export interface BannersProps {
-  /** The content that can trigger and manage banners via `useBanners` hook. */
+  /**
+   * The Content with access to the banner queue via `useBanners`.
+   * Banners wrapped in this component will be portaled into the container.
+   */
   children?: React.ReactNode;
 
   /**
@@ -55,18 +58,21 @@ export interface BannerProps extends RenderProps, BannerVariantProps {
   onOpenChange?: (open: boolean) => void;
 
   /**
+   * Callback when the banner is dismissed.
+   * ```ts
+   * onDismiss={() => {
+   *   console.log("Banner dismissed")
+   * }}
+   * ```
+   */
+  onDismiss?: () => void;
+
+  /**
    * Priority level for queue ordering.
    * Higher priority banners are shown first.
    * @default 0
    */
   priority?: number;
-
-  /**
-   * Whether the banner can be dismissed by the user.
-   * When false, the close button is disabled.
-   * @default true
-   */
-  dismissible?: boolean;
 
   /**
    * Auto-dismiss duration in milliseconds.
@@ -75,9 +81,11 @@ export interface BannerProps extends RenderProps, BannerVariantProps {
   duration?: number;
 
   /**
-   * Callback when the banner is dismissed.
+   * Whether the banner can be dismissed by the user.
+   * When false, the close button is disabled.
+   * @default true
    */
-  onDismiss?: () => void;
+  dismissible?: boolean;
 }
 
 export interface BannerIconProps extends RenderProps {}
