@@ -56,11 +56,7 @@ function SimpleExample() {
           </BannerDescription>
         </BannerContent>
         <BannerActions>
-          <BannerClose asChild>
-            <Button size="sm" variant="ghost">
-              Later
-            </Button>
-          </BannerClose>
+          <BannerClose size="sm">Later</BannerClose>
           <Button size="sm" variant="default">
             Update Now
           </Button>
@@ -164,11 +160,7 @@ function StackedExample() {
             </BannerDescription>
           </BannerContent>
           <BannerActions>
-            <BannerClose asChild>
-              <Button size="sm" variant="ghost">
-                Dismiss
-              </Button>
-            </BannerClose>
+            <BannerClose size="sm">Dismiss</BannerClose>
             <Button size="sm" variant="destructive">
               Save Now
             </Button>

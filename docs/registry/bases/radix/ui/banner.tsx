@@ -20,10 +20,6 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-interface ButtonProps extends React.ComponentProps<"button"> {
-  asChild?: boolean;
-}
-
 type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
 type BannerSide = "top" | "bottom";
 
@@ -601,15 +597,13 @@ function BannerActions({ className, asChild, ...props }: DivProps) {
 
 function BannerClose({
   onClick: onClickProp,
-  className,
-  children,
-  asChild,
   disabled,
+  children,
   ...props
-}: ButtonProps) {
+}: React.ComponentProps<typeof Button>) {
   const { dismissible = DEFAULT_BANNER_DISMISSIBLE, onClose } =
     useBannerContext("BannerClose");
-  const ClosePrimitive = asChild ? SlotPrimitive.Slot : "button";
+
   const isDisabled = disabled ?? !dismissible;
 
   const onClick = React.useCallback(
@@ -622,19 +616,16 @@ function BannerClose({
   );
 
   return (
-    <ClosePrimitive
-      type="button"
+    <Button
       data-slot="banner-close"
+      variant="ghost"
+      size="icon-sm"
       onClick={onClick}
-      className={cn(
-        "shrink-0 rounded-md p-1 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
-        className,
-      )}
-      disabled={disabled}
+      disabled={isDisabled}
       {...props}
     >
       {children ?? <X className="size-3.5" />}
-    </ClosePrimitive>
+    </Button>
   );
 }
 
@@ -645,8 +636,6 @@ export {
   BannerContent,
   BannerDescription,
   BannerIcon,
-  //
-  type BannerSide,
   Banners,
   BannerTitle,
   //
