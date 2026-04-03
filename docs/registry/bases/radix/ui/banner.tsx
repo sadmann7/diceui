@@ -127,8 +127,6 @@ interface BannersProps {
   container?: Element | DocumentFragment | null;
 }
 
-const SideContext = React.createContext<BannerSide>("top");
-
 function Banners({
   children,
   maxVisible = 1,
@@ -259,30 +257,33 @@ function Banners({
 
   return (
     <StoreContext.Provider value={store}>
-      <SideContext.Provider value={side}>
-        {children}
-        {container &&
-          visibleBanners.length > 0 &&
-          ReactDOM.createPortal(
-            <div
-              data-slot="banner-container"
-              data-side={side}
-              className={cn(
-                "pointer-events-none fixed right-0 left-0 isolate z-50",
-                side === "top" ? "top-0" : "bottom-0",
-              )}
-              style={{
-                height: totalHeight > 0 ? totalHeight : "auto",
-                transition: `height ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1)`,
-              }}
-            >
-              {visibleBanners.map((banner, index) => (
-                <QueuedBanner key={banner.id} banner={banner} index={index} />
-              ))}
-            </div>,
-            container,
-          )}
-      </SideContext.Provider>
+      {children}
+      {container &&
+        visibleBanners.length > 0 &&
+        ReactDOM.createPortal(
+          <div
+            data-slot="banner-container"
+            data-side={side}
+            className={cn(
+              "pointer-events-none fixed right-0 left-0 isolate z-50",
+              side === "top" ? "top-0" : "bottom-0",
+            )}
+            style={{
+              height: totalHeight > 0 ? totalHeight : "auto",
+              transition: `height ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1)`,
+            }}
+          >
+            {visibleBanners.map((banner, index) => (
+              <QueuedBanner
+                key={banner.id}
+                banner={banner}
+                index={index}
+                side={side}
+              />
+            ))}
+          </div>,
+          container,
+        )}
     </StoreContext.Provider>
   );
 }
@@ -325,17 +326,18 @@ const bannerVariants = cva(
 interface QueuedBannerProps extends React.ComponentProps<"div"> {
   banner: QueuedBannerItem;
   index: number;
+  side: BannerSide;
 }
 
 function QueuedBanner({
   banner,
   index,
+  side,
   className,
   style,
   ...props
 }: QueuedBannerProps) {
   const store = useStoreContext("QueuedBanner");
-  const side = React.useContext(SideContext);
   const removing = useStore(store, (state) => state.removing.has(banner.id));
   const banners = useStore(store, (state) => state.banners);
   const heights = useStore(store, (state) => state.heights);
