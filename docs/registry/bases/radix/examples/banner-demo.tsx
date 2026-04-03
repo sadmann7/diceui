@@ -11,7 +11,6 @@ import {
   BannerIcon,
   Banners,
   BannerTitle,
-  useBanner,
   useBanners,
 } from "@/registry/bases/radix/ui/banner";
 import { Button } from "@/registry/bases/radix/ui/button";
@@ -64,32 +63,6 @@ function SimpleExample() {
   );
 }
 
-function WarningBannerContent() {
-  const { onClose } = useBanner();
-
-  return (
-    <>
-      <BannerIcon>
-        <AlertTriangle />
-      </BannerIcon>
-      <BannerContent>
-        <BannerTitle>Warning</BannerTitle>
-        <BannerDescription>
-          Please review your changes before continuing.
-        </BannerDescription>
-      </BannerContent>
-      <BannerActions>
-        <Button size="sm" variant="ghost" onClick={onClose}>
-          Skip
-        </Button>
-        <Button size="sm" variant="default">
-          Review
-        </Button>
-      </BannerActions>
-    </>
-  );
-}
-
 function StackedExample() {
   const { onBannerAdd, banners } = useBanners();
 
@@ -137,7 +110,27 @@ function StackedExample() {
   const onAddWarningBanner = React.useCallback(() => {
     onBannerAdd({
       variant: "warning",
-      content: <WarningBannerContent />,
+      content: ({ onClose }) => (
+        <>
+          <BannerIcon>
+            <AlertTriangle />
+          </BannerIcon>
+          <BannerContent>
+            <BannerTitle>Warning</BannerTitle>
+            <BannerDescription>
+              Please review your changes before continuing.
+            </BannerDescription>
+          </BannerContent>
+          <BannerActions>
+            <Button size="sm" variant="ghost" onClick={onClose}>
+              Skip
+            </Button>
+            <Button size="sm" variant="default">
+              Review
+            </Button>
+          </BannerActions>
+        </>
+      ),
     });
   }, [onBannerAdd]);
 

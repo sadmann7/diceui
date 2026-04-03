@@ -22,9 +22,20 @@ interface ButtonProps extends React.ComponentProps<"button"> {
 
 type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
 
+interface BannerRenderProps {
+  id: string;
+  variant?: BannerVariant;
+  onClose: () => void;
+  onRemove: () => void;
+}
+
+type BannerContent =
+  | React.ReactNode
+  | ((props: BannerRenderProps) => React.ReactNode);
+
 interface BannerQueueItem {
   id: string;
-  content: React.ReactNode;
+  content: BannerContent;
   variant?: BannerVariant;
   dismissible?: boolean;
   duration?: number;
@@ -279,6 +290,10 @@ function QueuedBannerItem({ banner }: QueuedBannerItemProps) {
     store.onRemovingChange(banner.id, true);
   }, [store, banner.id]);
 
+  const onRemove = React.useCallback(() => {
+    store.onBannerRemove(banner.id);
+  }, [store, banner.id]);
+
   const onAnimationEnd = React.useCallback(() => {
     if (removing) {
       store.onBannerRemove(banner.id);
@@ -294,6 +309,21 @@ function QueuedBannerItem({ banner }: QueuedBannerItemProps) {
     [banner.id, banner.variant, onClose],
   );
 
+  const renderProps = React.useMemo<BannerRenderProps>(
+    () => ({
+      id: banner.id,
+      variant: banner.variant,
+      onClose,
+      onRemove,
+    }),
+    [banner.id, banner.variant, onClose, onRemove],
+  );
+
+  const content =
+    typeof banner.content === "function"
+      ? banner.content(renderProps)
+      : banner.content;
+
   return (
     <BannerContext.Provider value={contextValue}>
       <div
@@ -308,7 +338,7 @@ function QueuedBannerItem({ banner }: QueuedBannerItemProps) {
             "fade-out-0 slide-out-to-top-full animate-out duration-200",
         )}
       >
-        {banner.content}
+        {content}
         {banner.dismissible && (
           <Button
             variant="ghost"
@@ -415,6 +445,7 @@ function BannerIcon({ className, children, asChild, ...props }: DivProps) {
 
 function BannerContent({ className, asChild, ...props }: DivProps) {
   const ContentPrimitive = asChild ? SlotPrimitive.Slot : "div";
+
   return (
     <ContentPrimitive
       data-slot="banner-content"
@@ -449,6 +480,7 @@ function BannerDescription({
 
 function BannerActions({ className, asChild, ...props }: DivProps) {
   const ActionsPrimitive = asChild ? SlotPrimitive.Slot : "div";
+
   return (
     <ActionsPrimitive
       data-slot="banner-actions"
@@ -502,6 +534,7 @@ export {
   BannerIcon,
   Banners,
   BannerTitle,
+  //
   useBanner,
   useBanners,
 };
