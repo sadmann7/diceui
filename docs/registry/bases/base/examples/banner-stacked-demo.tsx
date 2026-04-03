@@ -18,8 +18,8 @@ import {
   Banners,
   BannerTitle,
   useBanners,
-} from "@/registry/bases/radix/ui/banner";
-import { Button } from "@/registry/bases/radix/ui/button";
+} from "@/registry/bases/base/ui/banner";
+import { Button } from "@/registry/bases/base/ui/button";
 
 export default function BannerStackedDemo() {
   return (

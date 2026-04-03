@@ -1,0 +1,19 @@
+{
+  "name": "banner-demo",
+  "dependencies": [
+    "lucide-react"
+  ],
+  "registryDependencies": [
+    "banner",
+    "button"
+  ],
+  "files": [
+    {
+      "path": "examples/banner-demo.tsx",
+      "content": "import { Info } from \"lucide-react\";\nimport {\n  Banner,\n  BannerActions,\n  BannerClose,\n  BannerContent,\n  BannerDescription,\n  BannerIcon,\n  BannerTitle,\n} from \"@/registry/bases/base/ui/banner\";\nimport { Button } from \"@/registry/bases/base/ui/button\";\n\nexport default function BannerDemo() {\n  return (\n    <Banner>\n      <BannerIcon>\n        <Info />\n      </BannerIcon>\n      <BannerContent>\n        <BannerTitle>New update available</BannerTitle>\n        <BannerDescription>\n          A new version of the app is available. Update now to get the latest\n          features.\n        </BannerDescription>\n      </BannerContent>\n      <BannerActions>\n        <BannerClose size=\"sm\">Later</BannerClose>\n        <Button size=\"sm\" variant=\"default\">\n          Update Now\n        </Button>\n      </BannerActions>\n      <BannerClose />\n    </Banner>\n  );\n}\n",
+      "type": "registry:example",
+      "target": ""
+    }
+  ],
+  "type": "registry:example"
+}

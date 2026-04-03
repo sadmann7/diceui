@@ -1,13 +1,14 @@
 "use client";
 
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
-import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { cn } from "@/lib/utils";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
-import { Button } from "@/registry/bases/radix/ui/button";
+import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
+import { Button } from "@/registry/bases/base/ui/button";
 
 const BANNERS_NAME = "Banners";
 const BANNER_NAME = "Banner";
@@ -15,10 +16,6 @@ const BANNER_NAME = "Banner";
 const BANNER_ANIMATION_DURATION = 400;
 const DEFAULT_BANNER_PRIORITY = 0;
 const DEFAULT_BANNER_DISMISSIBLE = true;
-
-interface DivProps extends React.ComponentProps<"div"> {
-  asChild?: boolean;
-}
 
 type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
 type BannerSide = "top" | "bottom";
@@ -449,7 +446,10 @@ function QueuedBanner({ banner, index, side }: QueuedBannerProps) {
   );
 }
 
-interface BannerProps extends DivProps, VariantProps<typeof bannerVariants> {
+interface BannerProps
+  extends React.ComponentProps<"div">,
+    useRender.ComponentProps<"div">,
+    VariantProps<typeof bannerVariants> {
   open?: boolean;
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -459,20 +459,22 @@ interface BannerProps extends DivProps, VariantProps<typeof bannerVariants> {
   onDismiss?: () => void;
 }
 
-function Banner({
-  className,
-  variant = "default",
-  open: openProp,
-  defaultOpen,
-  onOpenChange,
-  priority,
-  dismissible = DEFAULT_BANNER_DISMISSIBLE,
-  duration,
-  onDismiss,
-  children,
-  asChild,
-  ...props
-}: BannerProps) {
+function Banner(props: BannerProps) {
+  const {
+    className,
+    variant = "default",
+    open: openProp,
+    defaultOpen,
+    onOpenChange,
+    priority,
+    dismissible = DEFAULT_BANNER_DISMISSIBLE,
+    duration,
+    onDismiss,
+    children,
+    render,
+    ...rootProps
+  } = props;
+
   const store = React.useContext(StoreContext);
   const isInsideStore = store !== null;
 
@@ -551,50 +553,76 @@ function Banner({
     [variant, dismissible, onClose],
   );
 
-  if (!open || isInsideStore) return null;
+  const rendered = useRender({
+    defaultTagName: "div",
+    props: mergeProps<"div">(
+      {
+        role: "status",
+        "aria-live": "polite",
+        className: cn(bannerVariants({ variant }), className),
+        children,
+      },
+      rootProps,
+    ),
+    render,
+    state: {
+      slot: "banner",
+      state: "open",
+    },
+  });
 
-  const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
+  if (!open || isInsideStore) return null;
 
   return (
     <BannerContext.Provider value={contextValue}>
-      <RootPrimitive
-        role="status"
-        aria-live="polite"
-        data-slot="banner"
-        data-state="open"
-        className={cn(bannerVariants({ variant }), className)}
-        {...props}
-      >
-        {children}
-      </RootPrimitive>
+      {rendered}
     </BannerContext.Provider>
   );
 }
 
-function BannerIcon({ className, children, asChild, ...props }: DivProps) {
-  const IconPrimitive = asChild ? SlotPrimitive.Slot : "div";
+interface BannerIconProps
+  extends React.ComponentProps<"div">,
+    useRender.ComponentProps<"div"> {}
 
-  return (
-    <IconPrimitive
-      data-slot="banner-icon"
-      className={cn("flex shrink-0 items-center [&>svg]:size-4", className)}
-      {...props}
-    >
-      {children}
-    </IconPrimitive>
-  );
+function BannerIcon(props: BannerIconProps) {
+  const { className, children, render, ...iconProps } = props;
+
+  return useRender({
+    defaultTagName: "div",
+    props: mergeProps<"div">(
+      {
+        className: cn("flex shrink-0 items-center [&>svg]:size-4", className),
+        children,
+      },
+      iconProps,
+    ),
+    render,
+    state: {
+      slot: "banner-icon",
+    },
+  });
 }
 
-function BannerContent({ className, asChild, ...props }: DivProps) {
-  const ContentPrimitive = asChild ? SlotPrimitive.Slot : "div";
+interface BannerContentProps
+  extends React.ComponentProps<"div">,
+    useRender.ComponentProps<"div"> {}
 
-  return (
-    <ContentPrimitive
-      data-slot="banner-content"
-      className={cn("flex min-w-0 flex-1 flex-col gap-1", className)}
-      {...props}
-    />
-  );
+function BannerContent(props: BannerContentProps) {
+  const { className, render, ...contentProps } = props;
+
+  return useRender({
+    defaultTagName: "div",
+    props: mergeProps<"div">(
+      {
+        className: cn("flex min-w-0 flex-1 flex-col gap-1", className),
+      },
+      contentProps,
+    ),
+    render,
+    state: {
+      slot: "banner-content",
+    },
+  });
 }
 
 function BannerTitle({ className, ...props }: React.ComponentProps<"div">) {
@@ -620,20 +648,29 @@ function BannerDescription({
   );
 }
 
-function BannerActions({ className, asChild, ...props }: DivProps) {
-  const ActionsPrimitive = asChild ? SlotPrimitive.Slot : "div";
+interface BannerActionsProps
+  extends React.ComponentProps<"div">,
+    useRender.ComponentProps<"div"> {}
 
-  return (
-    <ActionsPrimitive
-      data-slot="banner-actions"
-      className={cn("flex items-center gap-2", className)}
-      {...props}
-    />
-  );
+function BannerActions(props: BannerActionsProps) {
+  const { className, render, ...actionsProps } = props;
+
+  return useRender({
+    defaultTagName: "div",
+    props: mergeProps<"div">(
+      {
+        className: cn("flex items-center gap-2", className),
+      },
+      actionsProps,
+    ),
+    render,
+    state: {
+      slot: "banner-actions",
+    },
+  });
 }
 
 function BannerClose({
-  onClick: onClickProp,
   disabled,
   children,
   ...props
@@ -643,21 +680,15 @@ function BannerClose({
 
   const isDisabled = disabled ?? !dismissible;
 
-  const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
-      if (isDisabled) return;
-      onClickProp?.(event);
-      onClose?.();
-    },
-    [isDisabled, onClickProp, onClose],
-  );
-
   return (
     <Button
       data-slot="banner-close"
       variant="ghost"
       size="icon-sm"
-      onClick={onClick}
+      onClick={() => {
+        if (isDisabled) return;
+        onClose?.();
+      }}
       disabled={isDisabled}
       {...props}
     >

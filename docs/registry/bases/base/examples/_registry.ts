@@ -375,6 +375,30 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "banner-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["banner", "button"],
+    files: [
+      {
+        path: "examples/banner-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "banner-stacked-demo",
+    type: "registry:example",
+    dependencies: ["lucide-react"],
+    registryDependencies: ["banner", "button"],
+    files: [
+      {
+        path: "examples/banner-stacked-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "circular-progress-demo",
     type: "registry:example",
     registryDependencies: ["circular-progress"],

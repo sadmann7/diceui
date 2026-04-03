@@ -1,9 +1,7 @@
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-interface DemoProps extends React.ComponentProps<"div"> {}
-
-export function Demo({ children, className, ...props }: DemoProps) {
+function Demo({ children, className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="demo"
@@ -24,9 +22,7 @@ export function Demo({ children, className, ...props }: DemoProps) {
   );
 }
 
-interface DemoItemProps extends React.ComponentProps<"div"> {}
-
-function DemoItem({ className, ...props }: DemoItemProps) {
+function DemoItem({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="demo-item"
@@ -38,3 +34,21 @@ function DemoItem({ className, ...props }: DemoItemProps) {
     />
   );
 }
+
+function DemoItemGroup({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="demo-item-group"
+      className={cn("flex flex-col gap-4", className)}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+}
+
+export { Demo, DemoItemGroup };

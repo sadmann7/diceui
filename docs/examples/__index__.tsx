@@ -2812,6 +2812,32 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "banner-demo": {
+        name: "banner-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["banner","button"],
+        files: [{
+          path: "registry/bases/base/examples/banner-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "banner-stacked-demo": {
+        name: "banner-stacked-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["banner","button"],
+        files: [{
+          path: "registry/bases/base/examples/banner-stacked-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "circular-progress-demo": {
         name: "circular-progress-demo",
         description: "",

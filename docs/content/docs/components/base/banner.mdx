@@ -1,0 +1,226 @@
+---
+base: base
+title: Banner
+description: A notification banner that appears at the top or bottom of the viewport. Supports queuing, priority, and auto-dismiss.
+preview: false
+links:
+  api: /docs/components/base/banner#api-reference
+---
+
+<ComponentTabs name="banner-demo" />
+
+## Installation
+
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```package-install
+npx shadcn@latest add "@diceui/banner"
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps className="pt-2">
+
+<Step>Install the following dependencies:</Step>
+
+```package-install
+@base-ui/react class-variance-authority lucide-react
+```
+
+<Step>Copy and paste the following hook into your `hooks` directory.</Step>
+
+<ComponentSource name="use-lazy-ref" />
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="banner" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</CodeTabs>
+
+## Layout
+
+```tsx
+import {
+  Banner,
+  BannerIcon,
+  BannerContent,
+  BannerTitle,
+  BannerDescription,
+  BannerActions,
+  BannerClose,
+} from "@/components/ui/banner";
+
+return (
+  <Banner>
+    <BannerIcon />
+    <BannerContent>
+      <BannerTitle />
+      <BannerDescription />
+    </BannerContent>
+    <BannerActions />
+    <BannerClose />
+  </Banner>
+);
+```
+
+## Examples
+
+### Stacked Banners
+
+Use the `Banners` provider to manage multiple banners with a queue system. Banners can be added imperatively using the `useBanners` hook.
+
+<ComponentTabs name="banner-stacked-demo" />
+
+## API Reference
+
+### Banners
+
+The root provider for managing a queue of banners. Wrap your application or a section to enable banner queuing.
+
+<AutoTypeTable
+  path="./types/base/banner.ts"
+  name="BannersProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-side]",
+      value: ["top", "bottom"],
+    },
+  ]}
+/>
+
+### Banner
+
+An individual banner component. Can be used standalone or within the `Banners` provider.
+
+<AutoTypeTable
+  path="./types/base/banner.ts"
+  name="BannerProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+  ]}
+/>
+
+### BannerIcon
+
+Container for the banner's icon.
+
+<AutoTypeTable
+  path="./types/base/banner.ts"
+  name="BannerIconProps"
+/>
+
+### BannerContent
+
+Container for the banner's text content (title and description).
+
+<AutoTypeTable
+  path="./types/base/banner.ts"
+  name="BannerContentProps"
+/>
+
+### BannerTitle
+
+The banner's title text.
+
+<AutoTypeTable
+  path="./types/base/banner.ts"
+  name="BannerTitleProps"
+/>
+
+### BannerDescription
+
+The banner's description text.
+
+<AutoTypeTable
+  path="./types/base/banner.ts"
+  name="BannerDescriptionProps"
+/>
+
+### BannerActions
+
+Container for action buttons.
+
+<AutoTypeTable
+  path="./types/base/banner.ts"
+  name="BannerActionsProps"
+/>
+
+### BannerClose
+
+A button that dismisses the banner. Uses the shadcn Button component internally.
+
+<AutoTypeTable
+  path="./types/base/banner.ts"
+  name="BannerCloseProps"
+/>
+
+### useBanners
+
+Hook to access banner queue management within a `Banners` provider.
+
+<AutoTypeTable
+  path="./types/base/banner.ts"
+  name="UseBannersReturn"
+/>
+
+### useBanner
+
+Hook to access the current banner's context (id, variant, dismissible state, and close handler).
+
+<AutoTypeTable
+  path="./types/base/banner.ts"
+  name="UseBannerReturn"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Tab"],
+      description: "Moves focus to the next focusable element within the banner.",
+    },
+    {
+      keys: ["Shift", "Tab"],
+      description: "Moves focus to the previous focusable element within the banner.",
+    },
+    {
+      keys: ["Enter"],
+      description: "Activates the focused button.",
+    },
+    {
+      keys: ["Space"],
+      description: "Activates the focused button.",
+    },
+  ]}
+/>
+
+### ARIA
+
+- Banners have `role="status"` and `aria-live="polite"` to announce content changes to screen readers.
