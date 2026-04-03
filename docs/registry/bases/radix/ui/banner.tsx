@@ -14,6 +14,7 @@ const BANNER_NAME = "Banner";
 
 const BANNER_ANIMATION_DURATION = 400;
 const DEFAULT_BANNER_PRIORITY = 0;
+const DEFAULT_BANNER_DISMISSIBLE = true;
 
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
@@ -24,6 +25,7 @@ interface ButtonProps extends React.ComponentProps<"button"> {
 }
 
 type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
+type BannerSide = "top" | "bottom";
 
 interface BannerRenderProps {
   id: string;
@@ -125,12 +127,16 @@ function useBanner() {
 interface BannersProps {
   children: React.ReactNode;
   maxVisible?: number;
+  side?: BannerSide;
   container?: Element | DocumentFragment | null;
 }
+
+const SideContext = React.createContext<BannerSide>("top");
 
 function Banners({
   children,
   maxVisible = 1,
+  side = "top",
   container: containerProp,
 }: BannersProps) {
   const stateRef = useLazyRef<StoreState>(() => ({
@@ -257,24 +263,30 @@ function Banners({
 
   return (
     <StoreContext.Provider value={store}>
-      {children}
-      {container &&
-        visibleBanners.length > 0 &&
-        ReactDOM.createPortal(
-          <div
-            data-slot="banner-container"
-            className="pointer-events-none fixed top-0 right-0 left-0 isolate z-50"
-            style={{
-              height: totalHeight > 0 ? totalHeight : "auto",
-              transition: `height ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1)`,
-            }}
-          >
-            {visibleBanners.map((banner, index) => (
-              <QueuedBanner key={banner.id} banner={banner} index={index} />
-            ))}
-          </div>,
-          container,
-        )}
+      <SideContext.Provider value={side}>
+        {children}
+        {container &&
+          visibleBanners.length > 0 &&
+          ReactDOM.createPortal(
+            <div
+              data-slot="banner-container"
+              data-side={side}
+              className={cn(
+                "pointer-events-none fixed right-0 left-0 isolate z-50",
+                side === "top" ? "top-0" : "bottom-0",
+              )}
+              style={{
+                height: totalHeight > 0 ? totalHeight : "auto",
+                transition: `height ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1)`,
+              }}
+            >
+              {visibleBanners.map((banner, index) => (
+                <QueuedBanner key={banner.id} banner={banner} index={index} />
+              ))}
+            </div>,
+            container,
+          )}
+      </SideContext.Provider>
     </StoreContext.Provider>
   );
 }
@@ -321,6 +333,7 @@ interface QueuedBannerProps {
 
 function QueuedBanner({ banner, index }: QueuedBannerProps) {
   const store = useStoreContext("QueuedBanner");
+  const side = React.useContext(SideContext);
   const removing = useStore(store, (state) => state.removing.has(banner.id));
   const banners = useStore(store, (state) => state.banners);
   const heights = useStore(store, (state) => state.heights);
@@ -373,7 +386,7 @@ function QueuedBanner({ banner, index }: QueuedBannerProps) {
     [store, banner.id],
   );
 
-  const dismissible = banner.dismissible ?? true;
+  const dismissible = banner.dismissible ?? DEFAULT_BANNER_DISMISSIBLE;
 
   const contextValue = React.useMemo<BannerContextValue>(
     () => ({ id: banner.id, variant: banner.variant, dismissible, onClose }),
@@ -392,11 +405,19 @@ function QueuedBanner({ banner, index }: QueuedBannerProps) {
   );
 
   const currentOffset = removing ? offsetBeforeRemoveRef.current : offset;
-  const transform = !mounted
-    ? "translateY(-100%)"
-    : removing
-      ? `translateY(calc(${currentOffset}px - 100%))`
-      : `translateY(${currentOffset}px)`;
+  const isTop = side === "top";
+
+  const getTransform = () => {
+    if (!mounted) return isTop ? "translateY(-100%)" : "translateY(100%)";
+    if (removing) {
+      return isTop
+        ? `translateY(calc(${currentOffset}px - 100%))`
+        : `translateY(calc(-${currentOffset}px + 100%))`;
+    }
+    return isTop
+      ? `translateY(${currentOffset}px)`
+      : `translateY(-${currentOffset}px)`;
+  };
 
   return (
     <BannerContext.Provider value={contextValue}>
@@ -407,17 +428,18 @@ function QueuedBanner({ banner, index }: QueuedBannerProps) {
         data-state={removing ? "closed" : "open"}
         data-mounted={mounted}
         data-removed={removing}
+        data-side={side}
         data-front={index === 0}
         data-index={index}
         ref={bannerRef}
         className={cn(bannerVariants({ variant: banner.variant }))}
         style={{
           position: "absolute",
-          top: 0,
+          [isTop ? "top" : "bottom"]: 0,
           left: 0,
           right: 0,
           zIndex: removing ? 0 : 50 - index,
-          transform,
+          transform: getTransform(),
           opacity: mounted && !removing ? 1 : 0,
           transition: `transform ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1), opacity ${removing ? BANNER_ANIMATION_DURATION / 2 : BANNER_ANIMATION_DURATION}ms ease`,
         }}
@@ -490,6 +512,7 @@ function Banner({
   const contextValue = React.useMemo<BannerContextValue>(
     () => ({
       variant: variant ?? undefined,
+      dismissible: DEFAULT_BANNER_DISMISSIBLE,
       onClose,
     }),
     [variant, onClose],
@@ -584,9 +607,10 @@ function BannerClose({
   disabled,
   ...props
 }: ButtonProps) {
-  const { dismissible, onClose } = useBannerContext("BannerClose");
+  const { dismissible = DEFAULT_BANNER_DISMISSIBLE, onClose } =
+    useBannerContext("BannerClose");
   const ClosePrimitive = asChild ? SlotPrimitive.Slot : "button";
-  const isDisabled = disabled ?? dismissible ?? true;
+  const isDisabled = disabled ?? !dismissible;
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -606,7 +630,7 @@ function BannerClose({
         "shrink-0 rounded-md p-1 opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
-      disabled={!dismissible}
+      disabled={disabled}
       {...props}
     >
       {children ?? <X className="size-3.5" />}
@@ -621,6 +645,8 @@ export {
   BannerContent,
   BannerDescription,
   BannerIcon,
+  //
+  type BannerSide,
   Banners,
   BannerTitle,
   //

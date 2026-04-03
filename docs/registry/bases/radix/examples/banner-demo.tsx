@@ -24,13 +24,17 @@ import { Button } from "@/registry/bases/radix/ui/button";
 
 export default function BannerDemo() {
   return (
-    <Banners>
-      <div className="flex w-full flex-col gap-6">
-        <SimpleExample />
-        <StackedExample />
+    <>
+      <SimpleExample />
+      <Banners side="bottom">
+        <div className="flex w-full flex-col gap-6">
+          <StackedExample />
+        </div>
+      </Banners>
+      <Banners side="top">
         <PriorityExample />
-      </div>
-    </Banners>
+      </Banners>
+    </>
   );
 }
 
@@ -52,9 +56,11 @@ function SimpleExample() {
           </BannerDescription>
         </BannerContent>
         <BannerActions>
-          <Button size="sm" variant="ghost">
-            Later
-          </Button>
+          <BannerClose asChild>
+            <Button size="sm" variant="ghost">
+              Later
+            </Button>
+          </BannerClose>
           <Button size="sm" variant="default">
             Update Now
           </Button>
@@ -145,6 +151,7 @@ function StackedExample() {
     onBannerAdd({
       variant: "destructive",
       dismissible: false,
+      duration: 5000,
       content: (
         <>
           <BannerIcon>
