@@ -11,12 +11,12 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <DemoItemGroup>
-          <BannerBaseDemo />
           <BannerRadixDemo />
+          <BannerBaseDemo />
         </DemoItemGroup>
         <DemoItemGroup>
-          <BannerBaseStackedDemo />
           <BannerRadixStackedDemo />
+          <BannerBaseStackedDemo />
         </DemoItemGroup>
         <ColorPickerDemo />
       </Demo>
