@@ -23,7 +23,7 @@ import { Button } from "@/registry/bases/radix/ui/button";
 
 export default function BannerStackedDemo() {
   return (
-    <Banners maxVisible={1}>
+    <Banners>
       <BannerControls />
     </Banners>
   );

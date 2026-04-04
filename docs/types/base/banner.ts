@@ -1,10 +1,19 @@
 import type { Button } from "@/registry/bases/base/ui/button";
 import type { RenderProps } from "@/types";
 
+type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
+
 export interface BannersProps {
   /**
-   * The Content with access to the banner queue via `useBanners`.
-   * Banners wrapped in this component will be portaled into the container.
+   * Content with access to `useBanners` hook.
+   * `Banner` components inside auto-register with the queue.
+   *
+   * ```tsx
+   * <Banners>
+   *   <Banner variant="info">...</Banner> // auto-registers
+   *   <App /> // can use useBanners()
+   * </Banners>
+   * ```
    */
   children?: React.ReactNode;
 
@@ -22,7 +31,18 @@ export interface BannersProps {
   side?: "top" | "bottom";
 
   /**
+   * The positioning strategy for banners.
+   * - `"fixed"` - Fixed to viewport, uses portal (default)
+   * - `"absolute"` - Positioned within container, uses portal (container needs `position: relative`)
+   * - `"static"` - Renders inline, pushes content down
+   * - `"sticky"` - Sticks within scroll container
+   * @default "fixed"
+   */
+  strategy?: "fixed" | "static" | "sticky" | "absolute";
+
+  /**
    * The container element to portal banners into.
+   * Only used when strategy is "fixed" or "absolute".
    * @default document.body
    */
   container?: Element | DocumentFragment | null;
@@ -33,7 +53,7 @@ export interface BannerProps extends RenderProps, BannerVariantProps {
    * Whether the banner is open (controlled).
    *
    * ```tsx
-   * <Banner open={isOpen} onOpenChange={setIsOpen}>
+   * <Banner open={open} onOpenChange={setOpen}>
    *   ...
    * </Banner>
    * ```
@@ -47,7 +67,7 @@ export interface BannerProps extends RenderProps, BannerVariantProps {
   defaultOpen?: boolean;
 
   /**
-   * Callback when the banner's open state changes.
+   * Event handler called when the open state changes.
    *
    * ```ts
    * onOpenChange={(open) => {
@@ -109,7 +129,7 @@ export interface BannerVariantProps {
    * The visual style variant of the banner.
    * @default "default"
    */
-  variant?: "default" | "info" | "success" | "warning" | "destructive";
+  variant?: BannerVariant;
 }
 
 export interface BannerRenderProps {
@@ -121,7 +141,7 @@ export interface BannerRenderProps {
   /**
    * The visual variant of the banner.
    */
-  variant?: "default" | "info" | "success" | "warning" | "destructive";
+  variant?: BannerVariant;
 
   /**
    * Whether the banner can be dismissed.
@@ -148,7 +168,7 @@ export interface UseBannerReturn {
   /**
    * The visual variant of the banner.
    */
-  variant?: "default" | "info" | "success" | "warning" | "destructive" | null;
+  variant?: BannerVariant | null;
 
   /**
    * Whether the banner can be dismissed.
@@ -216,7 +236,7 @@ export interface BannerAddOptions {
    * The visual style variant.
    * @default "default"
    */
-  variant?: "default" | "info" | "success" | "warning" | "destructive";
+  variant?: BannerVariant;
 
   /**
    * Priority for queue ordering. Higher values show first.
