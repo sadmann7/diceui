@@ -1,13 +1,15 @@
 import type { Slider as SliderPrimitive } from "@base-ui/react/slider";
-import type { Button } from "@/registry/bases/base/ui/button";
-import type { DropdownMenu } from "@/registry/bases/base/ui/dropdown-menu";
+import type {
+  DropdownMenu,
+  DropdownMenuContent,
+} from "@/registry/bases/base/ui/dropdown-menu";
 import type {
   Tooltip,
   TooltipContent,
   TooltipProvider,
 } from "@/registry/bases/base/ui/tooltip";
 import type {
-  ButtonProps,
+  BaseButtonProps as ButtonProps,
   EmptyCompProps,
   EmptyProps,
   RenderProps,
@@ -15,7 +17,8 @@ import type {
 
 interface MediaPlayerDropdownMenuProps
   extends Omit<React.ComponentProps<typeof DropdownMenu>, "dir" | "children">,
-    React.ComponentProps<typeof Button> {}
+    Pick<React.ComponentProps<typeof DropdownMenuContent>, "sideOffset">,
+    ButtonProps {}
 
 export interface MediaPlayerProps extends EmptyProps<"div">, RenderProps {
   /**
@@ -470,7 +473,7 @@ export interface MediaPlayerVolumeProps
   expandable?: boolean;
 }
 
-export interface MediaPlayerTimeProps extends RenderProps {
+export interface MediaPlayerTimeProps extends EmptyProps<"div">, RenderProps {
   /**
    * The format variant for displaying time.
    * - `progress`: Shows "currentTime / duration" (e.g., "1:23 / 5:00").

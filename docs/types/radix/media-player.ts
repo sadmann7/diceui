@@ -5,6 +5,10 @@ import type {
   DropdownMenuTrigger,
 } from "@/registry/bases/radix/ui/dropdown-menu";
 import type {
+  Tooltip,
+  TooltipContent,
+} from "@/registry/bases/radix/ui/tooltip";
+import type {
   ButtonProps,
   CompositionProps,
   EmptyCompProps,
@@ -310,11 +314,11 @@ export interface MediaPlayerVolumeIndicatorProps
     CompositionProps {}
 
 export interface MediaPlayerPlayProps
-  extends EmptyProps<"button">,
+  extends EmptyCompProps<ButtonProps, "button">,
     CompositionProps {}
 
 export interface MediaPlayerSeekBackwardProps
-  extends EmptyProps<"button">,
+  extends EmptyCompProps<ButtonProps, "button">,
     CompositionProps {
   /**
    * The number of seconds to seek backward.
@@ -329,7 +333,7 @@ export interface MediaPlayerSeekBackwardProps
 }
 
 export interface MediaPlayerSeekForwardProps
-  extends EmptyProps<"button">,
+  extends EmptyCompProps<ButtonProps, "button">,
     CompositionProps {
   /**
    * The number of seconds to seek forward.
@@ -344,10 +348,7 @@ export interface MediaPlayerSeekForwardProps
 }
 
 export interface MediaPlayerSeekProps
-  extends Omit<
-      React.ComponentProps<typeof Slider.Root>,
-      keyof React.ComponentProps<"div">
-    >,
+  extends EmptyCompProps<React.ComponentProps<typeof Slider.Root>, "div">,
     CompositionProps {
   /**
    * Whether to display the current time and remaining time alongside the seek bar.
@@ -465,10 +466,7 @@ export interface MediaPlayerSeekProps
 }
 
 export interface MediaPlayerVolumeProps
-  extends Omit<
-      React.ComponentProps<typeof Slider.Root>,
-      keyof React.ComponentProps<"div">
-    >,
+  extends EmptyCompProps<React.ComponentProps<typeof Slider.Root>, "div">,
     CompositionProps {
   /**
    * Whether the volume slider should expand on hover.
@@ -538,7 +536,7 @@ export interface MediaPlayerPlaybackSpeedProps
 }
 
 export interface MediaPlayerLoopProps
-  extends EmptyProps<"button">,
+  extends EmptyCompProps<ButtonProps, "button">,
     CompositionProps {}
 
 export interface MediaPlayerPiPProps
@@ -624,7 +622,11 @@ export interface MediaPlayerPortalProps {
   children: React.ReactNode;
 }
 
-export interface MediaPlayerTooltipProps extends React.ComponentProps<"div"> {
+export interface MediaPlayerTooltipProps
+  extends Omit<React.ComponentProps<typeof Tooltip>, "children">,
+    Pick<React.ComponentProps<typeof TooltipContent>, "sideOffset"> {
+  children?: React.ReactNode;
+
   /**
    * The tooltip text to display.
    *

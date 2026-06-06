@@ -1,4 +1,5 @@
 import type { ClientUploadedFileData } from "uploadthing/types";
+import type { Button as BaseButton } from "@/registry/bases/base/ui/button";
 import type { Button } from "@/registry/bases/radix/ui/button";
 
 export type ControlledProps<T extends React.ElementType> = Omit<
@@ -53,5 +54,6 @@ export type PointerDownOutsideEvent = CustomEvent<{
 }>;
 
 export type ButtonProps = React.ComponentProps<typeof Button>;
+export type BaseButtonProps = React.ComponentProps<typeof BaseButton>;
 
 export interface UploadedFile<T = unknown> extends ClientUploadedFileData<T> {}
