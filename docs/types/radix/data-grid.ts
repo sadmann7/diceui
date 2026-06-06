@@ -73,7 +73,7 @@ export interface UseDataGridProps<TData>
    *     method: 'POST',
    *     body: JSON.stringify({ count })
    *   })
-   *   const newRows = Array.from({ length: count }, () => ({ id: nanoid() }))
+   *   const newRows = Array.from({ length: count }, () => ({ id: generateId() }))
    *   setData(prev => [...prev, ...newRows])
    * }}
    * ```
