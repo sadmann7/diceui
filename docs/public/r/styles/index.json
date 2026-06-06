@@ -5,78 +5,8 @@
     "base": "radix"
   },
   {
-    "name": "radix-nova",
-    "label": "Nova",
-    "base": "radix"
-  },
-  {
-    "name": "radix-maia",
-    "label": "Maia",
-    "base": "radix"
-  },
-  {
-    "name": "radix-lyra",
-    "label": "Lyra",
-    "base": "radix"
-  },
-  {
-    "name": "radix-mira",
-    "label": "Mira",
-    "base": "radix"
-  },
-  {
-    "name": "radix-luma",
-    "label": "Luma",
-    "base": "radix"
-  },
-  {
-    "name": "radix-sera",
-    "label": "Sera",
-    "base": "radix"
-  },
-  {
-    "name": "radix-rhea",
-    "label": "Rhea",
-    "base": "radix"
-  },
-  {
     "name": "base-vega",
     "label": "Vega",
-    "base": "base"
-  },
-  {
-    "name": "base-nova",
-    "label": "Nova",
-    "base": "base"
-  },
-  {
-    "name": "base-maia",
-    "label": "Maia",
-    "base": "base"
-  },
-  {
-    "name": "base-lyra",
-    "label": "Lyra",
-    "base": "base"
-  },
-  {
-    "name": "base-mira",
-    "label": "Mira",
-    "base": "base"
-  },
-  {
-    "name": "base-luma",
-    "label": "Luma",
-    "base": "base"
-  },
-  {
-    "name": "base-sera",
-    "label": "Sera",
-    "base": "base"
-  },
-  {
-    "name": "base-rhea",
-    "label": "Rhea",
     "base": "base"
   }
 ]
