@@ -11,8 +11,8 @@ export type EmptyProps<
   K extends PropertyKey = keyof React.ComponentProps<T>,
 > = Omit<React.ComponentProps<T>, K>;
 
-export type EmptyCompProps<TComponent, TBase extends React.ElementType> = Omit<
-  TComponent,
+export type EmptyCompProps<TComp, TBase extends React.ElementType> = Omit<
+  TComp,
   keyof React.ComponentProps<TBase>
 >;
 

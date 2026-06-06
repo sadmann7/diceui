@@ -489,7 +489,6 @@ interface ColorPickerProps
   defaultFormat?: ColorFormat;
   onFormatChange?: (format: ColorFormat) => void;
   name?: string;
-  asChild?: boolean;
   disabled?: boolean;
   inline?: boolean;
   readOnly?: boolean;

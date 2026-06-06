@@ -139,7 +139,7 @@ interface MediaPlayerContextValue {
   rootRef: React.RefObject<RootElement | null>;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
   portalContainer: HTMLElement | ShadowRoot | null;
-  tooltipDelayDuration: number;
+  tooltipDelay: number;
   tooltipSideOffset: number;
   disabled: boolean;
   isVideo: boolean;
@@ -171,7 +171,7 @@ interface MediaPlayerProps
   onFullscreenChange?: (fullscreen: boolean) => void;
   dir?: Direction;
   label?: string;
-  tooltipDelayDuration?: number;
+  tooltipDelay?: number;
   tooltipSideOffset?: number;
   autoHide?: boolean;
   disabled?: boolean;
@@ -229,7 +229,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
     onPipError,
     dir: dirProp,
     label,
-    tooltipDelayDuration = 600,
+    tooltipDelay = 600,
     tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
     render,
     autoHide = false,
@@ -718,7 +718,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
       rootRef,
       mediaRef,
       portalContainer,
-      tooltipDelayDuration,
+      tooltipDelay,
       tooltipSideOffset,
       disabled,
       isVideo,
@@ -730,7 +730,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
       descriptionId,
       dir,
       portalContainer,
-      tooltipDelayDuration,
+      tooltipDelay,
       tooltipSideOffset,
       disabled,
       isVideo,
@@ -2480,7 +2480,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
         container={context.portalContainer}
         sideOffset={sideOffset}
         align="center"
-        className="min-w-(--radix-dropdown-menu-trigger-width) data-[side=top]:mb-3.5"
+        className="min-w-(--anchor-width) data-[side=top]:mb-3.5"
       >
         {speeds.map((speed) => (
           <DropdownMenuItem
@@ -3066,25 +3066,19 @@ function MediaPlayerPortal(props: MediaPlayerPortalProps) {
 
 interface MediaPlayerTooltipProps
   extends Omit<React.ComponentProps<typeof Tooltip>, "children">,
-    Pick<React.ComponentProps<typeof TooltipContent>, "sideOffset"> {
+    Pick<React.ComponentProps<typeof TooltipContent>, "sideOffset">,
+    Pick<React.ComponentProps<typeof TooltipProvider>, "delay"> {
   tooltip?: string;
   shortcut?: string | string[];
   children?: React.ReactNode;
-  delayDuration?: number;
 }
 
 function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
-  const {
-    tooltip,
-    shortcut,
-    delayDuration,
-    sideOffset,
-    children,
-    ...tooltipProps
-  } = props;
+  const { tooltip, shortcut, delay, sideOffset, children, ...tooltipProps } =
+    props;
 
   const context = useMediaPlayerContext("MediaPlayerTooltip");
-  const tooltipDelayDuration = delayDuration ?? context.tooltipDelayDuration;
+  const tooltipDelay = delay ?? context.tooltipDelay;
   const tooltipSideOffset = sideOffset ?? context.tooltipSideOffset;
 
   if ((!tooltip && !shortcut) || context.withoutTooltip) return <>{children}</>;
@@ -3101,7 +3095,7 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
   );
 
   return (
-    <TooltipProvider delay={tooltipDelayDuration}>
+    <TooltipProvider delay={tooltipDelay}>
       <Tooltip {...tooltipProps}>
         {trigger}
         <TooltipContent

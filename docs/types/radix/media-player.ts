@@ -4,12 +4,17 @@ import type {
   DropdownMenu,
   DropdownMenuTrigger,
 } from "@/registry/bases/radix/ui/dropdown-menu";
-import type { CompositionProps, EmptyProps } from "@/types";
+import type {
+  ButtonProps,
+  CompositionProps,
+  EmptyCompProps,
+  EmptyProps,
+} from "@/types";
 
 interface MediaPlayerDropdownMenuProps
-  extends React.ComponentProps<typeof DropdownMenuTrigger>,
-    React.ComponentProps<typeof Button>,
-    Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {}
+  extends Omit<React.ComponentProps<typeof DropdownMenu>, "dir">,
+    React.ComponentProps<typeof DropdownMenuTrigger>,
+    React.ComponentProps<typeof Button> {}
 
 export interface MediaPlayerProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -496,10 +501,7 @@ export interface MediaPlayerTimeProps
 }
 
 export interface MediaPlayerPlaybackSpeedProps
-  extends Omit<
-      MediaPlayerDropdownMenuProps,
-      keyof React.ComponentProps<"button">
-    >,
+  extends EmptyCompProps<MediaPlayerDropdownMenuProps, "button">,
     CompositionProps {
   /**
    * Whether the dropdown menu is open by default.
@@ -540,7 +542,7 @@ export interface MediaPlayerLoopProps
     CompositionProps {}
 
 export interface MediaPlayerPiPProps
-  extends EmptyProps<"button">,
+  extends EmptyCompProps<ButtonProps, "button">,
     CompositionProps,
     Pick<MediaPlayerProps, "onPipError"> {
   /**
@@ -571,22 +573,19 @@ export interface MediaPlayerPiPProps
 }
 
 export interface MediaPlayerFullscreenProps
-  extends EmptyProps<"button">,
+  extends EmptyCompProps<ButtonProps, "button">,
     CompositionProps {}
 
 export interface MediaPlayerCaptionsProps
-  extends EmptyProps<"button">,
+  extends EmptyCompProps<ButtonProps, "button">,
     CompositionProps {}
 
 export interface MediaPlayerDownloadProps
-  extends EmptyProps<"button">,
+  extends EmptyCompProps<ButtonProps, "button">,
     CompositionProps {}
 
 export interface MediaPlayerSettingsProps
-  extends Omit<
-      MediaPlayerPlaybackSpeedProps,
-      keyof React.ComponentProps<"button">
-    >,
+  extends EmptyCompProps<MediaPlayerPlaybackSpeedProps, "button">,
     CompositionProps {
   /**
    * The settings menu provides a unified interface for adjusting playback speed,

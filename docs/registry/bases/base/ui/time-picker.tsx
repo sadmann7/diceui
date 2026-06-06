@@ -267,21 +267,7 @@ interface TimePickerContextValue {
   };
   min?: string;
   max?: string;
-  contentHandlersRef: React.RefObject<{
-    onInteractOutside?: (event: TimePickerInteractOutsideEvent) => void;
-  }>;
 }
-
-type TimePickerOpenAutoFocusEvent = {
-  preventDefault: () => void;
-  readonly defaultPrevented: boolean;
-};
-
-type TimePickerInteractOutsideEvent = {
-  target: EventTarget | null;
-  preventDefault: () => void;
-  readonly defaultPrevented: boolean;
-};
 
 const TimePickerContext = React.createContext<TimePickerContextValue | null>(
   null,
@@ -357,9 +343,6 @@ function TimePicker(props: TimePickerProps) {
 
   const inputGroupRef = React.useRef<InputGroupElement>(null);
   const triggerRef = React.useRef<TriggerElement>(null);
-  const contentHandlersRef = React.useRef<{
-    onInteractOutside?: (event: TimePickerInteractOutsideEvent) => void;
-  }>({});
 
   const [inputGroup, setInputGroup] = React.useState<InputGroupElement | null>(
     null,
@@ -430,19 +413,6 @@ function TimePicker(props: TimePickerProps) {
       eventDetails: PopoverPrimitive.Root.ChangeEventDetails,
     ) => {
       if (!newOpen && eventDetails.reason === "outside-press") {
-        let defaultPrevented = false;
-
-        contentHandlersRef.current.onInteractOutside?.({
-          target: eventDetails.event.target,
-          preventDefault: () => {
-            defaultPrevented = true;
-            eventDetails.cancel();
-          },
-          get defaultPrevented() {
-            return defaultPrevented || eventDetails.isCanceled;
-          },
-        });
-
         if (eventDetails.isCanceled) return;
 
         if (openOnFocus && inputGroupRef.current) {
@@ -504,7 +474,6 @@ function TimePicker(props: TimePickerProps) {
       segmentPlaceholder: normalizedPlaceholder,
       min,
       max,
-      contentHandlersRef,
     }),
     [
       rootId,
@@ -1549,10 +1518,7 @@ interface TimePickerContentProps
     Pick<
       PopoverPrimitive.Positioner.Props,
       "align" | "alignOffset" | "side" | "sideOffset"
-    > {
-  onOpenAutoFocus?: (event: TimePickerOpenAutoFocusEvent) => void;
-  onInteractOutside?: (event: TimePickerInteractOutsideEvent) => void;
-}
+    > {}
 
 function TimePickerContent(props: TimePickerContentProps) {
   const {
@@ -1561,15 +1527,12 @@ function TimePickerContent(props: TimePickerContentProps) {
     sideOffset = 6,
     alignOffset = 0,
     className,
-    onOpenAutoFocus: onOpenAutoFocusProp,
-    onInteractOutside: onInteractOutsideProp,
     initialFocus: initialFocusProp,
     ...contentProps
   } = props;
 
   const store = useStoreContext(CONTENT_NAME);
-  const { inputGroupRef, contentHandlersRef } =
-    useTimePickerContext(CONTENT_NAME);
+  const { inputGroupRef } = useTimePickerContext(CONTENT_NAME);
   const columnsRef = React.useRef<Map<string, Omit<ColumnData, "id">>>(
     new Map(),
   );
@@ -1603,33 +1566,12 @@ function TimePickerContent(props: TimePickerContentProps) {
     [getColumns, onColumnRegister, onColumnUnregister],
   );
 
-  React.useLayoutEffect(() => {
-    contentHandlersRef.current.onInteractOutside = onInteractOutsideProp;
-
-    return () => {
-      contentHandlersRef.current.onInteractOutside = undefined;
-    };
-  }, [contentHandlersRef, onInteractOutsideProp]);
-
   const onInitialFocus = React.useCallback(
     (openType: "mouse" | "touch" | "pen" | "keyboard" | "") => {
       if (typeof initialFocusProp === "function") {
         const resolved = initialFocusProp(openType);
         if (resolved !== undefined) return resolved;
       }
-
-      let defaultPrevented = false;
-
-      onOpenAutoFocusProp?.({
-        preventDefault: () => {
-          defaultPrevented = true;
-        },
-        get defaultPrevented() {
-          return defaultPrevented;
-        },
-      });
-
-      if (defaultPrevented) return false;
 
       const { openedViaFocus } = store.getState();
 
@@ -1653,7 +1595,7 @@ function TimePickerContent(props: TimePickerContentProps) {
       focusFirst(candidateRefs, false);
       return false;
     },
-    [getColumns, initialFocusProp, onOpenAutoFocusProp, store],
+    [getColumns, initialFocusProp, store],
   );
 
   const resolvedInitialFocus =
