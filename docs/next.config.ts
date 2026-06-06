@@ -49,6 +49,26 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: "/r/registry.json",
+        destination: "/r/styles/radix-vega/registry.json",
+      },
+      {
+        source: "/r/base/registry.json",
+        destination: "/r/styles/base-vega/registry.json",
+      },
+      {
+        source: "/r/base/:name.json",
+        destination: "/r/styles/base-vega/:name.json",
+      },
+      {
+        source: "/r/:name.json",
+        destination: "/r/styles/radix-vega/:name.json",
+      },
+    ];
+  },
   // Already doing typechecking as separate tasks in CI
   typescript: { ignoreBuildErrors: true },
 };

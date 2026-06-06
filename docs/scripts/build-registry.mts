@@ -7,24 +7,18 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
 import { rimraf } from "rimraf";
-import {
-  registryItemSchema,
-  type registryItemTypeSchema,
-  registrySchema,
-} from "shadcn/schema";
+import { type registryItemTypeSchema, registrySchema } from "shadcn/schema";
 import { Project, ScriptKind, SyntaxKind } from "ts-morph";
 import type { z } from "zod";
 import { DEFAULT_BASE } from "../lib/constants";
 import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
-import { fixImport } from "./fix-imports.mts";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
 const STYLES_PATH = path.join(REGISTRY_PATH, "styles");
 
-// Types included in the per-style public registry (downloadable via CLI).
-// registry:example is handled separately — written only for the default style,
-// not duplicated across all style variants.
+// Types included in the per-style public registry.
+// registry:example is written only for the default style, not duplicated.
 const REGISTRY_INDEX_WHITELIST: z.infer<typeof registryItemTypeSchema>[] = [
   "registry:ui",
   "registry:lib",
@@ -37,16 +31,12 @@ const REGISTRY_INDEX_WHITELIST: z.infer<typeof registryItemTypeSchema>[] = [
   "registry:style",
 ];
 
-// The style name considered "default" — examples are only written for this style.
-const DEFAULT_STYLE = "default";
+// The style whose output directory receives example JSON files.
+const DEFAULT_STYLE = "vega";
 
-// Define bases to build
 const BASES: RegistryBase[] = ["radix", "base"];
-
-// Map styles for compatibility
 const styles = STYLES.map((s) => ({ name: s.name, label: s.title ?? s.name }));
 
-// Build all base-style combination names
 function getStylesToBuild() {
   const stylesToBuild: {
     name: string;
@@ -58,7 +48,7 @@ function getStylesToBuild() {
     for (const style of styles) {
       stylesToBuild.push({
         name: `${baseName}-${style.name}`,
-        label: `${style.label}`,
+        label: style.label,
         base: baseName,
         style,
       });
@@ -193,7 +183,6 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
             components.map(async (component, chunkIndex) => {
               const chunkName = `${item.name}-chunk-${chunkIndex}`;
 
-              // Get the value of x-chunk attribute.
               const attr = component
                 .getAttributeOrThrow("x-chunk")
                 .asKindOrThrow(SyntaxKind.JsxAttribute);
@@ -203,16 +192,13 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
                 .asKindOrThrow(SyntaxKind.StringLiteral)
                 .getLiteralValue();
 
-              // Delete the x-chunk attribute.
               attr.remove();
 
-              // Add a new attribute to the component.
               component.addAttribute({
                 name: "x-chunk",
                 initializer: `"${chunkName}"`,
               });
 
-              // Get the value of x-chunk-container attribute.
               const containerAttr = component
                 .getAttribute("x-chunk-container")
                 ?.asKindOrThrow(SyntaxKind.JsxAttribute);
@@ -228,18 +214,13 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
                 SyntaxKind.JsxElement,
               );
 
-              // Find all opening tags on component.
               const children = parentJsxElement
                 .getDescendantsOfKind(SyntaxKind.JsxOpeningElement)
-                .map((node) => {
-                  return node.getTagNameNode().getText();
-                })
+                .map((node) => node.getTagNameNode().getText())
                 .concat(
                   parentJsxElement
                     .getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement)
-                    .map((node) => {
-                      return node.getTagNameNode().getText();
-                    }),
+                    .map((node) => node.getTagNameNode().getText()),
                 );
 
               const componentImports = new Map<
@@ -251,11 +232,9 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
                 if (importLine) {
                   const existingImports =
                     componentImports.get(importLine.module) || [];
-
                   const newImports = importLine.isDefault
                     ? importLine.text
                     : new Set([...existingImports, child]);
-
                   componentImports.set(
                     importLine.module,
                     importLine?.isDefault ? newImports : Array.from(newImports),
@@ -270,7 +249,6 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
                 const specifier = Array.isArray(values)
                   ? `{${values.join(",")}}`
                   : values;
-
                 return `import ${specifier} from "${key}"`;
               });
 
@@ -289,23 +267,18 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
                 `registry/bases/${baseName}/${type}/${chunkName}.tsx`,
               );
 
-              // Write component file.
               rimraf.sync(targetFilePath);
               await fs.writeFile(targetFilePath, code, "utf8");
 
               return {
                 name: chunkName,
                 description: chunkDescription,
-                // No React.lazy here — loaded on demand by component-tabs.tsx
                 file: targetFile,
-                container: {
-                  className: containerClassName,
-                },
+                container: { className: containerClassName },
               };
             }),
           );
 
-          // // Write the source file for blocks only.
           sourceFilename = `__registry__/${baseName}/${style.name}/${type}/${item.name}.tsx`;
 
           if (item.files) {
@@ -341,7 +314,6 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
           }
         }
 
-        // Strip file extension — stored as the import path for runtime use
         componentPath = componentPath.replace(/\.(tsx?|jsx?)$/, "");
 
         const entryStr = `
@@ -375,8 +347,6 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         )}]
       },`;
 
-        // Route examples to the examples index (keyed by base only, first style pass only)
-        // Non-examples go to the main index (keyed by styleName)
         if (item.type === "registry:example") {
           if (style === styles[0]) {
             examplesIndex += entryStr;
@@ -401,11 +371,9 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
 }
 `;
 
-  // Write main index to registry/__index__.tsx (non-examples, keyed by styleName)
   rimraf.sync(path.join(process.cwd(), "registry/__index__.tsx"));
   await fs.writeFile(path.join(process.cwd(), "registry/__index__.tsx"), index);
 
-  // Write examples index to examples/__index__.tsx (examples only, keyed by base)
   await fs.mkdir(path.join(process.cwd(), "examples"), { recursive: true });
   rimraf.sync(path.join(process.cwd(), "examples/__index__.tsx"));
   await fs.writeFile(
@@ -427,63 +395,37 @@ async function buildRegistryJson() {
 
     const isDefaultStyle = style.name === DEFAULT_STYLE;
 
-    // ----------------------------------------------------------------------------
-    // Build index.json (UI components only).
-    // ----------------------------------------------------------------------------
     const uiItems = registry.items
-      .filter((item) => ["registry:ui"].includes(item.type))
-      .map((item) => {
-        return {
-          ...item,
-          files: item.files?.map((_file) => {
-            const file =
-              typeof _file === "string"
-                ? {
-                    path: _file,
-                    type: item.type,
-                  }
-                : _file;
+      .filter((item) => item.type === "registry:ui")
+      .map((item) => ({
+        ...item,
+        files: item.files?.map((_file) =>
+          typeof _file === "string" ? { path: _file, type: item.type } : _file,
+        ),
+      }));
+    await fs.writeFile(
+      path.join(outputDir, "index.json"),
+      JSON.stringify(uiItems, null, 2),
+      "utf8",
+    );
 
-            return file;
-          }),
-        };
-      });
-    const indexJson = JSON.stringify(uiItems, null, 2);
-    await fs.writeFile(path.join(outputDir, "index.json"), indexJson, "utf8");
-
-    // ----------------------------------------------------------------------------
-    // Build registry.json (full registry object).
-    // ----------------------------------------------------------------------------
     const allItems = registry.items
       .filter((item) => REGISTRY_INDEX_WHITELIST.includes(item.type))
-      .filter((item) => item.name !== "index") // Skip index item
-      // Examples don't change across style variants — only include for default style
+      .filter((item) => item.name !== "index")
       .filter((item) => item.type !== "registry:example" || isDefaultStyle)
-      .map((item) => {
-        return {
-          ...item,
-          files: item.files?.map((_file) => {
-            const file =
-              typeof _file === "string"
-                ? {
-                    path: _file,
-                    type: item.type,
-                  }
-                : _file;
-
-            return file;
-          }),
-        };
-      });
-    const fullRegistry = {
-      name: registry.name,
-      homepage: registry.homepage,
-      items: allItems,
-    };
-    const registryJson = JSON.stringify(fullRegistry, null, 2);
+      .map((item) => ({
+        ...item,
+        files: item.files?.map((_file) =>
+          typeof _file === "string" ? { path: _file, type: item.type } : _file,
+        ),
+      }));
     await fs.writeFile(
       path.join(outputDir, "registry.json"),
-      registryJson,
+      JSON.stringify(
+        { name: registry.name, homepage: registry.homepage, items: allItems },
+        null,
+        2,
+      ),
       "utf8",
     );
   }
@@ -509,29 +451,19 @@ async function buildStylesIndex() {
 }
 
 // ----------------------------------------------------------------------------
-// Build public/r/index.json (top-level UI component listing, like shadcn).
-// Uses the default base ("radix") as the primary registry index.
+// Build public/r/index.json (top-level UI component listing).
 // ----------------------------------------------------------------------------
 async function buildRootIndex() {
   const registry = registries[DEFAULT_BASE];
 
   const uiItems = registry.items
-    .filter((item) => ["registry:ui"].includes(item.type))
+    .filter((item) => item.type === "registry:ui")
     .map((item) => {
       // biome-ignore lint/suspicious/noExplicitAny: registry item types vary
-      const mapped: Record<string, any> = {
-        name: item.name,
-        type: item.type,
-      };
-
-      if (item.dependencies && item.dependencies.length > 0) {
-        mapped.dependencies = item.dependencies;
-      }
-
-      if (item.registryDependencies && item.registryDependencies.length > 0) {
+      const mapped: Record<string, any> = { name: item.name, type: item.type };
+      if (item.dependencies?.length) mapped.dependencies = item.dependencies;
+      if (item.registryDependencies?.length)
         mapped.registryDependencies = item.registryDependencies;
-      }
-
       if (item.files) {
         mapped.files = item.files.map((_file) => {
           const file =
@@ -541,7 +473,6 @@ async function buildRootIndex() {
           return { path: file.path, type: file.type };
         });
       }
-
       return mapped;
     });
 
@@ -553,127 +484,94 @@ async function buildRootIndex() {
 }
 
 // ----------------------------------------------------------------------------
-// Build public/r/styles/{base}-{style}/[name].json for each base-style combo.
+// Build public/r/styles/{base}-{style}/{name}.json with inlined file content.
+//
+// Runs once per base (for DEFAULT_STYLE = "vega"), then copies per-item JSON
+// files to the remaining style directories. All style variants are identical
+// since visual differences are CSS-variable-based (no source transforms yet).
 // ----------------------------------------------------------------------------
-async function buildStyles() {
-  const stylesToBuild = getStylesToBuild();
-
-  for (const { name: styleName, base: baseName, style } of stylesToBuild) {
+async function buildPublicItems() {
+  for (const baseName of BASES) {
     const registry = registries[baseName];
-    const outputDir = path.join(STYLES_PATH, styleName);
-    await fs.mkdir(outputDir, { recursive: true });
+    const baseSrcRoot = path.join(process.cwd(), "registry", "bases", baseName);
 
-    const isDefaultStyle = style.name === DEFAULT_STYLE;
+    // Collect example item names so we can skip copying them to non-default styles
+    const exampleFileNames = new Set(
+      registry.items
+        .filter((item) => item.type === "registry:example")
+        .map((item) => `${item.name}.json`),
+    );
+
+    // Build all per-item JSON files once, into the default style directory
+    const defaultStyleDir = path.join(
+      STYLES_PATH,
+      `${baseName}-${DEFAULT_STYLE}`,
+    );
+    await fs.mkdir(defaultStyleDir, { recursive: true });
 
     for (const item of registry.items) {
-      if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) {
-        continue;
-      }
+      if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) continue;
+      if (item.name === "index") continue;
 
-      // Skip "index" item to avoid overwriting the UI component listing
-      if (item.name === "index") {
-        continue;
-      }
-
-      // Examples don't change across style variants — only write them for the
-      // default style to avoid duplicating identical files across all 12 variants.
-      if (item.type === "registry:example" && !isDefaultStyle) {
-        continue;
-      }
-
-      // biome-ignore lint/suspicious/noExplicitAny: files array can contain various registry item types
-      let files: any[] = [];
-      if (item.files) {
-        files = await Promise.all(
-          item.files.map(async (_file) => {
+      const files = (
+        await Promise.all(
+          (item.files ?? []).map(async (_file) => {
             const file =
               typeof _file === "string"
-                ? {
-                    path: _file,
-                    type: item.type,
-                    content: "",
-                    target: "",
-                  }
+                ? { path: _file, type: item.type, target: "" }
                 : _file;
 
             let content: string;
             try {
               content = await fs.readFile(
-                path.join(
-                  process.cwd(),
-                  "registry",
-                  "bases",
-                  baseName,
-                  file.path,
-                ),
+                path.join(baseSrcRoot, file.path),
                 "utf8",
               );
-
-              // Only fix imports for v0- blocks.
-              if (item.name.startsWith("v0-")) {
-                content = fixImport(content);
-              }
-            } catch (_error) {
-              return;
-            }
-
-            const tempFile = await createTempSourceFile(file.path);
-            const sourceFile = project.createSourceFile(tempFile, content, {
-              scriptKind: ScriptKind.TSX,
-            });
-
-            sourceFile.getVariableDeclaration("iframeHeight")?.remove();
-            sourceFile.getVariableDeclaration("containerClassName")?.remove();
-            sourceFile.getVariableDeclaration("description")?.remove();
-
-            let target = file.target || "";
-
-            if ((!target || target === "") && item.name.startsWith("v0-")) {
-              const fileName = file.path.split("/").pop();
-              if (
-                file.type === "registry:block" ||
-                file.type === "registry:component" ||
-                file.type === "registry:example"
-              ) {
-                target = `components/${fileName}`;
-              }
-
-              if (file.type === "registry:ui") {
-                target = `components/ui/${fileName}`;
-              }
-
-              if (file.type === "registry:hook") {
-                target = `hooks/${fileName}`;
-              }
-
-              if (file.type === "registry:lib") {
-                target = `lib/${fileName}`;
-              }
+            } catch {
+              return null;
             }
 
             return {
               path: file.path,
               type: file.type,
-              content: sourceFile.getText(),
-              target,
+              content,
+              target: (file as { target?: string }).target ?? "",
             };
           }),
-        );
-      }
+        )
+      ).filter(Boolean);
 
-      const payload = registryItemSchema.safeParse({
-        ...item,
-        files,
-      });
+      await fs.writeFile(
+        path.join(defaultStyleDir, `${item.name}.json`),
+        JSON.stringify({ ...item, files }, null, 2),
+        "utf8",
+      );
+    }
 
-      if (payload.success) {
-        // Write to public/r/styles/{base}-{style}/{name}.json
-        await fs.writeFile(
-          path.join(outputDir, `${item.name}.json`),
-          JSON.stringify(payload.data, null, 2),
-          "utf8",
-        );
-      }
+    // Copy per-item JSON files to every other style directory for this base.
+    // Skip example files for non-default styles.
+    for (const style of styles) {
+      if (style.name === DEFAULT_STYLE) continue;
+
+      const styleDir = path.join(STYLES_PATH, `${baseName}-${style.name}`);
+      await fs.mkdir(styleDir, { recursive: true });
+
+      const builtFiles = (await fs.readdir(defaultStyleDir)).filter(
+        (f) =>
+          f.endsWith(".json") &&
+          f !== "registry.json" &&
+          f !== "index.json" &&
+          !exampleFileNames.has(f),
+      );
+
+      await Promise.all(
+        builtFiles.map((file) =>
+          fs.copyFile(
+            path.join(defaultStyleDir, file),
+            path.join(styleDir, file),
+          ),
+        ),
+      );
     }
   }
 }
@@ -681,18 +579,15 @@ async function buildStyles() {
 try {
   const totalStart = performance.now();
 
-  // Validate all registries
+  // Validate all registries before touching any output
   for (const baseName of BASES) {
-    const registry = registries[baseName];
-    const result = registrySchema.safeParse(registry);
-
+    const result = registrySchema.safeParse(registries[baseName]);
     if (!result.success) {
       console.error(`Error in ${baseName} registry:`, result.error);
       process.exit(1);
     }
   }
 
-  // Clean styles output directory
   console.log("🧹 Cleaning styles output directory...");
   await rimraf(STYLES_PATH);
   await fs.mkdir(STYLES_PATH, { recursive: true });
@@ -711,9 +606,12 @@ try {
   const stylesToBuild = getStylesToBuild();
   console.log(`💅 Building ${stylesToBuild.length} style variants...`);
 
-  // Build registry JSON and individual items for each style
+  // Build per-item JSONs (once per base, then copy across styles)
+  await buildPublicItems();
+
+  // Write registry.json + index.json metadata for each style directory.
+  // Runs after buildPublicItems so it correctly overwrites anything shadcn may have written.
   await buildRegistryJson();
-  await buildStyles();
 
   for (const style of stylesToBuild) {
     console.log(`   ✅ ${style.name}`);

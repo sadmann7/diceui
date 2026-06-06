@@ -1,0 +1,15 @@
+{
+  "name": "qr-code-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "qr-code"
+  ],
+  "files": [
+    {
+      "path": "examples/qr-code-demo.tsx",
+      "type": "registry:example",
+      "content": "import {\n  QRCode,\n  QRCodeCanvas,\n  QRCodeSkeleton,\n} from \"@/registry/bases/base/ui/qr-code\";\n\nexport default function QRCodeDemo() {\n  return (\n    <QRCode value=\"https://diceui.com\" size={200}>\n      <QRCodeSkeleton />\n      <QRCodeCanvas />\n    </QRCode>\n  );\n}\n",
+      "target": ""
+    }
+  ]
+}
