@@ -1,6 +1,7 @@
 "use client";
 
 import { mergeProps } from "@base-ui/react/merge-props";
+import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
 import { Clock } from "lucide-react";
 import * as React from "react";
@@ -10,12 +11,7 @@ import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
-import {
-  Popover,
-  PopoverAnchor,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/registry/bases/base/ui/popover";
+import { Popover, PopoverTrigger } from "@/registry/bases/base/ui/popover";
 
 const ROOT_NAME = "TimePicker";
 const LABEL_NAME = "TimePickerLabel";
@@ -48,8 +44,6 @@ interface DivProps
 interface ButtonProps
   extends React.ComponentProps<"button">,
     useRender.ComponentProps<"button"> {}
-
-type PopoverContentProps = React.ComponentProps<typeof PopoverContent>;
 
 type InputGroupElement = HTMLDivElement;
 type InputElement = HTMLInputElement;
@@ -273,7 +267,21 @@ interface TimePickerContextValue {
   };
   min?: string;
   max?: string;
+  contentHandlersRef: React.RefObject<{
+    onInteractOutside?: (event: TimePickerInteractOutsideEvent) => void;
+  }>;
 }
+
+type TimePickerOpenAutoFocusEvent = {
+  preventDefault: () => void;
+  readonly defaultPrevented: boolean;
+};
+
+type TimePickerInteractOutsideEvent = {
+  target: EventTarget | null;
+  preventDefault: () => void;
+  readonly defaultPrevented: boolean;
+};
 
 const TimePickerContext = React.createContext<TimePickerContextValue | null>(
   null,
@@ -349,6 +357,9 @@ function TimePicker(props: TimePickerProps) {
 
   const inputGroupRef = React.useRef<InputGroupElement>(null);
   const triggerRef = React.useRef<TriggerElement>(null);
+  const contentHandlersRef = React.useRef<{
+    onInteractOutside?: (event: TimePickerInteractOutsideEvent) => void;
+  }>({});
 
   const [inputGroup, setInputGroup] = React.useState<InputGroupElement | null>(
     null,
@@ -414,8 +425,41 @@ function TimePicker(props: TimePickerProps) {
   const storeOpen = useStore((state) => state.open, store);
 
   const onPopoverOpenChange = React.useCallback(
-    (newOpen: boolean) => store.setState("open", newOpen),
-    [store],
+    (
+      newOpen: boolean,
+      eventDetails: PopoverPrimitive.Root.ChangeEventDetails,
+    ) => {
+      if (!newOpen && eventDetails.reason === "outside-press") {
+        let defaultPrevented = false;
+
+        contentHandlersRef.current.onInteractOutside?.({
+          target: eventDetails.event.target,
+          preventDefault: () => {
+            defaultPrevented = true;
+            eventDetails.cancel();
+          },
+          get defaultPrevented() {
+            return defaultPrevented || eventDetails.isCanceled;
+          },
+        });
+
+        if (eventDetails.isCanceled) return;
+
+        if (openOnFocus && inputGroupRef.current) {
+          const target = eventDetails.event.target;
+          if (
+            target instanceof Node &&
+            inputGroupRef.current.contains(target)
+          ) {
+            eventDetails.cancel();
+            return;
+          }
+        }
+      }
+
+      store.setState("open", newOpen);
+    },
+    [store, openOnFocus],
   );
 
   const is12Hour = React.useMemo(() => getIs12Hour(locale), [locale]);
@@ -460,6 +504,7 @@ function TimePicker(props: TimePickerProps) {
       segmentPlaceholder: normalizedPlaceholder,
       min,
       max,
+      contentHandlersRef,
     }),
     [
       rootId,
@@ -757,7 +802,7 @@ function TimePickerInputGroup(props: DivProps) {
 
   return (
     <TimePickerInputGroupContext.Provider value={inputGroupContextValue}>
-      <PopoverAnchor asChild>{element}</PopoverAnchor>
+      {element}
     </TimePickerInputGroupContext.Provider>
   );
 }
@@ -1500,21 +1545,31 @@ function useTimePickerGroupContext(consumerName: string) {
 }
 
 interface TimePickerContentProps
-  extends React.ComponentProps<typeof PopoverContent> {}
+  extends PopoverPrimitive.Popup.Props,
+    Pick<
+      PopoverPrimitive.Positioner.Props,
+      "align" | "alignOffset" | "side" | "sideOffset"
+    > {
+  onOpenAutoFocus?: (event: TimePickerOpenAutoFocusEvent) => void;
+  onInteractOutside?: (event: TimePickerInteractOutsideEvent) => void;
+}
 
 function TimePickerContent(props: TimePickerContentProps) {
   const {
     side = "bottom",
     align = "start",
     sideOffset = 6,
+    alignOffset = 0,
     className,
     onOpenAutoFocus: onOpenAutoFocusProp,
     onInteractOutside: onInteractOutsideProp,
+    initialFocus: initialFocusProp,
     ...contentProps
   } = props;
 
   const store = useStoreContext(CONTENT_NAME);
-  const { openOnFocus, inputGroupRef } = useTimePickerContext(CONTENT_NAME);
+  const { inputGroupRef, contentHandlersRef } =
+    useTimePickerContext(CONTENT_NAME);
   const columnsRef = React.useRef<Map<string, Omit<ColumnData, "id">>>(
     new Map(),
   );
@@ -1548,73 +1603,87 @@ function TimePickerContent(props: TimePickerContentProps) {
     [getColumns, onColumnRegister, onColumnUnregister],
   );
 
-  const onOpenAutoFocus: NonNullable<PopoverContentProps["onOpenAutoFocus"]> =
-    React.useCallback(
-      (event) => {
-        onOpenAutoFocusProp?.(event);
-        if (event.defaultPrevented) return;
+  React.useLayoutEffect(() => {
+    contentHandlersRef.current.onInteractOutside = onInteractOutsideProp;
 
-        event.preventDefault();
+    return () => {
+      contentHandlersRef.current.onInteractOutside = undefined;
+    };
+  }, [contentHandlersRef, onInteractOutsideProp]);
 
-        const { openedViaFocus } = store.getState();
-
-        if (openedViaFocus) {
-          store.setState("openedViaFocus", false);
-          return;
-        }
-
-        const columns = getColumns();
-        const firstColumn = columns[0];
-
-        if (!firstColumn) return;
-
-        const items = firstColumn.getItems();
-        const selectedItem = items.find((item) => item.selected);
-
-        const candidateRefs = selectedItem
-          ? [selectedItem.ref, ...items.map((item) => item.ref)]
-          : items.map((item) => item.ref);
-
-        focusFirst(candidateRefs, false);
-      },
-      [onOpenAutoFocusProp, getColumns, store],
-    );
-
-  const onInteractOutside: NonNullable<
-    PopoverContentProps["onInteractOutside"]
-  > = React.useCallback(
-    (event) => {
-      onInteractOutsideProp?.(event);
-      if (event.defaultPrevented) return;
-
-      if (openOnFocus && inputGroupRef.current) {
-        const target = event.target;
-        if (!(target instanceof Node)) return;
-        const isInsideInputGroup = inputGroupRef.current.contains(target);
-
-        if (isInsideInputGroup) {
-          event.preventDefault();
-        }
+  const onInitialFocus = React.useCallback(
+    (openType: "mouse" | "touch" | "pen" | "keyboard" | "") => {
+      if (typeof initialFocusProp === "function") {
+        const resolved = initialFocusProp(openType);
+        if (resolved !== undefined) return resolved;
       }
+
+      let defaultPrevented = false;
+
+      onOpenAutoFocusProp?.({
+        preventDefault: () => {
+          defaultPrevented = true;
+        },
+        get defaultPrevented() {
+          return defaultPrevented;
+        },
+      });
+
+      if (defaultPrevented) return false;
+
+      const { openedViaFocus } = store.getState();
+
+      if (openedViaFocus) {
+        store.setState("openedViaFocus", false);
+        return false;
+      }
+
+      const columns = getColumns();
+      const firstColumn = columns[0];
+
+      if (!firstColumn) return false;
+
+      const items = firstColumn.getItems();
+      const selectedItem = items.find((item) => item.selected);
+
+      const candidateRefs = selectedItem
+        ? [selectedItem.ref, ...items.map((item) => item.ref)]
+        : items.map((item) => item.ref);
+
+      focusFirst(candidateRefs, false);
+      return false;
     },
-    [onInteractOutsideProp, openOnFocus, inputGroupRef],
+    [getColumns, initialFocusProp, onOpenAutoFocusProp, store],
   );
+
+  const resolvedInitialFocus =
+    typeof initialFocusProp === "boolean" ||
+    (initialFocusProp !== undefined && typeof initialFocusProp !== "function")
+      ? initialFocusProp
+      : onInitialFocus;
 
   return (
     <TimePickerGroupContext.Provider value={groupContextValue}>
-      <PopoverContent
-        data-slot="time-picker-content"
-        side={side}
-        align={align}
-        sideOffset={sideOffset}
-        {...contentProps}
-        className={cn(
-          "flex w-auto max-w-(--radix-popover-trigger-width) p-0",
-          className,
-        )}
-        onOpenAutoFocus={onOpenAutoFocus}
-        onInteractOutside={onInteractOutside}
-      />
+      <PopoverPrimitive.Portal>
+        <PopoverPrimitive.Positioner
+          anchor={inputGroupRef}
+          align={align}
+          alignOffset={alignOffset}
+          side={side}
+          sideOffset={sideOffset}
+          className="isolate z-50"
+        >
+          <PopoverPrimitive.Popup
+            data-slot="time-picker-content"
+            initialFocus={resolvedInitialFocus}
+            {...contentProps}
+            className={cn(
+              "data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:fade-in-0 data-open:zoom-in-95 data-closed:fade-out-0 data-closed:zoom-out-95 z-50 flex w-auto max-w-(--anchor-width) origin-(--transform-origin) rounded-lg bg-popover p-0 text-popover-foreground text-sm shadow-md outline-hidden ring-1 ring-foreground/10 duration-100 data-closed:animate-out data-open:animate-in",
+              className,
+            )}
+          />
+        </PopoverPrimitive.Positioner>
+      </PopoverPrimitive.Portal>
     </TimePickerGroupContext.Provider>
   );
 }
