@@ -5301,6 +5301,305 @@ export const Index: Record<string, Record<string, unknown>> = {
         chunks: []
       },
     },  "base-default": {
+      "avatar": {
+        name: "avatar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "badge": {
+        name: "badge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "button": {
+        name: "button",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/button.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "card": {
+        name: "card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "checkbox": {
+        name: "checkbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command": {
+        name: "command",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog"],
+        files: [{
+          path: "registry/bases/base/ui/command.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dialog": {
+        name: "dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button"],
+        files: [{
+          path: "registry/bases/base/ui/dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "drawer": {
+        name: "drawer",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/drawer.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dropdown-menu": {
+        name: "dropdown-menu",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/dropdown-menu.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "form": {
+        name: "form",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["label"],
+        files: [{
+          path: "registry/bases/base/ui/form.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input": {
+        name: "input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input-group": {
+        name: "input-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","textarea"],
+        files: [{
+          path: "registry/bases/base/ui/input-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "label": {
+        name: "label",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/label.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "popover": {
+        name: "popover",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/popover.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "scroll-area": {
+        name: "scroll-area",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroll-area.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "select": {
+        name: "select",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/select.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "separator": {
+        name: "separator",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/separator.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skeleton": {
+        name: "skeleton",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/skeleton.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "slider": {
+        name: "slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "switch": {
+        name: "switch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/switch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "textarea": {
+        name: "textarea",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/textarea.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tooltip": {
+        name: "tooltip",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tooltip.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "action-bar": {
         name: "action-bar",
         description: "",
@@ -5896,6 +6195,58 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/lib/compose-refs.ts",
           type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "client-only": {
+        name: "client-only",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/client-only.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction-provider": {
+        name: "direction-provider",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/direction-provider.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "portal": {
+        name: "portal",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/portal.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presence": {
+        name: "presence",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/presence.tsx",
+          type: "registry:component",
           target: ""
         }],
         source: "",
@@ -5967,6 +6318,305 @@ export const Index: Record<string, Record<string, unknown>> = {
         chunks: []
       },
     },  "base-vega": {
+      "avatar": {
+        name: "avatar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "badge": {
+        name: "badge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "button": {
+        name: "button",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/button.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "card": {
+        name: "card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "checkbox": {
+        name: "checkbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command": {
+        name: "command",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog"],
+        files: [{
+          path: "registry/bases/base/ui/command.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dialog": {
+        name: "dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button"],
+        files: [{
+          path: "registry/bases/base/ui/dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "drawer": {
+        name: "drawer",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/drawer.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dropdown-menu": {
+        name: "dropdown-menu",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/dropdown-menu.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "form": {
+        name: "form",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["label"],
+        files: [{
+          path: "registry/bases/base/ui/form.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input": {
+        name: "input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input-group": {
+        name: "input-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","textarea"],
+        files: [{
+          path: "registry/bases/base/ui/input-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "label": {
+        name: "label",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/label.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "popover": {
+        name: "popover",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/popover.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "scroll-area": {
+        name: "scroll-area",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroll-area.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "select": {
+        name: "select",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/select.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "separator": {
+        name: "separator",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/separator.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skeleton": {
+        name: "skeleton",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/skeleton.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "slider": {
+        name: "slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "switch": {
+        name: "switch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/switch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "textarea": {
+        name: "textarea",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/textarea.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tooltip": {
+        name: "tooltip",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tooltip.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "action-bar": {
         name: "action-bar",
         description: "",
@@ -6562,6 +7212,58 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/lib/compose-refs.ts",
           type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "client-only": {
+        name: "client-only",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/client-only.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction-provider": {
+        name: "direction-provider",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/direction-provider.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "portal": {
+        name: "portal",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/portal.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presence": {
+        name: "presence",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/presence.tsx",
+          type: "registry:component",
           target: ""
         }],
         source: "",
@@ -6633,6 +7335,305 @@ export const Index: Record<string, Record<string, unknown>> = {
         chunks: []
       },
     },  "base-nova": {
+      "avatar": {
+        name: "avatar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "badge": {
+        name: "badge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "button": {
+        name: "button",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/button.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "card": {
+        name: "card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "checkbox": {
+        name: "checkbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command": {
+        name: "command",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog"],
+        files: [{
+          path: "registry/bases/base/ui/command.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dialog": {
+        name: "dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button"],
+        files: [{
+          path: "registry/bases/base/ui/dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "drawer": {
+        name: "drawer",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/drawer.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dropdown-menu": {
+        name: "dropdown-menu",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/dropdown-menu.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "form": {
+        name: "form",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["label"],
+        files: [{
+          path: "registry/bases/base/ui/form.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input": {
+        name: "input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input-group": {
+        name: "input-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","textarea"],
+        files: [{
+          path: "registry/bases/base/ui/input-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "label": {
+        name: "label",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/label.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "popover": {
+        name: "popover",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/popover.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "scroll-area": {
+        name: "scroll-area",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroll-area.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "select": {
+        name: "select",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/select.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "separator": {
+        name: "separator",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/separator.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skeleton": {
+        name: "skeleton",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/skeleton.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "slider": {
+        name: "slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "switch": {
+        name: "switch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/switch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "textarea": {
+        name: "textarea",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/textarea.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tooltip": {
+        name: "tooltip",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tooltip.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "action-bar": {
         name: "action-bar",
         description: "",
@@ -7228,6 +8229,58 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/lib/compose-refs.ts",
           type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "client-only": {
+        name: "client-only",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/client-only.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction-provider": {
+        name: "direction-provider",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/direction-provider.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "portal": {
+        name: "portal",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/portal.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presence": {
+        name: "presence",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/presence.tsx",
+          type: "registry:component",
           target: ""
         }],
         source: "",
@@ -7299,6 +8352,305 @@ export const Index: Record<string, Record<string, unknown>> = {
         chunks: []
       },
     },  "base-maia": {
+      "avatar": {
+        name: "avatar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "badge": {
+        name: "badge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "button": {
+        name: "button",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/button.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "card": {
+        name: "card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "checkbox": {
+        name: "checkbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command": {
+        name: "command",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog"],
+        files: [{
+          path: "registry/bases/base/ui/command.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dialog": {
+        name: "dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button"],
+        files: [{
+          path: "registry/bases/base/ui/dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "drawer": {
+        name: "drawer",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/drawer.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dropdown-menu": {
+        name: "dropdown-menu",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/dropdown-menu.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "form": {
+        name: "form",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["label"],
+        files: [{
+          path: "registry/bases/base/ui/form.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input": {
+        name: "input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input-group": {
+        name: "input-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","textarea"],
+        files: [{
+          path: "registry/bases/base/ui/input-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "label": {
+        name: "label",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/label.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "popover": {
+        name: "popover",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/popover.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "scroll-area": {
+        name: "scroll-area",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroll-area.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "select": {
+        name: "select",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/select.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "separator": {
+        name: "separator",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/separator.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skeleton": {
+        name: "skeleton",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/skeleton.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "slider": {
+        name: "slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "switch": {
+        name: "switch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/switch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "textarea": {
+        name: "textarea",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/textarea.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tooltip": {
+        name: "tooltip",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tooltip.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "action-bar": {
         name: "action-bar",
         description: "",
@@ -7894,6 +9246,58 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/lib/compose-refs.ts",
           type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "client-only": {
+        name: "client-only",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/client-only.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction-provider": {
+        name: "direction-provider",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/direction-provider.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "portal": {
+        name: "portal",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/portal.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presence": {
+        name: "presence",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/presence.tsx",
+          type: "registry:component",
           target: ""
         }],
         source: "",
@@ -7965,6 +9369,305 @@ export const Index: Record<string, Record<string, unknown>> = {
         chunks: []
       },
     },  "base-lyra": {
+      "avatar": {
+        name: "avatar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "badge": {
+        name: "badge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "button": {
+        name: "button",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/button.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "card": {
+        name: "card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "checkbox": {
+        name: "checkbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command": {
+        name: "command",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog"],
+        files: [{
+          path: "registry/bases/base/ui/command.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dialog": {
+        name: "dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button"],
+        files: [{
+          path: "registry/bases/base/ui/dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "drawer": {
+        name: "drawer",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/drawer.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dropdown-menu": {
+        name: "dropdown-menu",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/dropdown-menu.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "form": {
+        name: "form",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["label"],
+        files: [{
+          path: "registry/bases/base/ui/form.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input": {
+        name: "input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input-group": {
+        name: "input-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","textarea"],
+        files: [{
+          path: "registry/bases/base/ui/input-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "label": {
+        name: "label",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/label.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "popover": {
+        name: "popover",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/popover.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "scroll-area": {
+        name: "scroll-area",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroll-area.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "select": {
+        name: "select",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/select.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "separator": {
+        name: "separator",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/separator.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skeleton": {
+        name: "skeleton",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/skeleton.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "slider": {
+        name: "slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "switch": {
+        name: "switch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/switch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "textarea": {
+        name: "textarea",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/textarea.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tooltip": {
+        name: "tooltip",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tooltip.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "action-bar": {
         name: "action-bar",
         description: "",
@@ -8560,6 +10263,58 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/lib/compose-refs.ts",
           type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "client-only": {
+        name: "client-only",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/client-only.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction-provider": {
+        name: "direction-provider",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/direction-provider.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "portal": {
+        name: "portal",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/portal.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presence": {
+        name: "presence",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/presence.tsx",
+          type: "registry:component",
           target: ""
         }],
         source: "",
@@ -8631,6 +10386,305 @@ export const Index: Record<string, Record<string, unknown>> = {
         chunks: []
       },
     },  "base-mira": {
+      "avatar": {
+        name: "avatar",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/avatar.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "badge": {
+        name: "badge",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/badge.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "button": {
+        name: "button",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/button.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "card": {
+        name: "card",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/card.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "checkbox": {
+        name: "checkbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command": {
+        name: "command",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["dialog"],
+        files: [{
+          path: "registry/bases/base/ui/command.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dialog": {
+        name: "dialog",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button"],
+        files: [{
+          path: "registry/bases/base/ui/dialog.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction": {
+        name: "direction",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/direction.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "drawer": {
+        name: "drawer",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/drawer.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "dropdown-menu": {
+        name: "dropdown-menu",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/dropdown-menu.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "form": {
+        name: "form",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["label"],
+        files: [{
+          path: "registry/bases/base/ui/form.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input": {
+        name: "input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/input.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "input-group": {
+        name: "input-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","input","textarea"],
+        files: [{
+          path: "registry/bases/base/ui/input-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "label": {
+        name: "label",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/label.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "popover": {
+        name: "popover",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/popover.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "scroll-area": {
+        name: "scroll-area",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/scroll-area.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "select": {
+        name: "select",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/select.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "separator": {
+        name: "separator",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/separator.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skeleton": {
+        name: "skeleton",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/skeleton.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "slider": {
+        name: "slider",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/slider.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "switch": {
+        name: "switch",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/switch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "textarea": {
+        name: "textarea",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/textarea.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tooltip": {
+        name: "tooltip",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tooltip.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "action-bar": {
         name: "action-bar",
         description: "",
@@ -9226,6 +11280,58 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/lib/compose-refs.ts",
           type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "client-only": {
+        name: "client-only",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/client-only.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "direction-provider": {
+        name: "direction-provider",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/direction-provider.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "portal": {
+        name: "portal",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/portal.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presence": {
+        name: "presence",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/presence.tsx",
+          type: "registry:component",
           target: ""
         }],
         source: "",

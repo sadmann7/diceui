@@ -1,15 +1,17 @@
 import type { Slider as SliderPrimitive } from "@base-ui/react/slider";
-import type { Button } from "@/registry/bases/radix/ui/button";
+import type { Button } from "@/registry/bases/base/ui/button";
 import type {
   DropdownMenu,
   DropdownMenuTrigger,
-} from "@/registry/bases/radix/ui/dropdown-menu";
+} from "@/registry/bases/base/ui/dropdown-menu";
 import type { EmptyProps, RenderProps } from "@/types";
 
 interface MediaPlayerDropdownMenuProps
-  extends React.ComponentProps<typeof DropdownMenuTrigger>,
-    React.ComponentProps<typeof Button>,
-    Omit<React.ComponentProps<typeof DropdownMenu>, "dir"> {}
+  extends Omit<React.ComponentProps<typeof DropdownMenu>, "dir" | "children">,
+    Pick<
+      React.ComponentProps<typeof Button>,
+      "className" | "disabled" | "variant" | "size"
+    > {}
 
 export interface MediaPlayerProps
   extends Omit<

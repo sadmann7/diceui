@@ -1,0 +1,12 @@
+{
+  "name": "client-only",
+  "files": [
+    {
+      "path": "components/client-only.tsx",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\ninterface ClientOnlyProps {\n  children: React.ReactNode;\n  fallback?: React.ReactNode;\n}\n\nfunction subscribe() {\n  return () => {};\n}\n\nfunction getSnapshot() {\n  return true;\n}\n\nfunction getServerSnapshot() {\n  return false;\n}\n\nfunction ClientOnly({ children, fallback = null }: ClientOnlyProps) {\n  const mounted = React.useSyncExternalStore(\n    subscribe,\n    getSnapshot,\n    getServerSnapshot,\n  );\n\n  if (!mounted) return fallback;\n\n  return children;\n}\n\nexport { ClientOnly };\n",
+      "type": "registry:component",
+      "target": ""
+    }
+  ],
+  "type": "registry:component"
+}

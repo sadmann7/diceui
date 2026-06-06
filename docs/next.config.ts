@@ -43,11 +43,6 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/r/:name((?!styles).*\\.json)",
-        destination: "/r/styles/radix-default/:name",
-        permanent: false,
-      },
-      {
         source: "/docs/:path*.mdx",
         destination: "/llms.mdx/:path*",
         permanent: true,

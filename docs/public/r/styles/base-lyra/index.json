@@ -1,5 +1,308 @@
 [
   {
+    "name": "avatar",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/avatar.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "badge",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/badge.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "button",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/button.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "card",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/card.tsx",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "checkbox",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/checkbox.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "command",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/command.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "dialog"
+    ],
+    "dependencies": [
+      "@base-ui/react",
+      "cmdk"
+    ]
+  },
+  {
+    "name": "dialog",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/dialog.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "button"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "direction",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/direction.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "drawer",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/drawer.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "vaul"
+    ]
+  },
+  {
+    "name": "dropdown-menu",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/dropdown-menu.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "form",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/form.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "label"
+    ],
+    "dependencies": [
+      "@base-ui/react",
+      "react-hook-form"
+    ]
+  },
+  {
+    "name": "input",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/input.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "input-group",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/input-group.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "button",
+      "input",
+      "textarea"
+    ]
+  },
+  {
+    "name": "label",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/label.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "popover",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/popover.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "scroll-area",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/scroll-area.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "select",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/select.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "separator",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/separator.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "skeleton",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/skeleton.tsx",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "slider",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/slider.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "switch",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/switch.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "textarea",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/textarea.tsx",
+        "type": "registry:ui"
+      }
+    ]
+  },
+  {
+    "name": "tooltip",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/tooltip.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
     "name": "action-bar",
     "type": "registry:ui",
     "files": [

@@ -1,0 +1,15 @@
+{
+  "name": "separator",
+  "dependencies": [
+    "@base-ui/react"
+  ],
+  "files": [
+    {
+      "path": "ui/separator.tsx",
+      "content": "\"use client\";\n\nimport { Separator as SeparatorPrimitive } from \"@base-ui/react/separator\";\nimport type * as React from \"react\";\n\nimport { cn } from \"@/lib/utils\";\n\nfunction Separator({\n  className,\n  orientation = \"horizontal\",\n  ...props\n}: SeparatorPrimitive.Props) {\n  return (\n    <SeparatorPrimitive\n      data-slot=\"separator\"\n      orientation={orientation}\n      className={cn(\n        \"shrink-0 bg-border data-horizontal:h-px data-vertical:h-full data-horizontal:w-full data-vertical:w-px\",\n        className,\n      )}\n      {...props}\n    />\n  );\n}\n\nexport { Separator };\n",
+      "type": "registry:ui",
+      "target": ""
+    }
+  ],
+  "type": "registry:ui"
+}
