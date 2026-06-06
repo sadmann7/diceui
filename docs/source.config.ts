@@ -1,3 +1,9 @@
+import {
+  transformerNotationDiff,
+  transformerNotationFocus,
+  transformerNotationHighlight,
+  transformerNotationWordHighlight,
+} from "@shikijs/transformers";
 import { remarkGfm, remarkNpm } from "fumadocs-core/mdx-plugins";
 import { fileGenerator, remarkDocGen } from "fumadocs-docgen";
 import {
@@ -5,6 +11,7 @@ import {
   defineDocs,
   frontmatterSchema,
 } from "fumadocs-mdx/config";
+import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import { codeImport } from "remark-code-import";
 import remarkMath from "remark-math";
@@ -13,15 +20,23 @@ import { rehypeComponent } from "@/lib/rehype-component";
 
 export default defineConfig({
   mdxOptions: {
-    rehypeCodeOptions: {
-      themes: {
-        dark: "github-dark",
-        light: "github-light",
-      },
-      langs: ["typescript", "tsx", "javascript", "jsx", "json", "bash", "css"],
-    },
     rehypePlugins: (plugins) => {
-      plugins.push(rehypeSlug, rehypeComponent);
+      plugins.shift();
+      plugins.push(rehypeSlug, rehypeComponent, [
+        rehypePrettyCode,
+        {
+          theme: {
+            dark: "github-dark",
+            light: "github-light",
+          },
+          transformers: [
+            transformerNotationDiff({ matchAlgorithm: "v3" }),
+            transformerNotationHighlight({ matchAlgorithm: "v3" }),
+            transformerNotationWordHighlight({ matchAlgorithm: "v3" }),
+            transformerNotationFocus({ matchAlgorithm: "v3" }),
+          ],
+        },
+      ]);
       return plugins;
     },
     remarkPlugins: (plugins) => {
