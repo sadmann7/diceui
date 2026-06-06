@@ -2,7 +2,6 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
-import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip";
 import { useRender } from "@base-ui/react/use-render";
 import {
   AlertTriangleIcon,
@@ -56,6 +55,7 @@ import {
 } from "@/registry/bases/base/ui/dropdown-menu";
 import {
   Tooltip,
+  TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/registry/bases/base/ui/tooltip";
@@ -138,7 +138,7 @@ interface MediaPlayerContextValue {
   dir: Direction;
   rootRef: React.RefObject<RootElement | null>;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
-  portalContainer: HTMLElement | DocumentFragment | null;
+  portalContainer: HTMLElement | ShadowRoot | null;
   tooltipDelayDuration: number;
   tooltipSideOffset: number;
   disabled: boolean;
@@ -2477,11 +2477,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
         />
       </MediaPlayerTooltip>
       <DropdownMenuContent
-        container={
-          context.portalContainer as React.ComponentProps<
-            typeof DropdownMenuContent
-          >["container"]
-        }
+        container={context.portalContainer}
         sideOffset={sideOffset}
         align="center"
         className="min-w-(--radix-dropdown-menu-trigger-width) data-[side=top]:mb-3.5"
@@ -2940,11 +2936,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
         align="end"
         side="top"
         sideOffset={sideOffset}
-        container={
-          context.portalContainer as React.ComponentProps<
-            typeof DropdownMenuContent
-          >["container"]
-        }
+        container={context.portalContainer}
         className="w-56 data-[side=top]:mb-3.5"
       >
         <DropdownMenuLabel className="sr-only">Settings</DropdownMenuLabel>
@@ -3073,12 +3065,12 @@ function MediaPlayerPortal(props: MediaPlayerPortalProps) {
 }
 
 interface MediaPlayerTooltipProps
-  extends Omit<React.ComponentProps<typeof Tooltip>, "children"> {
+  extends Omit<React.ComponentProps<typeof Tooltip>, "children">,
+    Pick<React.ComponentProps<typeof TooltipContent>, "sideOffset"> {
   tooltip?: string;
   shortcut?: string | string[];
   children?: React.ReactNode;
   delayDuration?: number;
-  sideOffset?: number;
 }
 
 function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
@@ -3112,45 +3104,38 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
     <TooltipProvider delay={tooltipDelayDuration}>
       <Tooltip {...tooltipProps}>
         {trigger}
-        <TooltipPrimitive.Portal
-          container={
-            context.portalContainer as TooltipPrimitive.Portal.Props["container"]
-          }
+        <TooltipContent
+          container={context.portalContainer}
+          sideOffset={tooltipSideOffset}
+          className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-zinc-900 [&>span]:hidden"
         >
-          <TooltipPrimitive.Positioner
-            sideOffset={tooltipSideOffset}
-            className="isolate z-50"
-          >
-            <TooltipPrimitive.Popup className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-zinc-900 [&>span]:hidden">
-              <p>{tooltip}</p>
-              {Array.isArray(shortcut) ? (
-                <div className="flex items-center gap-1">
-                  {shortcut.map((shortcutKey) => (
-                    <kbd
-                      key={shortcutKey}
-                      className="select-none rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs"
-                    >
-                      <abbr title={shortcutKey} className="no-underline">
-                        {shortcutKey}
-                      </abbr>
-                    </kbd>
-                  ))}
-                </div>
-              ) : (
-                shortcut && (
-                  <kbd
-                    key={shortcut}
-                    className="select-none rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-foreground shadow-xs"
-                  >
-                    <abbr title={shortcut} className="no-underline">
-                      {shortcut}
-                    </abbr>
-                  </kbd>
-                )
-              )}
-            </TooltipPrimitive.Popup>
-          </TooltipPrimitive.Positioner>
-        </TooltipPrimitive.Portal>
+          <p>{tooltip}</p>
+          {Array.isArray(shortcut) ? (
+            <div className="flex items-center gap-1">
+              {shortcut.map((shortcutKey) => (
+                <kbd
+                  key={shortcutKey}
+                  className="select-none rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs"
+                >
+                  <abbr title={shortcutKey} className="no-underline">
+                    {shortcutKey}
+                  </abbr>
+                </kbd>
+              ))}
+            </div>
+          ) : (
+            shortcut && (
+              <kbd
+                key={shortcut}
+                className="select-none rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-foreground shadow-xs"
+              >
+                <abbr title={shortcut} className="no-underline">
+                  {shortcut}
+                </abbr>
+              </kbd>
+            )
+          )}
+        </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

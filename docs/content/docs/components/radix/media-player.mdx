@@ -444,10 +444,10 @@ A slider component to seek through the media playback.
 <MediaPlayer.Seek 
   className={
     cn(
-      "[&_[data-slot='media-player-seek-buffered']]:bg-primary/60",
-      "[&_[data-slot='media-player-seek-hover-range']]:bg-primary/70",
-      "[&_[data-slot='media-player-seek-chapter-separator']]:w-1 [&_[data-slot='media-player-seek-chapter-separator']]:bg-muted",
-      "[&_[data-slot='media-player-seek-thumbnail']]:border-2 [&_[data-slot='media-player-seek-thumbnail']]:border-ring"
+      "**:data-[slot='media-player-seek-buffered']:bg-primary/60",
+      "**:data-[slot='media-player-seek-hover-range']:bg-primary/70",
+      "**:data-[slot='media-player-seek-chapter-separator']:w-1 **:data-[slot='media-player-seek-chapter-separator']:bg-muted",
+      "**:data-[slot='media-player-seek-thumbnail']:border-2 **:data-[slot='media-player-seek-thumbnail']:border-ring"
     )
   }
 />

@@ -19,17 +19,24 @@ links:
     **DropdownMenu**
     ```diff
     function DropdownMenuContent({
+      align = "start",
+      alignOffset = 0,
+      side = "bottom",
+      sideOffset = 4,
       className,
     + container,
-      sideOffset = 4,
       ...props
-    -}: React.ComponentProps<typeof DropdownMenuPrimitive.Content>) {
-    +}: React.ComponentProps<typeof DropdownMenuPrimitive.Content> & {
-    +  container?: DropdownMenuPrimitive.DropdownMenuPortalProps["container"];
-    +}) {
+    }: MenuPrimitive.Popup.Props &
+      Pick<
+        MenuPrimitive.Positioner.Props,
+        "align" | "alignOffset" | "side" | "sideOffset"
+    - >) {
+    + > & {
+    +   container?: MenuPrimitive.Portal.Props["container"];
+    + }) {
       return (
-    -    <DropdownMenuPrimitive.Portal>
-    +    <DropdownMenuPrimitive.Portal container={container}>
+    -    <MenuPrimitive.Portal>
+    +    <MenuPrimitive.Portal container={container}>
     ```
   </Step>
   <Step>
@@ -37,14 +44,21 @@ links:
     ```diff
     function TooltipContent({
       className,
-      sideOffset = 0,
+      side = "top",
+      sideOffset = 4,
+      align = "center",
+      alignOffset = 0,
     + container,
       children,
       ...props
-    -}: React.ComponentProps<typeof TooltipPrimitive.Content>) {
-    +}: React.ComponentProps<typeof TooltipPrimitive.Content> & {
-    +  container?: TooltipPrimitive.TooltipPortalProps["container"];
-    +}) {
+    }: TooltipPrimitive.Popup.Props &
+      Pick<
+        TooltipPrimitive.Positioner.Props,
+        "align" | "alignOffset" | "side" | "sideOffset"
+    - >) {
+    + > & {
+    +   container?: TooltipPrimitive.Portal.Props["container"];
+    + }) {
       return (
     -    <TooltipPrimitive.Portal>
     +    <TooltipPrimitive.Portal container={container}>
@@ -444,10 +458,10 @@ A slider component to seek through the media playback.
 <MediaPlayer.Seek 
   className={
     cn(
-      "[&_[data-slot='media-player-seek-buffered']]:bg-primary/60",
-      "[&_[data-slot='media-player-seek-hover-range']]:bg-primary/70",
-      "[&_[data-slot='media-player-seek-chapter-separator']]:w-1 [&_[data-slot='media-player-seek-chapter-separator']]:bg-muted",
-      "[&_[data-slot='media-player-seek-thumbnail']]:border-2 [&_[data-slot='media-player-seek-thumbnail']]:border-ring"
+      "**:data-[slot='media-player-seek-buffered']:bg-primary/60",
+      "**:data-[slot='media-player-seek-hover-range']:bg-primary/70",
+      "**:data-[slot='media-player-seek-chapter-separator']:w-1 **:data-[slot='media-player-seek-chapter-separator']:bg-muted",
+      "**:data-[slot='media-player-seek-thumbnail']:border-2 **:data-[slot='media-player-seek-thumbnail']:border-ring"
     )
   }
 />

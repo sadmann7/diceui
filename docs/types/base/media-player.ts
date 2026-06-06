@@ -4,6 +4,7 @@ import type {
   DropdownMenu,
   DropdownMenuTrigger,
 } from "@/registry/bases/base/ui/dropdown-menu";
+import type { Tooltip, TooltipContent } from "@/registry/bases/base/ui/tooltip";
 import type { EmptyProps, RenderProps } from "@/types";
 
 interface MediaPlayerDropdownMenuProps
@@ -589,7 +590,11 @@ export interface MediaPlayerPortalProps {
   children: React.ReactNode;
 }
 
-export interface MediaPlayerTooltipProps extends React.ComponentProps<"div"> {
+export interface MediaPlayerTooltipProps
+  extends Omit<React.ComponentProps<typeof Tooltip>, "children">,
+    Pick<React.ComponentProps<typeof TooltipContent>, "sideOffset"> {
+  children?: React.ReactNode;
+  delayDuration?: number;
   /**
    * The tooltip text to display.
    *
