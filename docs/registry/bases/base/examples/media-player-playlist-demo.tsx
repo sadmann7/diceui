@@ -22,7 +22,7 @@ import {
   MediaPlayerTooltip,
   MediaPlayerVolume,
 } from "@/registry/bases/base/ui/media-player";
-import { ScrollArea } from "@/registry/bases/radix/ui/scroll-area";
+import { ScrollArea } from "@/registry/bases/base/ui/scroll-area";
 
 interface Track {
   id: string;

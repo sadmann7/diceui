@@ -15,7 +15,7 @@ import {
   PopoverAnchor,
   PopoverContent,
   PopoverTrigger,
-} from "@/registry/bases/radix/ui/popover";
+} from "@/registry/bases/base/ui/popover";
 
 const ROOT_NAME = "TimePicker";
 const LABEL_NAME = "TimePickerLabel";
@@ -1500,8 +1500,7 @@ function useTimePickerGroupContext(consumerName: string) {
 }
 
 interface TimePickerContentProps
-  extends DivProps,
-    React.ComponentProps<typeof PopoverContent> {}
+  extends React.ComponentProps<typeof PopoverContent> {}
 
 function TimePickerContent(props: TimePickerContentProps) {
   const {

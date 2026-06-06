@@ -10,11 +10,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/registry/bases/radix/ui/dialog";
+} from "@/registry/bases/base/ui/dialog";
 import {
   InputGroup,
   InputGroupAddon,
-} from "@/registry/bases/radix/ui/input-group";
+} from "@/registry/bases/base/ui/input-group";
 
 function Command({
   className,
@@ -39,11 +39,12 @@ function CommandDialog({
   className,
   showCloseButton = false,
   ...props
-}: React.ComponentProps<typeof Dialog> & {
+}: Omit<React.ComponentProps<typeof Dialog>, "children"> & {
   title?: string;
   description?: string;
   className?: string;
   showCloseButton?: boolean;
+  children: React.ReactNode;
 }) {
   return (
     <Dialog {...props}>

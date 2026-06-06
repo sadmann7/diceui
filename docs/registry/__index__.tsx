@@ -5752,7 +5752,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -6418,7 +6418,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -7084,7 +7084,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -7750,7 +7750,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -8416,7 +8416,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -9082,7 +9082,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input","compose-refs","visually-hidden-input","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",

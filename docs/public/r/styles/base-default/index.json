@@ -418,7 +418,7 @@
       }
     ],
     "dependencies": [
-      "radix-ui"
+      "@base-ui/react"
     ]
   },
   {
@@ -607,6 +607,8 @@
     ],
     "registryDependencies": [
       "popover",
+      "command",
+      "input",
       "compose-refs",
       "visually-hidden-input",
       "@diceui/use-as-ref",
@@ -614,7 +616,8 @@
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
-      "@base-ui/react"
+      "@base-ui/react",
+      "cmdk"
     ]
   },
   {

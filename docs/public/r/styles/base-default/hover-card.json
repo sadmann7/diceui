@@ -1,7 +1,7 @@
 {
   "name": "hover-card",
   "dependencies": [
-    "radix-ui"
+    "@base-ui/react"
   ],
   "files": [
     {

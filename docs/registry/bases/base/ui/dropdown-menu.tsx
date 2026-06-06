@@ -2,7 +2,7 @@
 
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
-import type * as React from "react";
+import * as React from "react";
 import { cn } from "@/lib/utils";
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
@@ -13,8 +13,27 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />;
 }
 
-function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
-  return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />;
+function DropdownMenuTrigger({
+  asChild,
+  children,
+  render,
+  ...props
+}: MenuPrimitive.Trigger.Props & {
+  asChild?: boolean;
+}) {
+  const resolvedRender =
+    render ??
+    (asChild && React.isValidElement(children) ? children : undefined);
+
+  return (
+    <MenuPrimitive.Trigger
+      data-slot="dropdown-menu-trigger"
+      render={resolvedRender}
+      {...props}
+    >
+      {resolvedRender ? null : children}
+    </MenuPrimitive.Trigger>
+  );
 }
 
 function DropdownMenuContent({
@@ -22,15 +41,25 @@ function DropdownMenuContent({
   alignOffset = 0,
   side = "bottom",
   sideOffset = 4,
+  container,
   className,
   ...props
 }: MenuPrimitive.Popup.Props &
   Pick<
     MenuPrimitive.Positioner.Props,
     "align" | "alignOffset" | "side" | "sideOffset"
-  >) {
+  > & {
+    container?:
+      | MenuPrimitive.Portal.Props["container"]
+      | DocumentFragment
+      | null;
+  }) {
   return (
-    <MenuPrimitive.Portal>
+    <MenuPrimitive.Portal
+      container={
+        container as MenuPrimitive.Portal.Props["container"] | undefined
+      }
+    >
       <MenuPrimitive.Positioner
         className="isolate z-50 outline-none"
         align={align}
@@ -79,11 +108,24 @@ function DropdownMenuItem({
   className,
   inset,
   variant = "default",
+  onSelect,
+  onClick,
   ...props
 }: MenuPrimitive.Item.Props & {
   inset?: boolean;
   variant?: "default" | "destructive";
+  onSelect?: (event: React.MouseEvent<HTMLElement>) => void;
 }) {
+  const onItemClick = React.useCallback(
+    (
+      event: Parameters<NonNullable<MenuPrimitive.Item.Props["onClick"]>>[0],
+    ) => {
+      onClick?.(event);
+      onSelect?.(event as React.MouseEvent<HTMLElement>);
+    },
+    [onClick, onSelect],
+  );
+
   return (
     <MenuPrimitive.Item
       data-slot="dropdown-menu-item"
@@ -93,6 +135,7 @@ function DropdownMenuItem({
         "group/dropdown-menu-item relative flex cursor-default select-none items-center gap-1.5 rounded-md px-1.5 py-1 text-sm outline-hidden focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground data-disabled:pointer-events-none data-inset:pl-7 data-[variant=destructive]:text-destructive data-disabled:opacity-50 data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0 data-[variant=destructive]:*:[svg]:text-destructive",
         className,
       )}
+      onClick={onItemClick}
       {...props}
     />
   );

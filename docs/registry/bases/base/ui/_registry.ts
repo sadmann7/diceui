@@ -374,7 +374,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    dependencies: ["radix-ui"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "swap",
@@ -533,13 +533,15 @@ export const ui: Registry["items"] = [
     ],
     registryDependencies: [
       "popover",
+      "command",
+      "input",
       "compose-refs",
       "visually-hidden-input",
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "cmdk"],
   },
   {
     name: "marquee",

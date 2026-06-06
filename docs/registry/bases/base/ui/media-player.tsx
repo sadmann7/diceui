@@ -40,9 +40,9 @@ import * as ReactDOM from "react-dom";
 import { cn } from "@/lib/utils";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
+import { Badge } from "@/registry/bases/base/ui/badge";
+import { Button } from "@/registry/bases/base/ui/button";
 import { useDirection } from "@/registry/bases/base/ui/direction";
-import { Badge } from "@/registry/bases/radix/ui/badge";
-import { Button } from "@/registry/bases/radix/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,12 +52,12 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/registry/bases/radix/ui/dropdown-menu";
+} from "@/registry/bases/base/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
-} from "@/registry/bases/radix/ui/tooltip";
+} from "@/registry/bases/base/ui/tooltip";
 
 const ROOT_NAME = "MediaPlayer";
 const SEEK_NAME = "MediaPlayerSeek";
@@ -67,6 +67,10 @@ const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 
 const FLOATING_MENU_SIDE_OFFSET = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+
+type ButtonClickHandler = NonNullable<
+  React.ComponentProps<typeof Button>["onClick"]
+>;
 
 const SEEK_STEP_SHORT = 5;
 const SEEK_STEP_LONG = 10;
@@ -1246,8 +1250,8 @@ function MediaPlayerPlay(props: React.ComponentProps<typeof Button>) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onPlayToggle = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onPlayToggle = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -1312,8 +1316,8 @@ function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onSeekBackward = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onSeekBackward = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -1374,8 +1378,8 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
   );
   const isDisabled = disabled || context.disabled;
 
-  const onSeekForward = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onSeekForward = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -2395,11 +2399,13 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
 }
 
 interface MediaPlayerPlaybackSpeedProps
-  extends React.ComponentProps<typeof DropdownMenuTrigger>,
-    React.ComponentProps<typeof Button>,
-    Omit<React.ComponentProps<typeof DropdownMenu>, "dir">,
+  extends Omit<React.ComponentProps<typeof DropdownMenu>, "dir" | "children">,
     Pick<React.ComponentProps<typeof DropdownMenuContent>, "sideOffset"> {
   speeds?: number[];
+  className?: string;
+  disabled?: boolean;
+  variant?: React.ComponentProps<typeof Button>["variant"];
+  size?: React.ComponentProps<typeof Button>["size"];
 }
 
 function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
@@ -2434,10 +2440,12 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
     [dispatch],
   );
 
-  const onOpenChange = React.useCallback(
-    (open: boolean) => {
+  const onOpenChange = React.useCallback<
+    NonNullable<React.ComponentProps<typeof DropdownMenu>["onOpenChange"]>
+  >(
+    (open, eventDetails) => {
       store.setState("menuOpen", open);
-      onOpenChangeProp?.(open);
+      onOpenChangeProp?.(open, eventDetails);
     },
     [store.setState, onOpenChangeProp],
   );
@@ -2465,7 +2473,11 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
         </DropdownMenuTrigger>
       </MediaPlayerTooltip>
       <DropdownMenuContent
-        container={context.portalContainer}
+        container={
+          context.portalContainer as React.ComponentProps<
+            typeof DropdownMenuContent
+          >["container"]
+        }
         sideOffset={sideOffset}
         align="center"
         className="min-w-(--radix-dropdown-menu-trigger-width) data-[side=top]:mb-3.5"
@@ -2513,8 +2525,8 @@ function MediaPlayerLoop(props: MediaPlayerLoopProps) {
     return () => observer.disconnect();
   }, [context.mediaRef]);
 
-  const onLoopToggle = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onLoopToggle = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
       if (event.defaultPrevented) return;
 
@@ -2573,8 +2585,8 @@ function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onFullscreen = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onFullscreen = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -2629,8 +2641,8 @@ function MediaPlayerPiP(props: MediaPlayerPiPProps) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onPictureInPicture = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onPictureInPicture = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -2697,8 +2709,8 @@ function MediaPlayerCaptions(props: React.ComponentProps<typeof Button>) {
   );
 
   const isDisabled = disabled || context.disabled;
-  const onCaptionsToggle = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onCaptionsToggle = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -2741,8 +2753,8 @@ function MediaPlayerDownload(props: React.ComponentProps<typeof Button>) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onDownload = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onDownload = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -2882,10 +2894,12 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     return currentRendition.id ?? "Auto";
   }, [selectedRenditionId, mediaRenditionList]);
 
-  const onOpenChange = React.useCallback(
-    (open: boolean) => {
+  const onOpenChange = React.useCallback<
+    NonNullable<React.ComponentProps<typeof DropdownMenu>["onOpenChange"]>
+  >(
+    (open, eventDetails) => {
       store.setState("menuOpen", open);
-      onOpenChangeProp?.(open);
+      onOpenChangeProp?.(open, eventDetails);
     },
     [store.setState, onOpenChangeProp],
   );
@@ -2919,7 +2933,11 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
         align="end"
         side="top"
         sideOffset={sideOffset}
-        container={context.portalContainer}
+        container={
+          context.portalContainer as React.ComponentProps<
+            typeof DropdownMenuContent
+          >["container"]
+        }
         className="w-56 data-[side=top]:mb-3.5"
       >
         <DropdownMenuLabel className="sr-only">Settings</DropdownMenuLabel>
@@ -3048,10 +3066,11 @@ function MediaPlayerPortal(props: MediaPlayerPortalProps) {
 }
 
 interface MediaPlayerTooltipProps
-  extends React.ComponentProps<typeof Tooltip>,
+  extends Omit<React.ComponentProps<typeof Tooltip>, "children">,
     Pick<React.ComponentProps<typeof TooltipContent>, "sideOffset"> {
   tooltip?: string;
   shortcut?: string | string[];
+  children?: React.ReactNode;
 }
 
 function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
@@ -3070,16 +3089,26 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
 
   if ((!tooltip && !shortcut) || context.withoutTooltip) return <>{children}</>;
 
+  const trigger = React.isValidElement(children) ? (
+    <TooltipTrigger
+      className="text-foreground focus-visible:ring-ring/50"
+      render={children}
+    />
+  ) : (
+    <TooltipTrigger className="text-foreground focus-visible:ring-ring/50">
+      {children}
+    </TooltipTrigger>
+  );
+
   return (
     <Tooltip {...tooltipProps} delayDuration={tooltipDelayDuration}>
-      <TooltipTrigger
-        className="text-foreground focus-visible:ring-ring/50"
-        asChild
-      >
-        {children}
-      </TooltipTrigger>
+      {trigger}
       <TooltipContent
-        container={context.portalContainer}
+        container={
+          context.portalContainer as React.ComponentProps<
+            typeof TooltipContent
+          >["container"]
+        }
         sideOffset={tooltipSideOffset}
         className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-zinc-900 [&>span]:hidden"
       >
