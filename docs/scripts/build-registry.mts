@@ -7,10 +7,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
 import { rimraf } from "rimraf";
-import {
-  type registryItemTypeSchema,
-  registrySchema,
-} from "shadcn/schema";
+import { type registryItemTypeSchema, registrySchema } from "shadcn/schema";
 import { Project, ScriptKind, SyntaxKind } from "ts-morph";
 import type { z } from "zod";
 import { DEFAULT_BASE } from "../lib/constants";
@@ -403,9 +400,7 @@ async function buildRegistryJson() {
       .map((item) => ({
         ...item,
         files: item.files?.map((_file) =>
-          typeof _file === "string"
-            ? { path: _file, type: item.type }
-            : _file,
+          typeof _file === "string" ? { path: _file, type: item.type } : _file,
         ),
       }));
     await fs.writeFile(
@@ -421,14 +416,16 @@ async function buildRegistryJson() {
       .map((item) => ({
         ...item,
         files: item.files?.map((_file) =>
-          typeof _file === "string"
-            ? { path: _file, type: item.type }
-            : _file,
+          typeof _file === "string" ? { path: _file, type: item.type } : _file,
         ),
       }));
     await fs.writeFile(
       path.join(outputDir, "registry.json"),
-      JSON.stringify({ name: registry.name, homepage: registry.homepage, items: allItems }, null, 2),
+      JSON.stringify(
+        { name: registry.name, homepage: registry.homepage, items: allItems },
+        null,
+        2,
+      ),
       "utf8",
     );
   }
@@ -496,12 +493,7 @@ async function buildRootIndex() {
 async function buildPublicItems() {
   for (const baseName of BASES) {
     const registry = registries[baseName];
-    const baseSrcRoot = path.join(
-      process.cwd(),
-      "registry",
-      "bases",
-      baseName,
-    );
+    const baseSrcRoot = path.join(process.cwd(), "registry", "bases", baseName);
 
     // Collect example item names so we can skip copying them to non-default styles
     const exampleFileNames = new Set(
