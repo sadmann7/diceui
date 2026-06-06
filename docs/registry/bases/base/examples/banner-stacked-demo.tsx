@@ -87,11 +87,11 @@ function BannerControls() {
             </BannerDescription>
           </BannerContent>
           <BannerActions>
-            <Button size="sm" variant="ghost" onClick={onClose}>
-              Skip
-            </Button>
             <Button size="sm" variant="default">
               Review
+            </Button>
+            <Button size="sm" variant="ghost" onClick={onClose}>
+              Skip
             </Button>
           </BannerActions>
         </>
