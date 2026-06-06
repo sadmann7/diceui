@@ -1,0 +1,35 @@
+---
+title: June 2026 - Banner Positioning Strategy
+description: Added flexible positioning strategies to the Banner component for fixed, static, sticky, and absolute layouts.
+date: 2026-06-06
+---
+
+The Banner component now supports multiple positioning strategies, giving you more control over how banners are rendered in your layout.
+
+### Positioning Strategies
+
+The `Banners` provider accepts a new `strategy` prop with four options:
+
+- **`fixed`** (default) — Fixed to the viewport, rendered via portal into `document.body`
+- **`absolute`** — Positioned within a container, rendered via portal (container needs `position: relative`)
+- **`static`** — Rendered inline, pushes content down
+- **`sticky`** — Sticks within a scroll container
+
+```tsx
+// Inline banner that pushes content down
+<Banners strategy="static">
+  <App />
+</Banners>
+
+// Sticky banner within a scroll container
+<Banners strategy="sticky" side="top">
+  <App />
+</Banners>
+```
+
+`fixed` and `absolute` strategies portal banners out of the DOM tree. `static` and `sticky` render banners inline — above or below children depending on `side`.
+
+### Other Improvements
+
+- Improved type documentation for `Banners` and `Banner` props
+- Aligned stacked banner demo action order (primary → secondary) for consistent dismiss targets
