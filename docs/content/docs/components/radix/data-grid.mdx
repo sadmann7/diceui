@@ -19,6 +19,8 @@ links:
     ```package-install
     npx shadcn@latest add "@diceui/data-grid"
     ```
+
+    This also installs `src/components/ui/direction.tsx`, a thin wrapper around the unified [`radix-ui`](https://www.radix-ui.com/primitives/docs/overview/getting-started) package for RTL support. Individual `@radix-ui/react-*` packages are no longer required.
   </Step>
   <Step>
     Install the following optional components:
@@ -393,15 +395,15 @@ const { table, ...dataGridProps } = useDataGrid({
 
 ### RTL Support
 
-Wrap the grid in a `DirectionProvider` and the language direction will be automatically detected.
+Wrap the grid in a `DirectionProvider` and the language direction will be automatically detected. The `direction` component is included when you install the data grid — see the [shadcn Direction docs](https://ui.shadcn.com/docs/components/radix/direction) for the underlying API.
 
 ```tsx
-import { Direction } from "radix-ui";
+import { DirectionProvider } from "@/components/ui/direction";
 
 return (
-  <Direction.DirectionProvider dir="rtl">
+  <DirectionProvider dir="rtl">
     <DataGridImpl />
-  </Direction.DirectionProvider>
+  </DirectionProvider>
 )
 
 function DataGridImpl() {

@@ -190,6 +190,9 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
+  --diff-add: oklch(0.677 0.169 153.77);
+  --diff-remove: oklch(0.54 0.214 2.41);
+  --highlight: oklch(0.555 0.146 49);
 }
 
 .dark {
@@ -348,5 +351,48 @@
 
   [data-line] span {
     @apply text-(--shiki-light) dark:text-(--shiki-dark);
+  }
+
+  [data-line].highlighted {
+    @apply block -mx-4 px-4;
+    background-color: color-mix(in srgb, var(--highlight) 15%, transparent);
+  }
+
+  [data-line].highlighted::after {
+    @apply hidden!;
+  }
+
+  [data-line].diff {
+    @apply block -mx-4 px-4.5;
+  }
+
+  [data-line].diff.add {
+    background-color: color-mix(in srgb, var(--diff-add) 10%, transparent);
+  }
+
+  [data-line].diff.remove {
+    background-color: color-mix(in srgb, var(--diff-remove) 10%, transparent);
+  }
+
+  [data-line].diff.remove:has(+ [data-line].diff.add) {
+    @apply pb-1;
+  }
+
+  [data-line].diff.remove + [data-line].diff.add {
+    @apply pt-1;
+  }
+
+  [data-line].diff::before {
+    @apply static! inline-block! w-2 -ml-2 left-[unset]!;
+  }
+
+  [data-line].diff.add::before {
+    content: "+";
+    color: var(--diff-add);
+  }
+
+  [data-line].diff.remove::before {
+    content: "−";
+    color: var(--diff-remove);
   }
 }
