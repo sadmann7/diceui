@@ -192,6 +192,7 @@
   --sidebar-ring: oklch(0.705 0.015 286.067);
   --diff-add: oklch(0.677 0.169 153.77);
   --diff-remove: oklch(0.54 0.214 2.41);
+  --highlight: oklch(0.555 0.146 49);
 }
 
 .dark {
@@ -352,20 +353,17 @@
     @apply text-(--shiki-light) dark:text-(--shiki-dark);
   }
 
-  .fd-scroll-container:has(.diff) {
-    @apply py-0!;
+  [data-line].highlighted {
+    @apply block -mx-4 px-4;
+    background-color: color-mix(in srgb, var(--highlight) 15%, transparent);
   }
 
-  .fd-scroll-container:has(.diff) [data-line]:first-child {
-    @apply pt-3;
-  }
-
-  .fd-scroll-container:has(.diff) [data-line]:last-child {
-    @apply pb-3;
+  [data-line].highlighted::after {
+    @apply hidden!;
   }
 
   [data-line].diff {
-    @apply block -mx-4 px-5;
+    @apply block -mx-4 px-4.5;
   }
 
   [data-line].diff.add {
