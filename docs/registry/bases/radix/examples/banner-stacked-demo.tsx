@@ -23,7 +23,7 @@ import { Button } from "@/registry/bases/radix/ui/button";
 
 export default function BannerStackedDemo() {
   return (
-    <Banners maxVisible={1}>
+    <Banners>
       <BannerControls />
     </Banners>
   );
@@ -87,11 +87,11 @@ function BannerControls() {
             </BannerDescription>
           </BannerContent>
           <BannerActions>
-            <Button size="sm" variant="ghost" onClick={onClose}>
-              Skip
-            </Button>
             <Button size="sm" variant="default">
               Review
+            </Button>
+            <Button size="sm" variant="ghost" onClick={onClose}>
+              Skip
             </Button>
           </BannerActions>
         </>

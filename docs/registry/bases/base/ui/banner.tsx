@@ -17,6 +17,7 @@ const DEFAULT_BANNER_DISMISSIBLE = true;
 
 type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
 type BannerSide = "top" | "bottom";
+type BannerStrategy = "fixed" | "static" | "sticky" | "absolute";
 
 interface DivProps
   extends useRender.ComponentProps<"div">,
@@ -39,8 +40,8 @@ interface BannerData {
   content: BannerContent;
   variant?: BannerVariant;
   priority?: number;
-  dismissible?: boolean;
   duration?: number;
+  dismissible?: boolean;
   onDismiss?: () => void;
 }
 
@@ -119,6 +120,7 @@ interface BannersProps {
   children?: React.ReactNode;
   maxVisible?: number;
   side?: BannerSide;
+  strategy?: BannerStrategy;
   container?: Element | DocumentFragment | null;
 }
 
@@ -127,6 +129,7 @@ function Banners(props: BannersProps) {
     children,
     maxVisible = 1,
     side = "top",
+    strategy = "fixed",
     container: containerProp,
   } = props;
 
@@ -242,7 +245,11 @@ function Banners(props: BannersProps) {
   const banners = useStore(store, (state) => state.banners);
   const heights = useStore(store, (state) => state.heights);
   const visibleBanners = banners.slice(0, maxVisible);
-  const container = containerProp ?? globalThis.document?.body ?? null;
+
+  const withPortal = strategy === "fixed" || strategy === "absolute";
+  const container = withPortal
+    ? (containerProp ?? globalThis.document?.body ?? null)
+    : null;
 
   const totalHeight = React.useMemo(() => {
     let total = 0;
@@ -252,35 +259,46 @@ function Banners(props: BannersProps) {
     return total;
   }, [visibleBanners, heights]);
 
+  const bannerContainer = visibleBanners.length > 0 && (
+    <div
+      data-slot="banner-container"
+      data-side={side}
+      data-strategy={strategy}
+      className={cn(
+        "pointer-events-none right-0 left-0 isolate z-50",
+        strategy === "fixed" && "fixed",
+        strategy === "static" && "relative",
+        strategy === "sticky" && "sticky",
+        strategy === "absolute" && "absolute",
+        side === "top" ? "top-0" : "bottom-0",
+      )}
+      style={{
+        height: totalHeight > 0 ? totalHeight : "auto",
+        transition: `height ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1)`,
+      }}
+    >
+      {visibleBanners.map((banner, index) => (
+        <BannerImpl key={banner.id} banner={banner} side={side} index={index} />
+      ))}
+    </div>
+  );
+
   return (
     <StoreContext.Provider value={store}>
-      {children}
-      {container &&
-        visibleBanners.length > 0 &&
-        ReactDOM.createPortal(
-          <div
-            data-slot="banner-container"
-            data-side={side}
-            className={cn(
-              "pointer-events-none fixed right-0 left-0 isolate z-50",
-              side === "top" ? "top-0" : "bottom-0",
-            )}
-            style={{
-              height: totalHeight > 0 ? totalHeight : "auto",
-              transition: `height ${BANNER_ANIMATION_DURATION}ms cubic-bezier(0.32, 0.72, 0, 1)`,
-            }}
-          >
-            {visibleBanners.map((banner, index) => (
-              <BannerImpl
-                key={banner.id}
-                banner={banner}
-                side={side}
-                index={index}
-              />
-            ))}
-          </div>,
-          container,
-        )}
+      {strategy === "static" || strategy === "sticky" ? (
+        <>
+          {side === "top" && bannerContainer}
+          {children}
+          {side === "bottom" && bannerContainer}
+        </>
+      ) : (
+        <>
+          {children}
+          {container &&
+            bannerContainer &&
+            ReactDOM.createPortal(bannerContainer, container)}
+        </>
+      )}
     </StoreContext.Provider>
   );
 }
@@ -454,8 +472,8 @@ interface BannerProps extends DivProps, VariantProps<typeof bannerVariants> {
   onOpenChange?: (open: boolean) => void;
   onDismiss?: () => void;
   priority?: number;
-  dismissible?: boolean;
   duration?: number;
+  dismissible?: boolean;
 }
 
 function Banner(props: BannerProps) {
@@ -463,12 +481,12 @@ function Banner(props: BannerProps) {
     className,
     variant = "default",
     open: openProp,
-    defaultOpen,
+    defaultOpen = true,
     onOpenChange,
     onDismiss,
     priority,
-    dismissible = DEFAULT_BANNER_DISMISSIBLE,
     duration,
+    dismissible = DEFAULT_BANNER_DISMISSIBLE,
     children,
     render,
     ...rootProps
@@ -479,7 +497,7 @@ function Banner(props: BannerProps) {
   const isInsideStore = store !== null;
   const isControlled = openProp !== undefined;
 
-  const openRef = useLazyRef(() => openProp ?? defaultOpen ?? true);
+  const openRef = useLazyRef(() => openProp ?? defaultOpen);
   const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
   const bannerIdRef = React.useRef<string | null>(null);
   const onDismissRef = useAsRef(onDismiss);
