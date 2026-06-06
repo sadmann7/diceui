@@ -10,10 +10,10 @@ The Banner component now supports multiple positioning strategies, giving you mo
 
 The `Banners` provider accepts a new `strategy` prop with four options:
 
-- **`fixed`** (default) — Fixed to the viewport, rendered via portal into `document.body`
-- **`absolute`** — Positioned within a container, rendered via portal (container needs `position: relative`)
-- **`static`** — Rendered inline, pushes content down
-- **`sticky`** — Sticks within a scroll container
+- **`fixed`** (default): Fixed to the viewport, rendered via portal into `document.body`
+- **`absolute`**: Positioned within a container, rendered via portal (container needs `position: relative`)
+- **`static`**: Rendered inline, pushes content down
+- **`sticky`**: Sticks within a scroll container
 
 ```tsx
 // Inline banner that pushes content down
@@ -27,7 +27,7 @@ The `Banners` provider accepts a new `strategy` prop with four options:
 </Banners>
 ```
 
-`fixed` and `absolute` strategies portal banners out of the DOM tree. `static` and `sticky` render banners inline — above or below children depending on `side`.
+`fixed` and `absolute` strategies portal banners out of the DOM tree. `static` and `sticky` render banners inline, either above or below children depending on `side`.
 
 ### Other Improvements
 
