@@ -2,11 +2,11 @@
 
 import * as React from "react";
 import { z } from "zod";
+import { Label } from "@/registry/bases/base/ui/label";
 import {
   MaskInput,
   type MaskPattern,
 } from "@/registry/bases/base/ui/mask-input";
-import { Label } from "@/registry/bases/radix/ui/label";
 
 // Custom license plate pattern (e.g., ABC-1234)
 const licensePattern: MaskPattern = {

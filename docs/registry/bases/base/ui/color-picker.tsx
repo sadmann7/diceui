@@ -740,16 +740,19 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
 function ColorPickerTrigger(
   props: React.ComponentProps<typeof PopoverTrigger>,
 ) {
-  const { disabled, render, ...triggerProps } = props;
+  const { disabled, render, nativeButton, ...triggerProps } = props;
 
   const context = useColorPickerContext(TRIGGER_NAME);
 
   const isDisabled = disabled || context.disabled;
 
+  const usesButton =
+    !render || (React.isValidElement(render) && render.type === Button);
+
   return (
     <PopoverTrigger
       disabled={isDisabled}
-      nativeButton={false}
+      nativeButton={nativeButton ?? usesButton}
       data-slot="color-picker-trigger"
       render={render ?? <Button />}
       {...triggerProps}

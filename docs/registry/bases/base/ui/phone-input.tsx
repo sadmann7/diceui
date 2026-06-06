@@ -11,6 +11,7 @@ import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
+import { Input } from "@/registry/bases/base/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -24,7 +25,6 @@ import {
   CommandItem,
   CommandList,
 } from "@/registry/bases/radix/ui/command";
-import { Input } from "@/registry/bases/radix/ui/input";
 
 const ROOT_NAME = "PhoneInput";
 const COUNTRY_SELECT_NAME = "PhoneInputCountrySelect";

@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
+import { Label } from "@/registry/bases/base/ui/label";
 import { MaskInput } from "@/registry/bases/base/ui/mask-input";
-import { Label } from "@/registry/bases/radix/ui/label";
 
 interface Input {
   phone: string;

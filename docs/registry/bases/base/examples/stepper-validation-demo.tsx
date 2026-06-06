@@ -5,6 +5,16 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+import { Button } from "@/registry/bases/base/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/registry/bases/base/ui/form";
+import { Input } from "@/registry/bases/base/ui/input";
 import {
   Stepper,
   StepperContent,
@@ -19,17 +29,7 @@ import {
   StepperTitle,
   StepperTrigger,
 } from "@/registry/bases/base/ui/stepper";
-import { Button } from "@/registry/bases/radix/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/registry/bases/radix/ui/form";
-import { Input } from "@/registry/bases/radix/ui/input";
-import { Textarea } from "@/registry/bases/radix/ui/textarea";
+import { Textarea } from "@/registry/bases/base/ui/textarea";
 
 const formSchema = z.object({
   username: z
