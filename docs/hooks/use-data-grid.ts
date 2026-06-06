@@ -1,4 +1,3 @@
-import { useDirection } from "@radix-ui/react-direction";
 import {
   type ColumnDef,
   type ColumnFiltersState,
@@ -17,7 +16,6 @@ import {
 import { useVirtualizer, type Virtualizer } from "@tanstack/react-virtual";
 import * as React from "react";
 import { toast } from "sonner";
-
 import { useAsRef } from "@/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/hooks/use-lazy-ref";
@@ -31,6 +29,7 @@ import {
   parseCellKey,
   scrollCellIntoView,
 } from "@/lib/data-grid";
+import { useDirection } from "@/registry/bases/radix/ui/direction";
 import type {
   CellPosition,
   CellUpdate,

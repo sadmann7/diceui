@@ -5,7 +5,6 @@ import {
   defineDocs,
   frontmatterSchema,
 } from "fumadocs-mdx/config";
-import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import { codeImport } from "remark-code-import";
 import remarkMath from "remark-math";
@@ -14,17 +13,15 @@ import { rehypeComponent } from "@/lib/rehype-component";
 
 export default defineConfig({
   mdxOptions: {
+    rehypeCodeOptions: {
+      themes: {
+        dark: "github-dark",
+        light: "github-light",
+      },
+      langs: ["typescript", "tsx", "javascript", "jsx", "json", "bash", "css"],
+    },
     rehypePlugins: (plugins) => {
-      plugins.shift();
-      plugins.push(rehypeSlug, rehypeComponent, [
-        rehypePrettyCode,
-        {
-          theme: {
-            dark: "github-dark",
-            light: "github-light",
-          },
-        },
-      ]);
+      plugins.push(rehypeSlug, rehypeComponent);
       return plugins;
     },
     remarkPlugins: (plugins) => {

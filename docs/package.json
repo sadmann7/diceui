@@ -99,7 +99,6 @@
     "postcss": "^8.5.8",
     "react-reconciler": "^0.33.0",
     "react-scan": "^0.5.3",
-    "rehype-pretty-code": "^0.14.3",
     "rehype-slug": "^6.0.0",
     "remark-code-import": "^1.2.0",
     "remark-math": "^6.0.0",
