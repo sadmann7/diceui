@@ -256,11 +256,125 @@ export function scrollCellIntoView<TData>(params: {
   container.scrollLeft += scrollDelta;
 }
 
+function countTabs(s: string): number {
+  let n = 0;
+  for (let i = 0; i < s.length; i++) if (s[i] === "\t") n++;
+  return n;
+}
+
+export function parseTsv(
+  text: string,
+  fallbackColumnCount: number,
+): string[][] {
+  if (text.startsWith('"') || text.includes('\t"')) {
+    const rows: string[][] = [];
+    let currentRow: string[] = [];
+    let currentField = "";
+    let inQuotes = false;
+    let i = 0;
+
+    while (i < text.length) {
+      const char = text[i];
+      const nextChar = text[i + 1];
+
+      if (inQuotes) {
+        if (char === '"' && nextChar === '"') {
+          currentField += '"';
+          i += 2;
+        } else if (char === '"') {
+          inQuotes = false;
+          i++;
+        } else {
+          currentField += char;
+          i++;
+        }
+      } else {
+        if (char === '"' && currentField === "") {
+          inQuotes = true;
+          i++;
+        } else if (char === "\t") {
+          currentRow.push(currentField);
+          currentField = "";
+          i++;
+        } else if (char === "\n") {
+          currentRow.push(currentField);
+          if (currentRow.length > 1 || currentRow.some((f) => f.length > 0)) {
+            rows.push(currentRow);
+          }
+          currentRow = [];
+          currentField = "";
+          i++;
+        } else if (char === "\r" && nextChar === "\n") {
+          currentRow.push(currentField);
+          if (currentRow.length > 1 || currentRow.some((f) => f.length > 0)) {
+            rows.push(currentRow);
+          }
+          currentRow = [];
+          currentField = "";
+          i += 2;
+        } else {
+          currentField += char;
+          i++;
+        }
+      }
+    }
+
+    currentRow.push(currentField);
+    if (currentRow.length > 1 || currentRow.some((f) => f.length > 0)) {
+      rows.push(currentRow);
+    }
+
+    return rows;
+  }
+
+  const lines = text.split("\n");
+  let maxTabCount = 0;
+  for (const line of lines) {
+    const n = countTabs(line);
+    if (n > maxTabCount) maxTabCount = n;
+  }
+  const columnCount = maxTabCount > 0 ? maxTabCount + 1 : fallbackColumnCount;
+  if (columnCount <= 0) return [];
+
+  const expectedTabCount = columnCount - 1;
+  const rows: string[][] = [];
+  let buf = "";
+  let bufTabCount = 0;
+
+  for (const line of lines) {
+    const tc = countTabs(line);
+
+    if (tc === expectedTabCount) {
+      if (buf && bufTabCount === expectedTabCount) rows.push(buf.split("\t"));
+      buf = "";
+      bufTabCount = 0;
+      rows.push(line.split("\t"));
+    } else {
+      buf = buf ? `${buf}\n${line}` : line;
+      bufTabCount += tc;
+      if (bufTabCount === expectedTabCount) {
+        rows.push(buf.split("\t"));
+        buf = "";
+        bufTabCount = 0;
+      }
+    }
+  }
+
+  if (buf && bufTabCount === expectedTabCount) rows.push(buf.split("\t"));
+
+  return rows.length > 0
+    ? rows
+    : lines.filter((l) => l.length > 0).map((l) => l.split("\t"));
+}
+
 export function getIsInPopover(element: unknown): boolean {
+  if (!(element instanceof Element)) return false;
+
   return (
-    element instanceof Element &&
-    (element.closest("[data-grid-cell-editor]") ||
-      element.closest("[data-grid-popover]")) !== null
+    element.closest("[data-grid-cell-editor]") !== null ||
+    element.closest("[data-grid-popover]") !== null ||
+    element.closest("[data-slot='dropdown-menu-content']") !== null ||
+    element.closest("[data-slot='popover-content']") !== null
   );
 }
 
@@ -290,6 +404,15 @@ export function getColumnVariant(variant?: CellOpts["variant"]): {
     default:
       return null;
   }
+}
+
+export function getEmptyCellValue(
+  variant: CellOpts["variant"] | undefined,
+): unknown {
+  if (variant === "multi-select" || variant === "file") return [];
+  if (variant === "number" || variant === "date") return null;
+  if (variant === "checkbox") return false;
+  return "";
 }
 
 export function getUrlHref(urlString: string): string {
