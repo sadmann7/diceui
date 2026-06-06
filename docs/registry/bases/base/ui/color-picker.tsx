@@ -27,7 +27,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/registry/bases/radix/ui/select";
+} from "@/registry/bases/base/ui/select";
 
 const ROOT_NAME = "ColorPicker";
 const ROOT_IMPL_NAME = "ColorPickerImpl";
@@ -1160,8 +1160,13 @@ function ColorPickerFormatSelect(props: ColorPickerFormatSelectProps) {
   const format = useStore((state) => state.format);
 
   const onFormatChange = React.useCallback(
-    (value: ColorFormat) => {
-      store.setFormat(value);
+    (value: unknown) => {
+      if (
+        typeof value === "string" &&
+        colorFormats.includes(value as ColorFormat)
+      ) {
+        store.setFormat(value as ColorFormat);
+      }
     },
     [store],
   );
