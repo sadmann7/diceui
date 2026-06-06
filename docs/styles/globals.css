@@ -376,8 +376,12 @@
     background-color: color-mix(in srgb, var(--diff-remove) 10%, transparent);
   }
 
+  [data-line].diff.remove:has(+ [data-line].diff.add) {
+    @apply pb-1;
+  }
+
   [data-line].diff.remove + [data-line].diff.add {
-    @apply mt-2;
+    @apply pt-1;
   }
 
   [data-line].diff::before {
