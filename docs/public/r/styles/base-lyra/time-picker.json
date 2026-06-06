@@ -5,11 +5,9 @@
   ],
   "registryDependencies": [
     "popover",
-    "visually-hidden-input",
-    "compose-refs",
+    "@diceui/use-as-ref",
     "@diceui/use-isomorphic-layout-effect",
-    "@diceui/use-lazy-ref",
-    "@diceui/use-as-ref"
+    "@diceui/use-lazy-ref"
   ],
   "files": [
     {
@@ -31,5 +29,13 @@
       "target": ""
     }
   ],
+  "css": {
+    "@utility scrollbar-none": {
+      "scrollbar-width": "none",
+      "&::-webkit-scrollbar": {
+        "display": "none"
+      }
+    }
+  },
   "type": "registry:ui"
 }

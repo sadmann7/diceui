@@ -60,7 +60,7 @@
         "transform": "translateY(calc(-100% - var(--marquee-gap)))"
       },
       "100%": {
-        "transform": "translateY(0%)"
+        "transform": "translateY(calc(-100% - var(--marquee-gap)))"
       }
     },
     "@keyframes marquee-left-rtl": {
