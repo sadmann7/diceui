@@ -51,18 +51,17 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
+      // Known styles → serve the matching static directory.
       {
-        source: "/r/registry.json",
-        destination: "/r/styles/radix-vega/registry.json",
+        source: "/r/:style(radix-vega|base-vega)/:name.json",
+        destination: "/r/styles/:style/:name.json",
       },
+      // Unknown styles (e.g. "new-york", "default") → radix-vega fallback.
       {
-        source: "/r/base/registry.json",
-        destination: "/r/styles/base-vega/registry.json",
+        source: "/r/:style/:name.json",
+        destination: "/r/styles/radix-vega/:name.json",
       },
-      {
-        source: "/r/base/:name.json",
-        destination: "/r/styles/base-vega/:name.json",
-      },
+      // Flat /r/{name}.json → radix-vega default (no style in URL).
       {
         source: "/r/:name.json",
         destination: "/r/styles/radix-vega/:name.json",
