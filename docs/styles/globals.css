@@ -190,6 +190,8 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
+  --diff-add: oklch(0.677 0.169 153.77);
+  --diff-remove: oklch(0.54 0.214 2.41);
 }
 
 .dark {
@@ -350,53 +352,45 @@
     @apply text-(--shiki-light) dark:text-(--shiki-dark);
   }
 
-  /* Remove scroll container vertical padding so diff colors go flush to edges */
   .fd-scroll-container:has(.diff) {
     @apply py-0!;
   }
 
-  /* Restore breathing room on first/last lines inside the colored area */
   .fd-scroll-container:has(.diff) [data-line]:first-child {
-    padding-top: 0.875rem;
+    @apply pt-3;
   }
 
   .fd-scroll-container:has(.diff) [data-line]:last-child {
-    padding-bottom: 0.875rem;
+    @apply pb-3;
   }
 
-  /* Full-width colored background — extends through <pre>'s px-4 */
   [data-line].diff {
-    display: block;
-    margin-left: -1rem;
-    margin-right: -1rem;
-    padding-left: 1.5rem; /* 1rem (restore px-4) + 0.5rem (symbol gutter) */
-    padding-right: 1rem;
+    @apply block -mx-4 px-5;
   }
 
   [data-line].diff.add {
-    background-color: color-mix(in srgb, #0eb464 10%, transparent);
+    background-color: color-mix(in srgb, var(--diff-add) 10%, transparent);
   }
 
   [data-line].diff.remove {
-    background-color: color-mix(in srgb, #c80a64 10%, transparent);
+    background-color: color-mix(in srgb, var(--diff-remove) 10%, transparent);
   }
 
-  /* Inline +/− symbols — override fumadocs-ui's position:absolute so they scroll */
+  [data-line].diff.remove + [data-line].diff.add {
+    @apply mt-2;
+  }
+
   [data-line].diff::before {
-    position: static !important;
-    display: inline-block !important;
-    left: unset !important;
-    width: 0.5rem;
-    margin-left: -0.5rem;
+    @apply static! inline-block! w-2 -ml-2 left-[unset]!;
   }
 
   [data-line].diff.add::before {
     content: "+";
-    color: #0eb464;
+    color: var(--diff-add);
   }
 
   [data-line].diff.remove::before {
     content: "−";
-    color: #c80a64;
+    color: var(--diff-remove);
   }
 }
