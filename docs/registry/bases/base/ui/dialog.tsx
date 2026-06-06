@@ -2,7 +2,7 @@
 
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { XIcon } from "lucide-react";
-import type * as React from "react";
+import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/registry/bases/base/ui/button";
 
@@ -24,8 +24,22 @@ function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
   return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />;
 }
 
-function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
-  return <DialogPrimitive.Close data-slot="dialog-close" {...props} />;
+function DialogClose({
+  render,
+  nativeButton,
+  ...props
+}: DialogPrimitive.Close.Props) {
+  const usesButton =
+    render && React.isValidElement(render) && render.type === Button;
+
+  return (
+    <DialogPrimitive.Close
+      data-slot="dialog-close"
+      nativeButton={nativeButton ?? (usesButton ? true : undefined)}
+      render={render}
+      {...props}
+    />
+  );
 }
 
 function DialogOverlay({
@@ -65,8 +79,7 @@ function DialogContent({
       >
         {children}
         {showCloseButton && (
-          <DialogPrimitive.Close
-            data-slot="dialog-close"
+          <DialogClose
             render={
               <Button
                 variant="ghost"
@@ -113,9 +126,7 @@ function DialogFooter({
     >
       {children}
       {showCloseButton && (
-        <DialogPrimitive.Close
-          render={<Button variant="outline">Close</Button>}
-        />
+        <DialogClose render={<Button variant="outline">Close</Button>} />
       )}
     </div>
   );

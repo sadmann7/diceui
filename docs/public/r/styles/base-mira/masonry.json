@@ -4,8 +4,7 @@
     "@base-ui/react"
   ],
   "registryDependencies": [
-    "compose-refs",
-    "use-isomorphic-layout-effect"
+    "@diceui/use-isomorphic-layout-effect"
   ],
   "files": [
     {

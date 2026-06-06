@@ -9,9 +9,9 @@
   "oxc.enable": false,
   "tailwindCSS.validate": true,
   "tailwindCSS.lint.cssConflict": "ignore",
+  "tailwindCSS.classFunctions": ["cn", "cva", "clsx"],
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-    ["cn\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
     ["clsx\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
   ],
   "typescript.tsdk": "node_modules/typescript/lib",

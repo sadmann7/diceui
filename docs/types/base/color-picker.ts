@@ -6,7 +6,7 @@ import type {
   PopoverContent,
   PopoverTrigger,
 } from "@/registry/bases/base/ui/popover";
-import type { Select, SelectTrigger } from "@/registry/bases/radix/ui/select";
+import type { Select, SelectTrigger } from "@/registry/bases/base/ui/select";
 import type {
   ButtonProps,
   ControlledProps,

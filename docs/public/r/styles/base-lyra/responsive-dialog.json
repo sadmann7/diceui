@@ -6,10 +6,10 @@
   "registryDependencies": [
     "dialog",
     "drawer",
-    "use-as-ref",
-    "use-isomorphic-layout-effect",
-    "use-lazy-ref",
-    "use-mobile"
+    "@diceui/use-as-ref",
+    "@diceui/use-isomorphic-layout-effect",
+    "@diceui/use-lazy-ref",
+    "@diceui/use-mobile"
   ],
   "files": [
     {

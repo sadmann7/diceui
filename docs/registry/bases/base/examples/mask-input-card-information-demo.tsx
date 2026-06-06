@@ -2,8 +2,7 @@
 
 import * as React from "react";
 import { toast } from "sonner";
-import { MaskInput } from "@/registry/bases/base/ui/mask-input";
-import { Button } from "@/registry/bases/radix/ui/button";
+import { Button } from "@/registry/bases/base/ui/button";
 import {
   Card,
   CardContent,
@@ -11,8 +10,9 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/registry/bases/radix/ui/card";
-import { Label } from "@/registry/bases/radix/ui/label";
+} from "@/registry/bases/base/ui/card";
+import { Label } from "@/registry/bases/base/ui/label";
+import { MaskInput } from "@/registry/bases/base/ui/mask-input";
 
 export default function MaskInputCardInformationDemo() {
   const id = React.useId();

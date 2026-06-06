@@ -232,7 +232,7 @@ export default function MediaPlayerPlaylistDemo() {
             alt={currentTrack.title}
             className="h-40 w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
           <div className="absolute right-0 bottom-0 left-0 p-4">
             <h2 className="font-semibold text-2xl text-white tracking-tight drop-shadow-lg">
               {currentTrack.title}

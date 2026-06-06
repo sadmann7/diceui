@@ -10,7 +10,7 @@ import {
   type CropperPoint,
 } from "@/registry/bases/base/ui/cropper";
 import { Label } from "@/registry/bases/base/ui/label";
-import { Slider } from "@/registry/bases/radix/ui/slider";
+import { Slider } from "@/registry/bases/base/ui/slider";
 
 export default function CropperControlledDemo() {
   const id = React.useId();
@@ -49,7 +49,9 @@ export default function CropperControlledDemo() {
           <Slider
             id={`${id}-zoom`}
             value={[zoom]}
-            onValueChange={(value: number[]) => setZoom(value[0] ?? 1)}
+            onValueChange={(value) =>
+              setZoom(Array.isArray(value) ? (value[0] ?? 1) : value)
+            }
             min={1}
             max={3}
             step={0.1}
@@ -62,7 +64,9 @@ export default function CropperControlledDemo() {
           <Slider
             id={`${id}-rotation`}
             value={[rotation]}
-            onValueChange={(value: number[]) => setRotation(value[0] ?? 0)}
+            onValueChange={(value) =>
+              setRotation(Array.isArray(value) ? (value[0] ?? 0) : value)
+            }
             min={-180}
             max={180}
             step={1}

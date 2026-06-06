@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { Badge } from "@/registry/bases/base/ui/badge";
+import { Button } from "@/registry/bases/base/ui/button";
+import { Label } from "@/registry/bases/base/ui/label";
 import { MaskInput } from "@/registry/bases/base/ui/mask-input";
-import { Badge } from "@/registry/bases/radix/ui/badge";
-import { Button } from "@/registry/bases/radix/ui/button";
-import { Label } from "@/registry/bases/radix/ui/label";
 
 const modes = [
   {

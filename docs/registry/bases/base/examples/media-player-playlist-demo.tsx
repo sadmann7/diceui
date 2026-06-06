@@ -11,6 +11,7 @@ import {
 import * as React from "react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Button } from "@/registry/bases/base/ui/button";
 import {
   MediaPlayer,
   MediaPlayerAudio,
@@ -21,8 +22,7 @@ import {
   MediaPlayerTooltip,
   MediaPlayerVolume,
 } from "@/registry/bases/base/ui/media-player";
-import { Button } from "@/registry/bases/radix/ui/button";
-import { ScrollArea } from "@/registry/bases/radix/ui/scroll-area";
+import { ScrollArea } from "@/registry/bases/base/ui/scroll-area";
 
 interface Track {
   id: string;
@@ -232,7 +232,7 @@ export default function MediaPlayerPlaylistDemo() {
             alt={currentTrack.title}
             className="h-40 w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
           <div className="absolute right-0 bottom-0 left-0 p-4">
             <h2 className="font-semibold text-2xl text-white tracking-tight drop-shadow-lg">
               {currentTrack.title}

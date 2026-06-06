@@ -21,7 +21,10 @@ import {
 
 export default function MediaPlayerHlsDemo() {
   return (
-    <MediaPlayer autoHide>
+    <MediaPlayer
+      className="[&_video]:size-full [&_video]:object-cover"
+      autoHide
+    >
       <MediaPlayerVideo asChild>
         <MuxVideo playbackId="A3VXy02VoUinw01pwyomEO3bHnG4P32xzV7u1j1FSzjNg" />
       </MediaPlayerVideo>

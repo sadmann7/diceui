@@ -12,19 +12,19 @@ import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomo
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/registry/bases/base/ui/popover";
-import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/registry/bases/radix/ui/command";
-import { Input } from "@/registry/bases/radix/ui/input";
+} from "@/registry/bases/base/ui/command";
+import { Input } from "@/registry/bases/base/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/registry/bases/base/ui/popover";
 
 const ROOT_NAME = "PhoneInput";
 const COUNTRY_SELECT_NAME = "PhoneInputCountrySelect";

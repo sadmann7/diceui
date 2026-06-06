@@ -40,9 +40,9 @@ import * as ReactDOM from "react-dom";
 import { cn } from "@/lib/utils";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
+import { Badge } from "@/registry/bases/base/ui/badge";
+import { Button } from "@/registry/bases/base/ui/button";
 import { useDirection } from "@/registry/bases/base/ui/direction";
-import { Badge } from "@/registry/bases/radix/ui/badge";
-import { Button } from "@/registry/bases/radix/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,12 +52,13 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/registry/bases/radix/ui/dropdown-menu";
+} from "@/registry/bases/base/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger,
-} from "@/registry/bases/radix/ui/tooltip";
+} from "@/registry/bases/base/ui/tooltip";
 
 const ROOT_NAME = "MediaPlayer";
 const SEEK_NAME = "MediaPlayerSeek";
@@ -67,6 +68,10 @@ const PLAYBACK_SPEED_NAME = "MediaPlayerPlaybackSpeed";
 
 const FLOATING_MENU_SIDE_OFFSET = 10;
 const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+
+type ButtonClickHandler = NonNullable<
+  React.ComponentProps<typeof Button>["onClick"]
+>;
 
 const SEEK_STEP_SHORT = 5;
 const SEEK_STEP_LONG = 10;
@@ -133,8 +138,8 @@ interface MediaPlayerContextValue {
   dir: Direction;
   rootRef: React.RefObject<RootElement | null>;
   mediaRef: React.RefObject<HTMLVideoElement | HTMLAudioElement | null>;
-  portalContainer: Element | DocumentFragment | null;
-  tooltipDelayDuration: number;
+  portalContainer: HTMLElement | ShadowRoot | null;
+  tooltipDelay: number;
   tooltipSideOffset: number;
   disabled: boolean;
   isVideo: boolean;
@@ -166,7 +171,7 @@ interface MediaPlayerProps
   onFullscreenChange?: (fullscreen: boolean) => void;
   dir?: Direction;
   label?: string;
-  tooltipDelayDuration?: number;
+  tooltipDelay?: number;
   tooltipSideOffset?: number;
   autoHide?: boolean;
   disabled?: boolean;
@@ -224,7 +229,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
     onPipError,
     dir: dirProp,
     label,
-    tooltipDelayDuration = 600,
+    tooltipDelay = 600,
     tooltipSideOffset = FLOATING_MENU_SIDE_OFFSET,
     render,
     autoHide = false,
@@ -713,7 +718,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
       rootRef,
       mediaRef,
       portalContainer,
-      tooltipDelayDuration,
+      tooltipDelay,
       tooltipSideOffset,
       disabled,
       isVideo,
@@ -725,7 +730,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
       descriptionId,
       dir,
       portalContainer,
-      tooltipDelayDuration,
+      tooltipDelay,
       tooltipSideOffset,
       disabled,
       isVideo,
@@ -750,7 +755,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
             onKeyDown,
             onKeyUp,
             className: cn(
-              "dark relative isolate flex flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-disabled:pointer-events-none data-disabled:opacity-50 [&_video]:relative [&_video]:object-contain",
+              "dark relative isolate flex size-full flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-disabled:pointer-events-none data-disabled:opacity-50 [&_video]:relative [&_video]:object-contain",
               "in-[:fullscreen]:flex in-[:fullscreen]:h-full in-[:fullscreen]:max-h-screen in-[:fullscreen]:flex-col in-[:fullscreen]:justify-between data-[state=fullscreen]:[&_video]:size-full",
               "**:data-slider:relative [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default",
               "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]!",
@@ -1246,8 +1251,8 @@ function MediaPlayerPlay(props: React.ComponentProps<typeof Button>) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onPlayToggle = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onPlayToggle = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -1312,8 +1317,8 @@ function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onSeekBackward = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onSeekBackward = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -1374,8 +1379,8 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
   );
   const isDisabled = disabled || context.disabled;
 
-  const onSeekForward = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onSeekForward = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -2395,10 +2400,9 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
 }
 
 interface MediaPlayerPlaybackSpeedProps
-  extends React.ComponentProps<typeof DropdownMenuTrigger>,
-    React.ComponentProps<typeof Button>,
-    Omit<React.ComponentProps<typeof DropdownMenu>, "dir">,
-    Pick<React.ComponentProps<typeof DropdownMenuContent>, "sideOffset"> {
+  extends Omit<React.ComponentProps<typeof DropdownMenu>, "dir" | "children">,
+    Pick<React.ComponentProps<typeof DropdownMenuContent>, "sideOffset">,
+    React.ComponentProps<typeof Button> {
   speeds?: number[];
 }
 
@@ -2434,10 +2438,12 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
     [dispatch],
   );
 
-  const onOpenChange = React.useCallback(
-    (open: boolean) => {
+  const onOpenChange = React.useCallback<
+    NonNullable<React.ComponentProps<typeof DropdownMenu>["onOpenChange"]>
+  >(
+    (open, eventDetails) => {
       store.setState("menuOpen", open);
-      onOpenChangeProp?.(open);
+      onOpenChangeProp?.(open, eventDetails);
     },
     [store.setState, onOpenChangeProp],
   );
@@ -2450,31 +2456,34 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
       onOpenChange={onOpenChange}
     >
       <MediaPlayerTooltip tooltip="Playback speed" shortcut={["<", ">"]}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            aria-controls={context.mediaId}
-            disabled={isDisabled}
-            {...playbackSpeedProps}
-            variant="ghost"
-            size="icon"
-            className={cn("h-8 w-16 aria-expanded:bg-accent/50", className)}
-          >
-            {mediaPlaybackRate}x
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          nativeButton
+          render={
+            <Button
+              type="button"
+              aria-controls={context.mediaId}
+              disabled={isDisabled}
+              {...playbackSpeedProps}
+              variant="ghost"
+              size="icon"
+              className={cn("h-8 w-16 aria-expanded:bg-accent/50", className)}
+            >
+              {mediaPlaybackRate}x
+            </Button>
+          }
+        />
       </MediaPlayerTooltip>
       <DropdownMenuContent
         container={context.portalContainer}
         sideOffset={sideOffset}
         align="center"
-        className="min-w-(--radix-dropdown-menu-trigger-width) data-[side=top]:mb-3.5"
+        className="min-w-(--anchor-width) data-[side=top]:mb-3.5"
       >
         {speeds.map((speed) => (
           <DropdownMenuItem
             key={speed}
             className="justify-between"
-            onSelect={() => onPlaybackRateChange(speed)}
+            onClick={() => onPlaybackRateChange(speed)}
           >
             {speed}x{mediaPlaybackRate === speed && <CheckIcon />}
           </DropdownMenuItem>
@@ -2513,8 +2522,8 @@ function MediaPlayerLoop(props: MediaPlayerLoopProps) {
     return () => observer.disconnect();
   }, [context.mediaRef]);
 
-  const onLoopToggle = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onLoopToggle = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
       if (event.defaultPrevented) return;
 
@@ -2573,8 +2582,8 @@ function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onFullscreen = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onFullscreen = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -2629,8 +2638,8 @@ function MediaPlayerPiP(props: MediaPlayerPiPProps) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onPictureInPicture = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onPictureInPicture = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -2697,8 +2706,8 @@ function MediaPlayerCaptions(props: React.ComponentProps<typeof Button>) {
   );
 
   const isDisabled = disabled || context.disabled;
-  const onCaptionsToggle = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onCaptionsToggle = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -2741,8 +2750,8 @@ function MediaPlayerDownload(props: React.ComponentProps<typeof Button>) {
 
   const isDisabled = disabled || context.disabled;
 
-  const onDownload = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onDownload = React.useCallback<ButtonClickHandler>(
+    (event) => {
       props.onClick?.(event);
 
       if (event.defaultPrevented) return;
@@ -2882,10 +2891,12 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     return currentRendition.id ?? "Auto";
   }, [selectedRenditionId, mediaRenditionList]);
 
-  const onOpenChange = React.useCallback(
-    (open: boolean) => {
+  const onOpenChange = React.useCallback<
+    NonNullable<React.ComponentProps<typeof DropdownMenu>["onOpenChange"]>
+  >(
+    (open, eventDetails) => {
       store.setState("menuOpen", open);
-      onOpenChangeProp?.(open);
+      onOpenChangeProp?.(open, eventDetails);
     },
     [store.setState, onOpenChangeProp],
   );
@@ -2898,22 +2909,25 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
       onOpenChange={onOpenChange}
     >
       <MediaPlayerTooltip tooltip="Settings">
-        <DropdownMenuTrigger asChild>
-          <Button
-            type="button"
-            aria-controls={context.mediaId}
-            aria-label="Settings"
-            data-disabled={isDisabled ? "" : undefined}
-            data-slot="media-player-settings"
-            disabled={isDisabled}
-            {...settingsProps}
-            variant="ghost"
-            size="icon"
-            className={cn("size-8 aria-expanded:bg-accent/50", className)}
-          >
-            <SettingsIcon />
-          </Button>
-        </DropdownMenuTrigger>
+        <DropdownMenuTrigger
+          nativeButton
+          render={
+            <Button
+              type="button"
+              aria-controls={context.mediaId}
+              aria-label="Settings"
+              data-disabled={isDisabled ? "" : undefined}
+              data-slot="media-player-settings"
+              disabled={isDisabled}
+              {...settingsProps}
+              variant="ghost"
+              size="icon"
+              className={cn("size-8 aria-expanded:bg-accent/50", className)}
+            >
+              <SettingsIcon />
+            </Button>
+          }
+        />
       </MediaPlayerTooltip>
       <DropdownMenuContent
         align="end"
@@ -2935,7 +2949,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
               <DropdownMenuItem
                 key={speed}
                 className="justify-between"
-                onSelect={() => onPlaybackRateChange(speed)}
+                onClick={() => onPlaybackRateChange(speed)}
               >
                 {speed}x{mediaPlaybackRate === speed && <CheckIcon />}
               </DropdownMenuItem>
@@ -2953,7 +2967,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
             <DropdownMenuSubContent>
               <DropdownMenuItem
                 className="justify-between"
-                onSelect={() => onRenditionChange("auto")}
+                onClick={() => onRenditionChange("auto")}
               >
                 Auto
                 {!selectedRenditionId && <CheckIcon />}
@@ -2978,7 +2992,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                     <DropdownMenuItem
                       key={rendition.id}
                       className="justify-between"
-                      onSelect={() => onRenditionChange(rendition.id ?? "")}
+                      onClick={() => onRenditionChange(rendition.id ?? "")}
                     >
                       {label}
                       {selected && <CheckIcon />}
@@ -2998,7 +3012,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
           <DropdownMenuSubContent>
             <DropdownMenuItem
               className="justify-between"
-              onSelect={onSubtitlesToggle}
+              onClick={onSubtitlesToggle}
             >
               Off
               {!isSubtitlesActive && <CheckIcon />}
@@ -3012,7 +3026,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                 <DropdownMenuItem
                   key={`${subtitleTrack.kind}-${subtitleTrack.label}-${subtitleTrack.language}`}
                   className="justify-between"
-                  onSelect={() => onShowSubtitleTrack(subtitleTrack)}
+                  onClick={() => onShowSubtitleTrack(subtitleTrack)}
                 >
                   {subtitleTrack.label}
                   {isSelected && <CheckIcon />}
@@ -3048,69 +3062,73 @@ function MediaPlayerPortal(props: MediaPlayerPortalProps) {
 }
 
 interface MediaPlayerTooltipProps
-  extends React.ComponentProps<typeof Tooltip>,
-    Pick<React.ComponentProps<typeof TooltipContent>, "sideOffset"> {
+  extends Omit<React.ComponentProps<typeof Tooltip>, "children">,
+    Pick<React.ComponentProps<typeof TooltipContent>, "sideOffset">,
+    Pick<React.ComponentProps<typeof TooltipProvider>, "delay"> {
   tooltip?: string;
   shortcut?: string | string[];
+  children?: React.ReactNode;
 }
 
 function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
-  const {
-    tooltip,
-    shortcut,
-    delayDuration,
-    sideOffset,
-    children,
-    ...tooltipProps
-  } = props;
+  const { tooltip, shortcut, delay, sideOffset, children, ...tooltipProps } =
+    props;
 
   const context = useMediaPlayerContext("MediaPlayerTooltip");
-  const tooltipDelayDuration = delayDuration ?? context.tooltipDelayDuration;
+  const tooltipDelay = delay ?? context.tooltipDelay;
   const tooltipSideOffset = sideOffset ?? context.tooltipSideOffset;
 
   if ((!tooltip && !shortcut) || context.withoutTooltip) return <>{children}</>;
 
+  const trigger = React.isValidElement(children) ? (
+    <TooltipTrigger
+      className="text-foreground focus-visible:ring-ring/50"
+      render={children}
+    />
+  ) : (
+    <TooltipTrigger className="text-foreground focus-visible:ring-ring/50">
+      {children}
+    </TooltipTrigger>
+  );
+
   return (
-    <Tooltip {...tooltipProps} delayDuration={tooltipDelayDuration}>
-      <TooltipTrigger
-        className="text-foreground focus-visible:ring-ring/50"
-        asChild
-      >
-        {children}
-      </TooltipTrigger>
-      <TooltipContent
-        container={context.portalContainer}
-        sideOffset={tooltipSideOffset}
-        className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-zinc-900 [&>span]:hidden"
-      >
-        <p>{tooltip}</p>
-        {Array.isArray(shortcut) ? (
-          <div className="flex items-center gap-1">
-            {shortcut.map((shortcutKey) => (
+    <TooltipProvider delay={tooltipDelay}>
+      <Tooltip {...tooltipProps}>
+        {trigger}
+        <TooltipContent
+          container={context.portalContainer}
+          sideOffset={tooltipSideOffset}
+          className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-zinc-900 [&>span]:hidden"
+        >
+          <p>{tooltip}</p>
+          {Array.isArray(shortcut) ? (
+            <div className="flex items-center gap-1">
+              {shortcut.map((shortcutKey) => (
+                <kbd
+                  key={shortcutKey}
+                  className="select-none rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs"
+                >
+                  <abbr title={shortcutKey} className="no-underline">
+                    {shortcutKey}
+                  </abbr>
+                </kbd>
+              ))}
+            </div>
+          ) : (
+            shortcut && (
               <kbd
-                key={shortcutKey}
-                className="select-none rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs"
+                key={shortcut}
+                className="select-none rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-foreground shadow-xs"
               >
-                <abbr title={shortcutKey} className="no-underline">
-                  {shortcutKey}
+                <abbr title={shortcut} className="no-underline">
+                  {shortcut}
                 </abbr>
               </kbd>
-            ))}
-          </div>
-        ) : (
-          shortcut && (
-            <kbd
-              key={shortcut}
-              className="select-none rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-foreground shadow-xs"
-            >
-              <abbr title={shortcut} className="no-underline">
-                {shortcut}
-              </abbr>
-            </kbd>
-          )
-        )}
-      </TooltipContent>
-    </Tooltip>
+            )
+          )}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 

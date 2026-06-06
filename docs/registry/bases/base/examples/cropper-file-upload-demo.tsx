@@ -13,6 +13,15 @@ import {
   type CropperProps,
 } from "@/registry/bases/base/ui/cropper";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/registry/bases/base/ui/dialog";
+import {
   FileUpload,
   FileUploadDropzone,
   FileUploadItem,
@@ -23,16 +32,7 @@ import {
   FileUploadTrigger,
 } from "@/registry/bases/base/ui/file-upload";
 import { Label } from "@/registry/bases/base/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/registry/bases/radix/ui/dialog";
-import { Slider } from "@/registry/bases/radix/ui/slider";
+import { Slider } from "@/registry/bases/base/ui/slider";
 
 async function createCroppedImage(
   imageSrc: string,
@@ -277,16 +277,18 @@ export default function CropperFileUploadDemo() {
                   open={showCropDialog}
                   onOpenChange={onCropDialogOpenChange}
                 >
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="size-8"
-                      onClick={() => onFileSelect(file)}
-                    >
-                      <CropIcon />
-                    </Button>
-                  </DialogTrigger>
+                  <DialogTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-8"
+                        onClick={() => onFileSelect(file)}
+                      >
+                        <CropIcon />
+                      </Button>
+                    }
+                  />
                   <DialogContent className="max-w-4xl">
                     <DialogHeader>
                       <DialogTitle>Crop Image</DialogTitle>
@@ -321,8 +323,10 @@ export default function CropperFileUploadDemo() {
                           </Label>
                           <Slider
                             value={[zoom]}
-                            onValueChange={(value: number[]) =>
-                              setZoom(value[0] ?? 1)
+                            onValueChange={(value) =>
+                              setZoom(
+                                Array.isArray(value) ? (value[0] ?? 1) : value,
+                              )
                             }
                             min={1}
                             max={3}

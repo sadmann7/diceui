@@ -3,9 +3,6 @@
   "dependencies": [
     "@base-ui/react"
   ],
-  "registryDependencies": [
-    "compose-refs"
-  ],
   "files": [
     {
       "path": "ui/mask-input.tsx",

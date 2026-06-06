@@ -1,5 +1,5 @@
 import { Masonry, MasonryItem } from "@/registry/bases/base/ui/masonry";
-import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
+import { Skeleton } from "@/registry/bases/base/ui/skeleton";
 
 const items = [
   {

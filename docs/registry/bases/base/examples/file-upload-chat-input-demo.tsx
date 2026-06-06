@@ -16,7 +16,7 @@ import {
   type FileUploadProps,
   FileUploadTrigger,
 } from "@/registry/bases/base/ui/file-upload";
-import { Textarea } from "@/registry/bases/radix/ui/textarea";
+import { Textarea } from "@/registry/bases/base/ui/textarea";
 
 export default function FileUploadChatInputDemo() {
   const [input, setInput] = React.useState("");

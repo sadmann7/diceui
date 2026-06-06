@@ -25,97 +25,24 @@
       {
         "path": "ui/angle-slider.tsx",
         "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "compose-refs",
-      "direction",
-      "visually-hidden-input",
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "compare-slider",
-    "type": "registry:ui",
-    "files": [
+      },
       {
-        "path": "ui/compare-slider.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "compose-refs",
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "cropper",
-    "type": "registry:ui",
-    "files": [
+        "path": "components/visually-hidden-input.tsx",
+        "type": "registry:component"
+      },
       {
-        "path": "ui/cropper.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "compose-refs",
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "file-upload",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/file-upload.tsx",
-        "type": "registry:ui"
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
       }
     ],
     "registryDependencies": [
       "direction",
       "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
       "@base-ui/react"
-    ]
-  },
-  {
-    "name": "fps",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/fps.tsx",
-        "type": "registry:ui"
-      }
-    ]
-  },
-  {
-    "name": "stat",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/stat.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "separator"
     ]
   },
   {
@@ -126,118 +53,6 @@
         "path": "ui/avatar-group.tsx",
         "type": "registry:ui"
       }
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "color-swatch",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/color-swatch.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "color-picker",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/color-picker.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "button",
-      "input",
-      "popover",
-      "select",
-      "direction",
-      "visually-hidden-input",
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref",
-      "@diceui/compose-refs"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "editable",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/editable.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "direction",
-      "visually-hidden-input",
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "status",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/status.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "scroller",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/scroller.tsx",
-        "type": "registry:ui"
-      },
-      {
-        "path": "lib/compose-refs.ts",
-        "type": "registry:lib"
-      }
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "scroll-spy",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/scroll-spy.tsx",
-        "type": "registry:ui"
-      },
-      {
-        "path": "lib/compose-refs.ts",
-        "type": "registry:lib"
-      }
-    ],
-    "registryDependencies": [
-      "direction",
-      "compose-refs",
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref"
     ],
     "dependencies": [
       "@base-ui/react"
@@ -279,23 +94,6 @@
     ]
   },
   {
-    "name": "segmented-input",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/segmented-input.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "input",
-      "direction"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
     "name": "circular-progress",
     "type": "registry:ui",
     "files": [
@@ -324,11 +122,39 @@
     }
   },
   {
-    "name": "stack",
+    "name": "color-picker",
     "type": "registry:ui",
     "files": [
       {
-        "path": "ui/stack.tsx",
+        "path": "ui/color-picker.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "components/visually-hidden-input.tsx",
+        "type": "registry:component"
+      }
+    ],
+    "registryDependencies": [
+      "button",
+      "input",
+      "popover",
+      "select",
+      "direction",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref",
+      "@diceui/compose-refs"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "color-swatch",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/color-swatch.tsx",
         "type": "registry:ui"
       }
     ],
@@ -337,11 +163,11 @@
     ]
   },
   {
-    "name": "stepper",
+    "name": "compare-slider",
     "type": "registry:ui",
     "files": [
       {
-        "path": "ui/stepper.tsx",
+        "path": "ui/compare-slider.tsx",
         "type": "registry:ui"
       },
       {
@@ -350,14 +176,85 @@
       }
     ],
     "registryDependencies": [
-      "direction",
-      "compose-refs",
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref"
     ],
     "dependencies": [
       "@base-ui/react"
+    ]
+  },
+  {
+    "name": "cropper",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/cropper.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "registryDependencies": [
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "editable",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/editable.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "components/visually-hidden-input.tsx",
+        "type": "registry:component"
+      }
+    ],
+    "registryDependencies": [
+      "direction",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "file-upload",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/file-upload.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "direction",
+      "@diceui/use-as-ref",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "fps",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/fps.tsx",
+        "type": "registry:ui"
+      }
     ]
   },
   {
@@ -386,229 +283,18 @@
         "type": "registry:ui"
       },
       {
-        "path": "lib/compose-refs.ts",
-        "type": "registry:lib"
-      },
-      {
         "path": "components/visually-hidden-input.tsx",
         "type": "registry:component"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
       }
     ],
     "registryDependencies": [
       "button",
       "input",
       "textarea",
-      "compose-refs",
-      "visually-hidden-input",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "hover-card",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/hover-card.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "dependencies": [
-      "radix-ui"
-    ]
-  },
-  {
-    "name": "swap",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/swap.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "qr-code",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/qr-code.tsx",
-        "type": "registry:ui"
-      },
-      {
-        "path": "lib/compose-refs.ts",
-        "type": "registry:lib"
-      }
-    ],
-    "registryDependencies": [
-      "@diceui/use-lazy-ref"
-    ],
-    "dependencies": [
-      "@base-ui/react",
-      "qrcode"
-    ],
-    "devDependencies": [
-      "@types/qrcode"
-    ]
-  },
-  {
-    "name": "relative-time-card",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/relative-time-card.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "hover-card"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "rating",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/rating.tsx",
-        "type": "registry:ui"
-      },
-      {
-        "path": "lib/compose-refs.ts",
-        "type": "registry:lib"
-      }
-    ],
-    "registryDependencies": [
-      "direction",
-      "visually-hidden-input",
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "responsive-dialog",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/responsive-dialog.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "dialog",
-      "drawer",
-      "use-as-ref",
-      "use-isomorphic-layout-effect",
-      "use-lazy-ref",
-      "use-mobile"
-    ],
-    "dependencies": [
-      "vaul"
-    ]
-  },
-  {
-    "name": "mask-input",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/mask-input.tsx",
-        "type": "registry:ui"
-      },
-      {
-        "path": "lib/compose-refs.ts",
-        "type": "registry:lib"
-      }
-    ],
-    "registryDependencies": [
-      "compose-refs"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "masonry",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/masonry.tsx",
-        "type": "registry:ui"
-      },
-      {
-        "path": "lib/compose-refs.ts",
-        "type": "registry:lib"
-      }
-    ],
-    "registryDependencies": [
-      "compose-refs",
-      "use-isomorphic-layout-effect"
-    ],
-    "dependencies": [
-      "@base-ui/react"
-    ]
-  },
-  {
-    "name": "media-player",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/media-player.tsx",
-        "type": "registry:ui"
-      }
-    ],
-    "registryDependencies": [
-      "badge",
-      "button",
-      "dropdown-menu",
-      "tooltip",
-      "direction",
-      "@diceui/compose-refs",
-      "@diceui/use-lazy-ref"
-    ],
-    "dependencies": [
-      "@base-ui/react",
-      "media-chrome"
-    ]
-  },
-  {
-    "name": "phone-input",
-    "type": "registry:ui",
-    "files": [
-      {
-        "path": "ui/phone-input.tsx",
-        "type": "registry:ui"
-      },
-      {
-        "path": "lib/compose-refs.ts",
-        "type": "registry:lib"
-      },
-      {
-        "path": "components/visually-hidden-input.tsx",
-        "type": "registry:component"
-      }
-    ],
-    "registryDependencies": [
-      "popover",
-      "compose-refs",
-      "visually-hidden-input",
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref"
@@ -676,7 +362,7 @@
           "transform": "translateY(calc(-100% - var(--marquee-gap)))"
         },
         "100%": {
-          "transform": "translateY(0%)"
+          "transform": "translateY(calc(-100% - var(--marquee-gap)))"
         }
       },
       "@keyframes marquee-left-rtl": {
@@ -698,11 +384,28 @@
     }
   },
   {
-    "name": "timeline",
+    "name": "mask-input",
     "type": "registry:ui",
     "files": [
       {
-        "path": "ui/timeline.tsx",
+        "path": "ui/mask-input.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "masonry",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/masonry.tsx",
         "type": "registry:ui"
       },
       {
@@ -711,20 +414,41 @@
       }
     ],
     "registryDependencies": [
-      "direction",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref"
+      "@diceui/use-isomorphic-layout-effect"
     ],
     "dependencies": [
       "@base-ui/react"
     ]
   },
   {
-    "name": "time-picker",
+    "name": "media-player",
     "type": "registry:ui",
     "files": [
       {
-        "path": "ui/time-picker.tsx",
+        "path": "ui/media-player.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "badge",
+      "button",
+      "dropdown-menu",
+      "tooltip",
+      "direction",
+      "@diceui/compose-refs",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react",
+      "media-chrome"
+    ]
+  },
+  {
+    "name": "phone-input",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/phone-input.tsx",
         "type": "registry:ui"
       },
       {
@@ -738,11 +462,157 @@
     ],
     "registryDependencies": [
       "popover",
-      "visually-hidden-input",
-      "compose-refs",
+      "command",
+      "input",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react",
+      "cmdk"
+    ]
+  },
+  {
+    "name": "qr-code",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/qr-code.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "registryDependencies": [
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react",
+      "qrcode"
+    ],
+    "devDependencies": [
+      "@types/qrcode"
+    ]
+  },
+  {
+    "name": "rating",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/rating.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "components/visually-hidden-input.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "registryDependencies": [
+      "direction",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "relative-time-card",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/relative-time-card.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "hover-card"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "responsive-dialog",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/responsive-dialog.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "dialog",
+      "drawer",
+      "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
-      "@diceui/use-as-ref"
+      "@diceui/use-mobile"
+    ],
+    "dependencies": [
+      "vaul"
+    ]
+  },
+  {
+    "name": "scroll-spy",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/scroll-spy.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "registryDependencies": [
+      "direction",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "scroller",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/scroller.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "segmented-input",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/segmented-input.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "input",
+      "direction"
     ],
     "dependencies": [
       "@base-ui/react"
@@ -794,6 +664,143 @@
     "dependencies": [
       "@base-ui/react"
     ]
+  },
+  {
+    "name": "stack",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/stack.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "stat",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/stat.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "separator"
+    ]
+  },
+  {
+    "name": "status",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/status.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "stepper",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/stepper.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "registryDependencies": [
+      "direction",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "swap",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/swap.tsx",
+        "type": "registry:ui"
+      }
+    ],
+    "registryDependencies": [
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "timeline",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/timeline.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "registryDependencies": [
+      "direction",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ]
+  },
+  {
+    "name": "time-picker",
+    "type": "registry:ui",
+    "files": [
+      {
+        "path": "ui/time-picker.tsx",
+        "type": "registry:ui"
+      },
+      {
+        "path": "components/visually-hidden-input.tsx",
+        "type": "registry:component"
+      },
+      {
+        "path": "lib/compose-refs.ts",
+        "type": "registry:lib"
+      }
+    ],
+    "registryDependencies": [
+      "popover",
+      "@diceui/use-as-ref",
+      "@diceui/use-isomorphic-layout-effect",
+      "@diceui/use-lazy-ref"
+    ],
+    "dependencies": [
+      "@base-ui/react"
+    ],
+    "css": {
+      "@utility scrollbar-none": {
+        "scrollbar-width": "none",
+        "&::-webkit-scrollbar": {
+          "display": "none"
+        }
+      }
+    }
   },
   {
     "name": "tour",

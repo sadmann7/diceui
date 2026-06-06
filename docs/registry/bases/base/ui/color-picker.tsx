@@ -27,7 +27,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/registry/bases/radix/ui/select";
+} from "@/registry/bases/base/ui/select";
 
 const ROOT_NAME = "ColorPicker";
 const ROOT_IMPL_NAME = "ColorPickerImpl";
@@ -489,7 +489,6 @@ interface ColorPickerProps
   defaultFormat?: ColorFormat;
   onFormatChange?: (format: ColorFormat) => void;
   name?: string;
-  asChild?: boolean;
   disabled?: boolean;
   inline?: boolean;
   readOnly?: boolean;
@@ -740,16 +739,19 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
 function ColorPickerTrigger(
   props: React.ComponentProps<typeof PopoverTrigger>,
 ) {
-  const { disabled, render, ...triggerProps } = props;
+  const { disabled, render, nativeButton, ...triggerProps } = props;
 
   const context = useColorPickerContext(TRIGGER_NAME);
 
   const isDisabled = disabled || context.disabled;
 
+  const usesButton =
+    !render || (React.isValidElement(render) && render.type === Button);
+
   return (
     <PopoverTrigger
       disabled={isDisabled}
-      nativeButton={false}
+      nativeButton={nativeButton ?? usesButton}
       data-slot="color-picker-trigger"
       render={render ?? <Button />}
       {...triggerProps}
@@ -1160,8 +1162,13 @@ function ColorPickerFormatSelect(props: ColorPickerFormatSelectProps) {
   const format = useStore((state) => state.format);
 
   const onFormatChange = React.useCallback(
-    (value: ColorFormat) => {
-      store.setFormat(value);
+    (value: unknown) => {
+      if (
+        typeof value === "string" &&
+        colorFormats.includes(value as ColorFormat)
+      ) {
+        store.setFormat(value as ColorFormat);
+      }
     },
     [store],
   );
