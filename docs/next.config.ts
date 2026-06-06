@@ -49,6 +49,21 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      // Serve flat registry URLs required by the shadcn registry index.
+      // The index lists @diceui with URL https://diceui.com/r/{name}.json,
+      // so these rewrites map flat requests to radix-vega as the default style.
+      {
+        source: "/r/registry.json",
+        destination: "/r/styles/radix-vega/registry.json",
+      },
+      {
+        source: "/r/:name.json",
+        destination: "/r/styles/radix-vega/:name.json",
+      },
+    ];
+  },
   // Already doing typechecking as separate tasks in CI
   typescript: { ignoreBuildErrors: true },
 };

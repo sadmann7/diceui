@@ -1,10 +1,5 @@
 [
   {
-    "name": "radix-default",
-    "label": "Default",
-    "base": "radix"
-  },
-  {
     "name": "radix-vega",
     "label": "Vega",
     "base": "radix"
@@ -30,9 +25,19 @@
     "base": "radix"
   },
   {
-    "name": "base-default",
-    "label": "Default",
-    "base": "base"
+    "name": "radix-luma",
+    "label": "Luma",
+    "base": "radix"
+  },
+  {
+    "name": "radix-sera",
+    "label": "Sera",
+    "base": "radix"
+  },
+  {
+    "name": "radix-rhea",
+    "label": "Rhea",
+    "base": "radix"
   },
   {
     "name": "base-vega",
@@ -57,6 +62,21 @@
   {
     "name": "base-mira",
     "label": "Mira",
+    "base": "base"
+  },
+  {
+    "name": "base-luma",
+    "label": "Luma",
+    "base": "base"
+  },
+  {
+    "name": "base-sera",
+    "label": "Sera",
+    "base": "base"
+  },
+  {
+    "name": "base-rhea",
+    "label": "Rhea",
     "base": "base"
   }
 ]

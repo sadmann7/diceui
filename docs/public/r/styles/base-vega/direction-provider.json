@@ -1,15 +1,15 @@
 {
   "name": "direction-provider",
-  "dependencies": [
-    "@base-ui/react"
-  ],
+  "type": "registry:component",
   "files": [
     {
       "path": "components/direction-provider.tsx",
-      "content": "\"use client\";\n\nexport {\n  DirectionProvider,\n  useDirection,\n} from \"@base-ui/react/direction-provider\";\n",
       "type": "registry:component",
+      "content": "\"use client\";\n\nexport {\n  DirectionProvider,\n  useDirection,\n} from \"@base-ui/react/direction-provider\";\n",
       "target": ""
     }
   ],
-  "type": "registry:component"
+  "dependencies": [
+    "@base-ui/react"
+  ]
 }

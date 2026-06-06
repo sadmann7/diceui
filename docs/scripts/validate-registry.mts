@@ -6,14 +6,22 @@ import { STYLES } from "../registry/styles";
 
 const BASES: RegistryBase[] = ["radix", "base"];
 
+function getStyleNames(): string[] {
+  const names: string[] = [];
+  for (const baseName of BASES) {
+    for (const style of STYLES) {
+      names.push(`${baseName}-${style.name}`);
+    }
+  }
+  return names;
+}
+
 async function main() {
   console.log("📦 Validating registry files...\n");
 
   let hasErrors = false;
 
-  for (const baseName of BASES) {
-    for (const style of STYLES) {
-      const styleName = `${baseName}-${style.name}`;
+  for (const styleName of getStyleNames()) {
       const registryFile = path.join(
         process.cwd(),
         `public/r/styles/${styleName}/registry.json`,
@@ -57,7 +65,6 @@ async function main() {
         );
         hasErrors = true;
       }
-    }
   }
 
   if (hasErrors) {

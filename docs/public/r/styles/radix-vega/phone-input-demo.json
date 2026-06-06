@@ -1,0 +1,15 @@
+{
+  "name": "phone-input-demo",
+  "type": "registry:example",
+  "registryDependencies": [
+    "phone-input"
+  ],
+  "files": [
+    {
+      "path": "examples/phone-input-demo.tsx",
+      "type": "registry:example",
+      "content": "import {\n  PhoneInput,\n  PhoneInputCountrySelect,\n  PhoneInputField,\n} from \"@/registry/bases/radix/ui/phone-input\";\n\nexport default function PhoneInputDemo() {\n  return (\n    <PhoneInput>\n      <PhoneInputCountrySelect />\n      <PhoneInputField placeholder=\"12345667777\" />\n    </PhoneInput>\n  );\n}\n",
+      "target": ""
+    }
+  ]
+}
