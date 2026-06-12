@@ -2,8 +2,6 @@ import { ImageResponse } from "next/og";
 import { siteConfig } from "@/config/site";
 import { loadFonts } from "@/lib/fonts";
 
-export const runtime = "edge";
-
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
