@@ -53,7 +53,8 @@ const nextConfig: NextConfig = {
     return [
       // Known styles → serve the matching static directory.
       {
-        source: "/r/:style(radix-vega|base-vega)/:name.json",
+        source:
+          "/r/:style(radix-vega|base-vega|radix-nova|base-nova)/:name.json",
         destination: "/r/styles/:style/:name.json",
       },
       // Unknown styles (e.g. "new-york", "default") → radix-vega fallback.

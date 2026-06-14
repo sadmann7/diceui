@@ -5,8 +5,18 @@
     "base": "radix"
   },
   {
+    "name": "radix-nova",
+    "label": "Nova",
+    "base": "radix"
+  },
+  {
     "name": "base-vega",
     "label": "Vega",
+    "base": "base"
+  },
+  {
+    "name": "base-nova",
+    "label": "Nova",
     "base": "base"
   }
 ]
