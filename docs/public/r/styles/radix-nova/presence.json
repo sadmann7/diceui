@@ -1,0 +1,12 @@
+{
+  "name": "presence",
+  "type": "registry:component",
+  "files": [
+    {
+      "path": "components/presence.tsx",
+      "type": "registry:component",
+      "content": "import { Presence as PresencePrimitive } from \"radix-ui/internal\";\n\nconst Presence = PresencePrimitive.Root;\n\nexport { Presence };\n",
+      "target": ""
+    }
+  ]
+}
