@@ -349,6 +349,10 @@
     @apply bg-secondary/50!;
   }
 
+  [data-rehype-pretty-code-figure] pre {
+    padding-inline: calc(var(--spacing) * 3.5) !important;
+  }
+  
   [data-line] span {
     @apply text-(--shiki-light) dark:text-(--shiki-dark);
   }
