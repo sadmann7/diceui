@@ -28,7 +28,8 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
-        source: "/r/:component(data-table.*\\.json|data-grid.*\\.json)",
+        source:
+          "/r/:component(data-table.*\\.json|data-grid.*\\.json|use-data-grid.*\\.json)",
         destination: "https://tablecn.com/r/:component",
         permanent: true,
       },
