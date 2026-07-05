@@ -1,6 +1,6 @@
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
-import type * as React from "react";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -19,18 +19,17 @@ const hitboxVariants = cva(
         lg: "[--size:var(--size-lg)]",
         dynamic: "[--size:var(--size)]",
       },
+      // Inset utilities (not arbitrary properties) so tailwind-merge can
+      // override the slotted child's own after:inset-* classes, e.g. the
+      // checkbox touch target.
       position: {
-        all: "after:[inset:calc(-1*var(--size))]",
-        top: "after:[height:var(--size)] after:[left:0] after:[right:0] after:[top:calc(-1*var(--size))]",
-        bottom:
-          "after:[bottom:calc(-1*var(--size))] after:[height:var(--size)] after:[left:0] after:[right:0]",
-        left: "after:[bottom:0] after:[left:calc(-1*var(--size))] after:[top:0] after:[width:var(--size)]",
-        right:
-          "after:[bottom:0] after:[right:calc(-1*var(--size))] after:[top:0] after:[width:var(--size)]",
-        vertical:
-          "after:[bottom:calc(-1*var(--size))] after:[left:0] after:[right:0] after:[top:calc(-1*var(--size))]",
-        horizontal:
-          "after:[bottom:0] after:[left:calc(-1*var(--size))] after:[right:calc(-1*var(--size))] after:[top:0]",
+        all: "after:inset-[calc(-1*var(--size))]",
+        top: "after:inset-[calc(-1*var(--size))_0_100%]",
+        bottom: "after:inset-[100%_0_calc(-1*var(--size))]",
+        left: "after:inset-[0_100%_0_calc(-1*var(--size))]",
+        right: "after:inset-[0_calc(-1*var(--size))_0_100%]",
+        vertical: "after:inset-[calc(-1*var(--size))_0]",
+        horizontal: "after:inset-[0_calc(-1*var(--size))]",
       },
       radius: {
         none: "",
@@ -68,14 +67,22 @@ function Hitbox(props: HitboxProps) {
     radius,
     debug = false,
     render,
+    children,
     ...hitboxProps
   } = props;
 
   const isDynamicSize = size && !sizes.includes(size);
 
+  // Merge onto a single element child (like Radix Slot) so the ::after
+  // hit area belongs to the interactive element instead of a wrapper div
+  // that would intercept its clicks.
+  const childAsRender =
+    !render && React.isValidElement(children) ? children : undefined;
+
   return useRender({
     props: {
       ...hitboxProps,
+      ...(childAsRender ? {} : { children }),
       className: cn(
         hitboxVariants({
           size: isDynamicSize ? "dynamic" : (size as Size),
@@ -90,7 +97,7 @@ function Hitbox(props: HitboxProps) {
         ...style,
       } as React.CSSProperties,
     },
-    render,
+    render: render ?? childAsRender,
     state: {
       slot: "hitbox",
     },
