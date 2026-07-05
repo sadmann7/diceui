@@ -633,7 +633,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   const isReadOnly = readOnly || context.readOnly;
   const isRequired = required || context.required;
   const isInvalid = errors[itemData.id]?.value !== undefined;
-  const maxHeight = maxRows ? `calc(${maxRows} * 1.5em + 1rem)` : undefined;
+  const maxHeight = maxRows ? `calc(${maxRows} * 1.5em + 0.5rem)` : undefined;
 
   const onChange = React.useCallback(
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -708,7 +708,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
       placeholder={context.valuePlaceholder}
       {...valueInputProps}
       className={cn(
-        "field-sizing-content min-h-9 resize-none",
+        "field-sizing-content min-h-8 resize-none py-1",
         maxRows && "overflow-y-auto",
         className,
       )}
