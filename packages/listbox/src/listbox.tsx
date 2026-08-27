@@ -464,7 +464,9 @@ function ListboxRootImpl<Multiple extends boolean = false>(
   const onItemSelect = React.useCallback(
     (itemValue: string, isMultipleEvent = false) => {
       const allItems = getItems();
-      const item = allItems.find((item) => item.value === itemValue);
+      const item = allItems.find(
+        (collectionItem) => collectionItem.value === itemValue,
+      );
 
       if (item?.ref.current && item.onSelect) {
         const itemSelectEvent = new CustomEvent(ITEM_SELECT_EVENT, {
@@ -517,9 +519,9 @@ function ListboxRootImpl<Multiple extends boolean = false>(
   );
 
   const onItemFocus = React.useCallback(
-    (value: string) => {
-      store.onStateChange("focusedValue", value);
-      setFocusedValue(value);
+    (itemValue: string) => {
+      store.onStateChange("focusedValue", itemValue);
+      setFocusedValue(itemValue);
     },
     [store],
   );
@@ -529,22 +531,24 @@ function ListboxRootImpl<Multiple extends boolean = false>(
   }, [store]);
 
   const onItemHighlight = React.useCallback(
-    (value: string | null) => {
-      store.onHighlightedValueChange(value);
+    (itemValue: string | null) => {
+      store.onHighlightedValueChange(itemValue);
     },
     [store],
   );
 
   const focusItemByValue = React.useCallback(
-    (value: string) => {
+    (itemValue: string) => {
       const allItems = getItems();
 
-      const item = allItems.find((item) => item.value === value);
+      const item = allItems.find(
+        (collectionItem) => collectionItem.value === itemValue,
+      );
       if (item?.ref.current && !virtual && !item.disabled) {
         item.ref.current?.focus();
-        store.onStateChange("focusedValue", value);
-        setFocusedValue(value);
-        store.onHighlightedValueChange(value);
+        store.onStateChange("focusedValue", itemValue);
+        setFocusedValue(itemValue);
+        store.onHighlightedValueChange(itemValue);
       }
     },
     [getItems, store, virtual],
@@ -583,9 +587,9 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
       if (itemCount === 0) return;
 
-      const focusedValue = store.getSnapshot().focusedValue;
-      const currentIndex = focusedValue
-        ? items.findIndex((item) => item.value === focusedValue)
+      const currentFocusedValue = store.getSnapshot().focusedValue;
+      const currentIndex = currentFocusedValue
+        ? items.findIndex((item) => item.value === currentFocusedValue)
         : -1;
 
       let nextItem: CollectionItem | null = null;
@@ -640,8 +644,8 @@ function ListboxRootImpl<Multiple extends boolean = false>(
               } else if (loop) {
                 const lastRowItemIndex =
                   currentCol + (rowCount - 1) * columnCount;
-                const targetIndex = Math.min(lastRowItemIndex, itemCount - 1);
-                nextItem = items[targetIndex] ?? null;
+                const loopedIndex = Math.min(lastRowItemIndex, itemCount - 1);
+                nextItem = items[loopedIndex] ?? null;
               }
             } else if (currentIndex >= 0) {
               nextItem = findEnabledItem(items, {
@@ -713,14 +717,14 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
         case "Enter":
         case " ":
-          if (focusedValue) {
+          if (currentFocusedValue) {
             const isMultipleSelectionKey =
               multiple && (multiple === true || event.ctrlKey || event.metaKey);
-            onItemSelect(focusedValue, isMultipleSelectionKey);
-            setFocusedValue(focusedValue);
+            onItemSelect(currentFocusedValue, isMultipleSelectionKey);
+            setFocusedValue(currentFocusedValue);
 
             const focusedItem = items.find(
-              (item) => item.value === focusedValue,
+              (item) => item.value === currentFocusedValue,
             );
             if (focusedItem?.ref.current instanceof HTMLElement) {
               focusedItem.ref.current.scrollIntoView({

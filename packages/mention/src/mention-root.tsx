@@ -254,12 +254,12 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
     }, [getItems]);
 
     const onOpenChange = React.useCallback(
-      (open: boolean) => {
-        if (open && filterStore.search && filterStore.itemCount === 0) {
+      (nextOpen: boolean) => {
+        if (nextOpen && filterStore.search && filterStore.itemCount === 0) {
           return;
         }
-        setOpen(open);
-        if (open) {
+        setOpen(nextOpen);
+        if (nextOpen) {
           requestAnimationFrame(() => {
             const items = getEnabledItems();
             const firstItem = items[0] ?? null;

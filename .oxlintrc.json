@@ -42,7 +42,8 @@
     "typescript/no-misused-spread": "warn",
     "typescript/no-base-to-string": "warn",
     "typescript/no-duplicate-type-constituents": "warn",
-    "react/exhaustive-deps": "warn",
+    "react/exhaustive-deps": "off",
+    "react/memo-dependencies": "off",
     "react/rules-of-hooks": "warn",
     "react/react-in-jsx-scope": "off",
     "react/no-array-index-key": "off",
@@ -60,13 +61,18 @@
     "nextjs/no-html-link-for-pages": "off",
     "nextjs/no-assign-module-variable": "off",
     "unicorn/no-new-array": "warn",
-    "unicorn/no-invalid-remove-event-listener": "warn"
+    "unicorn/no-invalid-remove-event-listener": "warn",
+    "unicorn/no-array-sort": "off"
   },
   "overrides": [
     {
       "files": ["**/*.{test,spec}.{ts,tsx}"],
       "env": {
         "vitest": true
+      },
+      "rules": {
+        "unicorn/consistent-function-scoping": "off",
+        "no-shadow": "off"
       }
     }
   ]

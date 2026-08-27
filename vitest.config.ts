@@ -10,5 +10,8 @@ export default defineConfig({
     setupFiles: [resolve(__dirname, "./vitest.setup.ts")],
     include: ["**/*.test.?(c|m)[jt]s?(x)"],
   },
+  resolve: {
+    dedupe: ["react", "react-dom"],
+  },
   plugins: [tsconfigPaths(), react()],
 });

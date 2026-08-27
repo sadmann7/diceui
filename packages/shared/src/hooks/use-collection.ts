@@ -83,5 +83,5 @@ function useCollection<TElement extends HTMLElement, TData = {}>({
   };
 }
 
-export type { CollectionGroupMap, CollectionItem, CollectionItemMap };
 export { useCollection };
+export type { CollectionGroupMap, CollectionItem, CollectionItemMap };

@@ -127,7 +127,7 @@ function useDismiss(params: UseDismissProps) {
       if (onEscapeKeyDown && !event.defaultPrevented) {
         onEscapeKeyDown(event);
         if (!event.defaultPrevented) {
-          onDismiss(event);
+          void onDismiss(event);
         }
       }
     },
@@ -139,7 +139,7 @@ function useDismiss(params: UseDismissProps) {
       onPointerDownOutside?.(event);
       onInteractOutside?.(event);
       if (!event.defaultPrevented) {
-        onDismiss(event);
+        void onDismiss(event);
       }
     },
   );
@@ -148,7 +148,7 @@ function useDismiss(params: UseDismissProps) {
     onFocusOutside?.(event);
     onInteractOutside?.(event);
     if (!event.defaultPrevented) {
-      onDismiss(event);
+      void onDismiss(event);
     }
   });
 

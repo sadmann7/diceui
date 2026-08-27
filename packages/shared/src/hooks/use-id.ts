@@ -8,8 +8,7 @@ import { useLayoutEffect } from "./use-layout-effect";
 
 // We spaces with `.trim().toString()` to prevent bundlers from trying to `import { useId } from 'react';`
 const useReactId =
-  (React as { [key: string]: unknown })[" useId ".trim().toString()] ||
-  (() => undefined);
+  (React as { [key: string]: unknown })[" useId ".trim()] || (() => undefined);
 let count = 0;
 
 function useId(deterministicId?: string): string {

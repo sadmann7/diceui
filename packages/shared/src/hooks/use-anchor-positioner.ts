@@ -8,7 +8,6 @@ import {
   hide,
   inline,
   limitShift,
-  type Middleware,
   offset,
   type Placement,
   type Strategy,

@@ -43,7 +43,7 @@ function createPrimitive<E extends IntrinsicElementsKeys>(
     });
   });
 
-  Primitive.displayName = `Primitive.${String(element)}`;
+  Primitive.displayName = `Primitive.${element}`;
   return Primitive as PrimitiveForwardRefComponent<E>;
 }
 

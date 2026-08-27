@@ -78,7 +78,7 @@ function normalizeWithGaps(str: string) {
       .replace(SEPARATORS_PATTERN, " ")
       .trim()
       .replace(/\s+/g, "");
-  } catch (_err) {
+  } catch {
     normalized = str
       .toLowerCase()
       .normalize("NFC")

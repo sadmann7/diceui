@@ -132,7 +132,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
         context.onVirtualAnchorChange(virtualElement);
       },
-      [context.onVirtualAnchorChange, calculatePosition],
+      [context, calculatePosition],
     );
 
     const onMentionUpdate = React.useCallback(
@@ -818,7 +818,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               .replace(SEPARATORS_PATTERN, " ")
               .trim()
               .replace(/\s+/g, "");
-          } catch (_err) {
+          } catch {
             normalized = str
               .toLowerCase()
               .normalize("NFC")
@@ -1023,5 +1023,5 @@ MentionInput.displayName = INPUT_NAME;
 
 const Input = MentionInput;
 
-export type { InputElement, MentionInputProps };
 export { Input, MentionInput };
+export type { InputElement, MentionInputProps };

@@ -172,7 +172,7 @@ const TagsInputRoot = React.forwardRef<CollectionElement, TagsInputRootProps>(
       onValueChange,
       onValidate,
       onInvalid,
-      displayValue = (value: InputValue) => value.toString(),
+      displayValue = (value: InputValue) => value,
       addOnPaste = false,
       addOnTab = false,
       disabled = false,
