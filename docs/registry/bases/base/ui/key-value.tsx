@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { PlusIcon, XIcon } from "lucide-react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
@@ -27,8 +28,7 @@ type Orientation = "vertical" | "horizontal";
 type Field = "key" | "value";
 
 interface DivProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 type RootElement = HTMLDivElement;
 type KeyInputElement = HTMLInputElement;
@@ -385,8 +385,7 @@ function useKeyValueItemContext(consumerName: string) {
 }
 
 interface KeyValueItemProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function KeyValueItem(props: KeyValueItemProps) {
   const { className, render, ...itemProps } = props;
@@ -603,8 +602,10 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   );
 }
 
-interface KeyValueValueInputProps
-  extends Omit<React.ComponentProps<"textarea">, "rows"> {
+interface KeyValueValueInputProps extends Omit<
+  React.ComponentProps<"textarea">,
+  "rows"
+> {
   maxRows?: number;
 }
 
@@ -833,8 +834,7 @@ function KeyValueAdd(props: React.ComponentProps<typeof Button>) {
 }
 
 interface KeyValueErrorProps
-  extends React.ComponentProps<"span">,
-    useRender.ComponentProps<"span"> {
+  extends React.ComponentProps<"span">, useRender.ComponentProps<"span"> {
   field: Field;
 }
 
@@ -853,7 +853,7 @@ function KeyValueError(props: KeyValueErrorProps) {
       {
         id: getErrorId(context.rootId, itemData.id, field),
         role: "alert",
-        className: cn("font-medium text-destructive text-sm", className),
+        className: cn("text-sm font-medium text-destructive", className),
         children: error,
       },
       errorProps,

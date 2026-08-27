@@ -1,12 +1,14 @@
 import { Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useTagsInputItem } from "./tags-input-item";
 import { useTagsInput } from "./tags-input-root";
 
 const ITEM_TEXT_NAME = "TagsInputItemText";
 
-interface TagsInputItemTextProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.span> {}
+interface TagsInputItemTextProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.span
+> {}
 
 const TagsInputItemText = React.forwardRef<
   HTMLSpanElement,

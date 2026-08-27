@@ -2,12 +2,14 @@
  * @see https://github.com/shadcn-ui/ui/blob/main/apps/v4/registry/styles.tsx
  */
 
-// biome-ignore lint/style/useImportType: React must be a value import for JSX in the tsx build script runtime
-import * as React from "react";
 import type { RegistryItem } from "shadcn/schema";
 
-interface RegistryStyleItem
-  extends Pick<RegistryItem, "name" | "title" | "description"> {
+import * as React from "react";
+
+interface RegistryStyleItem extends Pick<
+  RegistryItem,
+  "name" | "title" | "description"
+> {
   icon: React.ReactNode;
 }
 

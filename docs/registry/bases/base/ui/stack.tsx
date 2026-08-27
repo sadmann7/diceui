@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva } from "class-variance-authority";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 interface ItemDimension {
@@ -43,8 +44,7 @@ function useStackContext(consumerName: string) {
 }
 
 interface StackProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   side?: Side;
   itemCount?: number;
   expandedItemCount?: number;
@@ -328,8 +328,7 @@ function StackItemWrapper(props: StackItemWrapperProps) {
 }
 
 interface StackItemProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function StackItem(props: StackItemProps) {
   const { render, className, ...itemProps } = props;

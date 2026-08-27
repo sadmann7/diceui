@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   SegmentedInput,
   SegmentedInputItem,
@@ -26,7 +27,7 @@ export default function SegmentedInputDemo() {
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="font-medium text-sm leading-none">
+      <label className="text-sm leading-none font-medium">
         Enter your details
       </label>
       <SegmentedInput className="w-full max-w-sm">

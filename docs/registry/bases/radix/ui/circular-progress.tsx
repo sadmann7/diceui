@@ -2,6 +2,7 @@
 
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const CIRCULAR_PROGRESS_NAME = "CircularProgress";
@@ -301,7 +302,7 @@ function CircularProgressRange(props: React.ComponentProps<"circle">) {
       className={cn(
         "origin-center text-primary transition-all duration-300 ease-in-out",
         context.state === "indeterminate" &&
-          "motion-reduce:animate-none motion-safe:[animation:var(--animate-spin-around)]",
+          "motion-safe:[animation:var(--animate-spin-around)] motion-reduce:animate-none",
         className,
       )}
     />
@@ -325,7 +326,7 @@ function CircularProgressValueText(props: CircularProgressValueTextProps) {
       data-state={context.state}
       {...valueTextProps}
       className={cn(
-        "absolute inset-0 flex items-center justify-center font-medium text-sm",
+        "absolute inset-0 flex items-center justify-center text-sm font-medium",
         className,
       )}
     >

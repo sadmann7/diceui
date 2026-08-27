@@ -1,6 +1,7 @@
 "use client";
 
 import type { Column, ColumnDef } from "@tanstack/react-table";
+
 import {
   CheckCircle,
   CheckCircle2,
@@ -11,6 +12,7 @@ import {
 } from "lucide-react";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
+
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
@@ -109,7 +111,7 @@ export default function DataTableDemo() {
       {
         id: "title",
         accessorKey: "title",
-        header: ({ column }: { column: Column<Project, unknown> }) => (
+        header: ({ column }: { column: Column<Project> }) => (
           <DataTableColumnHeader column={column} label="Title" />
         ),
         cell: ({ cell }) => <div>{cell.getValue<Project["title"]>()}</div>,
@@ -124,7 +126,7 @@ export default function DataTableDemo() {
       {
         id: "status",
         accessorKey: "status",
-        header: ({ column }: { column: Column<Project, unknown> }) => (
+        header: ({ column }: { column: Column<Project> }) => (
           <DataTableColumnHeader column={column} label="Status" />
         ),
         cell: ({ cell }) => {
@@ -151,7 +153,7 @@ export default function DataTableDemo() {
       {
         id: "budget",
         accessorKey: "budget",
-        header: ({ column }: { column: Column<Project, unknown> }) => (
+        header: ({ column }: { column: Column<Project> }) => (
           <DataTableColumnHeader column={column} label="Budget" />
         ),
         cell: ({ cell }) => {

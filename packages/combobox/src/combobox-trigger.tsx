@@ -5,8 +5,9 @@ import { useComboboxContext } from "./combobox-root";
 
 const TRIGGER_NAME = "ComboboxTrigger";
 
-interface ComboboxTriggerProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
+interface ComboboxTriggerProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.button
+> {}
 
 const ComboboxTrigger = React.forwardRef<
   HTMLButtonElement,

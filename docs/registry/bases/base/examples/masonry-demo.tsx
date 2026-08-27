@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { Masonry, MasonryItem } from "@/registry/bases/base/ui/masonry";
 import { Skeleton } from "@/registry/bases/base/ui/skeleton";
 
@@ -52,10 +53,10 @@ export default function MasonryDemo() {
           key={item.id}
           className="flex flex-col gap-1 rounded-md border bg-card p-4 text-card-foreground shadow-xs"
         >
-          <div className="font-medium text-sm leading-tight sm:text-base">
+          <div className="text-sm leading-tight font-medium sm:text-base">
             {item.title}
           </div>
-          <span className="text-muted-foreground text-sm">
+          <span className="text-sm text-muted-foreground">
             {item.description}
           </span>
         </MasonryItem>

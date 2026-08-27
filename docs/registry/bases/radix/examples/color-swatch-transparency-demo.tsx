@@ -4,7 +4,7 @@ export default function ColorSwatchTransparencyDemo() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <span className="font-medium text-sm">Alpha Transparency</span>
+        <span className="text-sm font-medium">Alpha Transparency</span>
         <div className="flex gap-2">
           <ColorSwatch color="rgba(59, 130, 246, 1)" />
           <ColorSwatch color="rgba(59, 130, 246, 0.8)" />
@@ -14,7 +14,7 @@ export default function ColorSwatchTransparencyDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="font-medium text-sm">HSLA Colors</span>
+        <span className="text-sm font-medium">HSLA Colors</span>
         <div className="flex gap-2">
           <ColorSwatch color="hsla(220, 91%, 60%, 1)" />
           <ColorSwatch color="hsla(220, 91%, 60%, 0.75)" />
@@ -24,7 +24,7 @@ export default function ColorSwatchTransparencyDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="font-medium text-sm">
+        <span className="text-sm font-medium">
           Without Transparency Pattern
         </span>
         <div className="flex gap-2">
@@ -34,7 +34,7 @@ export default function ColorSwatchTransparencyDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="font-medium text-sm">
+        <span className="text-sm font-medium">
           With Transparency Pattern (Default)
         </span>
         <div className="flex gap-2">

@@ -1,4 +1,5 @@
 import type { RegistryBase } from "../registry/registry";
+
 import { registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
 

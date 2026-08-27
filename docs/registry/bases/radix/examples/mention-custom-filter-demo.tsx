@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   Mention,
   MentionContent,
@@ -69,7 +70,7 @@ export default function MentionCustomFilterDemo() {
             value={command.name}
           >
             <span className="font-mono text-sm">{command.name}</span>
-            <span className="text-muted-foreground text-xs">
+            <span className="text-xs text-muted-foreground">
               {command.description}
             </span>
           </MentionItem>

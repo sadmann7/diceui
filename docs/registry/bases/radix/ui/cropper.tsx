@@ -3,6 +3,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
@@ -1282,7 +1283,7 @@ function CropperImpl(props: CropperImplProps) {
       {...rootImplProps}
       ref={composedRef}
       className={cn(
-        "absolute inset-0 flex cursor-move touch-none select-none items-center justify-center overflow-hidden outline-none",
+        "absolute inset-0 flex cursor-move touch-none items-center justify-center overflow-hidden outline-none select-none",
         className,
       )}
       onKeyUp={onKeyUp}
@@ -1444,7 +1445,8 @@ function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>({
 }
 
 interface CropperImageProps
-  extends React.ComponentProps<"img">,
+  extends
+    React.ComponentProps<"img">,
     VariantProps<typeof cropperMediaVariants> {
   asChild?: boolean;
   snapPixels?: boolean;
@@ -1576,7 +1578,8 @@ function CropperImage(props: CropperImageProps) {
 }
 
 interface CropperVideoProps
-  extends React.ComponentProps<"video">,
+  extends
+    React.ComponentProps<"video">,
     VariantProps<typeof cropperMediaVariants> {
   asChild?: boolean;
   snapPixels?: boolean;
@@ -1716,7 +1719,7 @@ const cropperAreaVariants = cva(
         circle: "rounded-full",
       },
       withGrid: {
-        true: "before:absolute before:top-0 before:right-1/3 before:bottom-0 before:left-1/3 before:box-border before:border before:border-white/50 before:border-t-0 before:border-b-0 before:content-[''] after:absolute after:top-1/3 after:right-0 after:bottom-1/3 after:left-0 after:box-border after:border after:border-white/50 after:border-r-0 after:border-l-0 after:content-['']",
+        true: "before:absolute before:top-0 before:right-1/3 before:bottom-0 before:left-1/3 before:box-border before:border before:border-t-0 before:border-b-0 before:border-white/50 before:content-[''] after:absolute after:top-1/3 after:right-0 after:bottom-1/3 after:left-0 after:box-border after:border after:border-r-0 after:border-l-0 after:border-white/50 after:content-['']",
         false: "",
       },
     },
@@ -1728,8 +1731,7 @@ const cropperAreaVariants = cva(
 );
 
 interface CropperAreaProps
-  extends DivProps,
-    VariantProps<typeof cropperAreaVariants> {
+  extends DivProps, VariantProps<typeof cropperAreaVariants> {
   snapPixels?: boolean;
 }
 

@@ -83,15 +83,14 @@ export interface ActionBarProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface ActionBarSelectionProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface ActionBarGroupProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface ActionBarItemProps
-  extends Omit<
+  extends
+    Omit<
       React.ComponentProps<typeof Button>,
       keyof React.ComponentProps<"button">
     >,
@@ -111,9 +110,7 @@ export interface ActionBarItemProps
 }
 
 export interface ActionBarCloseProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
+  extends EmptyProps<"button">, CompositionProps {}
 
 export interface ActionBarSeparatorProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}

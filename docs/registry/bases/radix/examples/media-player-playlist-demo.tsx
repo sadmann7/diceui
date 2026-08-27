@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
@@ -226,7 +227,6 @@ export default function MediaPlayerPlaylistDemo() {
       />
       <div className="flex w-full flex-col items-center gap-4 md:items-start">
         <div className="relative w-full overflow-hidden rounded-md rounded-b-none border-b">
-          {/* biome-ignore lint/performance/noImgElement: dynamic cover URLs from playlist tracks don't work well with Next.js Image optimization */}
           <img
             src={currentTrack.cover}
             alt={currentTrack.title}
@@ -234,7 +234,7 @@ export default function MediaPlayerPlaylistDemo() {
           />
           <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/20 to-transparent" />
           <div className="absolute right-0 bottom-0 left-0 p-4">
-            <h2 className="font-semibold text-2xl text-white tracking-tight drop-shadow-lg">
+            <h2 className="text-2xl font-semibold tracking-tight text-white drop-shadow-lg">
               {currentTrack.title}
             </h2>
             <p className="text-sm text-white/90 drop-shadow-md">
@@ -243,12 +243,12 @@ export default function MediaPlayerPlaylistDemo() {
           </div>
         </div>
         <div className="w-full">
-          <div className="flex items-center border-border border-b px-4 pb-4">
+          <div className="flex items-center border-b border-border px-4 pb-4">
             <div className="flex flex-1 items-center gap-2">
-              <h3 className="font-medium text-lg tracking-tight">Playlist</h3>
+              <h3 className="text-lg font-medium tracking-tight">Playlist</h3>
               <ListMusicIcon className="size-4" />
             </div>
-            <span className="text-muted-foreground text-sm">{`${currentTrackIndex + 1} / ${tracks.length}`}</span>
+            <span className="text-sm text-muted-foreground">{`${currentTrackIndex + 1} / ${tracks.length}`}</span>
           </div>
           <ScrollArea className="max-h-[200px]">
             {tracks.map((track, index) => (
@@ -262,7 +262,6 @@ export default function MediaPlayerPlaylistDemo() {
                 onClick={() => onTogglePlayPauseTrack(index)}
                 disabled={isLoading}
               >
-                {/* biome-ignore lint/performance/noImgElement: dynamic cover URLs from playlist tracks don't work well with Next.js Image optimization */}
                 <img
                   src={track.cover}
                   alt={track.title}
@@ -271,13 +270,13 @@ export default function MediaPlayerPlaylistDemo() {
                 <div className="flex flex-1 flex-col">
                   <span
                     className={cn(
-                      "font-medium leading-tight",
+                      "leading-tight font-medium",
                       index === currentTrackIndex && "text-primary",
                     )}
                   >
                     {track.title}
                   </span>
-                  <span className="text-muted-foreground text-sm">
+                  <span className="text-sm text-muted-foreground">
                     {track.artist}
                   </span>
                 </div>

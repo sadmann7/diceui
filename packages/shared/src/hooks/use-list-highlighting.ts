@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import type { HighlightingDirection } from "../types";
 import type { CollectionItem } from "./use-collection";
 

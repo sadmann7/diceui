@@ -1,10 +1,12 @@
+import type * as React from "react";
+
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot as SlotPrimitive } from "radix-ui";
-import type * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const statusVariants = cva(
-  "inline-flex w-fit shrink-0 items-center gap-1.5 overflow-hidden whitespace-nowrap rounded-full border px-2.5 py-1 font-medium text-xs transition-colors",
+  "inline-flex w-fit shrink-0 items-center gap-1.5 overflow-hidden rounded-full border px-2.5 py-1 text-xs font-medium whitespace-nowrap transition-colors",
   {
     variants: {
       variant: {
@@ -26,8 +28,7 @@ const statusVariants = cva(
 );
 
 interface StatusProps
-  extends VariantProps<typeof statusVariants>,
-    React.ComponentProps<"div"> {
+  extends VariantProps<typeof statusVariants>, React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 

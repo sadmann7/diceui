@@ -5,6 +5,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Form,
@@ -227,7 +228,7 @@ export default function StepperFormDemo() {
             <StepperPrev asChild>
               <Button variant="outline">Previous</Button>
             </StepperPrev>
-            <div className="text-muted-foreground text-sm">
+            <div className="text-sm text-muted-foreground">
               Step {stepIndex + 1} of {steps.length}
             </div>
             {stepIndex === steps.length - 1 ? (

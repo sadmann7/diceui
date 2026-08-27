@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { Check } from "lucide-react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
@@ -34,11 +35,9 @@ type ActivationMode = "automatic" | "manual";
 type DataState = "inactive" | "active" | "completed";
 
 interface DivProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 interface ButtonProps
-  extends React.ComponentProps<"button">,
-    useRender.ComponentProps<"button"> {}
+  extends React.ComponentProps<"button">, useRender.ComponentProps<"button"> {}
 
 type ListElement = HTMLDivElement;
 type TriggerElement = HTMLButtonElement;
@@ -670,7 +669,7 @@ function StepperItem(props: StepperItemProps) {
         dir: context.dir,
         ref,
         className: cn(
-          "relative flex not-last:flex-1 items-center",
+          "relative flex items-center not-last:flex-1",
           orientation === "horizontal" ? "flex-row" : "flex-col",
           className,
         ),
@@ -985,7 +984,7 @@ function StepperTrigger(props: ButtonProps) {
         tabIndex: isTabStop ? 0 : -1,
         ref: composedRef,
         className: cn(
-          "inline-flex items-center justify-center gap-3 rounded-md text-left outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+          "inline-flex items-center justify-center gap-3 rounded-md text-left transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           "not-has-data-[slot=description]:rounded-full not-has-data-[slot=title]:rounded-full",
           className,
         ),
@@ -1006,7 +1005,8 @@ function StepperTrigger(props: ButtonProps) {
 }
 
 interface StepperIndicatorProps
-  extends Omit<DivProps, "children">,
+  extends
+    Omit<DivProps, "children">,
     Omit<useRender.ComponentProps<"div">, "children"> {
   children?: React.ReactNode | ((dataState: DataState) => React.ReactNode);
 }
@@ -1033,7 +1033,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
         dir: context.dir,
         ref,
         className: cn(
-          "flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-muted bg-background font-medium text-muted-foreground text-sm transition-colors data-[state=active]:border-primary data-[state=completed]:border-primary data-[state=active]:bg-primary data-[state=completed]:bg-primary data-[state=active]:text-primary-foreground data-[state=completed]:text-primary-foreground",
+          "flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-muted bg-background text-sm font-medium text-muted-foreground transition-colors data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=completed]:border-primary data-[state=completed]:bg-primary data-[state=completed]:text-primary-foreground",
           className,
         ),
         children:
@@ -1120,8 +1120,7 @@ function StepperSeparator(props: StepperSeparatorProps) {
 }
 
 interface StepperTitleProps
-  extends React.ComponentProps<"span">,
-    useRender.ComponentProps<"span"> {}
+  extends React.ComponentProps<"span">, useRender.ComponentProps<"span"> {}
 
 function StepperTitle(props: StepperTitleProps) {
   const { className, render, ref, ...titleProps } = props;
@@ -1138,7 +1137,7 @@ function StepperTitle(props: StepperTitleProps) {
         id: titleId,
         dir: context.dir,
         ref,
-        className: cn("font-medium text-sm", className),
+        className: cn("text-sm font-medium", className),
       },
       titleProps,
     ),
@@ -1150,8 +1149,7 @@ function StepperTitle(props: StepperTitleProps) {
 }
 
 interface StepperDescriptionProps
-  extends React.ComponentProps<"span">,
-    useRender.ComponentProps<"span"> {}
+  extends React.ComponentProps<"span">, useRender.ComponentProps<"span"> {}
 
 function StepperDescription(props: StepperDescriptionProps) {
   const { className, render, ref, ...descriptionProps } = props;
@@ -1168,7 +1166,7 @@ function StepperDescription(props: StepperDescriptionProps) {
         id: descriptionId,
         dir: context.dir,
         ref,
-        className: cn("text-muted-foreground text-xs", className),
+        className: cn("text-xs text-muted-foreground", className),
       },
       descriptionProps,
     ),

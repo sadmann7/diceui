@@ -3,6 +3,7 @@
 import { Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
+
 import { Button } from "@/registry/bases/base/ui/button";
 import {
   FileUpload,
@@ -96,8 +97,8 @@ export default function FileUploadCircularProgressDemo() {
           <div className="flex items-center justify-center rounded-full border p-2.5">
             <Upload className="size-6 text-muted-foreground" />
           </div>
-          <p className="font-medium text-sm">Drag & drop files here</p>
-          <p className="text-muted-foreground text-xs">
+          <p className="text-sm font-medium">Drag & drop files here</p>
+          <p className="text-xs text-muted-foreground">
             Or click to browse (max 10 files, up to 5MB each)
           </p>
         </div>

@@ -5,6 +5,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
 import { Button } from "@/registry/bases/base/ui/button";
 import {
   Form,
@@ -217,29 +218,29 @@ export default function StepperValidationDemo() {
             className="grid grid-cols-2 gap-4 rounded-md border bg-card p-4 text-card-foreground lg:grid-cols-3"
           >
             <div className="flex flex-col gap-1 rounded-md border p-2">
-              <span className="font-medium text-sm">Username</span>
+              <span className="text-sm font-medium">Username</span>
               <p className="text-sm">
                 {form.watch("username") ?? "Not provided"}
               </p>
             </div>
             <div className="flex flex-col gap-1 rounded-md border p-2">
-              <span className="font-medium text-sm">Email</span>
+              <span className="text-sm font-medium">Email</span>
               <p className="text-sm">{form.watch("email") ?? "Not provided"}</p>
             </div>
             <div className="flex flex-col gap-1 rounded-md border p-2">
-              <span className="font-medium text-sm">First Name</span>
+              <span className="text-sm font-medium">First Name</span>
               <p className="text-sm">
                 {form.watch("firstName") ?? "Not provided"}
               </p>
             </div>
             <div className="flex flex-col gap-1 rounded-md border p-2">
-              <span className="font-medium text-sm">Last Name</span>
+              <span className="text-sm font-medium">Last Name</span>
               <p className="text-sm">
                 {form.watch("lastName") ?? "Not provided"}
               </p>
             </div>
             <div className="flex flex-col gap-1 rounded-md border p-2">
-              <span className="font-medium text-sm">Bio</span>
+              <span className="text-sm font-medium">Bio</span>
               <p className="text-sm">{form.watch("bio") ?? "Not provided"}</p>
             </div>
           </StepperContent>
@@ -251,7 +252,7 @@ export default function StepperValidationDemo() {
                 </Button>
               )}
             />
-            <div className="text-muted-foreground text-sm">
+            <div className="text-sm text-muted-foreground">
               Step {stepIndex + 1} of {steps.length}
             </div>
             {stepIndex === steps.length - 1 ? (

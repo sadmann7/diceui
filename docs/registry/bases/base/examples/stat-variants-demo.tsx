@@ -1,4 +1,5 @@
 import { DollarSign, TrendingUp } from "lucide-react";
+
 import {
   Stat,
   StatIndicator,

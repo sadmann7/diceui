@@ -6,6 +6,7 @@ import {
   Slot as SlotPrimitive,
 } from "radix-ui";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { Input } from "@/registry/bases/radix/ui/input";
 
@@ -168,7 +169,8 @@ const segmentedInputItemVariants = cva("", {
 });
 
 interface SegmentedInputItemProps
-  extends React.ComponentProps<"input">,
+  extends
+    React.ComponentProps<"input">,
     Omit<VariantProps<typeof segmentedInputItemVariants>, "size"> {
   asChild?: boolean;
 }

@@ -1,8 +1,12 @@
 "use client";
 
 import type { Column } from "@tanstack/react-table";
+
 import { Check, PlusCircle, XCircle } from "lucide-react";
 import * as React from "react";
+
+import type { Option } from "@/types/data-table";
+
 import { cn } from "@/lib/utils";
 import { Badge } from "@/registry/bases/radix/ui/badge";
 import { Button } from "@/registry/bases/radix/ui/button";
@@ -21,7 +25,6 @@ import {
   PopoverTrigger,
 } from "@/registry/bases/radix/ui/popover";
 import { Separator } from "@/registry/bases/radix/ui/separator";
-import type { Option } from "@/types/data-table";
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
@@ -85,7 +88,7 @@ export function DataTableFacetedFilter<TData, TValue>({
               role="button"
               aria-label={`Clear ${title} filter`}
               tabIndex={0}
-              className="rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
               onClick={onReset}
             >
               <XCircle />
@@ -137,7 +140,7 @@ export function DataTableFacetedFilter<TData, TValue>({
           <CommandInput placeholder={title} />
           <CommandList className="max-h-full">
             <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup className="max-h-[300px] scroll-py-1 overflow-y-auto overflow-x-hidden">
+            <CommandGroup className="max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto">
               {options.map((option) => {
                 const isSelected = selectedValues.has(option.value);
 

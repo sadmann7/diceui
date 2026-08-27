@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
+
 import { Primitive } from "../src/components/primitive";
 
 describe("Primitive", () => {

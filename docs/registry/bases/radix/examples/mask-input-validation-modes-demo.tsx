@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { Badge } from "@/registry/bases/radix/ui/badge";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { Label } from "@/registry/bases/radix/ui/label";
@@ -150,8 +151,8 @@ function ValidationModeCard({
   return (
     <div className="flex flex-col gap-3 rounded-md border bg-card p-4 text-card-foreground shadow-sm">
       <div className="flex flex-col gap-1">
-        <h4 className="font-medium text-xs">{mode.label}</h4>
-        <p className="text-muted-foreground text-xs leading-tight">
+        <h4 className="text-xs font-medium">{mode.label}</h4>
+        <p className="text-xs leading-tight text-muted-foreground">
           {mode.description}
         </p>
       </div>
@@ -172,7 +173,7 @@ function ValidationModeCard({
         >
           {validationState.isValid ? "Valid" : "Invalid"}
         </Badge>
-        <span className="text-muted-foreground text-xs">
+        <span className="text-xs text-muted-foreground">
           {validationState.message ||
             (mode.value === "onSubmit" && !submitAttempted
               ? "Click 'Submit' to check..."

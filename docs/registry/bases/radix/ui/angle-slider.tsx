@@ -5,6 +5,7 @@ import {
   Slot as SlotPrimitive,
 } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
@@ -795,7 +796,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
         {...thumbProps}
         ref={composedRef}
         className={cn(
-          "block size-4 shrink-0 rounded-full border border-primary bg-background shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50",
+          "block size-4 shrink-0 rounded-full border border-primary bg-background shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50",
           className,
         )}
         onFocus={onFocus}
@@ -875,7 +876,7 @@ function AngleSliderValue(props: AngleSliderValueProps) {
       data-slot="angle-slider-value"
       {...valueProps}
       className={cn(
-        "pointer-events-none flex select-none items-center justify-center font-medium text-foreground text-sm",
+        "pointer-events-none flex items-center justify-center text-sm font-medium text-foreground select-none",
         className,
       )}
       style={{

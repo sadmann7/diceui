@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { ENABLE_REACT_SCAN } from "@/lib/constants";
 
 interface ReactScanProps {

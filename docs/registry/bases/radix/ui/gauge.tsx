@@ -2,6 +2,7 @@
 
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const GAUGE_NAME = "Gauge";
@@ -459,7 +460,7 @@ function GaugeValueText(props: DivProps) {
         ...style,
       }}
       className={cn(
-        "absolute right-0 left-0 flex -translate-y-1/2 items-center justify-center font-semibold text-2xl",
+        "absolute right-0 left-0 flex -translate-y-1/2 items-center justify-center text-2xl font-semibold",
         className,
       )}
     >
@@ -481,7 +482,7 @@ function GaugeLabel(props: DivProps) {
       data-state={state}
       {...labelProps}
       className={cn(
-        "mt-2 font-medium text-muted-foreground text-sm",
+        "mt-2 text-sm font-medium text-muted-foreground",
         className,
       )}
     />

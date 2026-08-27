@@ -21,25 +21,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.33.0
+        uses: actions/checkout@v7
       - uses: ./.github/setup
 
       - name: Check formatting
-        run: pnpm lint:fix
+        run: pnpm fmt:check
 
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.33.0
+        uses: actions/checkout@v7
       - uses: ./.github/setup
 
       - name: Build packages
@@ -49,11 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.33.0
+        uses: actions/checkout@v7
       - uses: ./.github/setup
 
       - run: pnpm lint
@@ -62,11 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.33.0
+        uses: actions/checkout@v7
       - uses: ./.github/setup
 
       - name: Test packages (excluding docs)
@@ -76,11 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.33.0
+        uses: actions/checkout@v7
       - uses: ./.github/setup
 
       - name: Typecheck packages (excluding docs)

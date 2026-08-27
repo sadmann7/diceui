@@ -10,8 +10,10 @@ import {
   useLabel,
 } from "@diceui/shared";
 import * as React from "react";
-import { useComboboxGroupContext } from "./combobox-group";
+
 import type { ItemTextElement } from "./combobox-item-text";
+
+import { useComboboxGroupContext } from "./combobox-group";
 import { useComboboxContext } from "./combobox-root";
 
 const ITEM_NAME = "ComboboxItem";
@@ -30,11 +32,10 @@ const [ComboboxItemProvider, useComboboxItemContext] =
 
 type ItemElement = React.ElementRef<typeof Primitive.div>;
 
-interface ComboboxItemProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof Primitive.div>,
-    "onSelect"
-  > {
+interface ComboboxItemProps extends Omit<
+  React.ComponentPropsWithoutRef<typeof Primitive.div>,
+  "onSelect"
+> {
   /**
    * The value of the item.
    *

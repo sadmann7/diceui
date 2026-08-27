@@ -1,11 +1,13 @@
 import { Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxContext } from "./combobox-root";
 
 const SEPARATOR_NAME = "ComboboxSeparator";
 
-interface ComboboxSeparatorProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+interface ComboboxSeparatorProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {
   /**
    * Whether the separator should remain visible when search filtering is active.
    * @default false

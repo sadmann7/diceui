@@ -28,7 +28,7 @@ export default function ListboxDemo() {
         <ListboxItem key={trick.label} value={trick.label}>
           <div className="flex flex-col">
             <div className="font-medium">{trick.label}</div>
-            <div className="text-muted-foreground text-sm">
+            <div className="text-sm text-muted-foreground">
               {trick.description}
             </div>
           </div>

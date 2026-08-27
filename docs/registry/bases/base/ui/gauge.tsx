@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const GAUGE_NAME = "Gauge";
@@ -19,8 +20,7 @@ const DEFAULT_END_ANGLE = 360;
 type GaugeState = "indeterminate" | "complete" | "loading";
 
 interface DivProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 interface PathProps extends React.ComponentProps<"path"> {}
 
@@ -467,7 +467,7 @@ function GaugeValueText(props: DivProps) {
           ...style,
         },
         className: cn(
-          "absolute right-0 left-0 flex -translate-y-1/2 items-center justify-center font-semibold text-2xl",
+          "absolute right-0 left-0 flex -translate-y-1/2 items-center justify-center text-2xl font-semibold",
           className,
         ),
         children: children ?? valueText,
@@ -493,7 +493,7 @@ function GaugeLabel(props: DivProps) {
       {
         id: labelId,
         className: cn(
-          "mt-2 font-medium text-muted-foreground text-sm",
+          "mt-2 text-sm font-medium text-muted-foreground",
           className,
         ),
       },

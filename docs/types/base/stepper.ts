@@ -1,4 +1,5 @@
 import type * as React from "react";
+
 import type {
   ButtonProps,
   Direction,
@@ -163,7 +164,8 @@ export interface StepperItemProps extends RenderProps {
 }
 
 export interface StepperTriggerProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+  extends
+    Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     RenderProps {}
 
 export interface StepperIndicatorProps extends Omit<RenderProps, "children"> {

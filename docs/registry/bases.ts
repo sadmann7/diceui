@@ -4,11 +4,10 @@
 
 import type { RegistryItem } from "shadcn/schema";
 
-interface RegistryBaseItem
-  extends Pick<
-    RegistryItem,
-    "name" | "type" | "title" | "description" | "dependencies" | "meta"
-  > {}
+interface RegistryBaseItem extends Pick<
+  RegistryItem,
+  "name" | "type" | "title" | "description" | "dependencies" | "meta"
+> {}
 
 export const BASES: RegistryBaseItem[] = [
   {

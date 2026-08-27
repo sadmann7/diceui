@@ -16,6 +16,20 @@ import {
 import { useVirtualizer, type Virtualizer } from "@tanstack/react-virtual";
 import * as React from "react";
 import { toast } from "sonner";
+
+import type {
+  CellPosition,
+  CellUpdate,
+  ContextMenuState,
+  Direction,
+  FileCellData,
+  NavigationDirection,
+  PasteDialogState,
+  RowHeightValue,
+  SearchState,
+  SelectionState,
+} from "@/types/data-grid";
+
 import { useAsRef } from "@/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/hooks/use-lazy-ref";
@@ -32,18 +46,6 @@ import {
   scrollCellIntoView,
 } from "@/lib/data-grid";
 import { useDirection } from "@/registry/bases/radix/ui/direction";
-import type {
-  CellPosition,
-  CellUpdate,
-  ContextMenuState,
-  Direction,
-  FileCellData,
-  NavigationDirection,
-  PasteDialogState,
-  RowHeightValue,
-  SearchState,
-  SelectionState,
-} from "@/types/data-grid";
 
 const DEFAULT_ROW_HEIGHT = "short";
 const OVERSCAN = 6;
@@ -115,8 +117,10 @@ function useStore<T>(
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
-interface UseDataGridProps<TData>
-  extends Omit<TableOptions<TData>, "pageCount" | "getCoreRowModel"> {
+interface UseDataGridProps<TData> extends Omit<
+  TableOptions<TData>,
+  "pageCount" | "getCoreRowModel"
+> {
   onDataChange?: (data: TData[]) => void;
   onRowAdd?: (
     event?: React.MouseEvent<HTMLDivElement>,
@@ -2195,7 +2199,7 @@ function useDataGrid<TData>({
     tableRef.current = table;
   }
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: columnSizingInfo and columnSizing are used for calculating the column size vars
+  // oxlint-disable-next-line react/exhaustive-deps -- columnSizingInfo and columnSizing are used for calculating the column size vars
   const columnSizeVars = React.useMemo(() => {
     const headers = table.getFlatHeaders();
     const colSizes: { [key: string]: number } = {};
@@ -2217,7 +2221,7 @@ function useDataGrid<TData>({
     React.useCallback(() => false, []),
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: columnPinning is used for calculating the adjustLayout
+  // oxlint-disable-next-line react/exhaustive-deps -- columnPinning is used for calculating the adjustLayout
   const adjustLayout = React.useMemo(() => {
     const columnPinning = table.getState().columnPinning;
     return (

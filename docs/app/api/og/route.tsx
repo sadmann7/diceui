@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+
 import { siteConfig } from "@/config/site";
 import { loadFonts } from "@/lib/fonts";
 

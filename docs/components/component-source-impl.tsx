@@ -2,9 +2,11 @@
 
 import { ChevronDownIcon, FileIcon } from "lucide-react";
 import * as React from "react";
+
 import { CopyButton } from "@/components/copy-button";
 import { cn } from "@/lib/utils";
 import { Button } from "@/registry/bases/radix/ui/button";
+
 import { Icons } from "./icons";
 
 function getLanguageIcon(language: string) {
@@ -52,7 +54,7 @@ export function ComponentSourceImpl({
       <figcaption
         data-rehype-pretty-code-title=""
         data-language={language}
-        className="flex items-center gap-1.5 border-b bg-secondary/50 px-4 py-2 text-muted-foreground text-sm [&_svg]:opacity-70"
+        className="flex items-center gap-1.5 border-b bg-secondary/50 px-4 py-2 text-sm text-muted-foreground [&_svg]:opacity-70"
       >
         {getLanguageIcon(language)}
         <span className="flex-1 truncate">{title}</span>
@@ -60,7 +62,7 @@ export function ComponentSourceImpl({
           <Button
             variant="ghost"
             size="sm"
-            className="h-7 gap-1 px-2 text-muted-foreground text-xs hover:text-foreground"
+            className="h-7 gap-1 px-2 text-xs text-muted-foreground hover:text-foreground"
             onClick={() => setOpen((v) => !v)}
           >
             {open ? "Collapse" : "Expand"}

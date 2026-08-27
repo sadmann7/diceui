@@ -2,6 +2,7 @@
 
 import { motion, useInView, useMotionValue, useSpring } from "motion/react";
 import * as React from "react";
+
 import {
   Gauge,
   GaugeIndicator,
@@ -88,7 +89,7 @@ function AnimatedGauge({ config, index }: AnimatedGaugeProps) {
         <GaugeValueText className={config.valueTextClassName} />
         <GaugeLabel className="sr-only">{config.label}</GaugeLabel>
       </Gauge>
-      <p className="text-muted-foreground text-sm">{config.label}</p>
+      <p className="text-sm text-muted-foreground">{config.label}</p>
     </motion.div>
   );
 }

@@ -1,12 +1,14 @@
 "use client";
 
-import { mergeProps } from "@base-ui/react/merge-props";
 import type { Popover as PopoverPrimitive } from "@base-ui/react/popover";
+
+import { mergeProps } from "@base-ui/react/merge-props";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import { PipetteIcon } from "lucide-react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
@@ -44,8 +46,7 @@ const INPUT_NAME = "ColorPickerInput";
 const colorFormats = ["hex", "rgb", "hsl", "hsb"] as const;
 
 interface DivProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 type RootElement = HTMLDivElement;
 type AreaElement = HTMLDivElement;
@@ -472,7 +473,8 @@ function useColorPickerContext(consumerName: string) {
 }
 
 interface ColorPickerProps
-  extends Omit<DivProps, "onValueChange">,
+  extends
+    Omit<DivProps, "onValueChange">,
     Pick<
       React.ComponentProps<typeof Popover>,
       "defaultOpen" | "open" | "modal"
@@ -614,16 +616,15 @@ function ColorPicker(props: ColorPickerProps) {
   );
 }
 
-interface ColorPickerImplProps
-  extends Omit<
-    ColorPickerProps,
-    | "defaultValue"
-    | "onValueChange"
-    | "onOpenChange"
-    | "format"
-    | "defaultFormat"
-    | "onFormatChange"
-  > {}
+interface ColorPickerImplProps extends Omit<
+  ColorPickerProps,
+  | "defaultValue"
+  | "onValueChange"
+  | "onOpenChange"
+  | "format"
+  | "defaultFormat"
+  | "onFormatChange"
+> {}
 
 function ColorPickerImpl(props: ColorPickerImplProps) {
   const {
@@ -762,7 +763,7 @@ function ColorPickerTrigger(
 function ColorPickerContent(
   props: React.ComponentProps<typeof PopoverContent>,
 ) {
-  const { className, children, ...popoverContentProps } = props;
+  const { className, children, style, render, ...popoverContentProps } = props;
 
   const context = useColorPickerContext(CONTENT_NAME);
 
@@ -771,6 +772,7 @@ function ColorPickerContent(
       <div
         data-slot="color-picker-content"
         {...popoverContentProps}
+        style={typeof style === "function" ? undefined : style}
         className={cn("flex w-[340px] flex-col gap-4 p-4", className)}
       >
         {children}
@@ -782,6 +784,8 @@ function ColorPickerContent(
     <PopoverContent
       data-slot="color-picker-content"
       {...popoverContentProps}
+      style={style}
+      render={render}
       className={cn("flex w-[340px] flex-col gap-4 p-4", className)}
     >
       {children}
@@ -964,7 +968,7 @@ function ColorPickerHueSlider(
       max={360}
       step={1}
       className={cn(
-        "relative flex w-full touch-none select-none items-center",
+        "relative flex w-full touch-none items-center select-none",
         className,
       )}
       value={[hsv?.h ?? 0]}
@@ -973,7 +977,7 @@ function ColorPickerHueSlider(
     >
       <SliderPrimitive.Control className="relative flex w-full items-center">
         <SliderPrimitive.Track className="relative h-3 w-full grow overflow-hidden rounded-full bg-[linear-gradient(to_right,#ff0000_0%,#ffff00_16.66%,#00ff00_33.33%,#00ffff_50%,#0000ff_66.66%,#ff00ff_83.33%,#ff0000_100%)]" />
-        <SliderPrimitive.Thumb className="block size-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
+        <SliderPrimitive.Thumb className="block size-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50" />
       </SliderPrimitive.Control>
     </SliderPrimitive.Root>
   );
@@ -1012,7 +1016,7 @@ function ColorPickerAlphaSlider(
       step={1}
       disabled={context.disabled}
       className={cn(
-        "relative flex w-full touch-none select-none items-center",
+        "relative flex w-full touch-none items-center select-none",
         className,
       )}
       value={[Math.round((color?.a ?? 1) * 100)]}
@@ -1035,7 +1039,7 @@ function ColorPickerAlphaSlider(
             }}
           />
         </SliderPrimitive.Track>
-        <SliderPrimitive.Thumb className="block size-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
+        <SliderPrimitive.Thumb className="block size-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50" />
       </SliderPrimitive.Control>
     </SliderPrimitive.Root>
   );
@@ -1149,7 +1153,8 @@ function ColorPickerEyeDropper(props: React.ComponentProps<typeof Button>) {
 }
 
 interface ColorPickerFormatSelectProps
-  extends Omit<React.ComponentProps<typeof Select>, "value" | "onValueChange">,
+  extends
+    Omit<React.ComponentProps<typeof Select>, "value" | "onValueChange">,
     Pick<React.ComponentProps<typeof SelectTrigger>, "size" | "className"> {}
 
 function ColorPickerFormatSelect(props: ColorPickerFormatSelectProps) {
@@ -1199,11 +1204,10 @@ function ColorPickerFormatSelect(props: ColorPickerFormatSelectProps) {
   );
 }
 
-interface ColorPickerInputProps
-  extends Omit<
-    React.ComponentProps<typeof Input>,
-    "value" | "onChange" | "color"
-  > {
+interface ColorPickerInputProps extends Omit<
+  React.ComponentProps<typeof Input>,
+  "value" | "onChange" | "color"
+> {
   withoutAlpha?: boolean;
 }
 
@@ -1287,7 +1291,8 @@ const inputGroupItemVariants = cva(
 );
 
 interface InputGroupItemProps
-  extends React.ComponentProps<typeof Input>,
+  extends
+    React.ComponentProps<typeof Input>,
     VariantProps<typeof inputGroupItemVariants> {}
 
 function InputGroupItem({

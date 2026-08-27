@@ -4,6 +4,7 @@ import { Upload, X } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 import { UploadThingError } from "uploadthing/server";
+
 import { uploadFiles } from "@/lib/uploadthing";
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
@@ -96,8 +97,8 @@ export default function FileUploadUploadThingDemo() {
           <div className="flex items-center justify-center rounded-full border p-2.5">
             <Upload className="size-6 text-muted-foreground" />
           </div>
-          <p className="font-medium text-sm">Drag & drop images here</p>
-          <p className="text-muted-foreground text-xs">
+          <p className="text-sm font-medium">Drag & drop images here</p>
+          <p className="text-xs text-muted-foreground">
             Or click to browse (max 2 files, up to 4MB each)
           </p>
         </div>

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
@@ -283,7 +284,7 @@ function CompareSlider(props: CompareSliderProps) {
           ref={composedRef}
           tabIndex={0}
           className={cn(
-            "relative isolate touch-none select-none overflow-hidden outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+            "relative isolate touch-none overflow-hidden transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
             orientation === "horizontal" ? "w-full" : "h-full",
             className,
           )}
@@ -432,7 +433,7 @@ function CompareSliderHandle(props: DivProps) {
             )}
           />
           {interaction === "drag" && (
-            <div className="z-50 flex aspect-square size-11 shrink-0 items-center justify-center rounded-full bg-background p-2 [&_svg]:size-4 [&_svg]:select-none [&_svg]:stroke-3 [&_svg]:text-muted-foreground">
+            <div className="z-50 flex aspect-square size-11 shrink-0 items-center justify-center rounded-full bg-background p-2 [&_svg]:size-4 [&_svg]:stroke-3 [&_svg]:text-muted-foreground [&_svg]:select-none">
               {isVertical ? (
                 <div className="flex flex-col items-center">
                   <ChevronUpIcon />
@@ -469,7 +470,7 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
       ref={ref}
       data-slot="compare-slider-label"
       className={cn(
-        "absolute z-20 rounded-md border border-border bg-background/80 px-3 py-1.5 font-medium text-sm backdrop-blur-sm",
+        "absolute z-20 rounded-md border border-border bg-background/80 px-3 py-1.5 text-sm font-medium backdrop-blur-sm",
         isVertical
           ? side === "before"
             ? "top-2 left-2"

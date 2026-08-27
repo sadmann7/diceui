@@ -1,6 +1,7 @@
 "use client";
 
 import { Heart, Star, Zap } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 import { Rating, RatingItem } from "@/registry/bases/radix/ui/rating";
 
@@ -44,7 +45,7 @@ export default function RatingThemesDemo() {
           key={theme.label}
           className="flex flex-col items-center gap-3 rounded-lg border p-4"
         >
-          <h4 className="font-medium text-sm">{theme.label}</h4>
+          <h4 className="text-sm font-medium">{theme.label}</h4>
 
           <Rating
             defaultValue={theme.value}
@@ -56,7 +57,7 @@ export default function RatingThemesDemo() {
               </RatingItem>
             ))}
           </Rating>
-          <p className="text-muted-foreground text-xs">{theme.description}</p>
+          <p className="text-xs text-muted-foreground">{theme.description}</p>
         </div>
       ))}
     </div>

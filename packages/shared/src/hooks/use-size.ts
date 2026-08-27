@@ -3,6 +3,7 @@
  */
 
 import * as React from "react";
+
 import { useLayoutEffect } from "./use-layout-effect";
 
 function useSize(element: HTMLElement | null) {

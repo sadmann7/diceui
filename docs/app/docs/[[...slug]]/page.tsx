@@ -1,11 +1,13 @@
+import type { Metadata } from "next";
+
 import {
   DocsBody,
   DocsDescription,
   DocsPage,
   DocsTitle,
 } from "fumadocs-ui/page";
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
 import { BaseSwitcher } from "@/components/base-switcher";
 import { DocActions } from "@/components/doc-actions";
 import { DynamicLink } from "@/components/dynamic-link";

@@ -5,6 +5,7 @@ import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
+
 import { Button } from "@/registry/bases/base/ui/button";
 import {
   ColorPicker,
@@ -74,8 +75,8 @@ export default function ColorPickerFormDemo() {
         className="flex w-full max-w-md flex-col gap-4 rounded-md border p-6 shadow-sm"
       >
         <div className="flex flex-col gap-1">
-          <h3 className="font-semibold text-lg">Theme Colors</h3>
-          <p className="text-muted-foreground text-sm">
+          <h3 className="text-lg font-semibold">Theme Colors</h3>
+          <p className="text-sm text-muted-foreground">
             Configure your application's color scheme
           </p>
         </div>

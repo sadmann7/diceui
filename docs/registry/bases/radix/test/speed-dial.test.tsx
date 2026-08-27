@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
+
 import {
   SpeedDial,
   SpeedDialAction,
@@ -283,18 +284,16 @@ describe("SpeedDial", () => {
   });
 
   describe("Side Variations", () => {
-    it.each([
-      "top",
-      "bottom",
-      "left",
-      "right",
-    ] as const)("renders with side=%s", (side) => {
-      render(<SpeedDialTest open side={side} />);
+    it.each(["top", "bottom", "left", "right"] as const)(
+      "renders with side=%s",
+      (side) => {
+        render(<SpeedDialTest open side={side} />);
 
-      const content = screen.getByTestId("content");
-      expect(content).toBeInTheDocument();
-      expect(content).toHaveAttribute("data-side", side);
-    });
+        const content = screen.getByTestId("content");
+        expect(content).toBeInTheDocument();
+        expect(content).toHaveAttribute("data-side", side);
+      },
+    );
 
     it("applies correct orientation for vertical sides", () => {
       render(<SpeedDialTest open side="top" />);

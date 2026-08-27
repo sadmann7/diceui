@@ -281,7 +281,7 @@
 
 @utility mdx {
   & table {
-    @apply rounded-md my-2.5;
+    @apply my-2.5 rounded-md;
   }
 
   & table tr {
@@ -295,7 +295,7 @@
 
 @utility auto-type-table {
   & table {
-    @apply rounded-md w-full;
+    @apply w-full rounded-md;
   }
 
   & table tr {
@@ -328,12 +328,12 @@
 
 @utility data-table-container {
   & table {
-    @apply border-none rounded-none my-0;
+    @apply my-0 rounded-none border-none;
   }
 
   & table td,
   & table th {
-    @apply w-auto border-t-0 border-x-0;
+    @apply w-auto border-x-0 border-t-0;
   }
 }
 
@@ -354,7 +354,7 @@
   }
 
   [data-line].highlighted {
-    @apply block -mx-4 px-4;
+    @apply -mx-4 block px-4;
     background-color: color-mix(in srgb, var(--highlight) 15%, transparent);
   }
 
@@ -363,7 +363,7 @@
   }
 
   [data-line].diff {
-    @apply block -mx-4 px-4.5;
+    @apply -mx-4 block px-4.5;
   }
 
   [data-line].diff.add {
@@ -383,7 +383,7 @@
   }
 
   [data-line].diff::before {
-    @apply static! inline-block! w-2 -ml-2 left-[unset]!;
+    @apply static! left-[unset]! -ml-2 inline-block! w-2;
   }
 
   [data-line].diff.add::before {

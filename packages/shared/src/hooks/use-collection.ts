@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { compareNodePosition } from "../lib/node";
 
 type CollectionItem<TElement extends HTMLElement, TData = {}> = {
@@ -82,5 +83,5 @@ function useCollection<TElement extends HTMLElement, TData = {}>({
   };
 }
 
-export type { CollectionGroupMap, CollectionItem, CollectionItemMap };
 export { useCollection };
+export type { CollectionGroupMap, CollectionItem, CollectionItemMap };

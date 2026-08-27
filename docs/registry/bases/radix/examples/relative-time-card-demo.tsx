@@ -1,4 +1,5 @@
 import { Clock } from "lucide-react";
+
 import { Button } from "@/registry/bases/radix/ui/button";
 import { RelativeTimeCard } from "@/registry/bases/radix/ui/relative-time-card";
 
@@ -12,11 +13,11 @@ export default function RelativeTimeCardDemo() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-sm">Basic usage</span>
+        <span className="text-sm text-muted-foreground">Basic usage</span>
         <RelativeTimeCard date={fiveMinutesAgo} />
       </div>
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-sm">
+        <span className="text-sm text-muted-foreground">
           Different variants
         </span>
         <div className="flex items-center gap-4">
@@ -26,7 +27,7 @@ export default function RelativeTimeCardDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-sm">
+        <span className="text-sm text-muted-foreground">
           With time in the future
         </span>
         <div className="flex items-center gap-4">
@@ -34,7 +35,7 @@ export default function RelativeTimeCardDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-sm">
+        <span className="text-sm text-muted-foreground">
           Multiple timezones
         </span>
         <RelativeTimeCard
@@ -43,7 +44,7 @@ export default function RelativeTimeCardDemo() {
         />
       </div>
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-sm">Custom trigger</span>
+        <span className="text-sm text-muted-foreground">Custom trigger</span>
         <RelativeTimeCard date={now} asChild>
           <Button variant="outline" size="sm">
             <Clock />
@@ -52,7 +53,7 @@ export default function RelativeTimeCardDemo() {
         </RelativeTimeCard>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-sm">
+        <span className="text-sm text-muted-foreground">
           Different positions
         </span>
         <div className="flex items-center gap-4">

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import {
   Tabs,
@@ -81,7 +82,7 @@ function MdxTabsContent({
     <TabsContent
       className={cn(
         variant === "line"
-          ? "relative [&>.steps]:mt-6 [&_h3.font-heading]:font-medium [&_h3.font-heading]:text-base"
+          ? "relative [&_h3.font-heading]:text-base [&_h3.font-heading]:font-medium [&>.steps]:mt-6"
           : "[&_figure]:my-0 [&_figure]:rounded-none [&_figure]:border-0 [&_figure]:shadow-none",
         className,
       )}

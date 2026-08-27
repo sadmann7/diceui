@@ -4,7 +4,7 @@ export function SiteFooter() {
   return (
     <footer className="mt-auto border-t bg-fd-card py-6 text-fd-secondary-foreground">
       <div className="container flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Built by{" "}
           <a
             href={siteConfig.links.x}

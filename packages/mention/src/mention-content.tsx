@@ -14,6 +14,7 @@ import {
 } from "@diceui/shared";
 import { FloatingFocusManager } from "@floating-ui/react";
 import * as React from "react";
+
 import { getDataState, useMentionContext } from "./mention-root";
 
 const CONTENT_NAME = "MentionContent";
@@ -33,7 +34,8 @@ const [MentionContentProvider, useMentionContentContext] =
   createContext<MentionContentContextValue>(CONTENT_NAME);
 
 interface MentionContentProps
-  extends AnchorPositionerProps,
+  extends
+    AnchorPositionerProps,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * Event handler called when the `Escape` key is pressed.

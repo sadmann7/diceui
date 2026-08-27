@@ -1,3 +1,5 @@
+import type { VirtualElement } from "@floating-ui/react";
+
 import {
   type CollectionItem,
   composeRefs,
@@ -14,8 +16,8 @@ import {
   useListHighlighting,
   VisuallyHiddenInput,
 } from "@diceui/shared";
-import type { VirtualElement } from "@floating-ui/react";
 import * as React from "react";
+
 import type { ContentElement } from "./mention-content";
 import type { InputElement } from "./mention-input";
 import type { ItemElement } from "./mention-item";
@@ -87,11 +89,10 @@ interface MentionContextValue {
 const [MentionProvider, useMentionContext] =
   createContext<MentionContextValue>(ROOT_NAME);
 
-interface MentionRootProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof Primitive.div>,
-    "value" | "defaultValue"
-  > {
+interface MentionRootProps extends Omit<
+  React.ComponentPropsWithoutRef<typeof Primitive.div>,
+  "value" | "defaultValue"
+> {
   /** The currently selected value. */
   value?: string[];
 
@@ -253,12 +254,12 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
     }, [getItems]);
 
     const onOpenChange = React.useCallback(
-      (open: boolean) => {
-        if (open && filterStore.search && filterStore.itemCount === 0) {
+      (nextOpen: boolean) => {
+        if (nextOpen && filterStore.search && filterStore.itemCount === 0) {
           return;
         }
-        setOpen(open);
-        if (open) {
+        setOpen(nextOpen);
+        if (nextOpen) {
           requestAnimationFrame(() => {
             const items = getEnabledItems();
             const firstItem = items[0] ?? null;

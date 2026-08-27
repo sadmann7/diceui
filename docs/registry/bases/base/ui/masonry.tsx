@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
+
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 
@@ -1160,8 +1161,7 @@ const MASONRY_ERROR = {
 } as const;
 
 interface DivProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 type RootElement = HTMLDivElement;
 type ItemElement = HTMLDivElement;
@@ -1368,8 +1368,7 @@ function MasonryViewport(props: DivProps) {
 
   const validChildren = React.Children.toArray(children).filter(
     (child): child is React.ReactElement<MasonryItemPropsWithRef> =>
-      React.isValidElement(child) &&
-      (child.type === MasonryItem || child.type === MasonryItem),
+      React.isValidElement(child) && child.type === MasonryItem,
   );
   const itemCount = validChildren.length;
 

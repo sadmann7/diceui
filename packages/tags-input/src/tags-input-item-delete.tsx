@@ -1,12 +1,14 @@
 import { composeEventHandlers, Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useTagsInputItem } from "./tags-input-item";
 import { useTagsInput } from "./tags-input-root";
 
 const ITEM_DELETE_NAME = "TagsInputItemDelete";
 
-interface TagsInputItemDeleteProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
+interface TagsInputItemDeleteProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.button
+> {}
 
 const TagsInputItemDelete = React.forwardRef<
   HTMLButtonElement,

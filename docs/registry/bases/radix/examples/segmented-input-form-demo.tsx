@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
   SegmentedInput,
@@ -28,7 +29,7 @@ export default function SegmentedInputFormDemo() {
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <label className="font-medium text-sm leading-none">Phone Number</label>
+        <label className="text-sm leading-none font-medium">Phone Number</label>
         <SegmentedInput
           className="w-full max-w-sm"
           aria-label="Phone number input"

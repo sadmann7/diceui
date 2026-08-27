@@ -2,6 +2,7 @@
 
 import { X } from "lucide-react";
 import * as React from "react";
+
 import { Badge } from "@/registry/bases/base/ui/badge";
 import { BadgeOverflow } from "@/registry/bases/base/ui/badge-overflow";
 import { Button } from "@/registry/bases/base/ui/button";
@@ -69,7 +70,7 @@ export default function BadgeOverflowInteractiveDemo() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Tags with Overflow</h3>
+        <h3 className="text-sm font-medium">Tags with Overflow</h3>
         <div className="w-full max-w-80 rounded-md border p-3">
           <BadgeOverflow
             items={tags}
@@ -105,7 +106,7 @@ export default function BadgeOverflowInteractiveDemo() {
           Add
         </Button>
       </div>
-      <div className="flex flex-col gap-px text-balance text-muted-foreground text-sm">
+      <div className="flex flex-col gap-px text-sm text-balance text-muted-foreground">
         <p>Click on a badge to remove it.</p>
         <p>Resize the container to see overflow behavior.</p>
       </div>

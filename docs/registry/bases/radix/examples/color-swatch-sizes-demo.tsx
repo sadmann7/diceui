@@ -12,7 +12,7 @@ export default function ColorSwatchSizesDemo() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <span className="font-medium text-sm">Small (sm)</span>
+        <span className="text-sm font-medium">Small (sm)</span>
         <div className="flex gap-2">
           {colors.map((color, index) => (
             <ColorSwatch key={index} color={color} size="sm" />
@@ -20,7 +20,7 @@ export default function ColorSwatchSizesDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="font-medium text-sm">Default</span>
+        <span className="text-sm font-medium">Default</span>
         <div className="flex gap-2">
           {colors.map((color, index) => (
             <ColorSwatch key={index} color={color} size="default" />
@@ -29,7 +29,7 @@ export default function ColorSwatchSizesDemo() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="font-medium text-sm">Large (lg)</span>
+        <span className="text-sm font-medium">Large (lg)</span>
         <div className="flex gap-2">
           {colors.map((color, index) => (
             <ColorSwatch key={index} color={color} size="lg" />

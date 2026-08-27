@@ -193,8 +193,7 @@ export interface CropperImageProps extends EmptyProps<"img">, CompositionProps {
 }
 
 export interface CropperVideoProps
-  extends EmptyProps<"video">,
-    CompositionProps {
+  extends EmptyProps<"video">, CompositionProps {
   /**
    * How the video should fit within the container.
    * Overrides the root objectFit prop if provided.

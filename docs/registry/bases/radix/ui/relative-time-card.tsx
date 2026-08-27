@@ -3,6 +3,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import {
   HoverCard,
@@ -89,9 +90,9 @@ function TimezoneCard(props: TimezoneCardProps) {
       role="region"
       aria-label={`Time in ${timezoneName}: ${formattedDate} ${formattedTime}`}
       {...cardProps}
-      className="flex items-center justify-between gap-2 text-muted-foreground text-sm"
+      className="flex items-center justify-between gap-2 text-sm text-muted-foreground"
     >
-      <span className="w-fit rounded bg-accent px-1 font-medium text-xs">
+      <span className="w-fit rounded bg-accent px-1 text-xs font-medium">
         {timezoneName}
       </span>
       <div className="flex items-center gap-2">
@@ -105,7 +106,7 @@ function TimezoneCard(props: TimezoneCardProps) {
 }
 
 const triggerVariants = cva(
-  "inline-flex w-fit items-center justify-center text-foreground/70 text-sm transition-colors hover:text-foreground/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+  "inline-flex w-fit items-center justify-center text-sm text-foreground/70 transition-colors hover:text-foreground/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none",
   {
     variants: {
       variant: {
@@ -121,7 +122,8 @@ const triggerVariants = cva(
 );
 
 interface RelativeTimeCardProps
-  extends React.ComponentProps<"button">,
+  extends
+    React.ComponentProps<"button">,
     React.ComponentProps<typeof HoverCard>,
     Pick<
       React.ComponentProps<typeof HoverCardContent>,
@@ -227,7 +229,7 @@ function RelativeTimeCard(props: RelativeTimeCardProps) {
       >
         <time
           dateTime={date.toISOString()}
-          className="text-muted-foreground text-sm"
+          className="text-sm text-muted-foreground"
         >
           {formattedTime}
         </time>

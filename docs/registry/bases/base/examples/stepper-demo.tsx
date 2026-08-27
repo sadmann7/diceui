@@ -51,7 +51,7 @@ export default function StepperDemo() {
           className="flex flex-col items-center gap-4 rounded-md border bg-card p-4 text-card-foreground"
         >
           <div className="flex flex-col items-center gap-px text-center">
-            <h3 className="font-semibold text-lg">{step.title}</h3>
+            <h3 className="text-lg font-semibold">{step.title}</h3>
             <p className="text-muted-foreground">{step.description}</p>
           </div>
           <p className="text-sm">Content for {step.title} goes here.</p>

@@ -3,6 +3,7 @@
 import { Clock } from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
@@ -533,7 +534,7 @@ function TimePickerLabel(props: TimePickerLabelProps) {
       {...labelProps}
       htmlFor={labelId}
       className={cn(
-        "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+        "text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
         className,
       )}
     />
@@ -722,7 +723,7 @@ function TimePickerInputGroup(props: DivProps) {
           data-invalid={invalid ? "" : undefined}
           {...inputGroupProps}
           className={cn(
-            "flex h-10 w-full cursor-text items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs outline-none transition-shadow",
+            "flex h-10 w-full cursor-text items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs transition-shadow outline-none",
             "has-[input:focus]:border-ring has-[input:focus]:ring-[3px] has-[input:focus]:ring-ring/50",
             invalid && "border-destructive ring-destructive/20",
             disabled && "cursor-not-allowed opacity-50",
@@ -746,8 +747,10 @@ function TimePickerInputGroup(props: DivProps) {
   );
 }
 
-interface TimePickerInputProps
-  extends Omit<React.ComponentProps<"input">, "type" | "value"> {
+interface TimePickerInputProps extends Omit<
+  React.ComponentProps<"input">,
+  "type" | "value"
+> {
   segment: Segment;
 }
 
@@ -1417,7 +1420,7 @@ function TimePickerInput(props: TimePickerInputProps) {
       disabled={isDisabled}
       readOnly={isReadOnly}
       className={cn(
-        "inline-flex h-full items-center justify-center border-0 bg-transparent text-center text-sm tabular-nums outline-none transition-colors focus:bg-transparent disabled:cursor-not-allowed disabled:opacity-50",
+        "inline-flex h-full items-center justify-center border-0 bg-transparent text-center text-sm tabular-nums transition-colors outline-none focus:bg-transparent disabled:cursor-not-allowed disabled:opacity-50",
         className,
       )}
       style={{ width: segmentWidth, ...style }}
@@ -1484,8 +1487,7 @@ function useTimePickerGroupContext(consumerName: string) {
 }
 
 interface TimePickerContentProps
-  extends DivProps,
-    React.ComponentProps<typeof PopoverContent> {}
+  extends DivProps, React.ComponentProps<typeof PopoverContent> {}
 
 function TimePickerContent(props: TimePickerContentProps) {
   const {
@@ -1702,7 +1704,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
         ref={composedRef}
         data-slot="time-picker-column"
         {...columnProps}
-        className={cn("flex flex-col gap-1 not-last:border-r p-1", className)}
+        className={cn("flex flex-col gap-1 p-1 not-last:border-r", className)}
       >
         {children}
       </div>
@@ -1837,7 +1839,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
       ref={composedRef}
       data-selected={selected ? "" : undefined}
       className={cn(
-        "w-full rounded px-3 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus:border-ring focus:outline-none focus:ring-[3px] focus:ring-ring/50",
+        "w-full rounded px-3 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus:border-ring focus:ring-[3px] focus:ring-ring/50 focus:outline-none",
         "data-selected:bg-primary data-selected:text-primary-foreground data-selected:hover:bg-primary data-selected:hover:text-primary-foreground",
         className,
       )}
@@ -2186,7 +2188,7 @@ function TimePickerClear(props: ButtonProps) {
       disabled={isDisabled}
       {...clearProps}
       className={cn(
-        "inline-flex items-center justify-center rounded-sm font-medium text-sm transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex items-center justify-center rounded-sm text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
       onClick={onClick}

@@ -2,6 +2,7 @@
 
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 
@@ -1361,8 +1362,7 @@ function MasonryViewport(props: DivProps) {
 
   const validChildren = React.Children.toArray(children).filter(
     (child): child is React.ReactElement<MasonryItemPropsWithRef> =>
-      React.isValidElement(child) &&
-      (child.type === MasonryItem || child.type === MasonryItem),
+      React.isValidElement(child) && child.type === MasonryItem,
   );
   const itemCount = validChildren.length;
 

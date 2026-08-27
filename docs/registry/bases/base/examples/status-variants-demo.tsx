@@ -8,7 +8,7 @@ export default function StatusVariantsDemo() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Success Variants</h3>
+        <h3 className="text-sm font-medium">Success Variants</h3>
         <div className="flex flex-wrap items-center gap-2.5">
           <Status variant="success">
             <StatusIndicator />
@@ -26,7 +26,7 @@ export default function StatusVariantsDemo() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Error Variants</h3>
+        <h3 className="text-sm font-medium">Error Variants</h3>
         <div className="flex flex-wrap items-center gap-2.5">
           <Status variant="error">
             <StatusIndicator />
@@ -44,7 +44,7 @@ export default function StatusVariantsDemo() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Warning Variants</h3>
+        <h3 className="text-sm font-medium">Warning Variants</h3>
         <div className="flex flex-wrap items-center gap-2.5">
           <Status variant="warning">
             <StatusIndicator />
@@ -62,7 +62,7 @@ export default function StatusVariantsDemo() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Info Variants</h3>
+        <h3 className="text-sm font-medium">Info Variants</h3>
         <div className="flex flex-wrap items-center gap-2.5">
           <Status variant="info">
             <StatusIndicator />
@@ -80,7 +80,7 @@ export default function StatusVariantsDemo() {
       </div>
 
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Default Variants</h3>
+        <h3 className="text-sm font-medium">Default Variants</h3>
         <div className="flex flex-wrap items-center gap-2.5">
           <Status variant="default">
             <StatusIndicator />

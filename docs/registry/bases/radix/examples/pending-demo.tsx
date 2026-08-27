@@ -2,6 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import * as React from "react";
+
 import { usePending } from "@/registry/bases/radix/components/pending";
 import { Button } from "@/registry/bases/radix/ui/button";
 
@@ -24,7 +25,7 @@ export default function PendingDemo() {
         {isPending ? "Submitting..." : "Submit"}
       </Button>
 
-      <p className="text-muted-foreground text-sm">
+      <p className="text-sm text-muted-foreground">
         {isPending
           ? "Button is pending - try tabbing to it and pressing Enter"
           : "Click the button to see pending state"}

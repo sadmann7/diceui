@@ -64,10 +64,9 @@ export interface StatTrendProps extends EmptyProps<"div"> {
   trend?: "up" | "down" | "neutral";
 }
 
-export interface StatSeparatorProps
-  extends Omit<
-    React.ComponentProps<typeof Separator>,
-    keyof React.ComponentProps<"div">
-  > {}
+export interface StatSeparatorProps extends Omit<
+  React.ComponentProps<typeof Separator>,
+  keyof React.ComponentProps<"div">
+> {}
 
 export interface StatDescriptionProps extends EmptyProps<"div"> {}

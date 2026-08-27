@@ -3,6 +3,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
@@ -504,8 +505,7 @@ const speedDialContentVariants = cva(
 );
 
 interface SpeedDialContentProps
-  extends DivProps,
-    VariantProps<typeof speedDialContentVariants> {
+  extends DivProps, VariantProps<typeof speedDialContentVariants> {
   offset?: number;
   gap?: number;
   forceMount?: boolean;
@@ -839,7 +839,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 }
 
 const speedDialItemVariants = cva(
-  "flex items-center gap-2 transition-all [transition-delay:var(--speed-dial-delay)] [transition-duration:var(--speed-dial-animation-duration)] data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=closed]:opacity-0 data-[state=open]:opacity-100",
+  "flex items-center gap-2 transition-all [transition-delay:var(--speed-dial-delay)] [transition-duration:var(--speed-dial-animation-duration)] data-[state=closed]:opacity-0 data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=open]:opacity-100",
   {
     variants: {
       side: {
@@ -933,8 +933,10 @@ function SpeedDialItem(props: DivProps) {
   );
 }
 
-interface SpeedDialActionProps
-  extends Omit<React.ComponentProps<typeof Button>, "onSelect"> {
+interface SpeedDialActionProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "onSelect"
+> {
   onSelect?: (event: Event) => void;
 }
 
@@ -1035,7 +1037,7 @@ function SpeedDialLabel({ asChild, className, ...props }: DivProps) {
       data-slot="speed-dial-label"
       {...props}
       className={cn(
-        "pointer-events-none whitespace-nowrap rounded-md bg-popover px-2 py-1 text-popover-foreground text-sm shadow-md",
+        "pointer-events-none rounded-md bg-popover px-2 py-1 text-sm whitespace-nowrap text-popover-foreground shadow-md",
         className,
       )}
     />

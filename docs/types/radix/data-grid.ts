@@ -11,6 +11,7 @@ import type {
 } from "@tanstack/react-table";
 import type { VirtualItem } from "@tanstack/react-virtual";
 import type * as React from "react";
+
 import type { PopoverContent } from "@/registry/bases/radix/ui/popover";
 import type { EmptyProps } from "@/types";
 import type {
@@ -22,11 +23,10 @@ import type {
   SearchState,
 } from "@/types/data-grid";
 
-export interface UseDataGridProps<TData>
-  extends Pick<
-    TableOptions<TData>,
-    "data" | "columns" | "getRowId" | "defaultColumn" | "initialState" | "state"
-  > {
+export interface UseDataGridProps<TData> extends Pick<
+  TableOptions<TData>,
+  "data" | "columns" | "getRowId" | "defaultColumn" | "initialState" | "state"
+> {
   /**
    * Callback function called when data changes due to cell edits.
    * Receives the updated data array after changes are applied.
@@ -54,12 +54,9 @@ export interface UseDataGridProps<TData>
    * }}
    * ```
    */
-  onRowAdd?: (event?: React.MouseEvent<HTMLDivElement>) =>
-    | Partial<CellPosition>
-    | Promise<Partial<CellPosition>>
-    | null
-    // biome-ignore lint/suspicious/noConfusingVoidType: void is needed here to allow functions without explicit return
-    | void;
+  onRowAdd?: (
+    event?: React.MouseEvent<HTMLDivElement>,
+  ) => Partial<CellPosition> | Promise<Partial<CellPosition>> | null | void;
 
   /**
    * Callback function called when adding multiple rows at once.
@@ -351,12 +348,9 @@ export interface DataGridProps<TData> extends EmptyProps<"div"> {
    * Only defined when `onRowAdd` is provided to useDataGrid.
    * Handles the row addition interaction from the grid footer.
    */
-  onRowAdd?: (event?: React.MouseEvent<HTMLDivElement>) =>
-    | Partial<CellPosition>
-    | Promise<Partial<CellPosition>>
-    | null
-    // biome-ignore lint/suspicious/noConfusingVoidType: void is needed here to allow functions without explicit return
-    | void;
+  onRowAdd?: (
+    event?: React.MouseEvent<HTMLDivElement>,
+  ) => Partial<CellPosition> | Promise<Partial<CellPosition>> | null | void;
 
   /**
    * Whether columns should stretch to fill available space.
@@ -473,8 +467,7 @@ export interface DataGridCellProps<TData> {
 }
 
 export interface DataGridCellWrapperProps<TData>
-  extends DataGridCellProps<TData>,
-    EmptyProps<"div"> {}
+  extends DataGridCellProps<TData>, EmptyProps<"div"> {}
 
 export interface DataGridRowProps<TData> extends EmptyProps<"div"> {
   /**
@@ -678,8 +671,9 @@ export interface DataGridContextMenuProps<TData> {
   table: Table<TData>;
 }
 
-export interface DataGridSortMenuProps<TData>
-  extends EmptyProps<typeof PopoverContent> {
+export interface DataGridSortMenuProps<TData> extends EmptyProps<
+  typeof PopoverContent
+> {
   /**
    * The table instance from useDataGrid hook.
    * Used to read and update sorting state with drag-and-drop reordering.
@@ -697,8 +691,9 @@ export interface DataGridSortMenuProps<TData>
   disabled?: boolean;
 }
 
-export interface DataGridRowHeightMenuProps<TData>
-  extends EmptyProps<typeof PopoverContent> {
+export interface DataGridRowHeightMenuProps<TData> extends EmptyProps<
+  typeof PopoverContent
+> {
   /**
    * The table instance from useDataGrid hook.
    * Used to read and update the row height setting.
@@ -716,8 +711,9 @@ export interface DataGridRowHeightMenuProps<TData>
   disabled?: boolean;
 }
 
-export interface DataGridViewMenuProps<TData>
-  extends EmptyProps<typeof PopoverContent> {
+export interface DataGridViewMenuProps<TData> extends EmptyProps<
+  typeof PopoverContent
+> {
   /**
    * The table instance from useDataGrid hook.
    * Used to read and update column visibility settings.
@@ -735,8 +731,9 @@ export interface DataGridViewMenuProps<TData>
   disabled?: boolean;
 }
 
-export interface DataGridFilterMenuProps<TData>
-  extends EmptyProps<typeof PopoverContent> {
+export interface DataGridFilterMenuProps<TData> extends EmptyProps<
+  typeof PopoverContent
+> {
   /**
    * The table instance from useDataGrid hook.
    * Used to read and update column filter state with support for multiple operators and values.

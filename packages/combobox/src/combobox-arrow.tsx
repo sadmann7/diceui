@@ -1,12 +1,14 @@
 import { Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxContentContext } from "./combobox-content";
 import { getDataState, useComboboxContext } from "./combobox-root";
 
 const ARROW_NAME = "ComboboxArrow";
 
-interface ComboboxArrowProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.svg> {
+interface ComboboxArrowProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.svg
+> {
   /**
    * The width of the arrow in pixels.
    * @default 10

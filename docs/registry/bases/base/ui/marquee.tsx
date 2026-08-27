@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { useDirection } from "@/registry/bases/base/ui/direction";
@@ -261,8 +262,7 @@ function useMarqueeContext(consumerName: string) {
 }
 
 interface MarqueeProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   side?: Side;
   dir?: Direction;
   speed?: number;
@@ -398,7 +398,7 @@ function Marquee(props: MarqueeProps) {
           paused && "**:paused",
           pauseOnHover && "group",
           pauseOnKeyboard &&
-            "rounded-md focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+            "rounded-md focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
           className,
         ),
         style,
@@ -467,8 +467,7 @@ const marqueeContentVariants = cva(
 );
 
 interface MarqueeContentProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function MarqueeContent(props: MarqueeContentProps) {
   const {
@@ -610,8 +609,7 @@ function MarqueeContent(props: MarqueeContentProps) {
 }
 
 interface MarqueeItemProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function MarqueeItem({ className, render, ...itemProps }: MarqueeItemProps) {
   return useRender({
@@ -626,7 +624,8 @@ function MarqueeItem({ className, render, ...itemProps }: MarqueeItemProps) {
 }
 
 interface MarqueeEdgeProps
-  extends VariantProps<typeof marqueeEdgeVariants>,
+  extends
+    VariantProps<typeof marqueeEdgeVariants>,
     React.ComponentProps<"div">,
     useRender.ComponentProps<"div"> {}
 

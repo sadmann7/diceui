@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import type { Direction } from "../types";
 
 const DirectionContext = React.createContext<Direction | undefined>(undefined);

@@ -3,6 +3,7 @@
  */
 
 import * as React from "react";
+
 import { composeRefs } from "./compose-refs";
 import { getElementRef } from "./get-element-ref";
 

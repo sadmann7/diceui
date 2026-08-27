@@ -1,4 +1,5 @@
 import { HomeLayout } from "fumadocs-ui/layouts/home";
+
 import { SiteFooter } from "@/components/site-footer";
 import { baseOptions } from "@/config/layout";
 

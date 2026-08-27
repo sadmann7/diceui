@@ -1,12 +1,12 @@
 "use client";
 
-import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
 import type * as React from "react";
 
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
+
 interface VisuallyHiddenProps
-  extends React.ComponentProps<"span">,
-    useRender.ComponentProps<"span"> {}
+  extends React.ComponentProps<"span">, useRender.ComponentProps<"span"> {}
 
 function VisuallyHidden(props: VisuallyHiddenProps) {
   const { style, render, ...visuallyHiddenProps } = props;

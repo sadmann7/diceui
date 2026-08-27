@@ -6,7 +6,7 @@ export default function FpsDemo() {
       <Fps strategy="absolute" position="top-right" />
       <div className="flex size-full flex-col items-center justify-center gap-1">
         <div>Absolute positioning</div>
-        <div className="text-muted-foreground text-sm">
+        <div className="text-sm text-muted-foreground">
           Relative to this container without a portal
         </div>
       </div>

@@ -1,5 +1,6 @@
 import defaultComponents from "fumadocs-ui/mdx";
 import Link from "next/link";
+
 import { getChangelogPages } from "@/lib/changelog";
 import { Separator } from "@/registry/bases/radix/ui/separator";
 
@@ -24,17 +25,17 @@ export function Changelogs() {
             <Link href={page.url} className="no-underline hover:underline">
               <h2
                 id={slug}
-                className="not-prose font-semibold text-2xl tracking-tight"
+                className="not-prose text-2xl font-semibold tracking-tight"
               >
                 {page.data.title}
               </h2>
             </Link>
             {date && (
-              <p className="not-prose mt-1 text-muted-foreground text-sm">
+              <p className="not-prose mt-1 text-sm text-muted-foreground">
                 {date}
               </p>
             )}
-            <div className="prose dark:prose-invert mt-6 *:first:mt-0">
+            <div className="dark:prose-invert prose mt-6 *:first:mt-0">
               <MDX components={defaultComponents} />
             </div>
             <Separator className="mt-12" />

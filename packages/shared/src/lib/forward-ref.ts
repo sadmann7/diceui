@@ -10,10 +10,12 @@ interface WithDisplayName {
   displayName?: string;
 }
 
-interface ForwardRefComponent<T, P = {}>
-  extends React.ForwardRefExoticComponent<
-    React.PropsWithoutRef<P> & React.RefAttributes<T> & WithDisplayName
-  > {}
+interface ForwardRefComponent<
+  T,
+  P = {},
+> extends React.ForwardRefExoticComponent<
+  React.PropsWithoutRef<P> & React.RefAttributes<T> & WithDisplayName
+> {}
 
 function forwardRef<T, P = {}>(
   render: React.ForwardRefRenderFunction<T, React.PropsWithoutRef<P>>,

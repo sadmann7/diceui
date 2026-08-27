@@ -9,8 +9,8 @@ export default function ScrollerHorizontalDemo() {
             key={index}
             className="flex h-32 w-[180px] shrink-0 flex-col items-center justify-center rounded-md bg-accent p-4"
           >
-            <div className="font-medium text-lg">Card {index + 1}</div>
-            <span className="text-muted-foreground text-sm">
+            <div className="text-lg font-medium">Card {index + 1}</div>
+            <span className="text-sm text-muted-foreground">
               Scroll horizontally
             </span>
           </div>

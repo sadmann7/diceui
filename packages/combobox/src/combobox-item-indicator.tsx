@@ -1,11 +1,13 @@
 import { Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxItemContext } from "./combobox-item";
 
 const ITEM_INDICATOR_NAME = "ComboboxItemIndicator";
 
-interface ComboboxItemIndicatorProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.span> {
+interface ComboboxItemIndicatorProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.span
+> {
   /**
    * Whether to render the indicator even if the item is not selected.
    * @default false

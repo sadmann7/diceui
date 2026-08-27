@@ -17,7 +17,7 @@ export default function QRCodeCustomizationDemo() {
           <QRCodeCanvas />
           <QRCodeSkeleton />
         </QRCode>
-        <p className="text-muted-foreground text-sm">Custom Colors</p>
+        <p className="text-sm text-muted-foreground">Custom Colors</p>
       </div>
 
       <div className="flex flex-col items-center gap-2">
@@ -30,7 +30,7 @@ export default function QRCodeCustomizationDemo() {
           <QRCodeCanvas />
           <QRCodeSkeleton />
         </QRCode>
-        <p className="text-muted-foreground text-sm">High Error Correction</p>
+        <p className="text-sm text-muted-foreground">High Error Correction</p>
       </div>
     </div>
   );

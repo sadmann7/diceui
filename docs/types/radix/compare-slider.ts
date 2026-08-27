@@ -1,7 +1,8 @@
 import type { CompositionProps, EmptyProps, Orientation } from "@/types";
 
 export interface CompareSliderProps
-  extends EmptyProps<"div", "defaultValue" | "value" | "onValueChange">,
+  extends
+    EmptyProps<"div", "defaultValue" | "value" | "onValueChange">,
     CompositionProps {
   /**
    * The position of the slider as a percentage (0-100).
@@ -42,8 +43,7 @@ export interface CompareSliderProps
 }
 
 export interface CompareSliderBeforeProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * Label for the "before" side.
    *
@@ -55,8 +55,7 @@ export interface CompareSliderBeforeProps
 }
 
 export interface CompareSliderAfterProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * Label for the "after" side.
    *
@@ -68,12 +67,10 @@ export interface CompareSliderAfterProps
 }
 
 export interface CompareSliderHandleProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface CompareSliderLabelProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The side this label is for.
    *

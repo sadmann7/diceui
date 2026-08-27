@@ -1,7 +1,10 @@
-import Link from "next/link";
 import type * as React from "react";
-import { cn } from "@/lib/utils";
+
+import Link from "next/link";
+
 import type { RegistryBase } from "@/registry/registry";
+
+import { cn } from "@/lib/utils";
 
 const bases: { label: string; value: RegistryBase }[] = [
   { label: "Radix UI", value: "radix" },
@@ -39,7 +42,7 @@ export function BaseSwitcher({
             role="tab"
             aria-selected={isActive}
             className={cn(
-              "inline-flex items-center justify-center whitespace-nowrap border-b-2 pb-1.5 font-medium text-sm transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring/50",
+              "inline-flex items-center justify-center border-b-2 pb-1.5 text-sm font-medium whitespace-nowrap transition-colors focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-hidden",
               "not-aria-selected:border-transparent not-aria-selected:text-muted-foreground not-aria-selected:hover:text-foreground aria-selected:border-foreground aria-selected:text-foreground",
             )}
           >

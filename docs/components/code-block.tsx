@@ -2,6 +2,7 @@
 
 import { CodeBlock as FumadocsCodeBlock } from "fumadocs-ui/components/codeblock";
 import * as React from "react";
+
 import { trackEvent } from "@/lib/analytics";
 
 const INSTALL_COMMAND_REGEX =

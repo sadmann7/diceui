@@ -4,6 +4,7 @@
 
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import { Slot } from "./slot";
 
 type IntrinsicElementsKeys = keyof React.JSX.IntrinsicElements;
@@ -42,7 +43,7 @@ function createPrimitive<E extends IntrinsicElementsKeys>(
     });
   });
 
-  Primitive.displayName = `Primitive.${String(element)}`;
+  Primitive.displayName = `Primitive.${element}`;
   return Primitive as PrimitiveForwardRefComponent<E>;
 }
 

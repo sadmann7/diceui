@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { Label } from "@/registry/bases/radix/ui/label";
 import { MaskInput } from "@/registry/bases/radix/ui/mask-input";
 
@@ -45,7 +46,7 @@ export default function MaskInputDemo() {
           value={input.phone}
           onValueChange={onValueChange("phone")}
         />
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Enter your phone number with area code
         </p>
       </div>
@@ -58,7 +59,7 @@ export default function MaskInputDemo() {
           value={input.date}
           onValueChange={onValueChange("date")}
         />
-        <p className="text-muted-foreground text-sm">Enter your birth date</p>
+        <p className="text-sm text-muted-foreground">Enter your birth date</p>
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-dollar`}>Currency</Label>
@@ -69,7 +70,7 @@ export default function MaskInputDemo() {
           value={input.dollar}
           onValueChange={onValueChange("dollar")}
         />
-        <p className="text-muted-foreground text-sm">Enter your currency</p>
+        <p className="text-sm text-muted-foreground">Enter your currency</p>
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-euro`}>Currency (German)</Label>
@@ -82,7 +83,7 @@ export default function MaskInputDemo() {
           value={input.euro}
           onValueChange={onValueChange("euro")}
         />
-        <p className="text-muted-foreground text-sm">Enter your currency</p>
+        <p className="text-sm text-muted-foreground">Enter your currency</p>
       </div>
       <div className="flex flex-col gap-2">
         <Label htmlFor={`${id}-creditCard`}>Credit card</Label>
@@ -93,7 +94,7 @@ export default function MaskInputDemo() {
           value={input.creditCard}
           onValueChange={onValueChange("creditCard")}
         />
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Enter your credit card number
         </p>
       </div>
@@ -108,7 +109,7 @@ export default function MaskInputDemo() {
           value={input.percentage}
           onValueChange={onValueChange("percentage")}
         />
-        <p className="text-muted-foreground text-sm">Enter a percentage</p>
+        <p className="text-sm text-muted-foreground">Enter a percentage</p>
       </div>
     </div>
   );

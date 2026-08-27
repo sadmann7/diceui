@@ -24,6 +24,8 @@ Dice UI is organized into multiple packages and documentation:
 
 ## Development Setup
 
+Requires Node.js 22.13+ (24 recommended) and [pnpm](https://pnpm.io) 11.
+
 1. Fork the repository
 
 2. Clone the repository:
@@ -60,7 +62,7 @@ Dice UI is organized into multiple packages and documentation:
    - `package.json`
    - `README.md`
    - `tsconfig.json`
-   - `tsup.config.ts`
+   - `tsdown.config.ts`
    - `src/` directory
    - `test/` directory
 
@@ -76,7 +78,7 @@ packages/your-component/
 ├── test/
 │   └── your-component.test.ts
 ├── tsconfig.json
-└── tsup.config.ts
+└── tsdown.config.ts
 ```
 
 | Path | Description |
@@ -88,7 +90,7 @@ packages/your-component/
 | `test/` | Test source files |
 | `your-component.test.ts` | Test file for the component |
 | `tsconfig.json` | TypeScript configuration |
-| `tsup.config.ts` | Tsup configuration |
+| `tsdown.config.ts` | tsdown configuration |
 
 ### Write Documentation
 
@@ -240,8 +242,8 @@ test(tags-input): add validation tests
 
 ## Code Style
 
-- Follow the project's ESLint configuration
-- Use Prettier for code formatting
+- Lint with oxlint (`pnpm lint` / `pnpm lint:fix`)
+- Format with oxfmt (`pnpm fmt` / `pnpm fmt:check`)
 - Follow existing patterns in the codebase
 
 ## Submitting Changes

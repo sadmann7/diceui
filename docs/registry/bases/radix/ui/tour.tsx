@@ -19,6 +19,7 @@ import {
 } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
@@ -1288,7 +1289,7 @@ function TourSpotlight(props: TourSpotlightProps) {
       data-state={getDataState(open)}
       {...backdropProps}
       className={cn(
-        "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=open]:animate-in",
+        "fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
         className,
       )}
       style={{
@@ -1455,7 +1456,7 @@ function TourTitle(props: DivProps) {
       dir={context.dir}
       {...titleProps}
       className={cn(
-        "font-semibold text-lg leading-none tracking-tight",
+        "text-lg leading-none font-semibold tracking-tight",
         className,
       )}
     />
@@ -1474,7 +1475,7 @@ function TourDescription(props: DivProps) {
       data-slot="tour-description"
       dir={context.dir}
       {...descriptionProps}
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-sm text-muted-foreground", className)}
     />
   );
 }
@@ -1510,7 +1511,7 @@ function TourClose(props: TourCloseProps) {
       type="button"
       aria-label="Close tour"
       className={cn(
-        "absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        "absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       onClick={onClick}
@@ -1646,7 +1647,7 @@ function TourStepCounter(props: TourStepCounterProps) {
     <StepCounterPrimitive
       data-slot="tour-step-counter"
       {...stepCounterProps}
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-sm text-muted-foreground", className)}
     >
       {children ?? format(value + 1, steps.length)}
     </StepCounterPrimitive>

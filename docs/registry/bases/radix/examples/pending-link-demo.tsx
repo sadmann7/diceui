@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { Pending } from "@/registry/bases/radix/components/pending";
 
 export default function PendingLinkDemo() {

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { Button } from "@/registry/bases/base/ui/button";
 import {
   CircularProgress,
@@ -69,11 +70,11 @@ export default function CircularProgressControlledDemo() {
             <CircularProgressTrack />
             <CircularProgressRange />
           </CircularProgressIndicator>
-          <CircularProgressValueText className="font-semibold text-base" />
+          <CircularProgressValueText className="text-base font-semibold" />
         </CircularProgress>
         <div className="flex flex-col gap-2">
-          <div className="font-medium text-sm">Upload Progress</div>
-          <div className="text-muted-foreground text-xs">
+          <div className="text-sm font-medium">Upload Progress</div>
+          <div className="text-xs text-muted-foreground">
             Status:{" "}
             {isUploading
               ? "Uploading..."
@@ -81,7 +82,7 @@ export default function CircularProgressControlledDemo() {
                 ? "Complete"
                 : "Ready"}
           </div>
-          <div className="text-muted-foreground text-xs">
+          <div className="text-xs text-muted-foreground">
             Progress:{" "}
             {uploadProgress === null
               ? "Indeterminate"

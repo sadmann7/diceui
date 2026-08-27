@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
@@ -24,8 +25,7 @@ type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
 
 interface DivProps
-  extends useRender.ComponentProps<"div">,
-    React.ComponentProps<"div"> {}
+  extends useRender.ComponentProps<"div">, React.ComponentProps<"div"> {}
 
 type RootElement = React.ComponentRef<typeof ActionBar>;
 type ItemElement = React.ComponentRef<typeof ActionBarItem>;
@@ -199,7 +199,7 @@ function ActionBar(props: ActionBarProps) {
         ref: composedRef,
         className: cn(
           "fixed z-50 rounded-lg border bg-card shadow-lg outline-none",
-          "fade-in-0 zoom-in-95 animate-in duration-250 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
+          "animate-in duration-250 fade-in-0 zoom-in-95 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
           "data-[side=bottom]:slide-in-from-bottom-4 data-[side=top]:slide-in-from-top-4",
           "motion-reduce:animate-none motion-reduce:transition-none",
           orientation === "horizontal"
@@ -246,7 +246,7 @@ function ActionBarSelection(props: DivProps) {
     props: mergeProps<"div">(
       {
         className: cn(
-          "flex items-center gap-1 rounded-sm border px-2 py-1 font-medium text-sm tabular-nums",
+          "flex items-center gap-1 rounded-sm border px-2 py-1 text-sm font-medium tabular-nums",
           className,
         ),
       },
@@ -433,8 +433,10 @@ function ActionBarGroup(props: DivProps) {
   );
 }
 
-interface ActionBarItemProps
-  extends Omit<React.ComponentProps<typeof Button>, "onSelect"> {
+interface ActionBarItemProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "onSelect"
+> {
   onSelect?: (event: Event) => void;
 }
 
@@ -607,8 +609,7 @@ function ActionBarItem(props: ActionBarItemProps) {
 }
 
 interface ActionBarCloseProps
-  extends useRender.ComponentProps<"button">,
-    React.ComponentProps<"button"> {}
+  extends useRender.ComponentProps<"button">, React.ComponentProps<"button"> {}
 
 function ActionBarClose({
   render,
@@ -634,7 +635,7 @@ function ActionBarClose({
       {
         type: "button" as const,
         className: cn(
-          "rounded-xs opacity-70 outline-none hover:opacity-100 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none [&_svg:not([class*='size-'])]:size-3.5 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+          "rounded-xs opacity-70 outline-none hover:opacity-100 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
           className,
         ),
         onClick: onCloseClick,
@@ -671,7 +672,7 @@ function ActionBarSeparator(props: ActionBarSeparatorProps) {
         "aria-orientation": orientation,
         "aria-hidden": "true" as const,
         className: cn(
-          "in-data-[slot=action-bar-selection]:ml-0.5 in-data-[slot=action-bar-selection]:h-4 in-data-[slot=action-bar-selection]:w-px bg-border",
+          "bg-border in-data-[slot=action-bar-selection]:ml-0.5 in-data-[slot=action-bar-selection]:h-4 in-data-[slot=action-bar-selection]:w-px",
           orientation === "horizontal" ? "h-6 w-px" : "h-px w-full",
           className,
         ),

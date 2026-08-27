@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   SegmentedInput,
   SegmentedInputItem,
@@ -27,7 +28,7 @@ export default function SegmentedInputVerticalDemo() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <label className="font-medium text-sm leading-none">
+        <label className="text-sm leading-none font-medium">
           Mailing Address
         </label>
         <SegmentedInput
@@ -55,7 +56,7 @@ export default function SegmentedInputVerticalDemo() {
           />
         </SegmentedInput>
       </div>
-      <p className="text-muted-foreground text-sm">
+      <p className="text-sm text-muted-foreground">
         Use arrow keys (up/down) to navigate between fields in vertical
         orientation.
       </p>

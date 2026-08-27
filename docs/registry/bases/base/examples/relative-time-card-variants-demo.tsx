@@ -1,4 +1,5 @@
 import { Clock } from "lucide-react";
+
 import { Button } from "@/registry/bases/base/ui/button";
 import { RelativeTimeCard } from "@/registry/bases/base/ui/relative-time-card";
 
@@ -8,7 +9,7 @@ export default function RelativeTimeCardVariantsDemo() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-sm">Style variants</span>
+        <span className="text-sm text-muted-foreground">Style variants</span>
         <div className="flex items-center gap-4">
           <RelativeTimeCard date={now} variant="default" />
           <RelativeTimeCard date={now} variant="muted" />
@@ -16,7 +17,7 @@ export default function RelativeTimeCardVariantsDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-sm">Custom styling</span>
+        <span className="text-sm text-muted-foreground">Custom styling</span>
         <div className="flex items-center gap-4">
           <RelativeTimeCard
             date={now}
@@ -33,7 +34,7 @@ export default function RelativeTimeCardVariantsDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-sm">
+        <span className="text-sm text-muted-foreground">
           Hover card positions
         </span>
         <div className="flex items-center gap-4">
@@ -59,7 +60,7 @@ export default function RelativeTimeCardVariantsDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-sm">Custom trigger</span>
+        <span className="text-sm text-muted-foreground">Custom trigger</span>
         <div className="flex items-center gap-4">
           <RelativeTimeCard
             date={now}

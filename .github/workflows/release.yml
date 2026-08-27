@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - uses: ./.github/setup
 
       - name: Build
@@ -35,4 +35,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           # Trusted Publishing (OIDC) is configured - no NPM_TOKEN needed
-       

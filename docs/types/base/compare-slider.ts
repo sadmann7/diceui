@@ -1,7 +1,8 @@
 import type { EmptyProps, Orientation, RenderProps } from "@/types";
 
 export interface CompareSliderProps
-  extends EmptyProps<"div", "defaultValue" | "value" | "onValueChange">,
+  extends
+    EmptyProps<"div", "defaultValue" | "value" | "onValueChange">,
     RenderProps {
   /**
    * The position of the slider as a percentage (0-100).

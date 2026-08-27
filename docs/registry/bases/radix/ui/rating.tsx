@@ -6,6 +6,7 @@ import {
   Slot as SlotPrimitive,
 } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
@@ -522,8 +523,10 @@ function Rating(props: RatingProps) {
   );
 }
 
-interface RatingItemProps
-  extends Omit<React.ComponentProps<"button">, "children"> {
+interface RatingItemProps extends Omit<
+  React.ComponentProps<"button">,
+  "children"
+> {
   index?: number;
   asChild?: boolean;
   children?: React.ReactNode | ((dataState: DataState) => React.ReactNode);
@@ -907,7 +910,7 @@ function RatingItem(props: RatingItemProps) {
       }}
       className={cn(
         "inline-flex items-center justify-center rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
-        "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill)",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill) [&_svg:not([class*='size-'])]:size-full",
         context.size === "sm"
           ? "size-4"
           : context.size === "lg"

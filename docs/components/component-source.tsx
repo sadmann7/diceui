@@ -1,9 +1,11 @@
 import type * as React from "react";
+
+import type { RegistryBase } from "@/registry/registry";
+
 import { ComponentSourceImpl } from "@/components/component-source-impl";
 import { highlightCode } from "@/lib/highlight-code";
 import { readFileFromRoot } from "@/lib/read-file";
 import { getRegistryItem } from "@/lib/registry";
-import type { RegistryBase } from "@/registry/registry";
 
 function deriveTitle(
   name: string | undefined,
@@ -18,11 +20,10 @@ function deriveTitle(
   return undefined;
 }
 
-interface ComponentSourceProps
-  extends Omit<
-    React.ComponentProps<typeof ComponentSourceImpl>,
-    "code" | "language" | "highlightedCode"
-  > {
+interface ComponentSourceProps extends Omit<
+  React.ComponentProps<typeof ComponentSourceImpl>,
+  "code" | "language" | "highlightedCode"
+> {
   name?: string;
   src?: string;
   base?: RegistryBase;

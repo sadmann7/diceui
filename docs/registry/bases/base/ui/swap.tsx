@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
@@ -46,8 +47,7 @@ function useStore<T>(
 }
 
 interface SwapProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   swapped?: boolean;
   defaultSwapped?: boolean;
   onSwappedChange?: (swapped: boolean) => void;
@@ -200,7 +200,7 @@ function Swap(props: SwapProps) {
         "aria-disabled": disabled,
         tabIndex: isClickMode && !disabled ? 0 : undefined,
         className: cn(
-          "relative inline-flex cursor-pointer select-none items-center justify-center data-disabled:cursor-not-allowed data-disabled:opacity-50",
+          "relative inline-flex cursor-pointer items-center justify-center select-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
           className,
         ),
         onClick,
@@ -223,8 +223,7 @@ function Swap(props: SwapProps) {
 }
 
 interface SwapOnProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function SwapOn({ render, className, ...props }: SwapOnProps) {
   const swapped = useStore((state) => state.swapped);
@@ -252,8 +251,7 @@ function SwapOn({ render, className, ...props }: SwapOnProps) {
 }
 
 interface SwapOffProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function SwapOff({ render, className, ...props }: SwapOffProps) {
   const swapped = useStore((state) => state.swapped);
@@ -263,7 +261,7 @@ function SwapOff({ render, className, ...props }: SwapOffProps) {
     props: mergeProps<"div">(
       {
         className: cn(
-          "transition-all duration-300 data-[state=on]:absolute data-[state=off]:opacity-100 data-[state=on]:opacity-0 motion-reduce:transition-none",
+          "transition-all duration-300 data-[state=off]:opacity-100 data-[state=on]:absolute data-[state=on]:opacity-0 motion-reduce:transition-none",
           "[*[data-animation=rotate]_&]:data-[state=off]:rotate-0 [*[data-animation=rotate]_&]:data-[state=on]:rotate-180 motion-reduce:[*[data-animation=rotate]_&]:data-[state=on]:rotate-0",
           "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(0deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(180deg)] motion-reduce:[*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(0deg)]",
           "[*[data-animation=scale]_&]:data-[state=off]:scale-100 [*[data-animation=scale]_&]:data-[state=on]:scale-0 motion-reduce:[*[data-animation=scale]_&]:data-[state=on]:scale-100",

@@ -32,7 +32,7 @@ export default function AvatarGroupRtlDemo() {
   return (
     <div className="grid gap-6 md:grid-cols-2">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">RTL</h3>
+        <h3 className="text-sm font-medium">RTL</h3>
         <AvatarGroup dir="rtl">
           {avatars.map((avatar, index) => (
             <Avatar key={index}>
@@ -43,7 +43,7 @@ export default function AvatarGroupRtlDemo() {
         </AvatarGroup>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Reverse RTL</h3>
+        <h3 className="text-sm font-medium">Reverse RTL</h3>
         <AvatarGroup dir="rtl" reverse>
           {avatars.map((avatar, index) => (
             <Avatar key={index}>
@@ -54,7 +54,7 @@ export default function AvatarGroupRtlDemo() {
         </AvatarGroup>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Vertical RTL</h3>
+        <h3 className="text-sm font-medium">Vertical RTL</h3>
         <div className="flex justify-center">
           <AvatarGroup orientation="vertical" dir="rtl">
             {avatars.map((avatar, index) => (
@@ -67,7 +67,7 @@ export default function AvatarGroupRtlDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Vertical reverse RTL</h3>
+        <h3 className="text-sm font-medium">Vertical reverse RTL</h3>
         <div className="flex justify-center">
           <AvatarGroup orientation="vertical" dir="rtl" reverse>
             {avatars.map((avatar, index) => (

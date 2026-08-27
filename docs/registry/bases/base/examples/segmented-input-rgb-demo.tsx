@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   SegmentedInput,
   SegmentedInputItem,
@@ -29,7 +30,7 @@ export default function SegmentedInputRgbDemo() {
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="font-medium text-sm leading-none">RGB Color</label>
+      <label className="text-sm leading-none font-medium">RGB Color</label>
       <SegmentedInput className="w-fit" aria-label="RGB color input">
         <SegmentedInputItem
           placeholder="255"

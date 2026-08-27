@@ -7,6 +7,7 @@ import type {
   MentionRootProps,
 } from "@diceui/mention";
 import type * as React from "react";
+
 import type { ControlledProps } from "@/types";
 
 export type RootProps = Omit<MentionRootProps, keyof ControlledProps<"div">>;

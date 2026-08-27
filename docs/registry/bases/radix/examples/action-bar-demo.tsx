@@ -2,6 +2,7 @@
 
 import { Copy, Trash2, X } from "lucide-react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import {
   ActionBar,
@@ -69,7 +70,7 @@ export default function ActionBarDemo() {
 
   return (
     <div className="flex w-full flex-col gap-2.5">
-      <h3 className="font-semibold text-lg">Tasks</h3>
+      <h3 className="text-lg font-semibold">Tasks</h3>
       <div className="flex max-h-72 flex-col gap-1.5 overflow-y-auto">
         {tasks.map((task) => (
           <Label
@@ -85,7 +86,7 @@ export default function ActionBarDemo() {
                 onItemSelect(task.id, checked === true)
               }
             />
-            <span className="truncate font-medium text-sm">{task.name}</span>
+            <span className="truncate text-sm font-medium">{task.name}</span>
           </Label>
         ))}
       </div>

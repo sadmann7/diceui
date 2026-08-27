@@ -8,6 +8,7 @@ import {
   VisuallyHiddenInput,
 } from "@diceui/shared";
 import * as React from "react";
+
 import { useCheckboxGroup } from "./checkbox-group-root";
 
 const ITEM_NAME = "CheckboxGroupItem";
@@ -21,11 +22,10 @@ interface CheckboxGroupItemContext {
 const [CheckboxGroupItemProvider, useCheckboxGroupItem] =
   createContext<CheckboxGroupItemContext>(ITEM_NAME);
 
-interface CheckboxGroupItemProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof Primitive.button>,
-    "checked" | "defaultChecked" | "onCheckedChange"
-  > {
+interface CheckboxGroupItemProps extends Omit<
+  React.ComponentPropsWithoutRef<typeof Primitive.button>,
+  "checked" | "defaultChecked" | "onCheckedChange"
+> {
   /** Value of the checkbox. */
   value: string;
 

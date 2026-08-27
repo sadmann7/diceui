@@ -1,11 +1,13 @@
 import { Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useTagsInput } from "./tags-input-root";
 
 const LABEL_NAME = "TagsInputLabel";
 
-interface TagsInputLabelProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.label> {}
+interface TagsInputLabelProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.label
+> {}
 
 const TagsInputLabel = React.forwardRef<HTMLLabelElement, TagsInputLabelProps>(
   (props, ref) => {

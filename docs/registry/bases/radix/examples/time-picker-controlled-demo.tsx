@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
   TimePicker,
@@ -43,7 +44,7 @@ export default function TimePickerControlledDemo() {
           Clear
         </Button>
       </div>
-      <div className="text-muted-foreground text-sm">
+      <div className="text-sm text-muted-foreground">
         Selected time:{" "}
         <span className="font-mono font-semibold">{value || "None"}</span>
       </div>

@@ -8,13 +8,13 @@ export default function HitboxDebugDemo() {
         <Hitbox debug={false}>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">debug=false</p>
+        <p className="text-sm text-muted-foreground">debug=false</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">debug=true</p>
+        <p className="text-sm text-muted-foreground">debug=true</p>
       </div>
     </div>
   );

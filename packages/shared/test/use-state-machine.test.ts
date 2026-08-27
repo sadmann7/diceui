@@ -1,5 +1,6 @@
 import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+
 import { useStateMachine } from "../src/hooks/use-state-machine";
 
 type TestState = "idle" | "loading" | "success" | "error";

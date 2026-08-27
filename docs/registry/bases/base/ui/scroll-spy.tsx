@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
@@ -87,8 +88,7 @@ function useScrollSpyContext(consumerName: string) {
 }
 
 interface ScrollSpyProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -339,8 +339,7 @@ function ScrollSpy(props: ScrollSpyProps) {
 }
 
 interface ScrollSpyNavProps
-  extends React.ComponentProps<"nav">,
-    useRender.ComponentProps<"nav"> {}
+  extends React.ComponentProps<"nav">, useRender.ComponentProps<"nav"> {}
 
 function ScrollSpyNav(props: ScrollSpyNavProps) {
   const { render, className, ...navProps } = props;
@@ -369,8 +368,7 @@ function ScrollSpyNav(props: ScrollSpyNavProps) {
 }
 
 interface ScrollSpyLinkProps
-  extends React.ComponentProps<"a">,
-    useRender.ComponentProps<"a"> {
+  extends React.ComponentProps<"a">, useRender.ComponentProps<"a"> {
   value: string;
 }
 
@@ -396,7 +394,7 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
       {
         href: `#${linkValue}`,
         className: cn(
-          "rounded px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground",
+          "rounded px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground",
           className,
         ),
         onClick: onLinkClick,
@@ -413,8 +411,7 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
 }
 
 interface ScrollSpyViewportProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function ScrollSpyViewport(props: ScrollSpyViewportProps) {
   const { render, className, ...viewportProps } = props;
@@ -439,8 +436,7 @@ function ScrollSpyViewport(props: ScrollSpyViewportProps) {
 }
 
 interface ScrollSpySectionProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   value: string;
 }
 

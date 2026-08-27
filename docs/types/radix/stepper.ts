@@ -1,4 +1,5 @@
 import type * as React from "react";
+
 import type {
   ButtonProps,
   CompositionProps,
@@ -163,12 +164,12 @@ export interface StepperItemProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface StepperTriggerProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+  extends
+    Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
 export interface StepperIndicatorProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The display content for the indicator (e.g., step number).
    *
@@ -185,20 +186,16 @@ export interface StepperIndicatorProps
 }
 
 export interface StepperSeparatorProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface StepperTitleProps
-  extends EmptyProps<"span">,
-    CompositionProps {}
+  extends EmptyProps<"span">, CompositionProps {}
 
 export interface StepperDescriptionProps
-  extends EmptyProps<"span">,
-    CompositionProps {}
+  extends EmptyProps<"span">, CompositionProps {}
 
 export interface StepperContentProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique value that links the content with the item.
    *
@@ -218,9 +215,7 @@ export interface StepperContentProps
 }
 
 export interface StepperPrevProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
+  extends EmptyProps<"button">, CompositionProps {}
 
 export interface StepperNextProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
+  extends EmptyProps<"button">, CompositionProps {}

@@ -9,6 +9,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import * as React from "react";
+
 import {
   BannerActions,
   BannerClose,
@@ -174,7 +175,7 @@ function BannerControls() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2.5">
-        <h3 className="font-semibold text-base">
+        <h3 className="text-base font-semibold">
           Stacked Banners ({banners.length} in queue)
         </h3>
         <div className="flex flex-wrap gap-2">
@@ -193,7 +194,7 @@ function BannerControls() {
         </div>
       </div>
       <div className="flex flex-col gap-2.5">
-        <h3 className="font-semibold text-base">Priority</h3>
+        <h3 className="text-base font-semibold">Priority</h3>
         <div className="flex flex-wrap gap-2">
           <Button onClick={onAppVersionBannerAdd} variant="outline" size="sm">
             App Version (priority: 0)
@@ -202,7 +203,7 @@ function BannerControls() {
             System Health (priority: 10)
           </Button>
         </div>
-        <div className="text-muted-foreground text-sm">
+        <div className="text-sm text-muted-foreground">
           Higher priority banners jump ahead in the queue.
           <br />
           Try adding the app version banner first, then the system health

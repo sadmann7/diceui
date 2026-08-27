@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
@@ -297,8 +298,7 @@ function QRCode(props: QRCodeProps) {
 }
 
 interface QRCodeCanvasProps
-  extends React.ComponentProps<"canvas">,
-    useRender.ComponentProps<"canvas"> {}
+  extends React.ComponentProps<"canvas">, useRender.ComponentProps<"canvas"> {}
 
 function QRCodeCanvas({
   render,
@@ -332,8 +332,7 @@ function QRCodeCanvas({
 }
 
 interface QRCodeSvgProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function QRCodeSvg({ render, className, style, ...svgProps }: QRCodeSvgProps) {
   const context = useQRCodeContext(SVG_NAME);
@@ -362,8 +361,7 @@ function QRCodeSvg({ render, className, style, ...svgProps }: QRCodeSvgProps) {
 }
 
 interface QRCodeImageProps
-  extends React.ComponentProps<"img">,
-    useRender.ComponentProps<"img"> {
+  extends React.ComponentProps<"img">, useRender.ComponentProps<"img"> {
   alt?: string;
 }
 
@@ -401,8 +399,7 @@ function QRCodeImage({
 }
 
 interface QRCodeDownloadProps
-  extends React.ComponentProps<"button">,
-    useRender.ComponentProps<"button"> {
+  extends React.ComponentProps<"button">, useRender.ComponentProps<"button"> {
   filename?: string;
   format?: "png" | "svg";
 }
@@ -466,8 +463,7 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
 }
 
 interface QRCodeOverlayProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function QRCodeOverlay({
   render,
@@ -491,8 +487,7 @@ function QRCodeOverlay({
 }
 
 interface QRCodeSkeletonProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function QRCodeSkeleton({
   render,

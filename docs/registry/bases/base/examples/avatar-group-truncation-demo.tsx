@@ -52,7 +52,7 @@ export default function AvatarGroupTruncationDemo() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Max 3 items</h3>
+        <h3 className="text-sm font-medium">Max 3 items</h3>
         <AvatarGroup max={3}>
           {avatars.map((avatar, index) => (
             <Avatar key={index}>
@@ -63,7 +63,7 @@ export default function AvatarGroupTruncationDemo() {
         </AvatarGroup>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Max 5 items</h3>
+        <h3 className="text-sm font-medium">Max 5 items</h3>
         <AvatarGroup max={5}>
           {avatars.map((avatar, index) => (
             <Avatar key={index}>

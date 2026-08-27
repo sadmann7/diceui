@@ -23,7 +23,7 @@ function createContext<T extends object | null>(
     // Memoize the context value by its values
     const value = React.useMemo(
       () => contextValue,
-      // biome-ignore lint/correctness/useExhaustiveDependencies: we want to memoize by all values
+      // oxlint-disable-next-line react/exhaustive-deps -- we want to memoize by all values
       Object.values(contextValue),
     ) as T;
 

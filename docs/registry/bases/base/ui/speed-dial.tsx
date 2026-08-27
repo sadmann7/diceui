@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
@@ -32,7 +33,8 @@ type Side = "top" | "right" | "bottom" | "left";
 type ActivationMode = "click" | "hover";
 
 interface DivProps
-  extends Omit<React.ComponentProps<"div">, "children">,
+  extends
+    Omit<React.ComponentProps<"div">, "children">,
     useRender.ComponentProps<"div"> {}
 
 type RootElement = HTMLDivElement;
@@ -315,11 +317,10 @@ function SpeedDial(props: SpeedDialProps) {
   );
 }
 
-interface SpeedDialTriggerProps
-  extends Omit<
-    React.ComponentProps<typeof Button>,
-    "onClick" | "onMouseEnter" | "onMouseLeave"
-  > {
+interface SpeedDialTriggerProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "onClick" | "onMouseEnter" | "onMouseLeave"
+> {
   onClick?: (event: React.MouseEvent<TriggerElement>) => void;
   onMouseEnter?: (event: React.MouseEvent<TriggerElement>) => void;
   onMouseLeave?: (event: React.MouseEvent<TriggerElement>) => void;
@@ -523,8 +524,7 @@ const speedDialContentVariants = cva(
 );
 
 interface SpeedDialContentProps
-  extends DivProps,
-    VariantProps<typeof speedDialContentVariants> {
+  extends DivProps, VariantProps<typeof speedDialContentVariants> {
   offset?: number;
   gap?: number;
   forceMount?: boolean;
@@ -868,7 +868,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 }
 
 const speedDialItemVariants = cva(
-  "flex items-center gap-2 transition-all [transition-delay:var(--speed-dial-delay)] [transition-duration:var(--speed-dial-animation-duration)] data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=closed]:opacity-0 data-[state=open]:opacity-100",
+  "flex items-center gap-2 transition-all [transition-delay:var(--speed-dial-delay)] [transition-duration:var(--speed-dial-animation-duration)] data-[state=closed]:opacity-0 data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=open]:opacity-100",
   {
     variants: {
       side: {
@@ -969,8 +969,10 @@ function SpeedDialItem(props: DivProps) {
   );
 }
 
-interface SpeedDialActionProps
-  extends Omit<React.ComponentProps<typeof Button>, "onSelect" | "onClick"> {
+interface SpeedDialActionProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "onSelect" | "onClick"
+> {
   onSelect?: (event: Event) => void;
   onClick?: (event: React.MouseEvent<ActionElement>) => void;
 }
@@ -1070,7 +1072,7 @@ function SpeedDialLabel({ render, className, ...props }: DivProps) {
       {
         id: labelId,
         className: cn(
-          "pointer-events-none whitespace-nowrap rounded-md bg-popover px-2 py-1 text-popover-foreground text-sm shadow-md",
+          "pointer-events-none rounded-md bg-popover px-2 py-1 text-sm whitespace-nowrap text-popover-foreground shadow-md",
           className,
         ),
       },

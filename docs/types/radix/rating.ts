@@ -126,8 +126,7 @@ export interface RatingProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface RatingItemProps
-  extends EmptyProps<"button">,
-    CompositionProps {
+  extends EmptyProps<"button">, CompositionProps {
   /**
    * The index of this rating item.
    * If not provided, it will be auto-calculated based on position.

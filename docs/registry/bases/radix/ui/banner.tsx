@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
@@ -628,7 +629,7 @@ function BannerTitle(props: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="banner-title"
-      className={cn("font-medium text-sm leading-none", className)}
+      className={cn("text-sm leading-none font-medium", className)}
       {...titleProps}
     />
   );

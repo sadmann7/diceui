@@ -27,7 +27,7 @@ export default function ListboxHorizontalDemo() {
               <div className="font-medium">{trick.label}</div>
               <ListboxItemIndicator />
             </div>
-            <div className="line-clamp-2 text-muted-foreground text-sm">
+            <div className="line-clamp-2 text-sm text-muted-foreground">
               {trick.description}
             </div>
           </div>

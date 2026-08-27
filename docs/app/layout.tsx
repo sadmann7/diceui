@@ -1,14 +1,16 @@
+import type { Metadata, Viewport } from "next";
+import type * as React from "react";
+
+import Script from "next/script";
+
 import { Providers } from "@/components/providers";
 import { ReactScan } from "@/components/react-scan";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { siteConfig } from "@/config/site";
+import "@/styles/globals.css";
 import { fontMono, fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/registry/bases/radix/ui/sonner";
-import "@/styles/globals.css";
-import type { Metadata, Viewport } from "next";
-import Script from "next/script";
-import type * as React from "react";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),

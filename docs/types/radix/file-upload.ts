@@ -272,16 +272,13 @@ export interface FileUploadProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface FileUploadDropzoneProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface FileUploadTriggerProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
+  extends EmptyProps<"button">, CompositionProps {}
 
 export interface FileUploadListProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The orientation of the file list.
    *
@@ -318,8 +315,7 @@ export interface FileUploadListProps
 }
 
 export interface FileUploadItemProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The file to display in the item.
    *
@@ -335,8 +331,7 @@ export interface FileUploadItemProps
 }
 
 export interface FileUploadItemPreviewProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The render function for the preview.
    * Override the default preview with access to fallback behavior.
@@ -374,8 +369,7 @@ export interface FileUploadItemPreviewProps
 }
 
 export interface FileUploadItemMetadataProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The visual density of the displayed file metadata (name and size).
    *
@@ -388,8 +382,7 @@ export interface FileUploadItemMetadataProps
 }
 
 export interface FileUploadItemProgressProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The visual style of the progress indicator.
    *
@@ -438,12 +431,10 @@ export interface FileUploadItemProgressProps
 }
 
 export interface FileUploadItemDeleteProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
+  extends EmptyProps<"button">, CompositionProps {}
 
 export interface FileUploadClearProps
-  extends EmptyProps<"button">,
-    CompositionProps {
+  extends EmptyProps<"button">, CompositionProps {
   /**
    * Whether to force mount the clear button even if there are no files.
    * Useful for animating the clear button with animation libraries.

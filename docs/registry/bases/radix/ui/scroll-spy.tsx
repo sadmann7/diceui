@@ -5,6 +5,7 @@ import {
   Slot as SlotPrimitive,
 } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
@@ -386,7 +387,7 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
       {...linkProps}
       href={asChild ? undefined : `#${linkValue}`}
       className={cn(
-        "rounded px-3 py-1.5 font-medium text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground",
+        "rounded px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground",
         className,
       )}
       onClick={onLinkClick}

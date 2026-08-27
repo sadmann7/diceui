@@ -1,14 +1,14 @@
 import * as React from "react";
+
 import { useFormReset, usePrevious, useSize } from "../hooks";
 import { visuallyHidden } from "../lib";
 
 type InputValue = string[] | string;
 
-interface VisuallyHiddenInputProps<T = InputValue>
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "value" | "checked" | "onReset"
-  > {
+interface VisuallyHiddenInputProps<T = InputValue> extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "value" | "checked" | "onReset"
+> {
   value?: T;
   checked?: boolean;
   control: HTMLElement | null;
@@ -70,20 +70,11 @@ export function VisuallyHiddenInput<T = InputValue>(
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {
+      ...visuallyHidden,
       ...style,
       ...(controlSize?.width !== undefined && controlSize?.height !== undefined
         ? controlSize
         : {}),
-      border: 0,
-      clip: "rect(0 0 0 0)",
-      clipPath: "inset(50%)",
-      height: "1px",
-      margin: "-1px",
-      overflow: "hidden",
-      padding: 0,
-      position: "absolute",
-      whiteSpace: "nowrap",
-      width: "1px",
     };
   }, [style, controlSize]);
 

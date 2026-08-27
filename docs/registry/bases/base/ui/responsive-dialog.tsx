@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
@@ -215,8 +216,9 @@ function ResponsiveDialogClose({
   );
 }
 
-interface ResponsiveDialogPortalProps
-  extends React.ComponentProps<typeof DialogPortal> {
+interface ResponsiveDialogPortalProps extends React.ComponentProps<
+  typeof DialogPortal
+> {
   container?: HTMLElement | null;
 }
 
@@ -241,23 +243,28 @@ function ResponsiveDialogPortal({
   );
 }
 
-interface ResponsiveDialogOverlayProps
-  extends Omit<React.ComponentProps<typeof DialogOverlay>, "className"> {
+interface ResponsiveDialogOverlayProps extends Omit<
+  React.ComponentProps<typeof DialogOverlay>,
+  "className"
+> {
   className?: string;
 }
 
 function ResponsiveDialogOverlay({
   forceRender,
   render,
+  style,
   ...props
 }: ResponsiveDialogOverlayProps) {
   const isMobile = useStore((state) => state.isMobile);
+  const resolvedStyle = typeof style === "function" ? undefined : style;
 
   if (isMobile) {
     return (
       <DrawerOverlay
         data-variant="drawer"
         forceMount={forceRender as true}
+        style={resolvedStyle}
         {...props}
       />
     );
@@ -268,6 +275,7 @@ function ResponsiveDialogOverlay({
       data-variant="dialog"
       render={render}
       forceRender={forceRender}
+      style={style}
       {...props}
     />
   );
@@ -276,15 +284,18 @@ function ResponsiveDialogOverlay({
 function ResponsiveDialogContent({
   className,
   showCloseButton,
+  style,
   ...props
 }: React.ComponentProps<typeof DialogContent>) {
   const isMobile = useStore((state) => state.isMobile);
+  const resolvedStyle = typeof style === "function" ? undefined : style;
 
   if (isMobile) {
     return (
       <DrawerContent
         data-variant="drawer"
         className={cn("px-4 pb-4", className)}
+        style={resolvedStyle}
         {...props}
       />
     );
@@ -295,6 +306,7 @@ function ResponsiveDialogContent({
       data-variant="dialog"
       className={className}
       showCloseButton={showCloseButton}
+      style={style}
       {...props}
     />
   );

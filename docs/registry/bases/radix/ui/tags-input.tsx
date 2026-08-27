@@ -1,6 +1,8 @@
+import type * as React from "react";
+
 import * as TagsInputPrimitive from "@diceui/tags-input";
 import { X } from "lucide-react";
-import type * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 function TagsInput({
@@ -24,7 +26,7 @@ function TagsInputLabel({
     <TagsInputPrimitive.Label
       data-slot="tags-input-label"
       className={cn(
-        "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+        "text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
         className,
       )}
       {...props}
@@ -70,7 +72,7 @@ function TagsInputItem({
     <TagsInputPrimitive.Item
       data-slot="tags-input-item"
       className={cn(
-        "inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent px-2.5 py-1 text-sm focus:outline-hidden data-disabled:cursor-not-allowed data-editable:select-none data-editing:bg-transparent data-disabled:opacity-50 data-editing:ring-1 data-editing:ring-ring [&:not([data-editing])]:pr-1.5 [&[data-highlighted]:not([data-editing])]:bg-accent [&[data-highlighted]:not([data-editing])]:text-accent-foreground",
+        "inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent px-2.5 py-1 text-sm focus:outline-hidden data-disabled:cursor-not-allowed data-disabled:opacity-50 data-editable:select-none data-editing:bg-transparent data-editing:ring-1 data-editing:ring-ring [&:not([data-editing])]:pr-1.5 [&[data-highlighted]:not([data-editing])]:bg-accent [&[data-highlighted]:not([data-editing])]:text-accent-foreground",
         className,
       )}
       {...props}
