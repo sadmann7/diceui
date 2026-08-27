@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { isFirefox, isIOS, isSafari } from "../lib/browser";
 import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 

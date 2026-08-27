@@ -1,4 +1,5 @@
 import { Dice4 } from "lucide-react";
+
 import {
   QRCode,
   QRCodeCanvas,
@@ -24,7 +25,7 @@ export default function QRCodeOverlayDemo() {
             <Dice4 className="size-6" />
           </QRCodeOverlay>
         </QRCode>
-        <p className="text-center text-muted-foreground text-sm">
+        <p className="text-center text-sm text-muted-foreground">
           Canvas with Logo
         </p>
       </div>
@@ -42,7 +43,7 @@ export default function QRCodeOverlayDemo() {
             <Dice4 className="size-6" />
           </QRCodeOverlay>
         </QRCode>
-        <p className="text-center text-muted-foreground text-sm">
+        <p className="text-center text-sm text-muted-foreground">
           SVG with Logo
         </p>
       </div>
@@ -60,7 +61,7 @@ export default function QRCodeOverlayDemo() {
             <Dice4 className="size-6" />
           </QRCodeOverlay>
         </QRCode>
-        <p className="text-center text-muted-foreground text-sm">
+        <p className="text-center text-sm text-muted-foreground">
           Image with Logo
         </p>
       </div>

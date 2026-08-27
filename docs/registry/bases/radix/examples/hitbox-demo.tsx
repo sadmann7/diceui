@@ -8,19 +8,19 @@ export default function HitboxDemo() {
         <Hitbox debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">Default Size</p>
+        <p className="text-sm text-muted-foreground">Default Size</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox radius="full" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">Full Radius</p>
+        <p className="text-sm text-muted-foreground">Full Radius</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox position="bottom" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">Bottom Position</p>
+        <p className="text-sm text-muted-foreground">Bottom Position</p>
       </div>
     </div>
   );

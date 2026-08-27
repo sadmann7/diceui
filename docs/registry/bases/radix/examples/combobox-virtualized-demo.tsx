@@ -4,6 +4,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 import { useDeferredValue } from "react";
+
 import {
   Combobox,
   ComboboxAnchor,
@@ -115,7 +116,7 @@ export default function ComboboxVirtualizedDemo() {
       </ComboboxAnchor>
       <ComboboxContent
         ref={(node) => setContent(node)}
-        className="relative max-h-[300px] overflow-y-auto overflow-x-hidden"
+        className="relative max-h-[300px] overflow-x-hidden overflow-y-auto"
       >
         <ComboboxEmpty>No tricks found.</ComboboxEmpty>
         <div

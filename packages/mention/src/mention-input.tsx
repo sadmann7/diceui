@@ -4,6 +4,7 @@ import {
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
+
 import { MentionHighlighter } from "./mention-highlighter";
 import { type Mention, useMentionContext } from "./mention-root";
 
@@ -14,8 +15,9 @@ const UNWANTED_CHARS = /[^\p{L}\p{N}\s]/gu;
 
 type InputElement = React.ElementRef<typeof Primitive.input>;
 
-interface MentionInputProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
+interface MentionInputProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.input
+> {}
 
 const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
   (props, forwardedRef) => {

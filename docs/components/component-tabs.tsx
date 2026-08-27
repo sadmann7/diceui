@@ -1,6 +1,9 @@
 "use client";
 
 import * as React from "react";
+
+import type { RegistryBase } from "@/registry/registry";
+
 import {
   MdxTabs,
   MdxTabsContent,
@@ -9,7 +12,6 @@ import {
 } from "@/components/mdx-tabs";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
-import type { RegistryBase } from "@/registry/registry";
 
 function getExampleComponent(base: string, name: string) {
   if (base === "base") {
@@ -73,7 +75,7 @@ export function ComponentTabs({
         className={cn(
           "not-prose relative",
           preventPreviewFocus &&
-            "focus-visible:outline-hidden focus-visible:ring-0",
+            "focus-visible:ring-0 focus-visible:outline-hidden",
         )}
       >
         <div

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { Button } from "@/registry/bases/base/ui/button";
 import { Rating, RatingItem } from "@/registry/bases/base/ui/rating";
 
@@ -10,13 +11,13 @@ export default function RatingControlledDemo() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <h4 className="font-medium text-sm">Controlled Rating</h4>
+        <h4 className="text-sm font-medium">Controlled Rating</h4>
         <Rating value={rating} onValueChange={setRating}>
           {Array.from({ length: 5 }, (_, i) => (
             <RatingItem key={i} />
           ))}
         </Rating>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Current rating: {rating}
         </p>
       </div>

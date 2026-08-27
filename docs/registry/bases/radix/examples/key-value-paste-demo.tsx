@@ -1,4 +1,5 @@
 import { ClipboardIcon } from "lucide-react";
+
 import {
   KeyValue,
   KeyValueAdd,
@@ -15,9 +16,9 @@ export default function KeyValuePasteDemo() {
       <div className="flex flex-col gap-2 rounded-lg border bg-muted/50 p-4">
         <div className="flex items-center gap-2">
           <ClipboardIcon className="size-4" />
-          <p className="font-medium text-sm">Paste Support</p>
+          <p className="text-sm font-medium">Paste Support</p>
         </div>
-        <p className="text-muted-foreground text-xs">
+        <p className="text-xs text-muted-foreground">
           Try pasting multiple lines in any of these formats:
         </p>
         <pre className="rounded bg-background p-2 text-xs">

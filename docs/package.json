@@ -11,8 +11,6 @@
     "test:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/test-registry.mts",
     "dev": "next dev --turbopack",
     "start": "next start",
-    "lint": "biome check .",
-    "lint:fix": "biome check . --write",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "shadcn": "pnpm dlx shadcn@latest"

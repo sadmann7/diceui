@@ -1,6 +1,8 @@
+import type * as React from "react";
+
 import * as CheckboxGroupPrimitive from "@diceui/checkbox-group";
 import { Check } from "lucide-react";
-import type * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 function CheckboxGroup({
@@ -24,7 +26,7 @@ function CheckboxGroupLabel({
     <CheckboxGroupPrimitive.Label
       data-slot="checkbox-group-label"
       className={cn(
-        "text-foreground/70 text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+        "text-sm leading-none text-foreground/70 peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
         className,
       )}
       {...props}
@@ -54,11 +56,11 @@ function CheckboxGroupItem({
   ...props
 }: React.ComponentProps<typeof CheckboxGroupPrimitive.Item>) {
   return (
-    <label className="flex w-fit select-none items-center gap-2 text-sm leading-none has-data-disabled:cursor-not-allowed has-data-invalid:text-destructive has-data-disabled:opacity-50">
+    <label className="flex w-fit items-center gap-2 text-sm leading-none select-none has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50 has-data-invalid:text-destructive">
       <CheckboxGroupPrimitive.Item
         data-slot="checkbox-group-item"
         className={cn(
-          "size-4 shrink-0 rounded-sm border border-primary shadow-sm focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring data-invalid:border-destructive [&[data-state=checked]:not([data-invalid])]:bg-primary [&[data-state=checked]:not([data-invalid])]:text-primary-foreground [&[data-state=checked][data-invalid]]:bg-destructive [&[data-state=checked][data-invalid]]:text-primary-foreground [&[data-state=unchecked][data-invalid]]:bg-transparent",
+          "size-4 shrink-0 rounded-sm border border-primary shadow-sm focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-invalid:border-destructive [&[data-state=checked]:not([data-invalid])]:bg-primary [&[data-state=checked]:not([data-invalid])]:text-primary-foreground [&[data-state=checked][data-invalid]]:bg-destructive [&[data-state=checked][data-invalid]]:text-primary-foreground [&[data-state=unchecked][data-invalid]]:bg-transparent",
           className,
         )}
         {...props}
@@ -83,7 +85,7 @@ function CheckboxGroupDescription({
     <CheckboxGroupPrimitive.Description
       data-slot="checkbox-group-description"
       className={cn(
-        "text-[0.8rem] text-muted-foreground leading-none data-invalid:text-destructive",
+        "text-[0.8rem] leading-none text-muted-foreground data-invalid:text-destructive",
         className,
       )}
       {...props}
@@ -99,7 +101,7 @@ function CheckboxGroupMessage({
     <CheckboxGroupPrimitive.Message
       data-slot="checkbox-group-message"
       className={cn(
-        "text-[0.8rem] text-muted-foreground leading-none data-invalid:text-destructive",
+        "text-[0.8rem] leading-none text-muted-foreground data-invalid:text-destructive",
         className,
       )}
       {...props}

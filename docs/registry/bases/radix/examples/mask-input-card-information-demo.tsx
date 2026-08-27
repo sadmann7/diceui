@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { toast } from "sonner";
+
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Card,
@@ -72,7 +73,7 @@ export default function MaskInputCardInformationDemo() {
             invalid={!cardNumberValid}
           />
           {!cardNumberValid && cardNumber && (
-            <p className="text-destructive text-sm">
+            <p className="text-sm text-destructive">
               Please enter a valid credit card number.
             </p>
           )}
@@ -91,7 +92,7 @@ export default function MaskInputCardInformationDemo() {
               invalid={!expiryValid}
             />
             {!expiryValid && expiryDate && (
-              <p className="text-destructive text-sm">
+              <p className="text-sm text-destructive">
                 Your card's expiration date is invalid.
               </p>
             )}
@@ -113,7 +114,7 @@ export default function MaskInputCardInformationDemo() {
               invalid={!cvcValid}
             />
             {!cvcValid && cvc && (
-              <p className="text-destructive text-sm">CVC must be 3 digits.</p>
+              <p className="text-sm text-destructive">CVC must be 3 digits.</p>
             )}
           </div>
         </div>

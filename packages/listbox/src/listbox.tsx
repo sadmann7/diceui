@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { composeEventHandlers } from "./compose-event-handlers";
 import { useComposedRefs } from "./compose-refs";
 import {
@@ -384,8 +385,9 @@ function useListboxContext(name: keyof typeof LISTBOX_ERRORS) {
   return context;
 }
 
-interface ListboxRootProps<Multiple extends boolean = false>
-  extends React.ComponentPropsWithoutRef<"div"> {
+interface ListboxRootProps<
+  Multiple extends boolean = false,
+> extends React.ComponentPropsWithoutRef<"div"> {
   defaultValue?: Value<Multiple>;
   value?: Value<Multiple>;
   onValueChange?: (value: Value<Multiple>) => void;
@@ -955,8 +957,10 @@ function useListboxItemContext(name: keyof typeof LISTBOX_ERRORS) {
   return context;
 }
 
-interface ListboxItemProps
-  extends Omit<React.ComponentPropsWithoutRef<"div">, "onSelect"> {
+interface ListboxItemProps extends Omit<
+  React.ComponentPropsWithoutRef<"div">,
+  "onSelect"
+> {
   value: string;
   disabled?: boolean;
   asChild?: boolean;
@@ -1078,8 +1082,7 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
 );
 ListboxItem.displayName = ITEM_NAME;
 
-interface ListboxItemIndicatorProps
-  extends React.ComponentPropsWithoutRef<"span"> {
+interface ListboxItemIndicatorProps extends React.ComponentPropsWithoutRef<"span"> {
   forceMount?: boolean;
   asChild?: boolean;
 }

@@ -80,22 +80,18 @@ export interface QRCodeImageProps extends EmptyProps<"img">, CompositionProps {
 }
 
 export interface QRCodeCanvasProps
-  extends EmptyProps<"canvas">,
-    CompositionProps {}
+  extends EmptyProps<"canvas">, CompositionProps {}
 
 export interface QRCodeSvgProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface QRCodeOverlayProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface QRCodeSkeletonProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface QRCodeDownloadProps
-  extends EmptyProps<"button">,
-    CompositionProps {
+  extends EmptyProps<"button">, CompositionProps {
   /**
    * The filename for the downloaded QR code.
    *

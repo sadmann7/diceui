@@ -19,6 +19,9 @@ import {
   type VirtualElement,
 } from "@floating-ui/react";
 import * as React from "react";
+
+import type { Align, Side } from "../types";
+
 import {
   VAR_ANCHOR_HEIGHT,
   VAR_ANCHOR_WIDTH,
@@ -26,7 +29,6 @@ import {
   VAR_AVAILABLE_WIDTH,
   VAR_TRANSFORM_ORIGIN,
 } from "../constants";
-import type { Align, Side } from "../types";
 import { useDirection } from "./use-direction";
 import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 
@@ -370,9 +372,11 @@ function useAnchorPositioner({
 
     if (!anchor) return;
 
-    isVirtualAnchor
-      ? refs.setPositionReference(anchor)
-      : refs.setReference(anchor);
+    if (isVirtualAnchor) {
+      refs.setPositionReference(anchor);
+    } else {
+      refs.setReference(anchor);
+    }
     update();
   }, [open, anchorRef, refs, update]);
 

@@ -1,9 +1,11 @@
 "use client";
 
 import type { Column } from "@tanstack/react-table";
+import type { DateRange } from "react-day-picker";
+
 import { CalendarIcon, XCircle } from "lucide-react";
 import * as React from "react";
-import type { DateRange } from "react-day-picker";
+
 import { formatDate } from "@/lib/format";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { Calendar } from "@/registry/bases/radix/ui/calendar";
@@ -50,7 +52,7 @@ function parseColumnFilterValue(value: unknown) {
 }
 
 interface DataTableDateFilterProps<TData> {
-  column: Column<TData, unknown>;
+  column: Column<TData>;
   title?: string;
   multiple?: boolean;
 }
@@ -185,7 +187,7 @@ export function DataTableDateFilter<TData>({
               aria-label={`Clear ${title} filter`}
               tabIndex={0}
               onClick={onReset}
-              className="rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              className="rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
             >
               <XCircle />
             </div>

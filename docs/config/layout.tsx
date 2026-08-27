@@ -1,5 +1,6 @@
 import type { DocsLayoutProps } from "fumadocs-ui/layouts/docs";
 import type { BaseLayoutProps, LinkItemType } from "fumadocs-ui/layouts/shared";
+
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 import { source } from "@/lib/source";
@@ -17,7 +18,7 @@ export const baseOptions: BaseLayoutProps = {
     title: (
       <>
         <Icons.logo className="size-4" />
-        <span className="in-[.uwu]:hidden font-medium in-[header]:text-[15px]">
+        <span className="font-medium in-[.uwu]:hidden in-[header]:text-[15px]">
           {siteConfig.name}
         </span>
       </>

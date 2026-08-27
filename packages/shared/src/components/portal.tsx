@@ -1,10 +1,12 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import { useMounted } from "../hooks/use-mounted";
 import { Primitive } from "./primitive";
 
-interface PortalProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+interface PortalProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {
   /**
    * The container to mount the portal into.
    * @default document.body

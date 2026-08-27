@@ -42,7 +42,7 @@ export default function AvatarGroupDemo() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Avatar Group</h3>
+        <h3 className="text-sm font-medium">Avatar Group</h3>
         <AvatarGroup>
           {avatars.slice(0, 4).map((avatar, index) => (
             <Avatar key={index}>
@@ -53,7 +53,7 @@ export default function AvatarGroupDemo() {
         </AvatarGroup>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">
+        <h3 className="text-sm font-medium">
           Avatar Group with overflow (max 4)
         </h3>
         <AvatarGroup max={4}>

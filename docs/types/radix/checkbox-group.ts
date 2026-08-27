@@ -8,6 +8,7 @@ import type {
   CheckboxGroupRootProps,
 } from "@diceui/checkbox-group";
 import type * as React from "react";
+
 import type { ControlledProps } from "@/types";
 
 export type RootProps = Omit<

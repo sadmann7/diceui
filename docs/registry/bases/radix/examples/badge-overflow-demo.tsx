@@ -20,7 +20,7 @@ export default function BadgeOverflowDemo() {
   return (
     <div className="flex w-64 flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Badge Overflow</h3>
+        <h3 className="text-sm font-medium">Badge Overflow</h3>
         <div className="w-64 rounded-md border p-3">
           <BadgeOverflow
             items={tags}
@@ -31,7 +31,7 @@ export default function BadgeOverflowDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">
+        <h3 className="text-sm font-medium">
           Badge Overflow with Custom Overflow
         </h3>
         <div className="w-64 rounded-md border p-3">

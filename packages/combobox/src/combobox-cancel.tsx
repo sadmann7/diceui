@@ -1,11 +1,13 @@
 import { composeEventHandlers, Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxContext } from "./combobox-root";
 
 const CANCEL_NAME = "ComboboxCancel";
 
-interface ComboboxCancelProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
+interface ComboboxCancelProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.button
+> {
   /**
    * Whether the cancel button should always be rendered.
    *

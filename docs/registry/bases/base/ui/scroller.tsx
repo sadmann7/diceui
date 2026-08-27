@@ -10,6 +10,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 
@@ -37,7 +38,7 @@ const scrollerVariants = cva("", {
       ],
     },
     hideScrollbar: {
-      true: "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      true: "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
       false: "",
     },
   },
@@ -54,7 +55,8 @@ type ScrollVisibility = {
 };
 
 interface ScrollerProps
-  extends VariantProps<typeof scrollerVariants>,
+  extends
+    VariantProps<typeof scrollerVariants>,
     React.ComponentProps<"div">,
     useRender.ComponentProps<"div"> {
   size?: number;

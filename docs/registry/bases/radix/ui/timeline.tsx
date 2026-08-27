@@ -6,6 +6,7 @@ import {
   Slot as SlotPrimitive,
 } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
@@ -661,7 +662,7 @@ function TimelineTitle(props: DivProps) {
     <TitlePrimitive
       data-slot="timeline-title"
       {...titleProps}
-      className={cn("font-semibold leading-none", className)}
+      className={cn("leading-none font-semibold", className)}
     />
   );
 }
@@ -675,7 +676,7 @@ function TimelineDescription(props: DivProps) {
     <DescriptionPrimitive
       data-slot="timeline-description"
       {...descriptionProps}
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-sm text-muted-foreground", className)}
     />
   );
 }
@@ -693,7 +694,7 @@ function TimelineTime(props: TimelineTimeProps) {
     <TimePrimitive
       data-slot="timeline-time"
       {...timeProps}
-      className={cn("text-muted-foreground text-xs", className)}
+      className={cn("text-xs text-muted-foreground", className)}
     />
   );
 }

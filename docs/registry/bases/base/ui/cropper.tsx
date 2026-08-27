@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
@@ -380,8 +381,7 @@ function useCropperContext(consumerName: string) {
 }
 
 interface CropperProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   crop?: Point;
   zoom?: number;
   minZoom?: number;
@@ -1289,7 +1289,7 @@ function CropperImpl(props: CropperImplProps) {
       {
         tabIndex: 0,
         className: cn(
-          "absolute inset-0 flex cursor-move touch-none select-none items-center justify-center overflow-hidden outline-none",
+          "absolute inset-0 flex cursor-move touch-none items-center justify-center overflow-hidden outline-none select-none",
           className,
         ),
         onKeyUp,
@@ -1458,7 +1458,8 @@ function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>({
 }
 
 interface CropperImageProps
-  extends React.ComponentProps<"img">,
+  extends
+    React.ComponentProps<"img">,
     useRender.ComponentProps<"img">,
     VariantProps<typeof cropperMediaVariants> {
   snapPixels?: boolean;
@@ -1594,7 +1595,8 @@ function CropperImage(props: CropperImageProps) {
 }
 
 interface CropperVideoProps
-  extends React.ComponentProps<"video">,
+  extends
+    React.ComponentProps<"video">,
     useRender.ComponentProps<"video">,
     VariantProps<typeof cropperMediaVariants> {
   snapPixels?: boolean;
@@ -1738,7 +1740,7 @@ const cropperAreaVariants = cva(
         circle: "rounded-full",
       },
       withGrid: {
-        true: "before:absolute before:top-0 before:right-1/3 before:bottom-0 before:left-1/3 before:box-border before:border before:border-white/50 before:border-t-0 before:border-b-0 before:content-[''] after:absolute after:top-1/3 after:right-0 after:bottom-1/3 after:left-0 after:box-border after:border after:border-white/50 after:border-r-0 after:border-l-0 after:content-['']",
+        true: "before:absolute before:top-0 before:right-1/3 before:bottom-0 before:left-1/3 before:box-border before:border before:border-t-0 before:border-b-0 before:border-white/50 before:content-[''] after:absolute after:top-1/3 after:right-0 after:bottom-1/3 after:left-0 after:box-border after:border after:border-r-0 after:border-l-0 after:border-white/50 after:content-['']",
         false: "",
       },
     },
@@ -1750,7 +1752,8 @@ const cropperAreaVariants = cva(
 );
 
 interface CropperAreaProps
-  extends React.ComponentProps<"div">,
+  extends
+    React.ComponentProps<"div">,
     useRender.ComponentProps<"div">,
     VariantProps<typeof cropperAreaVariants> {
   snapPixels?: boolean;

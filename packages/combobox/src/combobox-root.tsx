@@ -20,6 +20,7 @@ import {
   type WithForwardedRef,
 } from "@diceui/shared";
 import * as React from "react";
+
 import type { AnchorElement } from "./combobox-anchor";
 import type { ContentElement } from "./combobox-content";
 import type { InputElement } from "./combobox-input";
@@ -96,11 +97,10 @@ interface ComboboxContextValue<Multiple extends boolean = false> {
 const [ComboboxProvider, useComboboxContext] =
   createContext<ComboboxContextValue<boolean>>(ROOT_NAME);
 
-interface ComboboxRootProps<Multiple extends boolean = false>
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof Primitive.div>,
-    "value" | "defaultValue" | "onValueChange"
-  > {
+interface ComboboxRootProps<Multiple extends boolean = false> extends Omit<
+  React.ComponentPropsWithoutRef<typeof Primitive.div>,
+  "value" | "defaultValue" | "onValueChange"
+> {
   /**
    * The current value of the combobox.
    *

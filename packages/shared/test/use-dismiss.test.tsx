@@ -1,6 +1,7 @@
 import { act, fireEvent, render } from "@testing-library/react";
 import * as React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
 import { useDismiss } from "../src/hooks/use-dismiss";
 
 type DismissableComponentProps = Partial<Parameters<typeof useDismiss>[0]>;

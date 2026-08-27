@@ -1,11 +1,13 @@
 import { Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxGroupContext } from "./combobox-group";
 
 const GROUP_LABEL_NAME = "ComboboxGroupLabel";
 
-interface ComboboxGroupLabelProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {}
+interface ComboboxGroupLabelProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {}
 
 const ComboboxGroupLabel = React.forwardRef<
   HTMLDivElement,

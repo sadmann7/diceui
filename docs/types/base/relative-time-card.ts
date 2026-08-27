@@ -2,7 +2,8 @@ import type { PreviewCard as PreviewCardPrimitive } from "@base-ui/react/preview
 import type * as React from "react";
 
 export interface RelativeTimeCardProps
-  extends PreviewCardPrimitive.Root.Props,
+  extends
+    PreviewCardPrimitive.Root.Props,
     Omit<
       PreviewCardPrimitive.Trigger.Props,
       keyof React.ComponentProps<"button">

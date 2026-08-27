@@ -2,6 +2,7 @@
 
 import { Edit, Trash2 } from "lucide-react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/registry/bases/base/ui/button";
 import { Checkbox } from "@/registry/bases/base/ui/checkbox";
@@ -47,7 +48,7 @@ export default function EditableTodoListDemo() {
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-2">
-      <span className="font-semibold text-lg">Tricks to learn</span>
+      <span className="text-lg font-semibold">Tricks to learn</span>
       {todos.map((todo) => (
         <div
           key={todo.id}

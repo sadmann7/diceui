@@ -1,5 +1,6 @@
 import { useCallbackRef, useComposedRefs } from "@diceui/shared";
 import * as React from "react";
+
 import { useMentionContext } from "./mention-root";
 
 const HIGHLIGHTER_NAME = "MentionHighlighter";
@@ -21,8 +22,7 @@ const defaultHighlighterStyle: React.CSSProperties = {
   width: "100%",
 };
 
-interface MentionHighlighterProps
-  extends React.HTMLAttributes<HighlighterElement> {}
+interface MentionHighlighterProps extends React.HTMLAttributes<HighlighterElement> {}
 
 const MentionHighlighter = React.memo(
   React.forwardRef<HighlighterElement, MentionHighlighterProps>(

@@ -1,4 +1,5 @@
 import type React from "react";
+
 import type { ButtonProps, RenderProps } from "@/types";
 
 export interface SelectionToolbarProps extends RenderProps {
@@ -161,7 +162,8 @@ export interface SelectionToolbarProps extends RenderProps {
 }
 
 export interface SelectionToolbarItemProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button"> | "onSelect">,
+  extends
+    Omit<ButtonProps, keyof React.ComponentProps<"button"> | "onSelect">,
     Omit<React.ComponentProps<"button">, "onSelect"> {
   /**
    * Callback fired when the item is selected.

@@ -2,6 +2,8 @@
  * @see https://github.com/shadcn-ui/ui/blob/main/apps/v4/scripts/build-registry.mts
  */
 
+import type { z } from "zod";
+
 import { existsSync, promises as fs } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -9,7 +11,7 @@ import { cwd } from "node:process";
 import { rimraf } from "rimraf";
 import { type registryItemTypeSchema, registrySchema } from "shadcn/schema";
 import { Project, ScriptKind, SyntaxKind } from "ts-morph";
-import type { z } from "zod";
+
 import { DEFAULT_BASE } from "../lib/constants";
 import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
@@ -128,7 +130,7 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
           let raw: string;
           try {
             raw = await fs.readFile(file, "utf8");
-          } catch (_error) {
+          } catch {
             continue;
           }
           const tempFile = await createTempSourceFile(filename);
@@ -223,29 +225,27 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
                     .map((node) => node.getTagNameNode().getText()),
                 );
 
-              const componentImports = new Map<
-                string,
-                string | string[] | Set<string>
-              >();
+              const componentImports = new Map<string, string | string[]>();
               for (const child of children) {
                 const importLine = imports.get(child);
-                if (importLine) {
-                  const existingImports =
-                    componentImports.get(importLine.module) || [];
-                  const newImports = importLine.isDefault
-                    ? importLine.text
-                    : new Set([...existingImports, child]);
-                  componentImports.set(
-                    importLine.module,
-                    importLine?.isDefault ? newImports : Array.from(newImports),
-                  );
+                if (!importLine) continue;
+
+                if (importLine.isDefault) {
+                  componentImports.set(importLine.module, importLine.text);
+                  continue;
                 }
+
+                const existing = componentImports.get(importLine.module);
+                const named = Array.isArray(existing) ? existing : [];
+                if (!named.includes(child)) {
+                  named.push(child);
+                }
+                componentImports.set(importLine.module, named);
               }
 
               const componentImportLines = Array.from(
-                componentImports.keys(),
-              ).map((key) => {
-                const values = componentImports.get(key);
+                componentImports.entries(),
+              ).map(([key, values]) => {
                 const specifier = Array.isArray(values)
                   ? `{${values.join(",")}}`
                   : values;
@@ -261,7 +261,7 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
               return (${parentJsxElement.getText()})
             }`;
 
-              const targetFile = file.replace(item.name, `${chunkName}`);
+              const targetFile = file.replace(item.name, chunkName);
               const targetFilePath = path.join(
                 cwd(),
                 `registry/bases/${baseName}/${type}/${chunkName}.tsx`,
@@ -282,10 +282,10 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
           sourceFilename = `__registry__/${baseName}/${style.name}/${type}/${item.name}.tsx`;
 
           if (item.files) {
-            const files = item.files.map((file) =>
-              typeof file === "string"
-                ? { type: "registry:page", path: file }
-                : file,
+            const files = item.files.map((itemFile) =>
+              typeof itemFile === "string"
+                ? { type: "registry:page", path: itemFile }
+                : itemFile,
             );
             if (files?.length) {
               sourceFilename = `__registry__/${baseName}/${style.name}/${files[0]?.path}`;
@@ -322,21 +322,24 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         description: "${item.description ?? ""}",
         type: "${item.type}",
         registryDependencies: ${JSON.stringify(item.registryDependencies)},
-        files: [${item.files?.map((file) => {
-          const filePath = `registry/bases/${baseName}/${
-            typeof file === "string" ? file : file.path
-          }`;
-          return typeof file === "string"
-            ? `"${filePath}"`
-            : `{
+        files: [${(item.files ?? [])
+          .map((itemFile) => {
+            const filePath = `registry/bases/${baseName}/${
+              typeof itemFile === "string" ? itemFile : itemFile.path
+            }`;
+            return typeof itemFile === "string"
+              ? `"${filePath}"`
+              : `{
           path: "${filePath}",
-          type: "${file.type}",
-          target: "${file.target ?? ""}"
+          type: "${itemFile.type}",
+          target: "${itemFile.target ?? ""}"
         }`;
-        })}],
+          })
+          .join(",")}],
         source: "${sourceFilename}",
-        chunks: [${chunks.map(
-          (chunk) => `{
+        chunks: [${chunks
+          .map(
+            (chunk) => `{
           name: "${chunk.name}",
           description: "${chunk.description ?? "No description"}",
           file: "${chunk.file}",
@@ -344,7 +347,8 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
             className: "${chunk.container.className}"
           }
         }`,
-        )}]
+          )
+          .join(",")}]
       },`;
 
         if (item.type === "registry:example") {
@@ -459,7 +463,7 @@ async function buildRootIndex() {
   const uiItems = registry.items
     .filter((item) => item.type === "registry:ui")
     .map((item) => {
-      // biome-ignore lint/suspicious/noExplicitAny: registry item types vary
+      // oxlint-disable-next-line typescript/no-explicit-any -- registry item types vary
       const mapped: Record<string, any> = { name: item.name, type: item.type };
       if (item.dependencies?.length) mapped.dependencies = item.dependencies;
       if (item.registryDependencies?.length)

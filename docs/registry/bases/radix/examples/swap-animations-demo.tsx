@@ -8,6 +8,7 @@ import {
   VolumeXIcon,
   XIcon,
 } from "lucide-react";
+
 import { Swap, SwapOff, SwapOn } from "@/registry/bases/radix/ui/swap";
 
 export default function SwapAnimationsDemo() {
@@ -25,7 +26,7 @@ export default function SwapAnimationsDemo() {
             <XIcon className="size-5" />
           </SwapOff>
         </Swap>
-        <span className="text-center text-muted-foreground text-sm">Fade</span>
+        <span className="text-center text-sm text-muted-foreground">Fade</span>
       </div>
 
       <div className="flex flex-col items-center gap-3">
@@ -40,7 +41,7 @@ export default function SwapAnimationsDemo() {
             <MoonIcon className="size-5" />
           </SwapOff>
         </Swap>
-        <span className="text-center text-muted-foreground text-sm">
+        <span className="text-center text-sm text-muted-foreground">
           Rotate
         </span>
       </div>
@@ -57,7 +58,7 @@ export default function SwapAnimationsDemo() {
             <PauseIcon className="size-5" />
           </SwapOff>
         </Swap>
-        <span className="text-center text-muted-foreground text-sm">Flip</span>
+        <span className="text-center text-sm text-muted-foreground">Flip</span>
       </div>
 
       <div className="flex flex-col items-center gap-3">
@@ -72,7 +73,7 @@ export default function SwapAnimationsDemo() {
             <VolumeXIcon className="size-5" />
           </SwapOff>
         </Swap>
-        <span className="text-center text-muted-foreground text-sm">Scale</span>
+        <span className="text-center text-sm text-muted-foreground">Scale</span>
       </div>
     </div>
   );

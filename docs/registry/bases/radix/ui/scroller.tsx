@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
@@ -36,7 +37,7 @@ const scrollerVariants = cva("", {
       ],
     },
     hideScrollbar: {
-      true: "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+      true: "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
       false: "",
     },
   },
@@ -53,8 +54,7 @@ type ScrollVisibility = {
 };
 
 interface ScrollerProps
-  extends VariantProps<typeof scrollerVariants>,
-    React.ComponentProps<"div"> {
+  extends VariantProps<typeof scrollerVariants>, React.ComponentProps<"div"> {
   size?: number;
   offset?: number;
   asChild?: boolean;

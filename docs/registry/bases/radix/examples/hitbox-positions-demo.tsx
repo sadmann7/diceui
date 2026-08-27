@@ -8,43 +8,43 @@ export default function HitboxPositionsDemo() {
         <Hitbox debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">all</p>
+        <p className="text-sm text-muted-foreground">all</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox position="top" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">top</p>
+        <p className="text-sm text-muted-foreground">top</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox position="bottom" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">bottom</p>
+        <p className="text-sm text-muted-foreground">bottom</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox position="left" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">left</p>
+        <p className="text-sm text-muted-foreground">left</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox position="right" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">right</p>
+        <p className="text-sm text-muted-foreground">right</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox position="vertical" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">vertical</p>
+        <p className="text-sm text-muted-foreground">vertical</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox position="horizontal" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">horizontal</p>
+        <p className="text-sm text-muted-foreground">horizontal</p>
       </div>
     </div>
   );

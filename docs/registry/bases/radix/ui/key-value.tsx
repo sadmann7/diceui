@@ -3,6 +3,7 @@
 import { PlusIcon, XIcon } from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
@@ -588,8 +589,10 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   );
 }
 
-interface KeyValueValueInputProps
-  extends Omit<React.ComponentProps<"textarea">, "rows"> {
+interface KeyValueValueInputProps extends Omit<
+  React.ComponentProps<"textarea">,
+  "rows"
+> {
   maxRows?: number;
   asChild?: boolean;
 }
@@ -845,7 +848,7 @@ function KeyValueError(props: KeyValueErrorProps) {
       id={getErrorId(context.rootId, itemData.id, field)}
       role="alert"
       {...errorProps}
-      className={cn("font-medium text-destructive text-sm", className)}
+      className={cn("text-sm font-medium text-destructive", className)}
     >
       {error}
     </ErrorPrimitive>

@@ -1,11 +1,13 @@
 import { composeEventHandlers, composeRefs, Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useTagsInput } from "./tags-input-root";
 
 const INPUT_NAME = "TagsInputInput";
 
-interface TagsInputInputProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
+interface TagsInputInputProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.input
+> {}
 
 const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
   (props, ref) => {

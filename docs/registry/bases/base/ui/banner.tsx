@@ -6,6 +6,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
@@ -20,8 +21,7 @@ type BannerSide = "top" | "bottom";
 type BannerStrategy = "fixed" | "static" | "sticky" | "absolute";
 
 interface DivProps
-  extends useRender.ComponentProps<"div">,
-    React.ComponentProps<"div"> {}
+  extends useRender.ComponentProps<"div">, React.ComponentProps<"div"> {}
 
 interface BannerRenderProps {
   id: string;
@@ -642,7 +642,7 @@ function BannerTitle(props: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="banner-title"
-      className={cn("font-medium text-sm leading-none", className)}
+      className={cn("text-sm leading-none font-medium", className)}
       {...titleProps}
     />
   );

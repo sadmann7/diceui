@@ -10,8 +10,10 @@ import type {
 } from "@/registry/bases/base/ui/dialog";
 import type { EmptyCompProps, EmptyProps } from "@/types";
 
-export interface ResponsiveDialogProps
-  extends EmptyCompProps<React.ComponentProps<typeof Dialog>, "div"> {
+export interface ResponsiveDialogProps extends EmptyCompProps<
+  React.ComponentProps<typeof Dialog>,
+  "div"
+> {
   /**
    * The breakpoint (in pixels) at which to switch between dialog and drawer.
    * Below this width, the drawer will be shown. Above it, the dialog will be shown.
@@ -64,8 +66,10 @@ export interface ResponsiveDialogCloseProps extends EmptyProps<"button"> {
   render?: React.ComponentProps<typeof DialogClose>["render"];
 }
 
-export interface ResponsiveDialogPortalProps
-  extends EmptyCompProps<React.ComponentProps<typeof DialogPortal>, "div"> {
+export interface ResponsiveDialogPortalProps extends EmptyCompProps<
+  React.ComponentProps<typeof DialogPortal>,
+  "div"
+> {
   /**
    * The container element to portal into.
    * @default document.body
@@ -73,8 +77,10 @@ export interface ResponsiveDialogPortalProps
   container?: HTMLElement | null;
 }
 
-export interface ResponsiveDialogOverlayProps
-  extends EmptyCompProps<React.ComponentProps<typeof DialogOverlay>, "div"> {
+export interface ResponsiveDialogOverlayProps extends EmptyCompProps<
+  React.ComponentProps<typeof DialogOverlay>,
+  "div"
+> {
   /**
    * Render prop for custom overlay rendering.
    * Only used on desktop (Dialog). Ignored on mobile (Drawer).
@@ -82,8 +88,10 @@ export interface ResponsiveDialogOverlayProps
   render?: React.ComponentProps<typeof DialogOverlay>["render"];
 }
 
-export interface ResponsiveDialogContentProps
-  extends EmptyCompProps<React.ComponentProps<typeof DialogContent>, "div"> {
+export interface ResponsiveDialogContentProps extends EmptyCompProps<
+  React.ComponentProps<typeof DialogContent>,
+  "div"
+> {
   /**
    * Whether to show the close button in the top-right corner.
    * Only applies on desktop (Dialog). Ignored on mobile (Drawer).
@@ -103,8 +111,12 @@ export interface ResponsiveDialogFooterProps extends EmptyProps<"div"> {
   showCloseButton?: boolean;
 }
 
-export interface ResponsiveDialogTitleProps
-  extends EmptyCompProps<React.ComponentProps<typeof DialogTitle>, "h2"> {}
+export interface ResponsiveDialogTitleProps extends EmptyCompProps<
+  React.ComponentProps<typeof DialogTitle>,
+  "h2"
+> {}
 
-export interface ResponsiveDialogDescriptionProps
-  extends EmptyCompProps<React.ComponentProps<typeof DialogDescription>, "p"> {}
+export interface ResponsiveDialogDescriptionProps extends EmptyCompProps<
+  React.ComponentProps<typeof DialogDescription>,
+  "p"
+> {}

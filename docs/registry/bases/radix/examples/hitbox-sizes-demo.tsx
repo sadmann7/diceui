@@ -8,25 +8,25 @@ export default function HitboxSizesDemo() {
         <Hitbox debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">default</p>
+        <p className="text-sm text-muted-foreground">default</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox size="sm" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">sm</p>
+        <p className="text-sm text-muted-foreground">sm</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox size="lg" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">lg</p>
+        <p className="text-sm text-muted-foreground">lg</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox size="10px" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">10px</p>
+        <p className="text-sm text-muted-foreground">10px</p>
       </div>
     </div>
   );

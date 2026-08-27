@@ -1,5 +1,6 @@
 import { createContext, Primitive, useComposedRefs } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxContext } from "./combobox-root";
 
 const BADGE_LIST_NAME = "ComboboxBadgeList";
@@ -14,8 +15,9 @@ const [ComboboxBadgeListProvider, useComboboxBadgeListContext] =
 
 type BadgeListElement = React.ElementRef<typeof Primitive.div>;
 
-interface ComboboxBadgeListProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+interface ComboboxBadgeListProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {
   /**
    * Whether to force mount the badge list even if there is no selected item.
    * @default false

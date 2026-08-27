@@ -25,7 +25,7 @@ export default function BadgeOverflowMultilineDemo() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Single Line (default)</h3>
+        <h3 className="text-sm font-medium">Single Line (default)</h3>
         <div className="w-64 rounded-md border p-3">
           <BadgeOverflow
             items={technologies}
@@ -36,7 +36,7 @@ export default function BadgeOverflowMultilineDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Two Lines</h3>
+        <h3 className="text-sm font-medium">Two Lines</h3>
         <div className="w-64 rounded-md border p-3">
           <BadgeOverflow
             items={technologies}
@@ -46,7 +46,7 @@ export default function BadgeOverflowMultilineDemo() {
         </div>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Three Lines</h3>
+        <h3 className="text-sm font-medium">Three Lines</h3>
         <div className="w-64 rounded-md border p-3">
           <BadgeOverflow
             items={technologies}

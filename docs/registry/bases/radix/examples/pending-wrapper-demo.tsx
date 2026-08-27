@@ -2,6 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import * as React from "react";
+
 import { Pending } from "@/registry/bases/radix/components/pending";
 import { Button } from "@/registry/bases/radix/ui/button";
 
@@ -25,7 +26,7 @@ export default function PendingWrapperDemo() {
         </Button>
       </Pending>
 
-      <p className="text-muted-foreground text-sm">
+      <p className="text-sm text-muted-foreground">
         Using the <code className="text-xs">{"<Pending>"}</code> wrapper
         component
       </p>

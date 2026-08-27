@@ -2,6 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import * as React from "react";
+
 import { usePending } from "@/registry/bases/base/components/pending";
 import { Button } from "@/registry/bases/base/ui/button";
 import { Input } from "@/registry/bases/base/ui/input";
@@ -55,7 +56,7 @@ export default function PendingFormDemo() {
       </Button>
 
       {submitted && (
-        <p className="text-center text-green-600 text-sm dark:text-green-400">
+        <p className="text-center text-sm text-green-600 dark:text-green-400">
           Successfully signed in!
         </p>
       )}

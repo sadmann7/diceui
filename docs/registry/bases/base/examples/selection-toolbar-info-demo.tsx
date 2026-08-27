@@ -2,6 +2,7 @@
 
 import { Bold, Copy, Italic } from "lucide-react";
 import * as React from "react";
+
 import {
   SelectionToolbar,
   SelectionToolbarItem,
@@ -61,13 +62,13 @@ export default function SelectionToolbarInfoDemo() {
         suppressContentEditableWarning
         className="w-full max-w-2xl space-y-4 rounded-lg border bg-card p-8 text-card-foreground outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
-        <h2 className="font-semibold text-2xl">Selection Info Tracking</h2>
-        <p className="text-muted-foreground leading-relaxed">
+        <h2 className="text-2xl font-semibold">Selection Info Tracking</h2>
+        <p className="leading-relaxed text-muted-foreground">
           Select any text to see the toolbar and track selection information
           below. The component provides callbacks to monitor selected text and
           implement custom behavior.
         </p>
-        <p className="text-muted-foreground leading-relaxed">
+        <p className="leading-relaxed text-muted-foreground">
           Try selecting different portions of text to see real-time updates of
           the word count and character count. This demonstrates how you can
           track and respond to selection changes.
@@ -92,7 +93,7 @@ export default function SelectionToolbarInfoDemo() {
 
       {selectedText && (
         <div className="flex w-full max-w-2xl flex-col gap-2 rounded-lg border bg-muted/50 p-4">
-          <div className="font-medium text-sm">Selection Info</div>
+          <div className="text-sm font-medium">Selection Info</div>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="text-muted-foreground">Words: </span>
@@ -103,7 +104,7 @@ export default function SelectionToolbarInfoDemo() {
               <span className="font-medium">{charCount}</span>
             </div>
           </div>
-          <div className="text-muted-foreground text-xs">
+          <div className="text-xs text-muted-foreground">
             <span className="font-medium">Selected text: </span>"
             {selectedText.length > 50
               ? `${selectedText.slice(0, 50)}...`

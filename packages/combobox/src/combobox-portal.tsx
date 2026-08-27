@@ -3,8 +3,10 @@ import * as React from "react";
 
 const PORTAL_NAME = "ComboboxPortal";
 
-interface ComboboxPortalProps
-  extends Pick<PortalProps, "container" | "children"> {}
+interface ComboboxPortalProps extends Pick<
+  PortalProps,
+  "container" | "children"
+> {}
 
 const ComboboxPortal = React.forwardRef<HTMLDivElement, ComboboxPortalProps>(
   (props, forwardedRef) => {

@@ -1,13 +1,18 @@
 import type { InferPageType } from "fumadocs-core/source";
+import type { MDXComponents } from "mdx/types";
+import type * as React from "react";
+
 import { Callout } from "fumadocs-ui/components/callout";
 import { Pre } from "fumadocs-ui/components/codeblock";
 import { Heading } from "fumadocs-ui/components/heading";
 import { Step, Steps } from "fumadocs-ui/components/steps";
 import defaultComponents from "fumadocs-ui/mdx";
-import type { MDXComponents } from "mdx/types";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import type * as React from "react";
+
+import type { source } from "@/lib/source";
+import type { RegistryBase } from "@/registry/registry";
+
 import { CodeBlock } from "@/components/code-block";
 import { CodeTabs } from "@/components/code-tabs";
 import {
@@ -20,7 +25,6 @@ import {
   PackageManagerTabsList,
 } from "@/components/package-manager-tabs";
 import { DEFAULT_BASE } from "@/lib/constants";
-import type { source } from "@/lib/source";
 import { cn } from "@/lib/utils";
 import {
   Alert,
@@ -35,7 +39,6 @@ import {
   TableRow,
 } from "@/registry/bases/radix/ui/table";
 import { Tabs } from "@/registry/bases/radix/ui/tabs";
-import type { RegistryBase } from "@/registry/registry";
 
 const ComponentSource = dynamic(() =>
   import("@/components/component-source").then((mod) => ({

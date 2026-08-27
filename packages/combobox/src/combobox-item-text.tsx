@@ -1,13 +1,15 @@
 import { Primitive, useComposedRefs } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxItemContext } from "./combobox-item";
 
 const ITEM_TEXT_NAME = "ComboboxItemText";
 
 type ItemTextElement = React.ElementRef<typeof Primitive.span>;
 
-interface ComboboxItemTextProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.span> {}
+interface ComboboxItemTextProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.span
+> {}
 
 const ComboboxItemText = React.forwardRef<
   HTMLSpanElement,

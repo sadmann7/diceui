@@ -6,8 +6,7 @@ import { rimraf } from "rimraf";
 import { registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const STYLES_PATH = path.resolve(__dirname, "../public/r/styles");
+const STYLES_PATH = path.resolve(import.meta.dirname, "../public/r/styles");
 
 // Define bases to match build-registry
 const BASES = Object.keys(registries) as Array<keyof typeof registries>;
@@ -134,7 +133,10 @@ if (
   process.argv[1] &&
   fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
 ) {
-  cleanupRegistry();
+  cleanupRegistry().catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
 }
 
 export { cleanupRegistry };

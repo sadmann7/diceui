@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
@@ -98,11 +99,10 @@ function useEditableContext(consumerName: string) {
   return context;
 }
 
-interface EditableProps
-  extends Omit<
-    React.ComponentProps<"div"> & useRender.ComponentProps<"div">,
-    "onSubmit"
-  > {
+interface EditableProps extends Omit<
+  React.ComponentProps<"div"> & useRender.ComponentProps<"div">,
+  "onSubmit"
+> {
   id?: string;
   defaultValue?: string;
   value?: string;
@@ -337,8 +337,7 @@ function Editable(props: EditableProps) {
 }
 
 interface EditableLabelProps
-  extends React.ComponentProps<"label">,
-    useRender.ComponentProps<"label"> {}
+  extends React.ComponentProps<"label">, useRender.ComponentProps<"label"> {}
 
 function EditableLabel(props: EditableLabelProps) {
   const { className, children, render, ref, ...labelProps } = props;
@@ -352,7 +351,7 @@ function EditableLabel(props: EditableLabelProps) {
         id: context.labelId,
         htmlFor: context.inputId,
         className: cn(
-          "font-medium text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 data-required:after:ml-0.5 data-required:after:text-destructive data-required:after:content-['*']",
+          "text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 data-required:after:ml-0.5 data-required:after:text-destructive data-required:after:content-['*']",
           className,
         ),
         children,
@@ -370,8 +369,7 @@ function EditableLabel(props: EditableLabelProps) {
 }
 
 interface EditableAreaProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function EditableArea(props: EditableAreaProps) {
   const { className, render, ref, ...areaProps } = props;
@@ -402,8 +400,7 @@ function EditableArea(props: EditableAreaProps) {
 }
 
 interface EditablePreviewProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function EditablePreview(props: EditablePreviewProps) {
   const {
@@ -492,7 +489,7 @@ function EditablePreview(props: EditablePreviewProps) {
         onFocus,
         onKeyDown,
         className: cn(
-          "cursor-text truncate rounded-sm border border-transparent py-1 text-base focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring data-disabled:cursor-not-allowed data-readonly:cursor-default data-empty:text-muted-foreground data-disabled:opacity-50 md:text-sm",
+          "cursor-text truncate rounded-sm border border-transparent py-1 text-base focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-disabled:cursor-not-allowed data-disabled:opacity-50 data-empty:text-muted-foreground data-readonly:cursor-default md:text-sm",
           className,
         ),
         children: value || context.placeholder,
@@ -514,8 +511,7 @@ function EditablePreview(props: EditablePreviewProps) {
 }
 
 interface EditableInputProps
-  extends React.ComponentProps<"input">,
-    useRender.ComponentProps<"input"> {
+  extends React.ComponentProps<"input">, useRender.ComponentProps<"input"> {
   maxLength?: number;
 }
 
@@ -665,7 +661,7 @@ function EditableInput(props: EditableInputProps) {
         onChange,
         onKeyDown,
         className: cn(
-          "flex rounded-sm border border-input bg-transparent py-1 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:font-medium file:text-foreground file:text-sm placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          "flex rounded-sm border border-input bg-transparent py-1 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
           context.autosize ? "w-auto" : "w-full",
           className,
         ),
@@ -684,8 +680,7 @@ function EditableInput(props: EditableInputProps) {
 }
 
 interface EditableTriggerProps
-  extends React.ComponentProps<"button">,
-    useRender.ComponentProps<"button"> {
+  extends React.ComponentProps<"button">, useRender.ComponentProps<"button"> {
   forceMount?: boolean;
 }
 
@@ -727,8 +722,7 @@ function EditableTrigger(props: EditableTriggerProps) {
 }
 
 interface EditableToolbarProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   orientation?: "horizontal" | "vertical";
 }
 
@@ -767,8 +761,7 @@ function EditableToolbar(props: EditableToolbarProps) {
 }
 
 interface EditableCancelProps
-  extends React.ComponentProps<"button">,
-    useRender.ComponentProps<"button"> {}
+  extends React.ComponentProps<"button">, useRender.ComponentProps<"button"> {}
 
 function EditableCancel(props: EditableCancelProps) {
   const { onClick: onClickProp, render, ref, ...cancelProps } = props;
@@ -814,8 +807,7 @@ function EditableCancel(props: EditableCancelProps) {
 }
 
 interface EditableSubmitProps
-  extends React.ComponentProps<"button">,
-    useRender.ComponentProps<"button"> {}
+  extends React.ComponentProps<"button">, useRender.ComponentProps<"button"> {}
 
 function EditableSubmit(props: EditableSubmitProps) {
   const { onClick: onClickProp, render, ref, ...submitProps } = props;

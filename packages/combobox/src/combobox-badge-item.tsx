@@ -5,6 +5,7 @@ import {
   useId,
 } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxBadgeListContext } from "./combobox-badge-list";
 import { useComboboxContext } from "./combobox-root";
 
@@ -21,8 +22,9 @@ interface ComboboxBadgeItemContextValue {
 const [ComboboxBadgeItemProvider, useComboboxBadgeItemContext] =
   createContext<ComboboxBadgeItemContextValue>(BADGE_ITEM_NAME);
 
-interface ComboboxBadgeItemProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+interface ComboboxBadgeItemProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {
   /** The value of the badge item. */
   value: string;
 

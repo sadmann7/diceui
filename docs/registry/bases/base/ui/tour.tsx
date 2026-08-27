@@ -18,6 +18,7 @@ import {
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
@@ -65,7 +66,8 @@ interface ScrollOffset {
 type Boundary = Element | null;
 
 interface DivProps
-  extends Omit<React.ComponentProps<"div">, "children">,
+  extends
+    Omit<React.ComponentProps<"div">, "children">,
     useRender.ComponentProps<"div"> {}
 
 type StepElement = HTMLDivElement;
@@ -1306,7 +1308,7 @@ function TourSpotlight(props: TourSpotlightProps) {
     props: mergeProps<"div">(
       {
         className: cn(
-          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=open]:animate-in",
+          "fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
           className,
         ),
         style: {
@@ -1494,7 +1496,7 @@ function TourTitle(props: DivProps) {
       {
         dir: context.dir,
         className: cn(
-          "font-semibold text-lg leading-none tracking-tight",
+          "text-lg leading-none font-semibold tracking-tight",
           className,
         ),
       },
@@ -1517,7 +1519,7 @@ function TourDescription(props: DivProps) {
     props: mergeProps<"div">(
       {
         dir: context.dir,
-        className: cn("text-muted-foreground text-sm", className),
+        className: cn("text-sm text-muted-foreground", className),
       },
       descriptionProps,
     ),
@@ -1529,7 +1531,8 @@ function TourDescription(props: DivProps) {
 }
 
 interface TourCloseProps
-  extends Omit<React.ComponentProps<"button">, "children">,
+  extends
+    Omit<React.ComponentProps<"button">, "children">,
     useRender.ComponentProps<"button"> {}
 
 function TourClose(props: TourCloseProps) {
@@ -1559,7 +1562,7 @@ function TourClose(props: TourCloseProps) {
         type: "button",
         "aria-label": "Close tour",
         className: cn(
-          "absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+          "absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
           className,
         ),
         onClick,
@@ -1572,8 +1575,10 @@ function TourClose(props: TourCloseProps) {
   });
 }
 
-interface TourPrevProps
-  extends Omit<React.ComponentProps<typeof Button>, "onClick"> {
+interface TourPrevProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "onClick"
+> {
   onClick?: (event: React.MouseEvent<PrevElement>) => void;
 }
 
@@ -1615,8 +1620,10 @@ function TourPrev(props: TourPrevProps) {
   );
 }
 
-interface TourNextProps
-  extends Omit<React.ComponentProps<typeof Button>, "onClick"> {
+interface TourNextProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "onClick"
+> {
   onClick?: (event: React.MouseEvent<NextElement>) => void;
 }
 
@@ -1656,8 +1663,10 @@ function TourNext(props: TourNextProps) {
   );
 }
 
-interface TourSkipProps
-  extends Omit<React.ComponentProps<typeof Button>, "onClick"> {
+interface TourSkipProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "onClick"
+> {
   onClick?: (event: React.MouseEvent<SkipElement>) => void;
 }
 
@@ -1710,7 +1719,7 @@ function TourStepCounter(props: TourStepCounterProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("text-muted-foreground text-sm", className),
+        className: cn("text-sm text-muted-foreground", className),
         children: children ?? format(value + 1, steps.length),
       },
       stepCounterProps,

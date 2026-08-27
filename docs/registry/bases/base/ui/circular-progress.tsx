@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const CIRCULAR_PROGRESS_NAME = "CircularProgress";
@@ -87,8 +88,7 @@ function useCircularProgressContext(consumerName: string) {
 }
 
 interface CircularProgressProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   value?: number | null | undefined;
   getValueText?(value: number, min: number, max: number): string;
   min?: number;
@@ -313,7 +313,7 @@ function CircularProgressRange(props: React.ComponentProps<"circle">) {
       className={cn(
         "origin-center text-primary transition-all duration-300 ease-in-out",
         context.state === "indeterminate" &&
-          "motion-reduce:animate-none motion-safe:[animation:var(--animate-spin-around)]",
+          "motion-safe:[animation:var(--animate-spin-around)] motion-reduce:animate-none",
         className,
       )}
     />
@@ -321,8 +321,7 @@ function CircularProgressRange(props: React.ComponentProps<"circle">) {
 }
 
 interface CircularProgressValueTextProps
-  extends React.ComponentProps<"span">,
-    useRender.ComponentProps<"span"> {}
+  extends React.ComponentProps<"span">, useRender.ComponentProps<"span"> {}
 
 function CircularProgressValueText(props: CircularProgressValueTextProps) {
   const { render, className, children, ...valueTextProps } = props;
@@ -335,7 +334,7 @@ function CircularProgressValueText(props: CircularProgressValueTextProps) {
       {
         id: context.valueTextId,
         className: cn(
-          "absolute inset-0 flex items-center justify-center font-medium text-sm",
+          "absolute inset-0 flex items-center justify-center text-sm font-medium",
           className,
         ),
         children: children ?? context.valueText,

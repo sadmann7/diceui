@@ -8,31 +8,31 @@ export default function HitboxRadiiDemo() {
         <Hitbox radius="none" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">none</p>
+        <p className="text-sm text-muted-foreground">none</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox radius="sm" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">sm</p>
+        <p className="text-sm text-muted-foreground">sm</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox radius="md" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">md</p>
+        <p className="text-sm text-muted-foreground">md</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox radius="lg" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">lg</p>
+        <p className="text-sm text-muted-foreground">lg</p>
       </div>
       <div className="flex flex-col items-center gap-4">
         <Hitbox radius="full" debug>
           <Checkbox />
         </Hitbox>
-        <p className="text-muted-foreground text-sm">full</p>
+        <p className="text-sm text-muted-foreground">full</p>
       </div>
     </div>
   );

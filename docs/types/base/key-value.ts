@@ -236,11 +236,15 @@ export interface KeyValueValueInputProps extends EmptyProps<"textarea"> {
   maxRows?: number;
 }
 
-export interface KeyValueRemoveProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button">> {}
+export interface KeyValueRemoveProps extends Omit<
+  ButtonProps,
+  keyof React.ComponentProps<"button">
+> {}
 
-export interface KeyValueAddProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button">> {}
+export interface KeyValueAddProps extends Omit<
+  ButtonProps,
+  keyof React.ComponentProps<"button">
+> {}
 
 export interface KeyValueErrorProps extends RenderProps {
   /**

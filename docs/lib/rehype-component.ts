@@ -6,8 +6,10 @@ import fs from "node:fs";
 import path from "node:path";
 import { u } from "unist-builder";
 import { visit } from "unist-util-visit";
-import { DEFAULT_BASE } from "@/lib/constants";
+
 import type { UnistNode, UnistTree } from "@/types/unist";
+
+import { DEFAULT_BASE } from "@/lib/constants";
 
 function resolveExamplePath(
   name: string,

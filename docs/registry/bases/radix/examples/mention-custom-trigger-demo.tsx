@@ -50,7 +50,7 @@ export default function MentionCustomTriggerDemo() {
             className="flex-col items-start gap-0.5"
           >
             <span className="text-sm">{user.name}</span>
-            <span className="text-muted-foreground text-xs">{user.email}</span>
+            <span className="text-xs text-muted-foreground">{user.email}</span>
           </MentionItem>
         ))}
       </MentionContent>

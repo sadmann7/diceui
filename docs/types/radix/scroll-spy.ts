@@ -122,8 +122,7 @@ export interface ScrollSpyProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface ScrollSpyNavProps
-  extends EmptyProps<"nav">,
-    CompositionProps {}
+  extends EmptyProps<"nav">, CompositionProps {}
 
 export interface ScrollSpyLinkProps extends EmptyProps<"a">, CompositionProps {
   /**
@@ -137,12 +136,10 @@ export interface ScrollSpyLinkProps extends EmptyProps<"a">, CompositionProps {
 }
 
 export interface ScrollSpyViewportProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface ScrollSpySectionProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The unique value that links the section with the link.
    *

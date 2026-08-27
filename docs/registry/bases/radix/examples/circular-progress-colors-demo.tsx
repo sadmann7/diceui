@@ -2,6 +2,7 @@
 
 import { motion, useInView, useMotionValue, useSpring } from "motion/react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import {
   CircularProgress,
@@ -145,12 +146,12 @@ function AnimatedCircularProgress({
           <CircularProgressRange className={theme.rangeClass} />
         </CircularProgressIndicator>
         <CircularProgressValueText
-          className={cn("font-semibold text-sm", theme.textClass)}
+          className={cn("text-sm font-semibold", theme.textClass)}
         />
       </CircularProgress>
       <div className="flex flex-col items-center gap-1 text-center">
-        <h4 className="font-medium text-sm">{theme.name}</h4>
-        <p className="text-muted-foreground text-xs">
+        <h4 className="text-sm font-medium">{theme.name}</h4>
+        <p className="text-xs text-muted-foreground">
           {displayValue}% complete
         </p>
       </div>

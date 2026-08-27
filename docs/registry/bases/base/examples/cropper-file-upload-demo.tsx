@@ -3,6 +3,7 @@
 import { CropIcon, UploadIcon, XIcon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
+
 import { Button } from "@/registry/bases/base/ui/button";
 import {
   Cropper,
@@ -226,10 +227,10 @@ export default function CropperFileUploadDemo() {
         <div className="flex flex-col items-center gap-2 text-center">
           <UploadIcon className="size-8 text-muted-foreground" />
           <div>
-            <p className="font-medium text-sm">
+            <p className="text-sm font-medium">
               Drop images here or click to upload
             </p>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-xs text-muted-foreground">
               PNG, JPG, WebP up to 10MB
             </p>
           </div>
@@ -259,7 +260,6 @@ export default function CropperFileUploadDemo() {
                   ) {
                     const url = URL.createObjectURL(fileWithCrop.cropped);
                     return (
-                      // biome-ignore lint/performance/noImgElement: dynamic cropped file URLs from user uploads don't work well with Next.js Image optimization
                       <img
                         src={url}
                         alt={originalFile.name}
@@ -351,7 +351,7 @@ export default function CropperFileUploadDemo() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="size-8 hover:bg-destructive/30 hover:text-destructive-foreground dark:hover:bg-destructive dark:hover:text-destructive-foreground"
+                      className="hover:text-destructive-foreground dark:hover:text-destructive-foreground size-8 hover:bg-destructive/30 dark:hover:bg-destructive"
                       {...props}
                     >
                       <XIcon />

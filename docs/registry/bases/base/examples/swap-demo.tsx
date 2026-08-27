@@ -1,11 +1,12 @@
 import { MoonIcon, SunIcon, Volume2Icon, VolumeXIcon } from "lucide-react";
+
 import { Swap, SwapOff, SwapOn } from "@/registry/bases/base/ui/swap";
 
 export default function SwapDemo() {
   return (
     <div className="flex flex-col items-center gap-8">
       <div className="flex flex-col items-center gap-2">
-        <span className="text-muted-foreground text-sm">Click to swap</span>
+        <span className="text-sm text-muted-foreground">Click to swap</span>
         <Swap className="size-12 rounded-lg border bg-muted/50 hover:bg-muted">
           <SwapOn>
             <SunIcon className="size-6" />
@@ -17,7 +18,7 @@ export default function SwapDemo() {
       </div>
 
       <div className="flex flex-col items-center gap-2">
-        <span className="text-muted-foreground text-sm">Hover to swap</span>
+        <span className="text-sm text-muted-foreground">Hover to swap</span>
         <Swap
           activationMode="hover"
           className="size-12 rounded-lg border bg-muted/50"

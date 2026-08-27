@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Tour,
@@ -45,7 +46,7 @@ export default function TourControlledDemo() {
   return (
     <div className="flex min-h-[400px] flex-col items-center justify-center gap-8 p-8">
       <div className="flex flex-col items-center gap-4">
-        <h1 id="controlled-title" className="font-bold text-2xl">
+        <h1 id="controlled-title" className="text-2xl font-bold">
           Controlled Tour
         </h1>
         <div className="flex items-center gap-2">
@@ -75,7 +76,7 @@ export default function TourControlledDemo() {
             className="rounded-lg border p-6 text-center"
           >
             <h3 className="font-semibold">Step 1</h3>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               First step in our controlled tour
             </p>
           </div>
@@ -84,7 +85,7 @@ export default function TourControlledDemo() {
             className="rounded-lg border p-6 text-center"
           >
             <h3 className="font-semibold">Step 2</h3>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               Second step with external controls
             </p>
           </div>
@@ -92,10 +93,10 @@ export default function TourControlledDemo() {
         {open && value >= 2 && (
           <div
             id="controlled-step-3"
-            className="fade-in slide-in-from-bottom-4 animate-in rounded-lg border border-primary/50 bg-primary/5 p-6 text-center duration-300"
+            className="animate-in rounded-lg border border-primary/50 bg-primary/5 p-6 text-center duration-300 fade-in slide-in-from-bottom-4"
           >
             <h3 className="font-semibold">Step 3</h3>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               Dynamic step that appears after step 2
             </p>
           </div>

@@ -13,6 +13,7 @@ import {
   VisuallyHiddenInput,
 } from "@diceui/shared";
 import * as React from "react";
+
 import type { TagsInputInput } from "./tags-input-input";
 
 type InputValue = string;
@@ -53,13 +54,12 @@ interface TagsInputContextValue<T = InputValue> {
 }
 
 const [TagsInputProvider, useTagsInput] =
-  createContext<TagsInputContextValue<InputValue>>(ROOT_NAME);
+  createContext<TagsInputContextValue>(ROOT_NAME);
 
-interface TagsInputRootProps<T = InputValue>
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof Primitive.div>,
-    "value" | "defaultValue" | "onValueChange" | "onInvalid" | "children"
-  > {
+interface TagsInputRootProps<T = InputValue> extends Omit<
+  React.ComponentPropsWithoutRef<typeof Primitive.div>,
+  "value" | "defaultValue" | "onValueChange" | "onInvalid" | "children"
+> {
   /** Controlled array of tag values. */
   value?: T[];
 
@@ -164,148 +164,108 @@ interface TagsInputRootProps<T = InputValue>
   id?: string;
 }
 
-const TagsInputRoot = React.forwardRef<
-  CollectionElement,
-  TagsInputRootProps<InputValue>
->((props, ref) => {
-  const {
-    value: valueProp,
-    defaultValue,
-    onValueChange,
-    onValidate,
-    onInvalid,
-    displayValue = (value: InputValue) => value.toString(),
-    addOnPaste = false,
-    addOnTab = false,
-    disabled = false,
-    editable = false,
-    loop = false,
-    blurBehavior,
-    delimiter = ",",
-    max = Number.POSITIVE_INFINITY,
-    readOnly = false,
-    required = false,
-    name,
-    children,
-    dir: dirProp,
-    id: idProp,
-    ...rootProps
-  } = props;
+const TagsInputRoot = React.forwardRef<CollectionElement, TagsInputRootProps>(
+  (props, ref) => {
+    const {
+      value: valueProp,
+      defaultValue,
+      onValueChange,
+      onValidate,
+      onInvalid,
+      displayValue = (value: InputValue) => value.toString(),
+      addOnPaste = false,
+      addOnTab = false,
+      disabled = false,
+      editable = false,
+      loop = false,
+      blurBehavior,
+      delimiter = ",",
+      max = Number.POSITIVE_INFINITY,
+      readOnly = false,
+      required = false,
+      name,
+      children,
+      dir: dirProp,
+      id: idProp,
+      ...rootProps
+    } = props;
 
-  const [value = [], setValue] = useControllableState({
-    prop: valueProp,
-    defaultProp: defaultValue,
-    onChange: onValueChange,
-  });
-  const [highlightedIndex, setHighlightedIndex] = React.useState<number | null>(
-    null,
-  );
-  const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
-  const [isInvalidInput, setIsInvalidInput] = React.useState(false);
-  const collectionRef = React.useRef<CollectionElement>(null);
-  const inputRef = React.useRef<InputElement>(null);
+    const [value = [], setValue] = useControllableState({
+      prop: valueProp,
+      defaultProp: defaultValue,
+      onChange: onValueChange,
+    });
+    const [highlightedIndex, setHighlightedIndex] = React.useState<
+      number | null
+    >(null);
+    const [editingIndex, setEditingIndex] = React.useState<number | null>(null);
+    const [isInvalidInput, setIsInvalidInput] = React.useState(false);
+    const collectionRef = React.useRef<CollectionElement>(null);
+    const inputRef = React.useRef<InputElement>(null);
 
-  const id = useId(idProp);
-  const inputId = useId();
-  const labelId = useId();
+    const id = useId(idProp);
+    const inputId = useId();
+    const labelId = useId();
 
-  const dir = useDirection(dirProp);
-  const { getEnabledItems } = useItemCollection<CollectionElement>({
-    ref: collectionRef,
-  });
-  const { isFormControl, onTriggerChange } =
-    useFormControl<CollectionElement>();
-  const composedRef = useComposedRefs(ref, collectionRef, (node) =>
-    onTriggerChange(node),
-  );
+    const dir = useDirection(dirProp);
+    const { getEnabledItems } = useItemCollection<CollectionElement>({
+      ref: collectionRef,
+    });
+    const { isFormControl, onTriggerChange } =
+      useFormControl<CollectionElement>();
+    const composedRef = useComposedRefs(ref, collectionRef, (node) =>
+      onTriggerChange(node),
+    );
 
-  const onItemAdd = React.useCallback(
-    (textValue: string, options?: { viaPaste?: boolean }) => {
-      if (disabled || readOnly) return false;
+    const onItemAdd = React.useCallback(
+      (textValue: string, options?: { viaPaste?: boolean }) => {
+        if (disabled || readOnly) return false;
 
-      if (addOnPaste && options?.viaPaste) {
-        const splitValues = textValue
-          .split(delimiter)
-          .map((v) => v.trim())
-          .filter(Boolean);
+        if (addOnPaste && options?.viaPaste) {
+          const splitValues = textValue
+            .split(delimiter)
+            .map((v) => v.trim())
+            .filter(Boolean);
 
-        if (value.length + splitValues.length > max && max > 0) {
+          if (value.length + splitValues.length > max && max > 0) {
+            onInvalid?.(textValue);
+            return false;
+          }
+
+          let newValues: InputValue[] = [];
+          for (const v of splitValues) {
+            if (value.includes(v)) {
+              onInvalid?.(v);
+            }
+          }
+          newValues = [
+            ...new Set(splitValues.filter((v) => !value.includes(v))),
+          ];
+
+          const validValues = newValues.filter(
+            (v) => !onValidate || onValidate(v),
+          );
+
+          if (validValues.length === 0) return false;
+
+          setValue([...value, ...validValues]);
+          return true;
+        }
+
+        if (value.length >= max && max > 0) {
           onInvalid?.(textValue);
           return false;
         }
 
-        let newValues: InputValue[] = [];
-        for (const v of splitValues) {
-          if (value.includes(v)) {
-            onInvalid?.(v);
-          }
+        const trimmedValue = textValue.trim();
+
+        if (onValidate && !onValidate(trimmedValue)) {
+          setIsInvalidInput(true);
+          onInvalid?.(trimmedValue);
+          return false;
         }
-        newValues = [...new Set(splitValues.filter((v) => !value.includes(v)))];
 
-        const validValues = newValues.filter(
-          (v) => !onValidate || onValidate(v),
-        );
-
-        if (validValues.length === 0) return false;
-
-        setValue([...value, ...validValues]);
-        return true;
-      }
-
-      if (value.length >= max && max > 0) {
-        onInvalid?.(textValue);
-        return false;
-      }
-
-      const trimmedValue = textValue.trim();
-
-      if (onValidate && !onValidate(trimmedValue)) {
-        setIsInvalidInput(true);
-        onInvalid?.(trimmedValue);
-        return false;
-      }
-
-      const exists = value.some((v) => {
-        const valueToCompare = v;
-        return valueToCompare === trimmedValue;
-      });
-
-      if (exists) {
-        setIsInvalidInput(true);
-        onInvalid?.(trimmedValue);
-        return true;
-      }
-
-      const newValue = trimmedValue;
-      const newValues = [...value, newValue];
-      setValue(newValues);
-      setHighlightedIndex(null);
-      setEditingIndex(null);
-      setIsInvalidInput(false);
-      return true;
-    },
-    [
-      value,
-      max,
-      addOnPaste,
-      delimiter,
-      setValue,
-      onInvalid,
-      onValidate,
-      disabled,
-      readOnly,
-    ],
-  );
-
-  const onItemUpdate = React.useCallback(
-    (index: number, newTextValue: string) => {
-      if (disabled || readOnly) return;
-
-      if (index !== -1) {
-        const trimmedValue = newTextValue.trim();
-
-        const exists = value.some((v, i) => {
-          if (i === index) return false;
+        const exists = value.some((v) => {
           const valueToCompare = v;
           return valueToCompare === trimmedValue;
         });
@@ -313,283 +273,332 @@ const TagsInputRoot = React.forwardRef<
         if (exists) {
           setIsInvalidInput(true);
           onInvalid?.(trimmedValue);
-          return;
+          return true;
         }
 
-        if (onValidate && !onValidate(trimmedValue)) {
-          setIsInvalidInput(true);
-          onInvalid?.(trimmedValue);
-          return;
-        }
-
-        const updatedValue = displayValue(trimmedValue);
-        const newValues = [...value];
-        newValues[index] = updatedValue;
-
+        const newValue = trimmedValue;
+        const newValues = [...value, newValue];
         setValue(newValues);
-        setHighlightedIndex(index);
+        setHighlightedIndex(null);
         setEditingIndex(null);
         setIsInvalidInput(false);
+        return true;
+      },
+      [
+        value,
+        max,
+        addOnPaste,
+        delimiter,
+        setValue,
+        onInvalid,
+        onValidate,
+        disabled,
+        readOnly,
+      ],
+    );
 
-        requestAnimationFrame(() => inputRef.current?.focus());
-      }
-    },
-    [value, setValue, displayValue, onInvalid, onValidate, disabled, readOnly],
-  );
+    const onItemUpdate = React.useCallback(
+      (index: number, newTextValue: string) => {
+        if (disabled || readOnly) return;
 
-  const onItemRemove = React.useCallback(
-    (index: number) => {
-      if (disabled || readOnly) return;
+        if (index !== -1) {
+          const trimmedValue = newTextValue.trim();
 
-      if (index !== -1) {
-        const newValues = [...value];
-        newValues.splice(index, 1);
-        setValue(newValues);
-        setHighlightedIndex(null);
-        setEditingIndex(null);
-        inputRef.current?.focus();
-      }
-    },
-    [value, setValue, disabled, readOnly],
-  );
+          const exists = value.some((v, i) => {
+            if (i === index) return false;
+            const valueToCompare = v;
+            return valueToCompare === trimmedValue;
+          });
 
-  const onItemLeave = React.useCallback(() => {
-    setHighlightedIndex(null);
-    setEditingIndex(null);
-    inputRef.current?.focus();
-  }, []);
-
-  const onInputKeydown = React.useCallback(
-    (event: React.KeyboardEvent) => {
-      const target = event.target;
-      if (!(target instanceof HTMLInputElement)) return;
-
-      const isArrowLeft =
-        (event.key === "ArrowLeft" && dir === "ltr") ||
-        (event.key === "ArrowRight" && dir === "rtl");
-      const isArrowRight =
-        (event.key === "ArrowRight" && dir === "ltr") ||
-        (event.key === "ArrowLeft" && dir === "rtl");
-
-      if (target.value && target.selectionStart !== 0) {
-        setHighlightedIndex(null);
-        setEditingIndex(null);
-        return;
-      }
-
-      function findNextEnabledIndex(
-        currentIndex: number | null,
-        direction: "next" | "prev",
-      ): number | null {
-        const collectionElement = collectionRef.current;
-        if (!collectionElement) return null;
-
-        const enabledItems = getEnabledItems();
-        const enabledIndices = enabledItems.map((_, index) => index);
-
-        if (enabledIndices.length === 0) return null;
-
-        if (currentIndex === null) {
-          return direction === "prev"
-            ? (enabledIndices[enabledIndices.length - 1] ?? null)
-            : (enabledIndices[0] ?? null);
-        }
-
-        const currentEnabledIndex = enabledIndices.indexOf(currentIndex);
-        if (direction === "next") {
-          return currentEnabledIndex >= enabledIndices.length - 1
-            ? loop
-              ? (enabledIndices[0] ?? null)
-              : null
-            : (enabledIndices[currentEnabledIndex + 1] ?? null);
-        }
-
-        return currentEnabledIndex <= 0
-          ? loop
-            ? (enabledIndices[enabledIndices.length - 1] ?? null)
-            : null
-          : (enabledIndices[currentEnabledIndex - 1] ?? null);
-      }
-
-      switch (event.key) {
-        case "Delete":
-        case "Backspace": {
-          if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
-
-          if (highlightedIndex !== null) {
-            const newIndex = findNextEnabledIndex(highlightedIndex, "prev");
-            onItemRemove(highlightedIndex);
-            setHighlightedIndex(newIndex);
-            event.preventDefault();
-          } else if (event.key === "Backspace" && value.length > 0) {
-            const lastIndex = findNextEnabledIndex(null, "prev");
-            setHighlightedIndex(lastIndex);
-            event.preventDefault();
-          }
-          break;
-        }
-        case "Enter": {
-          if (highlightedIndex !== null && editable && !disabled) {
-            setEditingIndex(highlightedIndex);
-            event.preventDefault();
+          if (exists) {
+            setIsInvalidInput(true);
+            onInvalid?.(trimmedValue);
             return;
           }
-          break;
-        }
-        case "ArrowLeft":
-        case "ArrowRight": {
-          if (
-            target.selectionStart === 0 &&
-            isArrowLeft &&
-            highlightedIndex === null &&
-            value.length > 0
-          ) {
-            const lastIndex = findNextEnabledIndex(null, "prev");
-            setHighlightedIndex(lastIndex);
-            event.preventDefault();
-          } else if (highlightedIndex !== null) {
-            const nextIndex = findNextEnabledIndex(
-              highlightedIndex,
-              isArrowLeft ? "prev" : "next",
-            );
-            if (nextIndex !== null) {
-              setHighlightedIndex(nextIndex);
-              event.preventDefault();
-            } else if (isArrowRight) {
-              setHighlightedIndex(null);
-              requestAnimationFrame(() => target.setSelectionRange(0, 0));
-            }
-          }
-          break;
-        }
-        case "Home": {
-          if (highlightedIndex !== null) {
-            const firstIndex = findNextEnabledIndex(null, "next");
-            setHighlightedIndex(firstIndex);
-            event.preventDefault();
-          }
-          break;
-        }
-        case "End": {
-          if (highlightedIndex !== null) {
-            const lastIndex = findNextEnabledIndex(null, "prev");
-            setHighlightedIndex(lastIndex);
-            event.preventDefault();
-          }
-          break;
-        }
-        case "Escape": {
-          if (highlightedIndex !== null) setHighlightedIndex(null);
-          if (editingIndex !== null) setEditingIndex(null);
-          requestAnimationFrame(() => target.setSelectionRange(0, 0));
-          break;
-        }
-      }
-    },
-    [
-      dir,
-      editingIndex,
-      highlightedIndex,
-      value,
-      onItemRemove,
-      getEnabledItems,
-      editable,
-      disabled,
-      loop,
-    ],
-  );
 
-  const getIsClickedInEmptyRoot = React.useCallback((target: HTMLElement) => {
-    return (
-      collectionRef.current?.contains(target) &&
-      !target.hasAttribute(DATA_ITEM_ATTR) &&
-      target.tagName !== "INPUT"
+          if (onValidate && !onValidate(trimmedValue)) {
+            setIsInvalidInput(true);
+            onInvalid?.(trimmedValue);
+            return;
+          }
+
+          const updatedValue = displayValue(trimmedValue);
+          const newValues = [...value];
+          newValues[index] = updatedValue;
+
+          setValue(newValues);
+          setHighlightedIndex(index);
+          setEditingIndex(null);
+          setIsInvalidInput(false);
+
+          requestAnimationFrame(() => inputRef.current?.focus());
+        }
+      },
+      [
+        value,
+        setValue,
+        displayValue,
+        onInvalid,
+        onValidate,
+        disabled,
+        readOnly,
+      ],
     );
-  }, []);
 
-  return (
-    <TagsInputProvider
-      value={value}
-      onValueChange={setValue}
-      onItemAdd={onItemAdd}
-      onItemRemove={onItemRemove}
-      onItemUpdate={onItemUpdate}
-      onInputKeydown={onInputKeydown}
-      highlightedIndex={highlightedIndex}
-      setHighlightedIndex={setHighlightedIndex}
-      editingIndex={editingIndex}
-      setEditingIndex={setEditingIndex}
-      displayValue={displayValue}
-      onItemLeave={onItemLeave}
-      inputRef={inputRef}
-      isInvalidInput={isInvalidInput}
-      addOnPaste={addOnPaste}
-      addOnTab={addOnTab}
-      disabled={disabled}
-      editable={editable}
-      loop={loop}
-      readOnly={readOnly}
-      blurBehavior={blurBehavior}
-      delimiter={delimiter}
-      max={max}
-      dir={dir}
-      id={id}
-      inputId={inputId}
-      labelId={labelId}
-    >
-      <Primitive.div
-        id={id}
-        data-disabled={disabled ? "" : undefined}
-        data-invalid={isInvalidInput ? "" : undefined}
-        data-readonly={readOnly ? "" : undefined}
+    const onItemRemove = React.useCallback(
+      (index: number) => {
+        if (disabled || readOnly) return;
+
+        if (index !== -1) {
+          const newValues = [...value];
+          newValues.splice(index, 1);
+          setValue(newValues);
+          setHighlightedIndex(null);
+          setEditingIndex(null);
+          inputRef.current?.focus();
+        }
+      },
+      [value, setValue, disabled, readOnly],
+    );
+
+    const onItemLeave = React.useCallback(() => {
+      setHighlightedIndex(null);
+      setEditingIndex(null);
+      inputRef.current?.focus();
+    }, []);
+
+    const onInputKeydown = React.useCallback(
+      (event: React.KeyboardEvent) => {
+        const target = event.target;
+        if (!(target instanceof HTMLInputElement)) return;
+
+        const isArrowLeft =
+          (event.key === "ArrowLeft" && dir === "ltr") ||
+          (event.key === "ArrowRight" && dir === "rtl");
+        const isArrowRight =
+          (event.key === "ArrowRight" && dir === "ltr") ||
+          (event.key === "ArrowLeft" && dir === "rtl");
+
+        if (target.value && target.selectionStart !== 0) {
+          setHighlightedIndex(null);
+          setEditingIndex(null);
+          return;
+        }
+
+        function findNextEnabledIndex(
+          currentIndex: number | null,
+          direction: "next" | "prev",
+        ): number | null {
+          const collectionElement = collectionRef.current;
+          if (!collectionElement) return null;
+
+          const enabledItems = getEnabledItems();
+          const enabledIndices = enabledItems.map((_, index) => index);
+
+          if (enabledIndices.length === 0) return null;
+
+          if (currentIndex === null) {
+            return direction === "prev"
+              ? (enabledIndices[enabledIndices.length - 1] ?? null)
+              : (enabledIndices[0] ?? null);
+          }
+
+          const currentEnabledIndex = enabledIndices.indexOf(currentIndex);
+          if (direction === "next") {
+            return currentEnabledIndex >= enabledIndices.length - 1
+              ? loop
+                ? (enabledIndices[0] ?? null)
+                : null
+              : (enabledIndices[currentEnabledIndex + 1] ?? null);
+          }
+
+          return currentEnabledIndex <= 0
+            ? loop
+              ? (enabledIndices[enabledIndices.length - 1] ?? null)
+              : null
+            : (enabledIndices[currentEnabledIndex - 1] ?? null);
+        }
+
+        switch (event.key) {
+          case "Delete":
+          case "Backspace": {
+            if (target.selectionStart !== 0 || target.selectionEnd !== 0) break;
+
+            if (highlightedIndex !== null) {
+              const newIndex = findNextEnabledIndex(highlightedIndex, "prev");
+              onItemRemove(highlightedIndex);
+              setHighlightedIndex(newIndex);
+              event.preventDefault();
+            } else if (event.key === "Backspace" && value.length > 0) {
+              const lastIndex = findNextEnabledIndex(null, "prev");
+              setHighlightedIndex(lastIndex);
+              event.preventDefault();
+            }
+            break;
+          }
+          case "Enter": {
+            if (highlightedIndex !== null && editable && !disabled) {
+              setEditingIndex(highlightedIndex);
+              event.preventDefault();
+              return;
+            }
+            break;
+          }
+          case "ArrowLeft":
+          case "ArrowRight": {
+            if (
+              target.selectionStart === 0 &&
+              isArrowLeft &&
+              highlightedIndex === null &&
+              value.length > 0
+            ) {
+              const lastIndex = findNextEnabledIndex(null, "prev");
+              setHighlightedIndex(lastIndex);
+              event.preventDefault();
+            } else if (highlightedIndex !== null) {
+              const nextIndex = findNextEnabledIndex(
+                highlightedIndex,
+                isArrowLeft ? "prev" : "next",
+              );
+              if (nextIndex !== null) {
+                setHighlightedIndex(nextIndex);
+                event.preventDefault();
+              } else if (isArrowRight) {
+                setHighlightedIndex(null);
+                requestAnimationFrame(() => target.setSelectionRange(0, 0));
+              }
+            }
+            break;
+          }
+          case "Home": {
+            if (highlightedIndex !== null) {
+              const firstIndex = findNextEnabledIndex(null, "next");
+              setHighlightedIndex(firstIndex);
+              event.preventDefault();
+            }
+            break;
+          }
+          case "End": {
+            if (highlightedIndex !== null) {
+              const lastIndex = findNextEnabledIndex(null, "prev");
+              setHighlightedIndex(lastIndex);
+              event.preventDefault();
+            }
+            break;
+          }
+          case "Escape": {
+            if (highlightedIndex !== null) setHighlightedIndex(null);
+            if (editingIndex !== null) setEditingIndex(null);
+            requestAnimationFrame(() => target.setSelectionRange(0, 0));
+            break;
+          }
+        }
+      },
+      [
+        dir,
+        editingIndex,
+        highlightedIndex,
+        value,
+        onItemRemove,
+        getEnabledItems,
+        editable,
+        disabled,
+        loop,
+      ],
+    );
+
+    const getIsClickedInEmptyRoot = React.useCallback((target: HTMLElement) => {
+      return (
+        collectionRef.current?.contains(target) &&
+        !target.hasAttribute(DATA_ITEM_ATTR) &&
+        target.tagName !== "INPUT"
+      );
+    }, []);
+
+    return (
+      <TagsInputProvider
+        value={value}
+        onValueChange={setValue}
+        onItemAdd={onItemAdd}
+        onItemRemove={onItemRemove}
+        onItemUpdate={onItemUpdate}
+        onInputKeydown={onInputKeydown}
+        highlightedIndex={highlightedIndex}
+        setHighlightedIndex={setHighlightedIndex}
+        editingIndex={editingIndex}
+        setEditingIndex={setEditingIndex}
+        displayValue={displayValue}
+        onItemLeave={onItemLeave}
+        inputRef={inputRef}
+        isInvalidInput={isInvalidInput}
+        addOnPaste={addOnPaste}
+        addOnTab={addOnTab}
+        disabled={disabled}
+        editable={editable}
+        loop={loop}
+        readOnly={readOnly}
+        blurBehavior={blurBehavior}
+        delimiter={delimiter}
+        max={max}
         dir={dir}
-        {...rootProps}
-        ref={composedRef}
-        onClick={composeEventHandlers(rootProps.onClick, (event) => {
-          const target = event.target;
-          if (!(target instanceof HTMLElement)) return;
-
-          if (
-            getIsClickedInEmptyRoot(target) &&
-            document.activeElement !== inputRef.current
-          ) {
-            event.currentTarget.focus();
-            inputRef.current?.focus();
-          }
-        })}
-        onMouseDown={composeEventHandlers(rootProps.onMouseDown, (event) => {
-          const target = event.target;
-          if (!(target instanceof HTMLElement)) return;
-
-          if (getIsClickedInEmptyRoot(target)) {
-            // prevent root from stealing focus from the input
-            event.preventDefault();
-          }
-        })}
-        onBlur={composeEventHandlers(rootProps.onBlur, (event) => {
-          if (
-            event.relatedTarget !== inputRef.current &&
-            !collectionRef.current?.contains(event.relatedTarget)
-          ) {
-            requestAnimationFrame(() => setHighlightedIndex(null));
-          }
-        })}
+        id={id}
+        inputId={inputId}
+        labelId={labelId}
       >
-        {typeof children === "function" ? children({ value }) : children}
-        {isFormControl && name && (
-          <VisuallyHiddenInput
-            type="hidden"
-            control={collectionRef.current}
-            name={name}
-            value={value}
-            disabled={disabled}
-            required={required}
-          />
-        )}
-      </Primitive.div>
-    </TagsInputProvider>
-  );
-});
+        <Primitive.div
+          id={id}
+          data-disabled={disabled ? "" : undefined}
+          data-invalid={isInvalidInput ? "" : undefined}
+          data-readonly={readOnly ? "" : undefined}
+          dir={dir}
+          {...rootProps}
+          ref={composedRef}
+          onClick={composeEventHandlers(rootProps.onClick, (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) return;
+
+            if (
+              getIsClickedInEmptyRoot(target) &&
+              document.activeElement !== inputRef.current
+            ) {
+              event.currentTarget.focus();
+              inputRef.current?.focus();
+            }
+          })}
+          onMouseDown={composeEventHandlers(rootProps.onMouseDown, (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) return;
+
+            if (getIsClickedInEmptyRoot(target)) {
+              // prevent root from stealing focus from the input
+              event.preventDefault();
+            }
+          })}
+          onBlur={composeEventHandlers(rootProps.onBlur, (event) => {
+            if (
+              event.relatedTarget !== inputRef.current &&
+              !collectionRef.current?.contains(event.relatedTarget)
+            ) {
+              requestAnimationFrame(() => setHighlightedIndex(null));
+            }
+          })}
+        >
+          {typeof children === "function" ? children({ value }) : children}
+          {isFormControl && name && (
+            <VisuallyHiddenInput
+              type="hidden"
+              control={collectionRef.current}
+              name={name}
+              value={value}
+              disabled={disabled}
+              required={required}
+            />
+          )}
+        </Primitive.div>
+      </TagsInputProvider>
+    );
+  },
+);
 
 TagsInputRoot.displayName = ROOT_NAME;
 

@@ -2,6 +2,7 @@
 
 import { GripVertical } from "lucide-react";
 import * as React from "react";
+
 import { Badge } from "@/registry/bases/radix/ui/badge";
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
@@ -120,8 +121,10 @@ export default function KanbanDynamicOverlayDemo() {
   );
 }
 
-interface TaskCardProps
-  extends Omit<React.ComponentProps<typeof KanbanItem>, "value"> {
+interface TaskCardProps extends Omit<
+  React.ComponentProps<typeof KanbanItem>,
+  "value"
+> {
   task: Task;
 }
 
@@ -131,7 +134,7 @@ function TaskCard({ task, ...props }: TaskCardProps) {
       <div className="rounded-md border bg-card p-3 shadow-xs">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between gap-2">
-            <span className="line-clamp-1 font-medium text-sm">
+            <span className="line-clamp-1 text-sm font-medium">
               {task.title}
             </span>
             <Badge
@@ -147,7 +150,7 @@ function TaskCard({ task, ...props }: TaskCardProps) {
               {task.priority}
             </Badge>
           </div>
-          <div className="flex items-center justify-between text-muted-foreground text-xs">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
             {task.assignee && (
               <div className="flex items-center gap-1">
                 <div className="size-2 rounded-full bg-primary/20" />
@@ -164,8 +167,10 @@ function TaskCard({ task, ...props }: TaskCardProps) {
   );
 }
 
-interface TaskColumnProps
-  extends Omit<React.ComponentProps<typeof KanbanColumn>, "children"> {
+interface TaskColumnProps extends Omit<
+  React.ComponentProps<typeof KanbanColumn>,
+  "children"
+> {
   tasks: Task[];
 }
 
@@ -174,7 +179,7 @@ function TaskColumn({ value, tasks, ...props }: TaskColumnProps) {
     <KanbanColumn value={value} {...props}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="font-semibold text-sm">{COLUMN_TITLES[value]}</span>
+          <span className="text-sm font-semibold">{COLUMN_TITLES[value]}</span>
           <Badge variant="secondary" className="pointer-events-none rounded-sm">
             {tasks.length}
           </Badge>

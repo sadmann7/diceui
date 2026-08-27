@@ -2,6 +2,7 @@
 
 import { Bold, Copy, Italic, Link, Share2 } from "lucide-react";
 import * as React from "react";
+
 import {
   SelectionToolbar,
   SelectionToolbarItem,
@@ -115,14 +116,14 @@ export default function SelectionToolbarDemo() {
         suppressContentEditableWarning
         className="max-w-2xl space-y-4 rounded-lg border bg-card p-8 text-card-foreground outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
       >
-        <h2 className="font-semibold text-2xl">Medium-Style Text Selection</h2>
-        <p className="text-muted-foreground leading-relaxed">
+        <h2 className="text-2xl font-semibold">Medium-Style Text Selection</h2>
+        <p className="leading-relaxed text-muted-foreground">
           Select any text in this area to see the floating toolbar appear. The
           toolbar automatically positions itself above the selection and
           includes common formatting options like bold, italic, and link, as
           well as utility actions like copy and share.
         </p>
-        <p className="text-muted-foreground leading-relaxed">
+        <p className="leading-relaxed text-muted-foreground">
           Try selecting text across multiple lines or near the edges of the
           viewport. The menu will automatically adjust its position to stay
           visible and accessible. This creates a seamless editing experience

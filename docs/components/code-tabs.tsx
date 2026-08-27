@@ -1,10 +1,12 @@
 "use client";
 
 import type * as React from "react";
+
+import type { Tabs } from "@/registry/bases/radix/ui/tabs";
+
 import { MdxTabs } from "@/components/mdx-tabs";
 import { type Config, useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
-import type { Tabs } from "@/registry/bases/radix/ui/tabs";
 
 export function CodeTabs({
   children,

@@ -21,8 +21,8 @@ export default function StatusListDemo() {
           className="flex items-center justify-between rounded-lg border bg-card p-3"
         >
           <div className="flex flex-col gap-0.5">
-            <span className="font-medium text-sm">{service.name}</span>
-            <span className="text-muted-foreground text-xs">
+            <span className="text-sm font-medium">{service.name}</span>
+            <span className="text-xs text-muted-foreground">
               Uptime: {service.uptime}
             </span>
           </div>

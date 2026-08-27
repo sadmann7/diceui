@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
@@ -153,11 +154,10 @@ function useSliderContext(consumerName: string) {
   return context;
 }
 
-interface AngleSliderProps
-  extends Omit<
-    React.ComponentProps<"div"> & useRender.ComponentProps<"div">,
-    "defaultValue"
-  > {
+interface AngleSliderProps extends Omit<
+  React.ComponentProps<"div"> & useRender.ComponentProps<"div">,
+  "defaultValue"
+> {
   value?: number[];
   defaultValue?: number[];
   onValueChange?: (value: number[]) => void;
@@ -716,8 +716,7 @@ function AngleSliderRange(props: React.ComponentProps<"path">) {
 }
 
 interface AngleSliderThumbProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   index?: number;
 }
 
@@ -798,7 +797,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
         "aria-orientation": "vertical" as const,
         tabIndex: disabled ? undefined : 0,
         className: cn(
-          "block size-4 shrink-0 rounded-full border border-primary bg-background shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50",
+          "block size-4 shrink-0 rounded-full border border-primary bg-background shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50",
           className,
         ),
         onFocus,
@@ -841,8 +840,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
 }
 
 interface AngleSliderValueProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   unit?: string;
   formatValue?: (value: number | number[]) => string;
 }
@@ -892,7 +890,7 @@ function AngleSliderValue(props: AngleSliderValueProps) {
     props: mergeProps<"div">(
       {
         className: cn(
-          "pointer-events-none flex select-none items-center justify-center font-medium text-foreground text-sm",
+          "pointer-events-none flex items-center justify-center text-sm font-medium text-foreground select-none",
           className,
         ),
         style: {

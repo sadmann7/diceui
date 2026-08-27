@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { toast } from "sonner";
+
 import {
   TagsInput,
   TagsInputInput,
@@ -38,7 +39,7 @@ export default function TagsInputValidationDemo() {
         ))}
         <TagsInputInput placeholder="Add trick..." />
       </TagsInputList>
-      <div className="text-muted-foreground text-sm">
+      <div className="text-sm text-muted-foreground">
         Add up to 6 tricks with at least 3 characters, excluding "ollie".
       </div>
     </TagsInput>

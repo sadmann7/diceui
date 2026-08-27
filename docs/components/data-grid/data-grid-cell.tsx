@@ -2,6 +2,8 @@
 
 import * as React from "react";
 
+import type { DataGridCellProps } from "@/types/data-grid";
+
 import {
   CheckboxCell,
   DateCell,
@@ -13,7 +15,6 @@ import {
   ShortTextCell,
   UrlCell,
 } from "@/components/data-grid/data-grid-cell-variants";
-import type { DataGridCellProps } from "@/types/data-grid";
 
 export const DataGridCell = React.memo(DataGridCellImpl, (prev, next) => {
   // Fast path: check stable primitive props first

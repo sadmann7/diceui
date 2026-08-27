@@ -58,7 +58,7 @@ export default function StepperVerticalDemo() {
         >
           <div className="flex flex-col gap-px">
             <h4 className="font-semibold">{step.title}</h4>
-            <p className="text-muted-foreground text-sm">{step.description}</p>
+            <p className="text-sm text-muted-foreground">{step.description}</p>
           </div>
           <p className="text-sm">
             This is the content for {step.title}. You can add forms,

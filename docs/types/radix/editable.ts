@@ -117,24 +117,19 @@ export interface EditableProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface EditableLabelProps
-  extends EmptyProps<"label">,
-    CompositionProps {}
+  extends EmptyProps<"label">, CompositionProps {}
 
 export interface EditableAreaProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface EditablePreviewProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface EditableInputProps
-  extends EmptyProps<"input">,
-    CompositionProps {}
+  extends EmptyProps<"input">, CompositionProps {}
 
 export interface EditableTriggerProps
-  extends EmptyProps<"button">,
-    CompositionProps {
+  extends EmptyProps<"button">, CompositionProps {
   /**
    * Whether to force mount the trigger.
    * @default false
@@ -143,8 +138,7 @@ export interface EditableTriggerProps
 }
 
 export interface EditableToolbarProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The orientation of the toolbar.
    * @default "horizontal"
@@ -153,9 +147,7 @@ export interface EditableToolbarProps
 }
 
 export interface EditableSubmitProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
+  extends EmptyProps<"button">, CompositionProps {}
 
 export interface EditableCancelProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
+  extends EmptyProps<"button">, CompositionProps {}

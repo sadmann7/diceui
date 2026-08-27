@@ -16,6 +16,7 @@ import rehypeSlug from "rehype-slug";
 import { codeImport } from "remark-code-import";
 import remarkMath from "remark-math";
 import { z } from "zod";
+
 import { rehypeComponent } from "@/lib/rehype-component";
 
 export default defineConfig({

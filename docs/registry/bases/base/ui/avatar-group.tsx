@@ -2,6 +2,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const avatarGroupVariants = cva("flex items-center", {
@@ -44,7 +45,8 @@ const avatarGroupVariants = cva("flex items-center", {
 });
 
 interface AvatarGroupProps
-  extends Omit<React.ComponentProps<"div">, "dir">,
+  extends
+    Omit<React.ComponentProps<"div">, "dir">,
     Omit<VariantProps<typeof avatarGroupVariants>, "dir">,
     useRender.ComponentProps<"div"> {
   dir?: "ltr" | "rtl";
@@ -105,7 +107,7 @@ function AvatarGroup(props: AvatarGroupProps) {
                   renderOverflow ? (
                     renderOverflow(overflowCount)
                   ) : (
-                    <div className="inline-flex size-full items-center justify-center rounded-full bg-muted font-medium text-muted-foreground text-xs">
+                    <div className="inline-flex size-full items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
                       +{overflowCount}
                     </div>
                   )
@@ -132,7 +134,8 @@ function AvatarGroup(props: AvatarGroupProps) {
 }
 
 interface AvatarGroupItemProps
-  extends Omit<React.ComponentProps<"div">, "dir">,
+  extends
+    Omit<React.ComponentProps<"div">, "dir">,
     VariantProps<typeof avatarGroupVariants> {
   child: React.ReactNode;
   index: number;

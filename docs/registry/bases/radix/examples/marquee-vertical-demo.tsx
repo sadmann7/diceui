@@ -66,17 +66,17 @@ export default function MarqueeVerticalDemo() {
           <MarqueeItem key={testimonial.name} asChild>
             <div className="flex w-full flex-col gap-3 rounded-lg border bg-card p-4 text-card-foreground shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-primary font-medium text-primary-foreground text-sm">
+                <div className="flex size-10 items-center justify-center rounded-full bg-primary text-sm font-medium text-primary-foreground">
                   {testimonial.avatar}
                 </div>
                 <div className="flex flex-col">
-                  <div className="font-medium text-sm">{testimonial.name}</div>
-                  <div className="text-muted-foreground text-xs">
+                  <div className="text-sm font-medium">{testimonial.name}</div>
+                  <div className="text-xs text-muted-foreground">
                     {testimonial.role} at {testimonial.company}
                   </div>
                 </div>
               </div>
-              <p className="text-muted-foreground text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 "{testimonial.content}"
               </p>
             </div>

@@ -9,6 +9,7 @@ import {
   ChevronUpIcon,
 } from "lucide-react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
@@ -84,8 +85,7 @@ function useCompareSliderContext(consumerName: string) {
 }
 
 interface CompareSliderProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
@@ -276,7 +276,7 @@ function CompareSlider(props: CompareSliderProps) {
         "aria-valuenow": value,
         tabIndex: 0,
         className: cn(
-          "relative isolate touch-none select-none overflow-hidden outline-none transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+          "relative isolate touch-none overflow-hidden transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
           orientation === "horizontal" ? "w-full" : "h-full",
           className,
         ),
@@ -307,8 +307,7 @@ function CompareSlider(props: CompareSliderProps) {
 }
 
 interface CompareSliderBeforeProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   label?: string;
 }
 
@@ -361,8 +360,7 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
 }
 
 interface CompareSliderAfterProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   label?: string;
 }
 
@@ -415,8 +413,7 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
 }
 
 interface CompareSliderHandleProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function CompareSliderHandle(props: CompareSliderHandleProps) {
   const { className, children, style, render, ref, ...handleProps } = props;
@@ -458,7 +455,7 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
                 )}
               />
               {interaction === "drag" && (
-                <div className="z-50 flex aspect-square size-11 shrink-0 items-center justify-center rounded-full bg-background p-2 [&_svg]:size-4 [&_svg]:select-none [&_svg]:stroke-3 [&_svg]:text-muted-foreground">
+                <div className="z-50 flex aspect-square size-11 shrink-0 items-center justify-center rounded-full bg-background p-2 [&_svg]:size-4 [&_svg]:stroke-3 [&_svg]:text-muted-foreground [&_svg]:select-none">
                   {isVertical ? (
                     <div className="flex flex-col items-center">
                       <ChevronUpIcon />
@@ -486,8 +483,7 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
 }
 
 interface CompareSliderLabelProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   side?: "before" | "after";
 }
 
@@ -502,7 +498,7 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
     props: mergeProps<"div">(
       {
         className: cn(
-          "absolute z-20 rounded-md border border-border bg-background/80 px-3 py-1.5 font-medium text-sm backdrop-blur-sm",
+          "absolute z-20 rounded-md border border-border bg-background/80 px-3 py-1.5 text-sm font-medium backdrop-blur-sm",
           isVertical
             ? side === "before"
               ? "top-2 left-2"

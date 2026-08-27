@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   ColorPicker,
   ColorPickerAlphaSlider,
@@ -25,7 +26,7 @@ export default function ColorPickerInlineDemo() {
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <ColorPickerSwatch className="size-8" />
-          <span className="font-medium text-sm">Selected Color</span>
+          <span className="text-sm font-medium">Selected Color</span>
         </div>
         <div className="flex flex-col gap-4 rounded-lg border p-4">
           <ColorPickerArea />

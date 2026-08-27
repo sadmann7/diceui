@@ -6,6 +6,7 @@ import {
   useId,
 } from "@diceui/shared";
 import * as React from "react";
+
 import { type InputValue, useTagsInput } from "./tags-input-root";
 
 const ITEM_NAME = "TagsInputItem";
@@ -24,8 +25,9 @@ interface TagsInputItemContextValue {
 const [TagsInputItemProvider, useTagsInputItem] =
   createContext<TagsInputItemContextValue>(ITEM_NAME);
 
-interface TagsInputItemProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+interface TagsInputItemProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {
   /** The value of the item. */
   value: InputValue;
 

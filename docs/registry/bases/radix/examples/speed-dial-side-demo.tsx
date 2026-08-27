@@ -2,6 +2,7 @@
 
 import { Copy, Heart, Plus, Share2 } from "lucide-react";
 import { toast } from "sonner";
+
 import {
   SpeedDial,
   SpeedDialAction,
@@ -18,7 +19,7 @@ export default function SpeedDialSideDemo() {
     <div className="grid grid-cols-2 gap-24">
       {sides.map((side) => (
         <div key={side} className="flex flex-col items-center gap-2">
-          <span className="text-muted-foreground text-sm capitalize">
+          <span className="text-sm text-muted-foreground capitalize">
             {side}
           </span>
           <SpeedDial side={side}>

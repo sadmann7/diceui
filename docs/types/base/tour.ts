@@ -1,4 +1,5 @@
 import type * as React from "react";
+
 import type { Button } from "@/registry/bases/base/ui/button";
 import type {
   Align,
@@ -425,18 +426,24 @@ export interface TourStepCounterProps extends RenderProps {
   format?: (current: number, total: number) => string;
 }
 
-export interface TourPrevProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button"> | "onClick"> {
+export interface TourPrevProps extends Omit<
+  ButtonProps,
+  keyof React.ComponentProps<"button"> | "onClick"
+> {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export interface TourNextProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button"> | "onClick"> {
+export interface TourNextProps extends Omit<
+  ButtonProps,
+  keyof React.ComponentProps<"button"> | "onClick"
+> {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export interface TourSkipProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button"> | "onClick"> {
+export interface TourSkipProps extends Omit<
+  ButtonProps,
+  keyof React.ComponentProps<"button"> | "onClick"
+> {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 

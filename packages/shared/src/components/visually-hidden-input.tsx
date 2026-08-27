@@ -1,14 +1,14 @@
 import * as React from "react";
+
 import { useFormReset, usePrevious, useSize } from "../hooks";
 import { visuallyHidden } from "../lib";
 
 type InputValue = string[] | string;
 
-interface VisuallyHiddenInputProps<T = InputValue>
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "value" | "checked" | "onReset"
-  > {
+interface VisuallyHiddenInputProps<T = InputValue> extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "value" | "checked" | "onReset"
+> {
   value?: T;
   checked?: boolean;
   control: HTMLElement | null;

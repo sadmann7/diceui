@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { z } from "zod";
+
 import { Label } from "@/registry/bases/base/ui/label";
 import {
   MaskInput,
@@ -69,7 +70,7 @@ export default function MaskInputCustomPatternDemo() {
           invalid={!isLicenseValid}
           onValidate={setIsLicenseValid}
         />
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Enter license plate (3 letters, 4 numbers)
         </p>
       </div>
@@ -85,7 +86,7 @@ export default function MaskInputCustomPatternDemo() {
           invalid={!isProductCodeValid}
           onValidate={setIsProductCodeValid}
         />
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Enter product code (PRD-XXX-XXX format)
         </p>
       </div>

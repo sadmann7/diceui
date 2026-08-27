@@ -8,8 +8,8 @@ export default function ScrollerHiddenDemo() {
           key={index}
           className="flex h-40 flex-col rounded-md bg-accent p-4"
         >
-          <div className="font-medium text-lg">Card {index + 1}</div>
-          <span className="text-muted-foreground text-sm">
+          <div className="text-lg font-medium">Card {index + 1}</div>
+          <span className="text-sm text-muted-foreground">
             Scroll smoothly without visible scrollbars
           </span>
         </div>

@@ -3,6 +3,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const colorSwatchVariants = cva(
@@ -52,7 +53,8 @@ function getHasAlpha(v: string): boolean {
 }
 
 interface ColorSwatchProps
-  extends Omit<React.ComponentProps<"div">, "children">,
+  extends
+    Omit<React.ComponentProps<"div">, "children">,
     VariantProps<typeof colorSwatchVariants> {
   color?: string;
   asChild?: boolean;

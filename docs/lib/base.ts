@@ -1,6 +1,8 @@
 import type { Node, Root } from "fumadocs-core/page-tree";
-import { source } from "@/lib/source";
+
 import type { RegistryBase } from "@/registry/registry";
+
+import { source } from "@/lib/source";
 
 const pageUrls = new Set(source.getPages().map((p) => p.url));
 

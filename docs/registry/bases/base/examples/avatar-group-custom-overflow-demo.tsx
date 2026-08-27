@@ -52,7 +52,7 @@ export default function AvatarGroupCustomOverflowDemo() {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Default Overflow</h3>
+        <h3 className="text-sm font-medium">Default Overflow</h3>
         <AvatarGroup max={4}>
           {avatars.map((avatar, index) => (
             <Avatar key={index}>
@@ -63,11 +63,11 @@ export default function AvatarGroupCustomOverflowDemo() {
         </AvatarGroup>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Custom Overflow with Badge</h3>
+        <h3 className="text-sm font-medium">Custom Overflow with Badge</h3>
         <AvatarGroup
           max={4}
           renderOverflow={(count) => (
-            <div className="flex size-full items-center justify-center rounded-full border-2 border-primary border-dashed bg-primary/10 font-semibold text-primary text-xs">
+            <div className="flex size-full items-center justify-center rounded-full border-2 border-dashed border-primary bg-primary/10 text-xs font-semibold text-primary">
               {count}+
             </div>
           )}
@@ -81,11 +81,11 @@ export default function AvatarGroupCustomOverflowDemo() {
         </AvatarGroup>
       </div>
       <div className="flex flex-col gap-3">
-        <h3 className="font-medium text-sm">Custom Overflow with Gradient</h3>
+        <h3 className="text-sm font-medium">Custom Overflow with Gradient</h3>
         <AvatarGroup
           max={3}
           renderOverflow={(count) => (
-            <div className="flex size-full items-center justify-center rounded-full bg-linear-to-br from-purple-500 to-pink-500 font-bold text-white text-xs">
+            <div className="flex size-full items-center justify-center rounded-full bg-linear-to-br from-purple-500 to-pink-500 text-xs font-bold text-white">
               +{count}
             </div>
           )}

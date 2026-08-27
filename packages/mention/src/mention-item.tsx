@@ -8,6 +8,7 @@ import {
   useIsomorphicLayoutEffect,
 } from "@diceui/shared";
 import * as React from "react";
+
 import { type ItemData, useMentionContext } from "./mention-root";
 
 const ITEM_NAME = "MentionItem";
@@ -19,8 +20,9 @@ interface MentionItemContext extends ItemData {}
 const [MentionItemProvider, useMentionItemContext] =
   createContext<MentionItemContext>(ITEM_NAME);
 
-interface MentionItemProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+interface MentionItemProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {
   /**
    * The value of the item.
    *

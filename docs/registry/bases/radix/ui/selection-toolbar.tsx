@@ -15,6 +15,7 @@ import {
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
@@ -554,7 +555,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
             className={cn(
               "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
               isPositioned &&
-                "fade-in-0 zoom-in-95 animate-in duration-200 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
+                "animate-in duration-200 fade-in-0 zoom-in-95 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
               "motion-reduce:animate-none motion-reduce:transition-none",
               className,
             )}
@@ -573,8 +574,10 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   );
 }
 
-interface SelectionToolbarItemProps
-  extends Omit<React.ComponentProps<typeof Button>, "onSelect"> {
+interface SelectionToolbarItemProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "onSelect"
+> {
   onSelect?: (text: string, event: Event) => void;
 }
 

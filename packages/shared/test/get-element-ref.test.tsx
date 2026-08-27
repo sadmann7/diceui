@@ -1,5 +1,6 @@
 import * as React from "react";
 import { describe, expect, it } from "vitest";
+
 import { getElementRef } from "../src/lib/get-element-ref";
 
 describe("getElementRef", () => {

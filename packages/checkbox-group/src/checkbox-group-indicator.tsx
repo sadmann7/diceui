@@ -1,11 +1,13 @@
 import { Presence, Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { getDataState, useCheckboxGroupItem } from "./checkbox-group-item";
 
 const INDICATOR_NAME = "CheckboxGroupIndicator";
 
-interface CheckboxGroupIndicatorProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.span> {
+interface CheckboxGroupIndicatorProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.span
+> {
   /** Whether the indicator should always be rendered. */
   forceMount?: boolean;
 }

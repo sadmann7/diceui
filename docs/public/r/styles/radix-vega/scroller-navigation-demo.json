@@ -8,7 +8,7 @@
     {
       "path": "examples/scroller-navigation-demo.tsx",
       "type": "registry:example",
-      "content": "import { Scroller } from \"@/registry/bases/radix/ui/scroller\";\n\nexport default function ScrollerNavigationDemo() {\n  return (\n    <Scroller\n      hideScrollbar\n      withNavigation\n      scrollTriggerMode=\"press\"\n      className=\"flex h-80 w-full flex-col gap-2.5 p-4\"\n    >\n      {Array.from({ length: 10 }).map((_, index) => (\n        <div key={index} className=\"flex flex-col rounded-md bg-accent p-4\">\n          <div className=\"font-medium text-lg\">Card {index + 1}</div>\n          <span className=\"text-muted-foreground text-sm\">\n            Use the navigation arrows to scroll\n          </span>\n        </div>\n      ))}\n    </Scroller>\n  );\n}\n",
+      "content": "import { Scroller } from \"@/registry/bases/radix/ui/scroller\";\n\nexport default function ScrollerNavigationDemo() {\n  return (\n    <Scroller\n      hideScrollbar\n      withNavigation\n      scrollTriggerMode=\"press\"\n      className=\"flex h-80 w-full flex-col gap-2.5 p-4\"\n    >\n      {Array.from({ length: 10 }).map((_, index) => (\n        <div key={index} className=\"flex flex-col rounded-md bg-accent p-4\">\n          <div className=\"text-lg font-medium\">Card {index + 1}</div>\n          <span className=\"text-sm text-muted-foreground\">\n            Use the navigation arrows to scroll\n          </span>\n        </div>\n      ))}\n    </Scroller>\n  );\n}\n",
       "target": ""
     }
   ]

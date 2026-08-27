@@ -1,11 +1,13 @@
 import { Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useCheckboxGroup } from "./checkbox-group-root";
 
 const DESCRIPTION_NAME = "CheckboxGroupDescription";
 
-interface CheckboxGroupDescriptionProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+interface CheckboxGroupDescriptionProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {
   /**
    * Whether the description should be announced by screen readers immediately upon rendering.
    * @default false

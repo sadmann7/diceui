@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 import { Input } from "@/registry/bases/base/ui/input";
@@ -37,8 +38,7 @@ function useSegmentedInputContext(consumerName: string) {
 }
 
 interface SegmentedInputProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   dir?: Direction;
   orientation?: Orientation;
   size?: Size;
@@ -174,7 +174,8 @@ const segmentedInputItemVariants = cva("", {
 });
 
 interface SegmentedInputItemProps
-  extends React.ComponentProps<"input">,
+  extends
+    React.ComponentProps<"input">,
     Omit<VariantProps<typeof segmentedInputItemVariants>, "size">,
     useRender.ComponentProps<"input"> {}
 

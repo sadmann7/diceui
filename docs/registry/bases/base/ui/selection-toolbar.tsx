@@ -16,6 +16,7 @@ import {
 } from "@floating-ui/react-dom";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
@@ -34,8 +35,7 @@ type Align = (typeof ALIGN_OPTIONS)[number];
 type Boundary = Element | null;
 
 interface DivProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function getSideAndAlignFromPlacement(placement: Placement) {
   const [side, align = "center"] = placement.split("-");
@@ -98,8 +98,7 @@ function useStore<T>(
 }
 
 interface SelectionToolbarProps
-  extends Omit<DivProps, "open">,
-    useRender.ComponentProps<"div"> {
+  extends Omit<DivProps, "open">, useRender.ComponentProps<"div"> {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   onSelectionChange?: (text: string) => void;
@@ -530,7 +529,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
         className: cn(
           "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
           isPositioned &&
-            "fade-in-0 zoom-in-95 animate-in duration-200 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
+            "animate-in duration-200 fade-in-0 zoom-in-95 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
           "motion-reduce:animate-none motion-reduce:transition-none",
           className,
         ),
@@ -582,11 +581,10 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   );
 }
 
-interface SelectionToolbarItemProps
-  extends Omit<
-    React.ComponentProps<typeof Button>,
-    "onSelect" | "onClick" | "onPointerDown" | "onPointerUp"
-  > {
+interface SelectionToolbarItemProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "onSelect" | "onClick" | "onPointerDown" | "onPointerUp"
+> {
   onSelect?: (text: string, event: Event) => void;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onPointerDown?: (event: React.PointerEvent<HTMLButtonElement>) => void;

@@ -1,4 +1,5 @@
 import MuxVideo from "@mux/mux-video-react";
+
 import {
   MediaPlayer,
   MediaPlayerCaptions,

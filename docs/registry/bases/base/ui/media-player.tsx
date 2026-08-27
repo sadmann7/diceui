@@ -37,6 +37,7 @@ import {
 } from "media-chrome/react/media-store";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
+
 import { cn } from "@/lib/utils";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
@@ -86,8 +87,7 @@ const SPRITE_CONTAINER_WIDTH = 224;
 const SPRITE_CONTAINER_HEIGHT = 128;
 
 interface DivProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 type RootElement = HTMLDivElement;
 
@@ -158,8 +158,10 @@ function useMediaPlayerContext(consumerName: string) {
   return context;
 }
 
-interface MediaPlayerProps
-  extends Omit<DivProps, "onTimeUpdate" | "onVolumeChange"> {
+interface MediaPlayerProps extends Omit<
+  DivProps,
+  "onTimeUpdate" | "onVolumeChange"
+> {
   onPlay?: () => void;
   onPause?: () => void;
   onEnded?: () => void;
@@ -758,7 +760,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
               "dark relative isolate flex size-full flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-disabled:pointer-events-none data-disabled:opacity-50 [&_video]:relative [&_video]:object-contain",
               "in-[:fullscreen]:flex in-[:fullscreen]:h-full in-[:fullscreen]:max-h-screen in-[:fullscreen]:flex-col in-[:fullscreen]:justify-between data-[state=fullscreen]:[&_video]:size-full",
               "**:data-slider:relative [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default",
-              "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]!",
+              "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]!",
               className,
             ),
             children: (
@@ -791,15 +793,15 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
 }
 
 interface MediaPlayerVideoProps
-  extends React.ComponentProps<"video">,
-    useRender.ComponentProps<"video"> {}
+  extends React.ComponentProps<"video">, useRender.ComponentProps<"video"> {}
 
 function MediaPlayerVideo(props: MediaPlayerVideoProps) {
   const { render, ref, ...videoProps } = props;
 
   const context = useMediaPlayerContext("MediaPlayerVideo");
   const dispatch = useMediaDispatch();
-  const mediaRefCallback = useMediaRef();
+  const mediaRefCallback =
+    useMediaRef() as React.RefCallback<HTMLVideoElement | null>;
   const composedRef = useComposedRefs(ref, context.mediaRef, mediaRefCallback);
 
   const onPlayToggle = React.useCallback(
@@ -838,14 +840,14 @@ function MediaPlayerVideo(props: MediaPlayerVideoProps) {
 }
 
 interface MediaPlayerAudioProps
-  extends React.ComponentProps<"audio">,
-    useRender.ComponentProps<"audio"> {}
+  extends React.ComponentProps<"audio">, useRender.ComponentProps<"audio"> {}
 
 function MediaPlayerAudio(props: MediaPlayerAudioProps) {
   const { render, ref, ...audioProps } = props;
 
   const context = useMediaPlayerContext("MediaPlayerAudio");
-  const mediaRefCallback = useMediaRef();
+  const mediaRefCallback =
+    useMediaRef() as React.RefCallback<HTMLAudioElement | null>;
   const composedRef = useComposedRefs(ref, context.mediaRef, mediaRefCallback);
 
   return useRender({
@@ -879,7 +881,7 @@ function MediaPlayerControls(props: DivProps) {
       {
         dir: context.dir,
         className: cn(
-          "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 in-[:fullscreen]:px-6 px-4 in-[:fullscreen]:py-4 py-3 opacity-0 transition-opacity duration-200 data-visible:pointer-events-auto data-visible:opacity-100",
+          "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-200 in-[:fullscreen]:px-6 in-[:fullscreen]:py-4 data-visible:pointer-events-auto data-visible:opacity-100",
           className,
         ),
       },
@@ -947,7 +949,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
         role: "status",
         "aria-live": "polite" as const,
         className: cn(
-          "fade-in-0 zoom-in-95 pointer-events-none absolute inset-0 z-50 flex animate-in items-center justify-center duration-200",
+          "pointer-events-none absolute inset-0 z-50 flex animate-in items-center justify-center duration-200 fade-in-0 zoom-in-95",
           className,
         ),
         children: children ?? (
@@ -1089,10 +1091,10 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
           <div className="flex max-w-md flex-col items-center gap-4 px-6 py-8 text-center">
             <AlertTriangleIcon className="size-12 text-destructive" />
             <div className="flex flex-col gap-px text-center">
-              <h3 className="font-semibold text-xl tracking-tight">
+              <h3 className="text-xl font-semibold tracking-tight">
                 {errorLabel}
               </h3>
-              <p className="text-balance text-muted-foreground text-sm leading-relaxed">
+              <p className="text-sm leading-relaxed text-balance text-muted-foreground">
                 {errorDescription}
               </p>
             </div>
@@ -1170,7 +1172,7 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
           className,
         ),
         children: (
-          <div className="fade-in-0 zoom-in-95 flex animate-in flex-col items-center gap-3 rounded-lg bg-black/30 px-6 py-4 text-white backdrop-blur-xs duration-200">
+          <div className="flex animate-in flex-col items-center gap-3 rounded-lg bg-black/30 px-6 py-4 text-white backdrop-blur-xs duration-200 fade-in-0 zoom-in-95">
             <div className="flex items-center gap-2">
               {mediaVolumeLevel === "off" || mediaMuted ? (
                 <VolumeXIcon className="size-6" />
@@ -1179,7 +1181,7 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
               ) : (
                 <Volume1Icon className="size-6" />
               )}
-              <span className="font-medium text-sm tabular-nums">
+              <span className="text-sm font-medium tabular-nums">
                 {mediaMuted ? "Muted" : `${volumePercentage}%`}
               </span>
             </div>
@@ -1295,8 +1297,9 @@ function MediaPlayerPlay(props: React.ComponentProps<typeof Button>) {
   );
 }
 
-interface MediaPlayerSeekBackwardProps
-  extends React.ComponentProps<typeof Button> {
+interface MediaPlayerSeekBackwardProps extends React.ComponentProps<
+  typeof Button
+> {
   seconds?: number;
 }
 
@@ -1355,8 +1358,9 @@ function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
   );
 }
 
-interface MediaPlayerSeekForwardProps
-  extends React.ComponentProps<typeof Button> {
+interface MediaPlayerSeekForwardProps extends React.ComponentProps<
+  typeof Button
+> {
   seconds?: number;
 }
 
@@ -2075,7 +2079,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         max={seekableEnd}
         step={0.01}
         className={cn(
-          "relative flex w-full touch-none select-none items-center data-disabled:pointer-events-none data-disabled:opacity-50",
+          "relative flex w-full touch-none items-center select-none data-disabled:pointer-events-none data-disabled:opacity-50",
           className,
         )}
         value={[displayValue]}
@@ -2107,7 +2111,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             )}
             {chapterSeparators}
           </SliderPrimitive.Track>
-          <SliderPrimitive.Thumb className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
+          <SliderPrimitive.Thumb className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50" />
         </SliderPrimitive.Control>
       </SliderPrimitive.Root>
       {!withoutTooltip &&
@@ -2117,7 +2121,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           <MediaPlayerPortal>
             <div
               ref={tooltipRef}
-              className="backface-hidden contain-[layout_style] pointer-events-none z-50 [transition:opacity_150ms_ease-in-out]"
+              className="pointer-events-none z-50 contain-[layout_style] [transition:opacity_150ms_ease-in-out] backface-hidden"
               style={{
                 position: "fixed" as const,
                 left: `var(${SEEK_TOOLTIP_X}, 0rem)`,
@@ -2146,7 +2150,6 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                     {thumbnail.coords ? (
                       <div style={spriteStyle} />
                     ) : (
-                      // biome-ignore lint/performance/noImgElement: dynamic thumbnail URLs from media don't work well with Next.js Image optimization
                       <img
                         src={thumbnail.src}
                         alt={`Preview at ${hoverTime}`}
@@ -2158,7 +2161,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 {currentChapterCue && (
                   <div
                     data-slot="media-player-seek-chapter-title"
-                    className="line-clamp-2 max-w-48 text-balance text-center text-xs"
+                    className="line-clamp-2 max-w-48 text-center text-xs text-balance"
                   >
                     {currentChapterCue.text}
                   </div>
@@ -2166,7 +2169,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 <div
                   data-slot="media-player-seek-time"
                   className={cn(
-                    "whitespace-nowrap text-center text-xs tabular-nums",
+                    "text-center text-xs whitespace-nowrap tabular-nums",
                     thumbnail && "pb-1.5",
                     !(thumbnail || currentChapterCue) && "px-2.5 py-1",
                   )}
@@ -2305,7 +2308,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
         max={1}
         step={0.1}
         className={cn(
-          "relative flex touch-none select-none items-center",
+          "relative flex touch-none items-center select-none",
           expandable
             ? "w-0 opacity-0 transition-[width,opacity] duration-200 ease-in-out group-focus-within:w-16 group-focus-within:opacity-100 group-hover:w-16 group-hover:opacity-100"
             : "w-16",
@@ -2320,7 +2323,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
           <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-zinc-500">
             <SliderPrimitive.Indicator className="absolute h-full bg-primary will-change-[width]" />
           </SliderPrimitive.Track>
-          <SliderPrimitive.Thumb className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:outline-hidden focus-visible:ring-4 disabled:pointer-events-none disabled:opacity-50" />
+          <SliderPrimitive.Thumb className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50" />
         </SliderPrimitive.Control>
       </SliderPrimitive.Root>
     </div>
@@ -2328,8 +2331,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
 }
 
 interface MediaPlayerTimeProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   variant?: "progress" | "remaining" | "duration";
 }
 
@@ -2381,8 +2383,8 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
   );
 
   const timeClassName = isSingleValue
-    ? cn("text-foreground/80 text-sm tabular-nums", className)
-    : cn("flex items-center gap-1 text-foreground/80 text-sm", className);
+    ? cn("text-sm text-foreground/80 tabular-nums", className)
+    : cn("flex items-center gap-1 text-sm text-foreground/80", className);
 
   return useRender({
     defaultTagName: "div",
@@ -2400,7 +2402,8 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
 }
 
 interface MediaPlayerPlaybackSpeedProps
-  extends Omit<React.ComponentProps<typeof DropdownMenu>, "dir" | "children">,
+  extends
+    Omit<React.ComponentProps<typeof DropdownMenu>, "dir" | "children">,
     Pick<React.ComponentProps<typeof DropdownMenuContent>, "sideOffset">,
     React.ComponentProps<typeof Button> {
   speeds?: number[];
@@ -2568,8 +2571,9 @@ function MediaPlayerLoop(props: MediaPlayerLoopProps) {
   );
 }
 
-interface MediaPlayerFullscreenProps
-  extends React.ComponentProps<typeof Button> {}
+interface MediaPlayerFullscreenProps extends React.ComponentProps<
+  typeof Button
+> {}
 
 function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
   const { children, className, disabled, ...fullscreenProps } = props;
@@ -2618,8 +2622,10 @@ function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
   );
 }
 
-interface MediaPlayerPiPProps
-  extends Omit<React.ComponentProps<typeof Button>, "children"> {
+interface MediaPlayerPiPProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  "children"
+> {
   children?:
     | React.ReactNode
     | ((isPictureInPicture: boolean) => React.ReactNode);
@@ -3062,7 +3068,8 @@ function MediaPlayerPortal(props: MediaPlayerPortalProps) {
 }
 
 interface MediaPlayerTooltipProps
-  extends Omit<React.ComponentProps<typeof Tooltip>, "children">,
+  extends
+    Omit<React.ComponentProps<typeof Tooltip>, "children">,
     Pick<React.ComponentProps<typeof TooltipContent>, "sideOffset">,
     Pick<React.ComponentProps<typeof TooltipProvider>, "delay"> {
   tooltip?: string;
@@ -3106,7 +3113,7 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
               {shortcut.map((shortcutKey) => (
                 <kbd
                   key={shortcutKey}
-                  className="select-none rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs"
+                  className="rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs select-none"
                 >
                   <abbr title={shortcutKey} className="no-underline">
                     {shortcutKey}
@@ -3118,7 +3125,7 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
             shortcut && (
               <kbd
                 key={shortcut}
-                className="select-none rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-foreground shadow-xs"
+                className="rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-foreground shadow-xs select-none"
               >
                 <abbr title={shortcut} className="no-underline">
                   {shortcut}

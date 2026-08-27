@@ -50,10 +50,10 @@ function getTricks(): SkateboardTrick[] {
 function TrickCard({ trick }: { trick: SkateboardTrick }) {
   return (
     <div className="flex flex-col gap-2 rounded-md border bg-card p-4 text-card-foreground shadow-xs">
-      <div className="font-medium text-sm leading-tight sm:text-base">
+      <div className="text-sm leading-tight font-medium sm:text-base">
         {trick.title}
       </div>
-      <span className="text-muted-foreground text-sm">{trick.description}</span>
+      <span className="text-sm text-muted-foreground">{trick.description}</span>
     </div>
   );
 }

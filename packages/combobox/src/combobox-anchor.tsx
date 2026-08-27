@@ -4,14 +4,16 @@ import {
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxContext } from "./combobox-root";
 
 const ANCHOR_NAME = "ComboboxAnchor";
 
 type AnchorElement = React.ElementRef<typeof Primitive.div>;
 
-interface ComboboxAnchorProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+interface ComboboxAnchorProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {
   /**
    * Whether the combobox input should be focused when the anchor is clicked.
    * @default false

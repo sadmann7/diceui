@@ -68,8 +68,7 @@ export interface MarqueeProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface MarqueeContentProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface MarqueeItemProps extends EmptyProps<"div">, CompositionProps {}
 

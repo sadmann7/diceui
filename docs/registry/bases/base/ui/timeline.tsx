@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva } from "class-variance-authority";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
@@ -145,8 +146,7 @@ const timelineVariants = cva(
 );
 
 interface TimelineProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   dir?: Direction;
   orientation?: Orientation;
   variant?: Variant;
@@ -322,8 +322,7 @@ const timelineItemVariants = cva("relative flex", {
 });
 
 interface TimelineItemProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function TimelineItem(props: TimelineItemProps) {
   const { render, className, id, ref, ...itemProps } = props;
@@ -436,8 +435,7 @@ const timelineContentVariants = cva("flex-1", {
 });
 
 interface TimelineContentProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function TimelineContent(props: TimelineContentProps) {
   const { render, className, ...contentProps } = props;
@@ -531,8 +529,7 @@ const timelineDotVariants = cva(
 );
 
 interface TimelineDotProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function TimelineDot(props: TimelineDotProps) {
   const { render, className, ...dotProps } = props;
@@ -627,8 +624,7 @@ const timelineConnectorVariants = cva("absolute z-0", {
 });
 
 interface TimelineConnectorProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   forceMount?: boolean;
 }
 
@@ -680,8 +676,7 @@ function TimelineConnector(props: TimelineConnectorProps) {
 }
 
 interface TimelineHeaderProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function TimelineHeader(props: TimelineHeaderProps) {
   const { render, className, ...headerProps } = props;
@@ -702,8 +697,7 @@ function TimelineHeader(props: TimelineHeaderProps) {
 }
 
 interface TimelineTitleProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function TimelineTitle(props: TimelineTitleProps) {
   const { render, className, ...titleProps } = props;
@@ -712,7 +706,7 @@ function TimelineTitle(props: TimelineTitleProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("font-semibold leading-none", className),
+        className: cn("leading-none font-semibold", className),
       },
       titleProps,
     ),
@@ -724,8 +718,7 @@ function TimelineTitle(props: TimelineTitleProps) {
 }
 
 interface TimelineDescriptionProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {}
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function TimelineDescription(props: TimelineDescriptionProps) {
   const { render, className, ...descriptionProps } = props;
@@ -734,7 +727,7 @@ function TimelineDescription(props: TimelineDescriptionProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("text-muted-foreground text-sm", className),
+        className: cn("text-sm text-muted-foreground", className),
       },
       descriptionProps,
     ),
@@ -746,8 +739,7 @@ function TimelineDescription(props: TimelineDescriptionProps) {
 }
 
 interface TimelineTimeProps
-  extends React.ComponentProps<"time">,
-    useRender.ComponentProps<"time"> {}
+  extends React.ComponentProps<"time">, useRender.ComponentProps<"time"> {}
 
 function TimelineTime(props: TimelineTimeProps) {
   const { render, className, ...timeProps } = props;
@@ -756,7 +748,7 @@ function TimelineTime(props: TimelineTimeProps) {
     defaultTagName: "time",
     props: mergeProps<"time">(
       {
-        className: cn("text-muted-foreground text-xs", className),
+        className: cn("text-xs text-muted-foreground", className),
       },
       timeProps,
     ),

@@ -1,8 +1,10 @@
 "use client";
 
 import type { Table } from "@tanstack/react-table";
+
 import { Check, Settings2 } from "lucide-react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
@@ -19,8 +21,9 @@ import {
   PopoverTrigger,
 } from "@/registry/bases/radix/ui/popover";
 
-interface DataTableViewOptionsProps<TData>
-  extends React.ComponentProps<typeof PopoverContent> {
+interface DataTableViewOptionsProps<TData> extends React.ComponentProps<
+  typeof PopoverContent
+> {
   table: Table<TData>;
   disabled?: boolean;
 }

@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import type { ProgressState } from "../types";
 
 function isNumber(value: unknown): value is number {

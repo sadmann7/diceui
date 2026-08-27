@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
 const colorSwatchVariants = cva(
@@ -53,7 +54,8 @@ function getHasAlpha(v: string): boolean {
 }
 
 interface ColorSwatchProps
-  extends Omit<React.ComponentProps<"div">, "children">,
+  extends
+    Omit<React.ComponentProps<"div">, "children">,
     VariantProps<typeof colorSwatchVariants>,
     useRender.ComponentProps<"div"> {
   color?: string;

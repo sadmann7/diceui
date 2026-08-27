@@ -1,11 +1,13 @@
 import { Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxContext } from "./combobox-root";
 
 const LABEL_NAME = "ComboboxLabel";
 
-interface ComboboxLabelProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.label> {}
+interface ComboboxLabelProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.label
+> {}
 
 const ComboboxLabel = React.forwardRef<HTMLLabelElement, ComboboxLabelProps>(
   (props, forwardedRef) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   Sortable,
   SortableContent,
@@ -75,8 +76,10 @@ export default function SortableDynamicOverlayDemo() {
   );
 }
 
-interface TrickCardProps
-  extends Omit<React.ComponentPropsWithoutRef<typeof SortableItem>, "value"> {
+interface TrickCardProps extends Omit<
+  React.ComponentPropsWithoutRef<typeof SortableItem>,
+  "value"
+> {
   trick: Trick;
 }
 
@@ -84,10 +87,10 @@ function TrickCard({ trick, ...props }: TrickCardProps) {
   return (
     <SortableItem value={trick.id} asChild {...props}>
       <div className="flex size-full flex-col gap-1 rounded-md border bg-zinc-100 p-4 text-foreground shadow-sm dark:bg-zinc-900">
-        <div className="font-medium text-sm leading-tight sm:text-base">
+        <div className="text-sm leading-tight font-medium sm:text-base">
           {trick.title}
         </div>
-        <span className="line-clamp-2 hidden text-muted-foreground text-sm sm:inline-block">
+        <span className="line-clamp-2 hidden text-sm text-muted-foreground sm:inline-block">
           {trick.description}
         </span>
       </div>

@@ -1,8 +1,10 @@
 "use client";
 
-import { faker } from "@faker-js/faker";
 import type { ColumnDef } from "@tanstack/react-table";
+
+import { faker } from "@faker-js/faker";
 import * as React from "react";
+
 import { DataGrid } from "@/components/data-grid/data-grid";
 import { DataGridKeyboardShortcuts } from "@/components/data-grid/data-grid-keyboard-shortcuts";
 import { useDataGrid } from "@/hooks/use-data-grid";

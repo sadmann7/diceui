@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { compareNodePosition } from "../lib/node";
 
 type CollectionItem<TElement extends HTMLElement, TData = {}> = {

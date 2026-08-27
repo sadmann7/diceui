@@ -6,6 +6,7 @@ import {
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
+
 import { ITEM_SELECT_EVENT } from "./combobox-item";
 import { useComboboxContext } from "./combobox-root";
 
@@ -13,8 +14,9 @@ const INPUT_NAME = "ComboboxInput";
 
 type InputElement = React.ElementRef<typeof Primitive.input>;
 
-interface ComboboxInputProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.input> {}
+interface ComboboxInputProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.input
+> {}
 
 const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
   (props, forwardedRef) => {

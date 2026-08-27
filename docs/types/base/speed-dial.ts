@@ -74,14 +74,13 @@ export interface SpeedDialProps extends RenderProps {
   delay?: number;
 }
 
-export interface SpeedDialTriggerProps
-  extends Omit<
-    ButtonProps,
-    | keyof React.ComponentProps<"button">
-    | "onClick"
-    | "onMouseEnter"
-    | "onMouseLeave"
-  > {
+export interface SpeedDialTriggerProps extends Omit<
+  ButtonProps,
+  | keyof React.ComponentProps<"button">
+  | "onClick"
+  | "onMouseEnter"
+  | "onMouseLeave"
+> {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onMouseEnter?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   onMouseLeave?: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -136,8 +135,10 @@ export interface SpeedDialContentProps extends RenderProps {
 
 export interface SpeedDialItemProps extends RenderProps {}
 
-export interface SpeedDialActionProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button"> | "onClick"> {
+export interface SpeedDialActionProps extends Omit<
+  ButtonProps,
+  keyof React.ComponentProps<"button"> | "onClick"
+> {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   /**
    * Callback fired when the action is selected.

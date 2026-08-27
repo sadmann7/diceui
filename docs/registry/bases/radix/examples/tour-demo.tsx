@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Tour,
@@ -26,7 +27,7 @@ export default function TourDemo() {
     <div className="flex min-h-[400px] flex-col items-center justify-center gap-8 p-8">
       <div className="flex flex-col items-center gap-4">
         <div className="flex flex-col items-center gap-1">
-          <h1 id="welcome-title" className="font-bold text-2xl">
+          <h1 id="welcome-title" className="text-2xl font-bold">
             Welcome to Your Dashboard
           </h1>
           <p className="text-center text-muted-foreground">
@@ -40,19 +41,19 @@ export default function TourDemo() {
       <div className="grid grid-cols-3 gap-4">
         <div id="feature-1" className="rounded-lg border p-4 text-center">
           <h3 className="font-semibold">Analytics</h3>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Track your performance metrics
           </p>
         </div>
         <div id="feature-2" className="rounded-lg border p-4 text-center">
           <h3 className="font-semibold">Projects</h3>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Manage your active projects
           </p>
         </div>
         <div id="feature-3" className="rounded-lg border p-4 text-center">
           <h3 className="font-semibold">Team</h3>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Collaborate with teammates
           </p>
         </div>

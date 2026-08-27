@@ -13,6 +13,7 @@ import {
 } from "@diceui/shared";
 import { FloatingFocusManager } from "@floating-ui/react";
 import * as React from "react";
+
 import { getDataState, useComboboxContext } from "./combobox-root";
 
 const CONTENT_NAME = "ComboboxContent";
@@ -32,7 +33,8 @@ const [ComboboxContentProvider, useComboboxContentContext] =
   createContext<ComboboxContentContextValue>(CONTENT_NAME);
 
 interface ComboboxContentProps
-  extends AnchorPositionerProps,
+  extends
+    AnchorPositionerProps,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
   /**
    * Event handler called when the `Escape` key is pressed.

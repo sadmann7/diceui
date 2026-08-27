@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   ScrollSpy,
   ScrollSpyLink,
@@ -30,7 +31,7 @@ export default function ScrollSpyDemo() {
         className="overflow-y-auto p-4"
       >
         <ScrollSpySection value="introduction">
-          <h2 className="font-bold text-2xl">Introduction</h2>
+          <h2 className="text-2xl font-bold">Introduction</h2>
           <p className="mt-2 text-muted-foreground">
             ScrollSpy automatically updates navigation links based on scroll
             position.
@@ -38,14 +39,14 @@ export default function ScrollSpyDemo() {
           <div className="mt-4 h-64 rounded-lg bg-accent" />
         </ScrollSpySection>
         <ScrollSpySection value="getting-started">
-          <h2 className="font-bold text-2xl">Getting Started</h2>
+          <h2 className="text-2xl font-bold">Getting Started</h2>
           <p className="mt-2 text-muted-foreground">
             Install the component using the CLI or copy the source code.
           </p>
           <div className="mt-4 h-64 rounded-lg bg-accent" />
         </ScrollSpySection>
         <ScrollSpySection value="usage">
-          <h2 className="font-bold text-2xl">Usage</h2>
+          <h2 className="text-2xl font-bold">Usage</h2>
           <p className="mt-2 text-muted-foreground">
             Use the Provider, Root, Link, and Section components to create your
             scroll spy navigation.
@@ -53,7 +54,7 @@ export default function ScrollSpyDemo() {
           <div className="mt-4 h-64 rounded-lg bg-accent" />
         </ScrollSpySection>
         <ScrollSpySection value="api-reference">
-          <h2 className="font-bold text-2xl">API Reference</h2>
+          <h2 className="text-2xl font-bold">API Reference</h2>
           <p className="mt-2 text-muted-foreground">
             Complete API documentation for all ScrollSpy components.
           </p>

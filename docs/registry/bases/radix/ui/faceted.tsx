@@ -2,6 +2,7 @@
 
 import { Check, ChevronsUpDown } from "lucide-react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { Badge } from "@/registry/bases/radix/ui/badge";
 import {
@@ -29,9 +30,7 @@ interface FacetedContextValue<Multiple extends boolean = boolean> {
   multiple?: Multiple;
 }
 
-const FacetedContext = React.createContext<FacetedContextValue<boolean> | null>(
-  null,
-);
+const FacetedContext = React.createContext<FacetedContextValue | null>(null);
 
 function useFacetedContext(name: string) {
   const context = React.useContext(FacetedContext);
@@ -41,8 +40,9 @@ function useFacetedContext(name: string) {
   return context;
 }
 
-interface FacetedProps<Multiple extends boolean = false>
-  extends React.ComponentProps<typeof Popover> {
+interface FacetedProps<
+  Multiple extends boolean = false,
+> extends React.ComponentProps<typeof Popover> {
   value?: FacetedValue<Multiple>;
   onValueChange?: (value: FacetedValue<Multiple> | undefined) => void;
   children?: React.ReactNode;

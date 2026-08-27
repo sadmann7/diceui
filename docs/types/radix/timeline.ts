@@ -46,28 +46,22 @@ export interface TimelineProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface TimelineItemProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface TimelineHeaderProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface TimelineTitleProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface TimelineDescriptionProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface TimelineContentProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface TimelineTimeProps
-  extends EmptyProps<"time">,
-    CompositionProps {
+  extends EmptyProps<"time">, CompositionProps {
   /**
    * The datetime attribute for the time element.
    *
@@ -81,8 +75,7 @@ export interface TimelineTimeProps
 export interface TimelineDotProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface TimelineConnectorProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * When `true`, forces the connector to be rendered even if it's the last item.
    * Useful for controlling animations with external animation libraries.

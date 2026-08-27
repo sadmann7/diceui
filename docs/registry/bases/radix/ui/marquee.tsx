@@ -6,6 +6,7 @@ import {
   Slot as SlotPrimitive,
 } from "radix-ui";
 import * as React from "react";
+
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
@@ -405,7 +406,7 @@ function Marquee(props: MarqueeProps) {
             paused && "[&_*]:[animation-play-state:paused]",
             pauseOnHover && "group",
             pauseOnKeyboard &&
-              "rounded-md focus-visible:border-ring focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+              "rounded-md focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
             className,
           )}
           style={style}
@@ -653,8 +654,7 @@ const marqueeEdgeVariants = cva("pointer-events-none absolute z-10", {
 });
 
 interface MarqueeEdgeProps
-  extends VariantProps<typeof marqueeEdgeVariants>,
-    DivProps {}
+  extends VariantProps<typeof marqueeEdgeVariants>, DivProps {}
 
 function MarqueeEdge(props: MarqueeEdgeProps) {
   const { side, size, className, asChild, ...edgeProps } = props;

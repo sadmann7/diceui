@@ -1,10 +1,12 @@
 "use client";
 
 import type * as React from "react";
+
+import type { Tabs, TabsList } from "@/registry/bases/radix/ui/tabs";
+
 import { MdxTabs, MdxTabsList } from "@/components/mdx-tabs";
 import { useConfig } from "@/hooks/use-config";
 import { cn } from "@/lib/utils";
-import type { Tabs, TabsList } from "@/registry/bases/radix/ui/tabs";
 
 const PACKAGE_MANAGERS = ["npm", "pnpm", "yarn", "bun"] as const;
 
@@ -32,7 +34,7 @@ export function PackageManagerTabs({
         setConfig({ ...config, packageManager: value as PackageManager })
       }
       className={cn(
-        "not-prose relative mt-4 in-[.fd-steps]:mb-4 w-full gap-0 overflow-hidden rounded-xl border [&_pre]:px-3.5",
+        "not-prose relative mt-4 w-full gap-0 overflow-hidden rounded-xl border in-[.fd-steps]:mb-4 [&_pre]:px-3.5",
         className,
       )}
       {...props}

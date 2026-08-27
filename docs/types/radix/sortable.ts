@@ -6,6 +6,7 @@ import type {
   UniqueIdentifier,
 } from "@dnd-kit/core";
 import type { SortableContextProps } from "@dnd-kit/sortable";
+
 import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface SortableProps<TData> extends DndContextProps {
@@ -152,8 +153,7 @@ export interface SortableProps<TData> extends DndContextProps {
 }
 
 export interface SortableContentProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The strategy to use for sorting the items.
    *
@@ -202,14 +202,12 @@ export interface SortableItemProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface SortableItemHandleProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
+  extends EmptyProps<"button">, CompositionProps {}
 
-export interface SortableOverlayProps
-  extends Omit<
-    React.ComponentProps<typeof DragOverlay>,
-    keyof React.ComponentProps<"div">
-  > {
+export interface SortableOverlayProps extends Omit<
+  React.ComponentProps<typeof DragOverlay>,
+  keyof React.ComponentProps<"div">
+> {
   /**
    * The container to render the overlay in.
    *

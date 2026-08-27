@@ -32,11 +32,10 @@ interface CheckboxGroupContextValue {
 const [CheckboxGroupProvider, useCheckboxGroup] =
   createContext<CheckboxGroupContextValue>(ROOT_NAME);
 
-interface CheckboxGroupRootProps
-  extends Omit<
-    React.ComponentPropsWithoutRef<typeof Primitive.div>,
-    "value" | "defaultValue" | "onChange" | "onInvalid"
-  > {
+interface CheckboxGroupRootProps extends Omit<
+  React.ComponentPropsWithoutRef<typeof Primitive.div>,
+  "value" | "defaultValue" | "onChange" | "onInvalid"
+> {
   /** Controlled value. */
   value?: string[];
 

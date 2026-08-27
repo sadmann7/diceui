@@ -6,6 +6,7 @@ import type {
   UniqueIdentifier,
 } from "@dnd-kit/core";
 import type { SortableContextProps } from "@dnd-kit/sortable";
+
 import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface KanbanProps<T> extends DndContextProps {
@@ -180,8 +181,7 @@ export interface KanbanColumnProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface KanbanColumnHandleProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
+  extends EmptyProps<"button">, CompositionProps {}
 
 export interface KanbanItemProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -207,14 +207,12 @@ export interface KanbanItemProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface KanbanItemHandleProps
-  extends EmptyProps<"button">,
-    CompositionProps {}
+  extends EmptyProps<"button">, CompositionProps {}
 
-export interface KanbanOverlayProps
-  extends Omit<
-    React.ComponentProps<typeof DragOverlay>,
-    keyof React.ComponentProps<"div">
-  > {
+export interface KanbanOverlayProps extends Omit<
+  React.ComponentProps<typeof DragOverlay>,
+  keyof React.ComponentProps<"div">
+> {
   /**
    * The container to render the overlay in.
    *

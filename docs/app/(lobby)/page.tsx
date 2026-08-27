@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import { siteConfig } from "@/config/site";
 import { source } from "@/lib/source";
 import { Button } from "@/registry/bases/radix/ui/button";
@@ -15,13 +16,13 @@ export default function IndexPage() {
     <section className="container flex flex-col items-center justify-center gap-6 pt-6 pb-8 md:py-10">
       <div className="flex max-w-5xl flex-col items-center gap-4">
         <h1
-          className="animate-fade-up text-balance bg-linear-to-br from-foreground/80 to-muted-foreground bg-clip-text text-center font-bold text-4xl/tight text-transparent leading-tight tracking-tighter opacity-0 drop-shadow-xs md:text-5xl/tight"
+          className="animate-fade-up bg-linear-to-br from-foreground/80 to-muted-foreground bg-clip-text text-center text-4xl/tight leading-tight font-bold tracking-tighter text-balance text-transparent opacity-0 drop-shadow-xs md:text-5xl/tight"
           style={{ animationDelay: "0.20s", animationFillMode: "forwards" }}
         >
           Accessible components for shadcn/ui
         </h1>
         <p
-          className="max-w-2xl animate-fade-up text-balance text-center font-light text-lg text-muted-foreground opacity-0 md:text-xl"
+          className="max-w-2xl animate-fade-up text-center text-lg font-light text-balance text-muted-foreground opacity-0 md:text-xl"
           style={{ animationDelay: "0.30s", animationFillMode: "forwards" }}
         >
           {siteConfig.description}

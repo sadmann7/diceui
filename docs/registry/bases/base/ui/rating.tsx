@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { Star } from "lucide-react";
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
@@ -179,8 +180,7 @@ function useFocusContext(consumerName: string) {
 }
 
 interface RatingProps
-  extends React.ComponentProps<"div">,
-    useRender.ComponentProps<"div"> {
+  extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
@@ -534,11 +534,10 @@ function Rating(props: RatingProps) {
   );
 }
 
-interface RatingItemProps
-  extends Omit<
-    React.ComponentProps<"button"> & useRender.ComponentProps<"button">,
-    "children"
-  > {
+interface RatingItemProps extends Omit<
+  React.ComponentProps<"button"> & useRender.ComponentProps<"button">,
+  "children"
+> {
   index?: number;
   children?: React.ReactNode | ((dataState: DataState) => React.ReactNode);
 }
@@ -921,7 +920,7 @@ function RatingItem(props: RatingItemProps) {
         ref: composedRef,
         className: cn(
           "inline-flex items-center justify-center rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
-          "[&_svg:not([class*='size-'])]:size-full [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill)",
+          "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill) [&_svg:not([class*='size-'])]:size-full",
           context.size === "sm"
             ? "size-4"
             : context.size === "lg"

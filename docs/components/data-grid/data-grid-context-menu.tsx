@@ -1,9 +1,13 @@
 "use client";
 
 import type { ColumnDef, TableMeta } from "@tanstack/react-table";
+
 import { CopyIcon, EraserIcon, ScissorsIcon, Trash2Icon } from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
+
+import type { CellUpdate, ContextMenuState } from "@/types/data-grid";
+
 import { useAsRef } from "@/hooks/use-as-ref";
 import { parseCellKey } from "@/lib/data-grid";
 import {
@@ -13,7 +17,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/registry/bases/radix/ui/dropdown-menu";
-import type { CellUpdate, ContextMenuState } from "@/types/data-grid";
 
 interface DataGridContextMenuProps<TData> {
   tableMeta: TableMeta<TData>;
@@ -53,7 +56,8 @@ export function DataGridContextMenu<TData>({
 }
 
 interface ContextMenuProps<TData>
-  extends Pick<
+  extends
+    Pick<
       TableMeta<TData>,
       | "dataGridRef"
       | "onContextMenuOpenChange"

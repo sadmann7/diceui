@@ -1,6 +1,7 @@
+import type * as React from "react";
+
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
-import type * as React from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -21,16 +22,16 @@ const hitboxVariants = cva(
       },
       position: {
         all: "after:[inset:calc(-1*var(--size))]",
-        top: "after:[height:var(--size)] after:[left:0] after:[right:0] after:[top:calc(-1*var(--size))]",
+        top: "after:[top:calc(-1*var(--size))] after:[right:0] after:[left:0] after:[height:var(--size)]",
         bottom:
-          "after:[bottom:calc(-1*var(--size))] after:[height:var(--size)] after:[left:0] after:[right:0]",
-        left: "after:[bottom:0] after:[left:calc(-1*var(--size))] after:[top:0] after:[width:var(--size)]",
+          "after:[right:0] after:[bottom:calc(-1*var(--size))] after:[left:0] after:[height:var(--size)]",
+        left: "after:[top:0] after:[bottom:0] after:[left:calc(-1*var(--size))] after:[width:var(--size)]",
         right:
-          "after:[bottom:0] after:[right:calc(-1*var(--size))] after:[top:0] after:[width:var(--size)]",
+          "after:[top:0] after:[right:calc(-1*var(--size))] after:[bottom:0] after:[width:var(--size)]",
         vertical:
-          "after:[bottom:calc(-1*var(--size))] after:[left:0] after:[right:0] after:[top:calc(-1*var(--size))]",
+          "after:[top:calc(-1*var(--size))] after:[right:0] after:[bottom:calc(-1*var(--size))] after:[left:0]",
         horizontal:
-          "after:[bottom:0] after:[left:calc(-1*var(--size))] after:[right:calc(-1*var(--size))] after:[top:0]",
+          "after:[top:0] after:[right:calc(-1*var(--size))] after:[bottom:0] after:[left:calc(-1*var(--size))]",
       },
       radius: {
         none: "",
@@ -40,7 +41,7 @@ const hitboxVariants = cva(
         full: "after:rounded-full",
       },
       debug: {
-        true: "after:border after:border-red-500 after:border-dashed after:bg-red-500/20",
+        true: "after:border after:border-dashed after:border-red-500 after:bg-red-500/20",
         false: "",
       },
     },
@@ -54,7 +55,8 @@ const hitboxVariants = cva(
 );
 
 interface HitboxProps
-  extends useRender.ComponentProps<"div">,
+  extends
+    useRender.ComponentProps<"div">,
     Omit<VariantProps<typeof hitboxVariants>, "size"> {
   size?: DynamicSize;
 }

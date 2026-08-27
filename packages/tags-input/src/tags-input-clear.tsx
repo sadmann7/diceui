@@ -1,11 +1,13 @@
 import { composeEventHandlers, Presence, Primitive } from "@diceui/shared";
 import * as React from "react";
+
 import { useTagsInput } from "./tags-input-root";
 
 const CLEAR_NAME = "TagsInputClear";
 
-interface TagsInputClearProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {
+interface TagsInputClearProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.button
+> {
   /**
    * Whether the clear button should always be rendered.
    *

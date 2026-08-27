@@ -1,11 +1,13 @@
 import { Primitive, useId } from "@diceui/shared";
 import * as React from "react";
+
 import { useCheckboxGroup } from "./checkbox-group-root";
 
 const LIST_NAME = "CheckboxGroupList";
 
-interface CheckboxGroupListProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {}
+interface CheckboxGroupListProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {}
 
 const CheckboxGroupList = React.forwardRef<
   HTMLDivElement,

@@ -4,6 +4,7 @@ import {
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxBadgeItemContext } from "./combobox-badge-item";
 import { useComboboxContext } from "./combobox-root";
 
@@ -11,8 +12,9 @@ const BADGE_ITEM_DELETE_NAME = "ComboboxBadgeItemDelete";
 
 type BadgeItemDeleteElement = React.ElementRef<typeof Primitive.button>;
 
-interface ComboboxBadgeItemDeleteProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.button> {}
+interface ComboboxBadgeItemDeleteProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.button
+> {}
 
 const ComboboxBadgeItemDelete = React.forwardRef<
   BadgeItemDeleteElement,

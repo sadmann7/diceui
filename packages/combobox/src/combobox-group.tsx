@@ -1,5 +1,6 @@
 import { createContext, Primitive, useId } from "@diceui/shared";
 import * as React from "react";
+
 import { useComboboxContext } from "./combobox-root";
 
 const GROUP_NAME = "ComboboxGroup";
@@ -13,8 +14,9 @@ interface ComboboxGroupContextValue {
 const [ComboboxGroupProvider, useComboboxGroupContext] =
   createContext<ComboboxGroupContextValue>(GROUP_NAME);
 
-interface ComboboxGroupProps
-  extends React.ComponentPropsWithoutRef<typeof Primitive.div> {
+interface ComboboxGroupProps extends React.ComponentPropsWithoutRef<
+  typeof Primitive.div
+> {
   /**
    * Whether to render the group even if it's not visible during filtering.
    * @default false

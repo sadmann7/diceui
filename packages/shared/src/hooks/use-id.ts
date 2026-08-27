@@ -3,6 +3,7 @@
  */
 
 import * as React from "react";
+
 import { useLayoutEffect } from "./use-layout-effect";
 
 // We spaces with `.trim().toString()` to prevent bundlers from trying to `import { useId } from 'react';`
@@ -13,7 +14,7 @@ let count = 0;
 
 function useId(deterministicId?: string): string {
   const [id, setId] = React.useState<string | undefined>(
-    // biome-ignore lint/correctness/useHookAtTopLevel: we want to use the useId hook conditionally
+    // oxlint-disable-next-line react/rules-of-hooks -- we want to use the useId hook conditionally
     typeof useReactId === "function" ? useReactId() : undefined,
   );
   // React versions older than 18 will have client-side ids only.

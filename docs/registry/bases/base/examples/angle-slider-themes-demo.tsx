@@ -122,12 +122,12 @@ function AngleSliderCard({ theme }: AngleSliderCardProps) {
         </AngleSliderTrack>
         <AngleSliderThumb className={theme.thumbClass} />
         <AngleSliderValue
-          className={cn("font-semibold text-sm", theme.textClass)}
+          className={cn("text-sm font-semibold", theme.textClass)}
         />
       </AngleSlider>
       <div className="flex flex-col items-center gap-1 text-center">
-        <h4 className="font-medium text-sm">{theme.name}</h4>
-        <p className="text-muted-foreground text-xs">{theme.value}°</p>
+        <h4 className="text-sm font-medium">{theme.name}</h4>
+        <p className="text-xs text-muted-foreground">{theme.value}°</p>
       </div>
     </div>
   );

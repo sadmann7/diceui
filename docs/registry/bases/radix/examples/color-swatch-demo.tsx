@@ -5,20 +5,20 @@ export default function ColorSwatchDemo() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-3">
         <ColorSwatch color="#3b82f6" />
-        <span className="font-medium text-sm">Primary Blue</span>
+        <span className="text-sm font-medium">Primary Blue</span>
       </div>
       <div className="flex items-center gap-3">
         <ColorSwatch color="#ef4444" size="sm" />
         <ColorSwatch color="#ef4444" size="default" />
         <ColorSwatch color="#ef4444" size="lg" />
-        <span className="font-medium text-sm">Different Sizes</span>
+        <span className="text-sm font-medium">Different Sizes</span>
       </div>
       <div className="flex items-center gap-3">
         <ColorSwatch color="rgba(59, 130, 246, 0.5)" />
-        <span className="font-medium text-sm">Semi-transparent Blue</span>
+        <span className="text-sm font-medium">Semi-transparent Blue</span>
       </div>
       <div className="flex items-center gap-3">
-        <span className="font-medium text-sm">Color Palette</span>
+        <span className="text-sm font-medium">Color Palette</span>
         <div className="flex gap-2">
           <ColorSwatch color="#ef4444" />
           <ColorSwatch color="#f97316" />
@@ -31,7 +31,7 @@ export default function ColorSwatchDemo() {
       </div>
       <div className="flex items-center gap-3">
         <ColorSwatch color="#ef4444" disabled />
-        <span className="font-medium text-sm">Disabled</span>
+        <span className="text-sm font-medium">Disabled</span>
       </div>
     </div>
   );

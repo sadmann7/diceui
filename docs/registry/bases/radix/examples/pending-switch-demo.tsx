@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import { Pending } from "@/registry/bases/radix/components/pending";
 import { Label } from "@/registry/bases/radix/ui/label";
 import { Switch } from "@/registry/bases/radix/ui/switch";
@@ -24,7 +25,7 @@ export default function PendingSwitchDemo() {
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <Label htmlFor="notifications">Email Notifications</Label>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             {isPending
               ? "Saving..."
               : "Receive email about your account activity"}
@@ -43,7 +44,7 @@ export default function PendingSwitchDemo() {
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
           <Label htmlFor="marketing">Marketing Updates</Label>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-sm text-muted-foreground">
             Get tips, updates, and special offers
           </p>
         </div>

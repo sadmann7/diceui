@@ -1,7 +1,10 @@
-import { renderHook } from "@testing-library/react";
 import type * as React from "react";
+
+import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+
 import type { CollectionItem } from "../src/hooks/use-collection";
+
 import { useListHighlighting } from "../src/hooks/use-list-highlighting";
 
 interface TestItemData {

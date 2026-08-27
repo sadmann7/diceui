@@ -118,11 +118,10 @@ export type BannerDescriptionProps = React.ComponentProps<"div">;
 
 export interface BannerActionsProps extends RenderProps {}
 
-export interface BannerCloseProps
-  extends Omit<
-    React.ComponentProps<typeof Button>,
-    keyof React.ComponentProps<"button">
-  > {}
+export interface BannerCloseProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  keyof React.ComponentProps<"button">
+> {}
 
 export interface BannerVariantProps {
   /**

@@ -48,7 +48,7 @@ export default function MasonryLinearDemo() {
           className="flex items-center justify-center rounded-lg border bg-card text-card-foreground shadow-xs"
           style={{ aspectRatio: item.aspectRatio }}
         >
-          <span className="font-medium text-2xl">{item.number}</span>
+          <span className="text-2xl font-medium">{item.number}</span>
         </MasonryItem>
       ))}
     </Masonry>

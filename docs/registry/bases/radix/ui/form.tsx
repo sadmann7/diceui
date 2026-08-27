@@ -1,7 +1,6 @@
 "use client";
 
 import { Slot as SlotPrimitive } from "radix-ui";
-
 import * as React from "react";
 import {
   Controller,
@@ -12,6 +11,7 @@ import {
   useFormContext,
   useFormState,
 } from "react-hook-form";
+
 import { cn } from "@/lib/utils";
 import { Label } from "@/registry/bases/radix/ui/label";
 
@@ -114,9 +114,7 @@ function FormControl({
       data-slot="form-control"
       id={formItemId}
       aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
+        !error ? formDescriptionId : `${formDescriptionId} ${formMessageId}`
       }
       aria-invalid={!!error}
       {...props}
@@ -131,7 +129,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="form-description"
       id={formDescriptionId}
-      className={cn("text-muted-foreground text-sm", className)}
+      className={cn("text-sm text-muted-foreground", className)}
       {...props}
     />
   );
@@ -149,7 +147,7 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
     <p
       data-slot="form-message"
       id={formMessageId}
-      className={cn("text-destructive text-sm", className)}
+      className={cn("text-sm text-destructive", className)}
       {...props}
     >
       {body}

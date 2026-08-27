@@ -38,7 +38,7 @@ function PageHeader({
 }
 
 const headingVariants = cva(
-  "font-bold leading-tight tracking-tighter lg:leading-[1.1]",
+  "leading-tight font-bold tracking-tighter lg:leading-[1.1]",
   {
     variants: {
       size: {
@@ -54,7 +54,8 @@ const headingVariants = cva(
 );
 
 interface PageHeaderHeadingProps
-  extends React.HTMLAttributes<HTMLHeadingElement>,
+  extends
+    React.HTMLAttributes<HTMLHeadingElement>,
     VariantProps<typeof headingVariants> {
   as?: "h1" | "h2" | "h3" | "h4" | "h5" | "h6";
 }
@@ -84,7 +85,8 @@ const descriptionVariants = cva("max-w-2xl text-balance", {
 });
 
 interface PageHeaderDescriptionProps
-  extends React.HTMLAttributes<HTMLParagraphElement>,
+  extends
+    React.HTMLAttributes<HTMLParagraphElement>,
     VariantProps<typeof descriptionVariants> {}
 
 function PageHeaderDescription({

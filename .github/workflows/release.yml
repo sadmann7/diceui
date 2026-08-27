@@ -35,4 +35,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
           # Trusted Publishing (OIDC) is configured - no NPM_TOKEN needed
-       

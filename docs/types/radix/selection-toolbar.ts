@@ -1,9 +1,9 @@
 import type React from "react";
+
 import type { ButtonProps, CompositionProps, EmptyProps } from "@/types";
 
 export interface SelectionToolbarProps
-  extends EmptyProps<"div">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * Whether the toolbar is open.
    * Use this prop to control the component externally.
@@ -163,7 +163,8 @@ export interface SelectionToolbarProps
 }
 
 export interface SelectionToolbarItemProps
-  extends Omit<ButtonProps, keyof React.ComponentProps<"button">>,
+  extends
+    Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
    * Callback fired when the item is selected.
@@ -184,5 +185,4 @@ export interface SelectionToolbarItemProps
 }
 
 export interface SelectionToolbarSeparatorProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}

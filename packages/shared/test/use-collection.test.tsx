@@ -1,6 +1,7 @@
 import { render, renderHook } from "@testing-library/react";
 import * as React from "react";
 import { describe, expect, it } from "vitest";
+
 import { useIsomorphicLayoutEffect } from "../src";
 import { useCollection } from "../src/hooks/use-collection";
 

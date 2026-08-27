@@ -49,9 +49,7 @@ export interface BannersProps {
 }
 
 export interface BannerProps
-  extends EmptyProps<"div">,
-    CompositionProps,
-    BannerVariantProps {
+  extends EmptyProps<"div">, CompositionProps, BannerVariantProps {
   /**
    * Whether the banner is open (controlled).
    *
@@ -114,22 +112,19 @@ export interface BannerProps
 export interface BannerIconProps extends EmptyProps<"div">, CompositionProps {}
 
 export interface BannerContentProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
 export interface BannerTitleProps extends EmptyProps<"div"> {}
 
 export interface BannerDescriptionProps extends EmptyProps<"div"> {}
 
 export interface BannerActionsProps
-  extends EmptyProps<"div">,
-    CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {}
 
-export interface BannerCloseProps
-  extends Omit<
-    React.ComponentProps<typeof Button>,
-    keyof React.ComponentProps<"button">
-  > {}
+export interface BannerCloseProps extends Omit<
+  React.ComponentProps<typeof Button>,
+  keyof React.ComponentProps<"button">
+> {}
 
 export interface BannerVariantProps {
   /**

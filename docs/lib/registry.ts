@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+
 import { DEFAULT_BASE } from "@/lib/constants";
 
 const SOURCE_DIRS = ["ui", "components", "lib", "hooks", "internal"];

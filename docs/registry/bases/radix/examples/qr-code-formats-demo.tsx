@@ -19,7 +19,7 @@ export default function QRCodeFormatsDemo() {
             <Button size="sm">Download PNG</Button>
           </QRCodeDownload>
         </QRCode>
-        <p className="text-muted-foreground text-sm">Rendered as canvas</p>
+        <p className="text-sm text-muted-foreground">Rendered as canvas</p>
       </div>
 
       <div className="flex flex-col items-center gap-2">
@@ -29,7 +29,7 @@ export default function QRCodeFormatsDemo() {
             <Button size="sm">Download SVG</Button>
           </QRCodeDownload>
         </QRCode>
-        <p className="text-muted-foreground text-sm">Rendered as SVG</p>
+        <p className="text-sm text-muted-foreground">Rendered as SVG</p>
       </div>
 
       <div className="flex flex-col items-center gap-2">
@@ -39,7 +39,7 @@ export default function QRCodeFormatsDemo() {
             <Button size="sm">Download PNG</Button>
           </QRCodeDownload>
         </QRCode>
-        <p className="text-muted-foreground text-sm">Rendered as image</p>
+        <p className="text-sm text-muted-foreground">Rendered as image</p>
       </div>
     </div>
   );

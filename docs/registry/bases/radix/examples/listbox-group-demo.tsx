@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+
 import {
   Listbox,
   ListboxGroup,
@@ -44,7 +45,7 @@ export default function ListboxGroupDemo() {
           <ListboxItem key={trick.label} value={trick.label}>
             <div className="flex flex-col items-start">
               <span>{trick.label}</span>
-              <span className="text-muted-foreground text-xs">
+              <span className="text-xs text-muted-foreground">
                 {trick.description}
               </span>
             </div>
@@ -58,7 +59,7 @@ export default function ListboxGroupDemo() {
           <ListboxItem key={trick.label} value={trick.label}>
             <div className="flex flex-col items-start">
               <span>{trick.label}</span>
-              <span className="text-muted-foreground text-xs">
+              <span className="text-xs text-muted-foreground">
                 {trick.description}
               </span>
             </div>
