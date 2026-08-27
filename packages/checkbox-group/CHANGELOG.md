@@ -1,5 +1,13 @@
 # @diceui/checkbox-group
 
+## 0.7.3
+
+### Patch Changes
+
+- 9632d6c: Switch package builds from tsup to tsdown so published ESM/CJS files and type declarations stay in sync. Require React 18+ and emit the automatic JSX runtime.
+- Updated dependencies [9632d6c]
+  - @diceui/shared@0.12.1
+
 ## 0.7.2
 
 ### Patch Changes
