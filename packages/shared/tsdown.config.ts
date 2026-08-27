@@ -1,4 +1,4 @@
-import { defineConfig } from "tsup";
+import { defineConfig } from "tsdown";
 
 export default defineConfig({
   entry: {
@@ -7,7 +7,5 @@ export default defineConfig({
   format: ["esm", "cjs"],
   dts: true,
   outDir: "dist",
-  splitting: true,
-  treeshake: true,
   tsconfig: "tsconfig.json",
 });
