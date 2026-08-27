@@ -24,6 +24,8 @@ Dice UI is organized into multiple packages and documentation:
 
 ## Development Setup
 
+Requires Node.js 22.13+ (24 recommended) and [pnpm](https://pnpm.io) 11.
+
 1. Fork the repository
 
 2. Clone the repository:
