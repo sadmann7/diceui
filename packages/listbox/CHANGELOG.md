@@ -1,5 +1,11 @@
 # @diceui/listbox
 
+## 1.0.0
+
+### Major Changes
+
+- dcb5f57: Publish ESM only. CommonJS `require()` builds are no longer included.
+
 ## 0.2.1
 
 ### Patch Changes

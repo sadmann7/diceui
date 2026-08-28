@@ -1,6 +1,6 @@
 {
   "name": "@diceui/checkbox-group",
-  "version": "0.7.3",
+  "version": "1.0.0",
   "type": "module",
   "publishConfig": {
     "access": "public"
