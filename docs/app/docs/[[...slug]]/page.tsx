@@ -21,30 +21,7 @@ interface DocPageParams {
     slug?: string[];
   }>;
 }
-export async function generateStaticParams() {
-  return source.generateParams();
-}
 
-export async function generateMetadata(props: {
-  params: Promise<{ slug?: string[] }>;
-}): Promise<Metadata> {
-  const params = await props.params;
-  const page = source.getPage(params.slug);
-  if (!page) notFound();
-
-  const image = getPageImage(page).url;
-
-  return {
-    title: page.data.title,
-    description: page.data.description,
-    openGraph: {
-      images: image,
-    },
-    twitter: {
-      images: image,
-    },
-  };
-}
 export default async function DocPage(props: DocPageParams) {
   const params = await props.params;
   const page = source.getPage(params.slug);
@@ -88,4 +65,26 @@ export default async function DocPage(props: DocPageParams) {
       </DocsBody>
     </DocsPage>
   );
+}
+
+export async function generateStaticParams() {
+  return source.generateParams();
+}
+
+export async function generateMetadata(props: {
+  params: Promise<{ slug?: string[] }>;
+}): Promise<Metadata> {
+  const params = await props.params;
+  const page = source.getPage(params.slug);
+  if (!page) notFound();
+
+  const image = getPageImage(page).url;
+
+  return {
+    title: page.data.title,
+    description: page.data.description,
+    openGraph: {
+      images: image,
+    },
+  };
 }

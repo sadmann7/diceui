@@ -11,7 +11,6 @@ export async function GET(
   { params }: { params: Promise<{ slug?: string[] }> },
 ) {
   const { slug } = await params;
-  // The trailing segment is the `content.md` filename, not part of the page slug.
   const page = source.getPage(slug?.slice(0, -1));
   if (!page) notFound();
 
