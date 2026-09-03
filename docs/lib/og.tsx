@@ -3,8 +3,6 @@ export const OG_IMAGE_SIZE = {
   height: 630,
 };
 
-const BRAND_GRADIENT = "linear-gradient(to bottom right, #111827, #000000)";
-
 function LogoMark() {
   return (
     <svg
@@ -36,7 +34,10 @@ export function OgImage({ title, description }: OgImageProps) {
   return (
     <div
       tw="flex h-full w-full flex-col p-16 text-white"
-      style={{ fontFamily: "Geist", background: BRAND_GRADIENT }}
+      style={{
+        fontFamily: "Geist",
+        background: "linear-gradient(to bottom right, #111827, #000000)",
+      }}
     >
       <p tw="m-0 text-[82px] font-semibold">{title}</p>
       <p tw="m-0 mt-4 text-[44px] text-[rgba(240,240,240,0.8)]">
