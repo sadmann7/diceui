@@ -2,6 +2,7 @@ import { loader } from "fumadocs-core/source";
 import { toFumadocsSource } from "fumadocs-mdx/runtime/server";
 
 import { docs, meta } from "@/.source/server";
+import { DOCS_CONTENT_ROUTE, DOCS_IMAGE_ROUTE } from "@/lib/constants";
 
 export const source = loader({
   source: toFumadocsSource(docs, meta),
@@ -36,3 +37,21 @@ export const source = loader({
     }),
   ],
 });
+
+export function getPageImage(page: (typeof source)["$inferPage"]) {
+  const segments = [...page.slugs, "image.png"];
+
+  return {
+    segments,
+    url: `${DOCS_IMAGE_ROUTE}/${segments.join("/")}`,
+  };
+}
+
+export function getPageMarkdownUrl(page: (typeof source)["$inferPage"]) {
+  const segments = [...page.slugs, "content.md"];
+
+  return {
+    segments,
+    url: `${DOCS_CONTENT_ROUTE}/${segments.join("/")}`,
+  };
+}
