@@ -7,10 +7,10 @@ import { Providers } from "@/components/providers";
 import { ReactScan } from "@/components/react-scan";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { siteConfig } from "@/config/site";
-import "@/styles/globals.css";
 import { fontMono, fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/registry/bases/radix/ui/sonner";
+import "@/styles/globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),

@@ -251,7 +251,7 @@ function SortableThumbnailList({ store }: SortableThumbnailListProps) {
         items={orderedIds}
         strategy={verticalListSortingStrategy}
       >
-        <PresentationThumbnailList className="p-2">
+        <PresentationThumbnailList className="p-1.5">
           {() => (
             <>
               {orderedIds.map((slideId) => (

@@ -63,7 +63,7 @@ export default function PresentationDemo() {
       </div>
       <PresentationProvider store={store}>
         <Presentation className="min-h-0 flex-1">
-          <PresentationThumbnailList />
+          <PresentationThumbnailList className="p-1.5" />
           <PresentationContent>
             <PresentationLoading />
             <PresentationError />

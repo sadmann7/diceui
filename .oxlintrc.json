@@ -60,6 +60,16 @@
     "nextjs/no-img-element": "off",
     "nextjs/no-html-link-for-pages": "off",
     "nextjs/no-assign-module-variable": "off",
+    "import/no-unassigned-import": [
+      "warn",
+      {
+        "allow": [
+          "**/*.css",
+          "@testing-library/jest-dom",
+          "@testing-library/jest-dom/**"
+        ]
+      }
+    ],
     "unicorn/no-new-array": "warn",
     "unicorn/no-invalid-remove-event-listener": "warn",
     "unicorn/no-array-sort": "off"
