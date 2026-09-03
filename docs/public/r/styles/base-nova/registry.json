@@ -477,6 +477,23 @@
       ]
     },
     {
+      "name": "presentation",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/presentation.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "button",
+        "@diceui/use-mobile"
+      ],
+      "dependencies": [
+        "@diceui/pptx"
+      ]
+    },
+    {
       "name": "qr-code",
       "type": "registry:ui",
       "files": [
@@ -898,6 +915,22 @@
       ],
       "dependencies": [
         "@base-ui/react"
+      ]
+    },
+    {
+      "name": "presentation-zoom-select",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "components/presentation-zoom-select.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "registryDependencies": [
+        "select"
+      ],
+      "dependencies": [
+        "@diceui/pptx"
       ]
     },
     {

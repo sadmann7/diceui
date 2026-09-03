@@ -1355,6 +1355,44 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "presentation-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/pptx"],
+    registryDependencies: ["presentation", "input"],
+    files: [
+      {
+        path: "examples/presentation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "presentation-editing-demo",
+    type: "registry:example",
+    dependencies: [
+      "@diceui/pptx",
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "lucide-react",
+      "sonner",
+    ],
+    registryDependencies: [
+      "presentation",
+      "presentation-zoom-select",
+      "button",
+      "input",
+      "tooltip",
+    ],
+    files: [
+      {
+        path: "examples/presentation-editing-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "qr-code-demo",
     type: "registry:example",
     registryDependencies: ["qr-code"],

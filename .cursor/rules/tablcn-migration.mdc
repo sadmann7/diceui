@@ -1,10 +1,11 @@
-# Tablcn to DiceUI Migration
+# Tablcn to Dice UI Migration
 
-This rule guides the migration of data-grid and data-table changes from the tablcn upstream repository to the diceui docs.
+This rule guides the migration of data-grid and data-table changes from the tablcn upstream repository to the Dice UI docs.
 
 ## When to Use
 
-Use this rule when PRs are merged into the tablcn repository and need to be synced to diceui. Common scenarios:
+Use this rule when PRs are merged into the tablcn repository and need to be synced to Dice UI. Common scenarios:
+
 - New features added to data-grid or data-table
 - Bug fixes in components
 - New keyboard shortcuts or props added
@@ -14,17 +15,19 @@ Use this rule when PRs are merged into the tablcn repository and need to be sync
 
 ## Data Grid Migration
 
-### 1. Fix Import Paths
+### 1. Fix Data Grid Import Paths
 
 After updating registry files, fix all incorrect import paths:
 
 **Files to check:**
+
 - `docs/lib/data-grid.ts`
 - `docs/hooks/use-data-grid.ts`
 - `docs/hooks/use-data-grid-undo-redo.ts` (if exists)
 - `docs/components/data-grid/*.tsx` (all files)
 
 **Import path transformations:**
+
 ```tsx
 // WRONG - from tablcn registry
 from "@/components/data-grid/data-grid"
@@ -35,6 +38,7 @@ from "@/types/data-grid"    // for type imports
 ```
 
 **Utility functions (go to @/lib/data-grid):**
+
 - `flexRender`, `getCellKey`, `parseCellKey`
 - `getColumnBorderVisibility`, `getColumnPinningStyle`, `getColumnVariant`
 - `getRowHeightValue`, `getLineCount`
@@ -44,13 +48,14 @@ from "@/types/data-grid"    // for type imports
 - `formatFileSize`, `getFileIcon`
 
 **Types (go to @/types/data-grid):**
+
 - `Direction`, `RowHeightValue`, `CellPosition`, `CellRange`
 - `CellOpts`, `CellUpdate`, `CellSelectOption`
 - `SelectionState`, `ContextMenuState`, `PasteDialogState`
 - `NavigationDirection`, `SearchState`, `DataGridCellProps`, `FileCellData`
 - `FilterValue`, `*FilterOperator` types
 
-### 2. Update Documentation
+### 2. Update Data Grid Documentation
 
 Update `docs/content/docs/components/data-grid.mdx`:
 
@@ -61,9 +66,10 @@ Update `docs/content/docs/components/data-grid.mdx`:
 - **Keyboard Interactions:** Add new shortcuts to appropriate category
 - **Features:** Update Core Features, Cell Variants, or Advanced Features
 
-### 3. Update Types
+### 3. Update Data Grid Types
 
 Update `docs/types/docs/data-grid.ts`:
+
 - Add new prop/return interfaces with JSDoc comments
 - Update `DataGridKeyboardShortcutsProps` for new keyboard features
 
@@ -71,9 +77,10 @@ Update `docs/types/docs/data-grid.ts`:
 
 ## Data Table Migration
 
-### 1. Fix Import Paths
+### 1. Fix Data Table Import Paths
 
 **Files to check:**
+
 - `docs/components/data-table/data-table.tsx`
 - `docs/components/data-table/data-table-toolbar.tsx`
 - `docs/lib/data-table.ts`
@@ -81,6 +88,7 @@ Update `docs/types/docs/data-grid.ts`:
 - `docs/hooks/use-data-table.ts`
 
 **Import path transformations:**
+
 ```tsx
 // WRONG - from tablcn registry
 from "@/components/data-table/data-table"
@@ -92,21 +100,24 @@ from "@/types/data-table"    // for type imports
 ```
 
 **Utility functions (go to @/lib/data-table):**
+
 - `getCommonPinningStyles`
 - `getFilterOperators`
 - `getDefaultFilterOperator`
 - Other utility functions
 
 **Config (go to @/config/data-table):**
+
 - `dataTableConfig`
 
 **Types (go to @/types/data-table):**
+
 - `ExtendedColumnFilter`, `ExtendedColumnSort`
 - `FilterOperator`, `FilterVariant`
 - `DataTableConfig`, `ColumnType`
 - Other type definitions
 
-### 2. Update Documentation
+### 2. Update Data Table Documentation
 
 Update `docs/content/docs/components/data-table.mdx`:
 
@@ -116,9 +127,10 @@ Update `docs/content/docs/components/data-table.mdx`:
 - **API Reference:** Add `<AutoTypeTable>` references
 - **Features:** Update feature lists
 
-### 3. Update Types
+### 3. Update Data Table Types
 
 Update `docs/types/docs/data-table.ts`:
+
 - Add new interfaces with JSDoc comments
 - Update existing interfaces when props change
 
@@ -127,17 +139,20 @@ Update `docs/types/docs/data-table.ts`:
 ## Quick Commands
 
 **Find data-grid files with wrong imports:**
+
 ```bash
 grep -r 'from "@/components/data-grid/data-grid"' docs/
 ```
 
 **Find data-table files with wrong imports:**
+
 ```bash
 grep -r 'from "@/components/data-table/data-table"' docs/
 ```
 
 **Data Grid files commonly needing fixes:**
-```
+
+```text
 docs/lib/data-grid.ts
 docs/hooks/use-data-grid.ts
 docs/hooks/use-data-grid-undo-redo.ts
@@ -153,7 +168,8 @@ docs/components/data-grid/data-grid-search.tsx
 ```
 
 **Data Table files commonly needing fixes:**
-```
+
+```text
 docs/lib/data-table.ts
 docs/lib/parsers.ts
 docs/hooks/use-data-table.ts
@@ -175,7 +191,7 @@ docs/components/data-table/data-table-toolbar.tsx
 ### Data Table
 - feat(data-table): add new filter variant (#XXX)
 
-## DiceUI Updates
+## Dice UI Updates
 
 ### Import Path Fixes
 - Fixed imports in data-grid components and hooks

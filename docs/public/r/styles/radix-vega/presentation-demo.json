@@ -1,0 +1,19 @@
+{
+  "name": "presentation-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@diceui/pptx"
+  ],
+  "registryDependencies": [
+    "presentation",
+    "input"
+  ],
+  "files": [
+    {
+      "path": "examples/presentation-demo.tsx",
+      "type": "registry:example",
+      "content": "\"use client\";\n\nimport { useCreatePresentationStore } from \"@diceui/pptx\";\nimport * as React from \"react\";\n\nimport { Input } from \"@/registry/bases/radix/ui/input\";\nimport {\n  Presentation,\n  PresentationContent,\n  PresentationError,\n  PresentationLoading,\n  PresentationProvider,\n  PresentationSelection,\n  PresentationSlide,\n  PresentationThumbnailList,\n  PresentationViewport,\n} from \"@/registry/bases/radix/ui/presentation\";\n\nconst DEMO_DECK_PATH = \"/assets/demo.pptx\";\n\nexport default function PresentationDemo() {\n  const id = React.useId();\n  const store = useCreatePresentationStore();\n\n  React.useEffect(() => {\n    fetch(DEMO_DECK_PATH)\n      .then((res) => {\n        // fetch resolves on 404, so an unchecked body would reach the parser as\n        // an error page rather than a deck.\n        if (!res.ok) throw new Error(`${DEMO_DECK_PATH}: ${res.status}.`);\n        return res.arrayBuffer();\n      })\n      .then((buffer) => store.load(buffer))\n      .catch(() => {\n        // Fail silently to avoid blocking the main thread.\n      });\n    // oxlint-disable-next-line react-hooks/exhaustive-deps -- store is a stable ref, intentionally omitted from deps\n  }, []);\n\n  async function onFileChange(event: React.ChangeEvent<HTMLInputElement>) {\n    const file = event.target.files?.[0];\n    if (!file) return;\n    try {\n      await store.load(file, { readOnly: false });\n    } catch {\n      // Fail silently because `load()` already wrote the failure to `store.error`.\n    }\n  }\n\n  return (\n    <div className=\"flex size-full flex-col overflow-hidden\">\n      <div className=\"flex items-center gap-2 border-b p-1.5\">\n        <label htmlFor={`${id}-file`} className=\"sr-only\">\n          Open .pptx\n        </label>\n        <Input\n          id={`${id}-file`}\n          type=\"file\"\n          accept=\".pptx\"\n          className=\"h-8 max-w-56 py-px text-xs\"\n          onChange={onFileChange}\n        />\n      </div>\n      <PresentationProvider store={store}>\n        <Presentation className=\"min-h-0 flex-1\">\n          <PresentationThumbnailList />\n          <PresentationContent>\n            <PresentationLoading />\n            <PresentationError />\n            <PresentationViewport>\n              <PresentationSlide>\n                <PresentationSelection undoRedoShortcuts />\n              </PresentationSlide>\n            </PresentationViewport>\n          </PresentationContent>\n        </Presentation>\n      </PresentationProvider>\n    </div>\n  );\n}\n",
+      "target": ""
+    }
+  ]
+}

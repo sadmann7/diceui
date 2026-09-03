@@ -5,13 +5,10 @@ import {
   transformerNotationWordHighlight,
 } from "@shikijs/transformers";
 import { remarkGfm, remarkNpm } from "fumadocs-core/mdx-plugins";
+import { pageSchema } from "fumadocs-core/source/schema";
 import { fileGenerator, remarkDocGen } from "fumadocs-docgen";
-import {
-  defineConfig,
-  defineDocs,
-  frontmatterSchema,
-} from "fumadocs-mdx/config";
-import rehypePrettyCode from "rehype-pretty-code";
+import { defineConfig, defineDocs } from "fumadocs-mdx/config";
+import { rehypePrettyCode } from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import { codeImport } from "remark-code-import";
 import remarkMath from "remark-math";
@@ -56,8 +53,8 @@ export default defineConfig({
 export const { docs, meta } = defineDocs({
   dir: "content/docs",
   docs: {
-    schema: frontmatterSchema.extend({
-      preview: z.boolean().optional(),
+    schema: pageSchema.extend({
+      new: z.boolean().optional(),
       base: z.enum(["radix", "base"]).optional(),
       date: z.coerce.string().optional(),
       links: z

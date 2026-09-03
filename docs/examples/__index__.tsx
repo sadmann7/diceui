@@ -1485,6 +1485,32 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "presentation-demo": {
+        name: "presentation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["presentation","input"],
+        files: [{
+          path: "registry/bases/radix/examples/presentation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presentation-editing-demo": {
+        name: "presentation-editing-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["presentation","presentation-zoom-select","button","input","tooltip"],
+        files: [{
+          path: "registry/bases/radix/examples/presentation-editing-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "qr-code-demo": {
         name: "qr-code-demo",
         description: "",
@@ -3911,6 +3937,32 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         registryDependencies: ["phone-input"],
         files: [{
           path: "registry/bases/base/examples/phone-input-custom-countries-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presentation-demo": {
+        name: "presentation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["presentation","input"],
+        files: [{
+          path: "registry/bases/base/examples/presentation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presentation-editing-demo": {
+        name: "presentation-editing-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["presentation","presentation-zoom-select","button","input","tooltip"],
+        files: [{
+          path: "registry/bases/base/examples/presentation-editing-demo.tsx",
           type: "registry:example",
           target: ""
         }],

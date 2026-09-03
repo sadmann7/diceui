@@ -438,6 +438,18 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react", "cmdk"],
   },
   {
+    name: "presentation",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/presentation.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: ["button", "@diceui/use-mobile"],
+    dependencies: ["@diceui/pptx"],
+  },
+  {
     name: "qr-code",
     type: "registry:ui",
     files: [

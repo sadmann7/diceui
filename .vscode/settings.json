@@ -32,9 +32,7 @@
   "tailwindCSS.validate": true,
   "tailwindCSS.lint.cssConflict": "ignore",
   "tailwindCSS.experimental.configFile": {
-    "apps/docs/src/styles/globals.css": ["apps/docs/**"],
-    "apps/video/src/styles/globals.css": ["apps/video/**"],
-    "packages/ui/src/styles/globals.css": ["packages/ui/**"]
+    "docs/styles/globals.css": ["docs/**"]
   },
   "tailwindCSS.classFunctions": ["cn", "cva", "clsx", "twMerge"],
   "css.lint.unknownAtRules": "ignore",

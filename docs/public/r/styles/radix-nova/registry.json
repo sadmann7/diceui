@@ -563,6 +563,23 @@
       ]
     },
     {
+      "name": "presentation",
+      "type": "registry:ui",
+      "dependencies": [
+        "@diceui/pptx"
+      ],
+      "registryDependencies": [
+        "button",
+        "@diceui/use-mobile"
+      ],
+      "files": [
+        {
+          "path": "ui/presentation.tsx",
+          "type": "registry:ui"
+        }
+      ]
+    },
+    {
       "name": "relative-time-card",
       "type": "registry:ui",
       "dependencies": [
@@ -1029,6 +1046,22 @@
           "path": "components/presence.tsx",
           "type": "registry:component"
         }
+      ]
+    },
+    {
+      "name": "presentation-zoom-select",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "components/presentation-zoom-select.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "registryDependencies": [
+        "select"
+      ],
+      "dependencies": [
+        "@diceui/pptx"
       ]
     },
     {

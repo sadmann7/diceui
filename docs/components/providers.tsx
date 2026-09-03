@@ -7,7 +7,9 @@ import { createStore, Provider as JotaiProvider } from "jotai";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { DocSearchDialog } from "@/components/doc-search-dialog";
-import { TooltipProvider } from "@/registry/bases/radix/ui/tooltip";
+import { ThemeShortcut } from "@/components/theme-shortcut";
+import { TooltipProvider as BaseTooltipProvider } from "@/registry/bases/base/ui/tooltip";
+import { TooltipProvider as RadixTooltipProvider } from "@/registry/bases/radix/ui/tooltip";
 
 const store = createStore();
 
@@ -25,7 +27,12 @@ export function Providers({ children, ...props }: ProvidersProps) {
     >
       <NuqsAdapter>
         <JotaiProvider store={store}>
-          <TooltipProvider delayDuration={240}>{children}</TooltipProvider>
+          <RadixTooltipProvider>
+            <BaseTooltipProvider>
+              <ThemeShortcut />
+              {children}
+            </BaseTooltipProvider>
+          </RadixTooltipProvider>
         </JotaiProvider>
       </NuqsAdapter>
     </RootProvider>

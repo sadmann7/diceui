@@ -2,7 +2,6 @@ import { loader } from "fumadocs-core/source";
 import { toFumadocsSource } from "fumadocs-mdx/runtime/server";
 
 import { docs, meta } from "@/.source/server";
-import { Badge } from "@/registry/bases/radix/ui/badge";
 
 export const source = loader({
   source: toFumadocsSource(docs, meta),
@@ -14,19 +13,20 @@ export const source = loader({
           if (!file) return node;
 
           const fileData = this.storage.read(file);
-          const preview =
-            fileData?.data &&
-            "preview" in fileData.data &&
-            fileData.data.preview;
+          const isNew =
+            fileData?.data && "new" in fileData.data && fileData.data.new;
 
-          if (preview) {
+          if (isNew) {
             node.name = (
-              <>
+              <span key={node.url} className="inline-flex items-center gap-2">
                 {node.name}
-                <Badge variant="outline" className="not-prose ml-2 rounded-sm">
-                  Preview
-                </Badge>
-              </>
+                <span
+                  aria-hidden="true"
+                  title="New"
+                  className="size-2 rounded-full bg-blue-500"
+                />
+                <span className="sr-only">New</span>
+              </span>
             );
           }
 

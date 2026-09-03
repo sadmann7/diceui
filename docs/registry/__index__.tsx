@@ -408,6 +408,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "presentation": {
+        name: "presentation",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-mobile"],
+        files: [{
+          path: "registry/bases/radix/ui/presentation.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "relative-time-card": {
         name: "relative-time-card",
         description: "",
@@ -801,6 +814,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/components/presence.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presentation-zoom-select": {
+        name: "presentation-zoom-select",
+        description: "",
+        type: "registry:component",
+        registryDependencies: ["select"],
+        files: [{
+          path: "registry/bases/radix/components/presentation-zoom-select.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -1291,6 +1317,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "presentation": {
+        name: "presentation",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-mobile"],
+        files: [{
+          path: "registry/bases/radix/ui/presentation.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "relative-time-card": {
         name: "relative-time-card",
         description: "",
@@ -1684,6 +1723,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/components/presence.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presentation-zoom-select": {
+        name: "presentation-zoom-select",
+        description: "",
+        type: "registry:component",
+        registryDependencies: ["select"],
+        files: [{
+          path: "registry/bases/radix/components/presentation-zoom-select.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -2089,6 +2141,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "presentation": {
+        name: "presentation",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-mobile"],
+        files: [{
+          path: "registry/bases/base/ui/presentation.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "qr-code": {
         name: "qr-code",
         description: "",
@@ -2430,6 +2495,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/components/presence.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presentation-zoom-select": {
+        name: "presentation-zoom-select",
+        description: "",
+        type: "registry:component",
+        registryDependencies: ["select"],
+        files: [{
+          path: "registry/bases/base/components/presentation-zoom-select.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -2822,6 +2900,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "presentation": {
+        name: "presentation",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["button","@diceui/use-mobile"],
+        files: [{
+          path: "registry/bases/base/ui/presentation.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "qr-code": {
         name: "qr-code",
         description: "",
@@ -3163,6 +3254,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/components/presence.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "presentation-zoom-select": {
+        name: "presentation-zoom-select",
+        description: "",
+        type: "registry:component",
+        registryDependencies: ["select"],
+        files: [{
+          path: "registry/bases/base/components/presentation-zoom-select.tsx",
           type: "registry:component",
           target: ""
         }],

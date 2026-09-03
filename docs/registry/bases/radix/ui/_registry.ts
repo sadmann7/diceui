@@ -517,6 +517,18 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "presentation",
+    type: "registry:ui",
+    dependencies: ["@diceui/pptx"],
+    registryDependencies: ["button", "@diceui/use-mobile"],
+    files: [
+      {
+        path: "ui/presentation.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "relative-time-card",
     type: "registry:ui",
     dependencies: ["radix-ui"],
