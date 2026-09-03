@@ -61,7 +61,7 @@ export default function PresentationDemo() {
           id={`${id}-file`}
           type="file"
           accept=".pptx"
-          className="h-8 max-w-xs cursor-pointer text-xs"
+          className="h-8 max-w-xs text-xs"
           onChange={onFileChange}
         />
       </div>

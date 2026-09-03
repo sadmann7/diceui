@@ -56,7 +56,9 @@ async function main() {
       }
 
       console.log("\n📊 Items by type:");
-      for (const [type, count] of Object.entries(typeCounts).sort()) {
+      for (const [type, count] of Object.entries(typeCounts).sort(([a], [b]) =>
+        a.localeCompare(b),
+      )) {
         console.log(`   - ${type}: ${count}`);
       }
       console.log();
@@ -76,4 +78,7 @@ async function main() {
   console.log("🎉 All registries are valid!");
 }
 
-main();
+main().catch((error: Error) => {
+  console.error("\n❌ Validation failed:", error.message);
+  process.exit(1);
+});

@@ -18,12 +18,14 @@ export const source = loader({
 
           if (isNew) {
             node.name = (
-              <span className="inline-flex items-center gap-2">
+              <span key={node.url} className="inline-flex items-center gap-2">
                 {node.name}
                 <span
-                  className="flex size-2 rounded-full bg-blue-500"
+                  aria-hidden="true"
                   title="New"
+                  className="size-2 rounded-full bg-blue-500"
                 />
+                <span className="sr-only">New</span>
               </span>
             );
           }

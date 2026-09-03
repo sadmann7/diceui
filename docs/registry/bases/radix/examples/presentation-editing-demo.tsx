@@ -122,30 +122,35 @@ function PresentationToolbar() {
       </span>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            aria-label="Undo"
-            variant="ghost"
-            size="icon-sm"
-            className="ml-auto"
-            disabled={!canUndo}
-            onClick={() => undo()}
-          >
-            <Undo2Icon />
-          </Button>
+          <span className="ml-auto inline-block w-fit">
+            <Button
+              aria-label="Undo"
+              variant="ghost"
+              size="icon-sm"
+              disabled={!canUndo}
+              onClick={() => undo()}
+            >
+              <Undo2Icon />
+            </Button>
+          </span>
         </TooltipTrigger>
         <TooltipContent>Undo</TooltipContent>
       </Tooltip>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Button
-            aria-label="Redo"
-            variant="ghost"
-            size="icon-sm"
-            disabled={!canRedo}
-            onClick={() => void redo().catch(() => toast.error("Redo failed"))}
-          >
-            <Redo2Icon />
-          </Button>
+          <span className="inline-block w-fit">
+            <Button
+              aria-label="Redo"
+              variant="ghost"
+              size="icon-sm"
+              disabled={!canRedo}
+              onClick={() =>
+                void redo().catch(() => toast.error("Redo failed"))
+              }
+            >
+              <Redo2Icon />
+            </Button>
+          </span>
         </TooltipTrigger>
         <TooltipContent>Redo</TooltipContent>
       </Tooltip>
