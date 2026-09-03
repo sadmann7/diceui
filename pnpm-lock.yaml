@@ -155,8 +155,8 @@ importers:
         specifier: workspace:*
         version: link:../packages/mention
       '@diceui/pptx':
-        specifier: ^0.1.2
-        version: 0.1.2(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^0.1.3
+        version: 0.1.3(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@diceui/tags-input':
         specifier: workspace:*
         version: link:../packages/tags-input
@@ -809,11 +809,11 @@ packages:
   '@date-fns/tz@1.4.1':
     resolution: {integrity: sha512-P5LUNhtbj6YfI3iJjw5EL9eUAG6OitD0W3fWQcpQjDRc/QIsL0tRNuO1PcDvPccWL1fSTXXdE1ds+l95DV/OFA==}
 
-  '@diceui/pptx-core@0.1.2':
-    resolution: {integrity: sha512-f0nup7CFDxfWXDF4JRYEbWcgeEIrmgiHRd11qTuh7VvH94aZzimix/dc5gSTvL5VdyV0tjXSwUtfXdfpnDB65A==}
+  '@diceui/pptx-core@0.1.3':
+    resolution: {integrity: sha512-/AHk+mf2etFqV4t/DOLkXcRTB4gC6tsBhyqs/oCEkyb9LSFUiA0+2OVJQ2xDMTxIna7Io2dEyhuMZpraz8txLQ==}
 
-  '@diceui/pptx@0.1.2':
-    resolution: {integrity: sha512-BWFw4gvZsGyYMsYaRn97TCGZYma0shogTW28eEYFZjgsffisQSu3rdo7YyUdcRXBGX39pr6iMwtyjV56+7gHOw==}
+  '@diceui/pptx@0.1.3':
+    resolution: {integrity: sha512-4gqzYVPoN2yzI+LNsu/0PHLJ4E3kVVt/bW+2M9RNepIocQ5nsj6+qy7MHNsJs37AhHPs2j0ZR0ICCuOQdZPs3A==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-dom': '*'
@@ -8331,14 +8331,14 @@ snapshots:
 
   '@date-fns/tz@1.4.1': {}
 
-  '@diceui/pptx-core@0.1.2':
+  '@diceui/pptx-core@0.1.3':
     dependencies:
       echarts: 6.1.0
       jszip: 3.10.1
 
-  '@diceui/pptx@0.1.2(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@diceui/pptx@0.1.3(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@diceui/pptx-core': 0.1.2
+      '@diceui/pptx-core': 0.1.3
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
     optionalDependencies:

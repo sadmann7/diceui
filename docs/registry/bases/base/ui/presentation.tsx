@@ -1,9 +1,8 @@
 "use client";
 
-import * as React from "react";
-
 import { Presentation as PresentationPrimitive } from "@diceui/pptx";
 import { PanelLeftIcon } from "lucide-react";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/registry/bases/base/hooks/use-mobile";
@@ -222,7 +221,9 @@ function PresentationThumbnailList({
     }
 
     function onPointerDown(event: PointerEvent) {
-      pendingPointerId = isInside(event.target as Node) ? null : event.pointerId;
+      pendingPointerId = isInside(event.target as Node)
+        ? null
+        : event.pointerId;
     }
 
     function onPointerUp(event: PointerEvent) {
