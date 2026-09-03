@@ -3137,6 +3137,32 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "kanban-demo": {
+        name: "kanban-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","button","kanban"],
+        files: [{
+          path: "registry/bases/base/examples/kanban-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "kanban-dynamic-overlay-demo": {
+        name: "kanban-dynamic-overlay-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["badge","button","kanban"],
+        files: [{
+          path: "registry/bases/base/examples/kanban-dynamic-overlay-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "key-value-demo": {
         name: "key-value-demo",
         description: "",
@@ -3326,6 +3352,58 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         registryDependencies: ["segmented-input"],
         files: [{
           path: "registry/bases/base/examples/segmented-input-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "sortable-demo": {
+        name: "sortable-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["sortable"],
+        files: [{
+          path: "registry/bases/base/examples/sortable-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "sortable-dynamic-overlay-demo": {
+        name: "sortable-dynamic-overlay-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["sortable"],
+        files: [{
+          path: "registry/bases/base/examples/sortable-dynamic-overlay-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "sortable-handle-demo": {
+        name: "sortable-handle-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","sortable","table"],
+        files: [{
+          path: "registry/bases/base/examples/sortable-handle-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "sortable-primitive-values-demo": {
+        name: "sortable-primitive-values-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["sortable"],
+        files: [{
+          path: "registry/bases/base/examples/sortable-primitive-values-demo.tsx",
           type: "registry:example",
           target: ""
         }],

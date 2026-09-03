@@ -64,18 +64,18 @@ export default async function DocPage(props: DocPageParams) {
       full={page.data.full}
       breadcrumb={{ enabled: false }}
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-col gap-1.5">
-          <DocsTitle>{page.data.title}</DocsTitle>
-          <DocsDescription className="mb-2.5">
-            {page.data.description}
-          </DocsDescription>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-2">
+          <DocsTitle className="flex-1">{page.data.title}</DocsTitle>
+          <div className="flex shrink-0 items-center gap-2">
+            {docLink ? <DynamicLink href={docLink}>Docs</DynamicLink> : null}
+            {apiLink ? <DynamicLink href={apiLink}>API</DynamicLink> : null}
+            <DocActions url={page.url} />
+          </div>
         </div>
-        <div className="flex shrink-0 items-center gap-2 pt-1.5">
-          {docLink ? <DynamicLink href={docLink}>Docs</DynamicLink> : null}
-          {apiLink ? <DynamicLink href={apiLink}>API</DynamicLink> : null}
-          <DocActions url={page.url} path={page.path} />
-        </div>
+        <DocsDescription className="mb-2.5">
+          {page.data.description}
+        </DocsDescription>
       </div>
       {showBaseSwitcher && base ? (
         <BaseSwitcher base={base} pathname={page.url} />

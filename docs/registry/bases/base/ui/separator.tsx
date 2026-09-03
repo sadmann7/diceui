@@ -1,7 +1,5 @@
 "use client";
 
-import type * as React from "react";
-
 import { Separator as SeparatorPrimitive } from "@base-ui/react/separator";
 
 import { cn } from "@/lib/utils";

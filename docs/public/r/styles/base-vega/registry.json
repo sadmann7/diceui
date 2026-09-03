@@ -278,6 +278,30 @@
       ]
     },
     {
+      "name": "kanban",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/kanban.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "registryDependencies": [
+        "@diceui/use-isomorphic-layout-effect"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities"
+      ]
+    },
+    {
       "name": "key-value",
       "type": "registry:ui",
       "files": [
@@ -660,6 +684,30 @@
       "dependencies": [
         "@base-ui/react",
         "@floating-ui/react-dom"
+      ]
+    },
+    {
+      "name": "sortable",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/sortable.tsx",
+          "type": "registry:ui"
+        },
+        {
+          "path": "lib/compose-refs.ts",
+          "type": "registry:lib"
+        }
+      ],
+      "registryDependencies": [
+        "@diceui/use-isomorphic-layout-effect"
+      ],
+      "dependencies": [
+        "@base-ui/react",
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities"
       ]
     },
     {
@@ -1701,6 +1749,50 @@
       ]
     },
     {
+      "name": "kanban-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "kanban"
+      ],
+      "files": [
+        {
+          "path": "examples/kanban-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "kanban-dynamic-overlay-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "badge",
+        "button",
+        "kanban"
+      ],
+      "files": [
+        {
+          "path": "examples/kanban-dynamic-overlay-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "key-value-demo",
       "type": "registry:example",
       "registryDependencies": [
@@ -1901,6 +1993,85 @@
       "files": [
         {
           "path": "examples/segmented-input-vertical-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "sortable-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities"
+      ],
+      "registryDependencies": [
+        "sortable"
+      ],
+      "files": [
+        {
+          "path": "examples/sortable-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "sortable-dynamic-overlay-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities"
+      ],
+      "registryDependencies": [
+        "sortable"
+      ],
+      "files": [
+        {
+          "path": "examples/sortable-dynamic-overlay-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "sortable-handle-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "button",
+        "sortable",
+        "table"
+      ],
+      "files": [
+        {
+          "path": "examples/sortable-handle-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "sortable-primitive-values-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities"
+      ],
+      "registryDependencies": [
+        "sortable"
+      ],
+      "files": [
+        {
+          "path": "examples/sortable-primitive-values-demo.tsx",
           "type": "registry:example"
         }
       ]
