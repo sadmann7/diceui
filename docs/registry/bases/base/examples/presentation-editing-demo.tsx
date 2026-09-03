@@ -56,7 +56,6 @@ import {
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/registry/bases/base/ui/tooltip";
 
@@ -129,64 +128,62 @@ function PresentationToolbar({ store }: { store: PresentationStore }) {
   }
 
   return (
-    <TooltipProvider>
-      <div className="flex items-center gap-2 border-b p-1.5">
-        <label htmlFor={`${id}-file`} className="sr-only">
-          Open .pptx
-        </label>
-        <Input
-          id={`${id}-file`}
-          type="file"
-          accept=".pptx"
-          className="h-8 max-w-56 text-xs"
-          onChange={onFileChange}
+    <div className="flex items-center gap-2 border-b p-1.5">
+      <label htmlFor={`${id}-file`} className="sr-only">
+        Open .pptx
+      </label>
+      <Input
+        id={`${id}-file`}
+        type="file"
+        accept=".pptx"
+        className="h-8 max-w-56 text-xs"
+        onChange={onFileChange}
+      />
+      <span className="min-w-0 truncate text-sm text-muted-foreground">
+        {status === "ready"
+          ? "Drag a shape to move it, or drag a thumbnail to reorder the deck"
+          : "Loading sample deck…"}
+      </span>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              aria-label="Undo"
+              variant="ghost"
+              size="icon-sm"
+              className="ml-auto active:not-aria-[haspopup]:translate-y-0 not-data-disabled:active:not-aria-[haspopup]:translate-y-px data-disabled:opacity-50"
+              disabled={!canUndo}
+              focusableWhenDisabled
+              onClick={() => undo()}
+            >
+              <Undo2Icon />
+            </Button>
+          }
         />
-        <span className="min-w-0 truncate text-sm text-muted-foreground">
-          {status === "ready"
-            ? "Drag a shape to move it, or drag a thumbnail to reorder the deck"
-            : "Loading sample deck…"}
-        </span>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button
-                aria-label="Undo"
-                variant="ghost"
-                size="icon-sm"
-                className="ml-auto active:not-aria-[haspopup]:translate-y-0 not-data-disabled:active:not-aria-[haspopup]:translate-y-px data-disabled:opacity-50"
-                disabled={!canUndo}
-                focusableWhenDisabled
-                onClick={() => undo()}
-              >
-                <Undo2Icon />
-              </Button>
-            }
-          />
-          <TooltipContent>Undo</TooltipContent>
-        </Tooltip>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <Button
-                aria-label="Redo"
-                variant="ghost"
-                size="icon-sm"
-                className="active:not-aria-[haspopup]:translate-y-0 not-data-disabled:active:not-aria-[haspopup]:translate-y-px data-disabled:opacity-50"
-                disabled={!canRedo}
-                focusableWhenDisabled
-                onClick={() =>
-                  void redo().catch(() => toast.error("Redo failed"))
-                }
-              >
-                <Redo2Icon />
-              </Button>
-            }
-          />
-          <TooltipContent>Redo</TooltipContent>
-        </Tooltip>
-        <PresentationZoomSelect />
-      </div>
-    </TooltipProvider>
+        <TooltipContent>Undo</TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              aria-label="Redo"
+              variant="ghost"
+              size="icon-sm"
+              className="active:not-aria-[haspopup]:translate-y-0 not-data-disabled:active:not-aria-[haspopup]:translate-y-px data-disabled:opacity-50"
+              disabled={!canRedo}
+              focusableWhenDisabled
+              onClick={() =>
+                void redo().catch(() => toast.error("Redo failed"))
+              }
+            >
+              <Redo2Icon />
+            </Button>
+          }
+        />
+        <TooltipContent>Redo</TooltipContent>
+      </Tooltip>
+      <PresentationZoomSelect />
+    </div>
   );
 }
 
