@@ -3,6 +3,9 @@ packages:
   - packages/*
 
 minimumReleaseAge: 1440
+minimumReleaseAgeExclude:
+  - "@diceui/pptx"
+  - "@diceui/pptx-core"
 
 allowBuilds:
   esbuild: true

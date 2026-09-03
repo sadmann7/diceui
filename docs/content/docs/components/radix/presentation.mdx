@@ -1,0 +1,365 @@
+---
+base: radix
+title: Presentation
+description: Composable primitives for viewing and editing PowerPoint presentations in the browser.
+preview: false
+links:
+  docs: https://pptx.diceui.com
+  api: /docs/components/radix/presentation#api-reference
+---
+
+<ComponentTabs name="presentation-demo" className="h-[520px] p-0" />
+
+## Installation
+
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```package-install
+npx shadcn@latest add @diceui/presentation
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps className="pt-2">
+
+<Step>Install the following dependencies:</Step>
+
+```package-install
+@diceui/pptx
+```
+
+<Step>Copy and paste the following hook into your `hooks` directory.</Step>
+
+<ComponentSource name="use-mobile" />
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="presentation" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</CodeTabs>
+
+`@diceui/pptx` pulls in `@diceui/pptx-core` automatically. The thumbnail rail collapses below 768px behind a toggle, which is why this item also depends on `button` and `use-mobile`. The primitives themselves use a `render` prop (not `asChild`) even in a Radix project.
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import {
+  Presentation,
+  PresentationContent,
+  PresentationError,
+  PresentationLoading,
+  PresentationSelection,
+  PresentationSlide,
+  PresentationThumbnailList,
+  PresentationViewport,
+} from "@/components/ui/presentation";
+
+return (
+  <Presentation>
+    <PresentationThumbnailList />
+    <PresentationContent>
+      <PresentationLoading />
+      <PresentationError />
+      <PresentationViewport>
+        <PresentationSlide>
+          <PresentationSelection />
+        </PresentationSlide>
+      </PresentationViewport>
+    </PresentationContent>
+  </Presentation>
+)
+```
+
+Pass a `File`, `Blob`, `ArrayBuffer`, or `Uint8Array` to `file` on `Presentation`. There is no toolbar in this item — toolbars are assembled around the primitives.
+
+## Examples
+
+### Editing
+
+Load with `readOnly={false}` and place `PresentationSelection` inside `PresentationSlide` to move, resize, and edit text. Undo and redo shortcuts are opt-in via `undoRedoShortcuts`.
+
+This example also uses `PresentationZoomSelect`, a companion control built with `useZoom` and `select`. Install it with `@diceui/presentation-zoom-select`.
+
+<ComponentTabs name="presentation-editing-demo" className="h-[520px] p-0" />
+
+## API Reference
+
+### PresentationProvider
+
+Makes an existing store available to descendants without rendering any DOM. Use it when a toolbar has to sit outside `Presentation`, or when the store is created with `useCreatePresentationStore` before the tree mounts.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationProviderProps"
+/>
+
+### Presentation
+
+The outermost component. Creates an internal store (or inherits one from `PresentationProvider`), loads the file, and provides context to all descendants.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationProps"
+/>
+
+### PresentationContent
+
+Layout wrapper for the viewport column next to the thumbnail rail.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationContentProps"
+/>
+
+### PresentationViewport
+
+Scrollable container that centers the slide and optionally auto-fits it to fill the available space. The styled wrapper defaults `autoFit` to `true` with 10px padding.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationViewportProps"
+/>
+
+### PresentationSlide
+
+Renders the active slide as a scaled DOM tree. Mounts an empty wrapper immediately so sibling layout is stable. Children are placed in an overlay; put `PresentationSelection` here.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationSlideProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-status]",
+      value: ["idle", "loading", "ready", "error"],
+    },
+  ]}
+/>
+
+### PresentationSelection
+
+PowerPoint-style editing overlay. Enables drag-to-move, resize, inline text editing, multi-select, and keyboard shortcuts. Renders nothing unless the presentation was loaded with `readOnly={false}`.
+
+Must be placed inside `PresentationSlide`.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationSelectionProps"
+/>
+
+<CSSVariablesTable
+  data={[
+    {
+      title: "--presentation-selection",
+      description: "Accent color for the selection overlay, resize handles, and marquee.",
+      defaultValue: "var(--ring)",
+    },
+  ]}
+/>
+
+### PresentationLoading
+
+Renders its children only while the presentation is in the `"loading"` state.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationLoadingProps"
+/>
+
+### PresentationError
+
+Renders its children only when the presentation fails to parse.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationErrorProps"
+/>
+
+### PresentationThumbnailList
+
+Scrollable list of slide thumbnails. Below 768px the rail collapses behind a toggle button and closes on outside pointerup or Escape.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationThumbnailListProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-mobile]",
+      value: "Present when the viewport is below 768px.",
+    },
+  ]}
+/>
+
+### PresentationThumbnailItem
+
+Clickable item for a single slide in a `PresentationThumbnailList`.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationThumbnailItemProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-active]",
+      value: "Present when this item's slide is the active slide.",
+    },
+  ]}
+/>
+
+### PresentationThumbnailItemPreview
+
+Renders the slide miniature for the enclosing `PresentationThumbnailItem`. Previews are rendered lazily as they approach the viewport.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationThumbnailItemPreviewProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-pending]",
+      value: "Present while the miniature has not been rendered yet.",
+    },
+  ]}
+/>
+
+### PresentationThumbnailItemNumber
+
+Renders the 1-based slide number for the enclosing `PresentationThumbnailItem`.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationThumbnailItemNumberProps"
+/>
+
+### PresentationZoomSelect
+
+Companion select for Fit and explicit zoom levels. Must be used inside `PresentationProvider` or `Presentation`.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationZoomSelectProps"
+/>
+
+### usePresentation
+
+Subscribes to top-level presentation state: parse status, progress, and errors.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="UsePresentationResult"
+/>
+
+### useSlide
+
+Subscribes to slide navigation state and exposes navigation actions.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="UseSlideResult"
+/>
+
+### useZoom
+
+Subscribes to zoom state. Setting an explicit level turns auto-fit off; `setAutoFit(true)` turns it back on.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="UseZoomResult"
+/>
+
+### useHistory
+
+Undo, redo, and whether the deck has unsaved edits.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="UseHistoryResult"
+/>
+
+Create a store with `useCreatePresentationStore` for programmatic `load`, `edit`, `save`, and `reset`. See the [store API](https://pptx.diceui.com/docs/store) for the full imperative surface.
+
+## Accessibility
+
+### Keyboard Interactions
+
+#### Thumbnail list
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["ArrowUp", "ArrowDown"],
+      description: "Moves focus and navigates to the previous or next slide.",
+    },
+    {
+      keys: ["Home"],
+      description: "Moves focus to the first slide.",
+    },
+    {
+      keys: ["End"],
+      description: "Moves focus to the last slide.",
+    },
+    {
+      keys: ["Escape"],
+      description: "Closes the thumbnail rail on mobile.",
+    },
+  ]}
+/>
+
+#### Selection overlay
+
+Available when the presentation is loaded with `readOnly={false}`.
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Arrow Keys"],
+      description: "Nudges the selection by 1px. Hold Shift for 10px.",
+    },
+    {
+      keys: ["Delete", "Backspace"],
+      description: "Deletes the selected shapes.",
+    },
+    {
+      keys: ["Escape"],
+      description: "Exits text editing, then deselects.",
+    },
+    {
+      keys: ["Ctrl/Cmd + A"],
+      description: "Selects every shape on the slide.",
+    },
+    {
+      keys: ["Ctrl/Cmd + Z"],
+      description: "Undo. Bound only when undoRedoShortcuts is true.",
+    },
+    {
+      keys: ["Ctrl/Cmd + Y", "Ctrl/Cmd + Shift + Z"],
+      description: "Redo. Bound only when undoRedoShortcuts is true.",
+    },
+  ]}
+/>

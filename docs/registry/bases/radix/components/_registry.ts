@@ -64,6 +64,18 @@ export const components: Registry["items"] = [
     ],
   },
   {
+    name: "presentation-zoom-select",
+    type: "registry:component",
+    files: [
+      {
+        path: "components/presentation-zoom-select.tsx",
+        type: "registry:component",
+      },
+    ],
+    registryDependencies: ["select"],
+    dependencies: ["@diceui/pptx"],
+  },
+  {
     name: "visually-hidden",
     type: "registry:component",
     dependencies: ["radix-ui"],

@@ -1,0 +1,20 @@
+{
+  "name": "presentation-demo",
+  "type": "registry:example",
+  "dependencies": [
+    "@diceui/pptx"
+  ],
+  "registryDependencies": [
+    "presentation",
+    "input",
+    "label"
+  ],
+  "files": [
+    {
+      "path": "examples/presentation-demo.tsx",
+      "type": "registry:example",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\n\nimport { useCreatePresentationStore } from \"@diceui/pptx\";\n\nimport { Input } from \"@/registry/bases/radix/ui/input\";\nimport { Label } from \"@/registry/bases/radix/ui/label\";\nimport {\n  Presentation,\n  PresentationContent,\n  PresentationError,\n  PresentationLoading,\n  PresentationProvider,\n  PresentationSelection,\n  PresentationSlide,\n  PresentationThumbnailList,\n  PresentationViewport,\n} from \"@/registry/bases/radix/ui/presentation\";\n\nconst DEMO_DECK_PATH = \"/assets/demo.pptx\";\n\nexport default function PresentationDemo() {\n  const id = React.useId();\n  const store = useCreatePresentationStore();\n\n  React.useEffect(() => {\n    fetch(DEMO_DECK_PATH)\n      .then((res) => {\n        if (!res.ok) throw new Error(`${DEMO_DECK_PATH}: ${res.status}.`);\n        return res.arrayBuffer();\n      })\n      .then((buffer) => store.load(buffer))\n      .catch(() => {\n        // Fail silently because `load()` already wrote the failure to `store.error`.\n      });\n  }, [store]);\n\n  async function onFileChange(event: React.ChangeEvent<HTMLInputElement>) {\n    const file = event.target.files?.[0];\n    if (!file) return;\n    try {\n      await store.load(file, { readOnly: false });\n    } catch {\n      // Fail silently because `load()` already wrote the failure to `store.error`.\n    }\n  }\n\n  return (\n    <div className=\"flex size-full flex-col overflow-hidden\">\n      <div className=\"flex items-center gap-2 border-b px-3 py-2\">\n        <Label\n          htmlFor={`${id}-file`}\n          className=\"shrink-0 text-sm text-muted-foreground\"\n        >\n          Open .pptx\n        </Label>\n        <Input\n          id={`${id}-file`}\n          type=\"file\"\n          accept=\".pptx\"\n          className=\"h-8 max-w-xs cursor-pointer text-xs\"\n          onChange={onFileChange}\n        />\n      </div>\n      <PresentationProvider store={store}>\n        <Presentation className=\"min-h-0 flex-1\">\n          <PresentationThumbnailList />\n          <PresentationContent>\n            <PresentationLoading />\n            <PresentationError />\n            <PresentationViewport>\n              <PresentationSlide>\n                <PresentationSelection undoRedoShortcuts />\n              </PresentationSlide>\n            </PresentationViewport>\n          </PresentationContent>\n        </Presentation>\n      </PresentationProvider>\n    </div>\n  );\n}\n",
+      "target": ""
+    }
+  ]
+}

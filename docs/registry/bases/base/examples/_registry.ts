@@ -1339,6 +1339,35 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "presentation-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/pptx"],
+    registryDependencies: ["presentation", "input", "label"],
+    files: [
+      {
+        path: "examples/presentation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "presentation-editing-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/pptx"],
+    registryDependencies: [
+      "presentation",
+      "presentation-zoom-select",
+      "input",
+      "label",
+    ],
+    files: [
+      {
+        path: "examples/presentation-editing-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "marquee-demo",
     type: "registry:example",
     registryDependencies: ["marquee"],

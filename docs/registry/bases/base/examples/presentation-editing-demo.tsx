@@ -1,0 +1,84 @@
+"use client";
+
+import * as React from "react";
+
+import { useCreatePresentationStore } from "@diceui/pptx";
+
+import { PresentationZoomSelect } from "@/registry/bases/base/components/presentation-zoom-select";
+import { Input } from "@/registry/bases/base/ui/input";
+import { Label } from "@/registry/bases/base/ui/label";
+import {
+  Presentation,
+  PresentationContent,
+  PresentationError,
+  PresentationLoading,
+  PresentationProvider,
+  PresentationSelection,
+  PresentationSlide,
+  PresentationThumbnailList,
+  PresentationViewport,
+} from "@/registry/bases/base/ui/presentation";
+
+const DEMO_DECK_PATH = "/assets/demo.pptx";
+
+export default function PresentationEditingDemo() {
+  const id = React.useId();
+  const store = useCreatePresentationStore();
+
+  React.useEffect(() => {
+    fetch(DEMO_DECK_PATH)
+      .then((res) => {
+        if (!res.ok) throw new Error(`${DEMO_DECK_PATH}: ${res.status}.`);
+        return res.arrayBuffer();
+      })
+      .then((buffer) => store.load(buffer, { readOnly: false }))
+      .catch(() => {
+        // Fail silently because `load()` already wrote the failure to `store.error`.
+      });
+  }, [store]);
+
+  async function onFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      await store.load(file, { readOnly: false });
+    } catch {
+      // Fail silently because `load()` already wrote the failure to `store.error`.
+    }
+  }
+
+  return (
+    <PresentationProvider store={store}>
+      <div className="flex size-full flex-col overflow-hidden">
+        <div className="flex items-center gap-2 border-b px-3 py-2">
+          <Label
+            htmlFor={`${id}-file`}
+            className="shrink-0 text-sm text-muted-foreground"
+          >
+            Open .pptx
+          </Label>
+          <Input
+            id={`${id}-file`}
+            type="file"
+            accept=".pptx"
+            className="h-8 max-w-xs cursor-pointer text-xs"
+            onChange={onFileChange}
+          />
+          <PresentationZoomSelect className="ml-auto" />
+        </div>
+        <Presentation className="min-h-0 flex-1">
+          <PresentationThumbnailList />
+          <PresentationContent>
+            <PresentationLoading />
+            <PresentationError />
+            <PresentationViewport>
+              <PresentationSlide>
+                <PresentationSelection undoRedoShortcuts />
+              </PresentationSlide>
+            </PresentationViewport>
+          </PresentationContent>
+        </Presentation>
+      </div>
+    </PresentationProvider>
+  );
+}

@@ -477,6 +477,23 @@
       ]
     },
     {
+      "name": "presentation",
+      "type": "registry:ui",
+      "files": [
+        {
+          "path": "ui/presentation.tsx",
+          "type": "registry:ui"
+        }
+      ],
+      "registryDependencies": [
+        "button",
+        "@diceui/use-mobile"
+      ],
+      "dependencies": [
+        "@diceui/pptx"
+      ]
+    },
+    {
       "name": "qr-code",
       "type": "registry:ui",
       "files": [
@@ -2597,6 +2614,43 @@
       ]
     },
     {
+      "name": "presentation-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/pptx"
+      ],
+      "registryDependencies": [
+        "presentation",
+        "input",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "examples/presentation-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
+      "name": "presentation-editing-demo",
+      "type": "registry:example",
+      "dependencies": [
+        "@diceui/pptx"
+      ],
+      "registryDependencies": [
+        "presentation",
+        "presentation-zoom-select",
+        "input",
+        "label"
+      ],
+      "files": [
+        {
+          "path": "examples/presentation-editing-demo.tsx",
+          "type": "registry:example"
+        }
+      ]
+    },
+    {
       "name": "marquee-demo",
       "type": "registry:example",
       "registryDependencies": [
@@ -3059,6 +3113,22 @@
       ],
       "dependencies": [
         "@base-ui/react"
+      ]
+    },
+    {
+      "name": "presentation-zoom-select",
+      "type": "registry:component",
+      "files": [
+        {
+          "path": "components/presentation-zoom-select.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "registryDependencies": [
+        "select"
+      ],
+      "dependencies": [
+        "@diceui/pptx"
       ]
     },
     {

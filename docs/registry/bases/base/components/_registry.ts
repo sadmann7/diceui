@@ -44,6 +44,18 @@ export const components: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "presentation-zoom-select",
+    type: "registry:component",
+    files: [
+      {
+        path: "components/presentation-zoom-select.tsx",
+        type: "registry:component",
+      },
+    ],
+    registryDependencies: ["select"],
+    dependencies: ["@diceui/pptx"],
+  },
+  {
     name: "visually-hidden-input",
     type: "registry:component",
     files: [
