@@ -14,7 +14,7 @@ import { DynamicLink } from "@/components/dynamic-link";
 import { Mdx } from "@/components/mdx-components";
 import { getHasBothBases } from "@/lib/base";
 import { getChangelogToc } from "@/lib/changelog";
-import { getPageImage, getPageMarkdownUrl, source } from "@/lib/source";
+import { getPageImage, source } from "@/lib/source";
 
 interface DocPageParams {
   params: Promise<{
@@ -32,11 +32,16 @@ export async function generateMetadata(props: {
   const page = source.getPage(params.slug);
   if (!page) notFound();
 
+  const image = getPageImage(page).url;
+
   return {
     title: page.data.title,
     description: page.data.description,
     openGraph: {
-      images: getPageImage(page).url,
+      images: image,
+    },
+    twitter: {
+      images: image,
     },
   };
 }
@@ -68,7 +73,7 @@ export default async function DocPage(props: DocPageParams) {
           <div className="flex items-center gap-2">
             {docLink ? <DynamicLink href={docLink}>Docs</DynamicLink> : null}
             {apiLink ? <DynamicLink href={apiLink}>API</DynamicLink> : null}
-            <DocActions url={getPageMarkdownUrl(page).url} />
+            <DocActions url={`${page.url}.md`} />
           </div>
         </div>
         <DocsDescription className="mb-2.5">
