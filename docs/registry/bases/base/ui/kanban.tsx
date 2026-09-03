@@ -50,18 +50,22 @@ import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 
-const directions: string[] = [
+const directions = new Set<string>([
   KeyboardCode.Down,
   KeyboardCode.Right,
   KeyboardCode.Up,
   KeyboardCode.Left,
-];
+]);
+
+function getIsDirectionCode(code: string): code is KeyboardCode {
+  return directions.has(code);
+}
 
 const coordinateGetter: KeyboardCoordinateGetter = (event, { context }) => {
   const { active, droppableRects, droppableContainers, collisionRect } =
     context;
 
-  if (directions.includes(event.code)) {
+  if (getIsDirectionCode(event.code)) {
     event.preventDefault();
 
     if (!active || !collisionRect) return;
@@ -244,11 +248,11 @@ function Kanban<T>(props: KanbanProps<T>) {
   );
 
   const getColumn = React.useCallback(
-    (id: UniqueIdentifier) => {
-      if (id in value) return id;
+    (targetId: UniqueIdentifier) => {
+      if (targetId in value) return targetId;
 
-      for (const [columnId, items] of Object.entries(value)) {
-        if (items.some((item) => getItemValue(item) === id)) {
+      for (const [columnId, columnItems] of Object.entries(value)) {
+        if (columnItems.some((item) => getItemValue(item) === targetId)) {
           return columnId;
         }
       }
@@ -787,8 +791,8 @@ function KanbanColumn(props: KanbanColumnProps) {
   }, [transform, transition, style]);
 
   const items = React.useMemo(() => {
-    const items = context.items[value] ?? [];
-    return items.map((item) => context.getItemValue(item));
+    const columnItems = context.items[value] ?? [];
+    return columnItems.map((item) => context.getItemValue(item));
   }, [context.items, value, context.getItemValue]);
 
   const columnContext = React.useMemo<KanbanColumnContextValue>(
