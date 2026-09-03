@@ -2772,13 +2772,18 @@
       "name": "presentation-editing-demo",
       "type": "registry:example",
       "dependencies": [
-        "@diceui/pptx"
+        "@diceui/pptx",
+        "@dnd-kit/core",
+        "@dnd-kit/modifiers",
+        "@dnd-kit/sortable",
+        "@dnd-kit/utilities",
+        "lucide-react"
       ],
       "registryDependencies": [
         "presentation",
         "presentation-zoom-select",
-        "input",
-        "label"
+        "button",
+        "tooltip"
       ],
       "files": [
         {

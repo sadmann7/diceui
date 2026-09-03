@@ -1502,7 +1502,7 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         name: "presentation-editing-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["presentation","presentation-zoom-select","input","label"],
+        registryDependencies: ["presentation","presentation-zoom-select","button","tooltip"],
         files: [{
           path: "registry/bases/radix/examples/presentation-editing-demo.tsx",
           type: "registry:example",
@@ -3960,7 +3960,7 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         name: "presentation-editing-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["presentation","presentation-zoom-select","input","label"],
+        registryDependencies: ["presentation","presentation-zoom-select","button","tooltip"],
         files: [{
           path: "registry/bases/base/examples/presentation-editing-demo.tsx",
           type: "registry:example",

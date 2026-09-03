@@ -1369,12 +1369,19 @@ export const examples: Registry["items"] = [
   {
     name: "presentation-editing-demo",
     type: "registry:example",
-    dependencies: ["@diceui/pptx"],
+    dependencies: [
+      "@diceui/pptx",
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "lucide-react",
+    ],
     registryDependencies: [
       "presentation",
       "presentation-zoom-select",
-      "input",
-      "label",
+      "button",
+      "tooltip",
     ],
     files: [
       {

@@ -194,8 +194,8 @@ function PresentationThumbnailList({
   children,
   ...props
 }: PresentationPrimitive.ThumbnailList.Props) {
-  const id = React.useId();
   const isMobile = useIsMobile();
+  const id = React.useId();
   const [open, setOpen] = React.useState(false);
   const [wasMobile, setWasMobile] = React.useState(isMobile);
   const listRef = React.useRef<HTMLDivElement | null>(null);

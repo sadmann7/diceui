@@ -2,13 +2,13 @@
 base: radix
 title: Presentation
 description: Composable primitives for viewing and editing PowerPoint presentations in the browser.
-preview: false
+new: true
 links:
   docs: https://pptx.diceui.com
   api: /docs/components/radix/presentation#api-reference
 ---
 
-<ComponentTabs name="presentation-demo" className="h-[520px] p-0" />
+<ComponentTabs name="presentation-demo" className="h-[350px] p-0" />
 
 ## Installation
 
@@ -93,11 +93,11 @@ Pass a `File`, `Blob`, `ArrayBuffer`, or `Uint8Array` to `file` on `Presentation
 
 ### Editing
 
-Load with `readOnly={false}` and place `PresentationSelection` inside `PresentationSlide` to move, resize, and edit text. Undo and redo shortcuts are opt-in via `undoRedoShortcuts`.
+Load with `readOnly={false}` and place `PresentationSelection` inside `PresentationSlide` to move, resize, and edit text. Undo and redo shortcuts are opt-in via `undoRedoShortcuts`. Drag thumbnails to reorder slides.
 
 This example also uses `PresentationZoomSelect`, a companion control built with `useZoom` and `select`. Install it with `@diceui/presentation-zoom-select`.
 
-<ComponentTabs name="presentation-editing-demo" className="h-[520px] p-0" />
+<ComponentTabs name="presentation-editing-demo" className="h-[350px] p-0" />
 
 ## API Reference
 
