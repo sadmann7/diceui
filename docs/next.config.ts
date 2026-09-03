@@ -45,7 +45,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/docs/:path*.mdx",
-        destination: "/llms.mdx/:path*",
+        destination: "/llms.mdx/docs/:path*/content.md",
         permanent: true,
       },
     ];

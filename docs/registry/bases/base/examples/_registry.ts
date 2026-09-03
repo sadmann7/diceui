@@ -634,6 +634,42 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "kanban-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "lucide-react",
+    ],
+    registryDependencies: ["badge", "button", "kanban"],
+    files: [
+      {
+        path: "examples/kanban-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "kanban-dynamic-overlay-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "lucide-react",
+    ],
+    registryDependencies: ["badge", "button", "kanban"],
+    files: [
+      {
+        path: "examples/kanban-dynamic-overlay-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "key-value-demo",
     type: "registry:example",
     registryDependencies: ["key-value"],
@@ -795,6 +831,75 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/segmented-input-vertical-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "sortable-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+    ],
+    registryDependencies: ["sortable"],
+    files: [
+      {
+        path: "examples/sortable-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "sortable-dynamic-overlay-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+    ],
+    registryDependencies: ["sortable"],
+    files: [
+      {
+        path: "examples/sortable-dynamic-overlay-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "sortable-handle-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+      "lucide-react",
+    ],
+    registryDependencies: ["button", "sortable", "table"],
+    files: [
+      {
+        path: "examples/sortable-handle-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "sortable-primitive-values-demo",
+    type: "registry:example",
+    dependencies: [
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+    ],
+    registryDependencies: ["sortable"],
+    files: [
+      {
+        path: "examples/sortable-primitive-values-demo.tsx",
         type: "registry:example",
       },
     ],

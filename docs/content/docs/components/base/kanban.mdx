@@ -1,0 +1,323 @@
+---
+base: base
+title: Kanban
+description: A drag and drop kanban board component for organizing items into columns.
+links:
+  doc: https://docs.dndkit.com/introduction/getting-started
+  api: /docs/components/base/kanban#api-reference
+---
+
+<ComponentTabs name="kanban-demo" />
+
+## Installation
+
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```package-install
+npx shadcn@latest add @diceui/kanban
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps className="pt-2">
+
+<Step>Install the following dependencies:</Step>
+
+```package-install
+@base-ui/react @dnd-kit/core @dnd-kit/modifiers @dnd-kit/sortable @dnd-kit/utilities
+```
+
+<Step>Copy and paste the refs composition utilities into your `lib/compose-refs.ts` file.</Step>
+
+<ComponentSource name="compose-refs" />
+
+<Step>Copy and paste the following hook into your `hooks` directory.</Step>
+
+<ComponentSource name="use-isomorphic-layout-effect" />
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="kanban" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</CodeTabs>
+
+## Layout
+
+Import the parts, and compose them together.
+
+```tsx
+import {
+  Kanban,
+  KanbanBoard,
+  KanbanColumn,
+  KanbanColumnHandle,
+  KanbanItem,
+  KanbanItemHandle,
+  KanbanOverlay,
+} from "@/components/ui/kanban";
+
+return (
+  <Kanban>
+    <KanbanBoard>
+      <KanbanColumn>
+        <KanbanColumnHandle />
+        <KanbanItem>
+          <KanbanItemHandle />
+        </KanbanItem>
+      </KanbanColumn>
+    </KanbanBoard>
+    <KanbanOverlay />
+  </Kanban>
+)
+```
+
+Every part accepts a `render` prop, so a column or item can be composed with your own element or component instead of the default `div`.
+
+```tsx
+<KanbanColumnHandle render={<Button variant="ghost" size="icon" />}>
+  <GripVertical />
+</KanbanColumnHandle>
+```
+
+## Usage
+
+### With Primitive Values
+
+When using primitive arrays (strings, numbers), the `getItemValue` prop is optional. The component will automatically use the items themselves as unique identifiers.
+
+```tsx
+const [columns, setColumns] = React.useState({
+  todo: ["Task 1", "Task 2"],
+  done: ["Task 3"],
+});
+
+<Kanban value={columns} onValueChange={setColumns}>
+  <KanbanBoard>
+    {Object.entries(columns).map(([columnValue, items]) => (
+      <KanbanColumn key={columnValue} value={columnValue}>
+        {items.map((item) => (
+          <KanbanItem key={item} value={item}>
+            {item}
+          </KanbanItem>
+        ))}
+      </KanbanColumn>
+    ))}
+  </KanbanBoard>
+</Kanban>
+```
+
+### With Object Arrays
+
+When using object arrays, the `getItemValue` prop is required to extract unique identifiers from each item.
+
+```tsx
+const [columns, setColumns] = React.useState({
+  todo: [
+    { id: 1, title: "Task 1" },
+    { id: 2, title: "Task 2" },
+  ],
+  done: [
+    { id: 3, title: "Task 3" },
+  ],
+});
+
+<Kanban
+  value={columns}
+  onValueChange={setColumns}
+  getItemValue={(item) => item.id}
+>
+  <KanbanBoard>
+    {Object.entries(columns).map(([columnValue, items]) => (
+      <KanbanColumn key={columnValue} value={columnValue}>
+        {items.map((item) => (
+          <KanbanItem key={item.id} value={item.id}>
+            {item.title}
+          </KanbanItem>
+        ))}
+      </KanbanColumn>
+    ))}
+  </KanbanBoard>
+</Kanban>
+```
+
+## Examples
+
+### With Dynamic Overlay
+
+Display a dynamic overlay when an item or column is being dragged.
+
+<ComponentTabs name="kanban-dynamic-overlay-demo" />
+
+## API Reference
+
+### Kanban
+
+The main container component for kanban board functionality.
+
+<AutoTypeTable
+  path="./types/base/kanban.ts"
+  name="KanbanProps"
+/>
+
+### KanbanBoard
+
+Container for kanban columns.
+
+<AutoTypeTable
+  path="./types/base/kanban.ts"
+  name="KanbanBoardProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-orientation]",
+      value: ["horizontal", "vertical"],
+    },
+  ]}
+/>
+
+### KanbanColumn
+
+Individual kanban column component.
+
+<AutoTypeTable
+  path="./types/base/kanban.ts"
+  name="KanbanColumnProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the column is disabled.",
+    },
+    {
+      title: "[data-dragging]",
+      value: "Present when the column is being dragged.",
+    },
+  ]}
+/>
+
+### KanbanColumnHandle
+
+A button component that acts as a drag handle for kanban columns.
+
+<AutoTypeTable
+  path="./types/base/kanban.ts"
+  name="KanbanColumnHandleProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the column is disabled.",
+    },
+    {
+      title: "[data-dragging]",
+      value: "Present when the parent column is being dragged.",
+    }
+  ]}
+/>
+
+### KanbanItem
+
+Individual kanban item component.
+
+<AutoTypeTable
+  path="./types/base/kanban.ts"
+  name="KanbanItemProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the item is disabled.",
+    },
+    {
+      title: "[data-dragging]",
+      value: "Present when the item is being dragged.",
+    },
+  ]}
+/>
+
+### KanbanItemHandle
+
+A button component that acts as a drag handle for kanban items.
+
+<AutoTypeTable
+  path="./types/base/kanban.ts"
+  name="KanbanItemHandleProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when the item is disabled.",
+    },
+    {
+      title: "[data-dragging]",
+      value: "Present when the parent item is being dragged.",
+    }
+  ]}
+/>
+
+### KanbanOverlay
+
+The overlay component that appears when an item or column is being dragged.
+
+<AutoTypeTable
+  path="./types/base/kanban.ts"
+  name="KanbanOverlayProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Enter", "Space"],
+      description: "Picks up the kanban item or column for reordering when released, and drops it in its new position when pressed again.",
+    },
+    {
+      keys: ["ArrowUp"],
+      description: "Moves the kanban item up in vertical orientation.",
+    },
+    {
+      keys: ["ArrowDown"],
+      description: "Moves the kanban item down in vertical orientation.",
+    },
+    {
+      keys: ["ArrowLeft"],
+      description: "Moves the kanban item left in horizontal orientation.",
+    },
+    {
+      keys: ["ArrowRight"],
+      description: "Moves the kanban item right in horizontal orientation.",
+    },
+    {
+      keys: ["Esc"],
+      description: "Cancels the drag operation and returns the item or column to its original position.",
+    },
+  ]}
+/>

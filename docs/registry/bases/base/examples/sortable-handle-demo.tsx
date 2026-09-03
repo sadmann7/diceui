@@ -1,0 +1,79 @@
+"use client";
+
+import { GripVertical } from "lucide-react";
+import * as React from "react";
+
+import { Button } from "@/registry/bases/base/ui/button";
+import {
+  Sortable,
+  SortableContent,
+  SortableItem,
+  SortableItemHandle,
+  SortableOverlay,
+} from "@/registry/bases/base/ui/sortable";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/registry/bases/base/ui/table";
+
+export default function SortableHandleDemo() {
+  const [tricks, setTricks] = React.useState([
+    { id: "1", title: "The 900", difficulty: "Expert", points: 9000 },
+    { id: "2", title: "Indy Backflip", difficulty: "Advanced", points: 4000 },
+    { id: "3", title: "Pizza Guy", difficulty: "Intermediate", points: 1500 },
+    {
+      id: "4",
+      title: "360 Varial McTwist",
+      difficulty: "Expert",
+      points: 5000,
+    },
+  ]);
+
+  return (
+    <Sortable
+      value={tricks}
+      onValueChange={setTricks}
+      getItemValue={(item) => item.id}
+    >
+      <Table className="rounded-none border">
+        <TableHeader>
+          <TableRow className="bg-accent/50">
+            <TableHead className="w-[50px] bg-transparent" />
+            <TableHead className="bg-transparent">Trick</TableHead>
+            <TableHead className="bg-transparent">Difficulty</TableHead>
+            <TableHead className="bg-transparent text-right">Points</TableHead>
+          </TableRow>
+        </TableHeader>
+        <SortableContent render={<TableBody />}>
+          {tricks.map((trick) => (
+            <SortableItem key={trick.id} value={trick.id} render={<TableRow />}>
+              <TableCell className="w-[50px]">
+                <SortableItemHandle
+                  render={
+                    <Button variant="ghost" size="icon" className="size-8" />
+                  }
+                >
+                  <GripVertical className="h-4 w-4" />
+                </SortableItemHandle>
+              </TableCell>
+              <TableCell className="font-medium">{trick.title}</TableCell>
+              <TableCell className="text-muted-foreground">
+                {trick.difficulty}
+              </TableCell>
+              <TableCell className="text-right text-muted-foreground">
+                {trick.points}
+              </TableCell>
+            </SortableItem>
+          ))}
+        </SortableContent>
+      </Table>
+      <SortableOverlay>
+        <div className="size-full rounded-none bg-primary/10" />
+      </SortableOverlay>
+    </Sortable>
+  );
+}

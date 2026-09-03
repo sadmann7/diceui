@@ -251,6 +251,28 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "kanban",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/kanban.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+    registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+    dependencies: [
+      "@base-ui/react",
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+    ],
+  },
+  {
     name: "key-value",
     type: "registry:ui",
     files: [
@@ -590,6 +612,28 @@ export const ui: Registry["items"] = [
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@floating-ui/react-dom"],
+  },
+  {
+    name: "sortable",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/sortable.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/compose-refs.ts",
+        type: "registry:lib",
+      },
+    ],
+    registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+    dependencies: [
+      "@base-ui/react",
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+    ],
   },
   {
     name: "speed-dial",

@@ -2035,6 +2035,23 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "kanban": {
+        name: "kanban",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/kanban.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "key-value": {
         name: "key-value",
         description: "",
@@ -2272,6 +2289,23 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "sortable": {
+        name: "sortable",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
         },{
@@ -2794,6 +2828,23 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "kanban": {
+        name: "kanban",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/kanban.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "key-value": {
         name: "key-value",
         description: "",
@@ -3031,6 +3082,23 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/selection-toolbar.tsx",
+          type: "registry:ui",
+          target: ""
+        },{
+          path: "registry/bases/base/lib/compose-refs.ts",
+          type: "registry:lib",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "sortable": {
+        name: "sortable",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
+        files: [{
+          path: "registry/bases/base/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
         },{

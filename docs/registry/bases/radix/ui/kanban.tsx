@@ -2,9 +2,10 @@
 
 import {
   type Announcements,
-  type CollisionDetection,
   closestCenter,
   closestCorners,
+  type CollisionDetection,
+  defaultDropAnimationSideEffects,
   DndContext,
   type DndContextProps,
   type DragCancelEvent,
@@ -16,7 +17,6 @@ import {
   type DragStartEvent,
   type DropAnimation,
   type DroppableContainer,
-  defaultDropAnimationSideEffects,
   getFirstCollision,
   KeyboardCode,
   type KeyboardCoordinateGetter,
@@ -48,18 +48,22 @@ import * as ReactDOM from "react-dom";
 import { useComposedRefs } from "@/lib/compose-refs";
 import { cn } from "@/lib/utils";
 
-const directions: string[] = [
+const directions = new Set<string>([
   KeyboardCode.Down,
   KeyboardCode.Right,
   KeyboardCode.Up,
   KeyboardCode.Left,
-];
+]);
+
+function getIsDirectionCode(code: string): code is KeyboardCode {
+  return directions.has(code);
+}
 
 const coordinateGetter: KeyboardCoordinateGetter = (event, { context }) => {
   const { active, droppableRects, droppableContainers, collisionRect } =
     context;
 
-  if (directions.includes(event.code)) {
+  if (getIsDirectionCode(event.code)) {
     event.preventDefault();
 
     if (!active || !collisionRect) return;
@@ -242,11 +246,11 @@ function Kanban<T>(props: KanbanProps<T>) {
   );
 
   const getColumn = React.useCallback(
-    (id: UniqueIdentifier) => {
-      if (id in value) return id;
+    (targetId: UniqueIdentifier) => {
+      if (targetId in value) return targetId;
 
-      for (const [columnId, items] of Object.entries(value)) {
-        if (items.some((item) => getItemValue(item) === id)) {
+      for (const [columnId, columnItems] of Object.entries(value)) {
+        if (columnItems.some((item) => getItemValue(item) === targetId)) {
           return columnId;
         }
       }
@@ -758,10 +762,15 @@ function KanbanColumn(props: KanbanColumnProps) {
     animateLayoutChanges,
   });
 
-  const composedRef = useComposedRefs(ref, (node) => {
-    if (disabled) return;
-    setNodeRef(node);
-  });
+  const onNodeRefChange = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (disabled) return;
+      setNodeRef(node);
+    },
+    [disabled, setNodeRef],
+  );
+
+  const composedRef = useComposedRefs(ref, onNodeRefChange);
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {
@@ -772,8 +781,8 @@ function KanbanColumn(props: KanbanColumnProps) {
   }, [transform, transition, style]);
 
   const items = React.useMemo(() => {
-    const items = context.items[value] ?? [];
-    return items.map((item) => context.getItemValue(item));
+    const columnItems = context.items[value] ?? [];
+    return columnItems.map((item) => context.getItemValue(item));
   }, [context.items, value, context.getItemValue]);
 
   const columnContext = React.useMemo<KanbanColumnContextValue>(
@@ -840,10 +849,17 @@ function KanbanColumnHandle(props: KanbanColumnHandleProps) {
 
   const isDisabled = disabled ?? columnContext.disabled;
 
-  const composedRef = useComposedRefs(ref, (node) => {
-    if (isDisabled) return;
-    columnContext.setActivatorNodeRef(node);
-  });
+  const { setActivatorNodeRef } = columnContext;
+
+  const onActivatorNodeRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (isDisabled) return;
+      setActivatorNodeRef(node);
+    },
+    [isDisabled, setActivatorNodeRef],
+  );
+
+  const composedRef = useComposedRefs(ref, onActivatorNodeRef);
 
   const HandlePrimitive = asChild ? SlotPrimitive.Slot : "button";
 
@@ -933,10 +949,17 @@ function KanbanItem(props: KanbanItemProps) {
     throw new Error(`\`${ITEM_NAME}\` value cannot be an empty string`);
   }
 
-  const composedRef = useComposedRefs(ref, (node) => {
-    if (disabled) return;
-    setNodeRef(node);
-  });
+  // Kept stable so React doesn't detach and reattach dnd-kit's node ref on
+  // every render, which retriggers droppable measuring during a drag.
+  const onNodeRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (disabled) return;
+      setNodeRef(node);
+    },
+    [disabled, setNodeRef],
+  );
+
+  const composedRef = useComposedRefs(ref, onNodeRef);
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {
@@ -1001,10 +1024,17 @@ function KanbanItemHandle(props: KanbanItemHandleProps) {
 
   const isDisabled = disabled ?? itemContext.disabled;
 
-  const composedRef = useComposedRefs(ref, (node) => {
-    if (isDisabled) return;
-    itemContext.setActivatorNodeRef(node);
-  });
+  const { setActivatorNodeRef } = itemContext;
+
+  const onActivatorNodeRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (isDisabled) return;
+      setActivatorNodeRef(node);
+    },
+    [isDisabled, setActivatorNodeRef],
+  );
+
+  const composedRef = useComposedRefs(ref, onActivatorNodeRef);
 
   const HandlePrimitive = asChild ? SlotPrimitive.Slot : "button";
 
