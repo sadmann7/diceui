@@ -174,7 +174,8 @@ export interface PresentationProps extends EmptyProps<"div">, RenderProps {
 
 export interface PresentationContentProps extends EmptyProps<"div"> {}
 
-export interface PresentationViewportProps extends EmptyProps<"div">, RenderProps {
+export interface PresentationViewportProps
+  extends EmptyProps<"div">, RenderProps {
   /**
    * When `true`, automatically scales the slide to fill the viewport whenever
    * the container resizes.
@@ -230,7 +231,8 @@ export interface PresentationSlideProps extends EmptyProps<"div">, RenderProps {
   onNodeError?: (nodeId: string, error: unknown) => void;
 }
 
-export interface PresentationSelectionProps extends EmptyProps<"div">, RenderProps {
+export interface PresentationSelectionProps
+  extends EmptyProps<"div">, RenderProps {
   /**
    * When `true`, binds undo and redo to the deck: `Ctrl/Cmd+Z` and
    * `Ctrl/Cmd+Shift+Z` (or `Ctrl/Cmd+Y`).
@@ -283,7 +285,8 @@ export interface PresentationSelectionProps extends EmptyProps<"div">, RenderPro
   ) => void;
 }
 
-export interface PresentationLoadingProps extends Omit<EmptyProps<"div">, "children">, RenderProps {
+export interface PresentationLoadingProps
+  extends Omit<EmptyProps<"div">, "children">, RenderProps {
   /**
    * Rendered while the presentation is loading.
    * Pass a function to receive the current `progress` (0–100).
@@ -293,7 +296,8 @@ export interface PresentationLoadingProps extends Omit<EmptyProps<"div">, "child
   children?: React.ReactNode | ((progress: number) => React.ReactNode);
 }
 
-export interface PresentationErrorProps extends Omit<EmptyProps<"div">, "children">, RenderProps {
+export interface PresentationErrorProps
+  extends Omit<EmptyProps<"div">, "children">, RenderProps {
   /**
    * Rendered when the presentation fails to parse.
    * Pass a function to receive the `Error` instance.
@@ -303,10 +307,8 @@ export interface PresentationErrorProps extends Omit<EmptyProps<"div">, "childre
   children?: React.ReactNode | ((error: Error) => React.ReactNode);
 }
 
-export interface PresentationThumbnailListProps extends Omit<
-  EmptyProps<"div">,
-  "children"
->, RenderProps {
+export interface PresentationThumbnailListProps
+  extends Omit<EmptyProps<"div">, "children">, RenderProps {
   /**
    * - Absent → default `PresentationThumbnailItem` list (one per slide)
    * - ReactNode → rendered as-is inside the container
@@ -325,10 +327,8 @@ export interface PresentationThumbnailListProps extends Omit<
   loop?: boolean;
 }
 
-export interface PresentationThumbnailItemProps extends Omit<
-  EmptyProps<"button">,
-  "onSelect"
->, RenderProps {
+export interface PresentationThumbnailItemProps
+  extends Omit<EmptyProps<"button">, "onSelect">, RenderProps {
   /**
    * Stable id of the slide this item represents.
    */
@@ -349,9 +349,11 @@ export interface PresentationThumbnailItemProps extends Omit<
   decorative?: boolean;
 }
 
-export interface PresentationThumbnailItemPreviewProps extends EmptyProps<"div">, RenderProps {}
+export interface PresentationThumbnailItemPreviewProps
+  extends EmptyProps<"div">, RenderProps {}
 
-export interface PresentationThumbnailItemNumberProps extends EmptyProps<"span">, RenderProps {}
+export interface PresentationThumbnailItemNumberProps
+  extends EmptyProps<"span">, RenderProps {}
 
 export interface PresentationZoomSelectProps {
   /**

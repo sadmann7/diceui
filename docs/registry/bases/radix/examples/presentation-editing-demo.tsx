@@ -1,8 +1,7 @@
 "use client";
 
-import * as React from "react";
-
 import type { PresentationStore } from "@diceui/pptx";
+
 import {
   useCreatePresentationStore,
   useHistory,
@@ -32,6 +31,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Redo2Icon, Undo2Icon } from "lucide-react";
+import * as React from "react";
+import { toast } from "sonner";
 
 import { PresentationZoomSelect } from "@/registry/bases/radix/components/presentation-zoom-select";
 import { Button } from "@/registry/bases/radix/ui/button";
@@ -112,12 +113,6 @@ function PresentationToolbar() {
   const { status } = usePresentation();
   const { canUndo, canRedo, undo, redo } = useHistory();
 
-  function run(action: () => Promise<unknown>) {
-    void action().catch((error) =>
-      console.error("[demo] action failed:", error),
-    );
-  }
-
   return (
     <div className="flex items-center gap-2 border-b px-3 py-2">
       <span className="text-sm text-muted-foreground">
@@ -147,7 +142,7 @@ function PresentationToolbar() {
             variant="ghost"
             size="icon-sm"
             disabled={!canRedo}
-            onClick={() => run(() => redo())}
+            onClick={() => void redo().catch(() => toast.error("Redo failed"))}
           >
             <Redo2Icon />
           </Button>
@@ -220,7 +215,10 @@ function SortableThumbnailList({ store }: { store: PresentationStore }) {
       onDragCancel={() => setDraggedId(null)}
       onDragEnd={onDragEnd}
     >
-      <SortableContext items={orderedIds} strategy={verticalListSortingStrategy}>
+      <SortableContext
+        items={orderedIds}
+        strategy={verticalListSortingStrategy}
+      >
         <PresentationThumbnailList>
           {() => (
             <>
@@ -253,10 +251,16 @@ function SortableThumbnailList({ store }: { store: PresentationStore }) {
 }
 
 function SortableItem({ slideId }: { slideId: string }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
-    useSortable({
-      id: slideId,
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: slideId,
+  });
 
   // dnd-kit sets role="button" and tabIndex={0}; both would override what the
   // list needs, replacing the `option` role and putting every thumbnail in the

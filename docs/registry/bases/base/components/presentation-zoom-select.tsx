@@ -1,8 +1,7 @@
 "use client";
 
-import * as React from "react";
-
 import { useZoom } from "@diceui/pptx";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import {
@@ -57,7 +56,11 @@ function PresentationZoomSelect({
           Fit
         </SelectItem>
         {levels.map((level) => (
-          <SelectItem key={level} value={String(level)} className={itemClassName}>
+          <SelectItem
+            key={level}
+            value={String(level)}
+            className={itemClassName}
+          >
             {`${level * 100}%`}
           </SelectItem>
         ))}
