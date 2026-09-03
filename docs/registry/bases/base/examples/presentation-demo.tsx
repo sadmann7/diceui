@@ -4,7 +4,6 @@ import { useCreatePresentationStore } from "@diceui/pptx";
 import * as React from "react";
 
 import { Input } from "@/registry/bases/base/ui/input";
-import { Label } from "@/registry/bases/base/ui/label";
 import {
   Presentation,
   PresentationContent,
@@ -50,18 +49,15 @@ export default function PresentationDemo() {
 
   return (
     <div className="flex size-full flex-col overflow-hidden">
-      <div className="flex items-center gap-2 border-b px-3 py-2">
-        <Label
-          htmlFor={`${id}-file`}
-          className="shrink-0 text-sm text-muted-foreground"
-        >
+      <div className="flex items-center gap-2 border-b p-1.5">
+        <label htmlFor={`${id}-file`} className="sr-only">
           Open .pptx
-        </Label>
+        </label>
         <Input
           id={`${id}-file`}
           type="file"
           accept=".pptx"
-          className="h-8 max-w-xs text-xs"
+          className="h-8 max-w-56 text-xs"
           onChange={onFileChange}
         />
       </div>

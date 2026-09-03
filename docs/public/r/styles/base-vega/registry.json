@@ -2621,8 +2621,7 @@
       ],
       "registryDependencies": [
         "presentation",
-        "input",
-        "label"
+        "input"
       ],
       "files": [
         {
@@ -2640,12 +2639,14 @@
         "@dnd-kit/modifiers",
         "@dnd-kit/sortable",
         "@dnd-kit/utilities",
-        "lucide-react"
+        "lucide-react",
+        "sonner"
       ],
       "registryDependencies": [
         "presentation",
         "presentation-zoom-select",
         "button",
+        "input",
         "tooltip"
       ],
       "files": [

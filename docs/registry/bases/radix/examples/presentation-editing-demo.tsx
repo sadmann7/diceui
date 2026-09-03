@@ -1,6 +1,11 @@
 "use client";
 
 import type { PresentationStore } from "@diceui/pptx";
+import type {
+  DragEndEvent,
+  DragStartEvent,
+  DropAnimation,
+} from "@dnd-kit/core";
 
 import {
   useCreatePresentationStore,
@@ -9,10 +14,7 @@ import {
 } from "@diceui/pptx";
 import {
   DndContext,
-  type DragEndEvent,
   DragOverlay,
-  type DragStartEvent,
-  type DropAnimation,
   PointerSensor,
   closestCenter,
   defaultDropAnimation,
@@ -36,6 +38,7 @@ import { toast } from "sonner";
 
 import { PresentationZoomSelect } from "@/registry/bases/radix/components/presentation-zoom-select";
 import { Button } from "@/registry/bases/radix/ui/button";
+import { Input } from "@/registry/bases/radix/ui/input";
 import {
   Presentation,
   PresentationContent,
@@ -91,7 +94,7 @@ export default function PresentationEditingDemo() {
   return (
     <div className="flex size-full flex-col overflow-hidden">
       <PresentationProvider store={store}>
-        <PresentationToolbar />
+        <PresentationToolbar store={store} />
         <Presentation className="min-h-0 flex-1">
           <SortableThumbnailList store={store} />
           <PresentationContent>
@@ -109,13 +112,34 @@ export default function PresentationEditingDemo() {
   );
 }
 
-function PresentationToolbar() {
+function PresentationToolbar({ store }: { store: PresentationStore }) {
+  const id = React.useId();
   const { status } = usePresentation();
   const { canUndo, canRedo, undo, redo } = useHistory();
 
+  async function onFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    try {
+      await store.load(file, { readOnly: false });
+    } catch {
+      // Fail silently because `load()` already wrote the failure to `store.error`.
+    }
+  }
+
   return (
-    <div className="flex items-center gap-2 border-b px-3 py-2">
-      <span className="text-sm text-muted-foreground">
+    <div className="flex items-center gap-2 border-b p-1.5">
+      <label htmlFor={`${id}-file`} className="sr-only">
+        Open .pptx
+      </label>
+      <Input
+        id={`${id}-file`}
+        type="file"
+        accept=".pptx"
+        className="h-8 max-w-56 py-px text-xs"
+        onChange={onFileChange}
+      />
+      <span className="min-w-0 truncate text-sm text-muted-foreground">
         {status === "ready"
           ? "Drag a shape to move it, or drag a thumbnail to reorder the deck"
           : "Loading sample deck…"}

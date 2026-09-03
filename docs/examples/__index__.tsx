@@ -1489,7 +1489,7 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         name: "presentation-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["presentation","input","label"],
+        registryDependencies: ["presentation","input"],
         files: [{
           path: "registry/bases/radix/examples/presentation-demo.tsx",
           type: "registry:example",
@@ -1502,7 +1502,7 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         name: "presentation-editing-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["presentation","presentation-zoom-select","button","tooltip"],
+        registryDependencies: ["presentation","presentation-zoom-select","button","input","tooltip"],
         files: [{
           path: "registry/bases/radix/examples/presentation-editing-demo.tsx",
           type: "registry:example",
@@ -3947,7 +3947,7 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         name: "presentation-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["presentation","input","label"],
+        registryDependencies: ["presentation","input"],
         files: [{
           path: "registry/bases/base/examples/presentation-demo.tsx",
           type: "registry:example",
@@ -3960,7 +3960,7 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         name: "presentation-editing-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["presentation","presentation-zoom-select","button","tooltip"],
+        registryDependencies: ["presentation","presentation-zoom-select","button","input","tooltip"],
         files: [{
           path: "registry/bases/base/examples/presentation-editing-demo.tsx",
           type: "registry:example",
