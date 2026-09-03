@@ -154,7 +154,7 @@ packages/your-component/
 
 ### Component Registry
 
-DiceUI supports multiple UI base libraries (Radix UI and Base UI). When adding new components:
+Dice UI supports multiple UI base libraries (Radix UI and Base UI). When adding new components:
 
 1. Choose the appropriate base library:
    - **Radix UI**: Use for components built with `@radix-ui/react-*` primitives

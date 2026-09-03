@@ -34,7 +34,7 @@ export default function QRCodeFormatsDemo() {
 
       <div className="flex flex-col items-center gap-2">
         <QRCode value={value} size={120}>
-          <QRCodeImage alt="DiceUI QR Code" />
+          <QRCodeImage alt="QR Code" />
           <QRCodeDownload format="png" filename="qr-image" asChild>
             <Button size="sm">Download PNG</Button>
           </QRCodeDownload>

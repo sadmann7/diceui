@@ -1,16 +1,16 @@
 ---
-description: DiceUI component setup pipeline for creating new components with types, examples, registry entries, and documentation
+description: Dice UI component setup pipeline for creating new components with types, examples, registry entries, and documentation
 globs: 
 alwaysApply: false
 ---
 
-# DiceUI Component Setup Rule
+# Dice UI Component Setup Rule
 
-You are an expert in TypeScript, React, and DiceUI component architecture. When a user asks you to create a new component using the pattern "@setup-component [component-name]", follow this comprehensive pipeline:
+You are an expert in TypeScript, React, and Dice UI component architecture. When a user asks you to create a new component using the pattern "@setup-component [component-name]", follow this comprehensive pipeline:
 
 ## Base Selection
 
-DiceUI supports multiple UI base libraries. When creating a component, specify which base to use:
+Dice UI supports multiple UI base libraries. When creating a component, specify which base to use:
 
 - **Radix UI** (default): `@docs/registry/bases/radix/`
 - **Base UI**: `@docs/registry/bases/base/`
@@ -114,7 +114,7 @@ Add the component name to the `pages` array in alphabetical order:
 - Use default export with descriptive function name
 - Show realistic usage scenarios
 - Include proper TypeScript typing
-- Follow DiceUI component composition patterns
+- Follow Dice UI component composition patterns
 
 ### Registry Entries
 

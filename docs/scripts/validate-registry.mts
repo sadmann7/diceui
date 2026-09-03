@@ -78,7 +78,8 @@ async function main() {
   console.log("🎉 All registries are valid!");
 }
 
-main().catch((error: Error) => {
-  console.error("\n❌ Validation failed:", error.message);
+main().catch((error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error("\n❌ Validation failed:", message);
   process.exit(1);
 });

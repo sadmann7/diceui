@@ -216,6 +216,8 @@ function SortableThumbnailList({ store }: { store: PresentationStore }) {
     if (toIndex === -1) return;
 
     const fromIndex = orderedIds.indexOf(slideId);
+    if (fromIndex === -1) return;
+
     const next = [...orderedIds];
     next.splice(fromIndex, 1);
     next.splice(toIndex, 0, slideId);

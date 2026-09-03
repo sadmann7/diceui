@@ -124,7 +124,7 @@ async function testItem(item: RegistryItem, url: string): Promise<TestResult> {
 async function main(): Promise<void> {
   const startTime = Date.now();
 
-  console.log("🧪 DiceUI Registry Test");
+  console.log("🧪 Dice UI Registry Test");
   console.log("=======================\n");
 
   // Detect server
@@ -204,7 +204,8 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch((error: Error) => {
-  console.error("\n❌ Test failed:", error.message);
+main().catch((error: unknown) => {
+  const message = error instanceof Error ? error.message : String(error);
+  console.error("\n❌ Test failed:", message);
   process.exit(1);
 });
