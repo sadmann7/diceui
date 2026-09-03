@@ -23,6 +23,7 @@ export async function GET(
 
 export function generateStaticParams() {
   return source.getPages().map((page) => ({
+    lang: page.locale,
     slug: getPageMarkdownUrl(page).segments,
   }));
 }
