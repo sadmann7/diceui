@@ -4,9 +4,10 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import {
   type Announcements,
-  type CollisionDetection,
   closestCenter,
   closestCorners,
+  type CollisionDetection,
+  defaultDropAnimationSideEffects,
   DndContext,
   type DndContextProps,
   type DragCancelEvent,
@@ -18,7 +19,6 @@ import {
   type DragStartEvent,
   type DropAnimation,
   type DroppableContainer,
-  defaultDropAnimationSideEffects,
   getFirstCollision,
   KeyboardCode,
   type KeyboardCoordinateGetter,
@@ -768,10 +768,15 @@ function KanbanColumn(props: KanbanColumnProps) {
     animateLayoutChanges,
   });
 
-  const composedRef = useComposedRefs(ref, (node) => {
-    if (disabled) return;
-    setNodeRef(node);
-  });
+  const onNodeRefChange = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (disabled) return;
+      setNodeRef(node);
+    },
+    [disabled, setNodeRef],
+  );
+
+  const composedRef = useComposedRefs(ref, onNodeRefChange);
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {
@@ -859,10 +864,17 @@ function KanbanColumnHandle(props: KanbanColumnHandleProps) {
 
   const isDisabled = disabled ?? columnContext.disabled;
 
-  const composedRef = useComposedRefs(ref, (node) => {
-    if (isDisabled) return;
-    columnContext.setActivatorNodeRef(node);
-  });
+  const { setActivatorNodeRef } = columnContext;
+
+  const onActivatorNodeRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (isDisabled) return;
+      setActivatorNodeRef(node);
+    },
+    [isDisabled, setActivatorNodeRef],
+  );
+
+  const composedRef = useComposedRefs(ref, onActivatorNodeRef);
 
   const handleProps = isDisabled
     ? undefined
@@ -959,10 +971,17 @@ function KanbanItem(props: KanbanItemProps) {
     throw new Error(`\`${ITEM_NAME}\` value cannot be an empty string`);
   }
 
-  const composedRef = useComposedRefs(ref, (node) => {
-    if (disabled) return;
-    setNodeRef(node);
-  });
+  // Kept stable so React doesn't detach and reattach dnd-kit's node ref on
+  // every render, which retriggers droppable measuring during a drag.
+  const onNodeRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (disabled) return;
+      setNodeRef(node);
+    },
+    [disabled, setNodeRef],
+  );
+
+  const composedRef = useComposedRefs(ref, onNodeRef);
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {
@@ -1036,10 +1055,17 @@ function KanbanItemHandle(props: KanbanItemHandleProps) {
 
   const isDisabled = disabled ?? itemContext.disabled;
 
-  const composedRef = useComposedRefs(ref, (node) => {
-    if (isDisabled) return;
-    itemContext.setActivatorNodeRef(node);
-  });
+  const { setActivatorNodeRef } = itemContext;
+
+  const onActivatorNodeRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (isDisabled) return;
+      setActivatorNodeRef(node);
+    },
+    [isDisabled, setActivatorNodeRef],
+  );
+
+  const composedRef = useComposedRefs(ref, onActivatorNodeRef);
 
   const handleProps = isDisabled
     ? undefined

@@ -4,6 +4,7 @@ import {
   type Announcements,
   closestCenter,
   closestCorners,
+  defaultDropAnimationSideEffects,
   DndContext,
   type DndContextProps,
   type DragEndEvent,
@@ -12,7 +13,6 @@ import {
   DragOverlay,
   type DragStartEvent,
   type DropAnimation,
-  defaultDropAnimationSideEffects,
   KeyboardSensor,
   MouseSensor,
   type ScreenReaderInstructions,
@@ -415,11 +415,16 @@ function SortableItem(props: SortableItemProps) {
     isDragging,
   } = useSortable({ id: value, disabled });
 
-  const composedRef = useComposedRefs(ref, (node) => {
-    if (disabled) return;
-    setNodeRef(node);
-    if (asHandle) setActivatorNodeRef(node);
-  });
+  const onNodeRefChange = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (disabled) return;
+      setNodeRef(node);
+      if (asHandle) setActivatorNodeRef(node);
+    },
+    [disabled, asHandle, setNodeRef, setActivatorNodeRef],
+  );
+
+  const composedRef = useComposedRefs(ref, onNodeRefChange);
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {
@@ -484,10 +489,17 @@ function SortableItemHandle(props: SortableItemHandleProps) {
 
   const isDisabled = disabled ?? itemContext.disabled;
 
-  const composedRef = useComposedRefs(ref, (node) => {
-    if (isDisabled) return;
-    itemContext.setActivatorNodeRef(node);
-  });
+  const { setActivatorNodeRef } = itemContext;
+
+  const onActivatorNodeRef = React.useCallback(
+    (node: HTMLElement | null) => {
+      if (isDisabled) return;
+      setActivatorNodeRef(node);
+    },
+    [isDisabled, setActivatorNodeRef],
+  );
+
+  const composedRef = useComposedRefs(ref, onActivatorNodeRef);
 
   const HandlePrimitive = asChild ? SlotPrimitive.Slot : "button";
 
