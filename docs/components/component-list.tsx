@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { DEFAULT_BASE } from "@/lib/constants";
 import { type RegistryBase, registries } from "@/registry/registry";
 
 function slugToTitle(slug: string): string {
@@ -26,7 +27,7 @@ interface ComponentListProps {
   base?: RegistryBase;
 }
 
-export function ComponentList({ base = "radix" }: ComponentListProps) {
+export function ComponentList({ base = DEFAULT_BASE }: ComponentListProps) {
   const components = getComponents(base);
 
   return (

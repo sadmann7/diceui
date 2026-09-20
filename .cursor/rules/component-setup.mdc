@@ -12,8 +12,8 @@ You are an expert in TypeScript, React, and Dice UI component architecture. When
 
 Dice UI supports multiple UI base libraries. When creating a component, specify which base to use:
 
-- **Radix UI** (default): `@docs/registry/bases/radix/`
-- **Base UI**: `@docs/registry/bases/base/`
+- **Base UI** (default): `@docs/registry/bases/base/`
+- **Radix UI**: `@docs/registry/bases/radix/`
 
 ## Steps
 

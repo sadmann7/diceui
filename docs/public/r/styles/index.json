@@ -1,82 +1,82 @@
 [
   {
-    "name": "radix-nova",
-    "label": "Nova",
-    "base": "radix"
-  },
-  {
-    "name": "radix-vega",
-    "label": "Vega",
-    "base": "radix"
-  },
-  {
-    "name": "radix-maia",
-    "label": "Maia",
-    "base": "radix"
-  },
-  {
-    "name": "radix-lyra",
-    "label": "Lyra",
-    "base": "radix"
-  },
-  {
-    "name": "radix-mira",
-    "label": "Mira",
-    "base": "radix"
-  },
-  {
-    "name": "radix-luma",
-    "label": "Luma",
-    "base": "radix"
-  },
-  {
-    "name": "radix-sera",
-    "label": "Sera",
-    "base": "radix"
-  },
-  {
-    "name": "radix-rhea",
-    "label": "Rhea",
-    "base": "radix"
-  },
-  {
-    "name": "base-nova",
-    "label": "Nova",
+    "name": "base-vega",
+    "label": "Base UI Vega",
     "base": "base"
   },
   {
-    "name": "base-vega",
-    "label": "Vega",
+    "name": "base-nova",
+    "label": "Base UI Nova",
     "base": "base"
   },
   {
     "name": "base-maia",
-    "label": "Maia",
+    "label": "Base UI Maia",
     "base": "base"
   },
   {
     "name": "base-lyra",
-    "label": "Lyra",
+    "label": "Base UI Lyra",
     "base": "base"
   },
   {
     "name": "base-mira",
-    "label": "Mira",
+    "label": "Base UI Mira",
     "base": "base"
   },
   {
     "name": "base-luma",
-    "label": "Luma",
+    "label": "Base UI Luma",
     "base": "base"
   },
   {
     "name": "base-sera",
-    "label": "Sera",
+    "label": "Base UI Sera",
     "base": "base"
   },
   {
     "name": "base-rhea",
-    "label": "Rhea",
+    "label": "Base UI Rhea",
     "base": "base"
+  },
+  {
+    "name": "radix-vega",
+    "label": "Radix UI Vega",
+    "base": "radix"
+  },
+  {
+    "name": "radix-nova",
+    "label": "Radix UI Nova",
+    "base": "radix"
+  },
+  {
+    "name": "radix-maia",
+    "label": "Radix UI Maia",
+    "base": "radix"
+  },
+  {
+    "name": "radix-lyra",
+    "label": "Radix UI Lyra",
+    "base": "radix"
+  },
+  {
+    "name": "radix-mira",
+    "label": "Radix UI Mira",
+    "base": "radix"
+  },
+  {
+    "name": "radix-luma",
+    "label": "Radix UI Luma",
+    "base": "radix"
+  },
+  {
+    "name": "radix-sera",
+    "label": "Radix UI Sera",
+    "base": "radix"
+  },
+  {
+    "name": "radix-rhea",
+    "label": "Radix UI Rhea",
+    "base": "radix"
   }
 ]

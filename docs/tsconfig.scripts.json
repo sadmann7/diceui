@@ -3,7 +3,8 @@
   "compilerOptions": {
     /* Base Options */
     "target": "ES2022",
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM"],
+    "jsx": "react-jsx",
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "moduleDetection": "force",
@@ -27,6 +28,11 @@
     },
     "types": ["node"]
   },
-  "include": ["scripts/**/*.ts", "scripts/**/*.mts"],
+  "include": [
+    "scripts/**/*.ts",
+    "scripts/**/*.mts",
+    "registry/**/*.ts",
+    "registry/**/*.tsx"
+  ],
   "exclude": ["node_modules"]
 }

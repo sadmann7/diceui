@@ -17,8 +17,9 @@ import {
 import { Project, ScriptKind, SyntaxKind } from "ts-morph";
 
 import { DEFAULT_BASE } from "../lib/constants";
+import { BASES } from "../registry/bases";
 import { type RegistryBase, registries } from "../registry/registry";
-import { DEFAULT_STYLE_NAME, STYLES } from "../registry/styles";
+import { STYLES } from "../registry/styles";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
 const STYLES_PATH = path.join(REGISTRY_PATH, "styles");
@@ -37,30 +38,16 @@ const REGISTRY_INDEX_WHITELIST: z.infer<typeof registryItemTypeSchema>[] = [
 ];
 
 // The style whose output directory is built first; remaining styles are copies.
-const DEFAULT_STYLE = DEFAULT_STYLE_NAME;
+const DEFAULT_STYLE = "nova";
 
-const BASES: RegistryBase[] = ["radix", "base"];
-const styles = STYLES.map((s) => ({ name: s.name, label: s.title ?? s.name }));
-
-function getStylesToBuild() {
-  const stylesToBuild: {
-    name: string;
-    label: string;
-    base: RegistryBase;
-    style: { name: string; label: string };
-  }[] = [];
-  for (const baseName of BASES) {
-    for (const style of styles) {
-      stylesToBuild.push({
-        name: `${baseName}-${style.name}`,
-        label: style.label,
-        base: baseName,
-        style,
-      });
-    }
-  }
-  return stylesToBuild;
-}
+const STYLE_COMBINATIONS = BASES.flatMap((base) =>
+  STYLES.map((style) => ({
+    base,
+    style,
+    name: `${base.name}-${style.name}`,
+    title: `${base.title} ${style.title}`,
+  })),
+);
 
 const project = new Project({
   compilerOptions: {},
@@ -142,13 +129,14 @@ export const Index: Record<string, Record<string, unknown>> = {
 export const ExamplesIndex: Record<string, Record<string, unknown>> = {
 `;
 
-  for (const baseName of BASES) {
+  for (const base of BASES) {
+    const baseName = base.name as RegistryBase;
     const registry = registries[baseName];
 
     // Add base entry to examples index (examples are keyed by base only, not style)
     examplesIndex += `  "${baseName}": {`;
 
-    for (const style of styles) {
+    for (const style of STYLES) {
       const styleName = `${baseName}-${style.name}`;
       index += `  "${styleName}": {`;
 
@@ -404,7 +392,7 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
       },`;
 
         if (item.type === "registry:example") {
-          if (style === styles[0]) {
+          if (style === STYLES[0]) {
             examplesIndex += entryStr;
           }
         } else {
@@ -442,9 +430,8 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
 // Build public/r/styles/{base}-{style}/registry.json and index.json.
 // ----------------------------------------------------------------------------
 async function buildRegistryJson() {
-  const stylesToBuild = getStylesToBuild();
-
-  for (const { name: styleName, base: baseName } of stylesToBuild) {
+  for (const { name: styleName, base } of STYLE_COMBINATIONS) {
+    const baseName = base.name as RegistryBase;
     const registry = registries[baseName];
     const outputDir = path.join(STYLES_PATH, styleName);
     await fs.mkdir(outputDir, { recursive: true });
@@ -504,11 +491,10 @@ async function buildRegistryJson() {
 // Build public/r/styles/index.json listing all available styles.
 // ----------------------------------------------------------------------------
 async function buildStylesIndex() {
-  const stylesToBuild = getStylesToBuild();
-  const stylesIndex = stylesToBuild.map(({ name, label, base }) => ({
+  const stylesIndex = STYLE_COMBINATIONS.map(({ name, title, base }) => ({
     name,
-    label,
-    base,
+    label: title,
+    base: base.name,
   }));
 
   await fs.mkdir(STYLES_PATH, { recursive: true });
@@ -566,7 +552,8 @@ async function buildRootIndex() {
 // `{style}` in a consumer URL does not 404. Visual differences are CSS-only.
 // ----------------------------------------------------------------------------
 async function buildPublicItems() {
-  for (const baseName of BASES) {
+  for (const base of BASES) {
+    const baseName = base.name as RegistryBase;
     const registry = registries[baseName];
     const baseSrcRoot = path.join(process.cwd(), "registry", "bases", baseName);
 
@@ -627,7 +614,7 @@ async function buildPublicItems() {
     }
 
     // Copy per-item JSON files to every other style directory for this base.
-    for (const style of styles) {
+    for (const style of STYLES) {
       if (style.name === DEFAULT_STYLE) continue;
 
       const styleDir = path.join(STYLES_PATH, `${baseName}-${style.name}`);
@@ -654,7 +641,8 @@ try {
   const totalStart = performance.now();
 
   // Validate all registries before touching any output
-  for (const baseName of BASES) {
+  for (const base of BASES) {
+    const baseName = base.name as RegistryBase;
     const result = registrySchema.safeParse(registries[baseName]);
     if (!result.success) {
       console.error(`Error in ${baseName} registry:`, result.error);
@@ -677,8 +665,7 @@ try {
   console.log("📋 Building public/r/index.json...");
   await buildRootIndex();
 
-  const stylesToBuild = getStylesToBuild();
-  console.log(`💅 Building ${stylesToBuild.length} style variants...`);
+  console.log(`💅 Building ${STYLE_COMBINATIONS.length} style variants...`);
 
   // Build per-item JSONs (once per base, then copy across styles)
   await buildPublicItems();
@@ -687,7 +674,7 @@ try {
   // Runs after buildPublicItems so it correctly overwrites anything shadcn may have written.
   await buildRegistryJson();
 
-  for (const style of stylesToBuild) {
+  for (const style of STYLE_COMBINATIONS) {
     console.log(`   ✅ ${style.name}`);
   }
 

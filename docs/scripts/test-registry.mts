@@ -1,7 +1,7 @@
 import type { RegistryBase } from "../registry/registry";
 
+import { BASES } from "../registry/bases";
 import { registries } from "../registry/registry";
-import { STYLES } from "../registry/styles";
 
 interface TestResult {
   success: boolean;
@@ -24,16 +24,14 @@ interface RegistryItem {
 const PROD_URL = "https://diceui.com";
 const LOCAL_URLS = ["http://localhost:3000", "http://localhost:3001"];
 const VERBOSE = process.env.VERBOSE === "true";
-const BASES: RegistryBase[] = ["radix", "base"];
-
-// Use the first style as default for testing
-const DEFAULT_STYLE = STYLES[0]?.name ?? "default";
+const DEFAULT_STYLE = "nova";
 
 // Extract hooks and components from all bases (using default style)
 const HOOKS: RegistryItem[] = [];
 const COMPONENTS: RegistryItem[] = [];
 
-for (const baseName of BASES) {
+for (const base of BASES) {
+  const baseName = base.name as RegistryBase;
   const registry = registries[baseName];
 
   // Extract hooks
@@ -65,7 +63,7 @@ for (const baseName of BASES) {
 
 async function detectServer(): Promise<ServerInfo> {
   // Use the first hook or component to test server availability
-  const testStyleName = `${BASES[0]}-${DEFAULT_STYLE}`;
+  const testStyleName = `${BASES[0]?.name ?? "base"}-${DEFAULT_STYLE}`;
   const testItemName = HOOKS[0]?.name ?? COMPONENTS[0]?.name ?? "utils";
 
   // Check local servers first
