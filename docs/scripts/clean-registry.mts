@@ -12,7 +12,7 @@ const STYLES_PATH = path.resolve(import.meta.dirname, "../public/r/styles");
 // Reserved file names within each style directory
 const RESERVED_NAMES = new Set(["index", "registry"]);
 
-async function cleanupRegistry() {
+async function cleanRegistry() {
   console.log("🧹 Starting registry cleanup...");
 
   try {
@@ -132,10 +132,10 @@ if (
   process.argv[1] &&
   fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
 ) {
-  cleanupRegistry().catch((error) => {
+  cleanRegistry().catch((error) => {
     console.error(error);
     process.exit(1);
   });
 }
 
-export { cleanupRegistry };
+export { cleanRegistry };

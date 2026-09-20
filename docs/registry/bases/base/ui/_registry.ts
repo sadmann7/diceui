@@ -542,7 +542,6 @@ export const ui: Registry["items"] = [
       "@diceui/use-lazy-ref",
       "@diceui/use-mobile",
     ],
-    dependencies: ["vaul"],
   },
   {
     name: "scroll-spy",

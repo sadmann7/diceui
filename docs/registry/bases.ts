@@ -2,9 +2,7 @@
  * @see https://github.com/shadcn-ui/ui/blob/main/apps/v4/registry/bases.ts
  */
 
-import type { RegistryItem } from "shadcn/schema";
-
-export const BASES: RegistryItem[] = [
+export const BASES = [
   {
     name: "base",
     type: "registry:style",
