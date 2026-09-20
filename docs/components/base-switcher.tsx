@@ -7,8 +7,8 @@ import type { RegistryBase } from "@/registry/registry";
 import { cn } from "@/lib/utils";
 
 const bases: { label: string; value: RegistryBase }[] = [
-  { label: "Radix UI", value: "radix" },
   { label: "Base UI", value: "base" },
+  { label: "Radix UI", value: "radix" },
 ];
 
 interface BaseSwitcherProps extends React.ComponentProps<"div"> {

@@ -3,13 +3,11 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { rimraf } from "rimraf";
 
-import { registries } from "../registry/registry";
+import { BASES } from "../registry/bases";
+import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
 
 const STYLES_PATH = path.resolve(import.meta.dirname, "../public/r/styles");
-
-// Define bases to match build-registry
-const BASES = Object.keys(registries) as Array<keyof typeof registries>;
 
 // Reserved file names within each style directory
 const RESERVED_NAMES = new Set(["index", "registry"]);
@@ -20,9 +18,9 @@ async function cleanupRegistry() {
   try {
     // Build expected style directory names
     const expectedStyleDirs = new Set<string>();
-    for (const baseName of BASES) {
+    for (const base of BASES) {
       for (const style of STYLES) {
-        expectedStyleDirs.add(`${baseName}-${style.name}`);
+        expectedStyleDirs.add(`${base.name}-${style.name}`);
       }
     }
 
@@ -60,7 +58,8 @@ async function cleanupRegistry() {
     let totalOrphaned = 0;
     let totalValid = 0;
 
-    for (const baseName of BASES) {
+    for (const base of BASES) {
+      const baseName = base.name as RegistryBase;
       const registry = registries[baseName];
 
       // Build expected item names for this base

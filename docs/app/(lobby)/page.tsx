@@ -7,9 +7,9 @@ import { Button } from "@/registry/bases/radix/ui/button";
 const firstComponentUrl =
   source
     .getPages()
-    .filter((page) => page.url.startsWith("/docs/components/radix/"))
+    .filter((page) => page.url.startsWith("/docs/components/base/"))
     .sort((a, b) => a.url.localeCompare(b.url))[0]?.url ??
-  "/docs/components/radix/action-bar";
+  "/docs/components/base/action-bar";
 
 export default function IndexPage(_props: PageProps<"/">) {
   return (

@@ -78,7 +78,7 @@ export const designSystemConfigSchema = z
 export type DesignSystemConfig = z.infer<typeof designSystemConfigSchema>;
 
 export const DEFAULT_CONFIG: DesignSystemConfig = {
-  base: "radix",
+  base: "base",
   style: "nova",
   baseColor: "neutral",
   theme: "neutral",
@@ -87,8 +87,6 @@ export const DEFAULT_CONFIG: DesignSystemConfig = {
 };
 
 export function getThemesForBaseColor(baseColorName: string) {
-  const baseColorNames = BASE_COLORS.map((bc) => bc.name);
-
   return THEMES.filter((theme) => {
     if (theme.name === baseColorName) {
       return true;

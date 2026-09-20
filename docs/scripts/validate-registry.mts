@@ -2,20 +2,13 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 import { registrySchema } from "shadcn/schema";
 
-import type { RegistryBase } from "../registry/registry";
-
+import { BASES } from "../registry/bases";
 import { STYLES } from "../registry/styles";
 
-const BASES: RegistryBase[] = ["radix", "base"];
-
 function getStyleNames(): string[] {
-  const names: string[] = [];
-  for (const baseName of BASES) {
-    for (const style of STYLES) {
-      names.push(`${baseName}-${style.name}`);
-    }
-  }
-  return names;
+  return BASES.flatMap((base) =>
+    STYLES.map((style) => `${base.name}-${style.name}`),
+  );
 }
 
 async function main() {
