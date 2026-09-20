@@ -4,6 +4,7 @@
 
 import { z } from "zod";
 
+import { DEFAULT_BASE, DEFAULT_STYLE } from "@/lib/constants";
 import { BASE_COLORS, type BaseColor } from "@/registry/base-colors";
 import { BASES, type Base } from "@/registry/bases";
 import { fonts } from "@/registry/fonts";
@@ -78,8 +79,8 @@ export const designSystemConfigSchema = z
 export type DesignSystemConfig = z.infer<typeof designSystemConfigSchema>;
 
 export const DEFAULT_CONFIG: DesignSystemConfig = {
-  base: "base",
-  style: "nova",
+  base: DEFAULT_BASE,
+  style: DEFAULT_STYLE,
   baseColor: "neutral",
   theme: "neutral",
   font: "inter",

@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 import { createMDX } from "fumadocs-mdx/next";
 
+import { DEFAULT_STYLE_ID } from "./lib/constants";
+
 const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
@@ -58,7 +60,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/r/:name.json",
-        destination: "/r/styles/base-nova/:name.json",
+        destination: `/r/styles/${DEFAULT_STYLE_ID}/:name.json`,
       },
     ];
   },
