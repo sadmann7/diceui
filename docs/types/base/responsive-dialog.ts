@@ -53,7 +53,6 @@ export interface ResponsiveDialogProps extends EmptyCompProps<
 export interface ResponsiveDialogTriggerProps extends EmptyProps<"button"> {
   /**
    * Render prop for custom trigger rendering.
-   * Supports Base UI render pattern (desktop) and converts to asChild for Drawer (mobile).
    */
   render?: React.ComponentProps<typeof DialogTrigger>["render"];
 }
@@ -61,7 +60,6 @@ export interface ResponsiveDialogTriggerProps extends EmptyProps<"button"> {
 export interface ResponsiveDialogCloseProps extends EmptyProps<"button"> {
   /**
    * Render prop for custom close button rendering.
-   * Supports Base UI render pattern (desktop) and converts to asChild for Drawer (mobile).
    */
   render?: React.ComponentProps<typeof DialogClose>["render"];
 }

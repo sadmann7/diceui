@@ -1,10 +1,9 @@
 "use client";
 
-import type * as React from "react";
-
 import { Menu as MenuPrimitive } from "@base-ui/react/menu";
 import { cn } from "cn";
-import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { ChevronRightIcon, CheckIcon } from "lucide-react";
+import * as React from "react";
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
@@ -67,15 +66,17 @@ function DropdownMenuLabel({
   inset?: boolean;
 }) {
   return (
-    <MenuPrimitive.GroupLabel
-      data-slot="dropdown-menu-label"
-      data-inset={inset}
-      className={cn(
-        "px-1.5 py-1 text-xs font-medium text-muted-foreground data-inset:pl-7",
-        className,
-      )}
-      {...props}
-    />
+    <MenuPrimitive.Group data-slot="dropdown-menu-label-group">
+      <MenuPrimitive.GroupLabel
+        data-slot="dropdown-menu-label"
+        data-inset={inset}
+        className={cn(
+          "px-1.5 py-1 text-xs font-medium text-muted-foreground data-inset:pl-7",
+          className,
+        )}
+        {...props}
+      />
+    </MenuPrimitive.Group>
   );
 }
 
@@ -125,7 +126,7 @@ function DropdownMenuSubTrigger({
       {...props}
     >
       {children}
-      <ChevronRightIcon className="cn-rtl-flip ml-auto" />
+      <ChevronRightIcon className="ml-auto" />
     </MenuPrimitive.SubmenuTrigger>
   );
 }
@@ -258,18 +259,18 @@ function DropdownMenuShortcut({
 
 export {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
+  DropdownMenuPortal,
+  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuGroup,
-  DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
+  DropdownMenuItem,
+  DropdownMenuCheckboxItem,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuSub,
-  DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
+  DropdownMenuSubContent,
 };
