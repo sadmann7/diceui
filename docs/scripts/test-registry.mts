@@ -1,5 +1,6 @@
 import type { RegistryBase } from "../registry/registry";
 
+import { DEFAULT_STYLE } from "../lib/constants";
 import { BASES } from "../registry/bases";
 import { registries } from "../registry/registry";
 
@@ -24,7 +25,6 @@ interface RegistryItem {
 const PROD_URL = "https://diceui.com";
 const LOCAL_URLS = ["http://localhost:3000", "http://localhost:3001"];
 const VERBOSE = process.env.VERBOSE === "true";
-const DEFAULT_STYLE = "nova";
 
 // Extract hooks and components from all bases (using default style)
 const HOOKS: RegistryItem[] = [];

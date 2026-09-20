@@ -18,11 +18,11 @@ Validates registry structure.
 pnpm validate:registry
 ```
 
-### `cleanup-registry.mts`
+### `clean-registry.mts`
 Cleans up generated files.
 
 ```bash
-pnpm cleanup:registry
+pnpm clean:registry
 ```
 
 ### `test-registry.mts`

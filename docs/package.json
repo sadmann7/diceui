@@ -7,7 +7,7 @@
     "generate:content": "fumadocs-mdx",
     "build:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/build-registry.mts",
     "validate:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/validate-registry.mts",
-    "cleanup:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/cleanup-registry.mts",
+    "clean:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/clean-registry.mts",
     "test:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/test-registry.mts",
     "dev": "next dev --turbopack",
     "start": "next start",

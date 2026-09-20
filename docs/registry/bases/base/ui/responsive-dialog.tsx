@@ -79,6 +79,7 @@ function ResponsiveDialog({
   open: openProp,
   defaultOpen = false,
   onOpenChange: onOpenChangeProp,
+  handle,
   ...props
 }: ResponsiveDialogProps) {
   const isMobile = useIsMobile(breakpoint);
@@ -147,7 +148,12 @@ function ResponsiveDialog({
 
   return (
     <StoreContext.Provider value={store}>
-      <Dialog open={open} onOpenChange={onOpenChange} {...props} />
+      <Dialog
+        open={open}
+        onOpenChange={onOpenChange}
+        handle={handle}
+        {...props}
+      />
     </StoreContext.Provider>
   );
 }
@@ -164,12 +170,8 @@ function ResponsiveDialogTrigger({
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {
-    return render && React.isValidElement(render) ? (
-      <DrawerTrigger data-variant="drawer" asChild {...props}>
-        {render}
-      </DrawerTrigger>
-    ) : (
-      <DrawerTrigger data-variant="drawer" {...props}>
+    return (
+      <DrawerTrigger data-variant="drawer" render={render} {...props}>
         {children}
       </DrawerTrigger>
     );
@@ -196,12 +198,8 @@ function ResponsiveDialogClose({
   const isMobile = useStore((state) => state.isMobile);
 
   if (isMobile) {
-    return render && React.isValidElement(render) ? (
-      <DrawerClose data-variant="drawer" asChild {...props}>
-        {render}
-      </DrawerClose>
-    ) : (
-      <DrawerClose data-variant="drawer" {...props}>
+    return (
+      <DrawerClose data-variant="drawer" render={render} {...props}>
         {children}
       </DrawerClose>
     );
@@ -261,12 +259,7 @@ function ResponsiveDialogOverlay({
 
   if (isMobile) {
     return (
-      <DrawerOverlay
-        data-variant="drawer"
-        forceMount={forceRender as true}
-        style={resolvedStyle}
-        {...props}
-      />
+      <DrawerOverlay data-variant="drawer" style={resolvedStyle} {...props} />
     );
   }
 
@@ -285,6 +278,7 @@ function ResponsiveDialogContent({
   className,
   showCloseButton,
   style,
+  render,
   ...props
 }: React.ComponentProps<typeof DialogContent>) {
   const isMobile = useStore((state) => state.isMobile);
@@ -307,6 +301,7 @@ function ResponsiveDialogContent({
       className={className}
       showCloseButton={showCloseButton}
       style={style}
+      render={render}
       {...props}
     />
   );

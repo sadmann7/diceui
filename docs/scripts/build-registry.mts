@@ -16,7 +16,7 @@ import {
 } from "shadcn/schema";
 import { Project, ScriptKind, SyntaxKind } from "ts-morph";
 
-import { DEFAULT_BASE } from "../lib/constants";
+import { DEFAULT_BASE, DEFAULT_STYLE } from "../lib/constants";
 import { BASES } from "../registry/bases";
 import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
@@ -36,9 +36,6 @@ const REGISTRY_INDEX_WHITELIST: z.infer<typeof registryItemTypeSchema>[] = [
   "registry:internal",
   "registry:style",
 ];
-
-// The style whose output directory is built first; remaining styles are copies.
-const DEFAULT_STYLE = "nova";
 
 const STYLE_COMBINATIONS = BASES.flatMap((base) =>
   STYLES.map((style) => ({
