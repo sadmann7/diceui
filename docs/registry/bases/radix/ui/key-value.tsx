@@ -1,11 +1,10 @@
 "use client";
 
-import { PlusIcon, XIcon } from "lucide-react";
+import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
@@ -13,6 +12,7 @@ import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { Input } from "@/registry/bases/radix/ui/input";
 import { Textarea } from "@/registry/bases/radix/ui/textarea";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "KeyValue";
 const LIST_NAME = "KeyValueList";
@@ -761,7 +761,15 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
       {...removeProps}
       onClick={onClick}
     >
-      {children ?? <XIcon />}
+      {children ?? (
+        <IconPlaceholder
+          lucide="XIcon"
+          tabler="IconX"
+          hugeicons="Cancel01Icon"
+          phosphor="XIcon"
+          remixicon="RiCloseLine"
+        />
+      )}
     </Button>
   );
 }
@@ -818,7 +826,13 @@ function KeyValueAdd(props: React.ComponentProps<typeof Button>) {
     >
       {children ?? (
         <>
-          <PlusIcon />
+          <IconPlaceholder
+            lucide="PlusIcon"
+            tabler="IconPlus"
+            hugeicons="PlusSignIcon"
+            phosphor="PlusIcon"
+            remixicon="RiAddLine"
+          />
           Add
         </>
       )}

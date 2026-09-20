@@ -1,11 +1,10 @@
 "use client";
 
-import { Clock } from "lucide-react";
+import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
@@ -16,6 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/registry/bases/radix/ui/popover";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "TimePicker";
 const LABEL_NAME = "TimePickerLabel";
@@ -1464,7 +1464,15 @@ function TimePickerTrigger(props: ButtonProps) {
         className,
       )}
     >
-      {children ?? <Clock />}
+      {children ?? (
+        <IconPlaceholder
+          lucide="Clock"
+          tabler="IconClock"
+          hugeicons="Clock01Icon"
+          phosphor="ClockIcon"
+          remixicon="RiTimeLine"
+        />
+      )}
     </PopoverTrigger>
   );
 }

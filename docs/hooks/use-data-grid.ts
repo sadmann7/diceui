@@ -159,7 +159,8 @@ function useDataGrid<TData>({
   initialState,
   ...props
 }: UseDataGridProps<TData>) {
-  const dir = useDirection(dirProp);
+  const contextDir = useDirection();
+  const dir = dirProp ?? contextDir;
   const dataGridRef = React.useRef<HTMLDivElement>(null);
   const tableRef = React.useRef<ReturnType<typeof useReactTable<TData>>>(null);
   const rowVirtualizerRef =

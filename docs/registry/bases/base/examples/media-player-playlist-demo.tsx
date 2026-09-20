@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "cn";
 import {
   ListMusicIcon,
   Loader2Icon,
@@ -11,7 +12,6 @@ import {
 import * as React from "react";
 import { toast } from "sonner";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/registry/bases/base/ui/button";
 import {
   MediaPlayer,

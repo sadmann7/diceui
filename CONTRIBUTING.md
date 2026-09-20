@@ -243,7 +243,7 @@ test(tags-input): add validation tests
 ## Code Style
 
 - Lint with oxlint (`pnpm lint` / `pnpm lint:fix`)
-- Format with oxfmt (`pnpm fmt` / `pnpm fmt:check`)
+- Format with oxfmt (`pnpm format` / `pnpm format:check`)
 - Follow existing patterns in the codebase
 
 ## Submitting Changes

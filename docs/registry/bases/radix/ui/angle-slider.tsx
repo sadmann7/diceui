@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
@@ -7,7 +8,6 @@ import {
 import * as React from "react";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";

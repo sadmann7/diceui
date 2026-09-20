@@ -4,7 +4,6 @@ export const examples: Registry["items"] = [
   {
     name: "action-bar-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["action-bar", "checkbox"],
     files: [
       {
@@ -16,7 +15,6 @@ export const examples: Registry["items"] = [
   {
     name: "action-bar-position-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["action-bar", "label", "select", "switch"],
     files: [
       {
@@ -39,7 +37,7 @@ export const examples: Registry["items"] = [
   {
     name: "angle-slider-controlled-demo",
     type: "registry:example",
-    dependencies: ["motion", "lucide-react"],
+    dependencies: ["motion"],
     registryDependencies: ["angle-slider", "button"],
     files: [
       {
@@ -96,7 +94,6 @@ export const examples: Registry["items"] = [
   {
     name: "compare-slider-controlled-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["compare-slider", "button", "label", "slider"],
     files: [
       {
@@ -186,7 +183,7 @@ export const examples: Registry["items"] = [
   {
     name: "file-upload-demo",
     type: "registry:example",
-    dependencies: ["lucide-react", "sonner"],
+    dependencies: ["sonner"],
     registryDependencies: ["button", "file-upload"],
     files: [
       {
@@ -198,12 +195,7 @@ export const examples: Registry["items"] = [
   {
     name: "file-upload-chat-input-demo",
     type: "registry:example",
-    dependencies: [
-      "lucide-react",
-      "sonner",
-      "uploadthing",
-      "@uploadthing/react",
-    ],
+    dependencies: ["sonner", "uploadthing", "@uploadthing/react"],
     registryDependencies: ["button", "file-upload", "textarea"],
     files: [
       {
@@ -215,7 +207,6 @@ export const examples: Registry["items"] = [
   {
     name: "file-upload-circular-progress-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["button", "file-upload"],
     files: [
       {
@@ -227,7 +218,7 @@ export const examples: Registry["items"] = [
   {
     name: "file-upload-direct-upload-demo",
     type: "registry:example",
-    dependencies: ["lucide-react", "sonner"],
+    dependencies: ["sonner"],
     registryDependencies: ["button", "file-upload"],
     files: [
       {
@@ -239,7 +230,6 @@ export const examples: Registry["items"] = [
   {
     name: "file-upload-fill-progress-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["button", "file-upload"],
     files: [
       {
@@ -251,7 +241,7 @@ export const examples: Registry["items"] = [
   {
     name: "file-upload-form-demo",
     type: "registry:example",
-    dependencies: ["lucide-react", "@hookform/resolvers/zod", "zod"],
+    dependencies: ["@hookform/resolvers/zod", "zod"],
     registryDependencies: ["button", "file-upload", "form"],
     files: [
       {
@@ -263,7 +253,7 @@ export const examples: Registry["items"] = [
   {
     name: "file-upload-uploadthing-demo",
     type: "registry:example",
-    dependencies: ["lucide-react", "uploadthing", "@uploadthing/react"],
+    dependencies: ["uploadthing", "@uploadthing/react"],
     registryDependencies: ["button", "file-upload"],
     files: [
       {
@@ -275,7 +265,7 @@ export const examples: Registry["items"] = [
   {
     name: "file-upload-validation-demo",
     type: "registry:example",
-    dependencies: ["lucide-react", "sonner"],
+    dependencies: ["sonner"],
     registryDependencies: ["button", "file-upload"],
     files: [
       {
@@ -320,7 +310,6 @@ export const examples: Registry["items"] = [
   {
     name: "avatar-group-icons-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["avatar-group"],
     files: [
       {
@@ -365,7 +354,6 @@ export const examples: Registry["items"] = [
   {
     name: "badge-overflow-interactive-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["badge", "badge-overflow", "button", "input"],
     files: [
       {
@@ -377,7 +365,6 @@ export const examples: Registry["items"] = [
   {
     name: "banner-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["banner", "button"],
     files: [
       {
@@ -389,7 +376,6 @@ export const examples: Registry["items"] = [
   {
     name: "banner-stacked-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["banner", "button"],
     files: [
       {
@@ -546,7 +532,6 @@ export const examples: Registry["items"] = [
   {
     name: "editable-todo-list-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["editable", "checkbox"],
     files: [
       {
@@ -641,7 +626,6 @@ export const examples: Registry["items"] = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
-      "lucide-react",
     ],
     registryDependencies: ["badge", "button", "kanban"],
     files: [
@@ -659,7 +643,6 @@ export const examples: Registry["items"] = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
-      "lucide-react",
     ],
     registryDependencies: ["badge", "button", "kanban"],
     files: [
@@ -877,7 +860,6 @@ export const examples: Registry["items"] = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
-      "lucide-react",
     ],
     registryDependencies: ["button", "sortable", "table"],
     files: [
@@ -986,7 +968,6 @@ export const examples: Registry["items"] = [
   {
     name: "stat-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["stat", "dropdown-menu"],
     files: [
       {
@@ -998,7 +979,6 @@ export const examples: Registry["items"] = [
   {
     name: "stat-variants-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["stat"],
     files: [
       {
@@ -1010,7 +990,6 @@ export const examples: Registry["items"] = [
   {
     name: "stat-layout-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["stat"],
     files: [
       {
@@ -1066,7 +1045,6 @@ export const examples: Registry["items"] = [
   {
     name: "swap-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["swap"],
     files: [
       {
@@ -1078,7 +1056,6 @@ export const examples: Registry["items"] = [
   {
     name: "swap-animations-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["swap"],
     files: [
       {
@@ -1112,7 +1089,6 @@ export const examples: Registry["items"] = [
   {
     name: "qr-code-overlay-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["qr-code"],
     files: [
       {
@@ -1135,7 +1111,6 @@ export const examples: Registry["items"] = [
   {
     name: "relative-time-card-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["button", "relative-time-card"],
     files: [
       {
@@ -1158,7 +1133,6 @@ export const examples: Registry["items"] = [
   {
     name: "relative-time-card-variants-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["button", "relative-time-card"],
     files: [
       {
@@ -1192,7 +1166,6 @@ export const examples: Registry["items"] = [
   {
     name: "rating-themes-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["rating"],
     files: [
       {
@@ -1243,7 +1216,6 @@ export const examples: Registry["items"] = [
   {
     name: "responsive-dialog-confirm-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
     registryDependencies: ["button", "responsive-dialog"],
     files: [
       {
@@ -1464,7 +1436,6 @@ export const examples: Registry["items"] = [
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
-      "lucide-react",
       "sonner",
     ],
     registryDependencies: [
@@ -1685,7 +1656,6 @@ export const examples: Registry["items"] = [
     name: "selection-toolbar-demo",
     type: "registry:example",
     registryDependencies: ["selection-toolbar"],
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/selection-toolbar-demo.tsx",
@@ -1697,7 +1667,6 @@ export const examples: Registry["items"] = [
     name: "selection-toolbar-info-demo",
     type: "registry:example",
     registryDependencies: ["selection-toolbar"],
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/selection-toolbar-info-demo.tsx",
@@ -1709,7 +1678,6 @@ export const examples: Registry["items"] = [
     name: "speed-dial-demo",
     type: "registry:example",
     registryDependencies: ["speed-dial"],
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/speed-dial-demo.tsx",
@@ -1721,7 +1689,6 @@ export const examples: Registry["items"] = [
     name: "speed-dial-controlled-demo",
     type: "registry:example",
     registryDependencies: ["speed-dial"],
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/speed-dial-controlled-demo.tsx",
@@ -1733,7 +1700,6 @@ export const examples: Registry["items"] = [
     name: "speed-dial-hover-demo",
     type: "registry:example",
     registryDependencies: ["speed-dial"],
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/speed-dial-hover-demo.tsx",
@@ -1745,7 +1711,6 @@ export const examples: Registry["items"] = [
     name: "speed-dial-labels-demo",
     type: "registry:example",
     registryDependencies: ["speed-dial"],
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/speed-dial-labels-demo.tsx",
@@ -1757,7 +1722,6 @@ export const examples: Registry["items"] = [
     name: "speed-dial-side-demo",
     type: "registry:example",
     registryDependencies: ["speed-dial"],
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/speed-dial-side-demo.tsx",
@@ -1769,7 +1733,6 @@ export const examples: Registry["items"] = [
     name: "tour-demo",
     type: "registry:example",
     registryDependencies: ["tour"],
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/tour-demo.tsx",
@@ -1781,7 +1744,6 @@ export const examples: Registry["items"] = [
     name: "tour-controlled-demo",
     type: "registry:example",
     registryDependencies: ["tour"],
-    dependencies: ["lucide-react"],
     files: [
       {
         path: "examples/tour-controlled-demo.tsx",

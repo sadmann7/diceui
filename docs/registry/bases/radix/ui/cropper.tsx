@@ -1,11 +1,11 @@
 "use client";
 
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";

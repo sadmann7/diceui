@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 import { createMDX } from "fumadocs-mdx/next";
 
+import { DEFAULT_STYLE_ID, getStyleIds } from "./registry/styles";
+
 const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
@@ -52,21 +54,21 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
-      // Known styles → serve the matching static directory.
+      // Published style ids resolve to their static directory.
       {
-        source:
-          "/r/:style(radix-vega|base-vega|radix-nova|base-nova)/:name.json",
+        source: `/r/:style(${getStyleIds().join("|")})/:name.json`,
         destination: "/r/styles/:style/:name.json",
       },
-      // Unknown styles (e.g. "new-york", "default") → radix-vega fallback.
+      // Bases we don't author (`aria-*`) and legacy v3 ids fall back to the
+      // default rather than 404ing on an otherwise valid install.
       {
         source: "/r/:style/:name.json",
-        destination: "/r/styles/radix-vega/:name.json",
+        destination: `/r/styles/${DEFAULT_STYLE_ID}/:name.json`,
       },
-      // Flat /r/{name}.json → radix-vega default (no style in URL).
+      // Flat /r/{name}.json → default base (no style in URL).
       {
         source: "/r/:name.json",
-        destination: "/r/styles/radix-vega/:name.json",
+        destination: `/r/styles/${DEFAULT_STYLE_ID}/:name.json`,
       },
     ];
   },

@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
 import {
   ChevronDown,
   ChevronLeft,
@@ -11,7 +12,6 @@ import {
 } from "lucide-react";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 
 const DATA_TOP_SCROLL = "data-top-scroll";

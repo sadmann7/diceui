@@ -1,15 +1,15 @@
 "use client";
 
 import { cva, type VariantProps } from "class-variance-authority";
-import { X } from "lucide-react";
+import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const BANNER_ANIMATION_DURATION = 400;
 const DEFAULT_BANNER_PRIORITY = 0;
@@ -687,7 +687,16 @@ function BannerClose(props: React.ComponentProps<typeof Button>) {
       disabled={isDisabled}
       {...closeProps}
     >
-      {children ?? <X className="size-3.5" />}
+      {children ?? (
+        <IconPlaceholder
+          lucide="X"
+          tabler="IconX"
+          hugeicons="Cancel01Icon"
+          phosphor="XIcon"
+          remixicon="RiCloseLine"
+          className="size-3.5"
+        />
+      )}
     </Button>
   );
 }

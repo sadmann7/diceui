@@ -3,16 +3,16 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
-import { Clock } from "lucide-react";
+import { cn } from "cn";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { Popover, PopoverTrigger } from "@/registry/bases/base/ui/popover";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "TimePicker";
 const LABEL_NAME = "TimePickerLabel";
@@ -1491,7 +1491,15 @@ function TimePickerTrigger(props: ButtonProps) {
         className,
       )}
     >
-      {children ?? <Clock />}
+      {children ?? (
+        <IconPlaceholder
+          lucide="Clock"
+          tabler="IconClock"
+          hugeicons="Clock01Icon"
+          phosphor="ClockIcon"
+          remixicon="RiTimeLine"
+        />
+      )}
     </PopoverTrigger>
   );
 }

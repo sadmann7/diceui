@@ -1,9 +1,9 @@
 import type * as React from "react";
 
 import * as ListboxPrimitive from "@diceui/listbox";
-import { Check } from "lucide-react";
+import { cn } from "cn";
 
-import { cn } from "@/lib/utils";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const Listbox = (({
   className,
@@ -78,7 +78,14 @@ function ListboxItemIndicator({
       data-slot="listbox-item-indicator"
       {...props}
     >
-      <Check className="size-4" />
+      <IconPlaceholder
+        lucide="Check"
+        tabler="IconCheck"
+        hugeicons="Tick02Icon"
+        phosphor="CheckIcon"
+        remixicon="RiCheckLine"
+        className="size-4"
+      />
     </ListboxPrimitive.ItemIndicator>
   );
 }

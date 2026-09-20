@@ -2,21 +2,13 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import {
-  FileArchiveIcon,
-  FileAudioIcon,
-  FileCodeIcon,
-  FileCogIcon,
-  FileIcon,
-  FileTextIcon,
-  FileVideoIcon,
-} from "lucide-react";
+import { cn } from "cn";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useDirection } from "@/registry/bases/base/ui/direction";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "FileUpload";
 const DROPZONE_NAME = "FileUploadDropzone";
@@ -41,18 +33,42 @@ function getFileIcon(file: File) {
   const extension = file.name.split(".").pop()?.toLowerCase() ?? "";
 
   if (type.startsWith("video/")) {
-    return <FileVideoIcon />;
+    return (
+      <IconPlaceholder
+        lucide="FileVideoIcon"
+        tabler="IconMovie"
+        hugeicons="Video01Icon"
+        phosphor="FileVideoIcon"
+        remixicon="RiVideoLine"
+      />
+    );
   }
 
   if (type.startsWith("audio/")) {
-    return <FileAudioIcon />;
+    return (
+      <IconPlaceholder
+        lucide="FileAudioIcon"
+        tabler="IconFileMusic"
+        hugeicons="FileMusicIcon"
+        phosphor="FileAudioIcon"
+        remixicon="RiFileMusicLine"
+      />
+    );
   }
 
   if (
     type.startsWith("text/") ||
     ["txt", "md", "rtf", "pdf"].includes(extension)
   ) {
-    return <FileTextIcon />;
+    return (
+      <IconPlaceholder
+        lucide="FileTextIcon"
+        tabler="IconFileText"
+        hugeicons="File02Icon"
+        phosphor="FileTextIcon"
+        remixicon="RiFileTextLine"
+      />
+    );
   }
 
   if (
@@ -74,21 +90,53 @@ function getFileIcon(file: File) {
       "cs",
     ].includes(extension)
   ) {
-    return <FileCodeIcon />;
+    return (
+      <IconPlaceholder
+        lucide="FileCodeIcon"
+        tabler="IconFileCode"
+        hugeicons="FileScriptIcon"
+        phosphor="FileCodeIcon"
+        remixicon="RiFileCodeLine"
+      />
+    );
   }
 
   if (["zip", "rar", "7z", "tar", "gz", "bz2"].includes(extension)) {
-    return <FileArchiveIcon />;
+    return (
+      <IconPlaceholder
+        lucide="FileArchiveIcon"
+        tabler="IconFileZip"
+        hugeicons="FileZipIcon"
+        phosphor="FileZipIcon"
+        remixicon="RiFileZipLine"
+      />
+    );
   }
 
   if (
     ["exe", "msi", "app", "apk", "deb", "rpm"].includes(extension) ||
     type.startsWith("application/")
   ) {
-    return <FileCogIcon />;
+    return (
+      <IconPlaceholder
+        lucide="FileCogIcon"
+        tabler="IconFileSettings"
+        hugeicons="FileSettingIcon"
+        phosphor="FileDashedIcon"
+        remixicon="RiFileSettingsLine"
+      />
+    );
   }
 
-  return <FileIcon />;
+  return (
+    <IconPlaceholder
+      lucide="FileIcon"
+      tabler="IconFile"
+      hugeicons="File01Icon"
+      phosphor="FileIcon"
+      remixicon="RiFileLine"
+    />
+  );
 }
 
 type Direction = "ltr" | "rtl";

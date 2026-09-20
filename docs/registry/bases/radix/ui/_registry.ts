@@ -260,7 +260,6 @@ export const ui: Registry["items"] = [
   {
     name: "fps",
     type: "registry:ui",
-    dependencies: [],
     files: [
       {
         path: "ui/fps.tsx",
@@ -683,7 +682,6 @@ export const ui: Registry["items"] = [
   {
     name: "stat",
     type: "registry:ui",
-    dependencies: [],
     registryDependencies: ["separator"],
     files: [
       {

@@ -1,9 +1,9 @@
 "use client";
 
+import { cn } from "cn";
 import { Edit, Trash2 } from "lucide-react";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { Checkbox } from "@/registry/bases/radix/ui/checkbox";
 import {

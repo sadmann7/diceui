@@ -1,6 +1,6 @@
 "use client";
 
-import { Check } from "lucide-react";
+import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
@@ -8,10 +8,10 @@ import {
 import * as React from "react";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "Stepper";
 const LIST_NAME = "StepperList";
@@ -1018,7 +1018,14 @@ function StepperIndicator(props: StepperIndicatorProps) {
       ) : children ? (
         children
       ) : dataState === "completed" ? (
-        <Check className="size-4" />
+        <IconPlaceholder
+          lucide="Check"
+          tabler="IconCheck"
+          hugeicons="Tick02Icon"
+          phosphor="CheckIcon"
+          remixicon="RiCheckLine"
+          className="size-4"
+        />
       ) : (
         stepPosition
       )}

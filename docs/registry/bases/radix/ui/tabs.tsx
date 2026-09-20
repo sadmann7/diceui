@@ -3,9 +3,8 @@
 import type * as React from "react";
 
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
 import { Tabs as TabsPrimitive } from "radix-ui";
-
-import { cn } from "@/lib/utils";
 
 function Tabs({
   className,

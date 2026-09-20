@@ -1,9 +1,9 @@
 "use client";
 
+import { cn } from "cn";
 import { Copy, Trash2, X } from "lucide-react";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import {
   ActionBar,
   ActionBarClose,

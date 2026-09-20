@@ -2,15 +2,15 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { Check } from "lucide-react";
+import { cn } from "cn";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { useDirection } from "@/registry/bases/base/ui/direction";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "Stepper";
 const LIST_NAME = "StepperList";
@@ -1042,7 +1042,14 @@ function StepperIndicator(props: StepperIndicatorProps) {
           ) : children ? (
             children
           ) : dataState === "completed" ? (
-            <Check className="size-4" />
+            <IconPlaceholder
+              lucide="Check"
+              tabler="IconCheck"
+              hugeicons="Tick02Icon"
+              phosphor="CheckIcon"
+              remixicon="RiCheckLine"
+              className="size-4"
+            />
           ) : (
             stepPosition
           ),

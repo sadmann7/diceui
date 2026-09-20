@@ -3,29 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { useRender } from "@base-ui/react/use-render";
-import {
-  AlertTriangleIcon,
-  CaptionsOffIcon,
-  CheckIcon,
-  DownloadIcon,
-  FastForwardIcon,
-  Loader2Icon,
-  Maximize2Icon,
-  Minimize2Icon,
-  PauseIcon,
-  PictureInPicture2Icon,
-  PictureInPictureIcon,
-  PlayIcon,
-  RefreshCcwIcon,
-  RepeatIcon,
-  RewindIcon,
-  RotateCcwIcon,
-  SettingsIcon,
-  SubtitlesIcon,
-  Volume1Icon,
-  Volume2Icon,
-  VolumeXIcon,
-} from "lucide-react";
+import { cn } from "cn";
 import {
   MediaActionTypes,
   MediaProvider,
@@ -38,7 +16,6 @@ import {
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { cn } from "@/lib/utils";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { Badge } from "@/registry/bases/base/ui/badge";
@@ -60,6 +37,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/registry/bases/base/ui/tooltip";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "MediaPlayer";
 const SEEK_NAME = "MediaPlayerSeek";
@@ -953,7 +931,14 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
           className,
         ),
         children: children ?? (
-          <Loader2Icon className="size-20 animate-spin stroke-[.0938rem] text-primary" />
+          <IconPlaceholder
+            lucide="Loader2Icon"
+            tabler="IconLoader2"
+            hugeicons="Loading03Icon"
+            phosphor="SpinnerIcon"
+            remixicon="RiLoader4Line"
+            className="size-20 animate-spin stroke-[.0938rem] text-primary"
+          />
         ),
       },
       loadingProps,
@@ -1089,7 +1074,14 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
         ),
         children: children ?? (
           <div className="flex max-w-md flex-col items-center gap-4 px-6 py-8 text-center">
-            <AlertTriangleIcon className="size-12 text-destructive" />
+            <IconPlaceholder
+              lucide="AlertTriangleIcon"
+              tabler="IconAlertTriangle"
+              hugeicons="Alert02Icon"
+              phosphor="WarningIcon"
+              remixicon="RiAlertLine"
+              className="size-12 text-destructive"
+            />
             <div className="flex flex-col gap-px text-center">
               <h3 className="text-xl font-semibold tracking-tight">
                 {errorLabel}
@@ -1106,9 +1098,22 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
                 disabled={actionState.retryPending}
               >
                 {actionState.retryPending ? (
-                  <Loader2Icon className="animate-spin" />
+                  <IconPlaceholder
+                    lucide="Loader2Icon"
+                    tabler="IconLoader2"
+                    hugeicons="Loading03Icon"
+                    phosphor="SpinnerIcon"
+                    remixicon="RiLoader4Line"
+                    className="animate-spin"
+                  />
                 ) : (
-                  <RefreshCcwIcon />
+                  <IconPlaceholder
+                    lucide="RefreshCcwIcon"
+                    tabler="IconRefresh"
+                    hugeicons="RefreshIcon"
+                    phosphor="ArrowsClockwiseIcon"
+                    remixicon="RiRefreshLine"
+                  />
                 )}
                 Try again
               </Button>
@@ -1119,9 +1124,22 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
                 disabled={actionState.reloadPending}
               >
                 {actionState.reloadPending ? (
-                  <Loader2Icon className="animate-spin" />
+                  <IconPlaceholder
+                    lucide="Loader2Icon"
+                    tabler="IconLoader2"
+                    hugeicons="Loading03Icon"
+                    phosphor="SpinnerIcon"
+                    remixicon="RiLoader4Line"
+                    className="animate-spin"
+                  />
                 ) : (
-                  <RotateCcwIcon />
+                  <IconPlaceholder
+                    lucide="RotateCcwIcon"
+                    tabler="IconRotate2"
+                    hugeicons="Rotate01Icon"
+                    phosphor="ArrowCounterClockwiseIcon"
+                    remixicon="RiResetLeftLine"
+                  />
                 )}
                 Reload page
               </Button>
@@ -1175,11 +1193,32 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
           <div className="flex animate-in flex-col items-center gap-3 rounded-lg bg-black/30 px-6 py-4 text-white backdrop-blur-xs duration-200 fade-in-0 zoom-in-95">
             <div className="flex items-center gap-2">
               {mediaVolumeLevel === "off" || mediaMuted ? (
-                <VolumeXIcon className="size-6" />
+                <IconPlaceholder
+                  lucide="VolumeXIcon"
+                  tabler="IconVolumeOff"
+                  hugeicons="VolumeOffIcon"
+                  phosphor="SpeakerSlashIcon"
+                  remixicon="RiVolumeMuteLine"
+                  className="size-6"
+                />
               ) : mediaVolumeLevel === "high" ? (
-                <Volume2Icon className="size-6" />
+                <IconPlaceholder
+                  lucide="Volume2Icon"
+                  tabler="IconVolume"
+                  hugeicons="VolumeHighIcon"
+                  phosphor="SpeakerHighIcon"
+                  remixicon="RiVolumeUpLine"
+                  className="size-6"
+                />
               ) : (
-                <Volume1Icon className="size-6" />
+                <IconPlaceholder
+                  lucide="Volume1Icon"
+                  tabler="IconVolume2"
+                  hugeicons="VolumeLowIcon"
+                  phosphor="SpeakerLowIcon"
+                  remixicon="RiVolumeDownLine"
+                  className="size-6"
+                />
               )}
               <span className="text-sm font-medium tabular-nums">
                 {mediaMuted ? "Muted" : `${volumePercentage}%`}
@@ -1291,7 +1330,24 @@ function MediaPlayerPlay(props: React.ComponentProps<typeof Button>) {
         )}
         onClick={onPlayToggle}
       >
-        {children ?? (mediaPaused ? <PlayIcon /> : <PauseIcon />)}
+        {children ??
+          (mediaPaused ? (
+            <IconPlaceholder
+              lucide="PlayIcon"
+              tabler="IconPlayerPlay"
+              hugeicons="PlayIcon"
+              phosphor="PlayIcon"
+              remixicon="RiPlayLine"
+            />
+          ) : (
+            <IconPlaceholder
+              lucide="PauseIcon"
+              tabler="IconPlayerPause"
+              hugeicons="PauseIcon"
+              phosphor="PauseIcon"
+              remixicon="RiPauseLine"
+            />
+          ))}
       </Button>
     </MediaPlayerTooltip>
   );
@@ -1352,7 +1408,15 @@ function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
         className={cn("size-8", className)}
         onClick={onSeekBackward}
       >
-        {children ?? <RewindIcon />}
+        {children ?? (
+          <IconPlaceholder
+            lucide="RewindIcon"
+            tabler="IconRewindBackward10"
+            hugeicons="ReplayIcon"
+            phosphor="RewindIcon"
+            remixicon="RiReplay10Line"
+          />
+        )}
       </Button>
     </MediaPlayerTooltip>
   );
@@ -1418,7 +1482,15 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
         className={cn("size-8", className)}
         onClick={onSeekForward}
       >
-        {children ?? <FastForwardIcon />}
+        {children ?? (
+          <IconPlaceholder
+            lucide="FastForwardIcon"
+            tabler="IconPlayerSkipForward"
+            hugeicons="FastForwardIcon"
+            phosphor="FastForwardIcon"
+            remixicon="RiSpeedLine"
+          />
+        )}
       </Button>
     </MediaPlayerTooltip>
   );
@@ -2289,11 +2361,29 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
           onClick={onMute}
         >
           {mediaVolumeLevel === "off" || mediaMuted ? (
-            <VolumeXIcon />
+            <IconPlaceholder
+              lucide="VolumeXIcon"
+              tabler="IconVolumeOff"
+              hugeicons="VolumeOffIcon"
+              phosphor="SpeakerSlashIcon"
+              remixicon="RiVolumeMuteLine"
+            />
           ) : mediaVolumeLevel === "high" ? (
-            <Volume2Icon />
+            <IconPlaceholder
+              lucide="Volume2Icon"
+              tabler="IconVolume"
+              hugeicons="VolumeHighIcon"
+              phosphor="SpeakerHighIcon"
+              remixicon="RiVolumeUpLine"
+            />
           ) : (
-            <Volume1Icon />
+            <IconPlaceholder
+              lucide="Volume1Icon"
+              tabler="IconVolume2"
+              hugeicons="VolumeLowIcon"
+              phosphor="SpeakerLowIcon"
+              remixicon="RiVolumeDownLine"
+            />
           )}
         </Button>
       </MediaPlayerTooltip>
@@ -2488,7 +2578,16 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
             className="justify-between"
             onClick={() => onPlaybackRateChange(speed)}
           >
-            {speed}x{mediaPlaybackRate === speed && <CheckIcon />}
+            {speed}x
+            {mediaPlaybackRate === speed && (
+              <IconPlaceholder
+                lucide="CheckIcon"
+                tabler="IconCheck"
+                hugeicons="Tick02Icon"
+                phosphor="CheckIcon"
+                remixicon="RiCheckLine"
+              />
+            )}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
@@ -2562,9 +2661,22 @@ function MediaPlayerLoop(props: MediaPlayerLoopProps) {
       >
         {children ??
           (isLooping ? (
-            <RepeatIcon className="text-muted-foreground" />
+            <IconPlaceholder
+              lucide="RepeatIcon"
+              tabler="IconRepeat"
+              hugeicons="RepeatIcon"
+              phosphor="RepeatIcon"
+              remixicon="RiRepeatLine"
+              className="text-muted-foreground"
+            />
           ) : (
-            <RepeatIcon />
+            <IconPlaceholder
+              lucide="RepeatIcon"
+              tabler="IconRepeat"
+              hugeicons="RepeatIcon"
+              phosphor="RepeatIcon"
+              remixicon="RiRepeatLine"
+            />
           ))}
       </Button>
     </MediaPlayerTooltip>
@@ -2616,7 +2728,24 @@ function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
         className={cn("size-8", className)}
         onClick={onFullscreen}
       >
-        {children ?? (isFullscreen ? <Minimize2Icon /> : <Maximize2Icon />)}
+        {children ??
+          (isFullscreen ? (
+            <IconPlaceholder
+              lucide="Minimize2Icon"
+              tabler="IconMinimize"
+              hugeicons="MinimizeIcon"
+              phosphor="ArrowsInIcon"
+              remixicon="RiFullscreenExitLine"
+            />
+          ) : (
+            <IconPlaceholder
+              lucide="Maximize2Icon"
+              tabler="IconMaximize"
+              hugeicons="MaximizeIcon"
+              phosphor="ArrowsOutIcon"
+              remixicon="RiFullscreenLine"
+            />
+          ))}
       </Button>
     </MediaPlayerTooltip>
   );
@@ -2693,9 +2822,21 @@ function MediaPlayerPiP(props: MediaPlayerPiPProps) {
           ? children(isPictureInPicture)
           : (children ??
             (isPictureInPicture ? (
-              <PictureInPicture2Icon />
+              <IconPlaceholder
+                lucide="PictureInPicture2Icon"
+                tabler="IconPictureInPictureOn"
+                hugeicons="PictureInPictureOnIcon"
+                phosphor="PictureInPictureIcon"
+                remixicon="RiPictureInPicture2Line"
+              />
             ) : (
-              <PictureInPictureIcon />
+              <IconPlaceholder
+                lucide="PictureInPictureIcon"
+                tabler="IconPictureInPicture"
+                hugeicons="PictureInPictureOnIcon"
+                phosphor="PictureInPictureIcon"
+                remixicon="RiPictureInPictureLine"
+              />
             )))}
       </Button>
     </MediaPlayerTooltip>
@@ -2743,7 +2884,23 @@ function MediaPlayerCaptions(props: React.ComponentProps<typeof Button>) {
         onClick={onCaptionsToggle}
       >
         {children ??
-          (isSubtitlesActive ? <SubtitlesIcon /> : <CaptionsOffIcon />)}
+          (isSubtitlesActive ? (
+            <IconPlaceholder
+              lucide="SubtitlesIcon"
+              tabler="IconCaptions"
+              hugeicons="ClosedCaptionIcon"
+              phosphor="ClosedCaptioningIcon"
+              remixicon="RiClosedCaptioningLine"
+            />
+          ) : (
+            <IconPlaceholder
+              lucide="CaptionsOffIcon"
+              tabler="IconCaptionsOff"
+              hugeicons="ClosedCaptionIcon"
+              phosphor="ClosedCaptioningIcon"
+              remixicon="RiClosedCaptioningOffLine"
+            />
+          ))}
       </Button>
     </MediaPlayerTooltip>
   );
@@ -2791,7 +2948,15 @@ function MediaPlayerDownload(props: React.ComponentProps<typeof Button>) {
         className={cn("size-8", className)}
         onClick={onDownload}
       >
-        {children ?? <DownloadIcon />}
+        {children ?? (
+          <IconPlaceholder
+            lucide="DownloadIcon"
+            tabler="IconDownload"
+            hugeicons="Download01Icon"
+            phosphor="DownloadSimpleIcon"
+            remixicon="RiDownloadLine"
+          />
+        )}
       </Button>
     </MediaPlayerTooltip>
   );
@@ -2930,7 +3095,13 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
               size="icon"
               className={cn("size-8 aria-expanded:bg-accent/50", className)}
             >
-              <SettingsIcon />
+              <IconPlaceholder
+                lucide="SettingsIcon"
+                tabler="IconSettings"
+                hugeicons="Settings01Icon"
+                phosphor="GearIcon"
+                remixicon="RiSettings3Line"
+              />
             </Button>
           }
         />
@@ -2957,7 +3128,16 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                 className="justify-between"
                 onClick={() => onPlaybackRateChange(speed)}
               >
-                {speed}x{mediaPlaybackRate === speed && <CheckIcon />}
+                {speed}x
+                {mediaPlaybackRate === speed && (
+                  <IconPlaceholder
+                    lucide="CheckIcon"
+                    tabler="IconCheck"
+                    hugeicons="Tick02Icon"
+                    phosphor="CheckIcon"
+                    remixicon="RiCheckLine"
+                  />
+                )}
               </DropdownMenuItem>
             ))}
           </DropdownMenuSubContent>
@@ -2976,7 +3156,15 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                 onClick={() => onRenditionChange("auto")}
               >
                 Auto
-                {!selectedRenditionId && <CheckIcon />}
+                {!selectedRenditionId && (
+                  <IconPlaceholder
+                    lucide="CheckIcon"
+                    tabler="IconCheck"
+                    hugeicons="Tick02Icon"
+                    phosphor="CheckIcon"
+                    remixicon="RiCheckLine"
+                  />
+                )}
               </DropdownMenuItem>
               {mediaRenditionList
                 .slice()
@@ -3001,7 +3189,15 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                       onClick={() => onRenditionChange(rendition.id ?? "")}
                     >
                       {label}
-                      {selected && <CheckIcon />}
+                      {selected && (
+                        <IconPlaceholder
+                          lucide="CheckIcon"
+                          tabler="IconCheck"
+                          hugeicons="Tick02Icon"
+                          phosphor="CheckIcon"
+                          remixicon="RiCheckLine"
+                        />
+                      )}
                     </DropdownMenuItem>
                   );
                 })}
@@ -3021,7 +3217,15 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
               onClick={onSubtitlesToggle}
             >
               Off
-              {!isSubtitlesActive && <CheckIcon />}
+              {!isSubtitlesActive && (
+                <IconPlaceholder
+                  lucide="CheckIcon"
+                  tabler="IconCheck"
+                  hugeicons="Tick02Icon"
+                  phosphor="CheckIcon"
+                  remixicon="RiCheckLine"
+                />
+              )}
             </DropdownMenuItem>
             {mediaSubtitlesList.map((subtitleTrack) => {
               const isSelected = mediaSubtitlesShowing.some(
@@ -3035,7 +3239,15 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                   onClick={() => onShowSubtitleTrack(subtitleTrack)}
                 >
                   {subtitleTrack.label}
-                  {isSelected && <CheckIcon />}
+                  {isSelected && (
+                    <IconPlaceholder
+                      lucide="CheckIcon"
+                      tabler="IconCheck"
+                      hugeicons="Tick02Icon"
+                      phosphor="CheckIcon"
+                      remixicon="RiCheckLine"
+                    />
+                  )}
                 </DropdownMenuItem>
               );
             })}

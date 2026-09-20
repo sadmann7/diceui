@@ -2,16 +2,16 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { Star } from "lucide-react";
+import { cn } from "cn";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { useDirection } from "@/registry/bases/base/ui/direction";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 type Direction = "ltr" | "rtl";
 type Orientation = "horizontal" | "vertical";
@@ -897,7 +897,15 @@ function RatingItem(props: RatingItemProps) {
   const resolvedChildren =
     typeof children === "function"
       ? children(dataState)
-      : (children ?? <Star />);
+      : (children ?? (
+          <IconPlaceholder
+            lucide="Star"
+            tabler="IconStar"
+            hugeicons="StarIcon"
+            phosphor="StarIcon"
+            remixicon="RiStarLine"
+          />
+        ));
 
   const element = useRender({
     defaultTagName: "button",

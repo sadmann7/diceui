@@ -1,9 +1,9 @@
 import type * as React from "react";
 
 import * as TagsInputPrimitive from "@diceui/tags-input";
-import { X } from "lucide-react";
+import { cn } from "cn";
 
-import { cn } from "@/lib/utils";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 function TagsInput({
   className,
@@ -81,7 +81,14 @@ function TagsInputItem({
         {children}
       </TagsInputPrimitive.ItemText>
       <TagsInputPrimitive.ItemDelete className="size-4 shrink-0 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100">
-        <X className="size-3.5" />
+        <IconPlaceholder
+          lucide="X"
+          tabler="IconX"
+          hugeicons="Cancel01Icon"
+          phosphor="XIcon"
+          remixicon="RiCloseLine"
+          className="size-3.5"
+        />
       </TagsInputPrimitive.ItemDelete>
     </TagsInputPrimitive.Item>
   );
