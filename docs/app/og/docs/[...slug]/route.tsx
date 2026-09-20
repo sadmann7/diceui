@@ -9,7 +9,7 @@ export const revalidate = false;
 
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ slug: string[] }> },
+  { params }: RouteContext<"/og/docs/[...slug]">,
 ) {
   const { slug } = await params;
   const page = source.getPage(slug.slice(0, -1));

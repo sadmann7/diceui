@@ -25,7 +25,7 @@ const DEFAULT_MAX_ITEM_COUNT = 5000;
 const ITEMS_PER_PAGE_OPTIONS = [50, 100, 500, 1000];
 const MAX_ITEMS_OPTIONS = [1000, 5000, 10000, 20000];
 
-export default function MasonryPage() {
+export default function MasonryPage(_props: PageProps<"/demos/masonry">) {
   const [linear, setLinear] = React.useState(false);
   const [itemsPerPage, setItemsPerPage] = React.useState(
     DEFAULT_ITEMS_PER_PAGE,

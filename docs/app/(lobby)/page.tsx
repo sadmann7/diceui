@@ -11,7 +11,7 @@ const firstComponentUrl =
     .sort((a, b) => a.url.localeCompare(b.url))[0]?.url ??
   "/docs/components/radix/action-bar";
 
-export default function IndexPage() {
+export default function IndexPage(_props: PageProps<"/">) {
   return (
     <section className="container flex flex-col items-center justify-center gap-6 pt-6 pb-8 md:py-10">
       <div className="flex max-w-5xl flex-col items-center gap-4">

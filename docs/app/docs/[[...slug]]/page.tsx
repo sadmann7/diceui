@@ -16,13 +16,7 @@ import { getHasBothBases } from "@/lib/base";
 import { getChangelogToc } from "@/lib/changelog";
 import { getPageImage, source } from "@/lib/source";
 
-interface DocPageParams {
-  params: Promise<{
-    slug?: string[];
-  }>;
-}
-
-export default async function DocPage(props: DocPageParams) {
+export default async function DocPage(props: PageProps<"/docs/[[...slug]]">) {
   const params = await props.params;
   const page = source.getPage(params.slug);
 
@@ -71,9 +65,9 @@ export async function generateStaticParams() {
   return source.generateParams();
 }
 
-export async function generateMetadata(props: {
-  params: Promise<{ slug?: string[] }>;
-}): Promise<Metadata> {
+export async function generateMetadata(
+  props: PageProps<"/docs/[[...slug]]">,
+): Promise<Metadata> {
   const params = await props.params;
   const page = source.getPage(params.slug);
   if (!page) notFound();

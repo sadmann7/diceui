@@ -35,7 +35,7 @@ jobs:
       - uses: ./.github/setup
 
       - name: Build packages
-        run: pnpm turbo build --filter=!docs
+        run: pnpm build --filter=!docs
 
   lint:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v7
       - uses: ./.github/setup
 
-      - run: pnpm turbo lint
+      - run: pnpm lint
 
   test:
     runs-on: ubuntu-latest
@@ -53,8 +53,8 @@ jobs:
         uses: actions/checkout@v7
       - uses: ./.github/setup
 
-      - name: Test packages (excluding docs)
-        run: pnpm turbo test --filter=!docs
+      - name: Test
+        run: pnpm test
 
   typecheck:
     runs-on: ubuntu-latest
@@ -63,5 +63,5 @@ jobs:
         uses: actions/checkout@v7
       - uses: ./.github/setup
 
-      - name: Typecheck packages (excluding docs)
-        run: pnpm turbo typecheck --filter=!docs
+      - name: Typecheck
+        run: pnpm typecheck
