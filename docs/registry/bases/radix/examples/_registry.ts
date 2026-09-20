@@ -4,7 +4,7 @@ export const examples: Registry["items"] = [
   {
     name: "action-bar-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
+    dependencies: ["cn", "lucide-react"],
     registryDependencies: ["action-bar", "checkbox"],
     files: [
       {
@@ -73,7 +73,13 @@ export const examples: Registry["items"] = [
   {
     name: "angle-slider-form-demo",
     type: "registry:example",
-    dependencies: ["@hookform/resolvers", "react-hook-form", "zod", "sonner"],
+    dependencies: [
+      "cn",
+      "@hookform/resolvers",
+      "react-hook-form",
+      "zod",
+      "sonner",
+    ],
     registryDependencies: ["angle-slider", "button", "form"],
     files: [
       {
@@ -281,7 +287,7 @@ export const examples: Registry["items"] = [
   {
     name: "circular-progress-colors-demo",
     type: "registry:example",
-    dependencies: ["motion"],
+    dependencies: ["cn", "motion"],
     registryDependencies: ["circular-progress"],
     files: [
       {
@@ -641,7 +647,7 @@ export const examples: Registry["items"] = [
   {
     name: "file-upload-demo",
     type: "registry:example",
-    dependencies: ["lucide-react", "sonner"],
+    dependencies: ["cn", "lucide-react", "sonner"],
     registryDependencies: ["button", "file-upload"],
     files: [
       {
@@ -808,7 +814,7 @@ export const examples: Registry["items"] = [
   {
     name: "hitbox-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
+    dependencies: ["cn", "lucide-react"],
     registryDependencies: ["checkbox", "hitbox"],
     files: [
       {
@@ -1258,7 +1264,7 @@ export const examples: Registry["items"] = [
   {
     name: "media-player-playlist-demo",
     type: "registry:example",
-    dependencies: ["lucide-react", "media-chrome"],
+    dependencies: ["cn", "lucide-react", "media-chrome"],
     registryDependencies: ["button", "media-player", "scroll-area"],
     files: [
       {
@@ -1451,7 +1457,7 @@ export const examples: Registry["items"] = [
   {
     name: "rating-themes-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
+    dependencies: ["cn", "lucide-react"],
     registryDependencies: ["rating"],
     files: [
       {

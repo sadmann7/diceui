@@ -1,11 +1,10 @@
 "use client";
 
-import { Check, ChevronDown } from "lucide-react";
+import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
@@ -24,6 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/registry/bases/radix/ui/popover";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "PhoneInput";
 const COUNTRY_SELECT_NAME = "PhoneInputCountrySelect";
@@ -689,7 +689,14 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
             </div>
           )
         )}
-        <ChevronDown className="size-4 opacity-50" />
+        <IconPlaceholder
+          lucide="ChevronDown"
+          tabler="IconChevronDown"
+          hugeicons="ArrowDown01Icon"
+          phosphor="CaretDownIcon"
+          remixicon="RiArrowDownSLine"
+          className="size-4 opacity-50"
+        />
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align="start">
         <Command>
@@ -714,7 +721,12 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
                   )}
                   <span className="flex-1">{c.name}</span>
                   <span className="text-muted-foreground">{c.dialCode}</span>
-                  <Check
+                  <IconPlaceholder
+                    lucide="Check"
+                    tabler="IconCheck"
+                    hugeicons="Tick02Icon"
+                    phosphor="CheckIcon"
+                    remixicon="RiCheckLine"
                     className={cn(
                       "size-4",
                       country === c.code ? "opacity-100" : "opacity-0",

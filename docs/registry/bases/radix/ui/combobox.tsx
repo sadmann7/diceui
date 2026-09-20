@@ -1,9 +1,9 @@
 import type * as React from "react";
 
 import * as ComboboxPrimitive from "@diceui/combobox";
-import { Check, ChevronDown, X } from "lucide-react";
+import { cn } from "cn";
 
-import { cn } from "@/lib/utils";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const Combobox = (({
   className,
@@ -77,7 +77,16 @@ function ComboboxTrigger({
       )}
       {...props}
     >
-      {children || <ChevronDown className="size-4" />}
+      {children || (
+        <IconPlaceholder
+          lucide="ChevronDown"
+          tabler="IconChevronDown"
+          hugeicons="ArrowDown01Icon"
+          phosphor="CaretDownIcon"
+          remixicon="RiArrowDownSLine"
+          className="size-4"
+        />
+      )}
     </ComboboxPrimitive.Trigger>
   );
 }
@@ -132,7 +141,14 @@ function ComboboxBadgeItem({
         data-slot="combobox-badge-item-delete"
         className="shrink-0 rounded p-0.5 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden data-highlighted:bg-destructive"
       >
-        <X className="size-3" />
+        <IconPlaceholder
+          lucide="X"
+          tabler="IconX"
+          hugeicons="Cancel01Icon"
+          phosphor="XIcon"
+          remixicon="RiCloseLine"
+          className="size-3"
+        />
       </ComboboxPrimitive.BadgeItemDelete>
     </ComboboxPrimitive.BadgeItem>
   );
@@ -242,7 +258,14 @@ function ComboboxItem({
           outset ? "right-2" : "left-2",
         )}
       >
-        <Check className="size-4" />
+        <IconPlaceholder
+          lucide="Check"
+          tabler="IconCheck"
+          hugeicons="Tick02Icon"
+          phosphor="CheckIcon"
+          remixicon="RiCheckLine"
+          className="size-4"
+        />
       </ComboboxPrimitive.ItemIndicator>
       <ComboboxPrimitive.ItemText>{children}</ComboboxPrimitive.ItemText>
     </ComboboxPrimitive.Item>

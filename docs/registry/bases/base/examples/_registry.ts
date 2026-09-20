@@ -4,7 +4,7 @@ export const examples: Registry["items"] = [
   {
     name: "action-bar-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
+    dependencies: ["cn", "lucide-react"],
     registryDependencies: ["action-bar", "checkbox"],
     files: [
       {
@@ -73,7 +73,13 @@ export const examples: Registry["items"] = [
   {
     name: "angle-slider-form-demo",
     type: "registry:example",
-    dependencies: ["@hookform/resolvers", "react-hook-form", "zod", "sonner"],
+    dependencies: [
+      "cn",
+      "@hookform/resolvers",
+      "react-hook-form",
+      "zod",
+      "sonner",
+    ],
     registryDependencies: ["angle-slider", "button", "form"],
     files: [
       {
@@ -423,7 +429,7 @@ export const examples: Registry["items"] = [
   {
     name: "circular-progress-colors-demo",
     type: "registry:example",
-    dependencies: ["motion"],
+    dependencies: ["cn", "motion"],
     registryDependencies: ["circular-progress"],
     files: [
       {
@@ -546,7 +552,7 @@ export const examples: Registry["items"] = [
   {
     name: "editable-todo-list-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
+    dependencies: ["cn", "lucide-react"],
     registryDependencies: ["editable", "checkbox"],
     files: [
       {
@@ -637,6 +643,7 @@ export const examples: Registry["items"] = [
     name: "kanban-demo",
     type: "registry:example",
     dependencies: [
+      "cn",
       "@dnd-kit/core",
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
@@ -1192,7 +1199,7 @@ export const examples: Registry["items"] = [
   {
     name: "rating-themes-demo",
     type: "registry:example",
-    dependencies: ["lucide-react"],
+    dependencies: ["cn", "lucide-react"],
     registryDependencies: ["rating"],
     files: [
       {
@@ -1367,7 +1374,7 @@ export const examples: Registry["items"] = [
   {
     name: "media-player-settings-demo",
     type: "registry:example",
-    dependencies: ["hls.js"],
+    dependencies: ["cn", "hls.js"],
     registryDependencies: ["media-player"],
     files: [
       {

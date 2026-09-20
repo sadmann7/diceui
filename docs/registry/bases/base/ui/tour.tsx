@@ -15,16 +15,16 @@ import {
   shift,
   useFloating,
 } from "@floating-ui/react-dom";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { cn } from "cn";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/base/ui/button";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "Tour";
 const PORTAL_NAME = "TourPortal";
@@ -1566,7 +1566,16 @@ function TourClose(props: TourCloseProps) {
           className,
         ),
         onClick,
-        children: <X className="size-4" />,
+        children: (
+          <IconPlaceholder
+            lucide="X"
+            tabler="IconX"
+            hugeicons="Cancel01Icon"
+            phosphor="XIcon"
+            remixicon="RiCloseLine"
+            className="size-4"
+          />
+        ),
       },
       closeButtonProps,
     ),
@@ -1612,7 +1621,13 @@ function TourPrev(props: TourPrevProps) {
     >
       {children ?? (
         <>
-          <ChevronLeft />
+          <IconPlaceholder
+            lucide="ChevronLeft"
+            tabler="IconChevronLeft"
+            hugeicons="ArrowLeft01Icon"
+            phosphor="CaretLeftIcon"
+            remixicon="RiArrowLeftSLine"
+          />
           Previous
         </>
       )}
@@ -1656,7 +1671,15 @@ function TourNext(props: TourNextProps) {
       {children ?? (
         <>
           {isLastStep ? "Finish" : "Next"}
-          {!isLastStep && <ChevronRight />}
+          {!isLastStep && (
+            <IconPlaceholder
+              lucide="ChevronRight"
+              tabler="IconChevronRight"
+              hugeicons="ArrowRight01Icon"
+              phosphor="CaretRightIcon"
+              remixicon="RiArrowRightSLine"
+            />
+          )}
         </>
       )}
     </Button>

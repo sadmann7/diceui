@@ -1,6 +1,7 @@
 "use client";
 
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
@@ -8,7 +9,6 @@ import {
 import * as React from "react";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 
 const ROOT_NAME = "Marquee";
 const CONTENT_NAME = "MarqueeContent";

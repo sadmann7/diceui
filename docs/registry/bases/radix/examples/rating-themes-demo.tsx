@@ -1,8 +1,8 @@
 "use client";
 
+import { cn } from "cn";
 import { Heart, Star, Zap } from "lucide-react";
 
-import { cn } from "@/lib/utils";
 import { Rating, RatingItem } from "@/registry/bases/radix/ui/rating";
 
 const themes = [

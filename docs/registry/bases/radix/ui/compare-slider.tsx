@@ -1,19 +1,14 @@
 "use client";
 
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-} from "lucide-react";
+import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "CompareSlider";
 const BEFORE_NAME = "CompareSliderBefore";
@@ -436,13 +431,37 @@ function CompareSliderHandle(props: DivProps) {
             <div className="z-50 flex aspect-square size-11 shrink-0 items-center justify-center rounded-full bg-background p-2 [&_svg]:size-4 [&_svg]:stroke-3 [&_svg]:text-muted-foreground [&_svg]:select-none">
               {isVertical ? (
                 <div className="flex flex-col items-center">
-                  <ChevronUpIcon />
-                  <ChevronDownIcon />
+                  <IconPlaceholder
+                    lucide="ChevronUpIcon"
+                    tabler="IconChevronUp"
+                    hugeicons="ArrowUp01Icon"
+                    phosphor="CaretUpIcon"
+                    remixicon="RiArrowUpSLine"
+                  />
+                  <IconPlaceholder
+                    lucide="ChevronDownIcon"
+                    tabler="IconChevronDown"
+                    hugeicons="ArrowDown01Icon"
+                    phosphor="CaretDownIcon"
+                    remixicon="RiArrowDownSLine"
+                  />
                 </div>
               ) : (
                 <div className="flex items-center">
-                  <ChevronLeftIcon />
-                  <ChevronRightIcon />
+                  <IconPlaceholder
+                    lucide="ChevronLeftIcon"
+                    tabler="IconChevronLeft"
+                    hugeicons="ArrowLeft01Icon"
+                    phosphor="CaretLeftIcon"
+                    remixicon="RiArrowLeftSLine"
+                  />
+                  <IconPlaceholder
+                    lucide="ChevronRightIcon"
+                    tabler="IconChevronRight"
+                    hugeicons="ArrowRight01Icon"
+                    phosphor="CaretRightIcon"
+                    remixicon="RiArrowRightSLine"
+                  />
                 </div>
               )}
             </div>

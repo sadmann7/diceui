@@ -58,6 +58,13 @@ Thumbs.db
 .vercel
 .source
 
+# generated registry output (rebuilt by `pnpm build:registry` on every deploy).
+# styles/index.json is the published style-id list; everything else under
+# public/r is produced from the authored base trees.
+/docs/public/r/styles/*
+!/docs/public/r/styles/index.json
+/docs/public/r/*.json
+
 # Emacs backup files
 \#*
 .\#*

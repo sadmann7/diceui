@@ -1,13 +1,13 @@
 "use client";
 
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { Input } from "@/registry/bases/radix/ui/input";
 
 const ROOT_NAME = "SegmentedInput";

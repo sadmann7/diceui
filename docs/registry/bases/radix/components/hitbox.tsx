@@ -1,9 +1,8 @@
 import type * as React from "react";
 
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-
-import { cn } from "@/lib/utils";
 
 type Size = "default" | "sm" | "lg";
 type DynamicSize = Size | (string & {});

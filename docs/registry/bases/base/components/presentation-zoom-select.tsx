@@ -1,9 +1,9 @@
 "use client";
 
 import { useZoom } from "@diceui/pptx";
+import { cn } from "cn";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,

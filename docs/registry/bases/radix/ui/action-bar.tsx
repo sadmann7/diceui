@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
@@ -8,7 +9,6 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { Button } from "@/registry/bases/radix/ui/button";

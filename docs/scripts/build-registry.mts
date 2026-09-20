@@ -14,13 +14,12 @@ import { Project, ScriptKind, SyntaxKind } from "ts-morph";
 
 import { DEFAULT_BASE } from "../lib/constants";
 import { type RegistryBase, registries } from "../registry/registry";
-import { STYLES } from "../registry/styles";
+import { DEFAULT_STYLE_NAME, STYLES } from "../registry/styles";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
 const STYLES_PATH = path.join(REGISTRY_PATH, "styles");
 
 // Types included in the per-style public registry.
-// registry:example is written only for the default style, not duplicated.
 const REGISTRY_INDEX_WHITELIST: z.infer<typeof registryItemTypeSchema>[] = [
   "registry:ui",
   "registry:lib",
@@ -33,8 +32,8 @@ const REGISTRY_INDEX_WHITELIST: z.infer<typeof registryItemTypeSchema>[] = [
   "registry:style",
 ];
 
-// The style whose output directory receives example JSON files.
-const DEFAULT_STYLE = "vega";
+// The style whose output directory is built first; remaining styles are copies.
+const DEFAULT_STYLE = DEFAULT_STYLE_NAME;
 
 const BASES: RegistryBase[] = ["radix", "base"];
 const styles = STYLES.map((s) => ({ name: s.name, label: s.title ?? s.name }));
@@ -392,12 +391,10 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
 async function buildRegistryJson() {
   const stylesToBuild = getStylesToBuild();
 
-  for (const { name: styleName, base: baseName, style } of stylesToBuild) {
+  for (const { name: styleName, base: baseName } of stylesToBuild) {
     const registry = registries[baseName];
     const outputDir = path.join(STYLES_PATH, styleName);
     await fs.mkdir(outputDir, { recursive: true });
-
-    const isDefaultStyle = style.name === DEFAULT_STYLE;
 
     const uiItems = registry.items
       .filter((item) => item.type === "registry:ui")
@@ -416,7 +413,6 @@ async function buildRegistryJson() {
     const allItems = registry.items
       .filter((item) => REGISTRY_INDEX_WHITELIST.includes(item.type))
       .filter((item) => item.name !== "index")
-      .filter((item) => item.type !== "registry:example" || isDefaultStyle)
       .map((item) => ({
         ...item,
         files: item.files?.map((_file) =>
@@ -490,21 +486,14 @@ async function buildRootIndex() {
 // ----------------------------------------------------------------------------
 // Build public/r/styles/{base}-{style}/{name}.json with inlined file content.
 //
-// Runs once per base (for DEFAULT_STYLE = "vega"), then copies per-item JSON
-// files to the remaining style directories. All style variants are identical
-// since visual differences are CSS-variable-based (no source transforms yet).
+// Runs once per base (for DEFAULT_STYLE), then copies per-item JSON files to
+// the remaining style directories. Per-style copies are byte-identical so
+// `{style}` in a consumer URL does not 404. Visual differences are CSS-only.
 // ----------------------------------------------------------------------------
 async function buildPublicItems() {
   for (const baseName of BASES) {
     const registry = registries[baseName];
     const baseSrcRoot = path.join(process.cwd(), "registry", "bases", baseName);
-
-    // Collect example item names so we can skip copying them to non-default styles
-    const exampleFileNames = new Set(
-      registry.items
-        .filter((item) => item.type === "registry:example")
-        .map((item) => `${item.name}.json`),
-    );
 
     // Build all per-item JSON files once, into the default style directory
     const defaultStyleDir = path.join(
@@ -543,7 +532,7 @@ async function buildPublicItems() {
             };
           }),
         )
-      ).filter(Boolean);
+      ).filter((file): file is NonNullable<typeof file> => file !== null);
 
       await fs.writeFile(
         path.join(defaultStyleDir, `${item.name}.json`),
@@ -553,7 +542,6 @@ async function buildPublicItems() {
     }
 
     // Copy per-item JSON files to every other style directory for this base.
-    // Skip example files for non-default styles.
     for (const style of styles) {
       if (style.name === DEFAULT_STYLE) continue;
 
@@ -562,10 +550,7 @@ async function buildPublicItems() {
 
       const builtFiles = (await fs.readdir(defaultStyleDir)).filter(
         (f) =>
-          f.endsWith(".json") &&
-          f !== "registry.json" &&
-          f !== "index.json" &&
-          !exampleFileNames.has(f),
+          f.endsWith(".json") && f !== "registry.json" && f !== "index.json",
       );
 
       await Promise.all(

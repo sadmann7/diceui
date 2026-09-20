@@ -1,9 +1,9 @@
 import type * as React from "react";
 
 import * as CheckboxGroupPrimitive from "@diceui/checkbox-group";
-import { Check } from "lucide-react";
+import { cn } from "cn";
 
-import { cn } from "@/lib/utils";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 function CheckboxGroup({
   className,
@@ -69,7 +69,14 @@ function CheckboxGroupItem({
           className="flex items-center justify-center text-current"
           asChild
         >
-          <Check className="size-3.5" />
+          <IconPlaceholder
+            lucide="Check"
+            tabler="IconCheck"
+            hugeicons="Tick02Icon"
+            phosphor="CheckIcon"
+            remixicon="RiCheckLine"
+            className="size-3.5"
+          />
         </CheckboxGroupPrimitive.Indicator>
       </CheckboxGroupPrimitive.Item>
       {children}

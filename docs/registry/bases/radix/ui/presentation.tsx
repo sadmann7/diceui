@@ -1,12 +1,12 @@
 "use client";
 
 import { Presentation as PresentationPrimitive } from "@diceui/pptx";
-import { PanelLeftIcon } from "lucide-react";
+import { cn } from "cn";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/registry/bases/radix/hooks/use-mobile";
 import { Button } from "@/registry/bases/radix/ui/button";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 function PresentationProvider({
   ...props
@@ -266,7 +266,13 @@ function PresentationThumbnailList({
           className="absolute top-2 left-2 z-10 bg-background/80 backdrop-blur-sm"
           onClick={() => setOpen((value) => !value)}
         >
-          <PanelLeftIcon />
+          <IconPlaceholder
+            lucide="PanelLeftIcon"
+            tabler="IconLayoutSidebar"
+            hugeicons="SidebarLeftIcon"
+            phosphor="SidebarIcon"
+            remixicon="RiSideBarLine"
+          />
         </Button>
       )}
       <PresentationPrimitive.ThumbnailList

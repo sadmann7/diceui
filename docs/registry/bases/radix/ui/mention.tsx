@@ -1,8 +1,7 @@
 import type * as React from "react";
 
 import * as MentionPrimitive from "@diceui/mention";
-
-import { cn } from "@/lib/utils";
+import { cn } from "cn";
 
 function Mention({
   className,

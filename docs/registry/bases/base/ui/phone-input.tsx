@@ -4,10 +4,9 @@ import type { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { Check, ChevronDown } from "lucide-react";
+import { cn } from "cn";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
@@ -27,6 +26,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/registry/bases/base/ui/popover";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "PhoneInput";
 const COUNTRY_SELECT_NAME = "PhoneInputCountrySelect";
@@ -701,7 +701,14 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
             </div>
           )
         )}
-        <ChevronDown className="size-4 opacity-50" />
+        <IconPlaceholder
+          lucide="ChevronDown"
+          tabler="IconChevronDown"
+          hugeicons="ArrowDown01Icon"
+          phosphor="CaretDownIcon"
+          remixicon="RiArrowDownSLine"
+          className="size-4 opacity-50"
+        />
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align="start">
         <Command>
@@ -726,7 +733,12 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
                   )}
                   <span className="flex-1">{c.name}</span>
                   <span className="text-muted-foreground">{c.dialCode}</span>
-                  <Check
+                  <IconPlaceholder
+                    lucide="Check"
+                    tabler="IconCheck"
+                    hugeicons="Tick02Icon"
+                    phosphor="CheckIcon"
+                    remixicon="RiCheckLine"
                     className={cn(
                       "size-4",
                       country === c.code ? "opacity-100" : "opacity-0",

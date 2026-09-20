@@ -6,10 +6,9 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
-import { PipetteIcon } from "lucide-react";
+import { cn } from "cn";
 import * as React from "react";
 
-import { cn } from "@/lib/utils";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
@@ -30,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/registry/bases/base/ui/select";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "ColorPicker";
 const ROOT_IMPL_NAME = "ColorPickerImpl";
@@ -1147,7 +1147,15 @@ function ColorPickerEyeDropper(props: React.ComponentProps<typeof Button>) {
       onClick={onEyeDropper}
       disabled={isDisabled}
     >
-      {children ?? <PipetteIcon />}
+      {children ?? (
+        <IconPlaceholder
+          lucide="PipetteIcon"
+          tabler="IconColorPicker"
+          hugeicons="ColorPickerIcon"
+          phosphor="EyedropperIcon"
+          remixicon="RiDropperLine"
+        />
+      )}
     </Button>
   );
 }

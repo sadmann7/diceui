@@ -12,7 +12,7 @@ import {
   shift,
   useFloating,
 } from "@floating-ui/react-dom";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
@@ -21,11 +21,11 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { useComposedRefs } from "@/lib/compose-refs";
-import { cn } from "@/lib/utils";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "Tour";
 const PORTAL_NAME = "TourPortal";
@@ -1517,7 +1517,14 @@ function TourClose(props: TourCloseProps) {
       onClick={onClick}
       {...closeButtonProps}
     >
-      <X className="size-4" />
+      <IconPlaceholder
+        lucide="X"
+        tabler="IconX"
+        hugeicons="Cancel01Icon"
+        phosphor="XIcon"
+        remixicon="RiCloseLine"
+        className="size-4"
+      />
     </ClosePrimitive>
   );
 }
@@ -1552,7 +1559,13 @@ function TourPrev(props: React.ComponentProps<typeof Button>) {
     >
       {children ?? (
         <>
-          <ChevronLeft />
+          <IconPlaceholder
+            lucide="ChevronLeft"
+            tabler="IconChevronLeft"
+            hugeicons="ArrowLeft01Icon"
+            phosphor="CaretLeftIcon"
+            remixicon="RiArrowLeftSLine"
+          />
           Previous
         </>
       )}
@@ -1589,7 +1602,15 @@ function TourNext(props: React.ComponentProps<typeof Button>) {
       {children ?? (
         <>
           {isLastStep ? "Finish" : "Next"}
-          {!isLastStep && <ChevronRight />}
+          {!isLastStep && (
+            <IconPlaceholder
+              lucide="ChevronRight"
+              tabler="IconChevronRight"
+              hugeicons="ArrowRight01Icon"
+              phosphor="CaretRightIcon"
+              remixicon="RiArrowRightSLine"
+            />
+          )}
         </>
       )}
     </Button>

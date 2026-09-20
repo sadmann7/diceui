@@ -3,9 +3,8 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cva } from "class-variance-authority";
+import { cn } from "cn";
 import * as React from "react";
-
-import { cn } from "@/lib/utils";
 
 interface ItemDimension {
   itemId: number;

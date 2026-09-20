@@ -1,9 +1,8 @@
 "use client";
 
+import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
-
-import { cn } from "@/lib/utils";
 
 const CIRCULAR_PROGRESS_NAME = "CircularProgress";
 const INDICATOR_NAME = "CircularProgressIndicator";

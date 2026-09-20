@@ -1,9 +1,8 @@
 "use client";
 
+import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
-
-import { cn } from "@/lib/utils";
 
 const GAUGE_NAME = "Gauge";
 const INDICATOR_NAME = "GaugeIndicator";
