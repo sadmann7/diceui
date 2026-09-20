@@ -24,7 +24,7 @@ export const components: Registry["items"] = [
   {
     name: "hitbox",
     type: "registry:component",
-    dependencies: ["cn", "radix-ui"],
+    dependencies: ["radix-ui"],
     files: [
       {
         path: "components/hitbox.tsx",
@@ -73,7 +73,7 @@ export const components: Registry["items"] = [
       },
     ],
     registryDependencies: ["select"],
-    dependencies: ["cn", "@diceui/pptx"],
+    dependencies: ["@diceui/pptx"],
   },
   {
     name: "visually-hidden",

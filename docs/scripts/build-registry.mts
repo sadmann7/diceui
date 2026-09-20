@@ -9,7 +9,11 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { cwd } from "node:process";
 import { rimraf } from "rimraf";
-import { type registryItemTypeSchema, registrySchema } from "shadcn/schema";
+import {
+  type RegistryItem,
+  type registryItemTypeSchema,
+  registrySchema,
+} from "shadcn/schema";
 import { Project, ScriptKind, SyntaxKind } from "ts-morph";
 
 import { DEFAULT_BASE } from "../lib/constants";
@@ -65,6 +69,55 @@ const project = new Project({
 async function createTempSourceFile(filename: string) {
   const dir = await fs.mkdtemp(path.join(tmpdir(), "shadcn-"));
   return path.join(dir, filename);
+}
+
+const itemDependencyCache = new Map<string, string[] | undefined>();
+
+// Components import cn directly, so every item that uses it declares the
+// package. Projects initialized before cn existed rely on this to install it.
+function getItemDependencies(
+  item: Pick<RegistryItem, "dependencies">,
+  fileContents: Array<string | null | undefined>,
+) {
+  const dependencies = item.dependencies ?? [];
+  if (dependencies.includes("cn")) {
+    return item.dependencies;
+  }
+
+  for (const content of fileContents) {
+    if (content && /from ["']cn["']/.test(content)) {
+      return ["cn", ...dependencies];
+    }
+  }
+
+  return item.dependencies;
+}
+
+async function resolveItemDependencies(
+  baseName: RegistryBase,
+  item: Pick<RegistryItem, "name" | "dependencies" | "files">,
+) {
+  const cacheKey = `${baseName}:${item.name}`;
+  if (itemDependencyCache.has(cacheKey)) {
+    return itemDependencyCache.get(cacheKey);
+  }
+
+  const baseSrcRoot = path.join(process.cwd(), "registry", "bases", baseName);
+  const contents: string[] = [];
+  for (const file of item.files ?? []) {
+    const filePath = typeof file === "string" ? file : file.path;
+    try {
+      contents.push(
+        await fs.readFile(path.join(baseSrcRoot, filePath), "utf8"),
+      );
+    } catch {
+      // Missing file — skip, same as the public JSON builder.
+    }
+  }
+
+  const dependencies = getItemDependencies(item, contents);
+  itemDependencyCache.set(cacheKey, dependencies);
+  return dependencies;
 }
 
 // ----------------------------------------------------------------------------
@@ -396,29 +449,45 @@ async function buildRegistryJson() {
     const outputDir = path.join(STYLES_PATH, styleName);
     await fs.mkdir(outputDir, { recursive: true });
 
-    const uiItems = registry.items
-      .filter((item) => item.type === "registry:ui")
-      .map((item) => ({
-        ...item,
-        files: item.files?.map((_file) =>
-          typeof _file === "string" ? { path: _file, type: item.type } : _file,
-        ),
-      }));
+    const uiItems = await Promise.all(
+      registry.items
+        .filter((item) => item.type === "registry:ui")
+        .map(async (item) => {
+          const dependencies = await resolveItemDependencies(baseName, item);
+          return {
+            ...item,
+            ...(dependencies && { dependencies }),
+            files: item.files?.map((_file) =>
+              typeof _file === "string"
+                ? { path: _file, type: item.type }
+                : _file,
+            ),
+          };
+        }),
+    );
     await fs.writeFile(
       path.join(outputDir, "index.json"),
       JSON.stringify(uiItems, null, 2),
       "utf8",
     );
 
-    const allItems = registry.items
-      .filter((item) => REGISTRY_INDEX_WHITELIST.includes(item.type))
-      .filter((item) => item.name !== "index")
-      .map((item) => ({
-        ...item,
-        files: item.files?.map((_file) =>
-          typeof _file === "string" ? { path: _file, type: item.type } : _file,
-        ),
-      }));
+    const allItems = await Promise.all(
+      registry.items
+        .filter((item) => REGISTRY_INDEX_WHITELIST.includes(item.type))
+        .filter((item) => item.name !== "index")
+        .map(async (item) => {
+          const dependencies = await resolveItemDependencies(baseName, item);
+          return {
+            ...item,
+            ...(dependencies && { dependencies }),
+            files: item.files?.map((_file) =>
+              typeof _file === "string"
+                ? { path: _file, type: item.type }
+                : _file,
+            ),
+          };
+        }),
+    );
     await fs.writeFile(
       path.join(outputDir, "registry.json"),
       JSON.stringify(
@@ -456,25 +525,31 @@ async function buildStylesIndex() {
 async function buildRootIndex() {
   const registry = registries[DEFAULT_BASE];
 
-  const uiItems = registry.items
-    .filter((item) => item.type === "registry:ui")
-    .map((item) => {
-      // oxlint-disable-next-line typescript/no-explicit-any -- registry item types vary
-      const mapped: Record<string, any> = { name: item.name, type: item.type };
-      if (item.dependencies?.length) mapped.dependencies = item.dependencies;
-      if (item.registryDependencies?.length)
-        mapped.registryDependencies = item.registryDependencies;
-      if (item.files) {
-        mapped.files = item.files.map((_file) => {
-          const file =
-            typeof _file === "string"
-              ? { path: _file, type: item.type }
-              : _file;
-          return { path: file.path, type: file.type };
-        });
-      }
-      return mapped;
-    });
+  const uiItems = await Promise.all(
+    registry.items
+      .filter((item) => item.type === "registry:ui")
+      .map(async (item) => {
+        const dependencies = await resolveItemDependencies(DEFAULT_BASE, item);
+        // oxlint-disable-next-line typescript/no-explicit-any -- registry item types vary
+        const mapped: Record<string, any> = {
+          name: item.name,
+          type: item.type,
+        };
+        if (dependencies?.length) mapped.dependencies = dependencies;
+        if (item.registryDependencies?.length)
+          mapped.registryDependencies = item.registryDependencies;
+        if (item.files) {
+          mapped.files = item.files.map((_file) => {
+            const file =
+              typeof _file === "string"
+                ? { path: _file, type: item.type }
+                : _file;
+            return { path: file.path, type: file.type };
+          });
+        }
+        return mapped;
+      }),
+  );
 
   await fs.writeFile(
     path.join(REGISTRY_PATH, "index.json"),
@@ -534,9 +609,19 @@ async function buildPublicItems() {
         )
       ).filter((file): file is NonNullable<typeof file> => file !== null);
 
+      const dependencies = getItemDependencies(
+        item,
+        files.map((file) => file.content),
+      );
+      itemDependencyCache.set(`${baseName}:${item.name}`, dependencies);
+
       await fs.writeFile(
         path.join(defaultStyleDir, `${item.name}.json`),
-        JSON.stringify({ ...item, files }, null, 2),
+        JSON.stringify(
+          { ...item, files, ...(dependencies && { dependencies }) },
+          null,
+          2,
+        ),
         "utf8",
       );
     }

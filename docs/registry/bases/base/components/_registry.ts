@@ -53,7 +53,7 @@ export const components: Registry["items"] = [
       },
     ],
     registryDependencies: ["select"],
-    dependencies: ["cn", "@diceui/pptx"],
+    dependencies: ["@diceui/pptx"],
   },
   {
     name: "visually-hidden-input",
