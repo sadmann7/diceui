@@ -1,4 +1,4 @@
-name: CI
+name: code-check
 
 on:
   pull_request:
@@ -25,7 +25,7 @@ jobs:
       - uses: ./.github/setup
 
       - name: Check formatting
-        run: pnpm fmt:check
+        run: pnpm format:check
 
   build:
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v7
       - uses: ./.github/setup
 
-      - run: pnpm lint
+      - run: pnpm turbo lint
 
   test:
     runs-on: ubuntu-latest
