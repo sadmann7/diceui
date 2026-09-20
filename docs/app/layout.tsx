@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import type * as React from "react";
 
 import Script from "next/script";
 
@@ -60,11 +59,7 @@ export const viewport: Viewport = {
   ],
 };
 
-interface RootLayoutProps {
-  children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body

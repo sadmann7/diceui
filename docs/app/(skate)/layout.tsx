@@ -1,7 +1,3 @@
-interface ShowcaseLayoutProps {
-  children: React.ReactNode;
-}
-
-export default function ShowcaseLayout({ children }: ShowcaseLayoutProps) {
+export default function ShowcaseLayout({ children }: LayoutProps<"/">) {
   return <>{children}</>;
 }

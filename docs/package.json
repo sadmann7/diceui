@@ -11,7 +11,7 @@
     "test:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/test-registry.mts",
     "dev": "next dev --turbopack",
     "start": "next start",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "shadcn": "pnpm dlx shadcn@latest"
   },
