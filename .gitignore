@@ -64,7 +64,3 @@ Thumbs.db
 /docs/public/r/styles/*
 !/docs/public/r/styles/index.json
 /docs/public/r/*.json
-
-# Emacs backup files
-\#*
-.\#*
