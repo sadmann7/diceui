@@ -24,76 +24,95 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
     const context = useMentionContext(INPUT_NAME);
     const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
-    const getTextWidth = React.useCallback(
-      (text: string, input: InputElement) => {
-        const style = window.getComputedStyle(input);
-        const measureSpan = document.createElement("span");
-        measureSpan.style.cssText = `
-        position: absolute;
-        visibility: hidden;
-        white-space: pre;
-        font: ${style.font};
-        letter-spacing: ${style.letterSpacing};
-        text-transform: ${style.textTransform};
-      `;
-        measureSpan.textContent = text;
-        document.body.appendChild(measureSpan);
-        const width = measureSpan.offsetWidth;
-        document.body.removeChild(measureSpan);
-        return width;
-      },
-      [],
-    );
-
     const getLineHeight = React.useCallback((input: InputElement) => {
       const style = window.getComputedStyle(input);
       return Number.parseInt(style.lineHeight, 10) ?? input.offsetHeight;
     }, []);
 
+    // Cache for mirror element to avoid recreating it
+    const mirrorRef = React.useRef<HTMLDivElement | null>(null);
+
+    // Cleanup mirror element on unmount
+    React.useEffect(() => {
+      return () => {
+        if (mirrorRef.current) {
+          document.body.removeChild(mirrorRef.current);
+          mirrorRef.current = null;
+        }
+      };
+    }, []);
+
     const calculatePosition = React.useCallback(
       (input: InputElement, cursorPosition: number) => {
-        const rect = input.getBoundingClientRect();
-        const textBeforeCursor = input.value.slice(0, cursorPosition);
-        const lines = textBeforeCursor.split("\n");
-        const currentLine = lines.length - 1;
-        const currentLineText = lines[currentLine] ?? "";
-        const textWidth = getTextWidth(currentLineText, input);
+        // Create or reuse mirror element
+        let mirror = mirrorRef.current;
+        if (!mirror) {
+          mirror = document.createElement("div");
+          mirrorRef.current = mirror;
+          document.body.appendChild(mirror);
+        }
 
         const style = window.getComputedStyle(input);
-        const lineHeight = getLineHeight(input);
-        const paddingLeft = Number.parseFloat(
-          style.getPropertyValue("padding-left") ?? "0",
-        );
-        const paddingRight = Number.parseFloat(
-          style.getPropertyValue("padding-right") ?? "0",
-        );
-        const paddingTop = Number.parseFloat(
-          style.getPropertyValue("padding-top") ?? "0",
-        );
+        const inputRect = input.getBoundingClientRect();
 
-        // Calculate wrapped lines before cursor
-        const containerWidth = input.clientWidth - paddingLeft - paddingRight;
-        const wrappedLines = Math.floor(textWidth / containerWidth);
-        const totalLines = currentLine + wrappedLines;
+        const textBeforeCursor = input.value.slice(0, cursorPosition);
+        const textAfterCursor = input.value.slice(cursorPosition);
 
-        const scrollTop = input.scrollTop;
+        // Mirror the input's styling exactly and position it at the same location
+        mirror.style.cssText = `
+          position: fixed;
+          visibility: hidden;
+          top: ${inputRect.top}px;
+          left: ${inputRect.left}px;
+          width: ${input.clientWidth}px;
+          height: auto;
+          overflow: hidden;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          font: ${style.font};
+          font-family: ${style.fontFamily};
+          font-size: ${style.fontSize};
+          font-weight: ${style.fontWeight};
+          font-style: ${style.fontStyle};
+          font-variant: ${style.fontVariant};
+          letter-spacing: ${style.letterSpacing};
+          text-transform: ${style.textTransform};
+          line-height: ${style.lineHeight};
+          padding: ${style.paddingTop} ${style.paddingRight} ${style.paddingBottom} ${style.paddingLeft};
+          border: ${style.borderWidth} solid ${style.borderColor};
+          box-sizing: ${style.boxSizing};
+          direction: ${context.dir};
+          text-align: ${style.textAlign};
+          z-index: -1;
+        `;
+
+        // Create a marker span at the cursor position
+        mirror.innerHTML = '';
+        const beforeSpan = document.createElement('span');
+        beforeSpan.textContent = textBeforeCursor;
+        mirror.appendChild(beforeSpan);
+
+        const markerSpan = document.createElement('span');
+        markerSpan.textContent = '|'; // Use a visible marker for measurement
+        markerSpan.style.visibility = 'hidden';
+        mirror.appendChild(markerSpan);
+
+        const afterSpan = document.createElement('span');
+        afterSpan.textContent = textAfterCursor;
+        mirror.appendChild(afterSpan);
+
+        // Get the actual position of the marker
+        const markerRect = markerSpan.getBoundingClientRect();
+
+        // Account for scroll position
         const scrollLeft = input.scrollLeft;
+        const scrollTop = input.scrollTop;
 
-        // Calculate x position considering text wrapping and RTL
-        const effectiveTextWidth = textWidth % containerWidth;
-        const isRTL = context.dir === "rtl";
-        const x = isRTL
-          ? Math.min(
-              rect.right - paddingRight - effectiveTextWidth + scrollLeft,
-              rect.right - 10,
-            )
-          : Math.min(
-              rect.left + paddingLeft + effectiveTextWidth - scrollLeft,
-              rect.right - 10,
-            );
+        const x = markerRect.left - scrollLeft;
+        const y = markerRect.top - scrollTop;
 
-        // Calculate y position considering wrapped lines
-        const y = rect.top + paddingTop + (totalLines * lineHeight - scrollTop);
+        const lineHeight = getLineHeight(input);
 
         return {
           width: 0,
@@ -109,7 +128,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           },
         } satisfies DOMRect;
       },
-      [getTextWidth, getLineHeight, context.dir],
+      [getLineHeight, context.dir],
     );
 
     const createVirtualElement = React.useCallback(
@@ -748,25 +767,12 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         if (context.disabled || context.readonly) return;
         const input = event.currentTarget;
 
-        // Get click position relative to input
-        const rect = input.getBoundingClientRect();
-        const style = window.getComputedStyle(input);
-        const paddingLeft = Number.parseFloat(style.paddingLeft);
-        const clickX = event.clientX - rect.left - paddingLeft;
+        // Get current cursor position after the click
+        const cursorPosition = input.selectionStart ?? 0;
 
-        // Calculate approximate character position
-        const textWidth = getTextWidth(
-          input.value.slice(0, input.value.length),
-          input,
-        );
-        const charWidth = textWidth / input.value.length;
-        const approximateClickPosition = Math.round(clickX / charWidth);
-
-        // Find if click is within a mention
+        // Check if cursor is within a mention
         const clickedMention = context.mentions.find(
-          (mention) =>
-            approximateClickPosition >= mention.start &&
-            approximateClickPosition < mention.end,
+          (mention) => cursorPosition >= mention.start && cursorPosition < mention.end,
         );
 
         if (clickedMention) {
@@ -777,7 +783,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           });
         }
       },
-      [context.disabled, context.readonly, context.mentions, getTextWidth],
+      [context.disabled, context.readonly, context.mentions],
     );
 
     const onPaste = React.useCallback(
