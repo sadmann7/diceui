@@ -110,7 +110,7 @@ function DataGridCellImpl<TData>({
       isSelected={isSelected}
       isSearchMatch={isSearchMatch}
       isActiveSearchMatch={isActiveSearchMatch}
-      readOnly={readOnly}
+      readOnly={readOnly || !!cellOpts?.readOnly}
     />
   );
 }
