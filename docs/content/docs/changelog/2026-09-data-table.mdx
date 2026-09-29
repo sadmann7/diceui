@@ -1,0 +1,60 @@
+---
+title: September 2026 - Data Table and Data Grid
+description: Data Table and Data Grid now ship Base UI variants, run on TanStack Table v9, and keep the full filter, sort, edit, and clipboard feature set.
+date: 2026-09-29
+---
+
+[Data Table](/docs/components/data-table) and [Data Grid](/docs/components/data-grid) now ship for both Base UI and Radix, and both run on TanStack Table v9.
+
+Installs no longer include a manual import-path rewrite. The registry writes component, config, and type imports in place.
+
+### Data Table
+
+- **Filtering.** Text, number, range, date, date range, boolean, select, and multi-select, each with its own operators. Compose them as a filter list or a command-style filter menu.
+- **Sorting.** Multi-column sorting, persisted in the URL.
+- **Pagination.** Manual pagination with a required `pageCount`, plus page size options.
+- **URL state.** Page, page size, sort, filters, and join operator stay in the query string through [nuqs](https://nuqs.47ng.com).
+- **Columns.** Visibility, ordering, sizing, and pinning. Pin with `start` and `end`.
+- **Rows.** Single or multi-row selection, with an action bar for the current selection.
+- **Keyboard.** `Ctrl/Cmd + Shift + F` toggles the filter menu, `Ctrl/Cmd + Shift + S` toggles the sort menu, and `Backspace` or `Delete` removes the focused filter or sort.
+
+### Data Grid
+
+A virtualized, spreadsheet-style grid for large datasets.
+
+- **Editing.** In-place editing across short text, long text, number, URL, checkbox, select, multi-select, date, and file cells.
+- **Selection.** Cell and row selection with keyboard and mouse, including shift-range selection.
+- **Clipboard.** Copy, cut, and paste, including TSV from Excel or Google Sheets. Paste can add rows when the copied range runs past the grid.
+- **Undo and redo.** `useDataGridUndoRedo` tracks cell edits, added rows, and deleted rows. `Ctrl/Cmd + Z` undoes, and `Ctrl/Cmd + Shift + Z` or `Ctrl/Cmd + Y` redoes.
+- **Find.** `Ctrl/Cmd + F` searches cells and steps through matches.
+- **Filter and sort menus.** Operator-based filters and multi-column sorts, both reorderable.
+- **Columns.** Resize, pin (`start` / `end`), hide, and reorder. Double-click a resize handle to fit the column.
+- **Rows.** Add and delete through `onRowAdd` and `onRowsDelete`. Row height is short, medium, tall, or extra-tall.
+- **Modes.** `readOnly` locks editing. `autoFocus` focuses the first navigable cell, or a specific `{ rowIndex, columnId }`. Direction follows `DirectionProvider`.
+
+### TanStack Table v9
+
+`useDataTable` and `useDataGrid` are still the public hooks. Under them, tables are created with `useTable` and an explicit feature set: `dataTableFeatures` for the table, `dataGridFeatures` for the grid.
+
+Column definitions, columns, rows, and the table instance take that feature set as the first type argument. Row data must extend `RowData`. Column meta and table meta come from the feature set, so the old `declare module "@tanstack/react-table"` augmentation is gone.
+
+```tsx
+import type { ColumnDef } from "@tanstack/react-table";
+
+import type { DataTableFeatures } from "@/lib/data-table-features";
+
+const columns: ColumnDef<DataTableFeatures, Project>[] = [
+  // ...
+];
+
+const { table } = useDataTable({
+  data,
+  columns,
+  pageCount,
+  initialState: {
+    columnPinning: { start: ["select"], end: ["actions"] },
+  },
+});
+```
+
+Pinning state is `{ start, end }`. Column visibility state is `ColumnVisibilityState`. Row models are created with `createSortedRowModel`, `createFilteredRowModel`, `createPaginatedRowModel`, and `createFacetedRowModel`, rather than the v8 `get*RowModel` helpers.

@@ -170,6 +170,34 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "data-grid-demo",
+    type: "registry:example",
+    dependencies: [
+      "@tanstack/react-table",
+      "@tanstack/react-virtual",
+      "sonner",
+    ],
+    devDependencies: ["@faker-js/faker"],
+    registryDependencies: ["data-grid"],
+    files: [
+      {
+        path: "examples/data-grid-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "data-table-demo",
+    type: "registry:example",
+    registryDependencies: ["data-table"],
+    files: [
+      {
+        path: "examples/data-table-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "cropper-video-demo",
     type: "registry:example",
     registryDependencies: ["cropper", "button", "label", "select"],

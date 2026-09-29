@@ -1,6 +1,12 @@
-import type { Column, Table, TableOptions } from "@tanstack/react-table";
+import type {
+  Column,
+  RowData,
+  Table,
+  TableOptions,
+} from "@tanstack/react-table";
 import type * as React from "react";
 
+import type { DataTableFeatures } from "@/lib/data-table-features";
 import type { DropdownMenuTrigger } from "@/registry/bases/radix/ui/dropdown-menu";
 import type { EmptyProps } from "@/types";
 import type {
@@ -9,11 +15,11 @@ import type {
   QueryKeys,
 } from "@/types/data-table";
 
-export interface UseDataTableProps<TData>
+export interface UseDataTableProps<TData extends RowData>
   extends
-    Required<Pick<TableOptions<TData>, "pageCount">>,
+    Required<Pick<TableOptions<DataTableFeatures, TData>, "pageCount">>,
     Pick<
-      TableOptions<TData>,
+      TableOptions<DataTableFeatures, TData>,
       | "data"
       | "columns"
       | "getRowId"
@@ -101,39 +107,44 @@ export interface UseDataTableProps<TData>
   startTransition?: React.TransitionStartFunction;
 }
 
-export interface DataTableProps<TData> extends EmptyProps<"div"> {
+export interface DataTableProps<
+  TData extends RowData,
+> extends EmptyProps<"div"> {
   /** The table instance. */
-  table: Table<TData>;
+  table: Table<DataTableFeatures, TData>;
 
   /** The action bar to display above the table. */
   actionBar?: React.ReactNode;
 }
 
-export interface DataTableToolbarProps<TData> extends EmptyProps<"div"> {
+export interface DataTableToolbarProps<
+  TData extends RowData,
+> extends EmptyProps<"div"> {
   /** The table instance. */
-  table: Table<TData>;
+  table: Table<DataTableFeatures, TData>;
 }
 
 export interface DataTableAdvancedToolbarProps<
-  TData,
+  TData extends RowData,
 > extends EmptyProps<"div"> {
   /** The table instance. */
-  table: Table<TData>;
+  table: Table<DataTableFeatures, TData>;
 }
 
-export interface DataTableColumnHeaderProps<TData, TValue> extends EmptyProps<
-  typeof DropdownMenuTrigger
-> {
+export interface DataTableColumnHeaderProps<
+  TData extends RowData,
+  TValue,
+> extends EmptyProps<typeof DropdownMenuTrigger> {
   /** The column instance. */
-  column: Column<TData, TValue>;
+  column: Column<DataTableFeatures, TData, TValue>;
 
   /** The column title. */
   title: string;
 }
 
-export interface DataTableDateFilterProps<TData> {
+export interface DataTableDateFilterProps<TData extends RowData> {
   /** The column instance. */
-  column: Column<TData>;
+  column: Column<DataTableFeatures, TData>;
 
   /** The title of the date picker. */
   title?: string;
@@ -142,9 +153,9 @@ export interface DataTableDateFilterProps<TData> {
   multiple?: boolean;
 }
 
-export interface DataTableFacetedFilterProps<TData, TValue> {
+export interface DataTableFacetedFilterProps<TData extends RowData, TValue> {
   /** The column instance. */
-  column?: Column<TData, TValue>;
+  column?: Column<DataTableFeatures, TData, TValue>;
 
   /** The title of the filter. */
   title?: string;
@@ -156,20 +167,22 @@ export interface DataTableFacetedFilterProps<TData, TValue> {
   multiple?: boolean;
 }
 
-export interface DataTableSliderFilterProps<TData> {
+export interface DataTableSliderFilterProps<TData extends RowData> {
   /** The column instance. */
-  column: Column<TData>;
+  column: Column<DataTableFeatures, TData>;
 
   /** The title of the slider filter. */
   title?: string;
 }
 
-export interface DataTableRangeFilterProps<TData> extends EmptyProps<"div"> {
+export interface DataTableRangeFilterProps<
+  TData extends RowData,
+> extends EmptyProps<"div"> {
   /** The extended column filter. */
   filter: ExtendedColumnFilter<TData>;
 
   /** The column instance. */
-  column: Column<TData>;
+  column: Column<DataTableFeatures, TData>;
 
   /** The input id for screen readers. */
   inputId: string;
@@ -181,9 +194,9 @@ export interface DataTableRangeFilterProps<TData> extends EmptyProps<"div"> {
   ) => void;
 }
 
-export interface DataTableFilterListProps<TData> {
+export interface DataTableFilterListProps<TData extends RowData> {
   /** The table instance. */
-  table: Table<TData>;
+  table: Table<DataTableFeatures, TData>;
 
   /**
    * Debounce time (ms) for filter updates to enhance performance during rapid input.
@@ -210,17 +223,19 @@ export interface DataTableFilterListProps<TData> {
 }
 
 export interface DataTableFilterMenuProps<
-  TData,
+  TData extends RowData,
 > extends DataTableFilterListProps<TData> {}
 
-export interface DataTableSortListProps<TData> {
+export interface DataTableSortListProps<TData extends RowData> {
   /** The table instance. */
-  table: Table<TData>;
+  table: Table<DataTableFeatures, TData>;
 }
 
-export interface DataTablePaginationProps<TData> extends EmptyProps<"div"> {
+export interface DataTablePaginationProps<
+  TData extends RowData,
+> extends EmptyProps<"div"> {
   /** The table instance. */
-  table: Table<TData>;
+  table: Table<DataTableFeatures, TData>;
 
   /**
    * The options of the pagination.
@@ -230,9 +245,9 @@ export interface DataTablePaginationProps<TData> extends EmptyProps<"div"> {
   pageSizeOptions?: number[];
 }
 
-export interface DataTableViewOptionsProps<TData> {
+export interface DataTableViewOptionsProps<TData extends RowData> {
   /** The table instance. */
-  table: Table<TData>;
+  table: Table<DataTableFeatures, TData>;
 }
 
 export interface DataTableSkeletonProps extends EmptyProps<"div"> {

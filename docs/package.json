@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
+    "@base-ui/utils": "0.3.2",
     "@diceui/checkbox-group": "workspace:*",
     "@diceui/combobox": "workspace:*",
     "@diceui/listbox": "workspace:*",
@@ -31,7 +32,7 @@
     "@hookform/resolvers": "^5.9.1",
     "@mux/mux-video-react": "^0.31.2",
     "@shikijs/transformers": "^4.4.3",
-    "@tanstack/react-table": "^8.21.3",
+    "@tanstack/react-table": "^9.2.4",
     "@tanstack/react-virtual": "^3.14.10",
     "@uploadthing/react": "^7.3.3",
     "@upstash/ratelimit": "^2.0.8",

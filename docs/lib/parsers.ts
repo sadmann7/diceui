@@ -4,9 +4,9 @@ import { z } from "zod";
 import type {
   ExtendedColumnFilter,
   ExtendedColumnSort,
-} from "@/types/data-table";
+} from "@/lib/data-table-types";
 
-import { dataTableConfig } from "@/config/data-table";
+import { dataTableConfig } from "@/lib/data-table-utils";
 
 const sortingItemSchema = z.object({
   id: z.string(),

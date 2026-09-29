@@ -195,9 +195,7 @@ export function useMdxComponents(
     }: React.ComponentProps<typeof ComponentList>) => (
       <ComponentList {...props} />
     ),
-    Changelogs: ({ ...props }: React.ComponentProps<typeof Changelogs>) => (
-      <Changelogs {...props} />
-    ),
+    Changelogs: () => <Changelogs />,
   };
 }
 
