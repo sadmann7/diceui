@@ -1,11 +1,13 @@
-import defaultComponents from "fumadocs-ui/mdx";
 import Link from "next/link";
 
+import { useMdxComponents } from "@/components/mdx-components";
 import { getChangelogPages } from "@/lib/changelog";
+import { DEFAULT_BASE } from "@/lib/constants";
 import { Separator } from "@/registry/bases/radix/ui/separator";
 
 export function Changelogs() {
   const pages = getChangelogPages();
+  const components = useMdxComponents({}, DEFAULT_BASE);
 
   return (
     <div className="flex flex-col">
@@ -35,8 +37,8 @@ export function Changelogs() {
                 {date}
               </p>
             )}
-            <div className="dark:prose-invert prose mt-6 *:first:mt-0">
-              <MDX components={defaultComponents} />
+            <div className="mt-6 *:first:mt-0">
+              <MDX components={components} />
             </div>
             <Separator className="mt-12" />
           </article>
