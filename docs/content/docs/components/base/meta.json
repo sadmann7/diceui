@@ -12,6 +12,8 @@
     "color-swatch",
     "compare-slider",
     "cropper",
+    "data-grid",
+    "data-table",
     "editable",
     "file-upload",
     "fps",

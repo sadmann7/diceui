@@ -1,0 +1,212 @@
+"use client";
+
+import type { Column, ColumnDef } from "@tanstack/react-table";
+
+import {
+  CheckCircle,
+  CheckCircle2,
+  DollarSign,
+  MoreHorizontal,
+  Text,
+  XCircle,
+} from "lucide-react";
+import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
+import * as React from "react";
+
+import type { DataTableFeatures } from "@/lib/data-table-features";
+
+import { DataTable } from "@/registry/bases/base/components/data-table/data-table";
+import { DataTableColumnHeader } from "@/registry/bases/base/components/data-table/data-table-column-header";
+import { DataTableToolbar } from "@/registry/bases/base/components/data-table/data-table-toolbar";
+import { useDataTable } from "@/registry/bases/base/hooks/use-data-table";
+import { Badge } from "@/registry/bases/base/ui/badge";
+import { Button } from "@/registry/bases/base/ui/button";
+import { Checkbox } from "@/registry/bases/base/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/registry/bases/base/ui/dropdown-menu";
+
+interface Project {
+  id: string;
+  title: string;
+  status: "active" | "inactive";
+  budget: number;
+}
+
+const data: Project[] = [
+  {
+    id: "1",
+    title: "Project Alpha",
+    status: "active",
+    budget: 50000,
+  },
+  {
+    id: "2",
+    title: "Project Beta",
+    status: "inactive",
+    budget: 75000,
+  },
+  {
+    id: "3",
+    title: "Project Gamma",
+    status: "active",
+    budget: 25000,
+  },
+  {
+    id: "4",
+    title: "Project Delta",
+    status: "active",
+    budget: 100000,
+  },
+];
+
+const columns: ColumnDef<DataTableFeatures, Project>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        indeterminate={
+          table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(value)}
+        aria-label="Select row"
+      />
+    ),
+    size: 32,
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    id: "title",
+    accessorKey: "title",
+    header: ({ column }: { column: Column<DataTableFeatures, Project> }) => (
+      <DataTableColumnHeader column={column} label="Title" />
+    ),
+    cell: ({ cell }) => <div>{cell.getValue<Project["title"]>()}</div>,
+    meta: {
+      label: "Title",
+      placeholder: "Search titles...",
+      variant: "text",
+      icon: Text,
+    },
+    enableColumnFilter: true,
+  },
+  {
+    id: "status",
+    accessorKey: "status",
+    header: ({ column }: { column: Column<DataTableFeatures, Project> }) => (
+      <DataTableColumnHeader column={column} label="Status" />
+    ),
+    cell: ({ cell }) => {
+      const status = cell.getValue<Project["status"]>();
+      const Icon = status === "active" ? CheckCircle2 : XCircle;
+
+      return (
+        <Badge variant="outline" className="capitalize">
+          <Icon />
+          {status}
+        </Badge>
+      );
+    },
+    meta: {
+      label: "Status",
+      variant: "multiSelect",
+      options: [
+        { label: "Active", value: "active", icon: CheckCircle },
+        { label: "Inactive", value: "inactive", icon: XCircle },
+      ],
+    },
+    enableColumnFilter: true,
+  },
+  {
+    id: "budget",
+    accessorKey: "budget",
+    header: ({ column }: { column: Column<DataTableFeatures, Project> }) => (
+      <DataTableColumnHeader column={column} label="Budget" />
+    ),
+    cell: ({ cell }) => {
+      const budget = cell.getValue<Project["budget"]>();
+
+      return (
+        <div className="flex items-center gap-1">
+          <DollarSign className="size-4" />
+          {budget.toLocaleString()}
+        </div>
+      );
+    },
+  },
+  {
+    id: "actions",
+    cell: function Cell() {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            nativeButton
+            render={
+              <Button variant="ghost" size="icon">
+                <MoreHorizontal />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            }
+          />
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+    size: 32,
+  },
+];
+
+export default function DataTableDemo() {
+  const [title] = useQueryState("title", parseAsString.withDefault(""));
+  const [status] = useQueryState(
+    "status",
+    parseAsArrayOf(parseAsString).withDefault([]),
+  );
+
+  // Ideally we would filter the data server-side, but for the sake of this example, we'll filter the data client-side
+  const filteredData = React.useMemo(() => {
+    return data.filter((project) => {
+      const matchesTitle =
+        title === "" ||
+        project.title.toLowerCase().includes(title.toLowerCase());
+      const matchesStatus =
+        status.length === 0 || status.includes(project.status);
+
+      return matchesTitle && matchesStatus;
+    });
+  }, [title, status]);
+
+  const { table } = useDataTable({
+    data: filteredData,
+    columns,
+    pageCount: 1,
+    initialState: {
+      sorting: [{ id: "title", desc: true }],
+      columnPinning: { start: [], end: ["actions"] },
+    },
+    getRowId: (row) => row.id,
+  });
+
+  return (
+    <div className="data-table-container">
+      <DataTable table={table}>
+        <DataTableToolbar table={table} />
+      </DataTable>
+    </div>
+  );
+}
