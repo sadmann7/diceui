@@ -13,6 +13,8 @@ import {
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import * as React from "react";
 
+import type { DataTableFeatures } from "@/lib/data-table-features";
+
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
@@ -81,7 +83,7 @@ export default function DataTableDemo() {
     });
   }, [title, status]);
 
-  const columns = React.useMemo<ColumnDef<Project>[]>(
+  const columns = React.useMemo<ColumnDef<DataTableFeatures, Project>[]>(
     () => [
       {
         id: "select",
@@ -111,9 +113,11 @@ export default function DataTableDemo() {
       {
         id: "title",
         accessorKey: "title",
-        header: ({ column }: { column: Column<Project> }) => (
-          <DataTableColumnHeader column={column} label="Title" />
-        ),
+        header: ({
+          column,
+        }: {
+          column: Column<DataTableFeatures, Project>;
+        }) => <DataTableColumnHeader column={column} label="Title" />,
         cell: ({ cell }) => <div>{cell.getValue<Project["title"]>()}</div>,
         meta: {
           label: "Title",
@@ -126,9 +130,11 @@ export default function DataTableDemo() {
       {
         id: "status",
         accessorKey: "status",
-        header: ({ column }: { column: Column<Project> }) => (
-          <DataTableColumnHeader column={column} label="Status" />
-        ),
+        header: ({
+          column,
+        }: {
+          column: Column<DataTableFeatures, Project>;
+        }) => <DataTableColumnHeader column={column} label="Status" />,
         cell: ({ cell }) => {
           const status = cell.getValue<Project["status"]>();
           const Icon = status === "active" ? CheckCircle2 : XCircle;
@@ -153,9 +159,11 @@ export default function DataTableDemo() {
       {
         id: "budget",
         accessorKey: "budget",
-        header: ({ column }: { column: Column<Project> }) => (
-          <DataTableColumnHeader column={column} label="Budget" />
-        ),
+        header: ({
+          column,
+        }: {
+          column: Column<DataTableFeatures, Project>;
+        }) => <DataTableColumnHeader column={column} label="Budget" />,
         cell: ({ cell }) => {
           const budget = cell.getValue<Project["budget"]>();
 
@@ -199,7 +207,7 @@ export default function DataTableDemo() {
     pageCount: 1,
     initialState: {
       sorting: [{ id: "title", desc: true }],
-      columnPinning: { right: ["actions"] },
+      columnPinning: { start: [], end: ["actions"] },
     },
     getRowId: (row) => row.id,
   });

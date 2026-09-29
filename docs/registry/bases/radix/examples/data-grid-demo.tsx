@@ -5,6 +5,8 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { faker } from "@faker-js/faker";
 import * as React from "react";
 
+import type { DataGridFeatures } from "@/lib/data-grid-features";
+
 import { DataGrid } from "@/components/data-grid/data-grid";
 import { DataGridKeyboardShortcuts } from "@/components/data-grid/data-grid-keyboard-shortcuts";
 import { useDataGrid } from "@/hooks/use-data-grid";
@@ -197,7 +199,7 @@ function generateTrickData(): SkateTrick[] {
 export default function DataGridDemo() {
   const [data, setData] = React.useState<SkateTrick[]>(generateTrickData());
 
-  const columns = React.useMemo<ColumnDef<SkateTrick>[]>(
+  const columns = React.useMemo<ColumnDef<DataGridFeatures, SkateTrick>[]>(
     () => [
       {
         id: "trickName",
@@ -338,7 +340,8 @@ export default function DataGridDemo() {
     getRowId: (row) => row.id,
     initialState: {
       columnPinning: {
-        left: ["select"],
+        start: ["select"],
+        end: [],
       },
     },
     enablePaste: true,

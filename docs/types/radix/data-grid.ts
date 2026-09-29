@@ -4,14 +4,16 @@ import type {
   ColumnPinningState,
   Header,
   Row,
+  RowData,
   Table,
   TableMeta,
   TableOptions,
-  VisibilityState,
+  ColumnVisibilityState,
 } from "@tanstack/react-table";
 import type { VirtualItem } from "@tanstack/react-virtual";
 import type * as React from "react";
 
+import type { DataGridFeatures } from "@/lib/data-grid-features";
 import type { PopoverContent } from "@/registry/bases/radix/ui/popover";
 import type { EmptyProps } from "@/types";
 import type {
@@ -23,8 +25,8 @@ import type {
   SearchState,
 } from "@/types/data-grid";
 
-export interface UseDataGridProps<TData> extends Pick<
-  TableOptions<TData>,
+export interface UseDataGridProps<TData extends RowData> extends Pick<
+  TableOptions<DataGridFeatures, TData>,
   "data" | "columns" | "getRowId" | "defaultColumn" | "initialState" | "state"
 > {
   /**
@@ -207,18 +209,20 @@ export interface UseDataGridProps<TData> extends Pick<
   readOnly?: boolean;
 }
 
-export interface DataGridProps<TData> extends EmptyProps<"div"> {
+export interface DataGridProps<
+  TData extends RowData,
+> extends EmptyProps<"div"> {
   /**
    * The table instance from useDataGrid hook.
    * Contains the table state, columns, and data.
    */
-  table: Table<TData>;
+  table: Table<DataGridFeatures, TData>;
 
   /**
    * The table meta from useDataGrid hook.
    * Contains table-level callbacks and state management.
    */
-  tableMeta: TableMeta<TData>;
+  tableMeta: TableMeta<DataGridFeatures, TData>;
 
   /**
    * Array of column definitions for the data grid.
@@ -360,7 +364,9 @@ export interface DataGridProps<TData> extends EmptyProps<"div"> {
   stretchColumns?: boolean;
 }
 
-export type GetDataGridSelectColumnProps<TData> = Partial<ColumnDef<TData>> & {
+export type GetDataGridSelectColumnProps<TData extends RowData> = Partial<
+  ColumnDef<DataGridFeatures, TData>
+> & {
   /**
    * The width of the select column in pixels.
    * @default 40
@@ -386,7 +392,7 @@ export type GetDataGridSelectColumnProps<TData> = Partial<ColumnDef<TData>> & {
   enableSorting?: boolean;
 };
 
-export interface DataGridColumnHeaderProps<TData> {
+export interface DataGridColumnHeaderProps<TData extends RowData> {
   /**
    * The header instance from TanStack Table.
    * Provides column metadata, sorting state, and sizing information.
@@ -395,27 +401,27 @@ export interface DataGridColumnHeaderProps<TData> {
    * <DataGridColumnHeader header={header} table={table} />
    * ```
    */
-  header: Header<TData, unknown>;
+  header: Header<DataGridFeatures, TData, unknown>;
 
   /**
    * The table instance.
    * Used to access table state and trigger actions like sorting.
    */
-  table: Table<TData>;
+  table: Table<DataGridFeatures, TData>;
 }
 
-export interface DataGridCellProps<TData> {
+export interface DataGridCellProps<TData extends RowData> {
   /**
    * The cell instance from TanStack Table.
    * Contains the cell value, column, and row information.
    */
-  cell: Cell<TData, unknown>;
+  cell: Cell<DataGridFeatures, TData, unknown>;
 
   /**
    * The table instance from useDataGrid hook.
    * Used to access table state and metadata for rendering the appropriate cell variant.
    */
-  table: Table<TData>;
+  table: Table<DataGridFeatures, TData>;
 
   /**
    * The row index in the data array.
@@ -466,21 +472,23 @@ export interface DataGridCellProps<TData> {
   readOnly: boolean;
 }
 
-export interface DataGridCellWrapperProps<TData>
+export interface DataGridCellWrapperProps<TData extends RowData>
   extends DataGridCellProps<TData>, EmptyProps<"div"> {}
 
-export interface DataGridRowProps<TData> extends EmptyProps<"div"> {
+export interface DataGridRowProps<
+  TData extends RowData,
+> extends EmptyProps<"div"> {
   /**
    * The row instance from TanStack Table.
    * Contains row data, cells, and selection state.
    */
-  row: Row<TData>;
+  row: Row<DataGridFeatures, TData>;
 
   /**
    * The table meta from useDataGrid hook.
    * Contains table-level callbacks and state management.
    */
-  tableMeta: TableMeta<TData>;
+  tableMeta: TableMeta<DataGridFeatures, TData>;
 
   /**
    * The virtual item representing this row.
@@ -510,7 +518,7 @@ export interface DataGridRowProps<TData> extends EmptyProps<"div"> {
    * Column visibility state from TanStack Table.
    * Determines which columns should be rendered.
    */
-  columnVisibility: VisibilityState;
+  columnVisibility: ColumnVisibilityState;
 
   /**
    * Column pinning state from TanStack Table.
@@ -659,7 +667,7 @@ export interface DataGridSearchProps {
   onSearch: (query: string) => void;
 }
 
-export interface DataGridContextMenuProps<TData> {
+export interface DataGridContextMenuProps<TData extends RowData> {
   /**
    * The table instance from useDataGrid hook.
    * Used to access table state and trigger context menu actions.
@@ -668,12 +676,12 @@ export interface DataGridContextMenuProps<TData> {
    * <DataGridContextMenu table={table} />
    * ```
    */
-  table: Table<TData>;
+  table: Table<DataGridFeatures, TData>;
 }
 
-export interface DataGridSortMenuProps<TData> extends EmptyProps<
-  typeof PopoverContent
-> {
+export interface DataGridSortMenuProps<
+  TData extends RowData,
+> extends EmptyProps<typeof PopoverContent> {
   /**
    * The table instance from useDataGrid hook.
    * Used to read and update sorting state with drag-and-drop reordering.
@@ -682,7 +690,7 @@ export interface DataGridSortMenuProps<TData> extends EmptyProps<
    * <DataGridSortMenu table={table} />
    * ```
    */
-  table: Table<TData>;
+  table: Table<DataGridFeatures, TData>;
 
   /**
    * Whether the menu trigger is disabled.
@@ -691,9 +699,9 @@ export interface DataGridSortMenuProps<TData> extends EmptyProps<
   disabled?: boolean;
 }
 
-export interface DataGridRowHeightMenuProps<TData> extends EmptyProps<
-  typeof PopoverContent
-> {
+export interface DataGridRowHeightMenuProps<
+  TData extends RowData,
+> extends EmptyProps<typeof PopoverContent> {
   /**
    * The table instance from useDataGrid hook.
    * Used to read and update the row height setting.
@@ -702,7 +710,7 @@ export interface DataGridRowHeightMenuProps<TData> extends EmptyProps<
    * <DataGridRowHeightMenu table={table} />
    * ```
    */
-  table: Table<TData>;
+  table: Table<DataGridFeatures, TData>;
 
   /**
    * Whether the menu trigger is disabled.
@@ -711,9 +719,9 @@ export interface DataGridRowHeightMenuProps<TData> extends EmptyProps<
   disabled?: boolean;
 }
 
-export interface DataGridViewMenuProps<TData> extends EmptyProps<
-  typeof PopoverContent
-> {
+export interface DataGridViewMenuProps<
+  TData extends RowData,
+> extends EmptyProps<typeof PopoverContent> {
   /**
    * The table instance from useDataGrid hook.
    * Used to read and update column visibility settings.
@@ -722,7 +730,7 @@ export interface DataGridViewMenuProps<TData> extends EmptyProps<
    * <DataGridViewMenu table={table} />
    * ```
    */
-  table: Table<TData>;
+  table: Table<DataGridFeatures, TData>;
 
   /**
    * Whether the menu trigger is disabled.
@@ -731,9 +739,9 @@ export interface DataGridViewMenuProps<TData> extends EmptyProps<
   disabled?: boolean;
 }
 
-export interface DataGridFilterMenuProps<TData> extends EmptyProps<
-  typeof PopoverContent
-> {
+export interface DataGridFilterMenuProps<
+  TData extends RowData,
+> extends EmptyProps<typeof PopoverContent> {
   /**
    * The table instance from useDataGrid hook.
    * Used to read and update column filter state with support for multiple operators and values.
@@ -742,7 +750,7 @@ export interface DataGridFilterMenuProps<TData> extends EmptyProps<
    * <DataGridFilterMenu table={table} />
    * ```
    */
-  table: Table<TData>;
+  table: Table<DataGridFeatures, TData>;
 
   /**
    * Whether the menu trigger is disabled.
@@ -751,7 +759,7 @@ export interface DataGridFilterMenuProps<TData> extends EmptyProps<
   disabled?: boolean;
 }
 
-export interface DataGridPasteDialogProps<TData> {
+export interface DataGridPasteDialogProps<TData extends RowData> {
   /**
    * The table meta from useDataGrid hook.
    * Contains callbacks for handling paste operations.
@@ -760,7 +768,7 @@ export interface DataGridPasteDialogProps<TData> {
    * <DataGridPasteDialog tableMeta={tableMeta} pasteDialog={pasteDialog} />
    * ```
    */
-  tableMeta: TableMeta<TData>;
+  tableMeta: TableMeta<DataGridFeatures, TData>;
 
   /**
    * The paste dialog state.
@@ -840,7 +848,7 @@ export interface DataGridKeyboardShortcutsProps {
   enableRowsDelete?: boolean;
 }
 
-export interface UseDataGridUndoRedoProps<TData> {
+export interface UseDataGridUndoRedoProps<TData extends RowData> {
   /**
    * The data array for the grid.
    * Used to track changes and apply undo/redo operations.
@@ -884,7 +892,7 @@ export interface UseDataGridUndoRedoProps<TData> {
   enabled?: boolean;
 }
 
-export interface UseDataGridUndoRedoReturn<TData> {
+export interface UseDataGridUndoRedoReturn<TData extends RowData> {
   /**
    * Whether there are any actions to undo.
    * Use this to conditionally enable/disable undo buttons.
