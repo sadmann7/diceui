@@ -1,0 +1,42 @@
+---
+title: September 2026 - Presentation
+description: Added a Presentation component for viewing and editing PowerPoint files in the browser, and made Base UI the default.
+date: 2026-09-20
+---
+
+### Presentation
+
+[Presentation](/docs/components/presentation) is a set of composable primitives for viewing and editing PowerPoint files in the browser. It is built on [`@diceui/pptx`](https://pptx.diceui.com/docs) and ships for both Base UI and Radix.
+
+```package-install
+npx shadcn@latest add @diceui/presentation
+```
+
+```tsx
+import {
+  Presentation,
+  PresentationContent,
+  PresentationError,
+  PresentationLoading,
+  PresentationSelection,
+  PresentationSlide,
+  PresentationThumbnailList,
+  PresentationViewport,
+} from "@/components/ui/presentation";
+```
+
+`PresentationSelection` is the editing overlay. It supports drag-to-move, resize, inline text, multi-select, and keyboard shortcuts, and it renders only when the file was loaded with `readOnly={false}`.
+
+A companion zoom control is available as `@diceui/presentation-zoom-select`.
+
+### Base UI is the default
+
+Docs and new installs now default to Base UI with the nova preset (`base-nova`). Radix pages are still published alongside them.
+
+### Styles
+
+The registry resolves every official style id: `base` and `radix`, each with vega, nova, maia, lyra, mira, luma, sera, and rhea. Nova itself landed in June.
+
+### Sortable and Kanban
+
+[Sortable](/docs/components/sortable) and [Kanban](/docs/components/kanban) now have Base UI variants.
