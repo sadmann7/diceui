@@ -53,54 +53,6 @@ links:
     npx shadcn@latest add "@diceui/data-table-filter-menu"
     ```
   </Step>
-  <Step>
-    Update import paths for custom components:
-
-    The shadcn CLI doesn't handle custom component paths properly ([see issue](https://github.com/shadcn-ui/ui/issues/8308)). You'll need to update these imports manually:
-
-    **In `components/data-table/data-table.tsx`:**
-
-    ```tsx title="components/data-table/data-table.tsx"
-    import { getCommonPinningStyles } from "@/components/data-table/data-table"; // [!code --]
-    import { getCommonPinningStyles } from "@/lib/data-table"; // [!code ++]
-    ```
-
-    **In `lib/data-table.ts`:**
-
-    ```tsx title="lib/data-table.ts"
-    import { dataTableConfig } from "@/components/data-table/data-table"; // [!code --]
-    import type { // [!code --]
-      ExtendedColumnFilter, // [!code --]
-      FilterOperator, // [!code --]
-      FilterVariant, // [!code --]
-    } from "@/components/data-table/data-table"; // [!code --]
-    import { dataTableConfig } from "@/config/data-table"; // [!code ++]
-    import type { // [!code ++]
-      ExtendedColumnFilter, // [!code ++]
-      FilterOperator, // [!code ++]
-      FilterVariant, // [!code ++]
-    } from "@/types/data-table"; // [!code ++]
-    ```
-
-    **In `lib/parsers.ts`:**
-
-    ```tsx title="lib/parsers.ts"
-    import { dataTableConfig } from "@/components/data-table/data-table"; // [!code --]
-    // [!code --]
-    import type { // [!code --]
-      ExtendedColumnFilter, // [!code --]
-      ExtendedColumnSort, // [!code --]
-    } from "@/components/data-table/data-table"; // [!code --]
-    import { dataTableConfig } from "@/config/data-table"; // [!code ++]
-    // [!code ++]
-    import type { // [!code ++]
-      ExtendedColumnFilter, // [!code ++]
-      ExtendedColumnSort, // [!code ++]
-    } from "@/types/data-table"; // [!code ++]
-    ```
-
-    Update imports to use `@/lib/data-table` for utility functions, `@/config/data-table` for config, and `@/types/data-table` for types instead of importing from `@/components/data-table/data-table`.
-  </Step>
 </Steps>
 
 ## Layout
