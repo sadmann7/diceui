@@ -36,6 +36,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/r/:style/:component((?:use-)?data-(?:table|grid).*\\.json)",
+        destination: "https://tablecn.com/r/:style/:component",
+        permanent: true,
+      },
+      {
         source: "/r/styles",
         destination: "/r/styles/index.json",
         permanent: true,
