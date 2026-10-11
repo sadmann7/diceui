@@ -241,7 +241,10 @@ function FacetedTrigger({
   return (
     <PopoverTrigger
       data-slot="faceted-trigger"
-      className={cn("justify-between text-left", className)}
+      className={cn(
+        "justify-between text-left has-[>[data-slot=faceted-value]>[data-slot=faceted-badge-list]]:ps-1",
+        className,
+      )}
       {...props}
     />
   );
