@@ -8,7 +8,7 @@ export default function SkipNavDemo() {
       </p>
       <SkipNav
         href="#skip-nav-demo-content"
-        className="focus:absolute focus:top-2 focus:left-2"
+        className="focus-visible:absolute focus-visible:top-2 focus-visible:left-2"
       />
       <header className="flex items-center gap-4 border-b px-4 py-3 text-sm">
         <span className="font-medium">Acme</span>

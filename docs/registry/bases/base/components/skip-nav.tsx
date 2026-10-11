@@ -3,44 +3,41 @@
 import type * as React from "react";
 
 import { mergeProps } from "@base-ui/react/merge-props";
-import { useRender } from "@base-ui/react/use-render";
 import { cn } from "cn";
 
 const MAIN_CONTENT_ID = "main-content";
 
-interface SkipNavProps extends useRender.ComponentProps<"a"> {}
+interface SkipNavProps extends React.ComponentProps<"a"> {}
 
 function SkipNav(props: SkipNavProps) {
   const {
     href = `#${MAIN_CONTENT_ID}`,
     children = "Skip to content",
     className,
-    render,
     ...linkProps
   } = props;
 
-  return useRender({
-    defaultTagName: "a",
-    props: mergeProps<"a">(
-      {
-        href,
-        children,
-        className: cn(
-          "sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          className,
-        ),
-        onClick: (event) => {
-          if (event.defaultPrevented) return;
-          skipToTarget(event, href);
+  return (
+    <a
+      data-slot="skip-nav"
+      {...mergeProps<"a">(
+        {
+          href,
+          className: cn(
+            "sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-50 focus-visible:rounded-md focus-visible:bg-background focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium focus-visible:text-foreground focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
+            className,
+          ),
+          onClick: (event) => {
+            if (event.defaultPrevented) return;
+            skipToTarget(event, href);
+          },
         },
-      },
-      linkProps,
-    ),
-    render,
-    state: {
-      slot: "skip-nav",
-    },
-  });
+        linkProps,
+      )}
+    >
+      {children}
+    </a>
+  );
 }
 
 function skipToTarget(

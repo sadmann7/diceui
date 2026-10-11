@@ -53,7 +53,7 @@ export interface PortalProps extends RenderProps {
   container?: Element | DocumentFragment | null;
 }
 
-export interface SkipNavProps extends RenderProps {
+export interface SkipNavProps {
   /**
    * The hash of the element to skip to. On click, focus moves to that element.
    * Defaults to `MAIN_CONTENT_ID`. A custom `href` replaces it, so the target

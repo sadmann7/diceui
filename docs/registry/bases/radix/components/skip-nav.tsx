@@ -3,34 +3,28 @@
 import type * as React from "react";
 
 import { cn } from "cn";
-import { Slot as SlotPrimitive } from "radix-ui";
 import { composeEventHandlers } from "radix-ui/internal";
 
 const MAIN_CONTENT_ID = "main-content";
 
-interface SkipNavProps extends React.ComponentProps<"a"> {
-  asChild?: boolean;
-}
+interface SkipNavProps extends React.ComponentProps<"a"> {}
 
 function SkipNav(props: SkipNavProps) {
   const {
     href = `#${MAIN_CONTENT_ID}`,
     children = "Skip to content",
-    asChild,
     className,
     onClick,
     ...linkProps
   } = props;
 
-  const LinkPrimitive = asChild ? SlotPrimitive.Slot : "a";
-
   return (
-    <LinkPrimitive
+    <a
       data-slot="skip-nav"
       {...linkProps}
       href={href}
       className={cn(
-        "sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-50 focus-visible:rounded-md focus-visible:bg-background focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium focus-visible:text-foreground focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
         className,
       )}
       onClick={composeEventHandlers(onClick, (event) =>
@@ -38,7 +32,7 @@ function SkipNav(props: SkipNavProps) {
       )}
     >
       {children}
-    </LinkPrimitive>
+    </a>
   );
 }
 
