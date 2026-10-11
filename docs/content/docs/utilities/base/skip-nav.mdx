@@ -128,6 +128,8 @@ Skip links satisfy [WCAG 2.4.1 Bypass Blocks](https://www.w3.org/WAI/WCAG22/Unde
 
 On activation, focus moves to the target element, not just the scroll position. If the target isn't focusable, like `<main>`, it gets `tabindex="-1"` so it can receive focus, and the next <Kbd>Tab</Kbd> continues from there. Its focus outline is hidden while it has focus, and both changes are undone when focus leaves it. The URL hash isn't changed, so the skip doesn't add a history entry.
 
+While focused, the link uses `z-index: 100` to stack above shadcn's `z-50` layers like sticky headers and popovers, so it's never covered ([WCAG 2.4.11 Focus Not Obscured](https://www.w3.org/WAI/WCAG22/Understanding/focus-not-obscured-minimum.html)). If your app has its own layers above 100, raise it with `className="focus-visible:z-[…]"`.
+
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable
