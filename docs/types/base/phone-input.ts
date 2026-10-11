@@ -39,7 +39,7 @@ export interface PhoneInputProps extends RenderProps {
   value?: string;
 
   /**
-   * Callback fired when the value changes.
+   * Event handler called when the value changes.
    */
   onValueChange?: (value: string) => void;
 
@@ -55,7 +55,7 @@ export interface PhoneInputProps extends RenderProps {
   country?: string;
 
   /**
-   * Callback fired when the country changes.
+   * Event handler called when the country changes.
    */
   onCountryChange?: (country: string) => void;
 

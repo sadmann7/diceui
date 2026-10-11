@@ -215,6 +215,18 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "faceted",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/faceted.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: ["command", "popover"],
+    dependencies: ["@base-ui/react", "cmdk"],
+  },
+  {
     name: "file-upload",
     type: "registry:ui",
     files: [

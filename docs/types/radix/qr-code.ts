@@ -56,12 +56,12 @@ export interface QRCodeProps extends EmptyProps<"div">, CompositionProps {
   quality?: number;
 
   /**
-   * Callback fired when the QR code fails to generate.
+   * Event handler called when the QR code fails to generate.
    */
   onError?: (error: Error) => void;
 
   /**
-   * Callback fired when the QR code is successfully generated.
+   * Event handler called when the QR code is successfully generated.
    */
   onGenerated?: () => void;
 }

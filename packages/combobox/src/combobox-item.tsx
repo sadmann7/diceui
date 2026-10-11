@@ -53,7 +53,7 @@ interface ComboboxItemProps extends Omit<
   /** Whether the item is disabled. */
   disabled?: boolean;
 
-  /** Callback called when the item is selected. */
+  /** Event handler called when the item is selected. */
   onSelect?: (value: string) => void;
 }
 

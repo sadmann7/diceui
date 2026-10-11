@@ -2183,4 +2183,59 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "faceted-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "faceted"],
+    files: [
+      {
+        path: "examples/faceted-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "faceted-multiple-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "faceted"],
+    files: [
+      {
+        path: "examples/faceted-multiple-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "faceted-groups-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "faceted"],
+    files: [
+      {
+        path: "examples/faceted-groups-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "faceted-async-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "faceted"],
+    files: [
+      {
+        path: "examples/faceted-async-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "faceted-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "faceted"],
+    files: [
+      {
+        path: "examples/faceted-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

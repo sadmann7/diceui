@@ -20,7 +20,7 @@ export interface EditableProps extends RenderProps {
   value?: string;
 
   /**
-   * Callback fired when the value changes.
+   * Event handler called when the value changes.
    */
   onValueChange?: (value: string) => void;
 
@@ -50,17 +50,17 @@ export interface EditableProps extends RenderProps {
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
   /**
-   * Callback fired when editing is cancelled.
+   * Event handler called when editing is cancelled.
    */
   onCancel?: () => void;
 
   /**
-   * Callback fired when editing begins.
+   * Event handler called when editing begins.
    */
   onEdit?: () => void;
 
   /**
-   * Callback fired when changes are submitted.
+   * Event handler called when changes are submitted.
    */
   onSubmit?: (value: string) => void;
 

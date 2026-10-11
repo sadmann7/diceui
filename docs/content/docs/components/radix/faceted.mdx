@@ -1,0 +1,306 @@
+---
+base: radix
+title: Faceted
+description: A searchable popover for picking one or more values, with badges for the current selection.
+new: true
+links:
+  api: /docs/components/radix/faceted#api-reference
+---
+
+<ComponentTabs name="faceted-demo" />
+
+## Installation
+
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```package-install
+npx shadcn@latest add @diceui/faceted
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps className="pt-2">
+
+<Step>Install the following dependencies:</Step>
+
+```package-install
+cmdk radix-ui
+```
+
+<Step>Install the command and popover components from shadcn/ui.</Step>
+
+```package-install
+npx shadcn@latest add command popover
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="faceted" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</CodeTabs>
+
+## Layout
+
+Import the parts and compose them together.
+
+```tsx
+import {
+  Faceted,
+  FacetedClear,
+  FacetedContent,
+  FacetedEmpty,
+  FacetedGroup,
+  FacetedInput,
+  FacetedItem,
+  FacetedItemIndicator,
+  FacetedList,
+  FacetedLoading,
+  FacetedTrigger,
+  FacetedValue,
+} from "@/components/ui/faceted";
+
+return (
+  <Faceted>
+    <FacetedTrigger>
+      <FacetedValue />
+    </FacetedTrigger>
+    <FacetedContent>
+      <FacetedInput />
+      <FacetedList>
+        <FacetedLoading />
+        <FacetedEmpty />
+        <FacetedGroup>
+          <FacetedItem>
+            <FacetedItemIndicator />
+          </FacetedItem>
+        </FacetedGroup>
+        <FacetedClear />
+      </FacetedList>
+    </FacetedContent>
+  </Faceted>
+)
+```
+
+## Examples
+
+### Multiple
+
+Set `multiple` to select more than one value. `FacetedItemIndicator` can show a count until the item is selected, and `FacetedClear` appears once something is selected.
+
+<ComponentTabs name="faceted-multiple-demo" />
+
+### Groups
+
+Split items into groups with headings, and separate them with `FacetedSeparator`.
+
+<ComponentTabs name="faceted-groups-demo" />
+
+### Async
+
+Search on the server by setting `shouldFilter={false}` on `FacetedContent` and controlling the search with `value` and `onValueChange` on `FacetedInput`. Show `FacetedLoading` while a request is pending. Keep the selected options in `items` so their badges stay labeled when they aren't in the current results.
+
+<ComponentTabs name="faceted-async-demo" />
+
+### Controlled
+
+Control the selection with `value` and `onValueChange`.
+
+<ComponentTabs name="faceted-controlled-demo" />
+
+## API Reference
+
+### Faceted
+
+The root component. It holds the selection and the popover's open state.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedProps"
+/>
+
+### FacetedTrigger
+
+The button that opens the popover. Use `asChild` to render your own button.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedTriggerProps"
+/>
+
+### FacetedValue
+
+Shows the current selection inside the trigger, as badges or a placeholder. Labels come from the `items` passed to `Faceted`.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedValueProps"
+/>
+
+### FacetedBadgeList
+
+The container for the selection badges.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedBadgeListProps"
+/>
+
+### FacetedBadge
+
+A badge for one selected option.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedBadgeProps"
+/>
+
+### FacetedContent
+
+The popover content. It wraps its children in a command menu.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedContentProps"
+/>
+
+### FacetedInput
+
+The search input that filters the items.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedInputProps"
+/>
+
+### FacetedList
+
+The scrollable list of groups and items.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedListProps"
+/>
+
+### FacetedEmpty
+
+Shown when no items match the search.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedEmptyProps"
+/>
+
+### FacetedLoading
+
+Shown while results are loading, such as during a server search.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedLoadingProps"
+/>
+
+### FacetedGroup
+
+A group of items with an optional heading.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedGroupProps"
+/>
+
+### FacetedItem
+
+A selectable option.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedItemProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-checked]",
+      value: "Present when the item is selected.",
+    },
+    {
+      title: "[data-selected]",
+      value: "Present when the item is highlighted.",
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when the item is disabled.",
+    },
+  ]}
+/>
+
+### FacetedItemIndicator
+
+The check shown on selected items. Its children, such as a count, show while the item isn't selected.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedItemIndicatorProps"
+/>
+
+### FacetedClear
+
+An item that clears the selection, in its own group below a separator. It only renders when something is selected.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedClearProps"
+/>
+
+### FacetedSeparator
+
+A line between groups.
+
+<AutoTypeTable
+  path="./types/radix/faceted.ts"
+  name="FacetedSeparatorProps"
+/>
+
+## Accessibility
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Enter", "Space"],
+      description: "When focus is on the trigger, opens the popover.",
+    },
+    {
+      keys: ["ArrowDown", "ArrowUp"],
+      description: "Moves the highlight to the next or previous item.",
+    },
+    {
+      keys: ["Home", "End"],
+      description: "Moves the highlight to the first or last item.",
+    },
+    {
+      keys: ["Enter"],
+      description: "Selects or deselects the highlighted item.",
+    },
+    {
+      keys: ["Escape"],
+      description: "Closes the popover and returns focus to the trigger.",
+    },
+  ]}
+/>

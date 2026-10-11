@@ -42,7 +42,7 @@ export interface PhoneInputProps extends EmptyProps<"div">, CompositionProps {
   value?: string;
 
   /**
-   * Callback fired when the value changes.
+   * Event handler called when the value changes.
    */
   onValueChange?: (value: string) => void;
 
@@ -58,7 +58,7 @@ export interface PhoneInputProps extends EmptyProps<"div">, CompositionProps {
   country?: string;
 
   /**
-   * Callback fired when the country changes.
+   * Event handler called when the country changes.
    */
   onCountryChange?: (country: string) => void;
 

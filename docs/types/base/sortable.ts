@@ -39,7 +39,7 @@ export interface SortableProps<TData> extends DndContextProps {
   getItemValue?: (item: TData) => UniqueIdentifier;
 
   /**
-   * Callback called when an item is moved. Receives the DragEndEvent with active and over indexes.
+   * Event handler called when an item is moved. Receives the DragEndEvent with active and over indexes.
    *
    * Overrides default reordering behavior.
    *

@@ -1,16 +1,22 @@
 import { Demo, DemoItemGroup } from "@/components/demo";
 import { Shell } from "@/components/shell";
-import ColorPickerDemo from "@/registry/bases/base/examples/color-picker-demo";
-import BannerRadixStackedDemo from "@/registry/bases/radix/examples/banner-stacked-demo";
+import FacetedBaseDemo from "@/registry/bases/base/examples/faceted-demo";
+import FacetedMultipleBaseDemo from "@/registry/bases/base/examples/faceted-multiple-demo";
+import { Separator } from "@/registry/bases/base/ui/separator";
+import FacetedRadixDemo from "@/registry/bases/radix/examples/faceted-demo";
+import FacetedMultipleRadixDemo from "@/registry/bases/radix/examples/faceted-multiple-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
         <DemoItemGroup>
-          <BannerRadixStackedDemo />
+          <FacetedBaseDemo />
+          <FacetedMultipleBaseDemo />
+          <Separator />
+          <FacetedRadixDemo />
+          <FacetedMultipleRadixDemo />
         </DemoItemGroup>
-        <ColorPickerDemo />
       </Demo>
     </Shell>
   );

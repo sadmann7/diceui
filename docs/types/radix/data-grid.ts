@@ -33,7 +33,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   "data" | "columns" | "getRowId" | "defaultColumn" | "initialState" | "state"
 > {
   /**
-   * Callback function called when data changes due to cell edits.
+   * Event handler called when data changes due to cell edits.
    * Receives the updated data array after changes are applied.
    *
    * ```ts
@@ -45,7 +45,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   onDataChange?: (data: TData[]) => void;
 
   /**
-   * Callback function called when adding a new row.
+   * Event handler called when adding a new row.
    * Should return the position to focus after adding the row, or null to prevent default behavior.
    * Can be async to support server-side row creation.
    *
@@ -64,7 +64,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   ) => Partial<CellPosition> | Promise<Partial<CellPosition> | null> | null;
 
   /**
-   * Callback function called when adding multiple rows at once.
+   * Event handler called when adding multiple rows at once.
    * Used during paste operations when clipboard data exceeds available rows.
    * More efficient than calling onRowAdd multiple times as it allows a single API call.
    * Can be async to support server-side row creation.
@@ -83,7 +83,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   onRowsAdd?: (count: number) => void | Promise<void>;
 
   /**
-   * Callback function called when deleting rows.
+   * Event handler called when deleting rows.
    * Receives both the row data objects and their row ids.
    * Can be async to support server-side row deletion.
    *
@@ -97,7 +97,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   onRowsDelete?: (rows: TData[], rowIds: string[]) => void | Promise<void>;
 
   /**
-   * Callback function called after cells are pasted.
+   * Event handler called after cells are pasted.
    * Receives the cell updates that were applied.
    * Can be async to support server-side persistence.
    *
@@ -110,7 +110,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   onPaste?: (updates: Array<CellUpdate>) => void | Promise<void>;
 
   /**
-   * Callback function called when files are uploaded to a file cell.
+   * Event handler called when files are uploaded to a file cell.
    * Should handle file upload to server/storage and return file metadata.
    * Can be async to support server-side file uploads.
    *
@@ -140,7 +140,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   }) => Promise<FileCellData[]>;
 
   /**
-   * Callback function called when files are deleted from a file cell.
+   * Event handler called when files are deleted from a file cell.
    * Should handle file deletion from server/storage.
    * Can be async to support server-side file deletion.
    *
@@ -362,7 +362,7 @@ export interface DataGridProps<
   pasteDialog: { open: boolean; rowsNeeded: number; clipboardText: string };
 
   /**
-   * Callback function called when adding a new row.
+   * Event handler called when adding a new row.
    * Only defined when `onRowAdd` is provided to useDataGrid.
    * Handles the row addition interaction from the grid footer.
    */
@@ -606,7 +606,7 @@ export interface DataGridSearchProps {
   searchQuery: string;
 
   /**
-   * Callback function called when the search query changes.
+   * Event handler called when the search query changes.
    * Called on every keystroke in the search input.
    *
    * ```tsx
@@ -646,7 +646,7 @@ export interface DataGridSearchProps {
   searchOpen: boolean;
 
   /**
-   * Callback function called when the search dialog open state changes.
+   * Event handler called when the search dialog open state changes.
    * Called when opening via Ctrl+F or closing via Escape.
    *
    * ```tsx
@@ -881,7 +881,7 @@ export interface UseDataGridUndoRedoProps<TData extends RowData> {
   data: TData[];
 
   /**
-   * Callback function called when data changes due to undo/redo.
+   * Event handler called when data changes due to undo/redo.
    * Receives the updated data array after applying the operation.
    *
    * ```tsx

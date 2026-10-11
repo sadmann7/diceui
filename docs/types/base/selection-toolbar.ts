@@ -15,7 +15,7 @@ export interface SelectionToolbarProps extends RenderProps {
   open?: boolean;
 
   /**
-   * Callback fired when the open state changes.
+   * Event handler called when the open state changes.
    *
    * ```ts
    * onOpenChange={(open) => {
@@ -26,7 +26,7 @@ export interface SelectionToolbarProps extends RenderProps {
   onOpenChange?: (open: boolean) => void;
 
   /**
-   * Callback fired when the selection changes.
+   * Event handler called when the selection changes.
    *
    * ```ts
    * onSelectionChange={(text) => {
@@ -166,7 +166,7 @@ export interface SelectionToolbarItemProps
     Omit<ButtonProps, keyof React.ComponentProps<"button"> | "render">,
     RenderProps {
   /**
-   * Callback fired when the item is selected.
+   * Event handler called when the item is selected.
    * Receives the selected text and a custom event.
    *
    * ```tsx

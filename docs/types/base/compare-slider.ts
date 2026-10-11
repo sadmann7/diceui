@@ -14,7 +14,7 @@ export interface CompareSliderProps extends EmptyProps<"div">, RenderProps {
   defaultValue?: number;
 
   /**
-   * Callback fired when the slider position changes.
+   * Event handler called when the slider position changes.
    */
   onValueChange?: (value: number) => void;
 

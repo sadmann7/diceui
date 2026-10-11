@@ -25,7 +25,7 @@ export interface ScrollSpyProps extends EmptyProps<"div">, CompositionProps {
   defaultValue?: string;
 
   /**
-   * Callback fired when the active section changes.
+   * Event handler called when the active section changes.
    *
    * ```ts
    * onValueChange={(value) => {

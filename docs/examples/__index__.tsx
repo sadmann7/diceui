@@ -2382,6 +2382,71 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "faceted-demo": {
+        name: "faceted-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/base/examples/faceted-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted-multiple-demo": {
+        name: "faceted-multiple-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/base/examples/faceted-multiple-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted-groups-demo": {
+        name: "faceted-groups-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/base/examples/faceted-groups-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted-async-demo": {
+        name: "faceted-async-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/base/examples/faceted-async-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted-controlled-demo": {
+        name: "faceted-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/base/examples/faceted-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
   },  "radix": {
       "action-bar-demo": {
         name: "action-bar-demo",
@@ -4808,6 +4873,71 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         registryDependencies: ["button","tour"],
         files: [{
           path: "registry/bases/radix/examples/tour-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted-demo": {
+        name: "faceted-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/radix/examples/faceted-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted-multiple-demo": {
+        name: "faceted-multiple-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/radix/examples/faceted-multiple-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted-groups-demo": {
+        name: "faceted-groups-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/radix/examples/faceted-groups-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted-async-demo": {
+        name: "faceted-async-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/radix/examples/faceted-async-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted-controlled-demo": {
+        name: "faceted-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/radix/examples/faceted-controlled-demo.tsx",
           type: "registry:example",
           target: ""
         }],

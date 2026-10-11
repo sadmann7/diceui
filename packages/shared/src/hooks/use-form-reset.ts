@@ -14,7 +14,7 @@ interface UseFormResetParams<T> {
   defaultValue?: T;
 
   /**
-   * Callback fired when form is reset.
+   * Event handler called when form is reset.
    */
   onReset?: (value: T) => void;
 }

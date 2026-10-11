@@ -24,7 +24,7 @@ interface UseDismissProps {
   enabled: boolean;
 
   /**
-   * Callback called when the dismissable layer is dismissed.
+   * Event handler called when the dismissable layer is dismissed.
    * @param event - The event that triggered the dismissal.
    */
   onDismiss: (
