@@ -223,7 +223,11 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["command", "popover"],
+    registryDependencies: [
+      "command",
+      "popover",
+      "@diceui/use-isomorphic-layout-effect",
+    ],
     dependencies: ["@base-ui/react", "cmdk"],
   },
   {

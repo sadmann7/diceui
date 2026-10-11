@@ -188,7 +188,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/faceted.tsx",
           type: "registry:ui",
@@ -1023,7 +1023,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/faceted.tsx",
           type: "registry:ui",
@@ -1858,7 +1858,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/faceted.tsx",
           type: "registry:ui",
@@ -2693,7 +2693,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/faceted.tsx",
           type: "registry:ui",
@@ -3528,7 +3528,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/faceted.tsx",
           type: "registry:ui",
@@ -4363,7 +4363,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/faceted.tsx",
           type: "registry:ui",
@@ -5198,7 +5198,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/faceted.tsx",
           type: "registry:ui",
@@ -6033,7 +6033,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/base/ui/faceted.tsx",
           type: "registry:ui",
@@ -6868,7 +6868,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/radix/ui/faceted.tsx",
           type: "registry:ui",
@@ -7703,7 +7703,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/radix/ui/faceted.tsx",
           type: "registry:ui",
@@ -8538,7 +8538,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/radix/ui/faceted.tsx",
           type: "registry:ui",
@@ -9373,7 +9373,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/radix/ui/faceted.tsx",
           type: "registry:ui",
@@ -10208,7 +10208,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/radix/ui/faceted.tsx",
           type: "registry:ui",
@@ -11043,7 +11043,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/radix/ui/faceted.tsx",
           type: "registry:ui",
@@ -11878,7 +11878,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/radix/ui/faceted.tsx",
           type: "registry:ui",
@@ -12713,7 +12713,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "faceted",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","popover"],
+        registryDependencies: ["command","popover","@diceui/use-isomorphic-layout-effect"],
         files: [{
           path: "registry/bases/radix/ui/faceted.tsx",
           type: "registry:ui",
