@@ -9,9 +9,8 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";
+import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
-
-import { useComposedRefs } from "@/lib/compose-refs";
 
 const DATA_TOP_SCROLL = "data-top-scroll";
 const DATA_BOTTOM_SCROLL = "data-bottom-scroll";

@@ -4,6 +4,7 @@ import type { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
@@ -11,7 +12,6 @@ import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-h
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import {
   Command,
   CommandEmpty,
@@ -495,7 +495,7 @@ function PhoneInput(props: PhoneInputProps) {
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -777,7 +777,7 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
   const store = useStoreContext(FIELD_NAME);
   const value = useStore((state) => state.value);
 
-  const composedRef = useComposedRefs(ref, inputRef);
+  const composedRef = useMergedRefs(ref, inputRef);
 
   const onChangeRef = useAsRef(onChangeProp);
 

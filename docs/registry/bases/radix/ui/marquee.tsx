@@ -6,9 +6,8 @@ import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
+import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
-
-import { useComposedRefs } from "@/lib/compose-refs";
 
 const ROOT_NAME = "Marquee";
 const CONTENT_NAME = "MarqueeContent";

@@ -5,6 +5,7 @@ import type { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
@@ -13,7 +14,6 @@ import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-h
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { Button } from "@/registry/bases/base/ui/button";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 import { Input } from "@/registry/bases/base/ui/input";
@@ -651,7 +651,7 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   useIsomorphicLayoutEffect(() => {
@@ -817,7 +817,7 @@ function ColorPickerArea(props: DivProps) {
 
   const isDraggingRef = React.useRef(false);
   const areaRef = React.useRef<HTMLDivElement>(null);
-  const composedRef = useComposedRefs(ref, areaRef);
+  const composedRef = useMergedRefs(ref, areaRef);
 
   const updateColorFromPosition = React.useCallback(
     (clientX: number, clientY: number) => {

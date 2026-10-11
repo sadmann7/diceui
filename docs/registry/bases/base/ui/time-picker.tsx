@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
@@ -10,7 +11,6 @@ import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-h
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { Popover, PopoverTrigger } from "@/registry/bases/base/ui/popover";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -614,7 +614,7 @@ function TimePickerInputGroup(props: DivProps) {
 
   const store = useStoreContext(INPUT_GROUP_NAME);
 
-  const composedRef = useComposedRefs(ref, inputGroupRef, onInputGroupChange);
+  const composedRef = useMergedRefs(ref, inputGroupRef, onInputGroupChange);
 
   const inputRefsMap = React.useRef<
     Map<Segment, React.RefObject<InputElement | null>>
@@ -815,7 +815,7 @@ function TimePickerInput(props: TimePickerInputProps) {
   const timeValue = parseTimeString(value);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const composedRef = useComposedRefs(ref, inputRef);
+  const composedRef = useMergedRefs(ref, inputRef);
 
   useIsomorphicLayoutEffect(() => {
     if (segment) {
@@ -1476,7 +1476,7 @@ function TimePickerTrigger(props: ButtonProps) {
 
   const isDisabled = disabledProp || disabled;
 
-  const composedRef = useComposedRefs(ref, triggerRef);
+  const composedRef = useMergedRefs(ref, triggerRef);
 
   return (
     <PopoverTrigger
@@ -1667,7 +1667,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
 
   const columnId = React.useId();
   const columnRef = React.useRef<ColumnElement | null>(null);
-  const composedRef = useComposedRefs(ref, columnRef);
+  const composedRef = useMergedRefs(ref, columnRef);
 
   const itemsRef = React.useRef<
     Map<
@@ -1762,7 +1762,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   } = props;
 
   const itemRef = React.useRef<ColumnItemElement | null>(null);
-  const composedRef = useComposedRefs(ref, itemRef);
+  const composedRef = useMergedRefs(ref, itemRef);
   const columnContext = useTimePickerColumnContext(COLUMN_ITEM_NAME);
   const groupContext = useTimePickerGroupContext(COLUMN_ITEM_NAME);
 

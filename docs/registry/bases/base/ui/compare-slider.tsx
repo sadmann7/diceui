@@ -2,13 +2,13 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "CompareSlider";
@@ -141,7 +141,7 @@ function CompareSlider(props: CompareSliderProps) {
   }, [listenersRef, stateRef, onValueChangeRef]);
 
   const rootRef = React.useRef<RootElement | null>(null);
-  const composedRef = useComposedRefs(ref, rootRef);
+  const composedRef = useMergedRefs(ref, rootRef);
   const isDraggingRef = React.useRef(false);
 
   const propsRef = useAsRef({

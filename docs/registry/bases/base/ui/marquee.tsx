@@ -2,11 +2,11 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
 
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
 const ROOT_NAME = "Marquee";
@@ -302,7 +302,7 @@ function Marquee(props: MarqueeProps) {
 
   const rootRef = React.useRef<RootElement>(null);
   const contentRef = React.useRef<ContentElement>(null);
-  const composedRef = useComposedRefs(ref, rootRef);
+  const composedRef = useMergedRefs(ref, rootRef);
 
   const [paused, setPaused] = React.useState(false);
 
@@ -480,7 +480,7 @@ function MarqueeContent(props: MarqueeContentProps) {
   } = props;
 
   const context = useMarqueeContext(CONTENT_NAME);
-  const composedRef = useComposedRefs(ref, context.contentRef);
+  const composedRef = useMergedRefs(ref, context.contentRef);
 
   const isVertical = context.orientation === "vertical";
   const isRtl = context.dir === "rtl";

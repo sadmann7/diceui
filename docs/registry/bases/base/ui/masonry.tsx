@@ -2,10 +2,10 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import * as React from "react";
 
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 
 const NODE_COLOR = {
   RED: 0,
@@ -1228,7 +1228,7 @@ function Masonry(props: MasonryProps) {
   const rowGap = gapValue.row;
 
   const containerRef = React.useRef<RootElement | null>(null);
-  const composedRef = useComposedRefs(ref, containerRef);
+  const composedRef = useMergedRefs(ref, containerRef);
 
   const size = useDebouncedWindowSize({
     containerRef,

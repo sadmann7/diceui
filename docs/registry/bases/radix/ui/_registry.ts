@@ -15,10 +15,6 @@ export const ui: Registry["items"] = [
         path: "ui/action-bar.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -38,10 +34,6 @@ export const ui: Registry["items"] = [
       {
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -64,10 +56,6 @@ export const ui: Registry["items"] = [
       {
         path: "ui/badge-overflow.tsx",
         type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -146,10 +134,6 @@ export const ui: Registry["items"] = [
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -177,10 +161,6 @@ export const ui: Registry["items"] = [
         path: "ui/compare-slider.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -196,10 +176,6 @@ export const ui: Registry["items"] = [
       {
         path: "ui/cropper.tsx",
         type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -239,10 +215,6 @@ export const ui: Registry["items"] = [
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -276,10 +248,6 @@ export const ui: Registry["items"] = [
         path: "ui/gauge.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -296,10 +264,6 @@ export const ui: Registry["items"] = [
       {
         path: "ui/kanban.tsx",
         type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -323,10 +287,6 @@ export const ui: Registry["items"] = [
       {
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -416,10 +376,6 @@ export const ui: Registry["items"] = [
         path: "ui/marquee.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -430,10 +386,6 @@ export const ui: Registry["items"] = [
       {
         path: "ui/mask-input.tsx",
         type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -446,10 +398,6 @@ export const ui: Registry["items"] = [
       {
         path: "ui/masonry.tsx",
         type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -470,10 +418,6 @@ export const ui: Registry["items"] = [
       {
         path: "ui/media-player.tsx",
         type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -508,10 +452,6 @@ export const ui: Registry["items"] = [
       {
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -567,10 +507,6 @@ export const ui: Registry["items"] = [
         path: "ui/scroller.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -586,10 +522,6 @@ export const ui: Registry["items"] = [
       {
         path: "ui/scroll-spy.tsx",
         type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -620,10 +552,6 @@ export const ui: Registry["items"] = [
         path: "ui/selection-toolbar.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -641,10 +569,6 @@ export const ui: Registry["items"] = [
         path: "ui/sortable.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -661,10 +585,6 @@ export const ui: Registry["items"] = [
       {
         path: "ui/speed-dial.tsx",
         type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -716,10 +636,6 @@ export const ui: Registry["items"] = [
         path: "ui/stepper.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -769,10 +685,6 @@ export const ui: Registry["items"] = [
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -798,10 +710,6 @@ export const ui: Registry["items"] = [
       {
         path: "ui/timeline.tsx",
         type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },
@@ -832,10 +740,6 @@ export const ui: Registry["items"] = [
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
   },
   {
@@ -851,10 +755,6 @@ export const ui: Registry["items"] = [
       {
         path: "ui/tour.tsx",
         type: "registry:ui",
-      },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
       },
     ],
   },

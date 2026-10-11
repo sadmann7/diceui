@@ -30,10 +30,6 @@ export const ui: Registry["items"] = [
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "direction",
@@ -41,7 +37,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "avatar-group",
@@ -62,12 +58,8 @@ export const ui: Registry["items"] = [
         path: "ui/badge-overflow.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "banner",
@@ -133,9 +125,8 @@ export const ui: Registry["items"] = [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
-      "@diceui/compose-refs",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "color-swatch",
@@ -156,17 +147,13 @@ export const ui: Registry["items"] = [
         path: "ui/compare-slider.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "cropper",
@@ -176,17 +163,13 @@ export const ui: Registry["items"] = [
         path: "ui/cropper.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "@diceui/use-as-ref",
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "editable",
@@ -243,12 +226,8 @@ export const ui: Registry["items"] = [
         path: "ui/gauge.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "kanban",
@@ -258,14 +237,11 @@ export const ui: Registry["items"] = [
         path: "ui/kanban.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
     dependencies: [
       "@base-ui/react",
+      "@base-ui/utils",
       "@dnd-kit/core",
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
@@ -284,10 +260,6 @@ export const ui: Registry["items"] = [
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "button",
@@ -297,7 +269,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "marquee",
@@ -307,13 +279,9 @@ export const ui: Registry["items"] = [
         path: "ui/marquee.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: ["direction"],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
     cssVars: {
       theme: {
         "--animate-marquee-left":
@@ -389,12 +357,8 @@ export const ui: Registry["items"] = [
         path: "ui/mask-input.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "masonry",
@@ -404,13 +368,9 @@ export const ui: Registry["items"] = [
         path: "ui/masonry.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "media-player",
@@ -427,10 +387,9 @@ export const ui: Registry["items"] = [
       "dropdown-menu",
       "tooltip",
       "direction",
-      "@diceui/compose-refs",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "media-chrome"],
+    dependencies: ["@base-ui/react", "@base-ui/utils", "media-chrome"],
   },
   {
     name: "phone-input",
@@ -444,10 +403,6 @@ export const ui: Registry["items"] = [
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "popover",
@@ -457,7 +412,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "cmdk"],
+    dependencies: ["@base-ui/react", "@base-ui/utils", "cmdk"],
   },
   {
     name: "presentation",
@@ -479,13 +434,9 @@ export const ui: Registry["items"] = [
         path: "ui/qr-code.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: ["@diceui/use-lazy-ref"],
-    dependencies: ["@base-ui/react", "qrcode"],
+    dependencies: ["@base-ui/react", "@base-ui/utils", "qrcode"],
     devDependencies: ["@types/qrcode"],
   },
   {
@@ -500,10 +451,6 @@ export const ui: Registry["items"] = [
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "direction",
@@ -511,7 +458,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "relative-time-card",
@@ -551,10 +498,6 @@ export const ui: Registry["items"] = [
         path: "ui/scroll-spy.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "direction",
@@ -562,7 +505,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "scroller",
@@ -572,12 +515,8 @@ export const ui: Registry["items"] = [
         path: "ui/scroller.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "segmented-input",
@@ -599,10 +538,6 @@ export const ui: Registry["items"] = [
         path: "ui/selection-toolbar.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "button",
@@ -610,7 +545,11 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "@floating-ui/react-dom"],
+    dependencies: [
+      "@base-ui/react",
+      "@base-ui/utils",
+      "@floating-ui/react-dom",
+    ],
   },
   {
     name: "sortable",
@@ -620,14 +559,11 @@ export const ui: Registry["items"] = [
         path: "ui/sortable.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
     dependencies: [
       "@base-ui/react",
+      "@base-ui/utils",
       "@dnd-kit/core",
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
@@ -642,10 +578,6 @@ export const ui: Registry["items"] = [
         path: "ui/speed-dial.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "button",
@@ -653,7 +585,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "stack",
@@ -696,10 +628,6 @@ export const ui: Registry["items"] = [
         path: "ui/stepper.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "direction",
@@ -707,7 +635,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "swap",
@@ -733,17 +661,13 @@ export const ui: Registry["items"] = [
         path: "ui/timeline.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "direction",
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "time-picker",
@@ -757,10 +681,6 @@ export const ui: Registry["items"] = [
         path: "components/visually-hidden-input.tsx",
         type: "registry:component",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "popover",
@@ -768,7 +688,7 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
     css: {
       "@utility scrollbar-none": {
         "scrollbar-width": "none",
@@ -786,10 +706,6 @@ export const ui: Registry["items"] = [
         path: "ui/tour.tsx",
         type: "registry:ui",
       },
-      {
-        path: "lib/compose-refs.ts",
-        type: "registry:lib",
-      },
     ],
     registryDependencies: [
       "button",
@@ -798,6 +714,10 @@ export const ui: Registry["items"] = [
       "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react", "@floating-ui/react-dom"],
+    dependencies: [
+      "@base-ui/react",
+      "@base-ui/utils",
+      "@floating-ui/react-dom",
+    ],
   },
 ];

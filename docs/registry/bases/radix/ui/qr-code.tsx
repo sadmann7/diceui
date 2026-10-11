@@ -2,9 +2,9 @@
 
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
+import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 
-import { useComposedRefs } from "@/lib/compose-refs";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 
 const ROOT_NAME = "QRCode";

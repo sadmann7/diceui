@@ -1,9 +1,20 @@
 ---
 title: Composition
 description: Utilities for composing multiple refs into a single ref in React components.
+deprecated: true
 links:
   api: /docs/utilities/radix/composition#api-reference
 ---
+
+<Callout type="warn">
+**Deprecated.** Dice UI components now use Radix's own `useComposedRefs` and `composeRefs`, which `radix-ui` already ships, so this utility is no longer installed with them. Import them instead:
+
+```tsx
+import { composeRefs, useComposedRefs } from "radix-ui/internal";
+```
+
+This utility will be removed in a future release.
+</Callout>
 
 ## Installation
 

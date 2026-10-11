@@ -2,6 +2,7 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
@@ -9,7 +10,6 @@ import * as React from "react";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 
 const ROOT_NAME = "Cropper";
 const ROOT_IMPL_NAME = "CropperImpl";
@@ -736,7 +736,7 @@ function CropperImpl(props: CropperImplProps) {
     onTouchStart: onTouchStartProp,
   });
 
-  const composedRef = useComposedRefs(ref, context.rootRef);
+  const composedRef = useMergedRefs(ref, context.rootRef);
   const dragStartPositionRef = React.useRef<Point>({ x: 0, y: 0 });
   const dragStartCropRef = React.useRef<Point>({ x: 0, y: 0 });
   const contentPositionRef = React.useRef<Point>({ x: 0, y: 0 });
@@ -1484,7 +1484,7 @@ function CropperImage(props: CropperImageProps) {
   const rotation = useStore((state) => state.rotation);
 
   const imageRef = React.useRef<HTMLImageElement>(null);
-  const composedRef = useComposedRefs(ref, imageRef);
+  const composedRef = useMergedRefs(ref, imageRef);
 
   const getNaturalDimensions = React.useCallback(
     (image: HTMLImageElement) => ({
@@ -1621,7 +1621,7 @@ function CropperVideo(props: CropperVideoProps) {
   const rotation = useStore((state) => state.rotation);
 
   const videoRef = React.useRef<HTMLVideoElement>(null);
-  const composedRef = useComposedRefs(ref, videoRef);
+  const composedRef = useMergedRefs(ref, videoRef);
 
   const getNaturalDimensions = React.useCallback(
     (video: HTMLVideoElement) => ({

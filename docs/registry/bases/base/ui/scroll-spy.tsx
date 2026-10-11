@@ -2,13 +2,13 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
 const ROOT_NAME = "ScrollSpy";
@@ -446,7 +446,7 @@ function ScrollSpySection(props: ScrollSpySectionProps) {
   const { orientation, onSectionRegister, onSectionUnregister } =
     useScrollSpyContext(SECTION_NAME);
   const sectionRef = React.useRef<SectionElement>(null);
-  const composedRef = useComposedRefs(ref, sectionRef);
+  const composedRef = useMergedRefs(ref, sectionRef);
 
   useIsomorphicLayoutEffect(() => {
     const element = sectionRef.current;

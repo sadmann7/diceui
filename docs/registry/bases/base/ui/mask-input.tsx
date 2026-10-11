@@ -2,10 +2,9 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
-
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 
 const PAST_YEARS_LIMIT = 120;
 const FUTURE_YEARS_LIMIT = 10;
@@ -881,7 +880,7 @@ function MaskInput(props: MaskInputProps) {
   const [composing, setComposing] = React.useState(false);
   const [touched, setTouched] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const composedRef = useComposedRefs(ref, inputRef);
+  const composedRef = useMergedRefs(ref, inputRef);
 
   const isControlled = valueProp !== undefined;
   const value = isControlled ? valueProp : internalValue;

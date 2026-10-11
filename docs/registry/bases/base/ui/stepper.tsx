@@ -2,13 +2,13 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -434,7 +434,7 @@ function StepperList(props: DivProps) {
   const isClickFocusRef = React.useRef(false);
   const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
   const listRef = React.useRef<ListElement>(null);
-  const composedRef = useComposedRefs(ref, listRef);
+  const composedRef = useMergedRefs(ref, listRef);
 
   const onItemFocus = React.useCallback((tabStopId: string) => {
     setTabStopId(tabStopId);
@@ -743,7 +743,7 @@ function StepperTrigger(props: ButtonProps) {
   const dataState = getDataState(value, itemValue, stepState, steps);
 
   const triggerRef = React.useRef<TriggerElement>(null);
-  const composedRef = useComposedRefs(ref, triggerRef);
+  const composedRef = useMergedRefs(ref, triggerRef);
   const isArrowKeyPressedRef = React.useRef(false);
   const isMouseClickRef = React.useRef(false);
 

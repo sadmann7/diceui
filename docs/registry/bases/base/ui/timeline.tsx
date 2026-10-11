@@ -2,13 +2,13 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
 
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
 type Direction = "ltr" | "rtl";
@@ -334,7 +334,7 @@ function TimelineItem(props: TimelineItemProps) {
   const instanceId = React.useId();
   const itemId = id ?? instanceId;
   const itemRef = React.useRef<ItemElement | null>(null);
-  const composedRef = useComposedRefs(ref, itemRef);
+  const composedRef = useMergedRefs(ref, itemRef);
 
   const itemIndex = useStore((state) => state.getItemIndex(itemId));
 

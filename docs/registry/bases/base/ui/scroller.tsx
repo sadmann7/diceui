@@ -2,6 +2,7 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import {
@@ -11,8 +12,6 @@ import {
   ChevronUp,
 } from "lucide-react";
 import * as React from "react";
-
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 
 const DATA_TOP_SCROLL = "data-top-scroll";
 const DATA_BOTTOM_SCROLL = "data-bottom-scroll";
@@ -84,7 +83,7 @@ function Scroller(props: ScrollerProps) {
   } = props;
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const composedRef = useComposedRefs(ref, containerRef);
+  const composedRef = useMergedRefs(ref, containerRef);
   const [scrollVisibility, setScrollVisibility] =
     React.useState<ScrollVisibility>({
       up: false,

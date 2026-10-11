@@ -6,9 +6,9 @@ import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
+import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 
-import { useComposedRefs } from "@/lib/compose-refs";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 

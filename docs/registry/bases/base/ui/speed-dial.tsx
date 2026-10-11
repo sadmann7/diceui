@@ -2,11 +2,11 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
 
-import { useComposedRefs } from "@/lib/compose-refs";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
@@ -168,7 +168,7 @@ function SpeedDial(props: SpeedDialProps) {
   const contentId = React.useId();
 
   const rootRef = React.useRef<RootElement | null>(null);
-  const composedRefs = useComposedRefs(ref, rootRef);
+  const composedRefs = useMergedRefs(ref, rootRef);
 
   const triggerRef = React.useRef<TriggerElement | null>(null);
 
@@ -357,7 +357,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
   const instanceId = React.useId();
   const triggerId = id ?? instanceId;
 
-  const composedRef = useComposedRefs(ref, triggerRef);
+  const composedRef = useMergedRefs(ref, triggerRef);
   const hoverOpenTimerRef = React.useRef<number | null>(null);
 
   useIsomorphicLayoutEffect(() => {
@@ -564,10 +564,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   } = useSpeedDialContext(CONTENT_NAME);
 
   const contentRef = React.useRef<ContentElement | null>(null);
-  const composedRef: React.RefCallback<ContentElement> = useComposedRefs(
-    ref,
-    contentRef,
-  );
+  const composedRef = useMergedRefs(ref, contentRef);
 
   const propsRef = useAsRef({
     onMouseEnter: onMouseEnterProp,
@@ -1002,7 +999,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
   const actionId = id ?? itemActionId;
 
   const actionRef = React.useRef<ActionElement | null>(null);
-  const composedRefs = useComposedRefs(ref, actionRef);
+  const composedRefs = useMergedRefs(ref, actionRef);
 
   useIsomorphicLayoutEffect(() => {
     onNodeRegister({

@@ -2,10 +2,10 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
-import { useComposedRefs } from "@/lib/compose-refs";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 
 const ROOT_NAME = "QRCode";
@@ -309,7 +309,7 @@ function QRCodeCanvas({
   const context = useQRCodeContext(CANVAS_NAME);
   const generationKey = useStore((state) => state.generationKey);
 
-  const composedRef = useComposedRefs(ref, context.canvasRef);
+  const composedRef = useMergedRefs(ref, context.canvasRef);
 
   return useRender({
     defaultTagName: "canvas",

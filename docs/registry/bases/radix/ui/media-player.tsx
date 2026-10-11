@@ -15,10 +15,10 @@ import {
   Slider as SliderPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
+import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useComposedRefs } from "@/lib/compose-refs";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Badge } from "@/registry/bases/radix/ui/badge";
 import { Button } from "@/registry/bases/radix/ui/button";

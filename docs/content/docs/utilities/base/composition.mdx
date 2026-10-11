@@ -2,9 +2,24 @@
 base: base
 title: Composition
 description: Utilities for composing multiple refs into a single ref in React components.
+deprecated: true
 links:
   api: /docs/utilities/base/composition#api-reference
 ---
+
+<Callout type="warn">
+**Deprecated.** Dice UI components now merge refs with Base UI's own `useMergedRefs` from `@base-ui/utils`, so this utility is no longer installed with them. Use it directly instead:
+
+```package-install
+@base-ui/utils
+```
+
+```tsx
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+```
+
+This utility will be removed in a future release.
+</Callout>
 
 ## Installation
 
