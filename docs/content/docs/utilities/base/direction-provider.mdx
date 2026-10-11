@@ -2,10 +2,21 @@
 base: base
 title: Direction Provider
 description: Provides bidirectional text support (RTL/LTR) across your application.
+deprecated: true
 links:
   api: /docs/utilities/base/direction-provider#api-reference
   docs: https://base-ui.com/react/api-reference/direction-provider
 ---
+
+<Callout type="warn">
+**Deprecated.** shadcn/ui now ships a [Direction](https://ui.shadcn.com/docs/components/base/direction) component with the same `DirectionProvider` and `useDirection` API, and Dice UI components use it. Install it instead:
+
+```package-install
+npx shadcn@latest add direction
+```
+
+Then import from `@/components/ui/direction`. This utility will be removed in a future release.
+</Callout>
 
 ## Installation
 

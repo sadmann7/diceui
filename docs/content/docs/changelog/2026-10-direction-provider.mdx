@@ -1,0 +1,24 @@
+---
+title: October 2026 - Direction Provider Deprecated
+description: The Direction Provider utility is deprecated in favor of shadcn/ui's Direction component.
+date: 2026-10-11T13:01:19Z
+---
+
+The [Direction Provider](/docs/utilities/direction-provider) utility is deprecated. shadcn/ui now ships a [Direction](https://ui.shadcn.com/docs/components/direction) component with the same `DirectionProvider` and `useDirection` API, and Dice UI components follow it.
+
+### Migrating
+
+Install shadcn/ui's Direction component:
+
+```package-install
+npx shadcn@latest add direction
+```
+
+Then update your imports:
+
+```tsx
+import { DirectionProvider } from "@/components/direction-provider"; // [!code --]
+import { DirectionProvider } from "@/components/ui/direction"; // [!code ++]
+```
+
+`@diceui/direction-provider` still installs for now and will be removed in a future release.

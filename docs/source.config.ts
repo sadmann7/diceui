@@ -55,6 +55,7 @@ export const { docs, meta } = defineDocs({
   docs: {
     schema: pageSchema.extend({
       new: z.boolean().optional(),
+      deprecated: z.boolean().optional(),
       base: z.enum(["base", "radix"]).optional(),
       date: z.coerce.string().optional(),
       links: z
