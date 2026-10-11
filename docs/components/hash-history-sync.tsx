@@ -21,21 +21,38 @@ function getNextHistoryState(state: unknown): NextHistoryState | null {
 export function HashHistorySync() {
   const pathname = usePathname();
   const routerStateRef = React.useRef<NextHistoryState | null>(null);
-  const pathnameRef = React.useRef(pathname);
-  const pendingHashRef = React.useRef<string | null>(null);
+  const pendingHashRef = React.useRef<{
+    pathname: string;
+    hash: string;
+  } | null>(null);
 
   // Runs after each route change, once the router has written its state
   React.useEffect(() => {
-    pathnameRef.current = pathname;
-
     const state = getNextHistoryState(window.history.state);
     if (state) routerStateRef.current = state;
 
     // The router restores the page without scrolling to its hash
-    const hash = pendingHashRef.current;
+    const pending = pendingHashRef.current;
+    if (pending?.pathname !== pathname) return;
+
     pendingHashRef.current = null;
-    if (hash) document.getElementById(hash)?.scrollIntoView();
+    document.getElementById(pending.hash)?.scrollIntoView();
   }, [pathname]);
+
+  // Reads `pathname` from the latest render: the page shown before the
+  // router reacts to this popstate
+  const onPopState = React.useEffectEvent((event: PopStateEvent) => {
+    const state = getNextHistoryState(event.state);
+    if (state) routerStateRef.current = state;
+
+    // Same-page hash changes are scrolled by the browser
+    const hash = decodeURIComponent(window.location.hash.slice(1));
+    const nextPathname = window.location.pathname;
+    pendingHashRef.current =
+      hash && nextPathname !== pathname
+        ? { pathname: nextPathname, hash }
+        : null;
+  });
 
   React.useEffect(() => {
     function onHashChange() {
@@ -45,21 +62,15 @@ export function HashHistorySync() {
       window.history.replaceState({ ...routerState }, "", window.location.href);
     }
 
-    function onPopState(event: PopStateEvent) {
-      const state = getNextHistoryState(event.state);
-      if (state) routerStateRef.current = state;
-
-      // Same-page hash changes are scrolled by the browser
-      const hash = decodeURIComponent(window.location.hash.slice(1));
-      pendingHashRef.current =
-        hash && window.location.pathname !== pathnameRef.current ? hash : null;
+    function onPopStateListener(event: PopStateEvent) {
+      onPopState(event);
     }
 
     window.addEventListener("hashchange", onHashChange);
-    window.addEventListener("popstate", onPopState);
+    window.addEventListener("popstate", onPopStateListener);
     return () => {
       window.removeEventListener("hashchange", onHashChange);
-      window.removeEventListener("popstate", onPopState);
+      window.removeEventListener("popstate", onPopStateListener);
     };
   }, []);
 
