@@ -6,19 +6,29 @@ import { cn } from "cn";
 import * as React from "react";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
-import type { ExtendedColumnFilter } from "@/lib/data-table-types";
+import type { ColumnFilterItem } from "@/lib/data-table-types";
 
 import { Input } from "@/registry/bases/radix/ui/input";
+
+function getRangeFilterValues(value: string | string[]): [string, string] {
+  if (Array.isArray(value)) return [value[0] ?? "", value[1] ?? ""];
+  return [value, ""];
+}
+
+/** Number inputs only accept plain numbers, so skip rounding and grouping. */
+function getInputValue(value: string) {
+  return value === "" || Number.isNaN(Number(value)) ? "" : value;
+}
 
 interface DataTableRangeFilterProps<
   TData extends RowData,
 > extends React.ComponentProps<"div"> {
-  filter: ExtendedColumnFilter<TData>;
+  filter: ColumnFilterItem;
   column: Column<DataTableFeatures, TData>;
   inputId: string;
   onFilterUpdate: (
     filterId: string,
-    updates: Partial<Omit<ExtendedColumnFilter<TData>, "filterId">>,
+    updates: Partial<Omit<ColumnFilterItem, "filterId">>,
   ) => void;
 }
 
@@ -42,30 +52,12 @@ export function DataTableRangeFilter<TData extends RowData>({
     return [values[0], values[1]];
   }, [column]);
 
-  const formatValue = React.useCallback(
-    (value: string | number | undefined) => {
-      if (value === undefined || value === "") return "";
-      const numValue = Number(value);
-      return Number.isNaN(numValue)
-        ? ""
-        : numValue.toLocaleString(undefined, {
-            maximumFractionDigits: 0,
-          });
-    },
-    [],
-  );
-
-  const value = React.useMemo(() => {
-    if (Array.isArray(filter.value)) return filter.value.map(formatValue);
-    return [formatValue(filter.value), ""];
-  }, [filter.value, formatValue]);
+  const value = getRangeFilterValues(filter.value).map(getInputValue);
 
   const onRangeValueChange = React.useCallback(
     (value: string, isMin?: boolean) => {
       const numValue = Number(value);
-      const currentValues = Array.isArray(filter.value)
-        ? filter.value
-        : ["", ""];
+      const currentValues = getRangeFilterValues(filter.value);
       const otherValue = isMin
         ? (currentValues[1] ?? "")
         : (currentValues[0] ?? "");
@@ -87,7 +79,7 @@ export function DataTableRangeFilter<TData extends RowData>({
 
   return (
     <div
-      data-slot="range"
+      data-slot="data-table-range-filter"
       className={cn("flex w-full items-center gap-2", className)}
       {...props}
     >
@@ -97,12 +89,12 @@ export function DataTableRangeFilter<TData extends RowData>({
         aria-label={`${meta?.label} minimum value`}
         aria-valuemin={min}
         aria-valuemax={max}
-        data-slot="range-min"
+        data-slot="data-table-range-filter-min"
         inputMode="numeric"
         placeholder={min.toString()}
         min={min}
         max={max}
-        className="h-8 w-full rounded"
+        className="w-full min-w-24"
         defaultValue={value[0]}
         onChange={(event) => onRangeValueChange(event.target.value, true)}
       />
@@ -113,12 +105,12 @@ export function DataTableRangeFilter<TData extends RowData>({
         aria-label={`${meta?.label} maximum value`}
         aria-valuemin={min}
         aria-valuemax={max}
-        data-slot="range-max"
+        data-slot="data-table-range-filter-max"
         inputMode="numeric"
         placeholder={max.toString()}
         min={min}
         max={max}
-        className="h-8 w-full rounded"
+        className="w-full min-w-24"
         defaultValue={value[1]}
         onChange={(event) => onRangeValueChange(event.target.value)}
       />

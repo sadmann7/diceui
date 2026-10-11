@@ -1,13 +1,15 @@
 "use client";
 
-import type * as React from "react";
+import type { ReactTable, RowData } from "@tanstack/react-table";
 
-import { type RowData, Subscribe, type Table } from "@tanstack/react-table";
 import { cn } from "cn";
+import * as React from "react";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
 
+import { getVisibleSelectedRows } from "@/lib/data-table-utils";
 import { Button } from "@/registry/bases/base/ui/button";
+import { useDirection } from "@/registry/bases/base/ui/direction";
 import {
   Select,
   SelectContent,
@@ -21,7 +23,7 @@ import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 interface DataTablePaginationProps<
   TData extends RowData,
 > extends React.ComponentProps<"div"> {
-  table: Table<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
   pageSizeOptions?: number[];
 }
 
@@ -32,27 +34,39 @@ export function DataTablePagination<TData extends RowData>({
   ...props
 }: DataTablePaginationProps<TData>) {
   return (
-    <Subscribe
-      source={table.store}
+    <table.Subscribe
       selector={(state) => ({
         pageIndex: state.pagination.pageIndex,
         pageSize: state.pagination.pageSize,
-        selectedRowCount: table.getSelectedRowModel().rows.length,
+        selectedRowCount: table.getSelectedRowIds().length,
+        visibleSelectedRowCount: getVisibleSelectedRows(table).length,
       })}
     >
-      {({ pageIndex, pageSize, selectedRowCount }) => (
+      {({ pageIndex, pageSize, selectedRowCount, visibleSelectedRowCount }) => (
         <DataTablePaginationContent
           table={table}
           pageIndex={pageIndex}
           pageSize={pageSize}
           selectedRowCount={selectedRowCount}
+          visibleSelectedRowCount={visibleSelectedRowCount}
           pageSizeOptions={pageSizeOptions}
           className={className}
           {...props}
         />
       )}
-    </Subscribe>
+    </table.Subscribe>
   );
+}
+
+interface DataTablePaginationContentProps<
+  TData extends RowData,
+> extends React.ComponentProps<"div"> {
+  table: ReactTable<DataTableFeatures, TData, unknown>;
+  pageIndex: number;
+  pageSize: number;
+  selectedRowCount: number;
+  visibleSelectedRowCount: number;
+  pageSizeOptions: number[];
 }
 
 function DataTablePaginationContent<TData extends RowData>({
@@ -60,33 +74,44 @@ function DataTablePaginationContent<TData extends RowData>({
   pageIndex,
   pageSize,
   selectedRowCount,
+  visibleSelectedRowCount,
   pageSizeOptions,
   className,
   ...props
-}: DataTablePaginationProps<TData> & {
-  pageIndex: number;
-  pageSize: number;
-  selectedRowCount: number;
-  pageSizeOptions: number[];
-}) {
+}: DataTablePaginationContentProps<TData>) {
+  const pageSizeLabelId = React.useId();
   const pageCount = table.getPageCount();
   const canPreviousPage = table.getCanPreviousPage();
   const canNextPage = table.getCanNextPage();
+  const dir = useDirection();
 
   return (
     <div
+      data-slot="data-table-pagination"
       className={cn(
         "flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8",
         className,
       )}
       {...props}
     >
-      <div className="flex-1 text-sm whitespace-nowrap text-muted-foreground">
-        {selectedRowCount} {selectedRowCount === 1 ? "row" : "rows"} selected.
+      <div
+        role="status"
+        className="flex-1 text-sm whitespace-nowrap text-muted-foreground"
+      >
+        {selectedRowCount} {selectedRowCount === 1 ? "row" : "rows"} selected
+        {selectedRowCount > visibleSelectedRowCount
+          ? ` (${selectedRowCount - visibleSelectedRowCount} not shown)`
+          : ""}
+        .
       </div>
       <div className="flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8">
-        <div className="flex items-center space-x-2">
-          <p className="text-sm font-medium whitespace-nowrap">Rows per page</p>
+        <div className="flex items-center gap-2">
+          <p
+            id={pageSizeLabelId}
+            className="text-sm font-medium whitespace-nowrap"
+          >
+            Rows per page
+          </p>
           <Select
             value={`${pageSize}`}
             onValueChange={(value) => {
@@ -94,10 +119,10 @@ function DataTablePaginationContent<TData extends RowData>({
               table.setPageSize(Number(value));
             }}
           >
-            <SelectTrigger className="h-8 w-18 data-size:h-8">
+            <SelectTrigger aria-labelledby={pageSizeLabelId} className="w-18">
               <SelectValue placeholder={pageSize} />
             </SelectTrigger>
-            <SelectContent side="top">
+            <SelectContent side="top" dir={dir}>
               <SelectGroup>
                 {pageSizeOptions.map((pageSize) => (
                   <SelectItem key={pageSize} value={`${pageSize}`}>
@@ -108,15 +133,18 @@ function DataTablePaginationContent<TData extends RowData>({
             </SelectContent>
           </Select>
         </div>
-        <div className="flex items-center justify-center text-sm font-medium">
+        <div
+          role="status"
+          className="flex items-center justify-center text-sm font-medium"
+        >
           Page {pageIndex + 1} of {pageCount}
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Button
             aria-label="Go to first page"
             variant="outline"
             size="icon"
-            className="hidden size-8 lg:flex"
+            className="hidden lg:flex"
             onClick={() => table.setPageIndex(0)}
             disabled={!canPreviousPage}
           >
@@ -126,13 +154,13 @@ function DataTablePaginationContent<TData extends RowData>({
               hugeicons="ArrowLeftDoubleIcon"
               phosphor="CaretDoubleLeftIcon"
               remixicon="RiSkipLeftLine"
+              className="rtl:rotate-180"
             />
           </Button>
           <Button
             aria-label="Go to previous page"
             variant="outline"
             size="icon"
-            className="size-8"
             onClick={() => table.previousPage()}
             disabled={!canPreviousPage}
           >
@@ -142,13 +170,13 @@ function DataTablePaginationContent<TData extends RowData>({
               hugeicons="ArrowLeft01Icon"
               phosphor="CaretLeftIcon"
               remixicon="RiArrowLeftSLine"
+              className="rtl:rotate-180"
             />
           </Button>
           <Button
             aria-label="Go to next page"
             variant="outline"
             size="icon"
-            className="size-8"
             onClick={() => table.nextPage()}
             disabled={!canNextPage}
           >
@@ -158,13 +186,14 @@ function DataTablePaginationContent<TData extends RowData>({
               hugeicons="ArrowRight01Icon"
               phosphor="CaretRightIcon"
               remixicon="RiArrowRightSLine"
+              className="rtl:rotate-180"
             />
           </Button>
           <Button
             aria-label="Go to last page"
             variant="outline"
             size="icon"
-            className="hidden size-8 lg:flex"
+            className="hidden lg:flex"
             onClick={() => table.setPageIndex(pageCount - 1)}
             disabled={!canNextPage}
           >
@@ -174,6 +203,7 @@ function DataTablePaginationContent<TData extends RowData>({
               hugeicons="ArrowRightDoubleIcon"
               phosphor="CaretDoubleRightIcon"
               remixicon="RiSkipRightLine"
+              className="rtl:rotate-180"
             />
           </Button>
         </div>

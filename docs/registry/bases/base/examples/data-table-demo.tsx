@@ -10,18 +10,16 @@ import {
   Text,
   XCircle,
 } from "lucide-react";
-import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
-import * as React from "react";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
 
 import { DataTable } from "@/registry/bases/base/components/data-table/data-table";
 import { DataTableColumnHeader } from "@/registry/bases/base/components/data-table/data-table-column-header";
+import { getDataTableSelectColumn } from "@/registry/bases/base/components/data-table/data-table-select-column";
 import { DataTableToolbar } from "@/registry/bases/base/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/registry/bases/base/hooks/use-data-table";
 import { Badge } from "@/registry/bases/base/ui/badge";
 import { Button } from "@/registry/bases/base/ui/button";
-import { Checkbox } from "@/registry/bases/base/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,29 +62,7 @@ const data: Project[] = [
 ];
 
 const columns: ColumnDef<DataTableFeatures, Project>[] = [
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        indeterminate={
-          table.getIsSomePageRowsSelected() && !table.getIsAllPageRowsSelected()
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(value)}
-        aria-label="Select row"
-      />
-    ),
-    size: 32,
-    enableSorting: false,
-    enableHiding: false,
-  },
+  getDataTableSelectColumn(),
   {
     id: "title",
     accessorKey: "title",
@@ -172,29 +148,11 @@ const columns: ColumnDef<DataTableFeatures, Project>[] = [
 ];
 
 export default function DataTableDemo() {
-  const [title] = useQueryState("title", parseAsString.withDefault(""));
-  const [status] = useQueryState(
-    "status",
-    parseAsArrayOf(parseAsString).withDefault([]),
-  );
-
-  // Ideally we would filter the data server-side, but for the sake of this example, we'll filter the data client-side
-  const filteredData = React.useMemo(() => {
-    return data.filter((project) => {
-      const matchesTitle =
-        title === "" ||
-        project.title.toLowerCase().includes(title.toLowerCase());
-      const matchesStatus =
-        status.length === 0 || status.includes(project.status);
-
-      return matchesTitle && matchesStatus;
-    });
-  }, [title, status]);
-
+  // Client mode sorts, filters, and paginates `data` in the browser
   const { table } = useDataTable({
-    data: filteredData,
+    mode: "client",
+    data,
     columns,
-    pageCount: 1,
     initialState: {
       sorting: [{ id: "title", desc: true }],
       columnPinning: { start: [], end: ["actions"] },

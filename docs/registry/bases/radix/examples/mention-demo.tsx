@@ -50,7 +50,7 @@ export default function MentionDemo() {
             <Mention.MentionItem
               key={user.id}
               value={user.name}
-              className="relative flex w-full cursor-default flex-col rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 dark:data-highlighted:bg-zinc-800 dark:data-highlighted:text-zinc-50"
+              className="relative flex w-full cursor-default flex-col rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 dark:data-highlighted:bg-zinc-800 dark:data-highlighted:text-zinc-50 data-disabled:pointer-events-none data-disabled:opacity-50"
             >
               <span className="text-sm">{user.name}</span>
               <span className="text-xs text-muted-foreground">

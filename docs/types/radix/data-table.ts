@@ -1,32 +1,38 @@
 import type {
   Column,
+  ReactTable,
   RowData,
-  Table,
   TableOptions,
 } from "@tanstack/react-table";
 import type * as React from "react";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
+import type {
+  ColumnFilterItem,
+  DataTableQueryKeys,
+  FilterOption,
+} from "@/lib/data-table-types";
 import type { DropdownMenuTrigger } from "@/registry/bases/radix/ui/dropdown-menu";
 import type { EmptyProps } from "@/types";
-import type {
-  ExtendedColumnFilter,
-  Option,
-  QueryKeys,
-} from "@/types/data-table";
 
-export interface UseDataTableProps<TData extends RowData>
-  extends
-    Required<Pick<TableOptions<DataTableFeatures, TData>, "pageCount">>,
-    Pick<
-      TableOptions<DataTableFeatures, TData>,
-      | "data"
-      | "columns"
-      | "getRowId"
-      | "defaultColumn"
-      | "initialState"
-      | "state"
-    > {
+export interface UseDataTableProps<TData extends RowData> extends Pick<
+  TableOptions<DataTableFeatures, TData>,
+  "data" | "columns" | "getRowId" | "defaultColumn" | "initialState"
+> {
+  /**
+   * Where sorting, filtering, and pagination run.
+   * `server` expects pre-processed `data` and a `pageCount`.
+   * `client` processes `data` in the browser.
+   *
+   * @default "server"
+   */
+  mode?: "server" | "client";
+
+  /**
+   * The total number of pages. Required in `server` mode, not allowed in `client` mode.
+   */
+  pageCount?: number;
+
   /**
    * Custom query keys for URL state management.
    * Can be used to render multiple tables in the same page.
@@ -36,12 +42,11 @@ export interface UseDataTableProps<TData extends RowData>
    *   page: "pageOne",
    *   perPage: "perPageOne",
    *   sort: "sortOne",
-   *   filters: "filtersOne",
    *   joinOperator: "joinOperatorOne",
    * }
    * ```
    */
-  queryKeys?: Partial<QueryKeys>;
+  queryKeys?: Partial<DataTableQueryKeys>;
 
   /**
    * Determines how query updates affect history.
@@ -75,14 +80,6 @@ export interface UseDataTableProps<TData extends RowData>
   clearOnDefault?: boolean;
 
   /**
-   * Enable notion like column filters.
-   * Advanced filters and column filters cannot be used at the same time.
-   *
-   * @default false
-   */
-  enableAdvancedFilter?: boolean;
-
-  /**
    * Whether the page should scroll to the top when the URL changes.
    *
    * @default false
@@ -111,7 +108,7 @@ export interface DataTableProps<
   TData extends RowData,
 > extends EmptyProps<"div"> {
   /** The table instance. */
-  table: Table<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
 
   /** The action bar to display above the table. */
   actionBar?: React.ReactNode;
@@ -121,14 +118,14 @@ export interface DataTableToolbarProps<
   TData extends RowData,
 > extends EmptyProps<"div"> {
   /** The table instance. */
-  table: Table<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
 }
 
 export interface DataTableAdvancedToolbarProps<
   TData extends RowData,
 > extends EmptyProps<"div"> {
   /** The table instance. */
-  table: Table<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
 }
 
 export interface DataTableColumnHeaderProps<
@@ -138,8 +135,8 @@ export interface DataTableColumnHeaderProps<
   /** The column instance. */
   column: Column<DataTableFeatures, TData, TValue>;
 
-  /** The column title. */
-  title: string;
+  /** The column label. */
+  label: string;
 }
 
 export interface DataTableDateFilterProps<TData extends RowData> {
@@ -161,7 +158,7 @@ export interface DataTableFacetedFilterProps<TData extends RowData, TValue> {
   title?: string;
 
   /** The options of the filter. */
-  options: Option[];
+  options: FilterOption[];
 
   /** Whether to enable multiple selection. */
   multiple?: boolean;
@@ -178,8 +175,8 @@ export interface DataTableSliderFilterProps<TData extends RowData> {
 export interface DataTableRangeFilterProps<
   TData extends RowData,
 > extends EmptyProps<"div"> {
-  /** The extended column filter. */
-  filter: ExtendedColumnFilter<TData>;
+  /** The column filter. */
+  filter: ColumnFilterItem;
 
   /** The column instance. */
   column: Column<DataTableFeatures, TData>;
@@ -190,52 +187,39 @@ export interface DataTableRangeFilterProps<
   /** The function to update the filter. */
   onFilterUpdate: (
     filterId: string,
-    updates: Partial<Omit<ExtendedColumnFilter<TData>, "filterId">>,
+    updates: Partial<Omit<ColumnFilterItem, "filterId">>,
   ) => void;
 }
 
-export interface DataTableFilterListProps<TData extends RowData> {
+export interface DataTableFilterMenuProps<TData extends RowData> {
   /** The table instance. */
-  table: Table<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
 
-  /**
-   * Debounce time (ms) for filter updates to enhance performance during rapid input.
-   *
-   * @default 300
-   */
-  debounceMs?: number;
-
-  /**
-   * Maximum time (ms) to wait between URL query string updates.
-   * Helps with browser rate-limiting. Minimum effective value is 50ms.
-   *
-   * @default 50
-   */
-  throttleMs?: number;
-
-  /**
-   * Whether to keep query states client-side, avoiding server calls.
-   * Setting to `false` triggers a network request with the updated querystring.
-   *
-   * @default true
-   */
-  shallow?: boolean;
+  /** Whether the trigger is disabled. */
+  disabled?: boolean;
 }
 
-export interface DataTableFilterMenuProps<
-  TData extends RowData,
-> extends DataTableFilterListProps<TData> {}
-
-export interface DataTableSortListProps<TData extends RowData> {
+export interface DataTableCommandFilterMenuProps<TData extends RowData> {
   /** The table instance. */
-  table: Table<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
+
+  /** Whether the trigger is disabled. */
+  disabled?: boolean;
+}
+
+export interface DataTableSortMenuProps<TData extends RowData> {
+  /** The table instance. */
+  table: ReactTable<DataTableFeatures, TData, unknown>;
+
+  /** Whether the trigger is disabled. */
+  disabled?: boolean;
 }
 
 export interface DataTablePaginationProps<
   TData extends RowData,
 > extends EmptyProps<"div"> {
   /** The table instance. */
-  table: Table<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
 
   /**
    * The options of the pagination.
@@ -247,7 +231,10 @@ export interface DataTablePaginationProps<
 
 export interface DataTableViewOptionsProps<TData extends RowData> {
   /** The table instance. */
-  table: Table<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
+
+  /** Whether the trigger is disabled. */
+  disabled?: boolean;
 }
 
 export interface DataTableSkeletonProps extends EmptyProps<"div"> {

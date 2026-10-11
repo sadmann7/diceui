@@ -39,7 +39,7 @@ export default function ComboboxDemo() {
             <Combobox.ComboboxItem
               key={trick.value}
               value={trick.value}
-              className="relative flex w-full cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 dark:data-highlighted:bg-zinc-800 dark:data-highlighted:text-zinc-50"
+              className="relative flex w-full cursor-default items-center rounded-sm py-1.5 pr-2 pl-8 text-sm outline-hidden select-none data-highlighted:bg-zinc-100 data-highlighted:text-zinc-900 dark:data-highlighted:bg-zinc-800 dark:data-highlighted:text-zinc-50 data-disabled:pointer-events-none data-disabled:opacity-50"
             >
               <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
                 <Combobox.ComboboxItemIndicator>

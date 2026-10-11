@@ -489,7 +489,7 @@ function EditablePreview(props: EditablePreviewProps) {
       onFocus={onFocus}
       onKeyDown={onKeyDown}
       className={cn(
-        "cursor-text truncate rounded-sm border border-transparent py-1 text-base focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-disabled:cursor-not-allowed data-disabled:opacity-50 data-empty:text-muted-foreground data-readonly:cursor-default md:text-sm",
+        "cursor-text truncate rounded-sm border border-transparent py-1 text-base focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-empty:text-muted-foreground data-readonly:cursor-default md:text-sm data-disabled:cursor-not-allowed data-disabled:opacity-50",
         className,
       )}
     >

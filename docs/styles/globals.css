@@ -5,6 +5,8 @@
 
 @import "tw-animate-css";
 
+@import "shadcn/tailwind.css";
+
 @custom-variant style-vega (&:where(.style-vega *));
 @custom-variant style-nova (&:where(.style-nova *));
 @custom-variant style-lyra (&:where(.style-lyra *));

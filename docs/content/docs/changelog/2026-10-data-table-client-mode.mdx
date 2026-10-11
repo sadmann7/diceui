@@ -1,0 +1,112 @@
+---
+title: October 2026 - Data Table Client Mode
+description: Client mode and per-column URL filters for Data Table; Data Grid now identifies cells by row id. Includes breaking changes.
+date: 2026-10-11
+---
+
+[Data Table](/docs/components/data-table) and [Data Grid](/docs/components/data-grid) are synced with [tablecn](https://tablecn.com), which is now the source for both components. This release has breaking changes. Read the migration notes before reinstalling.
+
+## Data Table
+
+### Breaking changes
+
+- **Renamed components.** Reinstall under the new registry names. The old names no longer resolve.
+
+  | Before | After |
+  | --- | --- |
+  | `DataTableSortList` (`data-table-sort-list`) | `DataTableSortMenu` (`data-table-sort-menu`) |
+  | `DataTableFilterList` (`data-table-filter-list`) | `DataTableFilterMenu` (`data-table-filter-menu`) |
+  | `DataTableFilterMenu` (`data-table-filter-menu`) | `DataTableCommandFilterMenu` (`data-table-command-filter-menu`) |
+
+  The name `DataTableFilterMenu` now refers to the filter list. If you used the command-style menu, switch to `DataTableCommandFilterMenu`.
+
+- **One filter model.** `enableAdvancedFilter` is removed from `useDataTable`. `DataTableToolbar` and `DataTableAdvancedToolbar` now read and write the same filters, so you no longer pick a mode in the hook.
+
+- **Per-column URL filters.** Filters no longer live in a single JSON `filters` param. Each filterable column gets its own param, keyed by column id, with the operator as a prefix: `?title=ilike.report&status=in.todo,done`. Filters that use a column's default operator drop the prefix: `?title=report`. Links saved with the old `filters` param stop applying their filters. Sort links in the old JSON format still parse.
+
+- **`queryKeys.filters` is removed.** `queryKeys` now accepts `page`, `perPage`, `sort`, and `joinOperator`.
+
+- **Menu props.** `DataTableFilterMenu` and `DataTableCommandFilterMenu` no longer take `debounceMs`, `throttleMs`, or `shallow`; set those on `useDataTable`. The filter, sort, and view menus accept `disabled` and forward popover content props such as `align`.
+
+- **Renamed types and files.** `lib/parsers` is replaced by `lib/data-table-parsers`, and `dataTableConfig` is replaced by the `FILTER_VARIANTS`, `FILTER_OPERATORS`, and `JOIN_OPERATORS` constants in `lib/data-table-utils`.
+
+  | Before | After |
+  | --- | --- |
+  | `ExtendedColumnFilter<TData>` | `ColumnFilterItem<TColumnId>` |
+  | `ExtendedColumnSort<TData>` | `ColumnSortItem<TColumnId>` |
+  | `Option` | `FilterOption` |
+  | `QueryKeys` | `DataTableQueryKeys` |
+  | `getFiltersStateParser` | `getColumnFilterParser` |
+
+- **Memoized cells.** Rows and cells only re-render when the state they subscribe to changes. A custom checkbox column that reads `row.getIsSelected()` no longer updates when clicked. Use `getDataTableSelectColumn()` from `data-table-select-column`, or wrap selection-dependent cells in `Subscribe`.
+
+- **`Table` props are typed as `ReactTable`.** Components take `table: ReactTable<DataTableFeatures, TData, unknown>`, the type `useDataTable` already returns. Code that passes the hook's `table` straight through doesn't change.
+
+### New
+
+- **Client mode.** Pass `mode: "client"` to sort, filter, and paginate `data` in the browser, with no `pageCount`. Server mode stays the default and still requires `pageCount`.
+
+  ```tsx
+  const { table } = useDataTable({
+    mode: "client",
+    data,
+    columns,
+  });
+  ```
+
+- **Server helpers.** `getDataTableSearchParams` builds the nuqs parsers from a column config, and `getDataTableQuery` turns the parsed search params into `{ page, perPage, sorting, filters, joinOperator }` for your database query.
+
+  ```ts
+  const columnConfigs = {
+    title: { variant: "text" },
+    status: { variant: "multiSelect" },
+    createdAt: { variant: "dateRange" },
+  } satisfies DataTableColumnConfigs;
+
+  const searchParams = getDataTableSearchParams({ columnConfigs });
+  ```
+
+- **Right-to-left.** Layout, pinning, and menus follow `DirectionProvider`.
+- **Accessibility.** Fixes from an accessibility audit, and a `data-slot` on every data table part for styling.
+- **Performance.** Cells are memoized, so selection and filter changes skip unchanged cells. A fixed table layout stops columns shifting as data loads.
+- **Fixes.** Header menu flicker, multi-sort, row highlights, and action bar actions now scoped to the visible selection.
+
+## Data Grid
+
+### Breaking changes
+
+- **Cells are identified by row id, not row index.** `CellPosition` is now `{ rowId, columnId }`. Pass a stable `getRowId` so ids survive sorting and filtering. This changes:
+  - `onRowAdd` returns `{ rowId, columnId }` to focus a cell in the new row.
+  - `onRowsDelete` receives `(rows, rowIds)` instead of `(rows, rowIndices)`.
+  - `onFilesUpload` and `onFilesDelete` receive `rowId` instead of `rowIndex`.
+  - `autoFocus` takes `{ rowId, columnId }`.
+  - Custom cells receive `rowId` and `rowHeight` in `DataGridCellProps`. Import the type from `@/lib/data-grid-types`.
+
+  ```tsx
+  const onRowAdd = React.useCallback(() => {
+    const newRow = { id: generateId() };
+    setData((prev) => [...prev, newRow]);
+
+    return { rowId: newRow.id, columnId: "name" }; // [!code highlight]
+  }, []);
+  ```
+
+- **Row height is table state.** The `rowHeight` option is removed from `useDataGrid`. Set it with `initialState: { rowHeight: "tall" }`, control it with `state.rowHeight` and `onRowHeightChange`, or call `table.setRowHeight`.
+
+- **`onRowAdd` can't return `undefined`.** Return a cell position, or `null` to skip focusing.
+
+### New
+
+- **Cell editing feature.** Editing is a table feature. Turn it off per grid or per column with `enableCellEditing: false`, and read it with `cell.getCanEdit()`, `cell.getIsEditing()`, and `table.setEditingCell`.
+- **`onPaste`.** Called with the applied `{ rowId, columnId, value }` updates after a paste, so you can persist them.
+- **`enableSingleCellSelection`.** A single click selects the clicked cell.
+- **Grid-style keyboard navigation.** Tab and arrow keys move between cells the way a spreadsheet does.
+- **Fixes.** The multi-select cell search input.
+
+## Migrating
+
+1. Reinstall the components you use. Replace `data-table-sort-list` and `data-table-filter-list` with `data-table-sort-menu` and `data-table-filter-menu`.
+2. Rename imports and types using the tables above.
+3. Remove `enableAdvancedFilter` and `queryKeys.filters`.
+4. If you parse filters on the server, switch to `getDataTableSearchParams` and `getDataTableQuery`.
+5. For Data Grid, replace row indices with row ids in your callbacks and move `rowHeight` into `initialState`.

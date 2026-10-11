@@ -31,6 +31,11 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
+        source: "/docs/changelog/2026-09-data-table",
+        destination: "/docs/changelog/2026-09-data-table-v9",
+        permanent: true,
+      },
+      {
         source: "/r/:component((?:use-)?data-(?:table|grid).*\\.json)",
         destination: "https://tablecn.com/r/:component",
         permanent: true,

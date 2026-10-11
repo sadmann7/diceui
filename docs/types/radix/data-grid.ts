@@ -14,16 +14,19 @@ import type { VirtualItem } from "@tanstack/react-virtual";
 import type * as React from "react";
 
 import type { DataGridFeatures } from "@/lib/data-grid-features";
-import type { PopoverContent } from "@/registry/bases/radix/ui/popover";
-import type { EmptyProps } from "@/types";
 import type {
   CellPosition,
+  CellUpdate,
+  ContextMenuState,
+  DataGridTableMeta,
   Direction,
   FileCellData,
   PasteDialogState,
   RowHeightValue,
   SearchState,
-} from "@/types/data-grid";
+} from "@/lib/data-grid-types";
+import type { PopoverContent } from "@/registry/bases/radix/ui/popover";
+import type { EmptyProps } from "@/types";
 
 export interface UseDataGridProps<TData extends RowData> extends Pick<
   TableOptions<DataGridFeatures, TData>,
@@ -52,13 +55,13 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    *   setData(prev => [...prev, newRow])
    *
    *   // Focus the cell under the "name" column in the new row
-   *   return { rowIndex: data.length, columnId: "name" }
+   *   return { rowId: newRow.id, columnId: "name" }
    * }}
    * ```
    */
   onRowAdd?: (
     event?: React.MouseEvent<HTMLDivElement>,
-  ) => Partial<CellPosition> | Promise<Partial<CellPosition>> | null | void;
+  ) => Partial<CellPosition> | Promise<Partial<CellPosition> | null> | null;
 
   /**
    * Callback function called when adding multiple rows at once.
@@ -81,17 +84,30 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
 
   /**
    * Callback function called when deleting rows.
-   * Receives both the row data objects and their indices.
+   * Receives both the row data objects and their row ids.
    * Can be async to support server-side row deletion.
    *
    * ```ts
-   * onRowsDelete={async (rows, indices) => {
+   * onRowsDelete={async (rows, rowIds) => {
    *   await deleteRowsFromServer(rows.map(r => r.id))
    *   setData(prev => prev.filter(row => !rows.includes(row)))
    * }}
    * ```
    */
-  onRowsDelete?: (rows: TData[], rowIndices: number[]) => void | Promise<void>;
+  onRowsDelete?: (rows: TData[], rowIds: string[]) => void | Promise<void>;
+
+  /**
+   * Callback function called after cells are pasted.
+   * Receives the cell updates that were applied.
+   * Can be async to support server-side persistence.
+   *
+   * ```ts
+   * onPaste={async (updates) => {
+   *   await saveCells(updates)
+   * }}
+   * ```
+   */
+  onPaste?: (updates: Array<CellUpdate>) => void | Promise<void>;
 
   /**
    * Callback function called when files are uploaded to a file cell.
@@ -99,7 +115,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    * Can be async to support server-side file uploads.
    *
    * ```ts
-   * onFilesUpload={async ({ files, rowIndex, columnId }) => {
+   * onFilesUpload={async ({ files, rowId, columnId }) => {
    *   const formData = new FormData()
    *   files.forEach(file => formData.append('files', file))
    *   const response = await fetch('/api/upload', {
@@ -119,7 +135,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    */
   onFilesUpload?: (params: {
     files: File[];
-    rowIndex: number;
+    rowId: string;
     columnId: string;
   }) => Promise<FileCellData[]>;
 
@@ -129,7 +145,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    * Can be async to support server-side file deletion.
    *
    * ```ts
-   * onFilesDelete={async ({ fileIds, rowIndex, columnId }) => {
+   * onFilesDelete={async ({ fileIds, rowId, columnId }) => {
    *   await fetch('/api/files/batch-delete', {
    *     method: 'DELETE',
    *     body: JSON.stringify({ fileIds })
@@ -139,7 +155,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    */
   onFilesDelete?: (params: {
     fileIds: string[];
-    rowIndex: number;
+    rowId: string;
     columnId: string;
   }) => void | Promise<void>;
 
@@ -148,14 +164,6 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    * Used for RTL support in layout, pinning, and navigation.
    */
   dir?: Direction;
-
-  /**
-   * The height of rows in the grid.
-   * Controls the vertical spacing and row dimensions.
-   *
-   * @default "short"
-   */
-  rowHeight?: RowHeightValue;
 
   /**
    * Number of items to render outside of the visible area for smoother scrolling.
@@ -174,10 +182,16 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    * autoFocus={true}
    *
    * // Focus the first row and the name column
-   * autoFocus={{ rowIndex: 0, columnId: "name" }}
+   * autoFocus={{ rowId: "row-1", columnId: "name" }}
    * ```
    */
   autoFocus?: boolean | Partial<CellPosition>;
+
+  /**
+   * Select the clicked cell on single click, not only on drag or shift-click.
+   * @default false
+   */
+  enableSingleCellSelection?: boolean;
 
   /**
    * Enable column selection functionality.
@@ -303,13 +317,13 @@ export interface DataGridProps<
    * Map of row indexes to sets of selected cell keys.
    * Used to efficiently track multi-cell selection per row.
    */
-  cellSelectionMap: Map<number, Set<string>>;
+  cellSelectionMap: Map<string, Set<string>> | null;
 
   /**
    * Map of row indexes to sets of column IDs with search matches.
    * Used for efficient row-level search match tracking.
    */
-  searchMatchesByRow: Map<number, Set<string>> | null;
+  searchMatchesByRow: Map<string, Set<string>> | null;
 
   /**
    * The currently active search match position.
@@ -354,7 +368,7 @@ export interface DataGridProps<
    */
   onRowAdd?: (
     event?: React.MouseEvent<HTMLDivElement>,
-  ) => Partial<CellPosition> | Promise<Partial<CellPosition>> | null | void;
+  ) => Partial<CellPosition> | Promise<Partial<CellPosition> | null> | null;
 
   /**
    * Whether columns should stretch to fill available space.
@@ -418,16 +432,22 @@ export interface DataGridCellProps<TData extends RowData> {
   cell: Cell<DataGridFeatures, TData, unknown>;
 
   /**
-   * The table instance from useDataGrid hook.
-   * Used to access table state and metadata for rendering the appropriate cell variant.
+   * The table meta from useDataGrid hook.
+   * Used to access grid state and callbacks for rendering the appropriate cell variant.
    */
-  table: Table<DataGridFeatures, TData>;
+  tableMeta: DataGridTableMeta;
 
   /**
-   * The row index in the data array.
+   * The row ID for this cell.
    * Used for cell positioning and data updates.
    */
-  rowIndex: number;
+  rowId: string;
+
+  /**
+   * The height of the row.
+   * Used to size multi-line cell content.
+   */
+  rowHeight: RowHeightValue;
 
   /**
    * The column ID for this cell.
@@ -563,10 +583,9 @@ export interface DataGridRowProps<
   dir: Direction;
 
   /**
-   * Whether the row is read-only.
-   * When true, prevents editing in all cells of the row.
+   * The ids of columns whose cells cannot be edited.
    */
-  readOnly: boolean;
+  readOnlyColumnIds: Set<string>;
 
   /**
    * Whether columns should stretch to fill available space.
@@ -601,7 +620,7 @@ export interface DataGridSearchProps {
    * Empty when no search is active or no matches found.
    *
    * ```tsx
-   * searchMatches={[{ rowIndex: 0, columnId: "name" }]}
+   * searchMatches={[{ rowId: "row-1", columnId: "name" }]}
    * ```
    */
   searchMatches: CellPosition[];
@@ -669,14 +688,20 @@ export interface DataGridSearchProps {
 
 export interface DataGridContextMenuProps<TData extends RowData> {
   /**
-   * The table instance from useDataGrid hook.
-   * Used to access table state and trigger context menu actions.
-   *
-   * ```tsx
-   * <DataGridContextMenu table={table} />
-   * ```
+   * The table meta from useDataGrid hook.
+   * Used to access grid state and trigger context menu actions.
    */
-  table: Table<DataGridFeatures, TData>;
+  tableMeta: DataGridTableMeta;
+
+  /**
+   * The column definitions of the grid.
+   */
+  columns: ReadonlyArray<ColumnDef<DataGridFeatures, TData>>;
+
+  /**
+   * The context menu state from useDataGrid hook.
+   */
+  contextMenu: ContextMenuState;
 }
 
 export interface DataGridSortMenuProps<

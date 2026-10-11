@@ -19,7 +19,7 @@ links:
     npx shadcn@latest add "@diceui/data-table"
     ```
 
-    Filter and sort list installs bundle a `sortable` component that uses the unified [`radix-ui`](https://www.radix-ui.com/primitives/docs/overview/getting-started) package. Individual `@radix-ui/react-*` packages (such as `@radix-ui/react-slot`) are no longer required.
+    Filter and sort menu installs bundle a `sortable` component that uses the unified [`radix-ui`](https://www.radix-ui.com/primitives/docs/overview/getting-started) package. Individual `@radix-ui/react-*` packages (such as `@radix-ui/react-slot`) are no longer required.
   </Step>
   <Step>
     Wrap your application with the [`NuqsAdapter`](https://nuqs.47ng.com/docs/adapters) for query state management:
@@ -35,22 +35,28 @@ links:
   <Step>
     Install the following optional components:
 
-    [`DataTableSortList`](#datatablesortlist):
+    [`DataTableSortMenu`](#datatablesortmenu):
 
     ```package-install
-    npx shadcn@latest add "@diceui/data-table-sort-list"
-    ```
-
-    [`DataTableFilterList`](#datatablefilterlist):
-
-    ```package-install
-    npx shadcn@latest add "@diceui/data-table-filter-list"
+    npx shadcn@latest add "@diceui/data-table-sort-menu"
     ```
 
     [`DataTableFilterMenu`](#datatablefiltermenu):
 
     ```package-install
     npx shadcn@latest add "@diceui/data-table-filter-menu"
+    ```
+
+    [`DataTableCommandFilterMenu`](#datatablecommandfiltermenu):
+
+    ```package-install
+    npx shadcn@latest add "@diceui/data-table-command-filter-menu"
+    ```
+
+    [`getDataTableSelectColumn`](#row-selection):
+
+    ```package-install
+    npx shadcn@latest add "@diceui/data-table-select-column"
     ```
   </Step>
 </Steps>
@@ -63,8 +69,8 @@ Import the components and compose them together:
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
-import { DataTableFilterList } from "@/components/data-table/data-table-filter-list";
-import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
+import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu";
+import { DataTableSortMenu } from "@/components/data-table/data-table-sort-menu";
 import { useDataTable } from "@/hooks/use-data-table";
 
 const { table } = useDataTable({
@@ -76,15 +82,15 @@ const { table } = useDataTable({
 // With standard toolbar
 <DataTable table={table}>
   <DataTableToolbar table={table}>
-    <DataTableSortList table={table} />
+    <DataTableSortMenu table={table} />
   </DataTableToolbar>
 </DataTable>
 
 // With advanced toolbar
 <DataTable table={table}>
   <DataTableAdvancedToolbar table={table}>
-    <DataTableFilterList table={table} />
-    <DataTableSortList table={table} />
+    <DataTableFilterMenu table={table} />
+    <DataTableSortMenu table={table} />
   </DataTableAdvancedToolbar>
 </DataTable>
 ```
@@ -106,7 +112,7 @@ const { table } = useDataTable({
         id: "title", // [!code highlight]
         accessorKey: "title",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Title" />
+          <DataTableColumnHeader column={column} label="Title" />
         ),
         cell: ({ row }) => <div>{row.getValue("title")}</div>,
         // Define the column meta options for sorting, filtering, and view options
@@ -133,7 +139,8 @@ const { table } = useDataTable({
       const { table } = useDataTable({
         data,
         columns,
-        // Pass the total number of pages for the table
+        // Pass the total number of pages for server-side data,
+        // or set `mode: "client"` to sort, filter, and paginate in the browser
         pageCount, // [!code highlight]
         initialState: {
           sorting: [{ id: "createdAt", desc: true }],
@@ -156,13 +163,13 @@ const { table } = useDataTable({
     ```tsx
     import { DataTable } from "@/components/data-table/data-table";
     import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
-    import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
+    import { DataTableSortMenu } from "@/components/data-table/data-table-sort-menu";
 
     function DataTableDemo() {
       return (
         <DataTable table={table}>
           <DataTableToolbar table={table}>
-            <DataTableSortList table={table} />
+            <DataTableSortMenu table={table} />
           </DataTableToolbar>
         </DataTable>
       );
@@ -175,15 +182,15 @@ const { table } = useDataTable({
 
     ```tsx
     import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
-    import { DataTableFilterList } from "@/components/data-table/data-table-filter-list";
     import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu";
+    import { DataTableSortMenu } from "@/components/data-table/data-table-sort-menu";
 
     function DataTableDemo() {
       return (
         <DataTable table={table}>
           <DataTableAdvancedToolbar table={table}>
-            <DataTableFilterList table={table} />
-            <DataTableSortList table={table} />
+            <DataTableFilterMenu table={table} />
+            <DataTableSortMenu table={table} />
           </DataTableAdvancedToolbar>
         </DataTable>
       );
@@ -192,23 +199,23 @@ const { table } = useDataTable({
   </Step>
 
   <Step>
-    Alternatively, swap out `DataTableFilterList` with `DataTableFilterMenu` for a command palette-style interface:
+    Alternatively, swap out `DataTableFilterMenu` with `DataTableCommandFilterMenu` for a command palette-style interface:
 
     ```tsx
     import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
-    import { DataTableFilterList } from "@/components/data-table/data-table-filter-list"; // [!code --]
-    import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu"; // [!code ++]
-    import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
+    import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu"; // [!code --]
+    import { DataTableCommandFilterMenu } from "@/components/data-table/data-table-command-filter-menu"; // [!code ++]
+    import { DataTableSortMenu } from "@/components/data-table/data-table-sort-menu";
 
     function DataTableDemo() {
       return (
         <DataTable table={table}>
           <DataTableAdvancedToolbar table={table}>
             {/* [!code --] */}
-            <DataTableFilterList table={table} />
-            {/* [!code ++] */}
             <DataTableFilterMenu table={table} />
-            <DataTableSortList table={table} />
+            {/* [!code ++] */}
+            <DataTableCommandFilterMenu table={table} />
+            <DataTableSortMenu table={table} />
           </DataTableAdvancedToolbar>
         </DataTable>
       );
@@ -254,6 +261,174 @@ const { table } = useDataTable({
   </Step>
 </Steps>
 
+## Row Selection
+
+Use `getDataTableSelectColumn` to add a checkbox column for selecting rows:
+
+```tsx
+import { getDataTableSelectColumn } from "@/components/data-table/data-table-select-column";
+
+const columns = React.useMemo<ColumnDef<DataTableFeatures, Project>[]>(
+  () => [
+    getDataTableSelectColumn(),
+    // ...other columns
+  ],
+  [],
+);
+```
+
+Cells are memoized and only re-render when the state they subscribe to changes. If you render your own selection-dependent cell, read the selection inside `Subscribe` instead of calling `row.getIsSelected()` directly:
+
+```tsx
+import { Subscribe } from "@tanstack/react-table";
+
+cell: ({ row }) => (
+  <Subscribe
+    source={row.table.atoms.rowSelection}
+    selector={(selection) => selection[row.id] === true}
+  >
+    {(isSelected) => (
+      <Checkbox
+        checked={isSelected}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+      />
+    )}
+  </Subscribe>
+),
+```
+
+## Client and Server Mode
+
+`useDataTable` runs in one of two modes. Both keep pagination, sorting, and filters in the URL.
+
+<PropsTable
+  variant="title"
+  data={[
+    {
+      title: "server",
+      description: "Default. Pass the current page of `data` and the total `pageCount` (required). Read the URL state on the server and query your database.",
+    },
+    {
+      title: "client",
+      description: "Pass all rows as `data` and omit `pageCount`. The hook sorts, filters, and paginates them in the browser and derives the page count.",
+    },
+  ]}
+/>
+
+`pageCount` is required in server mode and not allowed in client mode. TypeScript reports an error if you pass it in client mode or leave it out in server mode.
+
+### Client Mode
+
+Use client mode when the full dataset fits in the browser:
+
+```tsx
+const { table } = useDataTable({
+  mode: "client",
+  data,
+  columns,
+  getRowId: (row) => row.id,
+});
+```
+
+### Server Mode
+
+Use server mode for large datasets. Describe the filterable and sortable columns once, and share that config between the server and the column definitions.
+
+<Steps>
+  <Step>
+    Define the column configs and search params:
+
+    ```ts title="lib/validations.ts"
+    import { createSearchParamsCache } from "nuqs/server";
+
+    import type { DataTableColumnConfig } from "@/lib/data-table-types";
+    import { getDataTableSearchParams } from "@/lib/data-table-parsers";
+
+    export const tasksColumnConfigs = {
+      // Sortable, not filterable
+      code: { isSortable: false },
+      title: { variant: "text" },
+      status: { variant: "multiSelect" },
+      estimatedHours: { variant: "range" },
+      createdAt: { variant: "dateRange" },
+    } as const satisfies Record<string, DataTableColumnConfig>;
+
+    export const searchParamsCache = createSearchParamsCache(
+      getDataTableSearchParams({
+        columnConfigs: tasksColumnConfigs,
+        defaultSorting: [{ id: "createdAt", desc: true }],
+      }),
+    );
+    ```
+  </Step>
+
+  <Step>
+    Parse the search params on the server and turn them into a query:
+
+    ```tsx title="app/page.tsx"
+    import { getDataTableQuery } from "@/lib/data-table-parsers";
+
+    export default async function Page(props: {
+      searchParams: Promise<Record<string, string | string[] | undefined>>;
+    }) {
+      const search = searchParamsCache.parse(await props.searchParams);
+      // { page, perPage, sorting, filters, joinOperator }
+      const query = getDataTableQuery(search, tasksColumnConfigs);
+      const { data, pageCount } = await getTasks(query);
+
+      return <TasksTable data={data} pageCount={pageCount} />;
+    }
+    ```
+
+    Type the query function's input with `DataTableColumnConfigsQuery<typeof tasksColumnConfigs>`. Each filter has an `id`, `variant`, `operator`, and `value` to map onto your database query.
+  </Step>
+
+  <Step>
+    Spread `getColumnOptions` into each column so filtering and sorting match the config:
+
+    ```tsx
+    import { getColumnOptions } from "@/lib/data-table-parsers";
+
+    {
+      id: "title",
+      accessorKey: "title",
+      meta: { label: "Title", variant: "text" },
+      ...getColumnOptions(tasksColumnConfigs.title), // [!code highlight]
+    }
+    ```
+  </Step>
+
+  <Step>
+    Pass the server data and `pageCount` to `useDataTable`. Pass `startTransition` from `React.useTransition()` to show loading states while the server re-renders:
+
+    ```tsx
+    const [isPending, startTransition] = React.useTransition();
+
+    const { table } = useDataTable({
+      data,
+      columns,
+      pageCount,
+      startTransition,
+    });
+    ```
+  </Step>
+</Steps>
+
+### URL Format
+
+Each filterable column has its own search param, keyed by column id. The value is the operator followed by the filter value. When a filter uses the column's default operator, the operator is left out.
+
+```txt
+?title=report                     # text, default operator (contains)
+?title=eq.Weekly%20report         # text, "is"
+?status=todo,done                 # multi-select, default operator (has any of)
+?estimatedHours=2,8               # range, default operator (between)
+?estimatedHours=gt.4              # range, "is greater than"
+?createdAt=is.empty               # no value
+?sort=createdAt.desc,title.asc
+?joinOperator=or
+```
+
 ## API Reference
 
 ### Column Definitions
@@ -269,7 +444,7 @@ const columns = React.useMemo<ColumnDef<Project>[]>(() => [
     accessorKey: "title", // [!code highlight]
     // Optional: Custom header component
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
+      <DataTableColumnHeader column={column} label="Title" />
     ),
     // Optional: Custom cell component
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
@@ -481,31 +656,31 @@ Controls column visibility and display preferences in the data table.
   name="DataTableViewOptionsProps"
 />
 
-### DataTableSortList
+### DataTableSortMenu
 
 List of applied sorting with ability to add, remove, and modify sorting.
 
 <AutoTypeTable
   path="./types/radix/data-table.ts"
-  name="DataTableSortListProps"
+  name="DataTableSortMenuProps"
 />
 
-### DataTableFilterList
+### DataTableFilterMenu
 
 List of applied filters with ability to add, remove, and modify filters.
 
 <AutoTypeTable
   path="./types/radix/data-table.ts"
-  name="DataTableFilterListProps"
+  name="DataTableFilterMenuProps"
 />
 
-### DataTableFilterMenu
+### DataTableCommandFilterMenu
 
-Filter menu with ability to add, remove, and modify filters.
+Command palette-style filter menu with ability to add, remove, and modify filters.
 
 <AutoTypeTable
   path="./types/radix/data-table.ts"
-  name="DataTableFilterMenuProps"
+  name="DataTableCommandFilterMenuProps"
 />
 
 ### DataTablePagination

@@ -1,19 +1,28 @@
 "use client";
 
 import {
+  type Cell,
+  type ColumnPinningPosition,
   FlexRender,
+  type Header,
+  type ReactTable,
   type Row,
   type RowData,
   Subscribe,
-  type Table as TanstackTable,
 } from "@tanstack/react-table";
 import { cn } from "cn";
 import * as React from "react";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
 
-import { getColumnPinningStyle } from "@/lib/data-table-utils";
+import {
+  getAriaSort,
+  getColumnPinningStyle,
+  getColumnSizingStyle,
+  getVisibleSelectedRows,
+} from "@/lib/data-table-utils";
 import { DataTablePagination } from "@/registry/bases/radix/components/data-table/data-table-pagination";
+import { useDirection } from "@/registry/bases/radix/ui/direction";
 import {
   Table,
   TableBody,
@@ -26,7 +35,7 @@ import {
 interface DataTableProps<
   TData extends RowData,
 > extends React.ComponentProps<"div"> {
-  table: TanstackTable<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
   actionBar?: React.ReactNode;
 }
 
@@ -35,19 +44,29 @@ export function DataTable<TData extends RowData>({
   actionBar,
   children,
   className,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
   ...props
 }: DataTableProps<TData>) {
+  const dir = useDirection();
+
   return (
     <div
+      data-slot="data-table"
+      dir={dir}
       className={cn("flex w-full flex-col gap-2.5 overflow-auto", className)}
       {...props}
     >
       {children}
       <div className="overflow-hidden rounded-md border">
-        <Table>
+        <DataTableLayout
+          table={table}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+        >
           <DataTableHeader table={table} />
           <DataTableBody table={table} />
-        </Table>
+        </DataTableLayout>
       </div>
       <div className="flex flex-col gap-2.5">
         <DataTablePagination table={table} />
@@ -59,48 +78,105 @@ export function DataTable<TData extends RowData>({
   );
 }
 
+interface DataTableLayoutProps<TData extends RowData> extends Pick<
+  React.ComponentProps<"table">,
+  "aria-label" | "aria-labelledby"
+> {
+  table: ReactTable<DataTableFeatures, TData, unknown>;
+  children: React.ReactNode;
+}
+
+function DataTableLayout<TData extends RowData>({
+  table,
+  children,
+  ...props
+}: DataTableLayoutProps<TData>) {
+  return (
+    <table.Subscribe
+      selector={(state) => ({
+        columnOrder: state.columnOrder,
+        columnPinning: state.columnPinning,
+        columnSizing: state.columnSizing,
+        columnVisibility: state.columnVisibility,
+      })}
+    >
+      {() => (
+        <Table
+          className="table-fixed"
+          style={getColumnSizingStyle(table)}
+          {...props}
+        >
+          {children}
+        </Table>
+      )}
+    </table.Subscribe>
+  );
+}
+
 interface DataTableHeaderProps<TData extends RowData> {
-  table: TanstackTable<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
 }
 
 function DataTableHeader<TData extends RowData>({
   table,
 }: DataTableHeaderProps<TData>) {
   return (
-    <Subscribe
-      source={table.store}
+    <table.Subscribe
       selector={(state) => ({
         columnOrder: state.columnOrder,
         columnPinning: state.columnPinning,
-        columnSizing: state.columnSizing,
         columnVisibility: state.columnVisibility,
-        rowSelection: state.rowSelection,
-        sorting: state.sorting,
       })}
     >
       {() => (
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
+            <TableRow key={headerGroup.id} className="group/row">
               {headerGroup.headers.map((header) => (
-                <TableHead
+                <DataTableHeadCell
                   key={header.id}
-                  colSpan={header.colSpan}
-                  style={getColumnPinningStyle({ column: header.column })}
-                >
-                  {header.isPlaceholder ? null : <FlexRender header={header} />}
-                </TableHead>
+                  header={header}
+                  pinned={header.column.getIsPinned()}
+                />
               ))}
             </TableRow>
           ))}
         </TableHeader>
+      )}
+    </table.Subscribe>
+  );
+}
+
+interface DataTableHeadCellProps<TData extends RowData> {
+  header: Header<DataTableFeatures, TData>;
+  pinned: ColumnPinningPosition;
+}
+
+function DataTableHeadCell<TData extends RowData>({
+  header,
+  pinned,
+}: DataTableHeadCellProps<TData>) {
+  return (
+    <Subscribe
+      source={header.column.table.atoms.sorting}
+      selector={(sorting) => getAriaSort(sorting, header.column.id)}
+    >
+      {(ariaSort) => (
+        <TableHead
+          aria-sort={ariaSort}
+          colSpan={header.colSpan}
+          className={getCellClassName(pinned)}
+          style={getColumnPinningStyle(header.column)}
+        >
+          {header.isPlaceholder ? null : <FlexRender header={header} />}
+        </TableHead>
       )}
     </Subscribe>
   );
 }
 
 interface DataTableBodyProps<TData extends RowData> {
-  table: TanstackTable<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
 }
 
 function DataTableBody<TData extends RowData>({
@@ -130,7 +206,7 @@ function DataTableBody<TData extends RowData>({
   return (
     <TableBody>
       {rows.map((row) => (
-        <MemoizedDataTableRow key={row.id} row={row} />
+        <DataTableRow key={row.id} row={row} />
       ))}
     </TableBody>
   );
@@ -140,7 +216,9 @@ interface DataTableRowProps<TData extends RowData> {
   row: Row<DataTableFeatures, TData>;
 }
 
-function DataTableRow<TData extends RowData>({
+const DataTableRow = React.memo(DataTableRowImpl) as typeof DataTableRowImpl;
+
+function DataTableRowImpl<TData extends RowData>({
   row,
 }: DataTableRowProps<TData>) {
   return (
@@ -149,41 +227,51 @@ function DataTableRow<TData extends RowData>({
       selector={(state) => ({
         columnOrder: state.columnOrder,
         columnPinning: state.columnPinning,
-        columnSizing: state.columnSizing,
         columnVisibility: state.columnVisibility,
+        isSelected: state.rowSelection[row.id] === true,
       })}
     >
-      {() => {
-        const cells = row.getVisibleCells().map((cell) => ({
-          cell,
-          style: getColumnPinningStyle({ column: cell.column }),
-        }));
-
-        return (
-          <Subscribe
-            source={row.table.atoms.rowSelection}
-            selector={(selection) => selection[row.id] === true}
-          >
-            {(isSelected) => (
-              <TableRow data-state={isSelected ? "selected" : undefined}>
-                {cells.map(({ cell, style }) => (
-                  <TableCell key={cell.id} style={style}>
-                    <FlexRender cell={cell} />
-                  </TableCell>
-                ))}
-              </TableRow>
-            )}
-          </Subscribe>
-        );
-      }}
+      {({ isSelected }) => (
+        <TableRow
+          data-state={isSelected ? "selected" : undefined}
+          className="group/row"
+        >
+          {row.getVisibleCells().map((cell) => (
+            <DataTableCell
+              key={cell.id}
+              cell={cell}
+              pinned={cell.column.getIsPinned()}
+            />
+          ))}
+        </TableRow>
+      )}
     </Subscribe>
   );
 }
 
-const MemoizedDataTableRow = React.memo(DataTableRow) as typeof DataTableRow;
+interface DataTableCellProps<TData extends RowData> {
+  cell: Cell<DataTableFeatures, TData>;
+  pinned: ColumnPinningPosition;
+}
+
+const DataTableCell = React.memo(DataTableCellImpl) as typeof DataTableCellImpl;
+
+function DataTableCellImpl<TData extends RowData>({
+  cell,
+  pinned,
+}: DataTableCellProps<TData>) {
+  return (
+    <TableCell
+      className={getCellClassName(pinned)}
+      style={getColumnPinningStyle(cell.column)}
+    >
+      <FlexRender cell={cell} />
+    </TableCell>
+  );
+}
 
 interface DataTableActionBarProps<TData extends RowData> {
-  table: TanstackTable<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
   actionBar: React.ReactNode;
 }
 
@@ -192,11 +280,14 @@ function DataTableActionBar<TData extends RowData>({
   actionBar,
 }: DataTableActionBarProps<TData>) {
   return (
-    <Subscribe
-      source={table.atoms.rowSelection}
-      selector={() => table.getSelectedRowModel().rows.length > 0}
-    >
-      {(hasSelectedRows) => (hasSelectedRows ? actionBar : null)}
-    </Subscribe>
+    <table.Subscribe selector={() => getVisibleSelectedRows(table).length > 0}>
+      {(hasVisibleSelectedRows) => (hasVisibleSelectedRows ? actionBar : null)}
+    </table.Subscribe>
   );
+}
+
+function getCellClassName(pinned: ColumnPinningPosition) {
+  return pinned
+    ? "overflow-hidden bg-background transition-colors group-hover/row:bg-[color-mix(in_srgb,var(--muted)_50%,var(--background))] group-has-aria-expanded/row:bg-[color-mix(in_srgb,var(--muted)_50%,var(--background))] group-data-[state=selected]/row:bg-muted"
+    : "overflow-hidden";
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import type { RowData, Table } from "@tanstack/react-table";
+import type { ReactTable, RowData } from "@tanstack/react-table";
 import type * as React from "react";
 
 import { cn } from "cn";
@@ -12,7 +12,7 @@ import { DataTableViewOptions } from "@/registry/bases/radix/components/data-tab
 interface DataTableAdvancedToolbarProps<
   TData extends RowData,
 > extends React.ComponentProps<"div"> {
-  table: Table<DataTableFeatures, TData>;
+  table: ReactTable<DataTableFeatures, TData, unknown>;
 }
 
 export function DataTableAdvancedToolbar<TData extends RowData>({
@@ -23,8 +23,7 @@ export function DataTableAdvancedToolbar<TData extends RowData>({
 }: DataTableAdvancedToolbarProps<TData>) {
   return (
     <div
-      role="toolbar"
-      aria-orientation="horizontal"
+      data-slot="data-table-advanced-toolbar"
       className={cn(
         "flex w-full items-start justify-between gap-2 p-1",
         className,

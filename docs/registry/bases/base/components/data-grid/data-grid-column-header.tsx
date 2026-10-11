@@ -1,6 +1,7 @@
 "use client";
 
 import type {
+  Column,
   ColumnSort,
   Header,
   RowData,
@@ -14,7 +15,12 @@ import * as React from "react";
 
 import type { DataGridFeatures } from "@/lib/data-grid-features";
 
-import { getColumnVariant } from "@/lib/data-grid-utils";
+import { getBadgeListWidth } from "@/hooks/use-badge-overflow";
+import {
+  getColumnFitSize,
+  getColumnVariant,
+  getIsFileCellData,
+} from "@/lib/data-grid-utils";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -124,8 +130,9 @@ export function DataGridColumnHeader<TData extends RowData, TValue>({
     <>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger
+          tabIndex={-1}
           className={cn(
-            "flex size-full items-center justify-between gap-2 p-2 text-sm hover:bg-accent/40 data-open:bg-accent/40 [&_svg]:size-4",
+            "flex size-full items-center justify-between gap-2 p-2 text-sm outline-none hover:bg-accent/40 focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-inset data-open:bg-accent/40 [&_svg]:size-4",
             isAnyColumnResizing && "pointer-events-none",
             className,
           )}
@@ -327,9 +334,33 @@ function DataGridColumnResizerImpl<TData extends RowData, TValue>({
 }: DataGridColumnResizerProps<TData, TValue>) {
   const defaultColumnDef = table.getDefaultColumnDef();
 
-  const onDoubleClick = React.useCallback(() => {
-    header.column.resetSize();
-  }, [header.column]);
+  const onDoubleClick = React.useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      const column = header.column;
+      const gridElement =
+        event.currentTarget.closest<HTMLElement>('[role="grid"]');
+      const fitSize = gridElement
+        ? getColumnFitSize({
+            gridElement,
+            columnId: column.id,
+            minSize: column.columnDef.minSize ?? defaultColumnDef.minSize ?? 0,
+            maxSize:
+              column.columnDef.maxSize ??
+              defaultColumnDef.maxSize ??
+              Number.POSITIVE_INFINITY,
+            wrapperContentSize: getBadgeColumnContentSize(column, table),
+          })
+        : null;
+
+      if (fitSize === null) {
+        column.resetSize();
+        return;
+      }
+
+      table.setColumnSizing((prev) => ({ ...prev, [column.id]: fitSize }));
+    },
+    [header.column, table, defaultColumnDef],
+  );
 
   return (
     <div
@@ -339,7 +370,7 @@ function DataGridColumnResizerImpl<TData extends RowData, TValue>({
       aria-valuenow={header.column.getSize()}
       aria-valuemin={defaultColumnDef.minSize}
       aria-valuemax={defaultColumnDef.maxSize}
-      tabIndex={0}
+      tabIndex={-1}
       className={cn(
         "absolute -inset-e-px top-0 z-50 h-full w-0.5 cursor-ew-resize touch-none bg-border transition-opacity select-none after:absolute after:inset-y-0 after:inset-s-1/2 after:h-full after:w-4.5 after:-translate-x-1/2 after:content-[''] hover:bg-primary focus:bg-primary focus:outline-none",
         header.column.getIsResizing()
@@ -351,4 +382,46 @@ function DataGridColumnResizerImpl<TData extends RowData, TValue>({
       onTouchStart={header.getResizeHandler()}
     />
   );
+}
+
+function getBadgeColumnContentSize<TData extends RowData, TValue>(
+  column: Column<DataGridFeatures, TData, TValue>,
+  table: Table<DataGridFeatures, TData>,
+): number {
+  const cellOpts = column.columnDef.meta?.cell;
+  if (cellOpts?.variant !== "multi-select" && cellOpts?.variant !== "file") {
+    return 0;
+  }
+
+  const labelByValue = new Map(
+    cellOpts.variant === "multi-select"
+      ? cellOpts.options.map((option) => [option.value, option.label])
+      : [],
+  );
+
+  let contentSize = 0;
+  for (const row of table.getRowModel().rows) {
+    const value = row.getValue(column.id);
+    if (!Array.isArray(value)) continue;
+
+    const rowContentSize =
+      cellOpts.variant === "multi-select"
+        ? getBadgeListWidth({
+            items: value
+              .filter((item): item is string => typeof item === "string")
+              .map((item) => labelByValue.get(item) ?? item)
+              .filter(Boolean),
+            getLabel: (label) => label,
+          })
+        : getBadgeListWidth({
+            items: value.filter(getIsFileCellData),
+            getLabel: (file) => file.name,
+            cacheKeyPrefix: "file",
+            iconSize: 12,
+            maxWidth: 100,
+          });
+    contentSize = Math.max(contentSize, rowContentSize);
+  }
+
+  return contentSize;
 }
