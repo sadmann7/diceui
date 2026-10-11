@@ -3,6 +3,7 @@
 import { useDirection } from "@base-ui/react/direction-provider";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import {
   autoUpdate,
   flip,
@@ -19,7 +20,6 @@ import { cn } from "cn";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useComposedRefs } from "@/lib/compose-refs";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
@@ -1021,7 +1021,7 @@ function TourStep(props: TourStepProps) {
     },
   });
 
-  const composedRef = useComposedRefs(refs.setFloating, stepRef);
+  const composedRef = useMergedRefs(refs.setFloating, stepRef);
 
   const [placedSide, placedAlign] =
     getSideAndAlignFromPlacement(finalPlacement);
@@ -1761,7 +1761,7 @@ function TourFooter(props: DivProps) {
   const hasDefaultFooter = React.useContext(DefaultFooterContext);
   const context = useTourContext(FOOTER_NAME);
 
-  const composedRef = useComposedRefs(
+  const composedRef = useMergedRefs(
     ref,
     hasDefaultFooter ? undefined : stepContext.onFooterChange,
   );

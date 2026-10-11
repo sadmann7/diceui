@@ -2,6 +2,7 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
@@ -9,7 +10,6 @@ import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-h
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
 const ROOT_NAME = "AngleSlider";
@@ -398,7 +398,7 @@ function AngleSlider(props: AngleSliderProps) {
   const [sliderElement, setSliderElement] = React.useState<RootElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, setSliderElement);
+  const composedRef = useMergedRefs(ref, setSliderElement);
   const valuesBeforeSlideStartRef = React.useRef(value ?? defaultValue);
 
   const contextValue = React.useMemo<SliderContextValue>(
@@ -736,7 +736,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
   const [thumbElement, setThumbElement] = React.useState<ThumbElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, setThumbElement);
+  const composedRef = useMergedRefs(ref, setThumbElement);
 
   const isFormControl = thumbElement
     ? context.form || !!thumbElement.closest("form")

@@ -1,0 +1,28 @@
+---
+title: October 2026 - compose-refs Deprecated
+description: Components now use the ref helpers Base UI and Radix already ship, and the compose-refs utility is deprecated.
+date: 2026-10-11T14:30:00Z
+---
+
+Dice UI components no longer copy `lib/compose-refs.ts` into your project. They now use the ref helpers their primitives already ship:
+
+- **Base UI** components use `useMergedRefs` from `@base-ui/utils`, which they now list as a dependency.
+- **Radix** components use `useComposedRefs` from `radix-ui/internal`. They need nothing new.
+
+The `compose-refs` utility is deprecated as a result. The [Composition](/docs/utilities/composition) page now covers how to compose Dice UI components, and how to build your own parts, with each library's own tools.
+
+### Migrating
+
+Existing components keep working, because your copy of `lib/compose-refs.ts` stays in place. To drop it, reinstall the components, or update the imports yourself:
+
+```tsx title="Base UI"
+import { useComposedRefs } from "@/lib/compose-refs"; // [!code --]
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs"; // [!code ++]
+```
+
+```tsx title="Radix"
+import { useComposedRefs } from "@/lib/compose-refs"; // [!code --]
+import { useComposedRefs } from "radix-ui/internal"; // [!code ++]
+```
+
+Then delete `lib/compose-refs.ts`. `@diceui/compose-refs` still installs for now and will be removed in a future release.

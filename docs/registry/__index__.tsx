@@ -29,10 +29,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -58,10 +54,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -97,7 +89,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -132,10 +124,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -148,10 +136,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -209,10 +193,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -225,10 +205,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -247,10 +223,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -263,10 +235,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/marquee.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -281,10 +249,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/mask-input.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -298,10 +262,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -310,7 +270,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -331,10 +291,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -362,10 +318,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -382,10 +334,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -426,10 +374,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -442,10 +386,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/scroller.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -473,10 +413,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -490,10 +426,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -506,10 +438,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -563,10 +491,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -593,10 +517,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -614,10 +534,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -630,10 +546,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -874,10 +786,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -903,10 +811,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -942,7 +846,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -977,10 +881,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -993,10 +893,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1054,10 +950,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1070,10 +962,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1092,10 +980,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1108,10 +992,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/marquee.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1126,10 +1006,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/mask-input.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1143,10 +1019,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1155,7 +1027,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -1176,10 +1048,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1207,10 +1075,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1227,10 +1091,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1271,10 +1131,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1287,10 +1143,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/scroller.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1318,10 +1170,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1335,10 +1183,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1351,10 +1195,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1408,10 +1248,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1438,10 +1274,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1459,10 +1291,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1475,10 +1303,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1719,10 +1543,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1748,10 +1568,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1787,7 +1603,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -1822,10 +1638,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1838,10 +1650,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1899,10 +1707,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1915,10 +1719,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1937,10 +1737,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1953,10 +1749,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/marquee.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -1971,10 +1763,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/mask-input.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -1988,10 +1776,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2000,7 +1784,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -2021,10 +1805,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2052,10 +1832,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2072,10 +1848,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2116,10 +1888,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2132,10 +1900,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/scroller.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2163,10 +1927,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2180,10 +1940,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2196,10 +1952,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2253,10 +2005,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2283,10 +2031,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2304,10 +2048,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2320,10 +2060,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2564,10 +2300,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2593,10 +2325,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2632,7 +2360,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -2667,10 +2395,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2683,10 +2407,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2744,10 +2464,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2760,10 +2476,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2782,10 +2494,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2798,10 +2506,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/marquee.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2816,10 +2520,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/mask-input.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2833,10 +2533,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2845,7 +2541,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -2866,10 +2562,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2897,10 +2589,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2917,10 +2605,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -2961,10 +2645,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -2977,10 +2657,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/scroller.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3008,10 +2684,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3025,10 +2697,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3041,10 +2709,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3098,10 +2762,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3128,10 +2788,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3149,10 +2805,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3165,10 +2817,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3409,10 +3057,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3438,10 +3082,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3477,7 +3117,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -3512,10 +3152,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3528,10 +3164,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3589,10 +3221,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3605,10 +3233,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3627,10 +3251,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3643,10 +3263,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/marquee.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3661,10 +3277,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/mask-input.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3678,10 +3290,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3690,7 +3298,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -3711,10 +3319,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3742,10 +3346,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3762,10 +3362,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3806,10 +3402,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3822,10 +3414,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/scroller.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3853,10 +3441,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3870,10 +3454,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3886,10 +3466,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -3943,10 +3519,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3973,10 +3545,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -3994,10 +3562,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4010,10 +3574,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -4254,10 +3814,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4283,10 +3839,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -4322,7 +3874,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -4357,10 +3909,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4373,10 +3921,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -4434,10 +3978,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4450,10 +3990,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -4472,10 +4008,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4488,10 +4020,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/marquee.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -4506,10 +4034,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/mask-input.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4523,10 +4047,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4535,7 +4055,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -4556,10 +4076,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -4587,10 +4103,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4607,10 +4119,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -4651,10 +4159,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4667,10 +4171,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/scroller.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -4698,10 +4198,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4715,10 +4211,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4731,10 +4223,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -4788,10 +4276,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4818,10 +4302,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4839,10 +4319,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -4855,10 +4331,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -5099,10 +4571,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5128,10 +4596,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -5167,7 +4631,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -5202,10 +4666,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5218,10 +4678,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -5279,10 +4735,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5295,10 +4747,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -5317,10 +4765,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5333,10 +4777,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/marquee.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -5351,10 +4791,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/mask-input.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5368,10 +4804,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5380,7 +4812,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -5401,10 +4833,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -5432,10 +4860,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5452,10 +4876,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -5496,10 +4916,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5512,10 +4928,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/scroller.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -5543,10 +4955,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5560,10 +4968,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5576,10 +4980,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -5633,10 +5033,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5663,10 +5059,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5684,10 +5076,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5700,10 +5088,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -5944,10 +5328,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -5973,10 +5353,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6012,7 +5388,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref","@diceui/compose-refs"],
+        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -6047,10 +5423,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6063,10 +5435,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6124,10 +5492,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6140,10 +5504,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6162,10 +5522,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6178,10 +5534,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/marquee.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6196,10 +5548,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/mask-input.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6213,10 +5561,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6225,7 +5569,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/compose-refs","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -6246,10 +5590,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6277,10 +5617,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6297,10 +5633,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6341,10 +5673,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6357,10 +5685,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/scroller.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6388,10 +5712,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6405,10 +5725,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6421,10 +5737,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6478,10 +5790,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6508,10 +5816,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6529,10 +5833,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6545,10 +5845,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/base/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6772,10 +6068,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6792,10 +6084,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6822,10 +6110,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6883,10 +6167,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6913,10 +6193,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -6929,10 +6205,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -6963,10 +6235,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7007,10 +6275,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7023,10 +6287,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7044,10 +6304,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7075,10 +6331,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/marquee.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7091,10 +6343,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/mask-input.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7109,10 +6357,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7125,10 +6369,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7159,10 +6399,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7216,10 +6452,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/scroller.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7232,10 +6464,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7263,10 +6491,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7280,10 +6504,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7296,10 +6516,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7353,10 +6569,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7400,10 +6612,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7430,10 +6638,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7451,10 +6655,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7467,10 +6667,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7694,10 +6890,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7714,10 +6906,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7744,10 +6932,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7805,10 +6989,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7835,10 +7015,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7851,10 +7027,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7885,10 +7057,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7929,10 +7097,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -7945,10 +7109,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7966,10 +7126,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -7997,10 +7153,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/marquee.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8013,10 +7165,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/mask-input.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8031,10 +7179,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8047,10 +7191,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8081,10 +7221,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8138,10 +7274,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/scroller.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8154,10 +7286,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8185,10 +7313,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8202,10 +7326,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8218,10 +7338,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8275,10 +7391,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8322,10 +7434,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8352,10 +7460,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8373,10 +7477,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8389,10 +7489,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8616,10 +7712,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8636,10 +7728,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8666,10 +7754,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8727,10 +7811,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8757,10 +7837,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8773,10 +7849,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8807,10 +7879,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8851,10 +7919,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8867,10 +7931,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8888,10 +7948,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8919,10 +7975,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/marquee.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8935,10 +7987,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/mask-input.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -8953,10 +8001,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -8969,10 +8013,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9003,10 +8043,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9060,10 +8096,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/scroller.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9076,10 +8108,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9107,10 +8135,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9124,10 +8148,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9140,10 +8160,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9197,10 +8213,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9244,10 +8256,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9274,10 +8282,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9295,10 +8299,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9311,10 +8311,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9538,10 +8534,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9558,10 +8550,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9588,10 +8576,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9649,10 +8633,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9679,10 +8659,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9695,10 +8671,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9729,10 +8701,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9773,10 +8741,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9789,10 +8753,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9810,10 +8770,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9841,10 +8797,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/marquee.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9857,10 +8809,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/mask-input.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9875,10 +8823,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9891,10 +8835,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9925,10 +8865,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -9982,10 +8918,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/scroller.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -9998,10 +8930,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10029,10 +8957,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10046,10 +8970,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10062,10 +8982,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10119,10 +9035,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10166,10 +9078,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10196,10 +9104,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10217,10 +9121,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10233,10 +9133,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10460,10 +9356,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10480,10 +9372,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10510,10 +9398,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10571,10 +9455,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10601,10 +9481,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10617,10 +9493,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10651,10 +9523,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10695,10 +9563,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10711,10 +9575,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10732,10 +9592,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10763,10 +9619,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/marquee.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10779,10 +9631,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/mask-input.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10797,10 +9645,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10813,10 +9657,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10847,10 +9687,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10904,10 +9740,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/scroller.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10920,10 +9752,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -10951,10 +9779,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10968,10 +9792,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -10984,10 +9804,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11041,10 +9857,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11088,10 +9900,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11118,10 +9926,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11139,10 +9943,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11155,10 +9955,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11382,10 +10178,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11402,10 +10194,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11432,10 +10220,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11493,10 +10277,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11523,10 +10303,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11539,10 +10315,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11573,10 +10345,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11617,10 +10385,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11633,10 +10397,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11654,10 +10414,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11685,10 +10441,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/marquee.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11701,10 +10453,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/mask-input.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11719,10 +10467,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11735,10 +10479,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11769,10 +10509,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11826,10 +10562,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/scroller.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11842,10 +10574,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11873,10 +10601,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11890,10 +10614,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -11906,10 +10626,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -11963,10 +10679,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12010,10 +10722,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12040,10 +10748,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12061,10 +10765,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12077,10 +10777,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12304,10 +11000,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12324,10 +11016,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12354,10 +11042,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12415,10 +11099,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12445,10 +11125,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12461,10 +11137,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12495,10 +11167,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12539,10 +11207,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12555,10 +11219,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12576,10 +11236,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12607,10 +11263,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/marquee.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12623,10 +11275,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/mask-input.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12641,10 +11289,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12657,10 +11301,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12691,10 +11331,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12748,10 +11384,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/scroller.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12764,10 +11396,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12795,10 +11423,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12812,10 +11436,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12828,10 +11448,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -12885,10 +11501,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12932,10 +11544,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12962,10 +11570,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12983,10 +11587,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -12999,10 +11599,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13226,10 +11822,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13246,10 +11838,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13276,10 +11864,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/badge-overflow.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13337,10 +11921,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13367,10 +11947,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13383,10 +11959,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13417,10 +11989,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13461,10 +12029,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/gauge.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13477,10 +12041,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/kanban.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13498,10 +12058,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13529,10 +12085,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/marquee.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13545,10 +12097,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/mask-input.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13563,10 +12111,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/masonry.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13579,10 +12123,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13613,10 +12153,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13670,10 +12206,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/scroller.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13686,10 +12218,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13717,10 +12245,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13734,10 +12258,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/sortable.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13750,10 +12270,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",
@@ -13807,10 +12323,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13854,10 +12366,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13884,10 +12392,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13905,10 +12409,6 @@ export const Index: Record<string, Record<string, unknown>> = {
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
           target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
-          target: ""
         }],
         source: "",
         chunks: []
@@ -13921,10 +12421,6 @@ export const Index: Record<string, Record<string, unknown>> = {
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
-          target: ""
-        },{
-          path: "registry/bases/radix/lib/compose-refs.ts",
-          type: "registry:lib",
           target: ""
         }],
         source: "",

@@ -2,9 +2,8 @@
 
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
+import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
-
-import { useComposedRefs } from "@/lib/compose-refs";
 
 const PAST_YEARS_LIMIT = 120;
 const FUTURE_YEARS_LIMIT = 10;

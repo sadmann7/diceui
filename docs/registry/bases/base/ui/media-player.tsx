@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import {
   MediaActionTypes,
@@ -17,7 +18,6 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { Badge } from "@/registry/bases/base/ui/badge";
 import { Button } from "@/registry/bases/base/ui/button";
 import { useDirection } from "@/registry/bases/base/ui/direction";
@@ -227,7 +227,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
 
   const rootRef = React.useRef<RootElement | null>(null);
   const fullscreenRef = useMediaFullscreenRef();
-  const composedRef = useComposedRefs(ref, rootRef, fullscreenRef);
+  const composedRef = useMergedRefs(ref, rootRef, fullscreenRef);
 
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;
@@ -780,7 +780,7 @@ function MediaPlayerVideo(props: MediaPlayerVideoProps) {
   const dispatch = useMediaDispatch();
   const mediaRefCallback =
     useMediaRef() as React.RefCallback<HTMLVideoElement | null>;
-  const composedRef = useComposedRefs(ref, context.mediaRef, mediaRefCallback);
+  const composedRef = useMergedRefs(ref, context.mediaRef, mediaRefCallback);
 
   const onPlayToggle = React.useCallback(
     (event: React.MouseEvent<HTMLVideoElement>) => {
@@ -826,7 +826,7 @@ function MediaPlayerAudio(props: MediaPlayerAudioProps) {
   const context = useMediaPlayerContext("MediaPlayerAudio");
   const mediaRefCallback =
     useMediaRef() as React.RefCallback<HTMLAudioElement | null>;
-  const composedRef = useComposedRefs(ref, context.mediaRef, mediaRefCallback);
+  const composedRef = useMergedRefs(ref, context.mediaRef, mediaRefCallback);
 
   return useRender({
     defaultTagName: "audio",

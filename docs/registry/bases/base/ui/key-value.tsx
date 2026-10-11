@@ -2,6 +2,7 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
@@ -9,7 +10,6 @@ import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-h
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 import { Button } from "@/registry/bases/base/ui/button";
 import { Input } from "@/registry/bases/base/ui/input";
 import { Textarea } from "@/registry/bases/base/ui/textarea";
@@ -201,7 +201,7 @@ function KeyValue(props: KeyValueProps) {
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());

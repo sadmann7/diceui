@@ -1,96 +1,103 @@
 ---
 title: Composition
-description: Utilities for composing multiple refs into a single ref in React components.
+description: How Dice UI components compose with your own elements, components, props and refs.
 links:
-  api: /docs/utilities/radix/composition#api-reference
+  doc: https://www.radix-ui.com/primitives/docs/guides/composition
 ---
 
-## Installation
+Dice UI's Radix components follow [Radix's composition model](https://www.radix-ui.com/primitives/docs/guides/composition). Every part renders a default element, and the `asChild` prop lets you render your own child instead while keeping the part's behavior, props and ref.
 
-<CodeTabs>
+## The asChild prop
 
-<TabsList>
-  <TabsTrigger value="cli">Command</TabsTrigger>
-  <TabsTrigger value="manual">Manual</TabsTrigger>
-</TabsList>
+With `asChild`, the part renders its only child instead of its default element. Dice UI merges its own props, such as ARIA attributes, data attributes, event handlers and the ref, into that child.
 
-<TabsContent value="cli">
+```tsx
+import { Timeline, TimelineItem } from "@/components/ui/timeline";
+
+return (
+  <Timeline asChild>
+    <ol>
+      <TimelineItem asChild>
+        <li>Design review</li>
+      </TimelineItem>
+    </ol>
+  </Timeline>
+)
+```
+
+## Combining components
+
+The child can be any component that spreads its props onto a DOM element and accepts a `ref`. That includes other Radix and shadcn/ui parts, so you can layer behaviors onto one element:
+
+```tsx
+import { Archive } from "lucide-react";
+
+import { ActionBarItem } from "@/components/ui/action-bar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
+return (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <ActionBarItem>
+        <Archive />
+      </ActionBarItem>
+    </TooltipTrigger>
+    <TooltipContent>Archive</TooltipContent>
+  </Tooltip>
+)
+```
+
+The rendered `button` is both the tooltip trigger and the action bar item.
+
+## Building your own parts
+
+To give your own components an `asChild` prop, use the same tools Dice UI uses. All of them come from `radix-ui`:
+
+- **`Slot`** renders the child, merging the slot's props into it.
+- **`useComposedRefs`** and **`composeRefs`** from `radix-ui/internal` combine several refs.
+- **`composeEventHandlers`** from `radix-ui/internal` chains handlers and skips the internal one when yours calls `event.preventDefault()`.
 
 ```package-install
-npx shadcn@latest add @diceui/compose-refs
+radix-ui
 ```
 
-</TabsContent>
-
-<TabsContent value="manual">
-
-<Steps className="pt-2">
-
-<Step>Copy and paste the following code into your `lib/compose-refs.ts` file.</Step>
-
-<ComponentSource name="compose-refs" />
-
-</Steps>
-
-</TabsContent>
-
-</CodeTabs>
-
-## Usage
-
-### useComposedRefs
-
-Use the hook inside components. It returns a memoized ref callback, so the ref stays stable across renders.
-
 ```tsx
-import * as React from "react"
-import { useComposedRefs } from "@/lib/compose-refs"
+import { Slot as SlotPrimitive } from "radix-ui";
+import { composeEventHandlers, useComposedRefs } from "radix-ui/internal";
+import * as React from "react";
 
-function Input({ ref, ...props }: React.ComponentProps<"input">) {
-  const localRef = React.useRef<HTMLInputElement>(null)
-  const composedRef = useComposedRefs(ref, localRef)
+interface CardProps extends React.ComponentProps<"div"> {
+  asChild?: boolean;
+}
 
-  return <input ref={composedRef} {...props} />
+function Card({ asChild, ref, onKeyDown, ...props }: CardProps) {
+  const localRef = React.useRef<HTMLDivElement>(null);
+  const composedRef = useComposedRefs(ref, localRef);
+
+  const CardPrimitive = asChild ? SlotPrimitive.Slot : "div";
+
+  return (
+    <CardPrimitive
+      data-slot="card"
+      {...props}
+      ref={composedRef}
+      onKeyDown={composeEventHandlers(onKeyDown, (event) => {
+        if (event.key === "Escape") localRef.current?.blur();
+      })}
+    />
+  );
 }
 ```
 
-### composeRefs
+`useComposedRefs` returns a stable callback ref, so use it during render. `composeRefs` is the plain function, for when you can't call a hook. Both accept callback refs and ref objects.
 
-Use the plain function outside of render, or when you can't call a hook.
+## Migrating from compose-refs
+
+Dice UI used to ship a `compose-refs` utility (`@diceui/compose-refs`). It's deprecated, and components no longer install it. Import the same helpers from `radix-ui` instead:
 
 ```tsx
-import * as React from "react"
-import { composeRefs } from "@/lib/compose-refs"
-
-function Input({ ref, ...props }: React.ComponentProps<"input">) {
-  const localRef = React.useRef<HTMLInputElement>(null)
-
-  return <input ref={composeRefs(ref, localRef)} {...props} />
-}
+import { useComposedRefs } from "@/lib/compose-refs"; // [!code --]
+import { useComposedRefs } from "radix-ui/internal"; // [!code ++]
 ```
 
-Both accept callback refs and ref objects. When a callback ref returns a cleanup function, it runs on unmount.
-
-## API Reference
-
-### composeRefs
-
-A utility function that composes multiple refs together.
-
-<AutoTypeTable
-  path="./types/radix/utilities.ts"
-  name="ComposeRefsProps"
-/>
-
-### useComposedRefs
-
-A React hook that composes multiple refs together.
-
-<AutoTypeTable
-  path="./types/radix/utilities.ts"
-  name="UseComposedRefsProps"
-/>
-
-## Credits
-
-- [Radix UI](https://github.com/radix-ui/primitives/blob/main/packages/react/compose-refs/src/compose-refs.tsx) - For the `composeRefs` and `useComposedRefs` utilities.
+Then delete `lib/compose-refs.ts`. See the [changelog](/docs/changelog/2026-10-composition) for details.

@@ -2,11 +2,11 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useComposedRefs } from "@/lib/compose-refs";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { Button } from "@/registry/bases/base/ui/button";
@@ -144,7 +144,7 @@ function ActionBar(props: ActionBarProps) {
   const [mounted, setMounted] = React.useState(false);
 
   const rootRef = React.useRef<RootElement>(null);
-  const composedRef = useComposedRefs(ref, rootRef);
+  const composedRef = useMergedRefs(ref, rootRef);
 
   const propsRef = useAsRef({
     onEscapeKeyDown,
@@ -275,7 +275,7 @@ function ActionBarGroup(props: DivProps) {
   const [focusableItemCount, setFocusableItemCount] = React.useState(0);
 
   const groupRef = React.useRef<HTMLDivElement>(null);
-  const composedRef = useComposedRefs(ref, groupRef);
+  const composedRef = useMergedRefs(ref, groupRef);
   const isClickFocusRef = React.useRef(false);
   const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
 
@@ -454,7 +454,7 @@ function ActionBarItem(props: ActionBarItemProps) {
   } = props;
 
   const itemRef = React.useRef<ItemElement>(null);
-  const composedRef = useComposedRefs(ref, itemRef);
+  const composedRef = useMergedRefs(ref, itemRef);
   const isMouseClickRef = React.useRef(false);
 
   const { onOpenChange, dir, orientation, loop } =

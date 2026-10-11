@@ -2,10 +2,9 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
-
-import { useComposedRefs } from "@/registry/bases/base/lib/compose-refs";
 
 interface GetBadgeLabel<T> {
   /**
@@ -54,10 +53,7 @@ function BadgeOverflow<T = string>(
   );
 
   const rootRef = React.useRef<HTMLDivElement | null>(null);
-  const composedRef = useComposedRefs(
-    ref,
-    rootRef,
-  ) as React.Ref<HTMLDivElement>;
+  const composedRef = useMergedRefs(ref, rootRef) as React.Ref<HTMLDivElement>;
   const measureRef = React.useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = React.useState(0);
   const [badgeGap, setBadgeGap] = React.useState(4);

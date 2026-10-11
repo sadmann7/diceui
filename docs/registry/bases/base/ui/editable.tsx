@@ -2,10 +2,10 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
-import { useComposedRefs } from "@/lib/compose-refs";
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
@@ -171,7 +171,7 @@ function Editable(props: EditableProps) {
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const listenersRef = useLazyRef(() => new Set<() => void>());
@@ -535,7 +535,7 @@ function EditableInput(props: EditableInputProps) {
   const value = useStore((state) => state.value);
   const editing = useStore((state) => state.editing);
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const composedRef = useComposedRefs(ref, inputRef);
+  const composedRef = useMergedRefs(ref, inputRef);
 
   const propsRef = useAsRef({
     onBlur: onBlurProp,
