@@ -15,28 +15,6 @@ export interface ClientOnlyProps {
   fallback?: React.ReactNode;
 }
 
-export interface ComposeRefsProps<T> {
-  /**
-   * The refs to compose together (can be callback refs or RefObjects).
-   *
-   * ```ts
-   * const composedRef = composeRefs(ref1, ref2);
-   * ```
-   */
-  refs: React.Ref<T>[];
-}
-
-export interface UseComposedRefsProps<T> {
-  /**
-   * The refs to compose together (can be callback refs or RefObjects).
-   *
-   * ```ts
-   * const composedRef = useComposedRefs(ref1, ref2);
-   * ```
-   */
-  refs: React.Ref<T>[];
-}
-
 export interface DirectionProviderProps {
   /**
    * The direction of the text.

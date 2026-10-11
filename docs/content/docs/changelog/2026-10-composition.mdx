@@ -1,6 +1,6 @@
 ---
-title: October 2026 - Composition Deprecated
-description: Components now use the ref helpers Base UI and Radix already ship, and the Composition utility is deprecated.
+title: October 2026 - compose-refs Deprecated
+description: Components now use the ref helpers Base UI and Radix already ship, and the compose-refs utility is deprecated.
 date: 2026-10-11T14:30:00Z
 ---
 
@@ -9,7 +9,7 @@ Dice UI components no longer copy `lib/compose-refs.ts` into your project. They 
 - **Base UI** components use `useMergedRefs` from `@base-ui/utils`, which they now list as a dependency.
 - **Radix** components use `useComposedRefs` from `radix-ui/internal`. They need nothing new.
 
-The [Composition](/docs/utilities/composition) utility is deprecated as a result.
+The `compose-refs` utility is deprecated as a result. The [Composition](/docs/utilities/composition) page now covers how to compose Dice UI components, and how to build your own parts, with each library's own tools.
 
 ### Migrating
 
