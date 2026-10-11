@@ -17,13 +17,9 @@ interface DocsLayoutProps extends Omit<
   trees: Record<RegistryBase, Root>;
 }
 
-// Picks the sidebar tree on the client, so the layout (and the sidebar's
-// scroll position) persists across page navigations
 export function DocsLayout({ trees, ...props }: DocsLayoutProps) {
   const pathname = usePathname();
-  // `/docs/components/radix/...` and `/docs/utilities/radix/...`
   const base = pathname.split("/")[3] === "radix" ? "radix" : DEFAULT_BASE;
 
-  // The sidebar keeps the tree it mounted with, so remount it when the base changes
   return <DocsLayoutImpl key={base} {...props} tree={trees[base]} />;
 }
