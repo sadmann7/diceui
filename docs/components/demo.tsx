@@ -52,15 +52,4 @@ function DemoItemGroup({
   );
 }
 
-function DemoSeparator({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      role="separator"
-      data-slot="demo-separator"
-      className={cn("my-2 h-px w-full bg-border", className)}
-      {...props}
-    />
-  );
-}
-
-export { Demo, DemoItemGroup, DemoSeparator };
+export { Demo, DemoItemGroup };
