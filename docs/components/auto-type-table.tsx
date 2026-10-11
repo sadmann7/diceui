@@ -10,10 +10,31 @@ function getGenerator() {
   return cachedGenerator;
 }
 
-export function AutoTypeTable(props: Record<string, unknown>) {
+interface AutoTypeTableProps extends Record<string, unknown> {
+  path?: string;
+  name?: string;
+  type?: string;
+}
+
+export async function AutoTypeTable(props: AutoTypeTableProps) {
+  const generator = getGenerator();
+  const docs = await generator.generateTypeTable({
+    path: props.path,
+    name: props.name,
+    type: props.type,
+  });
+
+  if (docs.every((doc) => doc.entries.length === 0)) {
+    return (
+      <p className="text-muted-foreground">
+        No props of its own. It accepts the native attributes of its element.
+      </p>
+    );
+  }
+
   return (
     <div className="auto-type-table">
-      <AutoTypeTableImpl {...props} generator={getGenerator()} />
+      <AutoTypeTableImpl {...props} generator={generator} />
     </div>
   );
 }
