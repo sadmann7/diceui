@@ -744,6 +744,71 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "hitbox-demo": {
+        name: "hitbox-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["checkbox","hitbox"],
+        files: [{
+          path: "registry/bases/base/examples/hitbox-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "hitbox-debug-demo": {
+        name: "hitbox-debug-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["checkbox","hitbox"],
+        files: [{
+          path: "registry/bases/base/examples/hitbox-debug-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "hitbox-positions-demo": {
+        name: "hitbox-positions-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["checkbox","hitbox"],
+        files: [{
+          path: "registry/bases/base/examples/hitbox-positions-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "hitbox-radii-demo": {
+        name: "hitbox-radii-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["checkbox","hitbox"],
+        files: [{
+          path: "registry/bases/base/examples/hitbox-radii-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "hitbox-sizes-demo": {
+        name: "hitbox-sizes-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["checkbox","hitbox"],
+        files: [{
+          path: "registry/bases/base/examples/hitbox-sizes-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "kanban-demo": {
         name: "kanban-demo",
         description: "",
@@ -1596,6 +1661,71 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         registryDependencies: ["masonry","skeleton"],
         files: [{
           path: "registry/bases/base/examples/masonry-ssr-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending-demo": {
+        name: "pending-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["pending","button"],
+        files: [{
+          path: "registry/bases/base/examples/pending-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending-form-demo": {
+        name: "pending-form-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["pending","button","input","label"],
+        files: [{
+          path: "registry/bases/base/examples/pending-form-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending-link-demo": {
+        name: "pending-link-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["pending"],
+        files: [{
+          path: "registry/bases/base/examples/pending-link-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending-switch-demo": {
+        name: "pending-switch-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["pending","switch","label"],
+        files: [{
+          path: "registry/bases/base/examples/pending-switch-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending-wrapper-demo": {
+        name: "pending-wrapper-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["pending","button"],
+        files: [{
+          path: "registry/bases/base/examples/pending-wrapper-demo.tsx",
           type: "registry:example",
           target: ""
         }],
@@ -2972,7 +3102,7 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         name: "hitbox-debug-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["button","hitbox"],
+        registryDependencies: ["checkbox","hitbox"],
         files: [{
           path: "registry/bases/radix/examples/hitbox-debug-demo.tsx",
           type: "registry:example",

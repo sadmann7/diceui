@@ -647,6 +647,61 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "hitbox-demo",
+    type: "registry:example",
+    registryDependencies: ["checkbox", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-debug-demo",
+    type: "registry:example",
+    registryDependencies: ["checkbox", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-debug-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-positions-demo",
+    type: "registry:example",
+    registryDependencies: ["checkbox", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-positions-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-radii-demo",
+    type: "registry:example",
+    registryDependencies: ["checkbox", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-radii-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "hitbox-sizes-demo",
+    type: "registry:example",
+    registryDependencies: ["checkbox", "hitbox"],
+    files: [
+      {
+        path: "examples/hitbox-sizes-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "kanban-demo",
     type: "registry:example",
     dependencies: [
@@ -1416,6 +1471,61 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/masonry-ssr-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-demo",
+    type: "registry:example",
+    registryDependencies: ["pending", "button"],
+    files: [
+      {
+        path: "examples/pending-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-form-demo",
+    type: "registry:example",
+    registryDependencies: ["pending", "button", "input", "label"],
+    files: [
+      {
+        path: "examples/pending-form-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-link-demo",
+    type: "registry:example",
+    registryDependencies: ["pending"],
+    files: [
+      {
+        path: "examples/pending-link-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-switch-demo",
+    type: "registry:example",
+    registryDependencies: ["pending", "switch", "label"],
+    files: [
+      {
+        path: "examples/pending-switch-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "pending-wrapper-demo",
+    type: "registry:example",
+    registryDependencies: ["pending", "button"],
+    files: [
+      {
+        path: "examples/pending-wrapper-demo.tsx",
         type: "registry:example",
       },
     ],
