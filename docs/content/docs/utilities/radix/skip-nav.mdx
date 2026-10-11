@@ -1,0 +1,144 @@
+---
+base: radix
+title: Skip Nav
+description: A link that lets keyboard and screen reader users skip past repeated navigation to the main content.
+new: true
+links:
+  api: /docs/utilities/radix/skip-nav#api-reference
+---
+
+<ComponentTabs name="skip-nav-demo" />
+
+## Installation
+
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```package-install
+npx shadcn@latest add @diceui/skip-nav
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps className="pt-2">
+
+<Step>Install the following dependencies:</Step>
+
+```package-install
+radix-ui
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource src="./registry/bases/radix/components/skip-nav.tsx" />
+
+</Steps>
+
+</TabsContent>
+
+</CodeTabs>
+
+## Layout
+
+Render the skip link as the first focusable element on the page, and give your main content the `MAIN_CONTENT_ID` it targets by default.
+
+```tsx
+import { MAIN_CONTENT_ID, SkipNav } from "@/components/skip-nav";
+
+<body>
+  <SkipNav />
+  <header>{/* Navigation */}</header>
+  <main id={MAIN_CONTENT_ID}>{/* Page content */}</main>
+</body>
+```
+
+If your page has a sticky header, give the target a `scroll-margin-top` so it isn't scrolled underneath it.
+
+```tsx
+<main id={MAIN_CONTENT_ID} className="scroll-mt-16">
+  {/* Page content */}
+</main>
+```
+
+## Examples
+
+### Custom target
+
+Point `href` at any element on the page and change the label with `children`.
+
+```tsx
+<SkipNav href="#search">Skip to search</SkipNav>
+```
+
+### Multiple skip links
+
+Render more than one when the page has several landmarks worth jumping to.
+
+```tsx
+<SkipNav />
+<SkipNav href="#footer">Skip to footer</SkipNav>
+```
+
+## API Reference
+
+### SkipNav
+
+A link that is visually hidden until it receives keyboard focus.
+
+<AutoTypeTable
+  path="./types/radix/utilities.ts"
+  name="SkipNavProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-slot]",
+      value: "skip-nav",
+    },
+  ]}
+/>
+
+### MAIN_CONTENT_ID
+
+The `id` that `SkipNav` targets by default, `"main-content"`. Use it on your main content so the link and its target stay in sync.
+
+```tsx
+<main id={MAIN_CONTENT_ID}>{/* Page content */}</main>
+```
+
+It only applies to the default `href`. When you pass a custom `href`, `SkipNav` ignores `MAIN_CONTENT_ID` and targets the `id` in that `href`, so give that element the matching `id` instead.
+
+```tsx
+<SkipNav href="#search">Skip to search</SkipNav>
+<input id="search" aria-label="Search" />
+```
+
+## Accessibility
+
+Skip links satisfy [WCAG 2.4.1 Bypass Blocks](https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks.html). The link stays in the accessibility tree and becomes visible when focused, so sighted keyboard users can see where it goes.
+
+On activation, focus moves to the target element, not just the scroll position. If the target isn't focusable, like `<main>`, it gets `tabindex="-1"` so it can receive focus, and the next <Kbd>Tab</Kbd> continues from there. Its focus outline is hidden while it has focus, and both changes are undone when focus leaves it. The URL hash isn't changed, so the skip doesn't add a history entry.
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Tab"],
+      description: "Reveals the skip link when it is the first focusable element.",
+    },
+    {
+      keys: ["Enter"],
+      description: "Moves focus to the target element.",
+    },
+  ]}
+/>

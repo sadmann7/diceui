@@ -1589,6 +1589,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "skip-nav-demo",
+    type: "registry:example",
+    registryDependencies: ["skip-nav"],
+    files: [
+      {
+        path: "examples/skip-nav-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "sortable-demo",
     type: "registry:example",
     dependencies: [

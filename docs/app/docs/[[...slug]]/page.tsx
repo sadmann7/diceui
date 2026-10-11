@@ -47,7 +47,7 @@ export default async function DocPage(props: PageProps<"/docs/[[...slug]]">) {
             <DocActions url={`${page.url}.md`} />
           </div>
         </div>
-        <DocsDescription className="mb-2.5">
+        <DocsDescription className="mb-2.5 sm:text-balance md:max-w-[80%]">
           {page.data.description}
         </DocsDescription>
       </div>

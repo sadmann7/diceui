@@ -1030,6 +1030,19 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "skip-nav-demo": {
+        name: "skip-nav-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["skip-nav"],
+        files: [{
+          path: "registry/bases/base/examples/skip-nav-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "sortable-demo": {
         name: "sortable-demo",
         description: "",
@@ -3898,6 +3911,19 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         registryDependencies: ["scroll-spy"],
         files: [{
           path: "registry/bases/radix/examples/scroll-spy-vertical-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skip-nav-demo": {
+        name: "skip-nav-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["skip-nav"],
+        files: [{
+          path: "registry/bases/radix/examples/skip-nav-demo.tsx",
           type: "registry:example",
           target: ""
         }],

@@ -262,6 +262,10 @@
   a:has(code) {
     @apply no-underline!;
   }
+  #nd-page,
+  #nd-page main {
+    scroll-margin-top: var(--fd-docs-row-3, 0px);
+  }
 }
 
 @utility container {
