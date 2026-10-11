@@ -60,6 +60,14 @@ import { MAIN_CONTENT_ID, SkipNav } from "@/components/skip-nav";
 </body>
 ```
 
+If your page has a sticky header, give the target a `scroll-margin-top` so it isn't scrolled underneath it.
+
+```tsx
+<main id={MAIN_CONTENT_ID} className="scroll-mt-16">
+  {/* Page content */}
+</main>
+```
+
 ## Examples
 
 ### Custom target
