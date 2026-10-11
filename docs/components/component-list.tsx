@@ -6,9 +6,9 @@ import { NewBadge } from "@/components/new-badge";
 import { DEFAULT_BASE } from "@/lib/constants";
 import { source } from "@/lib/source";
 
-type Section = "components" | "utilities";
+type Group = "components" | "utilities";
 
-function getPages(section: Section) {
+function getPages(group: Group) {
   const urls: string[] = [];
   function collect(nodes: Node[]) {
     for (const node of nodes) {
@@ -19,19 +19,19 @@ function getPages(section: Section) {
   collect(source.getPageTree().children);
 
   return urls
-    .filter((url) => url.startsWith(`/docs/${section}/${DEFAULT_BASE}/`))
+    .filter((url) => url.startsWith(`/docs/${group}/${DEFAULT_BASE}/`))
     .map((url) => source.getPage(url.split("/").slice(2)))
     .filter((page) => page !== undefined);
 }
 
 interface ComponentListProps {
-  section?: Section;
+  group?: Group;
 }
 
-export function ComponentList({ section = "components" }: ComponentListProps) {
+export function ComponentList({ group = "components" }: ComponentListProps) {
   return (
     <div className="not-prose grid grid-cols-2 gap-4 sm:grid-cols-3">
-      {getPages(section).map((page) => (
+      {getPages(group).map((page) => (
         <Link
           key={page.url}
           href={page.url}
