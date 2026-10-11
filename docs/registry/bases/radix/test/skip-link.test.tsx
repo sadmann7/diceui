@@ -45,6 +45,27 @@ describe.each([
     expect(main.scrollIntoView).toHaveBeenCalledWith({ block: "start" });
   });
 
+  test("hides the outline on a temporarily focusable target until blur", () => {
+    render(
+      <>
+        <SkipLink />
+        <main id="main-content" style={{ outline: "1px solid red" }}>
+          Content
+        </main>
+      </>,
+    );
+
+    const main = screen.getByRole("main");
+    fireEvent.click(screen.getByRole("link"));
+
+    expect(main.style.outline).toBe("none");
+
+    main.blur();
+
+    expect(main).not.toHaveAttribute("tabindex");
+    expect(main.style.outline).toBe("1px solid red");
+  });
+
   test("keeps a focusable target in the tab order", () => {
     render(
       <>

@@ -103,7 +103,7 @@ A link that is visually hidden until it receives keyboard focus.
 
 Skip links satisfy [WCAG 2.4.1 Bypass Blocks](https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks.html). The link stays in the accessibility tree and becomes visible when focused, so sighted keyboard users can see where it goes.
 
-On activation, focus moves to the target element, not just the scroll position. If the target isn't focusable, it gets `tabindex="-1"` so it can receive focus, and the next <Kbd>Tab</Kbd> continues from there. The URL hash isn't changed, so the skip doesn't add a history entry.
+On activation, focus moves to the target element, not just the scroll position. If the target isn't focusable, like `<main>`, it gets `tabindex="-1"` so it can receive focus, and the next <Kbd>Tab</Kbd> continues from there. Its focus outline is hidden while it has focus, and both changes are undone when focus leaves it. The URL hash isn't changed, so the skip doesn't add a history entry.
 
 ### Keyboard Interactions
 

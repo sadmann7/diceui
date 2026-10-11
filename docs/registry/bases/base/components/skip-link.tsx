@@ -50,10 +50,25 @@ function skipToTarget(
 
   event.preventDefault();
   if (target.tabIndex < 0 && !target.hasAttribute("tabindex")) {
-    target.tabIndex = -1;
+    makeTemporarilyFocusable(target);
   }
   target.focus({ preventScroll: true });
   target.scrollIntoView({ block: "start" });
+}
+
+function makeTemporarilyFocusable(target: HTMLElement) {
+  const outline = target.style.outline;
+
+  target.tabIndex = -1;
+  target.style.outline = "none";
+  target.addEventListener(
+    "blur",
+    () => {
+      target.removeAttribute("tabindex");
+      target.style.outline = outline;
+    },
+    { once: true },
+  );
 }
 
 function getTarget(href: string) {
