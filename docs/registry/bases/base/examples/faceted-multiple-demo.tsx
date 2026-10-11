@@ -24,9 +24,7 @@ const statuses = [
 export default function FacetedMultipleDemo() {
   return (
     <Faceted items={statuses} multiple>
-      <FacetedTrigger
-        render={<Button variant="outline" className="w-60" />}
-      >
+      <FacetedTrigger render={<Button variant="outline" className="w-48" />}>
         <FacetedValue placeholder="Filter status..." />
       </FacetedTrigger>
       <FacetedContent>
