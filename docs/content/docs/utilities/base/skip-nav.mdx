@@ -107,6 +107,13 @@ The `id` that `SkipNav` targets by default, `"main-content"`. Use it on your mai
 <main id={MAIN_CONTENT_ID}>{/* Page content */}</main>
 ```
 
+It only applies to the default `href`. When you pass a custom `href`, `SkipNav` ignores `MAIN_CONTENT_ID` and targets the `id` in that `href`, so give that element the matching `id` instead.
+
+```tsx
+<SkipNav href="#search">Skip to search</SkipNav>
+<input id="search" aria-label="Search" />
+```
+
 ## Accessibility
 
 Skip links satisfy [WCAG 2.4.1 Bypass Blocks](https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks.html). The link stays in the accessibility tree and becomes visible when focused, so sighted keyboard users can see where it goes.

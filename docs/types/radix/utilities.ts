@@ -56,6 +56,8 @@ export interface PortalProps extends CompositionProps {
 export interface SkipNavProps extends CompositionProps {
   /**
    * The hash of the element to skip to. On click, focus moves to that element.
+   * Defaults to `MAIN_CONTENT_ID`. A custom `href` replaces it, so the target
+   * needs the matching `id`.
    * @default "#main-content"
    */
   href?: string;
