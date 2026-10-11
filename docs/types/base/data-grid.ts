@@ -14,8 +14,6 @@ import type { VirtualItem } from "@tanstack/react-virtual";
 import type * as React from "react";
 
 import type { DataGridFeatures } from "@/lib/data-grid-features";
-import type { PopoverContent } from "@/registry/bases/base/ui/popover";
-import type { EmptyProps } from "@/types";
 import type {
   CellPosition,
   CellUpdate,
@@ -27,6 +25,8 @@ import type {
   RowHeightValue,
   SearchState,
 } from "@/lib/data-grid-types";
+import type { PopoverContent } from "@/registry/bases/base/ui/popover";
+import type { EmptyProps } from "@/types";
 
 export interface UseDataGridProps<TData extends RowData> extends Pick<
   TableOptions<DataGridFeatures, TData>,

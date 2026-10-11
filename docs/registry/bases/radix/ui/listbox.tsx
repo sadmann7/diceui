@@ -62,7 +62,7 @@ function ListboxItem({
     <ListboxPrimitive.Item
       data-slot="listbox-item"
       className={cn(
-        "flex w-full cursor-default items-center justify-between gap-2 rounded-md p-4 ring-1 ring-border outline-hidden select-none focus-visible:ring-ring data-disabled:pointer-events-none data-disabled:opacity-50 data-highlighted:bg-accent data-highlighted:text-accent-foreground",
+        "flex w-full cursor-default items-center justify-between gap-2 rounded-md p-4 ring-1 ring-border outline-hidden select-none focus-visible:ring-ring data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
         className,
       )}
       {...props}

@@ -56,7 +56,7 @@ function CheckboxGroupItem({
   ...props
 }: React.ComponentProps<typeof CheckboxGroupPrimitive.Item>) {
   return (
-    <label className="flex w-fit items-center gap-2 text-sm leading-none select-none has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50 has-data-invalid:text-destructive">
+    <label className="flex w-fit items-center gap-2 text-sm leading-none select-none has-data-invalid:text-destructive has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50">
       <CheckboxGroupPrimitive.Item
         data-slot="checkbox-group-item"
         className={cn(

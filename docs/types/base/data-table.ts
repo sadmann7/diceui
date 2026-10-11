@@ -7,13 +7,13 @@ import type {
 import type * as React from "react";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
-import type { DropdownMenuTrigger } from "@/registry/bases/base/ui/dropdown-menu";
-import type { EmptyProps } from "@/types";
 import type {
   ColumnFilterItem,
   DataTableQueryKeys,
   FilterOption,
 } from "@/lib/data-table-types";
+import type { DropdownMenuTrigger } from "@/registry/bases/base/ui/dropdown-menu";
+import type { EmptyProps } from "@/types";
 
 export interface UseDataTableProps<TData extends RowData> extends Pick<
   TableOptions<DataTableFeatures, TData>,
