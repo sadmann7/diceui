@@ -198,6 +198,32 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "data-grid-demo": {
+        name: "data-grid-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["data-grid"],
+        files: [{
+          path: "registry/bases/base/examples/data-grid-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "data-table-demo": {
+        name: "data-table-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["data-table"],
+        files: [{
+          path: "registry/bases/base/examples/data-table-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "cropper-video-demo": {
         name: "cropper-video-demo",
         description: "",

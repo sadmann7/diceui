@@ -1,0 +1,107 @@
+---
+title: November 2025 - New Components
+description: Scroll Spy, Compare Slider, FPS, Tour, Badge Overflow, Timeline, Time Picker, Stat, Key Value, Stack, and better RTL support.
+date: 2025-11-30
+---
+
+We've added ten new components, renamed two, and improved right-to-left support.
+
+- **Scroll Spy**
+- **Compare Slider**
+- **FPS**
+- **Tour**
+- **Badge Overflow**
+- **Timeline**
+- **Time Picker**
+- **Stat**
+- **Key Value**
+- **Stack**
+
+### Scroll Spy
+
+Automatically updates navigation links based on scroll position with support for nested sections and customizable behavior.
+
+<ComponentTabs name="scroll-spy-demo" />
+
+[Read the docs](/docs/components/scroll-spy)
+
+### Compare Slider
+
+An interactive before/after comparison slider for comparing two elements side by side.
+
+<ComponentTabs name="compare-slider-demo" />
+
+[Read the docs](/docs/components/compare-slider)
+
+### FPS
+
+A real-time frames per second (FPS) counter component for monitoring performance.
+
+<ComponentTabs name="fps-demo" />
+
+[Read the docs](/docs/components/fps)
+
+### Tour
+
+A guided tour component that highlights elements and provides step-by-step instructions to help users learn about your application.
+
+<ComponentTabs name="tour-demo" />
+
+[Read the docs](/docs/components/tour)
+
+### Badge Overflow
+
+A component that intelligently manages badge overflow by measuring available space and displaying only what fits with an overflow indicator.
+
+<ComponentTabs name="badge-overflow-demo" />
+
+[Read the docs](/docs/components/badge-overflow)
+
+### Timeline
+
+A flexible timeline component for displaying chronological events with support for different orientations, RTL layouts, and visual states.
+
+<ComponentTabs name="timeline-demo" />
+
+[Read the docs](/docs/components/timeline)
+
+### Time Picker
+
+An accessible time picker component with inline editing and dropdown selection. Automatically adapts to 12-hour or 24-hour format based on user locale.
+
+<ComponentTabs name="time-picker-demo" />
+
+[Read the docs](/docs/components/time-picker)
+
+### Stat
+
+A flexible component for displaying key metrics and statistics with support for trends, indicators, and descriptions.
+
+<ComponentTabs name="stat-demo" />
+
+[Read the docs](/docs/components/stat)
+
+### Key Value
+
+A dynamic input component for managing key-value pairs with paste support and validation.
+
+<ComponentTabs name="key-value-demo" />
+
+[Read the docs](/docs/components/key-value)
+
+### Stack
+
+A component that displays items in a stacked layout with hover expansion effects, similar to Sonner toast stacking.
+
+<ComponentTabs name="stack-demo" />
+
+[Read the docs](/docs/components/stack)
+
+### Renamed components
+
+- Input Group is now [Segmented Input](/docs/components/segmented-input).
+- Avatar is now [Avatar Group](/docs/components/avatar-group). The name Stack now belongs to the new [Stack](/docs/components/stack) component.
+
+### RTL support
+
+Components now read direction from Radix's `DirectionProvider` and `useDirection`, so every component shares one global direction context. Wrap your app in [Direction Provider](/docs/utilities/direction-provider) to switch to right-to-left.
