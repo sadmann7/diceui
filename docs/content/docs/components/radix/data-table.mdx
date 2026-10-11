@@ -306,14 +306,16 @@ cell: ({ row }) => (
   data={[
     {
       title: "server",
-      description: "Default. Pass the current page of `data` and a `pageCount`. Read the URL state on the server and query your database.",
+      description: "Default. Pass the current page of `data` and the total `pageCount` (required). Read the URL state on the server and query your database.",
     },
     {
       title: "client",
-      description: "Pass all rows as `data` without a `pageCount`. The hook sorts, filters, and paginates them in the browser.",
+      description: "Pass all rows as `data` and omit `pageCount`. The hook sorts, filters, and paginates them in the browser and derives the page count.",
     },
   ]}
 />
+
+`pageCount` is required in server mode and not allowed in client mode. TypeScript reports an error if you pass it in client mode or leave it out in server mode.
 
 ### Client Mode
 
