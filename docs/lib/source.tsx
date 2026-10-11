@@ -2,6 +2,7 @@ import { loader } from "fumadocs-core/source";
 import { toFumadocsSource } from "fumadocs-mdx/runtime/server";
 
 import { docs, meta } from "@/.source/server";
+import { NewBadge } from "@/components/new-badge";
 import { DOCS_CONTENT_ROUTE, DOCS_IMAGE_ROUTE } from "@/lib/constants";
 
 export const source = loader({
@@ -21,12 +22,7 @@ export const source = loader({
             node.name = (
               <span key={node.url} className="inline-flex items-center gap-2">
                 {node.name}
-                <span
-                  aria-hidden="true"
-                  title="New"
-                  className="size-2 rounded-full bg-blue-500"
-                />
-                <span className="sr-only">New</span>
+                <NewBadge />
               </span>
             );
           }
