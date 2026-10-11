@@ -1,12 +1,10 @@
 import * as React from "react";
 
-function useLazyRef<T>(fn: () => T) {
+function useLazyRef<T>(fn: () => T): React.RefObject<T> {
   const ref = React.useRef<T | null>(null);
-
   if (ref.current === null) {
     ref.current = fn();
   }
-
   return ref as React.RefObject<T>;
 }
 

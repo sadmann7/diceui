@@ -92,11 +92,11 @@ function DataGridKeyboardShortcutsImpl({
           },
           {
             keys: ["Tab"],
-            description: "Move to next cell",
+            description: "Move to next cell (wraps to next row)",
           },
           {
             keys: ["Shift", "Tab"],
-            description: "Move to previous cell",
+            description: "Move to previous cell (wraps to previous row)",
           },
           {
             keys: ["Home"],
@@ -160,6 +160,10 @@ function DataGridKeyboardShortcutsImpl({
         title: "Selection",
         shortcuts: [
           {
+            keys: ["Space"],
+            description: "Toggle row selection (in select column)",
+          },
+          {
             keys: ["Shift", "↑↓←→"],
             description: "Extend selection",
           },
@@ -211,6 +215,10 @@ function DataGridKeyboardShortcutsImpl({
           {
             keys: ["Double Click"],
             description: "Start editing cell",
+          },
+          {
+            keys: [modKey, "Enter"],
+            description: "Open link (in URL cell)",
           },
           ...(enableRowAdd
             ? [
@@ -422,13 +430,13 @@ function DataGridKeyboardShortcutsImpl({
             <Input
               ref={inputRef}
               placeholder="Search shortcuts..."
-              className="h-8 ps-8"
+              className="ps-8"
               value={input}
               onChange={onInputChange}
             />
           </div>
         </div>
-        <Separator className="mx-auto data-[orientation=horizontal]:w-[calc(100%-(--spacing(12)))]" />
+        <Separator className="mx-auto data-horizontal:w-[calc(100%-(--spacing(12)))]" />
         <div className="h-[40vh] overflow-y-auto px-6">
           {filteredGroups.length === 0 ? (
             <div className="flex h-full flex-col items-center justify-center gap-3 text-center">

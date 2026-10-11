@@ -19,7 +19,7 @@ links:
     npx shadcn@latest add "@diceui/data-table"
     ```
 
-    Filter and sort list installs bundle a `sortable` component. Primitives come from [`Base UI`](https://base-ui.com).
+    Filter and sort menu installs bundle a `sortable` component. Primitives come from [`Base UI`](https://base-ui.com).
   </Step>
   <Step>
     Wrap your application with the [`NuqsAdapter`](https://nuqs.47ng.com/docs/adapters) for query state management:
@@ -35,22 +35,22 @@ links:
   <Step>
     Install the following optional components:
 
-    [`DataTableSortList`](#datatablesortlist):
+    [`DataTableSortMenu`](#datatablesortmenu):
 
     ```package-install
-    npx shadcn@latest add "@diceui/data-table-sort-list"
-    ```
-
-    [`DataTableFilterList`](#datatablefilterlist):
-
-    ```package-install
-    npx shadcn@latest add "@diceui/data-table-filter-list"
+    npx shadcn@latest add "@diceui/data-table-sort-menu"
     ```
 
     [`DataTableFilterMenu`](#datatablefiltermenu):
 
     ```package-install
     npx shadcn@latest add "@diceui/data-table-filter-menu"
+    ```
+
+    [`DataTableCommandFilterMenu`](#datatablecommandfiltermenu):
+
+    ```package-install
+    npx shadcn@latest add "@diceui/data-table-command-filter-menu"
     ```
   </Step>
 </Steps>
@@ -63,8 +63,8 @@ Import the components and compose them together:
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
-import { DataTableFilterList } from "@/components/data-table/data-table-filter-list";
-import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
+import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu";
+import { DataTableSortMenu } from "@/components/data-table/data-table-sort-menu";
 import { useDataTable } from "@/hooks/use-data-table";
 
 const { table } = useDataTable({
@@ -76,15 +76,15 @@ const { table } = useDataTable({
 // With standard toolbar
 <DataTable table={table}>
   <DataTableToolbar table={table}>
-    <DataTableSortList table={table} />
+    <DataTableSortMenu table={table} />
   </DataTableToolbar>
 </DataTable>
 
 // With advanced toolbar
 <DataTable table={table}>
   <DataTableAdvancedToolbar table={table}>
-    <DataTableFilterList table={table} />
-    <DataTableSortList table={table} />
+    <DataTableFilterMenu table={table} />
+    <DataTableSortMenu table={table} />
   </DataTableAdvancedToolbar>
 </DataTable>
 ```
@@ -106,7 +106,7 @@ const { table } = useDataTable({
         id: "title", // [!code highlight]
         accessorKey: "title",
         header: ({ column }) => (
-          <DataTableColumnHeader column={column} title="Title" />
+          <DataTableColumnHeader column={column} label="Title" />
         ),
         cell: ({ row }) => <div>{row.getValue("title")}</div>,
         // Define the column meta options for sorting, filtering, and view options
@@ -133,7 +133,8 @@ const { table } = useDataTable({
       const { table } = useDataTable({
         data,
         columns,
-        // Pass the total number of pages for the table
+        // Pass the total number of pages for server-side data,
+        // or set `mode: "client"` to sort, filter, and paginate in the browser
         pageCount, // [!code highlight]
         initialState: {
           sorting: [{ id: "createdAt", desc: true }],
@@ -156,13 +157,13 @@ const { table } = useDataTable({
     ```tsx
     import { DataTable } from "@/components/data-table/data-table";
     import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
-    import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
+    import { DataTableSortMenu } from "@/components/data-table/data-table-sort-menu";
 
     function DataTableDemo() {
       return (
         <DataTable table={table}>
           <DataTableToolbar table={table}>
-            <DataTableSortList table={table} />
+            <DataTableSortMenu table={table} />
           </DataTableToolbar>
         </DataTable>
       );
@@ -175,15 +176,15 @@ const { table } = useDataTable({
 
     ```tsx
     import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
-    import { DataTableFilterList } from "@/components/data-table/data-table-filter-list";
     import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu";
+    import { DataTableSortMenu } from "@/components/data-table/data-table-sort-menu";
 
     function DataTableDemo() {
       return (
         <DataTable table={table}>
           <DataTableAdvancedToolbar table={table}>
-            <DataTableFilterList table={table} />
-            <DataTableSortList table={table} />
+            <DataTableFilterMenu table={table} />
+            <DataTableSortMenu table={table} />
           </DataTableAdvancedToolbar>
         </DataTable>
       );
@@ -192,23 +193,23 @@ const { table } = useDataTable({
   </Step>
 
   <Step>
-    Alternatively, swap out `DataTableFilterList` with `DataTableFilterMenu` for a command palette-style interface:
+    Alternatively, swap out `DataTableFilterMenu` with `DataTableCommandFilterMenu` for a command palette-style interface:
 
     ```tsx
     import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
-    import { DataTableFilterList } from "@/components/data-table/data-table-filter-list"; // [!code --]
-    import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu"; // [!code ++]
-    import { DataTableSortList } from "@/components/data-table/data-table-sort-list";
+    import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu"; // [!code --]
+    import { DataTableCommandFilterMenu } from "@/components/data-table/data-table-command-filter-menu"; // [!code ++]
+    import { DataTableSortMenu } from "@/components/data-table/data-table-sort-menu";
 
     function DataTableDemo() {
       return (
         <DataTable table={table}>
           <DataTableAdvancedToolbar table={table}>
             {/* [!code --] */}
-            <DataTableFilterList table={table} />
-            {/* [!code ++] */}
             <DataTableFilterMenu table={table} />
-            <DataTableSortList table={table} />
+            {/* [!code ++] */}
+            <DataTableCommandFilterMenu table={table} />
+            <DataTableSortMenu table={table} />
           </DataTableAdvancedToolbar>
         </DataTable>
       );
@@ -269,7 +270,7 @@ const columns = React.useMemo<ColumnDef<Project>[]>(() => [
     accessorKey: "title", // [!code highlight]
     // Optional: Custom header component
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Title" />
+      <DataTableColumnHeader column={column} label="Title" />
     ),
     // Optional: Custom cell component
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
@@ -481,31 +482,31 @@ Controls column visibility and display preferences in the data table.
   name="DataTableViewOptionsProps"
 />
 
-### DataTableSortList
+### DataTableSortMenu
 
 List of applied sorting with ability to add, remove, and modify sorting.
 
 <AutoTypeTable
   path="./types/base/data-table.ts"
-  name="DataTableSortListProps"
+  name="DataTableSortMenuProps"
 />
 
-### DataTableFilterList
+### DataTableFilterMenu
 
 List of applied filters with ability to add, remove, and modify filters.
 
 <AutoTypeTable
   path="./types/base/data-table.ts"
-  name="DataTableFilterListProps"
+  name="DataTableFilterMenuProps"
 />
 
-### DataTableFilterMenu
+### DataTableCommandFilterMenu
 
-Filter menu with ability to add, remove, and modify filters.
+Command palette-style filter menu with ability to add, remove, and modify filters.
 
 <AutoTypeTable
   path="./types/base/data-table.ts"
-  name="DataTableFilterMenuProps"
+  name="DataTableCommandFilterMenuProps"
 />
 
 ### DataTablePagination

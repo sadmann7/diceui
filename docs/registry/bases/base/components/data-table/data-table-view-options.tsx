@@ -1,31 +1,34 @@
 "use client";
 
-import { type RowData, Subscribe, type Table } from "@tanstack/react-table";
+import {
+  type ReactTable,
+  type RowData,
+  Subscribe,
+} from "@tanstack/react-table";
 import { cn } from "cn";
 import * as React from "react";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
 
 import { Button } from "@/registry/bases/base/ui/button";
+import { useDirection } from "@/registry/bases/base/ui/direction";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/registry/bases/base/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/registry/bases/base/ui/popover";
+  Faceted,
+  FacetedContent,
+  FacetedEmpty,
+  FacetedGroup,
+  FacetedInput,
+  FacetedItem,
+  FacetedItemIndicator,
+  FacetedList,
+  FacetedTrigger,
+} from "@/registry/bases/base/ui/faceted";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 interface DataTableViewOptionsProps<
   TData extends RowData,
-> extends React.ComponentProps<typeof PopoverContent> {
-  table: Table<DataTableFeatures, TData>;
+> extends React.ComponentProps<typeof FacetedContent> {
+  table: ReactTable<DataTableFeatures, TData, unknown>;
   disabled?: boolean;
 }
 
@@ -35,6 +38,7 @@ export function DataTableViewOptions<TData extends RowData>({
   className,
   ...props
 }: DataTableViewOptionsProps<TData>) {
+  const dir = useDirection();
   const columns = React.useMemo(
     () =>
       table
@@ -47,57 +51,62 @@ export function DataTableViewOptions<TData extends RowData>({
   );
 
   return (
-    <Popover>
-      <PopoverTrigger
-        render={
-          <Button
-            aria-label="Toggle columns"
-            role="combobox"
-            variant="outline"
-            className="ml-auto hidden h-8 font-normal lg:flex"
-            disabled={disabled}
-          />
-        }
-      >
-        <IconPlaceholder
-          lucide="Settings2"
-          tabler="IconSettings"
-          hugeicons="Settings05Icon"
-          phosphor="GearIcon"
-          remixicon="RiSettingsLine"
-          className="text-muted-foreground"
-        />
-        View
-      </PopoverTrigger>
-      <PopoverContent className={cn("w-44 p-0", className)} {...props}>
-        <Command>
-          <CommandInput placeholder="Search columns..." />
-          <CommandList>
-            <CommandEmpty>No columns found.</CommandEmpty>
-            <CommandGroup>
-              <Subscribe source={table.atoms.columnVisibility}>
-                {(columnVisibility) =>
-                  columns.map((column) => {
-                    const isVisible = columnVisibility[column.id] !== false;
-
-                    return (
-                      <CommandItem
-                        key={column.id}
-                        data-checked={isVisible}
-                        onSelect={() => column.toggleVisibility(!isVisible)}
-                      >
-                        <span className="truncate">
-                          {column.columnDef.meta?.label ?? column.id}
-                        </span>
-                      </CommandItem>
-                    );
-                  })
-                }
-              </Subscribe>
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </PopoverContent>
-    </Popover>
+    <Subscribe source={table.atoms.columnVisibility}>
+      {(columnVisibility) => (
+        <Faceted
+          multiple
+          value={columns
+            .filter((column) => columnVisibility[column.id] !== false)
+            .map((column) => column.id)}
+        >
+          <FacetedTrigger
+            render={
+              <Button
+                aria-label="View columns"
+                variant="outline"
+                className="ms-auto hidden lg:flex"
+                disabled={disabled}
+              />
+            }
+          >
+            <IconPlaceholder
+              lucide="Settings2"
+              tabler="IconSettings"
+              hugeicons="Settings05Icon"
+              phosphor="GearIcon"
+              remixicon="RiSettingsLine"
+              className="text-muted-foreground"
+            />
+            View
+          </FacetedTrigger>
+          <FacetedContent
+            aria-label="Columns"
+            dir={dir}
+            align="center"
+            className={cn("w-44", className)}
+            {...props}
+          >
+            <FacetedInput placeholder="Search columns..." />
+            <FacetedList>
+              <FacetedEmpty>No columns found.</FacetedEmpty>
+              <FacetedGroup>
+                {columns.map((column) => (
+                  <FacetedItem
+                    key={column.id}
+                    value={column.id}
+                    onSelect={() => column.toggleVisibility()}
+                  >
+                    <span className="truncate">
+                      {column.columnDef.meta?.label ?? column.id}
+                    </span>
+                    <FacetedItemIndicator />
+                  </FacetedItem>
+                ))}
+              </FacetedGroup>
+            </FacetedList>
+          </FacetedContent>
+        </Faceted>
+      )}
+    </Subscribe>
   );
 }

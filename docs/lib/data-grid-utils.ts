@@ -1,4 +1,11 @@
-import type { Column, RowData, Table } from "@tanstack/react-table";
+import type {
+  Column,
+  ColumnOrderState,
+  ColumnPinningState,
+  ColumnVisibilityState,
+  RowData,
+  Table,
+} from "@tanstack/react-table";
 import type * as React from "react";
 
 import {
@@ -77,21 +84,28 @@ export function matchSelectOption(
   )?.value;
 }
 
-export function getCellKey(rowIndex: number, columnId: string) {
-  return `${rowIndex}:${columnId}`;
+// Unit separator, so row ids and column ids may contain any printable character
+const CELL_KEY_SEPARATOR = "\u001f";
+
+export function getCellKey(rowId: string, columnId: string) {
+  return `${rowId}${CELL_KEY_SEPARATOR}${columnId}`;
 }
 
-export function parseCellKey(cellKey: string): Required<CellPosition> {
-  const parts = cellKey.split(":");
-  const rowIndexStr = parts[0];
-  const columnId = parts[1];
-  if (rowIndexStr && columnId) {
-    const rowIndex = parseInt(rowIndexStr, 10);
-    if (!Number.isNaN(rowIndex)) {
-      return { rowIndex, columnId };
-    }
-  }
-  return { rowIndex: 0, columnId: "" };
+export function parseCellKey(cellKey: string): CellPosition {
+  const separatorIndex = cellKey.indexOf(CELL_KEY_SEPARATOR);
+  if (separatorIndex === -1) return { rowId: "", columnId: "" };
+  return {
+    rowId: cellKey.slice(0, separatorIndex),
+    columnId: cellKey.slice(separatorIndex + CELL_KEY_SEPARATOR.length),
+  };
+}
+
+/** Position of a row in the rendered row model, or `-1` if it isn't rendered. */
+export function getRowIndexById<TData extends RowData>(
+  table: Table<DataGridFeatures, TData>,
+  rowId: string,
+) {
+  return table.getRowModel().rowsById[rowId]?.getDisplayIndex() ?? -1;
 }
 
 export function getRowHeightValue(rowHeight: RowHeightValue): number {
@@ -187,6 +201,163 @@ export function getColumnPinningStyle<TData extends RowData>(params: {
     width: column.getSize(),
     zIndex: isPinned ? 1 : undefined,
   };
+}
+
+export function getVisibleColumnIds(params: {
+  columnIds: string[];
+  columnVisibility?: ColumnVisibilityState;
+  columnPinning?: Partial<ColumnPinningState>;
+  columnOrder?: ColumnOrderState;
+}): string[] {
+  const {
+    columnIds,
+    columnVisibility = {},
+    columnPinning = {},
+    columnOrder = [],
+  } = params;
+
+  const knownIds = new Set(columnIds);
+  const orderedIds = new Set(columnOrder.filter((id) => knownIds.has(id)));
+  for (const id of columnIds) orderedIds.add(id);
+
+  const visibleIds = [...orderedIds].filter(
+    (id) => columnVisibility[id] !== false,
+  );
+  const visibleIdSet = new Set(visibleIds);
+  const startIds = (columnPinning.start ?? []).filter((id) =>
+    visibleIdSet.has(id),
+  );
+  const endIds = (columnPinning.end ?? []).filter((id) => visibleIdSet.has(id));
+  const pinnedIds = new Set([...startIds, ...endIds]);
+
+  return [
+    ...startIds,
+    ...visibleIds.filter((id) => !pinnedIds.has(id)),
+    ...endIds,
+  ];
+}
+
+export function getTabTargetCell(params: {
+  rowIndex: number;
+  columnId: string;
+  columnIds: string[];
+  rowCount: number;
+  isBackward: boolean;
+  getIsColumnTabbable?: (columnId: string) => boolean;
+}): { rowIndex: number; columnId: string } | null {
+  const {
+    rowIndex,
+    columnId,
+    columnIds,
+    rowCount,
+    isBackward,
+    getIsColumnTabbable = () => true,
+  } = params;
+  const colIndex = columnIds.indexOf(columnId);
+  if (colIndex === -1 || !columnIds.some(getIsColumnTabbable)) return null;
+
+  const step = isBackward ? -1 : 1;
+  let nextRowIndex = rowIndex;
+  let nextColIndex = colIndex;
+
+  while (true) {
+    nextColIndex += step;
+    if (nextColIndex >= columnIds.length) {
+      nextColIndex = 0;
+      nextRowIndex++;
+    } else if (nextColIndex < 0) {
+      nextColIndex = columnIds.length - 1;
+      nextRowIndex--;
+    }
+
+    if (nextRowIndex < 0 || nextRowIndex >= rowCount) return null;
+
+    const nextColumnId = columnIds[nextColIndex];
+    if (nextColumnId && getIsColumnTabbable(nextColumnId)) {
+      return { rowIndex: nextRowIndex, columnId: nextColumnId };
+    }
+  }
+}
+
+export function getCellFocusTarget(cellElement: HTMLElement): HTMLElement {
+  if (cellElement.dataset.slot === "grid-cell-wrapper") return cellElement;
+  return (
+    cellElement.querySelector<HTMLElement>(
+      'button, a[href], [role="checkbox"]',
+    ) ?? cellElement
+  );
+}
+
+export function getColumnFitSize(params: {
+  gridElement: HTMLElement;
+  columnId: string;
+  minSize: number;
+  maxSize: number;
+  wrapperContentSize?: number;
+}): number | null {
+  const {
+    gridElement,
+    columnId,
+    minSize,
+    maxSize,
+    wrapperContentSize = 0,
+  } = params;
+  const cellElements = gridElement.querySelectorAll<HTMLElement>(
+    `:is([data-slot="grid-header-cell"], [data-slot="grid-cell"])[data-column-id="${CSS.escape(columnId)}"]`,
+  );
+  if (cellElements.length === 0) return null;
+
+  let cellChromeSize = 0;
+  for (const cellElement of cellElements) {
+    const wrapperElement = cellElement.querySelector<HTMLElement>(
+      '[data-slot="grid-cell-wrapper"]',
+    );
+    if (!wrapperElement) continue;
+    cellChromeSize =
+      cellElement.getBoundingClientRect().width - wrapperElement.clientWidth;
+    break;
+  }
+
+  const measurer = document.createElement("div");
+  measurer.setAttribute("aria-hidden", "true");
+  Object.assign(measurer.style, {
+    position: "absolute",
+    top: "0",
+    insetInlineStart: "0",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    visibility: "hidden",
+    pointerEvents: "none",
+    contain: "layout style",
+  });
+
+  for (const cellElement of cellElements) {
+    const clone = cellElement.cloneNode(true) as HTMLElement;
+    clone.removeAttribute("id");
+    Object.assign(clone.style, {
+      position: "static",
+      width: "max-content",
+      minWidth: "0",
+      maxWidth: "none",
+    });
+    for (const element of clone.querySelectorAll<HTMLElement>("*")) {
+      element.style.whiteSpace = "nowrap";
+      element.style.flexWrap = "nowrap";
+      element.style.webkitLineClamp = "unset";
+    }
+    measurer.append(clone);
+  }
+
+  gridElement.append(measurer);
+  let contentSize =
+    wrapperContentSize > 0 ? wrapperContentSize + cellChromeSize : 0;
+  for (const clone of measurer.children) {
+    contentSize = Math.max(contentSize, clone.getBoundingClientRect().width);
+  }
+  measurer.remove();
+
+  return Math.min(maxSize, Math.max(minSize, Math.ceil(contentSize)));
 }
 
 export function getScrollDirection(
@@ -391,7 +562,9 @@ export function getIsInPopover(element: unknown): boolean {
     element.closest("[data-grid-cell-editor]") !== null ||
     element.closest("[data-grid-popover]") !== null ||
     element.closest("[data-slot='dropdown-menu-content']") !== null ||
-    element.closest("[data-slot='popover-content']") !== null
+    element.closest("[data-slot='popover-content']") !== null ||
+    element.closest("[data-slot='select-content']") !== null ||
+    element.closest("[data-slot='faceted-content']") !== null
   );
 }
 

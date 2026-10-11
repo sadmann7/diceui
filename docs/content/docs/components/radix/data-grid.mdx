@@ -157,17 +157,18 @@ Add and delete rows with callbacks:
 
 ```tsx
 const onRowAdd = React.useCallback(() => {
-  setData((prev) => [...prev, { id: generateId() }]);
+  const newRow = { id: generateId() };
+  setData((prev) => [...prev, newRow]);
   
   return {
-    rowIndex: data.length,
+    rowId: newRow.id,
     columnId: "name", // Focus this column after creating the new row
   };
-}, [data.length]);
+}, []);
 
-const onRowsDelete = React.useCallback((rows, rowIndices) => {
+const onRowsDelete = React.useCallback((rows, rowIds) => {
   // rows: array of row data objects
-  // rowIndices: array of row indices
+  // rowIds: array of row ids
   setData((prev) => prev.filter((row) => !rows.includes(row)));
 }, []);
 
@@ -274,8 +275,8 @@ export default function MyDataGrid() {
     const newRow = { id: generateId() };
     setData((prev) => [...prev, newRow]);
     trackRowsAdd([newRow]);
-    return { rowIndex: data.length, columnId: "name" };
-  }, [data.length, trackRowsAdd]);
+    return { rowId: newRow.id, columnId: "name" };
+  }, [trackRowsAdd]);
 
   const onRowsDelete = React.useCallback(
     (rows) => {
@@ -350,7 +351,7 @@ const { table, ...dataGridProps } = useDataGrid({
   columns,
   autoFocus: true, // Focus first navigable cell
   // Or focus a specific cell:
-  // autoFocus: { rowIndex: 0, columnId: "name" },
+  // autoFocus: { rowId: "row-1", columnId: "name" },
 });
 ```
 
@@ -572,7 +573,7 @@ File upload with support for multiple files and file management:
 To use file cells, provide upload and delete handlers:
 
 ```tsx
-const onFilesUpload = React.useCallback(async ({ files, rowIndex, columnId }) => {
+const onFilesUpload = React.useCallback(async ({ files, rowId, columnId }) => {
   // Upload files to your server/storage
   const formData = new FormData();
   files.forEach(file => formData.append('files', file));
@@ -594,7 +595,7 @@ const onFilesUpload = React.useCallback(async ({ files, rowIndex, columnId }) =>
   }));
 }, []);
 
-const onFilesDelete = React.useCallback(async ({ fileIds, rowIndex, columnId }) => {
+const onFilesDelete = React.useCallback(async ({ fileIds, rowId, columnId }) => {
   // Delete files from your server/storage
   await fetch('/api/files', {
     method: 'DELETE',
@@ -667,13 +668,14 @@ You can create custom cell variants by implementing the `DataGridCellProps` inte
 
 ```tsx
 import { DataGridCellWrapper } from "@/components/data-grid/data-grid-cell-wrapper";
-import type { DataGridCellProps } from "@/types/data-grid";
+import type { DataGridCellProps } from "@/lib/data-grid-types";
 
 export function CustomCell<TData>({
   cell,
   tableMeta,
-  rowIndex,
+  rowId,
   columnId,
+  rowHeight,
   isFocused,
   isEditing,
   isSelected,
@@ -687,8 +689,9 @@ export function CustomCell<TData>({
     <DataGridCellWrapper
       cell={cell}
       tableMeta={tableMeta}
-      rowIndex={rowIndex}
+      rowId={rowId}
       columnId={columnId}
+      rowHeight={rowHeight}
       isEditing={isEditing}
       isFocused={isFocused}
       isSelected={isSelected}
