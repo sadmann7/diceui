@@ -1,0 +1,121 @@
+---
+base: base
+title: Skip Link
+description: A link that lets keyboard and screen reader users skip past repeated navigation to the main content.
+new: true
+links:
+  api: /docs/utilities/base/skip-link#api-reference
+---
+
+<ComponentTabs name="skip-link-demo" />
+
+## Installation
+
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```package-install
+npx shadcn@latest add @diceui/skip-link
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps className="pt-2">
+
+<Step>Install the following dependencies:</Step>
+
+```package-install
+@base-ui/react
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource src="./registry/bases/base/components/skip-link.tsx" />
+
+</Steps>
+
+</TabsContent>
+
+</CodeTabs>
+
+## Layout
+
+Render the skip link as the first focusable element on the page, and give your main content a matching `id`.
+
+```tsx
+import { SkipLink } from "@/components/skip-link";
+
+<body>
+  <SkipLink />
+  <header>{/* Navigation */}</header>
+  <main id="main-content">{/* Page content */}</main>
+</body>
+```
+
+## Examples
+
+### Custom target
+
+Point `href` at any element on the page and change the label with `children`.
+
+```tsx
+<SkipLink href="#search">Skip to search</SkipLink>
+```
+
+### Multiple skip links
+
+Render more than one when the page has several landmarks worth jumping to.
+
+```tsx
+<SkipLink />
+<SkipLink href="#footer">Skip to footer</SkipLink>
+```
+
+## API Reference
+
+### SkipLink
+
+A link that is visually hidden until it receives keyboard focus.
+
+<AutoTypeTable
+  path="./types/base/utilities.ts"
+  name="SkipLinkProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-slot]",
+      value: "skip-link",
+    },
+  ]}
+/>
+
+## Accessibility
+
+Skip links satisfy [WCAG 2.4.1 Bypass Blocks](https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks.html). The link stays in the accessibility tree and becomes visible when focused, so sighted keyboard users can see where it goes.
+
+On activation, focus moves to the target element, not just the scroll position. If the target isn't focusable, it gets `tabindex="-1"` so it can receive focus, and the next <Kbd>Tab</Kbd> continues from there. The URL hash isn't changed, so the skip doesn't add a history entry.
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Tab"],
+      description: "Reveals the skip link when it is the first focusable element.",
+    },
+    {
+      keys: ["Enter"],
+      description: "Moves focus to the target element.",
+    },
+  ]}
+/>

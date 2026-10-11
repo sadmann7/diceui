@@ -56,6 +56,17 @@ export const components: Registry["items"] = [
     dependencies: ["@diceui/pptx"],
   },
   {
+    name: "skip-link",
+    type: "registry:component",
+    dependencies: ["@base-ui/react"],
+    files: [
+      {
+        path: "components/skip-link.tsx",
+        type: "registry:component",
+      },
+    ],
+  },
+  {
     name: "visually-hidden-input",
     type: "registry:component",
     files: [

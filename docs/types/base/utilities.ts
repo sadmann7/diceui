@@ -53,6 +53,20 @@ export interface PortalProps extends RenderProps {
   container?: Element | DocumentFragment | null;
 }
 
+export interface SkipLinkProps extends RenderProps {
+  /**
+   * The hash of the element to skip to. On click, focus moves to that element.
+   * @default "#main-content"
+   */
+  href?: string;
+
+  /**
+   * The link text.
+   * @default "Skip to content"
+   */
+  children?: React.ReactNode;
+}
+
 export interface VisuallyHiddenProps extends RenderProps {}
 
 export interface VisuallyHiddenInputProps {

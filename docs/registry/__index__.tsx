@@ -730,6 +730,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/skip-link.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "visually-hidden-input": {
         name: "visually-hidden-input",
         description: "",
@@ -1517,6 +1530,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/skip-link.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -2316,6 +2342,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/skip-link.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "visually-hidden-input": {
         name: "visually-hidden-input",
         description: "",
@@ -3103,6 +3142,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/skip-link.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -3902,6 +3954,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/skip-link.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "visually-hidden-input": {
         name: "visually-hidden-input",
         description: "",
@@ -4689,6 +4754,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/skip-link.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -5488,6 +5566,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/skip-link.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "visually-hidden-input": {
         name: "visually-hidden-input",
         description: "",
@@ -6275,6 +6366,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/skip-link.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -7171,6 +7275,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/radix/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/components/skip-link.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -8086,6 +8203,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/components/skip-link.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "visually-hidden": {
         name: "visually-hidden",
         description: "",
@@ -8989,6 +9119,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/radix/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/components/skip-link.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -9904,6 +10047,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/components/skip-link.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "visually-hidden": {
         name: "visually-hidden",
         description: "",
@@ -10807,6 +10963,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/radix/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/components/skip-link.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -11722,6 +11891,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/components/skip-link.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "visually-hidden": {
         name: "visually-hidden",
         description: "",
@@ -12631,6 +12813,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/components/skip-link.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "visually-hidden": {
         name: "visually-hidden",
         description: "",
@@ -13534,6 +13729,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/radix/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "skip-link": {
+        name: "skip-link",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/components/skip-link.tsx",
           type: "registry:component",
           target: ""
         }],

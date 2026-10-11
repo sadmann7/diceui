@@ -847,6 +847,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "skip-link-demo",
+    type: "registry:example",
+    registryDependencies: ["skip-link"],
+    files: [
+      {
+        path: "examples/skip-link-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "sortable-demo",
     type: "registry:example",
     dependencies: [

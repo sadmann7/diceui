@@ -76,6 +76,17 @@ export const components: Registry["items"] = [
     dependencies: ["@diceui/pptx"],
   },
   {
+    name: "skip-link",
+    type: "registry:component",
+    dependencies: ["radix-ui"],
+    files: [
+      {
+        path: "components/skip-link.tsx",
+        type: "registry:component",
+      },
+    ],
+  },
+  {
     name: "visually-hidden",
     type: "registry:component",
     dependencies: ["radix-ui"],
