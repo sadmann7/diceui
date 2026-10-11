@@ -79,7 +79,7 @@ export interface FacetedValueProps {
 
   /**
    * Custom content, or a function that receives the selected options.
-   * By default, up to two selected options render as badges, and more render as a count.
+   * By default, a single selection renders as text. Multiple selections render as badges, up to two, then as a count.
    *
    * ```tsx
    * <FacetedValue>

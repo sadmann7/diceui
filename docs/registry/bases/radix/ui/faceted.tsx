@@ -267,13 +267,19 @@ function FacetedValue({
   if (typeof children === "function") return children(selected);
   if (children != null) return children;
 
-  if (selected.length === 0) {
+  // A single selection reads as text, like a select. Multiple selections render as badges.
+  if (selected.length === 0 || !store.getProps().multiple) {
+    const [item] = selected;
+
     return (
       <span
         data-slot="faceted-value"
-        className="flex w-full items-center gap-1 text-muted-foreground"
+        className={cn(
+          "flex w-full min-w-0 items-center gap-1",
+          !item && "text-muted-foreground",
+        )}
       >
-        {placeholder}
+        <span className="truncate">{item ? item.label : placeholder}</span>
         <IconPlaceholder
           lucide="ChevronDown"
           tabler="IconChevronDown"
