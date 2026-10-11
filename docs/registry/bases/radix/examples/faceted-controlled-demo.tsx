@@ -24,7 +24,7 @@ const priorities = [
 ];
 
 export default function FacetedControlledDemo() {
-  const [value, setValue] = React.useState<string[]>(["high"]);
+  const [value, setValue] = React.useState<string[]>(["medium"]);
 
   return (
     <div className="flex flex-col items-center gap-4">
