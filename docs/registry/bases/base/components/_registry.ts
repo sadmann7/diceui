@@ -23,6 +23,28 @@ export const components: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "hitbox",
+    type: "registry:component",
+    files: [
+      {
+        path: "components/hitbox.tsx",
+        type: "registry:component",
+      },
+    ],
+    dependencies: ["@base-ui/react"],
+  },
+  {
+    name: "pending",
+    type: "registry:component",
+    files: [
+      {
+        path: "components/pending.tsx",
+        type: "registry:component",
+      },
+    ],
+    dependencies: ["@base-ui/react"],
+  },
+  {
     name: "portal",
     type: "registry:component",
     files: [
@@ -54,6 +76,17 @@ export const components: Registry["items"] = [
     ],
     registryDependencies: ["select"],
     dependencies: ["@diceui/pptx"],
+  },
+  {
+    name: "visually-hidden",
+    type: "registry:component",
+    files: [
+      {
+        path: "components/visually-hidden.tsx",
+        type: "registry:component",
+      },
+    ],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "visually-hidden-input",

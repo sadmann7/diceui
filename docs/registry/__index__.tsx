@@ -691,6 +691,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "hitbox": {
+        name: "hitbox",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/hitbox.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending": {
+        name: "pending",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/pending.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "portal": {
         name: "portal",
         description: "",
@@ -724,6 +750,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "visually-hidden": {
+        name: "visually-hidden",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -1484,6 +1523,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "hitbox": {
+        name: "hitbox",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/hitbox.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending": {
+        name: "pending",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/pending.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "portal": {
         name: "portal",
         description: "",
@@ -1517,6 +1582,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "visually-hidden": {
+        name: "visually-hidden",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -2277,6 +2355,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "hitbox": {
+        name: "hitbox",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/hitbox.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending": {
+        name: "pending",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/pending.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "portal": {
         name: "portal",
         description: "",
@@ -2310,6 +2414,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "visually-hidden": {
+        name: "visually-hidden",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -3070,6 +3187,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "hitbox": {
+        name: "hitbox",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/hitbox.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending": {
+        name: "pending",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/pending.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "portal": {
         name: "portal",
         description: "",
@@ -3103,6 +3246,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "visually-hidden": {
+        name: "visually-hidden",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -3863,6 +4019,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "hitbox": {
+        name: "hitbox",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/hitbox.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending": {
+        name: "pending",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/pending.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "portal": {
         name: "portal",
         description: "",
@@ -3896,6 +4078,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "visually-hidden": {
+        name: "visually-hidden",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -4656,6 +4851,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "hitbox": {
+        name: "hitbox",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/hitbox.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending": {
+        name: "pending",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/pending.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "portal": {
         name: "portal",
         description: "",
@@ -4689,6 +4910,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "visually-hidden": {
+        name: "visually-hidden",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -5449,6 +5683,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "hitbox": {
+        name: "hitbox",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/hitbox.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending": {
+        name: "pending",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/pending.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "portal": {
         name: "portal",
         description: "",
@@ -5482,6 +5742,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "visually-hidden": {
+        name: "visually-hidden",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -6242,6 +6515,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "hitbox": {
+        name: "hitbox",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/hitbox.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "pending": {
+        name: "pending",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/pending.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "portal": {
         name: "portal",
         description: "",
@@ -6275,6 +6574,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["select"],
         files: [{
           path: "registry/bases/base/components/presentation-zoom-select.tsx",
+          type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "visually-hidden": {
+        name: "visually-hidden",
+        description: "",
+        type: "registry:component",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/components/visually-hidden.tsx",
           type: "registry:component",
           target: ""
         }],

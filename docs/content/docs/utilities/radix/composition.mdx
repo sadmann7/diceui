@@ -1,8 +1,8 @@
 ---
 title: Composition
-description: A collection of utility functions for composing event handlers and refs in React components.
+description: Utilities for composing multiple refs into a single ref in React components.
 links:
-  api: /docs/utilities/composition#api-reference
+  api: /docs/utilities/radix/composition#api-reference
 ---
 
 ## Installation
@@ -17,7 +17,7 @@ links:
 <TabsContent value="cli">
 
 ```package-install
-npx shadcn@latest add @diceui/composition
+npx shadcn@latest add @diceui/compose-refs
 ```
 
 </TabsContent>
@@ -26,7 +26,7 @@ npx shadcn@latest add @diceui/composition
 
 <Steps className="pt-2">
 
-<Step>Copy and paste the following code into your project.</Step>
+<Step>Copy and paste the following code into your `lib/compose-refs.ts` file.</Step>
 
 <ComponentSource name="compose-refs" />
 
@@ -38,33 +38,38 @@ npx shadcn@latest add @diceui/composition
 
 ## Usage
 
-### Composing Refs
+### useComposedRefs
 
-#### useComposedRefs
+Use the hook inside components. It returns a memoized ref callback, so the ref stays stable across renders.
 
 ```tsx
+import * as React from "react"
 import { useComposedRefs } from "@/lib/compose-refs"
 
-export function Input({ forwardedRef, ...props }) {
-  const localRef = React.useRef(null)
-  const composedRefs = useComposedRefs(forwardedRef, localRef)
+function Input({ ref, ...props }: React.ComponentProps<"input">) {
+  const localRef = React.useRef<HTMLInputElement>(null)
+  const composedRef = useComposedRefs(ref, localRef)
 
-  return <input ref={composedRefs} {...props} />
+  return <input ref={composedRef} {...props} />
 }
 ```
 
-#### composeRefs
+### composeRefs
+
+Use the plain function outside of render, or when you can't call a hook.
 
 ```tsx
+import * as React from "react"
 import { composeRefs } from "@/lib/compose-refs"
 
-export function Input({ forwardedRef, ...props }) {
-  const localRef = React.useRef(null)
-  const composedRefs = composeRefs(forwardedRef, localRef)
+function Input({ ref, ...props }: React.ComponentProps<"input">) {
+  const localRef = React.useRef<HTMLInputElement>(null)
 
-  return <input ref={composedRefs} {...props} />
-} 
+  return <input ref={composeRefs(ref, localRef)} {...props} />
+}
 ```
+
+Both accept callback refs and ref objects. When a callback ref returns a cleanup function, it runs on unmount.
 
 ## API Reference
 
