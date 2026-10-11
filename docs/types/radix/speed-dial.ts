@@ -135,7 +135,7 @@ export interface SpeedDialActionProps
     Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {
   /**
-   * Callback fired when the action is selected.
+   * Event handler called when the action is selected.
    * The speed dial will close after the action is selected unless the event is prevented.
    *
    * ```ts

@@ -141,7 +141,7 @@ export interface SpeedDialActionProps extends Omit<
 > {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   /**
-   * Callback fired when the action is selected.
+   * Event handler called when the action is selected.
    * The speed dial will close after the action is selected unless the event is prevented.
    *
    * ```ts

@@ -24,7 +24,7 @@ export interface FacetedProps<Multiple extends boolean = false> {
   defaultValue?: Multiple extends true ? string[] : string;
 
   /**
-   * Callback fired when the selected value changes.
+   * Event handler called when the selected value changes.
    */
   onValueChange?: (
     value: (Multiple extends true ? string[] : string) | undefined,
@@ -62,7 +62,7 @@ export interface FacetedProps<Multiple extends boolean = false> {
   defaultOpen?: boolean;
 
   /**
-   * Callback fired when the open state changes.
+   * Event handler called when the open state changes.
    */
   onOpenChange?: (open: boolean) => void;
 }
@@ -153,7 +153,7 @@ export interface FacetedItemProps extends EmptyProps<"div"> {
   value: string;
 
   /**
-   * Callback fired when the item is selected. When provided, it replaces the default selection behavior.
+   * Event handler called when the item is selected. When provided, it replaces the default selection behavior.
    */
   onSelect?: (value: string) => void;
 
@@ -184,7 +184,7 @@ export interface FacetedClearProps extends EmptyProps<"div"> {
   children?: React.ReactNode;
 
   /**
-   * Callback fired when the clear item is selected, before the selection is cleared.
+   * Event handler called when the clear item is selected, before the selection is cleared.
    */
   onSelect?: (value: string) => void;
 }
