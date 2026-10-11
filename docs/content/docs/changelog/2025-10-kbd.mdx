@@ -1,0 +1,23 @@
+---
+title: October 2025 - Kbd Deprecated
+description: Kbd is removed in favor of shadcn/ui's Kbd component.
+date: 2025-10-28
+---
+
+[Kbd](/docs/components/radix/kbd) is deprecated and no longer installs. shadcn/ui now ships a [Kbd](https://ui.shadcn.com/docs/components/kbd) component, so use that instead.
+
+```package-install
+npx shadcn@latest add kbd
+```
+
+### Migrating
+
+| Dice UI | shadcn/ui |
+| --- | --- |
+| `Kbd.Root` / `KbdRoot` | `KbdGroup` |
+| `Kbd.Key` / `KbdKey` | `Kbd` |
+| `Kbd.Separator` / `KbdSeparator` | Text between keys, such as `+`, or nothing |
+| `title` on `Kbd.Key` | Wrap the key in `<abbr title="…">` |
+| `variant` and `size` on `Kbd.Root` | `className` |
+
+See the [Kbd](/docs/components/radix/kbd) page for a before and after example.

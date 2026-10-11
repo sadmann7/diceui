@@ -1,0 +1,48 @@
+---
+base: base
+title: Kbd
+description: A keyboard key primitive for displaying keyboard shortcuts and key combinations.
+deprecated: true
+---
+
+<Callout type="warn">
+**Deprecated.** Kbd was removed from Dice UI in October 2025. shadcn/ui ships a [Kbd](https://ui.shadcn.com/docs/components/base/kbd) component, so use that instead:
+
+```package-install
+npx shadcn@latest add kbd
+```
+</Callout>
+
+## Migrating
+
+`@diceui/kbd` no longer installs. Replace it with shadcn/ui's `Kbd` and `KbdGroup`:
+
+| Dice UI | shadcn/ui |
+| --- | --- |
+| `Kbd.Root` / `KbdRoot` | `KbdGroup` |
+| `Kbd.Key` / `KbdKey` | `Kbd` |
+| `Kbd.Separator` / `KbdSeparator` | Text between keys, such as `+`, or nothing |
+| `title` on `Kbd.Key` | Wrap the key in `<abbr title="…">` |
+| `variant` and `size` on `Kbd.Root` | `className` |
+
+```tsx
+import * as Kbd from "@/components/ui/kbd"; // [!code --]
+import { Kbd, KbdGroup } from "@/components/ui/kbd"; // [!code ++]
+
+// Before
+<Kbd.Root>
+  <Kbd.Key>⌘</Kbd.Key>
+  <Kbd.Separator />
+  <Kbd.Key>K</Kbd.Key>
+</Kbd.Root>
+
+// After
+<KbdGroup>
+  <Kbd>
+    <abbr title="Command">⌘</abbr>
+  </Kbd>
+  <Kbd>K</Kbd>
+</KbdGroup>
+```
+
+`Kbd.Key` added a `title` for common symbols such as ⌘, ⇧ and ⌥ automatically. shadcn/ui's `Kbd` doesn't, so add an `<abbr title>` where a symbol needs a description.
