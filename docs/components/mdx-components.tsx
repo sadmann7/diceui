@@ -158,10 +158,11 @@ export function useMdxComponents(
       <Kbd className={cn("not-prose", className)} {...props} />
     ),
     ComponentTabs: ({
+      base: baseProp,
       ...props
-    }: React.ComponentProps<typeof ComponentTabs>) => (
-      <ComponentTabs {...props} base={base} />
-    ),
+    }: Omit<React.ComponentProps<typeof ComponentTabs>, "base"> & {
+      base?: RegistryBase;
+    }) => <ComponentTabs {...props} base={baseProp ?? base} />,
     ComponentSource: ({
       ...props
     }: React.ComponentProps<typeof ComponentSource>) => (

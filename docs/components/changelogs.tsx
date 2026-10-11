@@ -27,7 +27,7 @@ export function Changelogs() {
             <Link href={page.url} className="no-underline hover:underline">
               <h2
                 id={slug}
-                className="not-prose text-2xl font-semibold tracking-tight"
+                className="not-prose scroll-mt-20 text-2xl font-semibold tracking-tight md:scroll-mt-10"
               >
                 {page.data.title}
               </h2>
