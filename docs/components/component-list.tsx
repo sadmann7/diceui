@@ -2,26 +2,13 @@ import type { Node } from "fumadocs-core/page-tree";
 
 import Link from "next/link";
 
-import type { RegistryBase } from "@/registry/registry";
-
-import {
-  MdxTabs,
-  MdxTabsContent,
-  MdxTabsList,
-  MdxTabsTrigger,
-} from "@/components/mdx-tabs";
 import { NewBadge } from "@/components/new-badge";
 import { DEFAULT_BASE } from "@/lib/constants";
 import { source } from "@/lib/source";
 
 type Section = "components" | "utilities";
 
-const bases: { label: string; value: RegistryBase }[] = [
-  { label: "Base UI", value: "base" },
-  { label: "Radix UI", value: "radix" },
-];
-
-function getPages(section: Section, base: RegistryBase) {
+function getPages(section: Section) {
   const urls: string[] = [];
   function collect(nodes: Node[]) {
     for (const node of nodes) {
@@ -32,7 +19,7 @@ function getPages(section: Section, base: RegistryBase) {
   collect(source.getPageTree().children);
 
   return urls
-    .filter((url) => url.startsWith(`/docs/${section}/${base}/`))
+    .filter((url) => url.startsWith(`/docs/${section}/${DEFAULT_BASE}/`))
     .map((url) => source.getPage(url.split("/").slice(2)))
     .filter((page) => page !== undefined);
 }
@@ -43,34 +30,17 @@ interface ComponentListProps {
 
 export function ComponentList({ section = "components" }: ComponentListProps) {
   return (
-    <MdxTabs
-      variant="line"
-      defaultValue={DEFAULT_BASE}
-      className="not-prose *:data-[slot=tabs-list]:gap-6"
-    >
-      <MdxTabsList>
-        {bases.map((base) => (
-          <MdxTabsTrigger key={base.value} value={base.value}>
-            {base.label}
-          </MdxTabsTrigger>
-        ))}
-      </MdxTabsList>
-      {bases.map((base) => (
-        <MdxTabsContent key={base.value} value={base.value} className="pt-4">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-            {getPages(section, base.value).map((page) => (
-              <Link
-                key={page.url}
-                href={page.url}
-                className="inline-flex items-center gap-2 hover:underline hover:underline-offset-4"
-              >
-                {page.data.title}
-                {page.data.new ? <NewBadge /> : null}
-              </Link>
-            ))}
-          </div>
-        </MdxTabsContent>
+    <div className="not-prose grid grid-cols-2 gap-4 sm:grid-cols-3">
+      {getPages(section).map((page) => (
+        <Link
+          key={page.url}
+          href={page.url}
+          className="inline-flex items-center gap-2 hover:underline hover:underline-offset-4"
+        >
+          {page.data.title}
+          {page.data.new ? <NewBadge /> : null}
+        </Link>
       ))}
-    </MdxTabs>
+    </div>
   );
 }
