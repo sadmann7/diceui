@@ -1,0 +1,27 @@
+---
+title: October 2026 - Base UI Parity
+description: Base UI versions of Checkbox Group, Combobox, Listbox, Mention, and Tags Input, plus Components and Utilities index pages.
+date: 2026-10-11T15:00:00Z
+---
+
+Base UI and Radix UI now have the same components. Five components that only had Radix versions now have Base UI versions too:
+
+- **Checkbox Group**
+- **Combobox**
+- **Listbox**
+- **Mention**
+- **Tags Input**
+
+They're built on the same headless `@diceui/*` packages as their Radix versions, so they share the API, including `asChild` for composition. A `render` prop will follow once these primitives move into a single `@diceui/react` package.
+
+<ComponentTabs name="combobox-demo" />
+
+```package-install
+npx shadcn@latest add @diceui/combobox
+```
+
+[Read the docs](/docs/components/combobox)
+
+### Components and Utilities pages
+
+The new [Components](/docs/components) and [Utilities](/docs/utilities) pages list everything in one place, with new items marked the same way as in the sidebar. The sidebar is also flatter: components and utilities are grouped under section headings instead of collapsible folders.

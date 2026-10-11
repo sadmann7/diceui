@@ -72,6 +72,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "checkbox-group": {
+        name: "checkbox-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "circular-progress": {
         name: "circular-progress",
         description: "",
@@ -109,6 +122,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox": {
+        name: "combobox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/combobox.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -227,6 +253,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "listbox": {
+        name: "listbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/listbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -273,6 +312,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "mention": {
+        name: "mention",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/mention.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -515,6 +567,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input": {
+        name: "tags-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tags-input.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -829,6 +894,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "checkbox-group": {
+        name: "checkbox-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "circular-progress": {
         name: "circular-progress",
         description: "",
@@ -866,6 +944,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox": {
+        name: "combobox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/combobox.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -984,6 +1075,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "listbox": {
+        name: "listbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/listbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -1030,6 +1134,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "mention": {
+        name: "mention",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/mention.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -1272,6 +1389,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input": {
+        name: "tags-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tags-input.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -1586,6 +1716,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "checkbox-group": {
+        name: "checkbox-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "circular-progress": {
         name: "circular-progress",
         description: "",
@@ -1623,6 +1766,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox": {
+        name: "combobox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/combobox.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -1741,6 +1897,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "listbox": {
+        name: "listbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/listbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -1787,6 +1956,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "mention": {
+        name: "mention",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/mention.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -2029,6 +2211,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input": {
+        name: "tags-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tags-input.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -2343,6 +2538,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "checkbox-group": {
+        name: "checkbox-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "circular-progress": {
         name: "circular-progress",
         description: "",
@@ -2380,6 +2588,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox": {
+        name: "combobox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/combobox.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -2498,6 +2719,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "listbox": {
+        name: "listbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/listbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -2544,6 +2778,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "mention": {
+        name: "mention",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/mention.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -2786,6 +3033,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input": {
+        name: "tags-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tags-input.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -3100,6 +3360,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "checkbox-group": {
+        name: "checkbox-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "circular-progress": {
         name: "circular-progress",
         description: "",
@@ -3137,6 +3410,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox": {
+        name: "combobox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/combobox.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -3255,6 +3541,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "listbox": {
+        name: "listbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/listbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -3301,6 +3600,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "mention": {
+        name: "mention",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/mention.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -3543,6 +3855,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input": {
+        name: "tags-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tags-input.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -3857,6 +4182,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "checkbox-group": {
+        name: "checkbox-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "circular-progress": {
         name: "circular-progress",
         description: "",
@@ -3894,6 +4232,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox": {
+        name: "combobox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/combobox.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -4012,6 +4363,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "listbox": {
+        name: "listbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/listbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -4058,6 +4422,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "mention": {
+        name: "mention",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/mention.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -4300,6 +4677,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input": {
+        name: "tags-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tags-input.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -4614,6 +5004,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "checkbox-group": {
+        name: "checkbox-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "circular-progress": {
         name: "circular-progress",
         description: "",
@@ -4651,6 +5054,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox": {
+        name: "combobox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/combobox.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -4769,6 +5185,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "listbox": {
+        name: "listbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/listbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -4815,6 +5244,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "mention": {
+        name: "mention",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/mention.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -5057,6 +5499,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input": {
+        name: "tags-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tags-input.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -5371,6 +5826,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "checkbox-group": {
+        name: "checkbox-group",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/checkbox-group.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "circular-progress": {
         name: "circular-progress",
         description: "",
@@ -5408,6 +5876,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox": {
+        name: "combobox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/combobox.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -5526,6 +6007,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "listbox": {
+        name: "listbox",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/listbox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "marquee": {
         name: "marquee",
         description: "",
@@ -5572,6 +6066,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "mention": {
+        name: "mention",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/mention.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -5814,6 +6321,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: ["direction","@diceui/use-isomorphic-layout-effect","@diceui/use-lazy-ref"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input": {
+        name: "tags-input",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/ui/tags-input.tsx",
           type: "registry:ui",
           target: ""
         }],

@@ -1,44 +1,44 @@
+import type { Node } from "fumadocs-core/page-tree";
+
 import Link from "next/link";
 
+import { NewBadge } from "@/components/new-badge";
 import { DEFAULT_BASE } from "@/lib/constants";
-import { type RegistryBase, registries } from "@/registry/registry";
+import { source } from "@/lib/source";
 
-function slugToTitle(slug: string): string {
-  const special: Record<string, string> = {
-    fps: "FPS",
-    kbd: "Kbd",
-    "qr-code": "QR Code",
-  };
-  if (special[slug]) return special[slug];
-  return slug
-    .split("-")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
+type Group = "components" | "utilities";
 
-function getComponents(base: RegistryBase) {
-  return registries[base].items
-    .filter((item) => item.type === "registry:ui")
-    .map((item) => ({ name: slugToTitle(item.name), slug: item.name }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+function getPages(group: Group) {
+  const urls: string[] = [];
+  function collect(nodes: Node[]) {
+    for (const node of nodes) {
+      if (node.type === "page") urls.push(node.url);
+      if (node.type === "folder") collect(node.children);
+    }
+  }
+  collect(source.getPageTree().children);
+
+  return urls
+    .filter((url) => url.startsWith(`/docs/${group}/${DEFAULT_BASE}/`))
+    .map((url) => source.getPage(url.split("/").slice(2)))
+    .filter((page) => page !== undefined);
 }
 
 interface ComponentListProps {
-  base?: RegistryBase;
+  group?: Group;
 }
 
-export function ComponentList({ base = DEFAULT_BASE }: ComponentListProps) {
-  const components = getComponents(base);
-
+export function ComponentList({ group = "components" }: ComponentListProps) {
   return (
     <div className="not-prose grid grid-cols-2 gap-4 sm:grid-cols-3">
-      {components.map(({ name, slug }) => (
+      {getPages(group).map((page) => (
         <Link
-          key={slug}
-          href={`/docs/components/${base}/${slug}`}
-          className="hover:underline hover:underline-offset-4"
+          key={page.url}
+          href={page.url}
+          className="inline-flex items-center gap-2 hover:underline hover:underline-offset-4"
         >
-          {name}
+          {page.data.title}
+          {page.data.new ? <NewBadge /> : null}
         </Link>
       ))}
     </div>

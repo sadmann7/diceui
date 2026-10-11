@@ -1,0 +1,126 @@
+import type * as React from "react";
+
+import * as CheckboxGroupPrimitive from "@diceui/checkbox-group";
+import { cn } from "cn";
+
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
+
+function CheckboxGroup({
+  className,
+  ...props
+}: React.ComponentProps<typeof CheckboxGroupPrimitive.Root>) {
+  return (
+    <CheckboxGroupPrimitive.Root
+      data-slot="checkbox-group"
+      className={cn("peer flex flex-col gap-3.5", className)}
+      {...props}
+    />
+  );
+}
+
+function CheckboxGroupLabel({
+  className,
+  ...props
+}: React.ComponentProps<typeof CheckboxGroupPrimitive.Label>) {
+  return (
+    <CheckboxGroupPrimitive.Label
+      data-slot="checkbox-group-label"
+      className={cn(
+        "text-sm leading-none text-foreground/70 peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function CheckboxGroupList({
+  className,
+  ...props
+}: React.ComponentProps<typeof CheckboxGroupPrimitive.List>) {
+  return (
+    <CheckboxGroupPrimitive.List
+      data-slot="checkbox-group-list"
+      className={cn(
+        "flex gap-3 data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function CheckboxGroupItem({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof CheckboxGroupPrimitive.Item>) {
+  return (
+    <label className="flex w-fit items-center gap-2 text-sm leading-none select-none has-data-invalid:text-destructive has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50">
+      <CheckboxGroupPrimitive.Item
+        data-slot="checkbox-group-item"
+        className={cn(
+          "size-4 shrink-0 rounded-sm border border-primary shadow-sm focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-invalid:border-destructive [&[data-state=checked]:not([data-invalid])]:bg-primary [&[data-state=checked]:not([data-invalid])]:text-primary-foreground [&[data-state=checked][data-invalid]]:bg-destructive [&[data-state=checked][data-invalid]]:text-primary-foreground [&[data-state=unchecked][data-invalid]]:bg-transparent",
+          className,
+        )}
+        {...props}
+      >
+        <CheckboxGroupPrimitive.Indicator
+          className="flex items-center justify-center text-current"
+          asChild
+        >
+          <IconPlaceholder
+            lucide="Check"
+            tabler="IconCheck"
+            hugeicons="Tick02Icon"
+            phosphor="CheckIcon"
+            remixicon="RiCheckLine"
+            className="size-3.5"
+          />
+        </CheckboxGroupPrimitive.Indicator>
+      </CheckboxGroupPrimitive.Item>
+      {children}
+    </label>
+  );
+}
+
+function CheckboxGroupDescription({
+  className,
+  ...props
+}: React.ComponentProps<typeof CheckboxGroupPrimitive.Description>) {
+  return (
+    <CheckboxGroupPrimitive.Description
+      data-slot="checkbox-group-description"
+      className={cn(
+        "text-[0.8rem] leading-none text-muted-foreground data-invalid:text-destructive",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function CheckboxGroupMessage({
+  className,
+  ...props
+}: React.ComponentProps<typeof CheckboxGroupPrimitive.Message>) {
+  return (
+    <CheckboxGroupPrimitive.Message
+      data-slot="checkbox-group-message"
+      className={cn(
+        "text-[0.8rem] leading-none text-muted-foreground data-invalid:text-destructive",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export {
+  CheckboxGroup,
+  CheckboxGroupDescription,
+  CheckboxGroupItem,
+  CheckboxGroupLabel,
+  CheckboxGroupList,
+  CheckboxGroupMessage,
+};
