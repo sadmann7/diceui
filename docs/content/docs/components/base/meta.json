@@ -17,6 +17,7 @@
     "data-grid",
     "data-table",
     "editable",
+    "faceted",
     "file-upload",
     "fps",
     "gauge",

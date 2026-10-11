@@ -184,6 +184,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/base/ui/faceted.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "file-upload": {
         name: "file-upload",
         description: "",
@@ -1001,6 +1014,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/base/ui/faceted.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",
@@ -1828,6 +1854,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/base/ui/faceted.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "file-upload": {
         name: "file-upload",
         description: "",
@@ -2645,6 +2684,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/base/ui/faceted.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",
@@ -3472,6 +3524,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/base/ui/faceted.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "file-upload": {
         name: "file-upload",
         description: "",
@@ -4289,6 +4354,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/base/ui/faceted.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",
@@ -5116,6 +5194,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/base/ui/faceted.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "file-upload": {
         name: "file-upload",
         description: "",
@@ -5933,6 +6024,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/base/components/visually-hidden-input.tsx",
           type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/base/ui/faceted.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",
@@ -6760,6 +6864,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/radix/ui/faceted.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "file-upload": {
         name: "file-upload",
         description: "",
@@ -7577,6 +7694,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/radix/ui/faceted.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",
@@ -8404,6 +8534,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/radix/ui/faceted.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "file-upload": {
         name: "file-upload",
         description: "",
@@ -9221,6 +9364,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/radix/ui/faceted.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",
@@ -10048,6 +10204,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/radix/ui/faceted.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "file-upload": {
         name: "file-upload",
         description: "",
@@ -10865,6 +11034,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/radix/ui/faceted.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",
@@ -11692,6 +11874,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/radix/ui/faceted.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "file-upload": {
         name: "file-upload",
         description: "",
@@ -12509,6 +12704,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         },{
           path: "registry/bases/radix/components/visually-hidden-input.tsx",
           type: "registry:component",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted": {
+        name: "faceted",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command","popover"],
+        files: [{
+          path: "registry/bases/radix/ui/faceted.tsx",
+          type: "registry:ui",
           target: ""
         }],
         source: "",
