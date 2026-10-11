@@ -1,4 +1,4 @@
-import type { Folder, Node } from "fumadocs-core/page-tree";
+import type { Node } from "fumadocs-core/page-tree";
 
 import Link from "next/link";
 
@@ -21,22 +21,7 @@ const bases: { label: string; value: RegistryBase }[] = [
   { label: "Radix UI", value: "radix" },
 ];
 
-function findSectionFolder(nodes: Node[], section: Section): Folder | null {
-  for (const node of nodes) {
-    if (node.type !== "folder") continue;
-    if (node.index?.url === `/docs/${section}`) return node;
-
-    const folder = findSectionFolder(node.children, section);
-    if (folder) return folder;
-  }
-
-  return null;
-}
-
 function getPages(section: Section, base: RegistryBase) {
-  const folder = findSectionFolder(source.getPageTree().children, section);
-  if (!folder) return [];
-
   const urls: string[] = [];
   function collect(nodes: Node[]) {
     for (const node of nodes) {
@@ -44,7 +29,7 @@ function getPages(section: Section, base: RegistryBase) {
       if (node.type === "folder") collect(node.children);
     }
   }
-  collect(folder.children);
+  collect(source.getPageTree().children);
 
   return urls
     .filter((url) => url.startsWith(`/docs/${section}/${base}/`))
