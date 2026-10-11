@@ -6,6 +6,7 @@ import { Slot } from "radix-ui";
 import { composeEventHandlers } from "radix-ui/internal";
 import * as React from "react";
 
+import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import {
   Command,
   CommandEmpty,
@@ -231,9 +232,7 @@ function Faceted<Multiple extends boolean = false>({
   const store = storeRef.current;
   const open = useFacetedStoreSelector(store, (state) => state.open);
 
-  // A controlled value lives in props, so tell subscribers when it changes.
-  // Otherwise memoized items and values would keep the previous selection.
-  React.useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     if (value !== undefined) store.notify();
   }, [store, value]);
 
@@ -286,7 +285,6 @@ function FacetedValue({
   }
   if (children != null) return children;
 
-  // Past two badges, only the count shows, so skip the label lookup.
   const selected =
     multiple && values.length > 2 ? [] : getSelectedItems(values, items);
   const [item] = selected;
@@ -569,6 +567,7 @@ function FacetedSeparator({
   return (
     <CommandSeparator
       data-slot="faceted-separator"
+      aria-hidden="true"
       className="mx-0 my-0.5 w-full"
       {...props}
     />
