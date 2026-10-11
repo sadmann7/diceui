@@ -53,7 +53,7 @@ export interface PortalProps extends CompositionProps {
   container?: Element | DocumentFragment | null;
 }
 
-export interface SkipLinkProps extends CompositionProps {
+export interface SkipNavProps extends CompositionProps {
   /**
    * The hash of the element to skip to. On click, focus moves to that element.
    * @default "#main-content"

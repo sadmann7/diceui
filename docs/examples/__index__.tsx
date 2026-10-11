@@ -1030,13 +1030,13 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link-demo": {
-        name: "skip-link-demo",
+      "skip-nav-demo": {
+        name: "skip-nav-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["skip-link"],
+        registryDependencies: ["skip-nav"],
         files: [{
-          path: "registry/bases/base/examples/skip-link-demo.tsx",
+          path: "registry/bases/base/examples/skip-nav-demo.tsx",
           type: "registry:example",
           target: ""
         }],
@@ -3917,13 +3917,13 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link-demo": {
-        name: "skip-link-demo",
+      "skip-nav-demo": {
+        name: "skip-nav-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["skip-link"],
+        registryDependencies: ["skip-nav"],
         files: [{
-          path: "registry/bases/radix/examples/skip-link-demo.tsx",
+          path: "registry/bases/radix/examples/skip-nav-demo.tsx",
           type: "registry:example",
           target: ""
         }],

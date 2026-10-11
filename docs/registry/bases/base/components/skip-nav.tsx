@@ -6,11 +6,13 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { cn } from "cn";
 
-interface SkipLinkProps extends useRender.ComponentProps<"a"> {}
+const MAIN_CONTENT_ID = "main-content";
 
-function SkipLink(props: SkipLinkProps) {
+interface SkipNavProps extends useRender.ComponentProps<"a"> {}
+
+function SkipNav(props: SkipNavProps) {
   const {
-    href = "#main-content",
+    href = `#${MAIN_CONTENT_ID}`,
     children = "Skip to content",
     className,
     render,
@@ -36,7 +38,7 @@ function SkipLink(props: SkipLinkProps) {
     ),
     render,
     state: {
-      slot: "skip-link",
+      slot: "skip-nav",
     },
   });
 }
@@ -76,4 +78,4 @@ function getTarget(href: string) {
   return document.getElementById(decodeURIComponent(href.slice(1)));
 }
 
-export { SkipLink };
+export { MAIN_CONTENT_ID, SkipNav };

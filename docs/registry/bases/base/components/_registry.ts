@@ -78,12 +78,12 @@ export const components: Registry["items"] = [
     dependencies: ["@diceui/pptx"],
   },
   {
-    name: "skip-link",
+    name: "skip-nav",
     type: "registry:component",
     dependencies: ["@base-ui/react"],
     files: [
       {
-        path: "components/skip-link.tsx",
+        path: "components/skip-nav.tsx",
         type: "registry:component",
       },
     ],

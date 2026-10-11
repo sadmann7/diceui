@@ -756,13 +756,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/base/components/skip-link.tsx",
+          path: "registry/bases/base/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -1601,13 +1601,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/base/components/skip-link.tsx",
+          path: "registry/bases/base/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -2446,13 +2446,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/base/components/skip-link.tsx",
+          path: "registry/bases/base/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -3291,13 +3291,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/base/components/skip-link.tsx",
+          path: "registry/bases/base/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -4136,13 +4136,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/base/components/skip-link.tsx",
+          path: "registry/bases/base/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -4981,13 +4981,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/base/components/skip-link.tsx",
+          path: "registry/bases/base/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -5826,13 +5826,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/base/components/skip-link.tsx",
+          path: "registry/bases/base/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -6671,13 +6671,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/base/components/skip-link.tsx",
+          path: "registry/bases/base/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -7593,13 +7593,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/radix/components/skip-link.tsx",
+          path: "registry/bases/radix/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -8515,13 +8515,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/radix/components/skip-link.tsx",
+          path: "registry/bases/radix/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -9437,13 +9437,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/radix/components/skip-link.tsx",
+          path: "registry/bases/radix/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -10359,13 +10359,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/radix/components/skip-link.tsx",
+          path: "registry/bases/radix/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -11281,13 +11281,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/radix/components/skip-link.tsx",
+          path: "registry/bases/radix/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -12203,13 +12203,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/radix/components/skip-link.tsx",
+          path: "registry/bases/radix/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -13125,13 +13125,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/radix/components/skip-link.tsx",
+          path: "registry/bases/radix/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],
@@ -14047,13 +14047,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "skip-link": {
-        name: "skip-link",
+      "skip-nav": {
+        name: "skip-nav",
         description: "",
         type: "registry:component",
         registryDependencies: undefined,
         files: [{
-          path: "registry/bases/radix/components/skip-link.tsx",
+          path: "registry/bases/radix/components/skip-nav.tsx",
           type: "registry:component",
           target: ""
         }],

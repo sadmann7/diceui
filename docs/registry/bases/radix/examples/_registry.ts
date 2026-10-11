@@ -1589,12 +1589,12 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "skip-link-demo",
+    name: "skip-nav-demo",
     type: "registry:example",
-    registryDependencies: ["skip-link"],
+    registryDependencies: ["skip-nav"],
     files: [
       {
-        path: "examples/skip-link-demo.tsx",
+        path: "examples/skip-nav-demo.tsx",
         type: "registry:example",
       },
     ],

@@ -6,13 +6,15 @@ import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
 import { composeEventHandlers } from "radix-ui/internal";
 
-interface SkipLinkProps extends React.ComponentProps<"a"> {
+const MAIN_CONTENT_ID = "main-content";
+
+interface SkipNavProps extends React.ComponentProps<"a"> {
   asChild?: boolean;
 }
 
-function SkipLink(props: SkipLinkProps) {
+function SkipNav(props: SkipNavProps) {
   const {
-    href = "#main-content",
+    href = `#${MAIN_CONTENT_ID}`,
     children = "Skip to content",
     asChild,
     className,
@@ -24,7 +26,7 @@ function SkipLink(props: SkipLinkProps) {
 
   return (
     <LinkPrimitive
-      data-slot="skip-link"
+      data-slot="skip-nav"
       {...linkProps}
       href={href}
       className={cn(
@@ -75,4 +77,4 @@ function getTarget(href: string) {
   return document.getElementById(decodeURIComponent(href.slice(1)));
 }
 
-export { SkipLink };
+export { MAIN_CONTENT_ID, SkipNav };

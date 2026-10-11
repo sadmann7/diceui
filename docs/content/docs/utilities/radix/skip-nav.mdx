@@ -1,13 +1,13 @@
 ---
-base: base
-title: Skip Link
+base: radix
+title: Skip Nav
 description: A link that lets keyboard and screen reader users skip past repeated navigation to the main content.
 new: true
 links:
-  api: /docs/utilities/base/skip-link#api-reference
+  api: /docs/utilities/radix/skip-nav#api-reference
 ---
 
-<ComponentTabs name="skip-link-demo" />
+<ComponentTabs name="skip-nav-demo" />
 
 ## Installation
 
@@ -21,7 +21,7 @@ links:
 <TabsContent value="cli">
 
 ```package-install
-npx shadcn@latest add @diceui/skip-link
+npx shadcn@latest add @diceui/skip-nav
 ```
 
 </TabsContent>
@@ -33,12 +33,12 @@ npx shadcn@latest add @diceui/skip-link
 <Step>Install the following dependencies:</Step>
 
 ```package-install
-@base-ui/react
+radix-ui
 ```
 
 <Step>Copy and paste the following code into your project.</Step>
 
-<ComponentSource src="./registry/bases/base/components/skip-link.tsx" />
+<ComponentSource src="./registry/bases/radix/components/skip-nav.tsx" />
 
 </Steps>
 
@@ -48,15 +48,15 @@ npx shadcn@latest add @diceui/skip-link
 
 ## Layout
 
-Render the skip link as the first focusable element on the page, and give your main content a matching `id`.
+Render the skip link as the first focusable element on the page, and give your main content the `MAIN_CONTENT_ID` it targets by default.
 
 ```tsx
-import { SkipLink } from "@/components/skip-link";
+import { MAIN_CONTENT_ID, SkipNav } from "@/components/skip-nav";
 
 <body>
-  <SkipLink />
+  <SkipNav />
   <header>{/* Navigation */}</header>
-  <main id="main-content">{/* Page content */}</main>
+  <main id={MAIN_CONTENT_ID}>{/* Page content */}</main>
 </body>
 ```
 
@@ -67,7 +67,7 @@ import { SkipLink } from "@/components/skip-link";
 Point `href` at any element on the page and change the label with `children`.
 
 ```tsx
-<SkipLink href="#search">Skip to search</SkipLink>
+<SkipNav href="#search">Skip to search</SkipNav>
 ```
 
 ### Multiple skip links
@@ -75,29 +75,37 @@ Point `href` at any element on the page and change the label with `children`.
 Render more than one when the page has several landmarks worth jumping to.
 
 ```tsx
-<SkipLink />
-<SkipLink href="#footer">Skip to footer</SkipLink>
+<SkipNav />
+<SkipNav href="#footer">Skip to footer</SkipNav>
 ```
 
 ## API Reference
 
-### SkipLink
+### SkipNav
 
 A link that is visually hidden until it receives keyboard focus.
 
 <AutoTypeTable
-  path="./types/base/utilities.ts"
-  name="SkipLinkProps"
+  path="./types/radix/utilities.ts"
+  name="SkipNavProps"
 />
 
 <DataAttributesTable
   data={[
     {
       title: "[data-slot]",
-      value: "skip-link",
+      value: "skip-nav",
     },
   ]}
 />
+
+### MAIN_CONTENT_ID
+
+The `id` that `SkipNav` targets by default, `"main-content"`. Use it on your main content so the link and its target stay in sync.
+
+```tsx
+<main id={MAIN_CONTENT_ID}>{/* Page content */}</main>
+```
 
 ## Accessibility
 
