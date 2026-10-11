@@ -29,6 +29,15 @@ export const source = loader({
 
           return node;
         },
+        separator(node) {
+          node.name = (
+            <span key={node.$id} className="text-xs font-medium">
+              {node.name}
+            </span>
+          );
+
+          return node;
+        },
       },
     }),
   ],
