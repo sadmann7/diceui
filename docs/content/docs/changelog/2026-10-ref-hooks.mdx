@@ -1,0 +1,34 @@
+---
+title: October 2026 - useValueAsRef and useRefWithInit
+description: use-as-ref and use-lazy-ref are renamed to match Base UI, and Base UI components use Base UI's own hooks.
+date: 2026-10-12T12:00:00Z
+---
+
+Dice UI components use two small ref hooks. They now share Base UI's names, so call sites read the same in both bases:
+
+| Before | After | Base UI | Radix |
+| --- | --- | --- | --- |
+| `useAsRef` | `useValueAsRef` | `@base-ui/utils/useValueAsRef` | `@diceui/use-value-as-ref` |
+| `useLazyRef` | `useRefWithInit` | `@base-ui/utils/useRefWithInit` | `@diceui/use-ref-with-init` |
+
+Base UI components no longer copy either hook into your project. Radix components install the renamed hooks.
+
+### Migrating
+
+Existing components keep working, because your copies of the old hooks stay in place. To move over, reinstall the components, or update the imports yourself:
+
+```tsx title="Base UI"
+import { useAsRef } from "@/hooks/use-as-ref"; // [!code --]
+import { useLazyRef } from "@/hooks/use-lazy-ref"; // [!code --]
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit"; // [!code ++]
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef"; // [!code ++]
+```
+
+```tsx title="Radix"
+import { useAsRef } from "@/hooks/use-as-ref"; // [!code --]
+import { useLazyRef } from "@/hooks/use-lazy-ref"; // [!code --]
+import { useRefWithInit } from "@/hooks/use-ref-with-init"; // [!code ++]
+import { useValueAsRef } from "@/hooks/use-value-as-ref"; // [!code ++]
+```
+
+Then rename the calls. `@diceui/use-as-ref` and `@diceui/use-lazy-ref` still install for now and will be removed in a future release.

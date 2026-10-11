@@ -6,8 +6,8 @@ import { Slot as SlotPrimitive } from "radix-ui";
 import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
+import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 
 const ROOT_NAME = "SpeedDial";
@@ -173,12 +173,12 @@ function SpeedDial(props: SpeedDialProps) {
   const isPointerInsideReactTreeRef = React.useRef(false);
   const hoverCloseTimerRef = React.useRef<number | null>(null);
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     open: openProp ?? defaultOpen ?? false,
   }));
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onOpenChange,
     onPointerDownCapture: onPointerDownCaptureProp,
   });
@@ -546,7 +546,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   const contentRef = React.useRef<ContentElement | null>(null);
   const composedRef = useComposedRefs(ref, contentRef);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onMouseEnter: onMouseEnterProp,
     onMouseLeave: onMouseLeaveProp,
     onEscapeKeyDown,
@@ -950,7 +950,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
     ...actionProps
   } = props;
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
     onSelect,
   });

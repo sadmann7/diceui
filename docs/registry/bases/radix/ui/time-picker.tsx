@@ -6,8 +6,8 @@ import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
+import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import {
   Popover,
   PopoverAnchor,
@@ -354,14 +354,14 @@ function TimePicker(props: TimePickerProps) {
   );
   const isFormControl = inputGroup ? !!inputGroup.closest("form") : true;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     value: valueProp ?? defaultValue ?? "",
     open: open ?? defaultOpen ?? false,
     openedViaFocus: false,
   }));
 
-  const propsRef = useAsRef({ onValueChange, onOpenChange });
+  const propsRef = useValueAsRef({ onValueChange, onOpenChange });
 
   const store: Store = React.useMemo(() => {
     return {

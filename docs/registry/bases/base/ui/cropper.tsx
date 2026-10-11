@@ -4,12 +4,11 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
-
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 
 const ROOT_NAME = "Cropper";
 const ROOT_IMPL_NAME = "CropperImpl";
@@ -436,8 +435,8 @@ function Cropper(props: CropperProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     crop,
     zoom,
     rotation,
@@ -447,7 +446,7 @@ function Cropper(props: CropperProps) {
     isWheelZooming: false,
   }));
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onCropChange,
     onCropSizeChange,
     onCropAreaChange,
@@ -728,7 +727,7 @@ function CropperImpl(props: CropperImplProps) {
   const mediaSize = useStore((state) => state.mediaSize);
   const cropSize = useStore((state) => state.cropSize);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onWheelZoom: onWheelZoomProp,
     onKeyUp: onKeyUpProp,
     onKeyDown: onKeyDownProp,

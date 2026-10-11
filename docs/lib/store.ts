@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { useLazyRef } from "@/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/hooks/use-ref-with-init";
 
 interface Store<T> {
   subscribe: (callback: () => void) => () => void;
@@ -50,8 +50,8 @@ function useStoreSelector<T, U>(store: Store<T>, selector: (state: T) => U): U {
 }
 
 function useStore<T>(initialState: T) {
-  const stateRef = useLazyRef(() => initialState);
-  const listenersRef = useLazyRef(() => new Set<() => void>());
+  const stateRef = useRefWithInit(() => initialState);
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
 
   const store = React.useMemo(
     () => createStore(listenersRef, stateRef),

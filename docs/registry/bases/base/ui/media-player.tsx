@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { useRender } from "@base-ui/react/use-render";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { cn } from "cn";
 import {
   MediaActionTypes,
@@ -17,7 +18,6 @@ import {
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Badge } from "@/registry/bases/base/ui/badge";
 import { Button } from "@/registry/bases/base/ui/button";
 import { useDirection } from "@/registry/bases/base/ui/direction";
@@ -159,8 +159,8 @@ interface MediaPlayerProps extends Omit<
 }
 
 function MediaPlayer(props: MediaPlayerProps) {
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     controlsVisible: true,
     dragging: false,
     menuOpen: false,

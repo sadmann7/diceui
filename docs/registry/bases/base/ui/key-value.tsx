@@ -4,12 +4,12 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/base/ui/button";
 import { Input } from "@/registry/bases/base/ui/input";
 import { Textarea } from "@/registry/bases/base/ui/textarea";
@@ -204,14 +204,14 @@ function KeyValue(props: KeyValueProps) {
   const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<KeyValueState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<KeyValueState>(() => ({
     value: valueProp ??
       defaultValue ?? [{ id: crypto.randomUUID(), key: "", value: "" }],
     focusedId: null,
     errors: {},
   }));
-  const propsRef = useAsRef({ onValueChange });
+  const propsRef = useValueAsRef({ onValueChange });
 
   const store = React.useMemo<Store>(() => {
     return {
@@ -427,7 +427,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   const store = useStoreContext(KEY_INPUT_NAME);
   const errors = useStore((state) => state.errors);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onChange: onChangeProp,
     onPaste: onPasteProp,
   });
@@ -626,7 +626,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   const store = useStoreContext(VALUE_INPUT_NAME);
   const errors = useStore((state) => state.errors);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onChange: onChangeProp,
   });
 

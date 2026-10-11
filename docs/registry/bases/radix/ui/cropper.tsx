@@ -6,8 +6,8 @@ import { Slot as SlotPrimitive } from "radix-ui";
 import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
+import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 
 const ROOT_NAME = "Cropper";
 const ROOT_IMPL_NAME = "CropperImpl";
@@ -436,8 +436,8 @@ function Cropper(props: CropperProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     crop,
     zoom,
     rotation,
@@ -447,7 +447,7 @@ function Cropper(props: CropperProps) {
     isWheelZooming: false,
   }));
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onCropChange,
     onCropSizeChange,
     onCropAreaChange,
@@ -718,7 +718,7 @@ function CropperImpl(props: CropperImplProps) {
   const mediaSize = useStore((state) => state.mediaSize);
   const cropSize = useStore((state) => state.cropSize);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onWheelZoom: onWheelZoomProp,
     onKeyUp: onKeyUpProp,
     onKeyDown: onKeyDownProp,

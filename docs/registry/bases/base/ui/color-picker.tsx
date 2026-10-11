@@ -7,13 +7,13 @@ import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/base/ui/button";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 import { Input } from "@/registry/bases/base/ui/input";
@@ -516,8 +516,8 @@ function ColorPicker(props: ColorPickerProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => {
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => {
     const colorString = valueProp ?? defaultValue;
     const color = hexToRgb(colorString);
 
@@ -529,7 +529,7 @@ function ColorPicker(props: ColorPickerProps) {
     };
   });
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onValueChange,
     onOpenChange,
     onFormatChange,
@@ -804,7 +804,7 @@ function ColorPickerArea(props: DivProps) {
     ...areaProps
   } = props;
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onPointerDown: onPointerDownProp,
     onPointerMove: onPointerMoveProp,
     onPointerUp: onPointerUpProp,

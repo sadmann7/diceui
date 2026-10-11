@@ -5,7 +5,7 @@ export const ui: Registry["items"] = [
     name: "action-bar",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["button", "@diceui/use-as-ref"],
+    registryDependencies: ["button", "@diceui/use-value-as-ref"],
     files: [
       {
         path: "ui/action-bar.tsx",
@@ -17,7 +17,10 @@ export const ui: Registry["items"] = [
     name: "angle-slider",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
+    ],
     files: [
       {
         path: "ui/angle-slider.tsx",
@@ -57,8 +60,8 @@ export const ui: Registry["items"] = [
     dependencies: ["radix-ui"],
     registryDependencies: [
       "button",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
     ],
     files: [
       {
@@ -113,8 +116,8 @@ export const ui: Registry["items"] = [
       "input",
       "popover",
       "select",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
     ],
     files: [
       {
@@ -142,7 +145,10 @@ export const ui: Registry["items"] = [
     name: "compare-slider",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
+    ],
     files: [
       {
         path: "ui/compare-slider.tsx",
@@ -154,7 +160,10 @@ export const ui: Registry["items"] = [
     name: "cropper",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
+    ],
     files: [
       {
         path: "ui/cropper.tsx",
@@ -177,7 +186,10 @@ export const ui: Registry["items"] = [
     name: "editable",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
+    ],
     files: [
       {
         path: "ui/editable.tsx",
@@ -205,7 +217,10 @@ export const ui: Registry["items"] = [
     name: "file-upload",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
+    ],
     files: [
       {
         path: "ui/file-upload.tsx",
@@ -259,8 +274,8 @@ export const ui: Registry["items"] = [
       "button",
       "input",
       "textarea",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
     ],
     files: [
       {
@@ -394,7 +409,7 @@ export const ui: Registry["items"] = [
       "slider",
       "tooltip",
       "dropdown-menu",
-      "@diceui/use-lazy-ref",
+      "@diceui/use-ref-with-init",
     ],
     files: [
       {
@@ -422,8 +437,8 @@ export const ui: Registry["items"] = [
       "command",
       "input",
       "popover",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
     ],
     files: [
       {
@@ -467,8 +482,8 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "dialog",
       "drawer",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
       "@diceui/use-mobile",
     ],
     files: [
@@ -493,7 +508,10 @@ export const ui: Registry["items"] = [
     name: "scroll-spy",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
+    ],
     files: [
       {
         path: "ui/scroll-spy.tsx",
@@ -519,8 +537,8 @@ export const ui: Registry["items"] = [
     dependencies: ["@floating-ui/react-dom", "radix-ui"],
     registryDependencies: [
       "button",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
     ],
     files: [
       {
@@ -552,8 +570,8 @@ export const ui: Registry["items"] = [
     dependencies: ["radix-ui"],
     registryDependencies: [
       "button",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
     ],
     files: [
       {
@@ -601,8 +619,8 @@ export const ui: Registry["items"] = [
     dependencies: ["radix-ui"],
     registryDependencies: [
       "button",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
     ],
     files: [
       {
@@ -615,7 +633,10 @@ export const ui: Registry["items"] = [
     name: "swap",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
+    ],
     files: [
       {
         path: "ui/swap.tsx",
@@ -628,7 +649,7 @@ export const ui: Registry["items"] = [
     type: "registry:ui",
     dependencies: ["radix-ui", "qrcode"],
     devDependencies: ["@types/qrcode"],
-    registryDependencies: ["@diceui/use-lazy-ref"],
+    registryDependencies: ["@diceui/use-ref-with-init"],
     files: [
       {
         path: "ui/qr-code.tsx",
@@ -640,7 +661,10 @@ export const ui: Registry["items"] = [
     name: "rating",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
+    ],
     files: [
       {
         path: "ui/rating.tsx",
@@ -667,7 +691,7 @@ export const ui: Registry["items"] = [
     name: "timeline",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["@diceui/use-lazy-ref"],
+    registryDependencies: ["@diceui/use-ref-with-init"],
     files: [
       {
         path: "ui/timeline.tsx",
@@ -681,8 +705,8 @@ export const ui: Registry["items"] = [
     dependencies: ["radix-ui"],
     registryDependencies: [
       "popover",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
     ],
     css: {
       "@utility scrollbar-none": {
@@ -707,7 +731,10 @@ export const ui: Registry["items"] = [
     name: "tour",
     type: "registry:ui",
     dependencies: ["@floating-ui/react-dom", "radix-ui"],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    registryDependencies: [
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
+    ],
     files: [
       {
         path: "ui/tour.tsx",

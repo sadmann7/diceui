@@ -10,7 +10,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["button", "direction", "@diceui/use-as-ref"],
+    registryDependencies: ["button", "direction"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -26,11 +26,7 @@ export const ui: Registry["items"] = [
         type: "registry:component",
       },
     ],
-    registryDependencies: [
-      "direction",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["direction"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -64,12 +60,8 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "button",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
-    dependencies: ["@base-ui/react"],
+    registryDependencies: ["button"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "checkbox-group",
@@ -121,15 +113,7 @@ export const ui: Registry["items"] = [
         type: "registry:component",
       },
     ],
-    registryDependencies: [
-      "button",
-      "input",
-      "popover",
-      "select",
-      "direction",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["button", "input", "popover", "select", "direction"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -163,7 +147,6 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -175,7 +158,6 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -191,11 +173,7 @@ export const ui: Registry["items"] = [
         type: "registry:component",
       },
     ],
-    registryDependencies: [
-      "direction",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["direction"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -219,12 +197,8 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "direction",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
-    dependencies: ["@base-ui/react"],
+    registryDependencies: ["direction"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "fps",
@@ -278,13 +252,7 @@ export const ui: Registry["items"] = [
         type: "registry:component",
       },
     ],
-    registryDependencies: [
-      "button",
-      "input",
-      "textarea",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["button", "input", "textarea"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -413,7 +381,6 @@ export const ui: Registry["items"] = [
       "dropdown-menu",
       "tooltip",
       "direction",
-      "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils", "media-chrome"],
   },
@@ -441,13 +408,7 @@ export const ui: Registry["items"] = [
         type: "registry:component",
       },
     ],
-    registryDependencies: [
-      "popover",
-      "command",
-      "input",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["popover", "command", "input"],
     dependencies: ["@base-ui/react", "@base-ui/utils", "cmdk"],
   },
   {
@@ -471,7 +432,6 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["@diceui/use-lazy-ref"],
     dependencies: ["@base-ui/react", "@base-ui/utils", "qrcode"],
     devDependencies: ["@types/qrcode"],
   },
@@ -488,11 +448,7 @@ export const ui: Registry["items"] = [
         type: "registry:component",
       },
     ],
-    registryDependencies: [
-      "direction",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["direction"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -516,13 +472,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "dialog",
-      "drawer",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-      "@diceui/use-mobile",
-    ],
+    registryDependencies: ["dialog", "drawer", "@diceui/use-mobile"],
     dependencies: ["@base-ui/utils"],
   },
   {
@@ -534,11 +484,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "direction",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["direction"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -573,11 +519,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "button",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["button"],
     dependencies: [
       "@base-ui/react",
       "@base-ui/utils",
@@ -611,11 +553,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "button",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["button"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -660,11 +598,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "direction",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["direction"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -676,7 +610,6 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -688,7 +621,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["direction", "@diceui/use-lazy-ref"],
+    registryDependencies: ["direction"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -715,11 +648,7 @@ export const ui: Registry["items"] = [
         type: "registry:component",
       },
     ],
-    registryDependencies: [
-      "popover",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["popover"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
     css: {
       "@utility scrollbar-none": {
@@ -739,12 +668,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "button",
-      "direction",
-      "@diceui/use-as-ref",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["button", "direction"],
     dependencies: [
       "@base-ui/react",
       "@base-ui/utils",

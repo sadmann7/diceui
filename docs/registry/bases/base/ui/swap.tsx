@@ -3,11 +3,10 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
-
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 
 function getDataState(swapped: boolean) {
   return swapped ? "on" : "off";
@@ -73,12 +72,12 @@ function Swap(props: SwapProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     swapped: swappedProp ?? defaultSwapped ?? false,
   }));
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     activationMode,
     animation,
     disabled,

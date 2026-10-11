@@ -7,7 +7,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
@@ -20,7 +20,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -63,7 +63,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -102,7 +102,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","direction"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -145,7 +145,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -158,7 +158,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
@@ -171,7 +171,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/editable.tsx",
           type: "registry:ui",
@@ -201,7 +201,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/file-upload.tsx",
           type: "registry:ui",
@@ -253,7 +253,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea"],
         files: [{
           path: "registry/bases/base/ui/key-value.tsx",
           type: "registry:ui",
@@ -322,7 +322,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -348,7 +348,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","command","input","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -378,7 +378,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
@@ -391,7 +391,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/rating.tsx",
           type: "registry:ui",
@@ -421,7 +421,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/base/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -434,7 +434,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -473,7 +473,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -499,7 +499,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -551,7 +551,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
@@ -564,7 +564,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/swap.tsx",
           type: "registry:ui",
@@ -577,7 +577,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
@@ -603,7 +603,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover"],
         files: [{
           path: "registry/bases/base/ui/time-picker.tsx",
           type: "registry:ui",
@@ -620,7 +620,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
@@ -842,7 +842,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
@@ -855,7 +855,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -898,7 +898,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -937,7 +937,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","direction"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -980,7 +980,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -993,7 +993,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
@@ -1006,7 +1006,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/editable.tsx",
           type: "registry:ui",
@@ -1036,7 +1036,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/file-upload.tsx",
           type: "registry:ui",
@@ -1088,7 +1088,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea"],
         files: [{
           path: "registry/bases/base/ui/key-value.tsx",
           type: "registry:ui",
@@ -1157,7 +1157,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -1183,7 +1183,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","command","input","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -1213,7 +1213,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
@@ -1226,7 +1226,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/rating.tsx",
           type: "registry:ui",
@@ -1256,7 +1256,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/base/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -1269,7 +1269,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -1308,7 +1308,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -1334,7 +1334,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -1386,7 +1386,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
@@ -1399,7 +1399,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/swap.tsx",
           type: "registry:ui",
@@ -1412,7 +1412,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
@@ -1438,7 +1438,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover"],
         files: [{
           path: "registry/bases/base/ui/time-picker.tsx",
           type: "registry:ui",
@@ -1455,7 +1455,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
@@ -1677,7 +1677,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
@@ -1690,7 +1690,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -1733,7 +1733,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -1772,7 +1772,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","direction"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -1815,7 +1815,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -1828,7 +1828,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
@@ -1841,7 +1841,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/editable.tsx",
           type: "registry:ui",
@@ -1871,7 +1871,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/file-upload.tsx",
           type: "registry:ui",
@@ -1923,7 +1923,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea"],
         files: [{
           path: "registry/bases/base/ui/key-value.tsx",
           type: "registry:ui",
@@ -1992,7 +1992,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -2018,7 +2018,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","command","input","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -2048,7 +2048,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
@@ -2061,7 +2061,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/rating.tsx",
           type: "registry:ui",
@@ -2091,7 +2091,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/base/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -2104,7 +2104,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -2143,7 +2143,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -2169,7 +2169,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -2221,7 +2221,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
@@ -2234,7 +2234,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/swap.tsx",
           type: "registry:ui",
@@ -2247,7 +2247,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
@@ -2273,7 +2273,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover"],
         files: [{
           path: "registry/bases/base/ui/time-picker.tsx",
           type: "registry:ui",
@@ -2290,7 +2290,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
@@ -2512,7 +2512,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
@@ -2525,7 +2525,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -2568,7 +2568,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -2607,7 +2607,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","direction"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -2650,7 +2650,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -2663,7 +2663,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
@@ -2676,7 +2676,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/editable.tsx",
           type: "registry:ui",
@@ -2706,7 +2706,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/file-upload.tsx",
           type: "registry:ui",
@@ -2758,7 +2758,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea"],
         files: [{
           path: "registry/bases/base/ui/key-value.tsx",
           type: "registry:ui",
@@ -2827,7 +2827,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -2853,7 +2853,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","command","input","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -2883,7 +2883,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
@@ -2896,7 +2896,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/rating.tsx",
           type: "registry:ui",
@@ -2926,7 +2926,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/base/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -2939,7 +2939,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -2978,7 +2978,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -3004,7 +3004,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -3056,7 +3056,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
@@ -3069,7 +3069,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/swap.tsx",
           type: "registry:ui",
@@ -3082,7 +3082,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
@@ -3108,7 +3108,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover"],
         files: [{
           path: "registry/bases/base/ui/time-picker.tsx",
           type: "registry:ui",
@@ -3125,7 +3125,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
@@ -3347,7 +3347,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
@@ -3360,7 +3360,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -3403,7 +3403,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -3442,7 +3442,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","direction"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -3485,7 +3485,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -3498,7 +3498,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
@@ -3511,7 +3511,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/editable.tsx",
           type: "registry:ui",
@@ -3541,7 +3541,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/file-upload.tsx",
           type: "registry:ui",
@@ -3593,7 +3593,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea"],
         files: [{
           path: "registry/bases/base/ui/key-value.tsx",
           type: "registry:ui",
@@ -3662,7 +3662,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -3688,7 +3688,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","command","input","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -3718,7 +3718,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
@@ -3731,7 +3731,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/rating.tsx",
           type: "registry:ui",
@@ -3761,7 +3761,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/base/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -3774,7 +3774,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -3813,7 +3813,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -3839,7 +3839,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -3891,7 +3891,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
@@ -3904,7 +3904,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/swap.tsx",
           type: "registry:ui",
@@ -3917,7 +3917,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
@@ -3943,7 +3943,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover"],
         files: [{
           path: "registry/bases/base/ui/time-picker.tsx",
           type: "registry:ui",
@@ -3960,7 +3960,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
@@ -4182,7 +4182,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
@@ -4195,7 +4195,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -4238,7 +4238,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -4277,7 +4277,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","direction"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -4320,7 +4320,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -4333,7 +4333,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
@@ -4346,7 +4346,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/editable.tsx",
           type: "registry:ui",
@@ -4376,7 +4376,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/file-upload.tsx",
           type: "registry:ui",
@@ -4428,7 +4428,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea"],
         files: [{
           path: "registry/bases/base/ui/key-value.tsx",
           type: "registry:ui",
@@ -4497,7 +4497,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -4523,7 +4523,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","command","input","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -4553,7 +4553,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
@@ -4566,7 +4566,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/rating.tsx",
           type: "registry:ui",
@@ -4596,7 +4596,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/base/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -4609,7 +4609,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -4648,7 +4648,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -4674,7 +4674,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -4726,7 +4726,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
@@ -4739,7 +4739,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/swap.tsx",
           type: "registry:ui",
@@ -4752,7 +4752,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
@@ -4778,7 +4778,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover"],
         files: [{
           path: "registry/bases/base/ui/time-picker.tsx",
           type: "registry:ui",
@@ -4795,7 +4795,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
@@ -5017,7 +5017,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
@@ -5030,7 +5030,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -5073,7 +5073,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -5112,7 +5112,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","direction"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -5155,7 +5155,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -5168,7 +5168,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
@@ -5181,7 +5181,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/editable.tsx",
           type: "registry:ui",
@@ -5211,7 +5211,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/file-upload.tsx",
           type: "registry:ui",
@@ -5263,7 +5263,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea"],
         files: [{
           path: "registry/bases/base/ui/key-value.tsx",
           type: "registry:ui",
@@ -5332,7 +5332,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -5358,7 +5358,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","command","input","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -5388,7 +5388,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
@@ -5401,7 +5401,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/rating.tsx",
           type: "registry:ui",
@@ -5431,7 +5431,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/base/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -5444,7 +5444,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -5483,7 +5483,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -5509,7 +5509,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -5561,7 +5561,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
@@ -5574,7 +5574,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/swap.tsx",
           type: "registry:ui",
@@ -5587,7 +5587,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
@@ -5613,7 +5613,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover"],
         files: [{
           path: "registry/bases/base/ui/time-picker.tsx",
           type: "registry:ui",
@@ -5630,7 +5630,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
@@ -5852,7 +5852,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/action-bar.tsx",
           type: "registry:ui",
@@ -5865,7 +5865,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -5908,7 +5908,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/banner.tsx",
           type: "registry:ui",
@@ -5947,7 +5947,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","direction"],
         files: [{
           path: "registry/bases/base/ui/color-picker.tsx",
           type: "registry:ui",
@@ -5990,7 +5990,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -6003,7 +6003,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/cropper.tsx",
           type: "registry:ui",
@@ -6016,7 +6016,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/editable.tsx",
           type: "registry:ui",
@@ -6046,7 +6046,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/file-upload.tsx",
           type: "registry:ui",
@@ -6098,7 +6098,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea"],
         files: [{
           path: "registry/bases/base/ui/key-value.tsx",
           type: "registry:ui",
@@ -6167,7 +6167,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","dropdown-menu","tooltip","direction"],
         files: [{
           path: "registry/bases/base/ui/media-player.tsx",
           type: "registry:ui",
@@ -6193,7 +6193,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","command","input","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","command","input"],
         files: [{
           path: "registry/bases/base/ui/phone-input.tsx",
           type: "registry:ui",
@@ -6223,7 +6223,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/qr-code.tsx",
           type: "registry:ui",
@@ -6236,7 +6236,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/rating.tsx",
           type: "registry:ui",
@@ -6266,7 +6266,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/base/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -6279,7 +6279,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -6318,7 +6318,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -6344,7 +6344,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button"],
         files: [{
           path: "registry/bases/base/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -6396,7 +6396,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/stepper.tsx",
           type: "registry:ui",
@@ -6409,7 +6409,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/swap.tsx",
           type: "registry:ui",
@@ -6422,7 +6422,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["direction","@diceui/use-lazy-ref"],
+        registryDependencies: ["direction"],
         files: [{
           path: "registry/bases/base/ui/timeline.tsx",
           type: "registry:ui",
@@ -6448,7 +6448,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover"],
         files: [{
           path: "registry/bases/base/ui/time-picker.tsx",
           type: "registry:ui",
@@ -6465,7 +6465,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","direction","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","direction"],
         files: [{
           path: "registry/bases/base/ui/tour.tsx",
           type: "registry:ui",
@@ -6687,7 +6687,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref"],
         files: [{
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
@@ -6700,7 +6700,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -6743,7 +6743,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -6782,7 +6782,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/color-picker.tsx",
           type: "registry:ui",
@@ -6812,7 +6812,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -6825,7 +6825,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
@@ -6851,7 +6851,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/editable.tsx",
           type: "registry:ui",
@@ -6881,7 +6881,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/file-upload.tsx",
           type: "registry:ui",
@@ -6933,7 +6933,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/key-value.tsx",
           type: "registry:ui",
@@ -7002,7 +7002,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
@@ -7028,7 +7028,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["command","input","popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/phone-input.tsx",
           type: "registry:ui",
@@ -7071,7 +7071,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-value-as-ref","@diceui/use-ref-with-init","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/radix/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -7097,7 +7097,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -7123,7 +7123,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -7149,7 +7149,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -7201,7 +7201,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
@@ -7214,7 +7214,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/swap.tsx",
           type: "registry:ui",
@@ -7227,7 +7227,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/qr-code.tsx",
           type: "registry:ui",
@@ -7240,7 +7240,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/rating.tsx",
           type: "registry:ui",
@@ -7270,7 +7270,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
@@ -7283,7 +7283,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/time-picker.tsx",
           type: "registry:ui",
@@ -7300,7 +7300,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
@@ -7511,6 +7511,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-ref-with-init": {
+        name: "use-ref-with-init",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-ref-with-init.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-value-as-ref": {
+        name: "use-value-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-value-as-ref.ts",
           type: "registry:hook",
           target: ""
         }],
@@ -7522,7 +7548,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref"],
         files: [{
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
@@ -7535,7 +7561,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -7578,7 +7604,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -7617,7 +7643,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/color-picker.tsx",
           type: "registry:ui",
@@ -7647,7 +7673,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -7660,7 +7686,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
@@ -7686,7 +7712,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/editable.tsx",
           type: "registry:ui",
@@ -7716,7 +7742,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/file-upload.tsx",
           type: "registry:ui",
@@ -7768,7 +7794,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/key-value.tsx",
           type: "registry:ui",
@@ -7837,7 +7863,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
@@ -7863,7 +7889,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["command","input","popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/phone-input.tsx",
           type: "registry:ui",
@@ -7906,7 +7932,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-value-as-ref","@diceui/use-ref-with-init","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/radix/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -7932,7 +7958,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -7958,7 +7984,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -7984,7 +8010,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -8036,7 +8062,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
@@ -8049,7 +8075,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/swap.tsx",
           type: "registry:ui",
@@ -8062,7 +8088,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/qr-code.tsx",
           type: "registry:ui",
@@ -8075,7 +8101,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/rating.tsx",
           type: "registry:ui",
@@ -8105,7 +8131,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
@@ -8118,7 +8144,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/time-picker.tsx",
           type: "registry:ui",
@@ -8135,7 +8161,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
@@ -8346,6 +8372,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-ref-with-init": {
+        name: "use-ref-with-init",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-ref-with-init.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-value-as-ref": {
+        name: "use-value-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-value-as-ref.ts",
           type: "registry:hook",
           target: ""
         }],
@@ -8357,7 +8409,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref"],
         files: [{
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
@@ -8370,7 +8422,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -8413,7 +8465,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -8452,7 +8504,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/color-picker.tsx",
           type: "registry:ui",
@@ -8482,7 +8534,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -8495,7 +8547,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
@@ -8521,7 +8573,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/editable.tsx",
           type: "registry:ui",
@@ -8551,7 +8603,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/file-upload.tsx",
           type: "registry:ui",
@@ -8603,7 +8655,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/key-value.tsx",
           type: "registry:ui",
@@ -8672,7 +8724,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
@@ -8698,7 +8750,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["command","input","popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/phone-input.tsx",
           type: "registry:ui",
@@ -8741,7 +8793,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-value-as-ref","@diceui/use-ref-with-init","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/radix/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -8767,7 +8819,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -8793,7 +8845,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -8819,7 +8871,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -8871,7 +8923,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
@@ -8884,7 +8936,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/swap.tsx",
           type: "registry:ui",
@@ -8897,7 +8949,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/qr-code.tsx",
           type: "registry:ui",
@@ -8910,7 +8962,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/rating.tsx",
           type: "registry:ui",
@@ -8940,7 +8992,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
@@ -8953,7 +9005,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/time-picker.tsx",
           type: "registry:ui",
@@ -8970,7 +9022,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
@@ -9181,6 +9233,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-ref-with-init": {
+        name: "use-ref-with-init",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-ref-with-init.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-value-as-ref": {
+        name: "use-value-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-value-as-ref.ts",
           type: "registry:hook",
           target: ""
         }],
@@ -9192,7 +9270,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref"],
         files: [{
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
@@ -9205,7 +9283,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -9248,7 +9326,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -9287,7 +9365,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/color-picker.tsx",
           type: "registry:ui",
@@ -9317,7 +9395,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -9330,7 +9408,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
@@ -9356,7 +9434,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/editable.tsx",
           type: "registry:ui",
@@ -9386,7 +9464,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/file-upload.tsx",
           type: "registry:ui",
@@ -9438,7 +9516,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/key-value.tsx",
           type: "registry:ui",
@@ -9507,7 +9585,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
@@ -9533,7 +9611,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["command","input","popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/phone-input.tsx",
           type: "registry:ui",
@@ -9576,7 +9654,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-value-as-ref","@diceui/use-ref-with-init","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/radix/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -9602,7 +9680,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -9628,7 +9706,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -9654,7 +9732,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -9706,7 +9784,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
@@ -9719,7 +9797,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/swap.tsx",
           type: "registry:ui",
@@ -9732,7 +9810,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/qr-code.tsx",
           type: "registry:ui",
@@ -9745,7 +9823,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/rating.tsx",
           type: "registry:ui",
@@ -9775,7 +9853,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
@@ -9788,7 +9866,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/time-picker.tsx",
           type: "registry:ui",
@@ -9805,7 +9883,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
@@ -10016,6 +10094,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-ref-with-init": {
+        name: "use-ref-with-init",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-ref-with-init.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-value-as-ref": {
+        name: "use-value-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-value-as-ref.ts",
           type: "registry:hook",
           target: ""
         }],
@@ -10027,7 +10131,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref"],
         files: [{
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
@@ -10040,7 +10144,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -10083,7 +10187,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -10122,7 +10226,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/color-picker.tsx",
           type: "registry:ui",
@@ -10152,7 +10256,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -10165,7 +10269,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
@@ -10191,7 +10295,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/editable.tsx",
           type: "registry:ui",
@@ -10221,7 +10325,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/file-upload.tsx",
           type: "registry:ui",
@@ -10273,7 +10377,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/key-value.tsx",
           type: "registry:ui",
@@ -10342,7 +10446,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
@@ -10368,7 +10472,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["command","input","popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/phone-input.tsx",
           type: "registry:ui",
@@ -10411,7 +10515,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-value-as-ref","@diceui/use-ref-with-init","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/radix/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -10437,7 +10541,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -10463,7 +10567,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -10489,7 +10593,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -10541,7 +10645,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
@@ -10554,7 +10658,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/swap.tsx",
           type: "registry:ui",
@@ -10567,7 +10671,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/qr-code.tsx",
           type: "registry:ui",
@@ -10580,7 +10684,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/rating.tsx",
           type: "registry:ui",
@@ -10610,7 +10714,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
@@ -10623,7 +10727,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/time-picker.tsx",
           type: "registry:ui",
@@ -10640,7 +10744,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
@@ -10851,6 +10955,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-ref-with-init": {
+        name: "use-ref-with-init",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-ref-with-init.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-value-as-ref": {
+        name: "use-value-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-value-as-ref.ts",
           type: "registry:hook",
           target: ""
         }],
@@ -10862,7 +10992,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref"],
         files: [{
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
@@ -10875,7 +11005,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -10918,7 +11048,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -10957,7 +11087,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/color-picker.tsx",
           type: "registry:ui",
@@ -10987,7 +11117,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -11000,7 +11130,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
@@ -11026,7 +11156,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/editable.tsx",
           type: "registry:ui",
@@ -11056,7 +11186,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/file-upload.tsx",
           type: "registry:ui",
@@ -11108,7 +11238,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/key-value.tsx",
           type: "registry:ui",
@@ -11177,7 +11307,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
@@ -11203,7 +11333,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["command","input","popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/phone-input.tsx",
           type: "registry:ui",
@@ -11246,7 +11376,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-value-as-ref","@diceui/use-ref-with-init","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/radix/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -11272,7 +11402,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -11298,7 +11428,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -11324,7 +11454,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -11376,7 +11506,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
@@ -11389,7 +11519,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/swap.tsx",
           type: "registry:ui",
@@ -11402,7 +11532,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/qr-code.tsx",
           type: "registry:ui",
@@ -11415,7 +11545,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/rating.tsx",
           type: "registry:ui",
@@ -11445,7 +11575,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
@@ -11458,7 +11588,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/time-picker.tsx",
           type: "registry:ui",
@@ -11475,7 +11605,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
@@ -11686,6 +11816,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-ref-with-init": {
+        name: "use-ref-with-init",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-ref-with-init.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-value-as-ref": {
+        name: "use-value-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-value-as-ref.ts",
           type: "registry:hook",
           target: ""
         }],
@@ -11697,7 +11853,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref"],
         files: [{
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
@@ -11710,7 +11866,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -11753,7 +11909,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -11792,7 +11948,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/color-picker.tsx",
           type: "registry:ui",
@@ -11822,7 +11978,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -11835,7 +11991,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
@@ -11861,7 +12017,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/editable.tsx",
           type: "registry:ui",
@@ -11891,7 +12047,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/file-upload.tsx",
           type: "registry:ui",
@@ -11943,7 +12099,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/key-value.tsx",
           type: "registry:ui",
@@ -12012,7 +12168,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
@@ -12038,7 +12194,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["command","input","popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/phone-input.tsx",
           type: "registry:ui",
@@ -12081,7 +12237,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-value-as-ref","@diceui/use-ref-with-init","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/radix/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -12107,7 +12263,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -12133,7 +12289,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -12159,7 +12315,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -12211,7 +12367,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
@@ -12224,7 +12380,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/swap.tsx",
           type: "registry:ui",
@@ -12237,7 +12393,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/qr-code.tsx",
           type: "registry:ui",
@@ -12250,7 +12406,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/rating.tsx",
           type: "registry:ui",
@@ -12280,7 +12436,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
@@ -12293,7 +12449,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/time-picker.tsx",
           type: "registry:ui",
@@ -12310,7 +12466,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
@@ -12521,6 +12677,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-ref-with-init": {
+        name: "use-ref-with-init",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-ref-with-init.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-value-as-ref": {
+        name: "use-value-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-value-as-ref.ts",
           type: "registry:hook",
           target: ""
         }],
@@ -12532,7 +12714,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "action-bar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref"],
         files: [{
           path: "registry/bases/radix/ui/action-bar.tsx",
           type: "registry:ui",
@@ -12545,7 +12727,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "angle-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/angle-slider.tsx",
           type: "registry:ui",
@@ -12588,7 +12770,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "banner",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/banner.tsx",
           type: "registry:ui",
@@ -12627,7 +12809,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "color-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","popover","select","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","popover","select","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/color-picker.tsx",
           type: "registry:ui",
@@ -12657,7 +12839,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "compare-slider",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/compare-slider.tsx",
           type: "registry:ui",
@@ -12670,7 +12852,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "cropper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/cropper.tsx",
           type: "registry:ui",
@@ -12696,7 +12878,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "editable",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/editable.tsx",
           type: "registry:ui",
@@ -12726,7 +12908,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "file-upload",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/file-upload.tsx",
           type: "registry:ui",
@@ -12778,7 +12960,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "key-value",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","input","textarea","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","input","textarea","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/key-value.tsx",
           type: "registry:ui",
@@ -12847,7 +13029,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "media-player",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-lazy-ref"],
+        registryDependencies: ["badge","button","select","slider","tooltip","dropdown-menu","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/media-player.tsx",
           type: "registry:ui",
@@ -12873,7 +13055,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "phone-input",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["command","input","popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["command","input","popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/phone-input.tsx",
           type: "registry:ui",
@@ -12916,7 +13098,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "responsive-dialog",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["dialog","drawer","@diceui/use-as-ref","@diceui/use-lazy-ref","@diceui/use-mobile"],
+        registryDependencies: ["dialog","drawer","@diceui/use-value-as-ref","@diceui/use-ref-with-init","@diceui/use-mobile"],
         files: [{
           path: "registry/bases/radix/ui/responsive-dialog.tsx",
           type: "registry:ui",
@@ -12942,7 +13124,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "scroll-spy",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/scroll-spy.tsx",
           type: "registry:ui",
@@ -12968,7 +13150,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "selection-toolbar",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/selection-toolbar.tsx",
           type: "registry:ui",
@@ -12994,7 +13176,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "speed-dial",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/speed-dial.tsx",
           type: "registry:ui",
@@ -13046,7 +13228,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "stepper",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["button","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["button","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/stepper.tsx",
           type: "registry:ui",
@@ -13059,7 +13241,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "swap",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/swap.tsx",
           type: "registry:ui",
@@ -13072,7 +13254,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "qr-code",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/qr-code.tsx",
           type: "registry:ui",
@@ -13085,7 +13267,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "rating",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/rating.tsx",
           type: "registry:ui",
@@ -13115,7 +13297,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "timeline",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/timeline.tsx",
           type: "registry:ui",
@@ -13128,7 +13310,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "time-picker",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["popover","@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["popover","@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/time-picker.tsx",
           type: "registry:ui",
@@ -13145,7 +13327,7 @@ export const Index: Record<string, Record<string, unknown>> = {
         name: "tour",
         description: "",
         type: "registry:ui",
-        registryDependencies: ["@diceui/use-as-ref","@diceui/use-lazy-ref"],
+        registryDependencies: ["@diceui/use-value-as-ref","@diceui/use-ref-with-init"],
         files: [{
           path: "registry/bases/radix/ui/tour.tsx",
           type: "registry:ui",
@@ -13356,6 +13538,32 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/hooks/use-mobile.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-ref-with-init": {
+        name: "use-ref-with-init",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-ref-with-init.ts",
+          type: "registry:hook",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "use-value-as-ref": {
+        name: "use-value-as-ref",
+        description: "",
+        type: "registry:hook",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/radix/hooks/use-value-as-ref.ts",
           type: "registry:hook",
           target: ""
         }],

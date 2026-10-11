@@ -19,7 +19,7 @@ import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
 import { Badge } from "@/registry/bases/radix/ui/badge";
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
@@ -156,8 +156,8 @@ interface MediaPlayerProps extends Omit<
 }
 
 function MediaPlayer(props: MediaPlayerProps) {
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     controlsVisible: true,
     dragging: false,
     menuOpen: false,

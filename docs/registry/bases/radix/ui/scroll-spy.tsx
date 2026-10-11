@@ -8,8 +8,8 @@ import {
 import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
+import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 
 const ROOT_NAME = "ScrollSpy";
 const NAV_NAME = "ScrollSpyNav";
@@ -120,11 +120,11 @@ function ScrollSpy(props: ScrollSpyProps) {
 
   const dir = DirectionPrimitive.useDirection(dirProp);
 
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const stateRef = useRefWithInit<StoreState>(() => ({
     value: value ?? defaultValue ?? "",
   }));
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const onValueChangeRef = useAsRef(onValueChange);
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const onValueChangeRef = useValueAsRef(onValueChange);
 
   const store = React.useMemo<Store>(() => {
     return {

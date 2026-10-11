@@ -5,7 +5,7 @@ import { Slot as SlotPrimitive } from "radix-ui";
 import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
 
 const ROOT_NAME = "QRCode";
 const CANVAS_NAME = "QRCodeCanvas";
@@ -114,8 +114,8 @@ function QRCode(props: QRCodeProps) {
 
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     dataUrl: null,
     svgString: null,
     isGenerating: false,

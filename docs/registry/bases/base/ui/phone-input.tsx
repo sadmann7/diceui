@@ -6,12 +6,12 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import {
   Command,
   CommandEmpty,
@@ -498,8 +498,8 @@ function PhoneInput(props: PhoneInputProps) {
   const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => {
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => {
     const initialValue = valueProp ?? defaultValue ?? "";
     const initialCountry = countryProp ?? defaultCountry ?? "";
 
@@ -511,7 +511,7 @@ function PhoneInput(props: PhoneInputProps) {
     };
   });
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onValueChange,
     onCountryChange,
   });
@@ -666,7 +666,7 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const store = useStoreContext(COUNTRY_SELECT_NAME);
   const country = useStore((state) => state.country);
   const open = useStore((state) => state.open);
-  const onOpenChangeRef = useAsRef(onOpenChangeProp);
+  const onOpenChangeRef = useValueAsRef(onOpenChangeProp);
 
   const isDisabled = disabledProp || disabled;
 
@@ -779,7 +779,7 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
 
   const composedRef = useMergedRefs(ref, inputRef);
 
-  const onChangeRef = useAsRef(onChangeProp);
+  const onChangeRef = useValueAsRef(onChangeProp);
 
   const isDisabled = disabledProp || disabled;
   const isReadOnly = readOnlyProp || readOnly;

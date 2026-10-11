@@ -4,12 +4,12 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
 const ROOT_NAME = "AngleSlider";
@@ -206,8 +206,8 @@ function AngleSlider(props: AngleSliderProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     values: value ?? defaultValue,
     thumbs: new Map(),
     valueIndexToChange: 0,
@@ -223,7 +223,7 @@ function AngleSlider(props: AngleSliderProps) {
     endAngle,
   }));
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onValueChange,
     onValueCommit,
     onPointerMove: onPointerMoveProp,

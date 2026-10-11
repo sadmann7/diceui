@@ -6,8 +6,8 @@ import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
+import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import {
   Command,
   CommandEmpty,
@@ -494,8 +494,8 @@ function PhoneInput(props: PhoneInputProps) {
   const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => {
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => {
     const initialValue = valueProp ?? defaultValue ?? "";
     const initialCountry = countryProp ?? defaultCountry ?? "";
 
@@ -507,7 +507,7 @@ function PhoneInput(props: PhoneInputProps) {
     };
   });
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onValueChange,
     onCountryChange,
   });
@@ -654,7 +654,7 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const store = useStoreContext(COUNTRY_SELECT_NAME);
   const country = useStore((state) => state.country);
   const open = useStore((state) => state.open);
-  const onOpenChangeRef = useAsRef(onOpenChangeProp);
+  const onOpenChangeRef = useValueAsRef(onOpenChangeProp);
 
   const isDisabled = disabledProp || disabled;
 
@@ -766,7 +766,7 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
 
   const composedRef = useComposedRefs(ref, inputRef);
 
-  const onChangeRef = useAsRef(onChangeProp);
+  const onChangeRef = useValueAsRef(onChangeProp);
 
   const isDisabled = disabledProp || disabled;
   const isReadOnly = readOnlyProp || readOnly;

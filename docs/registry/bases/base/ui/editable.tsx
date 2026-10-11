@@ -4,12 +4,12 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
 const ROOT_NAME = "Editable";
@@ -174,13 +174,13 @@ function Editable(props: EditableProps) {
   const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     value: valueProp ?? defaultValue,
     editing: editingProp ?? defaultEditing ?? false,
   }));
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onValueChange,
     onEditingChange,
     onCancel: onCancelProp,
@@ -418,7 +418,7 @@ function EditablePreview(props: EditablePreviewProps) {
   const value = useStore((state) => state.value);
   const editing = useStore((state) => state.editing);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
     onDoubleClick: onDoubleClickProp,
     onFocus: onFocusProp,
@@ -537,7 +537,7 @@ function EditableInput(props: EditableInputProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const composedRef = useMergedRefs(ref, inputRef);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onBlur: onBlurProp,
     onChange: onChangeProp,
     onKeyDown: onKeyDownProp,
@@ -768,7 +768,7 @@ function EditableCancel(props: EditableCancelProps) {
   const context = useEditableContext(CANCEL_NAME);
   const editing = useStore((state) => state.editing);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
 
@@ -815,7 +815,7 @@ function EditableSubmit(props: EditableSubmitProps) {
   const value = useStore((state) => state.value);
   const editing = useStore((state) => state.editing);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
 

@@ -4,11 +4,11 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -245,13 +245,13 @@ function Stepper(props: StepperProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     steps: new Map(),
     value: value ?? defaultValue ?? "",
   }));
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onValueChange,
     onValueComplete,
     onValueAdd,
@@ -422,7 +422,7 @@ function StepperList(props: DivProps) {
   const orientation = context.orientation;
   const currentValue = useStore((state) => state.value);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onBlur: onBlurProp,
     onFocus: onFocusProp,
     onMouseDown: onMouseDownProp,
@@ -716,7 +716,7 @@ function StepperTrigger(props: ButtonProps) {
   const steps = useStore((state) => state.steps);
   const stepState = useStore((state) => state.steps.get(itemValue));
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
     onFocus: onFocusProp,
     onKeyDown: onKeyDownProp,
@@ -1236,7 +1236,7 @@ function StepperPrev(props: ButtonProps) {
   const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
 
@@ -1283,7 +1283,7 @@ function StepperNext(props: ButtonProps) {
   const value = useStore((state) => state.value);
   const steps = useStore((state) => state.steps);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
 

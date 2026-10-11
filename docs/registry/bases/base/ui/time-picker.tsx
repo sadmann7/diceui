@@ -5,12 +5,12 @@ import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Popover, PopoverTrigger } from "@/registry/bases/base/ui/popover";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -348,14 +348,14 @@ function TimePicker(props: TimePickerProps) {
   );
   const isFormControl = inputGroup ? !!inputGroup.closest("form") : true;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     value: valueProp ?? defaultValue ?? "",
     open: open ?? defaultOpen ?? false,
     openedViaFocus: false,
   }));
 
-  const propsRef = useAsRef({ onValueChange, onOpenChange });
+  const propsRef = useValueAsRef({ onValueChange, onOpenChange });
 
   const store: Store = React.useMemo(() => {
     return {

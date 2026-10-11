@@ -6,8 +6,8 @@ import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
+import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { Input } from "@/registry/bases/radix/ui/input";
 import { Textarea } from "@/registry/bases/radix/ui/textarea";
@@ -203,14 +203,14 @@ function KeyValue(props: KeyValueProps) {
   const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<KeyValueState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<KeyValueState>(() => ({
     value: valueProp ??
       defaultValue ?? [{ id: crypto.randomUUID(), key: "", value: "" }],
     focusedId: null,
     errors: {},
   }));
-  const propsRef = useAsRef({ onValueChange });
+  const propsRef = useValueAsRef({ onValueChange });
 
   const store = React.useMemo<Store>(() => {
     return {
@@ -411,7 +411,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   const store = useStoreContext(KEY_INPUT_NAME);
   const errors = useStore((state) => state.errors);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onChange: onChangeProp,
     onPaste: onPasteProp,
   });
@@ -614,7 +614,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   const store = useStoreContext(VALUE_INPUT_NAME);
   const errors = useStore((state) => state.errors);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onChange: onChangeProp,
   });
 
@@ -722,7 +722,7 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
   const itemData = useKeyValueItemContext(REMOVE_NAME);
   const store = useStoreContext(REMOVE_NAME);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
   const value = useStore((state) => state.value);
@@ -779,7 +779,7 @@ function KeyValueAdd(props: React.ComponentProps<typeof Button>) {
   const context = useKeyValueContext(ADD_NAME);
   const store = useStoreContext(ADD_NAME);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
   const value = useStore((state) => state.value);
