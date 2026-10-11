@@ -52,6 +52,12 @@ links:
     ```package-install
     npx shadcn@latest add "@diceui/data-table-command-filter-menu"
     ```
+
+    [`getDataTableSelectColumn`](#row-selection):
+
+    ```package-install
+    npx shadcn@latest add "@diceui/data-table-select-column"
+    ```
   </Step>
 </Steps>
 
@@ -254,6 +260,172 @@ const { table } = useDataTable({
     ```
   </Step>
 </Steps>
+
+## Row Selection
+
+Use `getDataTableSelectColumn` to add a checkbox column for selecting rows:
+
+```tsx
+import { getDataTableSelectColumn } from "@/components/data-table/data-table-select-column";
+
+const columns = React.useMemo<ColumnDef<DataTableFeatures, Project>[]>(
+  () => [
+    getDataTableSelectColumn(),
+    // ...other columns
+  ],
+  [],
+);
+```
+
+Cells are memoized and only re-render when the state they subscribe to changes. If you render your own selection-dependent cell, read the selection inside `Subscribe` instead of calling `row.getIsSelected()` directly:
+
+```tsx
+import { Subscribe } from "@tanstack/react-table";
+
+cell: ({ row }) => (
+  <Subscribe
+    source={row.table.atoms.rowSelection}
+    selector={(selection) => selection[row.id] === true}
+  >
+    {(isSelected) => (
+      <Checkbox
+        checked={isSelected}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+      />
+    )}
+  </Subscribe>
+),
+```
+
+## Client and Server Mode
+
+`useDataTable` runs in one of two modes. Both keep pagination, sorting, and filters in the URL.
+
+<PropsTable
+  variant="title"
+  data={[
+    {
+      title: "server",
+      description: "Default. Pass the current page of `data` and a `pageCount`. Read the URL state on the server and query your database.",
+    },
+    {
+      title: "client",
+      description: "Pass all rows as `data` without a `pageCount`. The hook sorts, filters, and paginates them in the browser.",
+    },
+  ]}
+/>
+
+### Client Mode
+
+Use client mode when the full dataset fits in the browser:
+
+```tsx
+const { table } = useDataTable({
+  mode: "client",
+  data,
+  columns,
+  getRowId: (row) => row.id,
+});
+```
+
+### Server Mode
+
+Use server mode for large datasets. Describe the filterable and sortable columns once, and share that config between the server and the column definitions.
+
+<Steps>
+  <Step>
+    Define the column configs and search params:
+
+    ```ts title="lib/validations.ts"
+    import { createSearchParamsCache } from "nuqs/server";
+
+    import type { DataTableColumnConfig } from "@/lib/data-table-types";
+    import { getDataTableSearchParams } from "@/lib/data-table-parsers";
+
+    export const tasksColumnConfigs = {
+      // Sortable, not filterable
+      code: { isSortable: false },
+      title: { variant: "text" },
+      status: { variant: "multiSelect" },
+      estimatedHours: { variant: "range" },
+      createdAt: { variant: "dateRange" },
+    } as const satisfies Record<string, DataTableColumnConfig>;
+
+    export const searchParamsCache = createSearchParamsCache(
+      getDataTableSearchParams({
+        columnConfigs: tasksColumnConfigs,
+        defaultSorting: [{ id: "createdAt", desc: true }],
+      }),
+    );
+    ```
+  </Step>
+
+  <Step>
+    Parse the search params on the server and turn them into a query:
+
+    ```tsx title="app/page.tsx"
+    import { getDataTableQuery } from "@/lib/data-table-parsers";
+
+    export default async function Page(props: {
+      searchParams: Promise<Record<string, string | string[] | undefined>>;
+    }) {
+      const search = searchParamsCache.parse(await props.searchParams);
+      // { page, perPage, sorting, filters, joinOperator }
+      const query = getDataTableQuery(search, tasksColumnConfigs);
+      const { data, pageCount } = await getTasks(query);
+
+      return <TasksTable data={data} pageCount={pageCount} />;
+    }
+    ```
+
+    Type the query function's input with `DataTableColumnConfigsQuery<typeof tasksColumnConfigs>`. Each filter has an `id`, `variant`, `operator`, and `value` to map onto your database query.
+  </Step>
+
+  <Step>
+    Spread `getColumnOptions` into each column so filtering and sorting match the config:
+
+    ```tsx
+    import { getColumnOptions } from "@/lib/data-table-parsers";
+
+    {
+      id: "title",
+      accessorKey: "title",
+      meta: { label: "Title", variant: "text" },
+      ...getColumnOptions(tasksColumnConfigs.title), // [!code highlight]
+    }
+    ```
+  </Step>
+
+  <Step>
+    Pass the server data and `pageCount` to `useDataTable`. Pass `startTransition` from `React.useTransition()` to show loading states while the server re-renders:
+
+    ```tsx
+    const [isPending, startTransition] = React.useTransition();
+
+    const { table } = useDataTable({
+      data,
+      columns,
+      pageCount,
+      startTransition,
+    });
+    ```
+  </Step>
+</Steps>
+
+### URL Format
+
+Each filterable column has its own search param, keyed by column id. The value is the operator followed by the filter value. When a filter uses the column's default operator, the operator is left out.
+
+```txt
+?title=report                     # text, default operator (contains)
+?title=eq.Weekly%20report         # text, "is"
+?status=todo,done                 # multi-select, default operator (has any of)
+?estimatedHours=2,8               # range, default operator (between)
+?estimatedHours=gt.4              # range, "is greater than"
+?createdAt=is.empty               # no value
+?sort=createdAt.desc,title.asc
+?joinOperator=or
+```
 
 ## API Reference
 
