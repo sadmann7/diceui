@@ -440,7 +440,7 @@ export const ui: Registry["items"] = [
   {
     name: "masonry",
     type: "registry:ui",
-    dependencies: ["@diceui/masonry", "radix-ui"],
+    dependencies: ["radix-ui"],
     registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
     files: [
       {

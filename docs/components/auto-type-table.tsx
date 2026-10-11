@@ -24,13 +24,7 @@ export async function AutoTypeTable(props: AutoTypeTableProps) {
     type: props.type,
   });
 
-  if (docs.every((doc) => doc.entries.length === 0)) {
-    return (
-      <p className="text-muted-foreground">
-        No props of its own. It accepts the native attributes of its element.
-      </p>
-    );
-  }
+  if (docs.every((doc) => doc.entries.length === 0)) return null;
 
   return (
     <div className="auto-type-table">

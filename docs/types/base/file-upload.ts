@@ -211,18 +211,6 @@ export interface FileUploadProps extends RenderProps {
   name?: string;
 
   /**
-   * Whether to render the component with a custom child.
-   * Useful for custom trigger elements.
-   *
-   * ```ts
-   * <FileUpload asChild>
-   *   <button>Upload Files</button>
-   * </FileUpload>
-   * ```
-   */
-  asChild?: boolean;
-
-  /**
    * Whether the file upload is disabled.
    *
    * ```ts
