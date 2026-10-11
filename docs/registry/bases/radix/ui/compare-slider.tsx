@@ -2,11 +2,10 @@
 
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -158,7 +157,7 @@ function CompareSlider(props: CompareSliderProps) {
 
   const value = useStore((state) => state.value, store);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", clamp(valueProp, 0, 100));
     }

@@ -2,10 +2,9 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import * as React from "react";
-
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 
 const NODE_COLOR = {
   RED: 0,
@@ -1242,7 +1241,7 @@ function Masonry(props: MasonryProps) {
     width: number;
   }>({ offset: 0, width: 0 });
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!containerRef.current) return;
 
     let offset = 0;
@@ -1359,7 +1358,7 @@ function MasonryViewport(props: DivProps) {
   const rafId = React.useRef<number | null>(null);
   const [mounted, setMounted] = React.useState(false);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     setMounted(true);
   }, []);
 

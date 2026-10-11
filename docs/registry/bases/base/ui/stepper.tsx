@@ -2,12 +2,12 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
@@ -327,7 +327,7 @@ function Stepper(props: StepperProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("value", value);
     }
@@ -638,7 +638,7 @@ function StepperItem(props: StepperItemProps) {
   const orientation = context.orientation;
   const value = useStore((state) => state.value);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.addStep(itemValue, completed, disabled);
 
     return () => {
@@ -646,7 +646,7 @@ function StepperItem(props: StepperItemProps) {
     };
   }, [itemValue, completed, disabled]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.setStep(itemValue, completed, disabled);
   }, [itemValue, completed, disabled]);
 
@@ -764,7 +764,7 @@ function StepperTrigger(props: ButtonProps) {
     };
   }, []);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     focusContext.onItemRegister({
       id: triggerId,
       ref: triggerRef,

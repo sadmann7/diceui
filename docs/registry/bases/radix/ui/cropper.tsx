@@ -3,11 +3,10 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 
 const ROOT_NAME = "Cropper";
@@ -588,7 +587,7 @@ function Cropper(props: CropperProps) {
     };
   }, [listenersRef, stateRef, propsRef, aspectRatio]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     const updates: Partial<StoreState> = {};
     let hasUpdates = false;
     let shouldRecompute = false;

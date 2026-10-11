@@ -2,12 +2,11 @@
 
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import {
   Popover,
@@ -399,13 +398,13 @@ function TimePicker(props: TimePickerProps) {
 
   const value = useStore((state) => state.value, store);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
   }, [valueProp]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (open !== undefined) {
       store.setState("open", open);
     }
@@ -790,7 +789,7 @@ function TimePickerInput(props: TimePickerInputProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const composedRef = useComposedRefs(ref, inputRef);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (segment) {
       inputGroupContext.onInputRegister(segment as Segment, inputRef);
       return () => inputGroupContext.onInputUnregister(segment as Segment);
@@ -1687,7 +1686,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
     return items.find((item) => item.selected)?.ref ?? null;
   }, [getItems]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     groupContext.onColumnRegister({
       id: columnId,
       ref: columnRef,
@@ -1741,12 +1740,12 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   const columnContext = useTimePickerColumnContext(COLUMN_ITEM_NAME);
   const groupContext = useTimePickerGroupContext(COLUMN_ITEM_NAME);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     columnContext.onItemRegister(value, itemRef, selected);
     return () => columnContext.onItemUnregister(value);
   }, [columnContext, value, selected]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (selected && itemRef.current) {
       itemRef.current.scrollIntoView({ block: "nearest" });
     }

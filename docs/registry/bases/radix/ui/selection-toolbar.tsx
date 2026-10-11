@@ -14,12 +14,11 @@ import {
 } from "@floating-ui/react-dom";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 
@@ -207,7 +206,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }

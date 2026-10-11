@@ -2,6 +2,7 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import {
   type Announcements,
@@ -47,8 +48,6 @@ import { CSS } from "@dnd-kit/utilities";
 import { cn } from "cn";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 
 const directions = new Set<string>([
   KeyboardCode.Down,
@@ -1135,7 +1134,7 @@ function KanbanOverlay(props: KanbanOverlayProps) {
 
   const [mounted, setMounted] = React.useState(false);
 
-  useIsomorphicLayoutEffect(() => setMounted(true), []);
+  useIsoLayoutEffect(() => setMounted(true), []);
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);

@@ -2,12 +2,12 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -156,7 +156,7 @@ function CompareSlider(props: CompareSliderProps) {
 
   const value = useStore((state) => state.value, store);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", clamp(valueProp, 0, 100));
     }

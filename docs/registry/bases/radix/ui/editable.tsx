@@ -5,12 +5,11 @@ import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 
 const ROOT_NAME = "Editable";
@@ -226,13 +225,13 @@ function Editable(props: EditableProps) {
 
   const value = useStore((state) => state.value, store);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
   }, [valueProp]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (editingProp !== undefined) {
       store.setState("editing", editingProp);
     }
@@ -613,7 +612,7 @@ function EditableInput(props: EditableInputProps) {
     ],
   );
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (!editing || isDisabled || isReadOnly || !inputRef.current) return;
 
     const frameId = window.requestAnimationFrame(() => {

@@ -10,13 +10,8 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "button",
-      "direction",
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-    ],
-    dependencies: ["@base-ui/react"],
+    registryDependencies: ["button", "direction", "@diceui/use-as-ref"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "angle-slider",
@@ -34,7 +29,6 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "direction",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
@@ -134,7 +128,6 @@ export const ui: Registry["items"] = [
       "select",
       "direction",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
@@ -170,11 +163,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -186,11 +175,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -209,10 +194,9 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "direction",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "faceted",
@@ -223,12 +207,8 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "command",
-      "popover",
-      "@diceui/use-isomorphic-layout-effect",
-    ],
-    dependencies: ["@base-ui/react", "cmdk"],
+    registryDependencies: ["command", "popover"],
+    dependencies: ["@base-ui/react", "@base-ui/utils", "cmdk"],
   },
   {
     name: "file-upload",
@@ -276,7 +256,6 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
     dependencies: [
       "@base-ui/react",
       "@base-ui/utils",
@@ -304,7 +283,6 @@ export const ui: Registry["items"] = [
       "input",
       "textarea",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
@@ -418,7 +396,6 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -469,7 +446,6 @@ export const ui: Registry["items"] = [
       "command",
       "input",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils", "cmdk"],
@@ -515,7 +491,6 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "direction",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
@@ -545,10 +520,10 @@ export const ui: Registry["items"] = [
       "dialog",
       "drawer",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
       "@diceui/use-mobile",
     ],
+    dependencies: ["@base-ui/utils"],
   },
   {
     name: "scroll-spy",
@@ -562,7 +537,6 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "direction",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
@@ -602,7 +576,6 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "button",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: [
@@ -620,7 +593,6 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["@diceui/use-isomorphic-layout-effect"],
     dependencies: [
       "@base-ui/react",
       "@base-ui/utils",
@@ -642,7 +614,6 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "button",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
@@ -692,7 +663,6 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "direction",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
@@ -706,12 +676,8 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref",
-    ],
-    dependencies: ["@base-ui/react"],
+    registryDependencies: ["@diceui/use-as-ref", "@diceui/use-lazy-ref"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
     name: "timeline",
@@ -722,11 +688,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: [
-      "direction",
-      "@diceui/use-isomorphic-layout-effect",
-      "@diceui/use-lazy-ref",
-    ],
+    registryDependencies: ["direction", "@diceui/use-lazy-ref"],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
@@ -756,7 +718,6 @@ export const ui: Registry["items"] = [
     registryDependencies: [
       "popover",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
@@ -782,7 +743,6 @@ export const ui: Registry["items"] = [
       "button",
       "direction",
       "@diceui/use-as-ref",
-      "@diceui/use-isomorphic-layout-effect",
       "@diceui/use-lazy-ref",
     ],
     dependencies: [

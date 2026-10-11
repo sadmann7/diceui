@@ -1,10 +1,8 @@
 "use client";
 
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
-
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 
 const NODE_COLOR = {
   RED: 0,
@@ -1241,7 +1239,7 @@ function Masonry(props: MasonryProps) {
     width: number;
   }>({ offset: 0, width: 0 });
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (!containerRef.current) return;
 
     let offset = 0;
@@ -1353,7 +1351,7 @@ function MasonryViewport(props: DivProps) {
   const rafId = React.useRef<number | null>(null);
   const [mounted, setMounted] = React.useState(false);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     setMounted(true);
   }, []);
 

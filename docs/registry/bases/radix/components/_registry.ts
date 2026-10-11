@@ -20,6 +20,7 @@ export const components: Registry["items"] = [
         type: "registry:component",
       },
     ],
+    dependencies: ["radix-ui"],
   },
   {
     name: "hitbox",
@@ -41,6 +42,7 @@ export const components: Registry["items"] = [
         type: "registry:component",
       },
     ],
+    dependencies: ["radix-ui"],
   },
   {
     name: "pending",
@@ -62,6 +64,7 @@ export const components: Registry["items"] = [
         type: "registry:component",
       },
     ],
+    dependencies: ["radix-ui"],
   },
   {
     name: "presentation-zoom-select",

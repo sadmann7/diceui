@@ -53,6 +53,7 @@ export const components: Registry["items"] = [
         type: "registry:component",
       },
     ],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "presence",

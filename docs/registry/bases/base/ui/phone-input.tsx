@@ -4,13 +4,13 @@ import type { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import {
   Command,
@@ -549,13 +549,13 @@ function PhoneInput(props: PhoneInputProps) {
   const value = useStore((state) => state.value, store);
   const country = useStore((state) => state.country, store);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
   }, [valueProp]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (countryProp !== undefined) {
       store.setState("country", countryProp);
     }

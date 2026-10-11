@@ -2,10 +2,10 @@
 
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
+import { useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 
 interface DivProps extends React.ComponentProps<"div"> {
@@ -122,7 +122,7 @@ function Swap(props: SwapProps) {
 
   const swapped = useStore((state) => state.swapped, store);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (swappedProp !== undefined) {
       store.setState("swapped", swappedProp);
     }

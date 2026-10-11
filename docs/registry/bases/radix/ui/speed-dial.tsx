@@ -3,11 +3,10 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 
@@ -237,7 +236,7 @@ function SpeedDial(props: SpeedDialProps) {
     nodesRef.current.delete(id);
   }, []);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
@@ -341,7 +340,7 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
   const composedRef = useComposedRefs(ref, triggerRef);
   const hoverOpenTimerRef = React.useRef<number | null>(null);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     onNodeRegister({
       id: triggerId,
       ref: triggerRef,
@@ -654,7 +653,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     });
   }, [triggerRef, open, side, offset]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (!open) return;
     updatePosition();
   }, [open, updatePosition]);
@@ -967,7 +966,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
   const actionRef = React.useRef<ActionElement | null>(null);
   const composedRefs = useComposedRefs(ref, actionRef);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     onNodeRegister({
       id: actionId,
       ref: actionRef,

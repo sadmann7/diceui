@@ -5,12 +5,11 @@ import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -273,7 +272,7 @@ function Rating(props: RatingProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
@@ -597,7 +596,7 @@ function RatingItem(props: RatingItemProps) {
     onMouseLeave: onMouseLeaveProp,
   });
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     focusContext.onItemRegister({
       id: itemId,
       ref: itemRef,
