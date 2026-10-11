@@ -177,7 +177,7 @@ export interface FacetedItemIndicatorProps extends EmptyProps<"span"> {
 
 export interface FacetedClearProps extends EmptyProps<"div"> {
   /**
-   * The content of the clear item. It only renders when something is selected.
+   * The content of the clear item. It renders in its own group below a separator, and only when something is selected.
    * @default "Clear"
    */
   children?: React.ReactNode;

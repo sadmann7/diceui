@@ -517,17 +517,22 @@ function FacetedClear({
   if (!hasSelection) return null;
 
   return (
-    <FacetedCommandItem
-      data-slot="faceted-clear"
-      className={cn("justify-center text-center", className)}
-      onSelect={(value) => {
-        onSelect?.(value);
-        store.clear();
-      }}
-      {...props}
-    >
-      {children}
-    </FacetedCommandItem>
+    <>
+      <FacetedSeparator />
+      <FacetedGroup>
+        <FacetedCommandItem
+          data-slot="faceted-clear"
+          className={cn("justify-center text-center", className)}
+          onSelect={(value) => {
+            onSelect?.(value);
+            store.clear();
+          }}
+          {...props}
+        >
+          {children}
+        </FacetedCommandItem>
+      </FacetedGroup>
+    </>
   );
 }
 

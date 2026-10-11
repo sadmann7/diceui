@@ -161,11 +161,7 @@ function DataTableFacetedFilterContent<TData extends RowData, TValue>({
               </FacetedItem>
             ))}
           </FacetedGroup>
-          {hasSelection && (
-            <FacetedGroup className="mt-0.5 border-t pt-1.5">
-              <FacetedClear>Clear filters</FacetedClear>
-            </FacetedGroup>
-          )}
+          <FacetedClear>Clear filters</FacetedClear>
         </FacetedList>
       </FacetedContent>
     </Faceted>
