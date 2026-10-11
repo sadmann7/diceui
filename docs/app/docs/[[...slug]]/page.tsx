@@ -34,7 +34,7 @@ export default async function DocPage(props: PageProps<"/docs/[[...slug]]">) {
   return (
     <DocsPage
       toc={toc}
-      tableOfContent={{ style: "clerk" }}
+      tableOfContent={{ style: "clerk", single: true }}
       full={page.data.full}
       breadcrumb={{ enabled: false }}
     >
