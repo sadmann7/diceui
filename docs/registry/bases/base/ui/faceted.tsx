@@ -188,21 +188,17 @@ interface FacetedProps<Multiple extends boolean = false> extends Omit<
   multiple?: Multiple;
 }
 
-function Faceted<Multiple extends boolean = false>(
-  props: FacetedProps<Multiple>,
-) {
-  const {
-    open: openProp,
-    defaultOpen = false,
-    onOpenChange,
-    value,
-    defaultValue,
-    onValueChange,
-    items = NO_ITEMS,
-    multiple = false as Multiple,
-    ...popoverProps
-  } = props;
-
+function Faceted<Multiple extends boolean = false>({
+  open: openProp,
+  defaultOpen = false,
+  onOpenChange,
+  value,
+  defaultValue,
+  onValueChange,
+  items = NO_ITEMS,
+  multiple = false as Multiple,
+  ...props
+}: FacetedProps<Multiple>) {
   const controller: FacetedController = {
     open: openProp,
     onOpenChange,
@@ -211,7 +207,7 @@ function Faceted<Multiple extends boolean = false>(
       if (!getIsFacetedSelectedValue(nextValue, multiple)) return;
       onValueChange?.(nextValue);
     },
-    isControlled: "value" in props,
+    isControlled: value !== undefined,
     multiple,
     items,
   };
@@ -232,7 +228,7 @@ function Faceted<Multiple extends boolean = false>(
         data-slot="faceted"
         open={openProp ?? open}
         onOpenChange={store.setOpen}
-        {...popoverProps}
+        {...props}
       />
     </FacetedStoreContext.Provider>
   );
@@ -269,7 +265,6 @@ function FacetedValue({
   if (typeof children === "function") return children(selected);
   if (children != null) return children;
 
-  // A single selection reads as text, like a select. Multiple selections render as badges.
   const isMultiple = store.getProps().multiple;
   const [item] = selected;
 
@@ -383,18 +378,15 @@ function FacetedContent({
   );
 }
 
-function FacetedInput({
-  ref,
-  ...props
-}: React.ComponentProps<typeof CommandInput>) {
-  return <CommandInput data-slot="faceted-input" ref={ref} {...props} />;
+function FacetedInput({ ...props }: React.ComponentProps<typeof CommandInput>) {
+  return <CommandInput data-slot="faceted-input" {...props} />;
 }
 
-function FacetedList(props: React.ComponentProps<typeof CommandList>) {
+function FacetedList({ ...props }: React.ComponentProps<typeof CommandList>) {
   return <CommandList data-slot="faceted-list" {...props} />;
 }
 
-function FacetedEmpty(props: React.ComponentProps<typeof CommandEmpty>) {
+function FacetedEmpty({ ...props }: React.ComponentProps<typeof CommandEmpty>) {
   return <CommandEmpty data-slot="faceted-empty" {...props} />;
 }
 
@@ -414,7 +406,7 @@ function FacetedLoading({
   );
 }
 
-function FacetedGroup(props: React.ComponentProps<typeof CommandGroup>) {
+function FacetedGroup({ ...props }: React.ComponentProps<typeof CommandGroup>) {
   return <CommandGroup data-slot="faceted-group" {...props} />;
 }
 
@@ -543,9 +535,9 @@ function FacetedClear({
   );
 }
 
-function FacetedSeparator(
-  props: React.ComponentProps<typeof CommandSeparator>,
-) {
+function FacetedSeparator({
+  ...props
+}: React.ComponentProps<typeof CommandSeparator>) {
   return (
     <CommandSeparator
       data-slot="faceted-separator"
