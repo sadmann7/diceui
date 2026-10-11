@@ -64,11 +64,6 @@ function getSelection(
   return props.isControlled ? props.value : state.value;
 }
 
-function getHasSelection(value: string | string[] | undefined) {
-  if (Array.isArray(value)) return value.length > 0;
-  return !!value;
-}
-
 function getIsValueSelected(
   value: string | string[] | undefined,
   multiple: boolean,
@@ -78,15 +73,31 @@ function getIsValueSelected(
   return value === itemValue;
 }
 
-function getSelectedItems(
-  value: string | string[] | undefined,
-  items: FacetedOption[],
-) {
-  const values = Array.isArray(value) ? value : value ? [value] : [];
+const labelsCache = new WeakMap<FacetedOption[], Map<string, string>>();
 
-  return values.map((itemValue) => ({
-    value: itemValue,
-    label: items.find((item) => item.value === itemValue)?.label ?? itemValue,
+function getLabels(items: FacetedOption[]) {
+  let labels = labelsCache.get(items);
+  if (!labels) {
+    labels = new Map(items.map((item) => [item.value, item.label]));
+    labelsCache.set(items, labels);
+  }
+  return labels;
+}
+
+function getSelectedValues(value: string | string[] | undefined) {
+  if (Array.isArray(value)) return value;
+  return value ? [value] : [];
+}
+
+function getSelectedItems(
+  values: string[],
+  items: FacetedOption[],
+): FacetedOption[] {
+  const labels = getLabels(items);
+
+  return values.map((value) => ({
+    label: labels.get(value) ?? value,
+    value,
   }));
 }
 
@@ -220,6 +231,12 @@ function Faceted<Multiple extends boolean = false>({
   const store = storeRef.current;
   const open = useFacetedStoreSelector(store, (state) => state.open);
 
+  // A controlled value lives in props, so tell subscribers when it changes.
+  // Otherwise memoized items and values would keep the previous selection.
+  React.useEffect(() => {
+    if (value !== undefined) store.notify();
+  }, [store, value]);
+
   return (
     <FacetedStoreContext.Provider value={store}>
       <Popover
@@ -261,12 +278,17 @@ function FacetedValue({
   const value = useFacetedStoreSelector(store, (state) =>
     getSelection(state, store.getProps()),
   );
-  const selected = getSelectedItems(value, store.getProps().items);
+  const { items, multiple } = store.getProps();
+  const values = getSelectedValues(value);
 
-  if (typeof children === "function") return children(selected);
+  if (typeof children === "function") {
+    return children(getSelectedItems(values, items));
+  }
   if (children != null) return children;
 
-  const isMultiple = store.getProps().multiple;
+  // Past two badges, only the count shows, so skip the label lookup.
+  const selected =
+    multiple && values.length > 2 ? [] : getSelectedItems(values, items);
   const [item] = selected;
 
   return (
@@ -274,13 +296,13 @@ function FacetedValue({
       data-slot="faceted-value"
       className={cn(
         "flex w-full min-w-0 items-center gap-1",
-        !item && "text-muted-foreground",
+        values.length === 0 && "text-muted-foreground",
       )}
     >
-      {item && isMultiple ? (
+      {multiple && values.length > 0 ? (
         <FacetedBadgeList>
-          {selected.length > 2 ? (
-            <FacetedBadge>{selected.length} selected</FacetedBadge>
+          {values.length > 2 ? (
+            <FacetedBadge>{values.length} selected</FacetedBadge>
           ) : (
             selected.map((selectedItem) => (
               <FacetedBadge key={selectedItem.value}>
@@ -513,8 +535,10 @@ function FacetedClear({
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Item>) {
   const store = useFacetedStore("FacetedClear");
-  const hasSelection = useFacetedStoreSelector(store, (state) =>
-    getHasSelection(getSelection(state, store.getProps())),
+  const hasSelection = useFacetedStoreSelector(
+    store,
+    (state) =>
+      getSelectedValues(getSelection(state, store.getProps())).length > 0,
   );
 
   if (!hasSelection) return null;
