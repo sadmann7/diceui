@@ -7,9 +7,7 @@ import { composeEventHandlers } from "radix-ui/internal";
 
 const MAIN_CONTENT_ID = "main-content";
 
-interface SkipNavProps extends React.ComponentProps<"a"> {}
-
-function SkipNav(props: SkipNavProps) {
+function SkipNav(props: React.ComponentProps<"a">) {
   const {
     href = `#${MAIN_CONTENT_ID}`,
     children = "Skip to content",

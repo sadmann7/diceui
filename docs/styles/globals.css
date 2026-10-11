@@ -262,7 +262,6 @@
   a:has(code) {
     @apply no-underline!;
   }
-  /* Skip nav targets scroll below the sticky header and table of contents */
   #nd-page,
   #nd-page main {
     scroll-margin-top: var(--fd-docs-row-3, 0px);
