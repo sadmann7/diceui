@@ -3,6 +3,7 @@
 import { useDirection } from "@base-ui/react/direction-provider";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import {
   autoUpdate,
@@ -21,7 +22,6 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/base/ui/button";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
@@ -733,7 +733,7 @@ function Tour(props: TourProps) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [store, open, propsRef]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const wasOpen = prevOpenRef.current;
 
     if (open && !wasOpen) {
@@ -770,13 +770,13 @@ function Tour(props: TourProps) {
     prevOpenRef.current = open;
   }, [open, portal, propsRef]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
   }, [openProp, store]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
@@ -905,7 +905,7 @@ function TourStep(props: TourStepProps) {
   const resolvedSideOffset = sideOffset ?? context.sideOffset;
   const resolvedAlignOffset = alignOffset ?? context.alignOffset;
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const { id, index } = store.addStep({
       target,
       align,
@@ -1385,7 +1385,7 @@ function TourPortal(props: TourPortalProps) {
 
   const [mounted, setMounted] = React.useState(false);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     setMounted(true);
 
     const node = container ?? document.body;

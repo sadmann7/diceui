@@ -5,12 +5,11 @@ import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 
 const ROOT_NAME = "AngleSlider";
@@ -341,13 +340,13 @@ function AngleSlider(props: AngleSliderProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("values", value);
     }
   }, [value, store]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     const currentState = store.getState();
 
     if (currentState.min !== min) {

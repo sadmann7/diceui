@@ -3,13 +3,13 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/base/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Popover, PopoverTrigger } from "@/registry/bases/base/ui/popover";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
@@ -392,13 +392,13 @@ function TimePicker(props: TimePickerProps) {
 
   const value = useStore((state) => state.value, store);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
   }, [valueProp]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (open !== undefined) {
       store.setState("open", open);
     }
@@ -817,7 +817,7 @@ function TimePickerInput(props: TimePickerInputProps) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const composedRef = useMergedRefs(ref, inputRef);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (segment) {
       inputGroupContext.onInputRegister(segment as Segment, inputRef);
       return () => inputGroupContext.onInputUnregister(segment as Segment);
@@ -1712,7 +1712,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
     return items.find((item) => item.selected)?.ref ?? null;
   }, [getItems]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     groupContext.onColumnRegister({
       id: columnId,
       ref: columnRef,
@@ -1766,12 +1766,12 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   const columnContext = useTimePickerColumnContext(COLUMN_ITEM_NAME);
   const groupContext = useTimePickerGroupContext(COLUMN_ITEM_NAME);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     columnContext.onItemRegister(value, itemRef, selected);
     return () => columnContext.onItemUnregister(value);
   }, [columnContext, value, selected]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (selected && itemRef.current) {
       itemRef.current.scrollIntoView({ block: "nearest" });
     }

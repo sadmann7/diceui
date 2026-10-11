@@ -5,11 +5,10 @@ import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -330,7 +329,7 @@ function Stepper(props: StepperProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("value", value);
     }
@@ -625,7 +624,7 @@ function StepperItem(props: StepperItemProps) {
   const orientation = context.orientation;
   const value = useStore((state) => state.value);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     store.addStep(itemValue, completed, disabled);
 
     return () => {
@@ -633,7 +632,7 @@ function StepperItem(props: StepperItemProps) {
     };
   }, [itemValue, completed, disabled]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     store.setStep(itemValue, completed, disabled);
   }, [itemValue, completed, disabled]);
 
@@ -744,7 +743,7 @@ function StepperTrigger(props: ButtonProps) {
     };
   }, []);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     focusContext.onItemRegister({
       id: triggerId,
       ref: triggerRef,

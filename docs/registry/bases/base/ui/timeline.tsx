@@ -2,12 +2,12 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
 
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
@@ -342,7 +342,7 @@ function TimelineItem(props: TimelineItemProps) {
     return getItemStatus(itemIndex, activeIndex);
   }, [activeIndex, itemIndex]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.onItemRegister(itemId, itemRef);
     return () => {
       store.onItemUnregister(itemId);

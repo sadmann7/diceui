@@ -17,12 +17,11 @@ import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
@@ -732,7 +731,7 @@ function Tour(props: TourProps) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [store, open, propsRef]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     const wasOpen = prevOpenRef.current;
 
     if (open && !wasOpen) {
@@ -769,13 +768,13 @@ function Tour(props: TourProps) {
     prevOpenRef.current = open;
   }, [open, portal, propsRef]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
   }, [openProp, store]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
@@ -897,7 +896,7 @@ function TourStep(props: TourStepProps) {
   const resolvedSideOffset = sideOffset ?? context.sideOffset;
   const resolvedAlignOffset = alignOffset ?? context.alignOffset;
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     const { id, index } = store.addStep({
       target,
       align,
@@ -1347,7 +1346,7 @@ function TourPortal(props: TourPortalProps) {
 
   const [mounted, setMounted] = React.useState(false);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     setMounted(true);
 
     const node = container ?? document.body;

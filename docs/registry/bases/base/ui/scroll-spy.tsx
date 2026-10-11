@@ -2,12 +2,12 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
@@ -219,7 +219,7 @@ function ScrollSpy(props: ScrollSpyProps) {
     [scrollContainer, offset, scrollBehavior, store],
   );
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const currentValue = value ?? defaultValue;
     if (currentValue === undefined) return;
 
@@ -232,7 +232,7 @@ function ScrollSpy(props: ScrollSpyProps) {
     onScrollToSection(currentValue);
   }, [value, onScrollToSection]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const sectionMap = sectionMapRef.current;
     if (sectionMap.size === 0) return;
 
@@ -448,7 +448,7 @@ function ScrollSpySection(props: ScrollSpySectionProps) {
   const sectionRef = React.useRef<SectionElement>(null);
   const composedRef = useMergedRefs(ref, sectionRef);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const element = sectionRef.current;
     if (!element || !value) return;
 

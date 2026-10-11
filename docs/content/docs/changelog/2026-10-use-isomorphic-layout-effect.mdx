@@ -1,0 +1,26 @@
+---
+title: October 2026 - use-isomorphic-layout-effect Deprecated
+description: Components now use the layout effect hooks Base UI and Radix already ship.
+date: 2026-10-12T10:00:00Z
+---
+
+Dice UI components no longer copy `hooks/use-isomorphic-layout-effect.ts` into your project. They use the hook their primitives already ship:
+
+- **Base UI** components use `useIsoLayoutEffect` from `@base-ui/utils`.
+- **Radix** components use `useLayoutEffect` from `radix-ui/internal`.
+
+### Migrating
+
+Existing components keep working, because your copy of the hook stays in place. To drop it, reinstall the components, or update the imports yourself:
+
+```tsx title="Base UI"
+import { useIsomorphicLayoutEffect } from "@/hooks/use-isomorphic-layout-effect"; // [!code --]
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect"; // [!code ++]
+```
+
+```tsx title="Radix"
+import { useIsomorphicLayoutEffect } from "@/hooks/use-isomorphic-layout-effect"; // [!code --]
+import { useLayoutEffect } from "radix-ui/internal"; // [!code ++]
+```
+
+Then delete `hooks/use-isomorphic-layout-effect.ts`. `@diceui/use-isomorphic-layout-effect` still installs for now and will be removed in a future release.

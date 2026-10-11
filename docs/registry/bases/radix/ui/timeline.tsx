@@ -6,10 +6,9 @@ import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 
 type Direction = "ltr" | "rtl";
@@ -334,7 +333,7 @@ function TimelineItem(props: DivProps) {
     return getItemStatus(itemIndex, activeIndex);
   }, [activeIndex, itemIndex]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     store.onItemRegister(itemId, itemRef);
     return () => {
       store.onItemUnregister(itemId);

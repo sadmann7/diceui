@@ -2,13 +2,13 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/base/ui/button";
 
@@ -239,7 +239,7 @@ function SpeedDial(props: SpeedDialProps) {
     nodesRef.current.delete(id);
   }, []);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
@@ -360,7 +360,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
   const composedRef = useMergedRefs(ref, triggerRef);
   const hoverOpenTimerRef = React.useRef<number | null>(null);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     onNodeRegister({
       id: triggerId,
       ref: triggerRef,
@@ -673,7 +673,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     });
   }, [triggerRef, open, side, offset]);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!open) return;
     updatePosition();
   }, [open, updatePosition]);
@@ -1001,7 +1001,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
   const actionRef = React.useRef<ActionElement | null>(null);
   const composedRefs = useMergedRefs(ref, actionRef);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     onNodeRegister({
       id: actionId,
       ref: actionRef,

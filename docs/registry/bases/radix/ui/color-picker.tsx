@@ -7,12 +7,11 @@ import {
   Slider as SliderPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { Input } from "@/registry/bases/radix/ui/input";
@@ -648,7 +647,7 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
   const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (valueProp !== undefined) {
       const currentState = store.getState();
       const color = hexToRgb(valueProp, currentState.color.a);
@@ -658,7 +657,7 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
     }
   }, [valueProp]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setOpen(openProp);
     }

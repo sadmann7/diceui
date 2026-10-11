@@ -5,11 +5,10 @@ import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
+import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useIsomorphicLayoutEffect } from "@/registry/bases/radix/hooks/use-isomorphic-layout-effect";
 import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
 
 const ROOT_NAME = "ScrollSpy";
@@ -219,7 +218,7 @@ function ScrollSpy(props: ScrollSpyProps) {
     [scrollContainer, offset, scrollBehavior, store],
   );
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     const currentValue = value ?? defaultValue;
     if (currentValue === undefined) return;
 
@@ -232,7 +231,7 @@ function ScrollSpy(props: ScrollSpyProps) {
     onScrollToSection(currentValue);
   }, [value, onScrollToSection]);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     const sectionMap = sectionMapRef.current;
     if (sectionMap.size === 0) return;
 
@@ -430,7 +429,7 @@ function ScrollSpySection(props: ScrollSpySectionProps) {
   const sectionRef = React.useRef<SectionElement>(null);
   const composedRef = useComposedRefs(ref, sectionRef);
 
-  useIsomorphicLayoutEffect(() => {
+  useLayoutEffect(() => {
     const element = sectionRef.current;
     if (!element || !value) return;
 

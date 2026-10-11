@@ -1,11 +1,10 @@
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import * as React from "react";
-
-import { useIsomorphicLayoutEffect } from "@/registry/bases/base/hooks/use-isomorphic-layout-effect";
 
 function useAsRef<T>(props: T) {
   const ref = React.useRef<T>(props);
 
-  useIsomorphicLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     ref.current = props;
   });
 
