@@ -29,7 +29,7 @@ export interface FileUploadProps extends RenderProps {
   defaultValue?: File[];
 
   /**
-   * Callback called when files are added, removed, or changed.
+   * Event handler called when files are added, removed, or changed.
    *
    * ```ts
    * onValueChange={(files) => {
@@ -41,7 +41,7 @@ export interface FileUploadProps extends RenderProps {
   onValueChange?: (files: File[]) => void;
 
   /**
-   * Callback called when files are accepted (after validation).
+   * Event handler called when files are accepted (after validation).
    * This is called after all validation checks pass.
    *
    * ```ts
@@ -54,7 +54,7 @@ export interface FileUploadProps extends RenderProps {
   onAccept?: (files: File[]) => void;
 
   /**
-   * Callback called when a file is accepted.
+   * Event handler called when a file is accepted.
    * ```ts
    * onFileAccept={(file) => {
    *   // All files have passed validation
@@ -65,7 +65,7 @@ export interface FileUploadProps extends RenderProps {
   onFileAccept?: (file: File) => void;
 
   /**
-   * Callback called when a file is rejected.
+   * Event handler called when a file is rejected.
    *
    * ```ts
    * onFileReject={(file, message) => {
