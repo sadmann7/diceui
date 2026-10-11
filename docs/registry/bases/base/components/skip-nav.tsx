@@ -75,4 +75,4 @@ function getTarget(href: string) {
   return document.getElementById(decodeURIComponent(href.slice(1)));
 }
 
-export { MAIN_CONTENT_ID, SkipNav };
+export { SkipNav, MAIN_CONTENT_ID };
