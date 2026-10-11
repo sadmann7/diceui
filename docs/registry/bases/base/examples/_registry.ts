@@ -1900,4 +1900,216 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "checkbox-group-animated-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/checkbox-group"],
+    registryDependencies: ["checkbox-group"],
+    files: [
+      {
+        path: "examples/checkbox-group-animated-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "checkbox-group-horizontal-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/checkbox-group"],
+    registryDependencies: ["checkbox-group"],
+    files: [
+      {
+        path: "examples/checkbox-group-horizontal-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "checkbox-group-multi-selection-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/checkbox-group"],
+    registryDependencies: ["checkbox-group"],
+    files: [
+      {
+        path: "examples/checkbox-group-multi-selection-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "checkbox-group-validation-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/checkbox-group"],
+    registryDependencies: ["checkbox-group"],
+    files: [
+      {
+        path: "examples/checkbox-group-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-custom-filter-demo",
+    type: "registry:example",
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "examples/combobox-custom-filter-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-debounced-demo",
+    type: "registry:example",
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "examples/combobox-debounced-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-groups-demo",
+    type: "registry:example",
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "examples/combobox-groups-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-multiple-demo",
+    type: "registry:example",
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "examples/combobox-multiple-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-tags-demo",
+    type: "registry:example",
+    registryDependencies: ["combobox", "tags-input"],
+    files: [
+      {
+        path: "examples/combobox-tags-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-virtualized-demo",
+    type: "registry:example",
+    dependencies: ["@tanstack/react-virtual"],
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "examples/combobox-virtualized-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "listbox-grid-demo",
+    type: "registry:example",
+    registryDependencies: ["listbox"],
+    files: [
+      {
+        path: "examples/listbox-grid-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "listbox-group-demo",
+    type: "registry:example",
+    registryDependencies: ["listbox"],
+    files: [
+      {
+        path: "examples/listbox-group-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "listbox-horizontal-demo",
+    type: "registry:example",
+    registryDependencies: ["listbox"],
+    files: [
+      {
+        path: "examples/listbox-horizontal-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mention-custom-filter-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/mention"],
+    files: [
+      {
+        path: "examples/mention-custom-filter-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "mention-custom-trigger-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/mention"],
+    files: [
+      {
+        path: "examples/mention-custom-trigger-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tags-input-editable-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/tags-input"],
+    registryDependencies: ["button", "tags-input"],
+    files: [
+      {
+        path: "examples/tags-input-editable-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tags-input-sortable-demo",
+    type: "registry:example",
+    dependencies: [
+      "@diceui/tags-input",
+      "@dnd-kit/core",
+      "@dnd-kit/modifiers",
+      "@dnd-kit/sortable",
+      "@dnd-kit/utilities",
+    ],
+    registryDependencies: ["sortable", "tags-input"],
+    files: [
+      {
+        path: "examples/tags-input-sortable-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tags-input-validation-demo",
+    type: "registry:example",
+    dependencies: ["@diceui/tags-input"],
+    registryDependencies: ["button", "tags-input"],
+    files: [
+      {
+        path: "examples/tags-input-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];

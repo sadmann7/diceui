@@ -78,6 +78,17 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react"],
   },
   {
+    name: "checkbox-group",
+    type: "registry:ui",
+    dependencies: ["@diceui/checkbox-group"],
+    files: [
+      {
+        path: "ui/checkbox-group.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "circular-progress",
     type: "registry:ui",
     files: [
@@ -138,6 +149,17 @@ export const ui: Registry["items"] = [
       },
     ],
     dependencies: ["@base-ui/react"],
+  },
+  {
+    name: "combobox",
+    type: "registry:ui",
+    dependencies: ["@diceui/combobox"],
+    files: [
+      {
+        path: "ui/combobox.tsx",
+        type: "registry:ui",
+      },
+    ],
   },
   {
     name: "compare-slider",
@@ -272,6 +294,17 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
+    name: "listbox",
+    type: "registry:ui",
+    dependencies: ["@diceui/listbox"],
+    files: [
+      {
+        path: "ui/listbox.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "marquee",
     type: "registry:ui",
     files: [
@@ -390,6 +423,17 @@ export const ui: Registry["items"] = [
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils", "media-chrome"],
+  },
+  {
+    name: "mention",
+    type: "registry:ui",
+    dependencies: ["@diceui/mention"],
+    files: [
+      {
+        path: "ui/mention.tsx",
+        type: "registry:ui",
+      },
+    ],
   },
   {
     name: "phone-input",
@@ -668,6 +712,17 @@ export const ui: Registry["items"] = [
       "@diceui/use-lazy-ref",
     ],
     dependencies: ["@base-ui/react", "@base-ui/utils"],
+  },
+  {
+    name: "tags-input",
+    type: "registry:ui",
+    dependencies: ["@diceui/tags-input"],
+    files: [
+      {
+        path: "ui/tags-input.tsx",
+        type: "registry:ui",
+      },
+    ],
   },
   {
     name: "time-picker",

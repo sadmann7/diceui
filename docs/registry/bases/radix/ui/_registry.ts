@@ -182,14 +182,7 @@ export const ui: Registry["items"] = [
   {
     name: "combobox",
     type: "registry:ui",
-    dependencies: [
-      "@diceui/combobox",
-      "@dnd-kit/core",
-      "@dnd-kit/modifiers",
-      "@dnd-kit/sortable",
-      "@dnd-kit/utilities",
-      "radix-ui",
-    ],
+    dependencies: ["@diceui/combobox"],
     files: [
       {
         path: "ui/combobox.tsx",

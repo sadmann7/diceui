@@ -2148,6 +2148,240 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "checkbox-group-animated-demo": {
+        name: "checkbox-group-animated-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["checkbox-group"],
+        files: [{
+          path: "registry/bases/base/examples/checkbox-group-animated-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "checkbox-group-horizontal-demo": {
+        name: "checkbox-group-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["checkbox-group"],
+        files: [{
+          path: "registry/bases/base/examples/checkbox-group-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "checkbox-group-multi-selection-demo": {
+        name: "checkbox-group-multi-selection-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["checkbox-group"],
+        files: [{
+          path: "registry/bases/base/examples/checkbox-group-multi-selection-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "checkbox-group-validation-demo": {
+        name: "checkbox-group-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["checkbox-group"],
+        files: [{
+          path: "registry/bases/base/examples/checkbox-group-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox-custom-filter-demo": {
+        name: "combobox-custom-filter-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["combobox"],
+        files: [{
+          path: "registry/bases/base/examples/combobox-custom-filter-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox-debounced-demo": {
+        name: "combobox-debounced-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["combobox"],
+        files: [{
+          path: "registry/bases/base/examples/combobox-debounced-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox-groups-demo": {
+        name: "combobox-groups-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["combobox"],
+        files: [{
+          path: "registry/bases/base/examples/combobox-groups-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox-multiple-demo": {
+        name: "combobox-multiple-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["combobox"],
+        files: [{
+          path: "registry/bases/base/examples/combobox-multiple-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox-tags-demo": {
+        name: "combobox-tags-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["combobox","tags-input"],
+        files: [{
+          path: "registry/bases/base/examples/combobox-tags-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "combobox-virtualized-demo": {
+        name: "combobox-virtualized-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["combobox"],
+        files: [{
+          path: "registry/bases/base/examples/combobox-virtualized-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "listbox-grid-demo": {
+        name: "listbox-grid-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["listbox"],
+        files: [{
+          path: "registry/bases/base/examples/listbox-grid-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "listbox-group-demo": {
+        name: "listbox-group-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["listbox"],
+        files: [{
+          path: "registry/bases/base/examples/listbox-group-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "listbox-horizontal-demo": {
+        name: "listbox-horizontal-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["listbox"],
+        files: [{
+          path: "registry/bases/base/examples/listbox-horizontal-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "mention-custom-filter-demo": {
+        name: "mention-custom-filter-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/examples/mention-custom-filter-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "mention-custom-trigger-demo": {
+        name: "mention-custom-trigger-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: undefined,
+        files: [{
+          path: "registry/bases/base/examples/mention-custom-trigger-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input-editable-demo": {
+        name: "tags-input-editable-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","tags-input"],
+        files: [{
+          path: "registry/bases/base/examples/tags-input-editable-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input-sortable-demo": {
+        name: "tags-input-sortable-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["sortable","tags-input"],
+        files: [{
+          path: "registry/bases/base/examples/tags-input-sortable-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "tags-input-validation-demo": {
+        name: "tags-input-validation-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","tags-input"],
+        files: [{
+          path: "registry/bases/base/examples/tags-input-validation-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
   },  "radix": {
       "action-bar-demo": {
         name: "action-bar-demo",
