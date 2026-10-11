@@ -9,9 +9,10 @@ import type {
 } from "@/registry/bases/base/ui/popover";
 import type { Select, SelectTrigger } from "@/registry/bases/base/ui/select";
 import type {
-  ButtonProps,
+  BaseButtonProps as ButtonProps,
   ControlledProps,
   Direction,
+  EmptyProps,
   RenderProps,
 } from "@/types";
 
@@ -160,8 +161,7 @@ export interface ColorPickerContentProps extends Omit<
   keyof React.ComponentProps<"div">
 > {}
 
-export interface ColorPickerAreaProps
-  extends React.ComponentProps<"div">, RenderProps {}
+export interface ColorPickerAreaProps extends EmptyProps<"div">, RenderProps {}
 
 export interface ColorPickerHueSliderProps extends Omit<
   SliderProps,
@@ -174,7 +174,7 @@ export interface ColorPickerAlphaSliderProps extends Omit<
 > {}
 
 export interface ColorPickerSwatchProps
-  extends React.ComponentProps<"div">, RenderProps {}
+  extends EmptyProps<"div">, RenderProps {}
 
 export interface ColorPickerEyeDropperProps extends Omit<
   ButtonProps,

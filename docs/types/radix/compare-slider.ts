@@ -1,9 +1,7 @@
 import type { CompositionProps, EmptyProps, Orientation } from "@/types";
 
 export interface CompareSliderProps
-  extends
-    EmptyProps<"div", "defaultValue" | "value" | "onValueChange">,
-    CompositionProps {
+  extends EmptyProps<"div">, CompositionProps {
   /**
    * The position of the slider as a percentage (0-100).
    * @default 50

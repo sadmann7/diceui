@@ -1,5 +1,5 @@
 import type {
-  ButtonProps,
+  BaseButtonProps as ButtonProps,
   EmptyProps,
   PointerDownOutsideEvent,
   RenderProps,

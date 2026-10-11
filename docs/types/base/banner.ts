@@ -1,5 +1,5 @@
 import type { Button } from "@/registry/bases/base/ui/button";
-import type { RenderProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 type BannerVariant = "default" | "info" | "success" | "warning" | "destructive";
 
@@ -112,9 +112,10 @@ export interface BannerIconProps extends RenderProps {}
 
 export interface BannerContentProps extends RenderProps {}
 
-export type BannerTitleProps = React.ComponentProps<"div">;
+export interface BannerTitleProps extends EmptyProps<"div">, RenderProps {}
 
-export type BannerDescriptionProps = React.ComponentProps<"div">;
+export interface BannerDescriptionProps
+  extends EmptyProps<"div">, RenderProps {}
 
 export interface BannerActionsProps extends RenderProps {}
 
