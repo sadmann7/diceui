@@ -62,15 +62,11 @@ export function HashHistorySync() {
       window.history.replaceState({ ...routerState }, "", window.location.href);
     }
 
-    function onPopStateListener(event: PopStateEvent) {
-      onPopState(event);
-    }
-
     window.addEventListener("hashchange", onHashChange);
-    window.addEventListener("popstate", onPopStateListener);
+    window.addEventListener("popstate", onPopState);
     return () => {
       window.removeEventListener("hashchange", onHashChange);
-      window.removeEventListener("popstate", onPopStateListener);
+      window.removeEventListener("popstate", onPopState);
     };
   }, []);
 
