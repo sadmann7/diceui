@@ -141,6 +141,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/base/ui/command-palette.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "compare-slider": {
         name: "compare-slider",
         description: "",
@@ -970,6 +983,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/combobox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/base/ui/command-palette.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -1811,6 +1837,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/base/ui/command-palette.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "compare-slider": {
         name: "compare-slider",
         description: "",
@@ -2640,6 +2679,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/combobox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/base/ui/command-palette.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -3481,6 +3533,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/base/ui/command-palette.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "compare-slider": {
         name: "compare-slider",
         description: "",
@@ -4310,6 +4375,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/base/ui/combobox.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/base/ui/command-palette.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -5151,6 +5229,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/base/ui/command-palette.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "compare-slider": {
         name: "compare-slider",
         description: "",
@@ -5986,6 +6077,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/base/ui/command-palette.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "compare-slider": {
         name: "compare-slider",
         description: "",
@@ -6802,6 +6906,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/radix/ui/command-palette.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -7669,6 +7786,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/radix/ui/command-palette.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "compare-slider": {
         name: "compare-slider",
         description: "",
@@ -8524,6 +8654,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/radix/ui/command-palette.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -9391,6 +9534,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/radix/ui/command-palette.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "compare-slider": {
         name: "compare-slider",
         description: "",
@@ -10246,6 +10402,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/radix/ui/command-palette.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -11113,6 +11282,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/radix/ui/command-palette.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "compare-slider": {
         name: "compare-slider",
         description: "",
@@ -11974,6 +12156,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/radix/ui/command-palette.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "compare-slider": {
         name: "compare-slider",
         description: "",
@@ -12829,6 +13024,19 @@ export const Index: Record<string, Record<string, unknown>> = {
         registryDependencies: undefined,
         files: [{
           path: "registry/bases/radix/ui/color-swatch.tsx",
+          type: "registry:ui",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-palette": {
+        name: "command-palette",
+        description: "",
+        type: "registry:ui",
+        registryDependencies: ["command"],
+        files: [{
+          path: "registry/bases/radix/ui/command-palette.tsx",
           type: "registry:ui",
           target: ""
         }],

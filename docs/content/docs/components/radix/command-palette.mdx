@@ -1,0 +1,268 @@
+---
+base: radix
+title: Command Palette
+description: A searchable command menu with nested pages, breadcrumbs, and keyboard navigation.
+new: true
+links:
+  api: /docs/components/radix/command-palette#api-reference
+---
+
+<ComponentTabs name="command-palette-demo" />
+
+## Installation
+
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```package-install
+npx shadcn@latest add @diceui/command-palette
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps className="pt-2">
+
+<Step>Install the following dependencies:</Step>
+
+```package-install
+cmdk
+```
+
+<Step>Install the command component from shadcn/ui.</Step>
+
+```package-install
+npx shadcn@latest add command
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="command-palette" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</CodeTabs>
+
+## Layout
+
+Import the parts and compose them together.
+
+```tsx
+import {
+  CommandPalette,
+  CommandPaletteBreadcrumb,
+  CommandPaletteEmpty,
+  CommandPaletteGroup,
+  CommandPaletteInput,
+  CommandPaletteItem,
+  CommandPaletteList,
+  CommandPalettePage,
+  CommandPaletteShortcut,
+} from "@/components/ui/command-palette";
+
+return (
+  <CommandPalette>
+    <CommandPaletteBreadcrumb />
+    <CommandPaletteInput />
+    <CommandPaletteList>
+      <CommandPaletteEmpty />
+      <CommandPalettePage value="root">
+        <CommandPaletteGroup>
+          <CommandPaletteItem page="projects">
+            <CommandPaletteShortcut />
+          </CommandPaletteItem>
+        </CommandPaletteGroup>
+      </CommandPalettePage>
+      <CommandPalettePage value="projects">
+        <CommandPaletteItem />
+      </CommandPalettePage>
+    </CommandPaletteList>
+  </CommandPalette>
+)
+```
+
+## Examples
+
+### Dialog
+
+Render the palette inside `CommandDialog` and open it with <Kbd>⌘ K</Kbd>.
+
+<ComponentTabs name="command-palette-dialog-demo" />
+
+### Async Pages
+
+Load a page's items when it opens. `useCommandPalette` gives access to the active page, and `CommandPaletteLoading` hides the empty state while items load.
+
+<ComponentTabs name="command-palette-async-demo" />
+
+### Controlled
+
+Control the open pages with `pages` and `onPagesChange`.
+
+<ComponentTabs name="command-palette-controlled-demo" />
+
+## API Reference
+
+### CommandPalette
+
+The root component. It keeps the stack of open pages and the search value, and clears the search whenever the page changes.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPaletteProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-bouncing]",
+      value: "Present briefly when a page opens or closes.",
+    },
+  ]}
+/>
+
+### CommandPaletteBreadcrumb
+
+Shows the open pages, using each page's `label`.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPaletteBreadcrumbProps"
+/>
+
+### CommandPaletteInput
+
+The search input. Pressing <Kbd>Backspace</Kbd> while it's empty goes back a page.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPaletteInputProps"
+/>
+
+### CommandPaletteList
+
+The scrollable list of pages, groups and items.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPaletteListProps"
+/>
+
+### CommandPaletteEmpty
+
+Shown when no items match the search. It stays hidden while a `CommandPaletteLoading` is rendered.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPaletteEmptyProps"
+/>
+
+### CommandPaletteLoading
+
+Shown while a page's items load.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPaletteLoadingProps"
+/>
+
+### CommandPalettePage
+
+A page of items. Only the active page renders its children.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPalettePageProps"
+/>
+
+### CommandPaletteGroup
+
+A group of items with an optional heading.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPaletteGroupProps"
+/>
+
+### CommandPaletteItem
+
+A selectable item. Set `page` to open a page when it's selected.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPaletteItemProps"
+/>
+
+### CommandPaletteShortcut
+
+A keyboard shortcut hint shown at the end of an item.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPaletteShortcutProps"
+/>
+
+### CommandPaletteSeparator
+
+A line between groups.
+
+<AutoTypeTable
+  path="./types/radix/command-palette.ts"
+  name="CommandPaletteSeparatorProps"
+/>
+
+### useCommandPalette
+
+Reads and changes the palette's pages from any component inside it. It returns `pages`, `activePage`, `search`, `pushPage(page)`, `popPage()` and `setPages(pages)`.
+
+```tsx
+import { useCommandPalette } from "@/components/ui/command-palette";
+
+function OpenSettings() {
+  const { pushPage } = useCommandPalette();
+
+  return (
+    <CommandPaletteItem onSelect={() => pushPage("settings")}>
+      Settings
+    </CommandPaletteItem>
+  );
+}
+```
+
+## Accessibility
+
+The input keeps focus while you move between pages. The breadcrumb is a labelled navigation landmark that marks the current page, and opening a page announces its label to screen readers. The open and close bounce is skipped when reduced motion is preferred.
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["ArrowDown", "ArrowUp"],
+      description: "Moves the highlight to the next or previous item.",
+    },
+    {
+      keys: ["Home", "End"],
+      description: "Moves the highlight to the first or last item.",
+    },
+    {
+      keys: ["Enter"],
+      description: "Selects the highlighted item, opening its page if it has one.",
+    },
+    {
+      keys: ["Backspace"],
+      description: "When the input is empty, goes back to the previous page.",
+    },
+  ]}
+/>

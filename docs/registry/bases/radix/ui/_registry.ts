@@ -142,6 +142,18 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "command-palette",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/command-palette.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: ["command"],
+    dependencies: ["cmdk"],
+  },
+  {
     name: "compare-slider",
     type: "registry:ui",
     dependencies: ["radix-ui"],

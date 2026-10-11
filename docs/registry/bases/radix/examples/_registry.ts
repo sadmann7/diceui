@@ -2238,4 +2238,48 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "command-palette-demo",
+    type: "registry:example",
+    registryDependencies: ["command-palette"],
+    files: [
+      {
+        path: "examples/command-palette-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "command-palette-dialog-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "command", "command-palette"],
+    files: [
+      {
+        path: "examples/command-palette-dialog-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "command-palette-async-demo",
+    type: "registry:example",
+    registryDependencies: ["command-palette"],
+    files: [
+      {
+        path: "examples/command-palette-async-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "command-palette-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "command-palette"],
+    files: [
+      {
+        path: "examples/command-palette-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];
