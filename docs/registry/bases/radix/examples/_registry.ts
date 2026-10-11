@@ -830,7 +830,7 @@ export const examples: Registry["items"] = [
   {
     name: "hitbox-debug-demo",
     type: "registry:example",
-    registryDependencies: ["button", "hitbox"],
+    registryDependencies: ["checkbox", "hitbox"],
     files: [
       {
         path: "examples/hitbox-debug-demo.tsx",
