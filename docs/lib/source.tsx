@@ -31,20 +31,6 @@ export const source = loader({
             );
           }
 
-          const isDeprecated =
-            fileData?.data &&
-            "deprecated" in fileData.data &&
-            fileData.data.deprecated;
-
-          if (isDeprecated) {
-            node.name = (
-              <span key={node.url} title="Deprecated">
-                <span className="line-through opacity-70">{node.name}</span>
-                <span className="sr-only"> (Deprecated)</span>
-              </span>
-            );
-          }
-
           return node;
         },
       },
