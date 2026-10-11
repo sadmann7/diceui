@@ -1,0 +1,37 @@
+---
+title: October 2026 - Skip Nav
+description: A Skip Nav utility for keyboard and screen reader users, and Base UI installs for Hitbox, Pending, and Visually Hidden.
+date: 2026-10-11T06:52:16Z
+---
+
+We've added a Skip Nav utility and fixed Base UI installs for three utilities.
+
+### Skip Nav
+
+A link that lets keyboard and screen reader users skip past repeated navigation to the main content ([WCAG 2.4.1](https://www.w3.org/WAI/WCAG22/Understanding/bypass-blocks.html)). It stays hidden until it receives keyboard focus.
+
+<ComponentTabs name="skip-nav-demo" />
+
+```package-install
+npx shadcn@latest add @diceui/skip-nav
+```
+
+Render it as the first focusable element and give your main content the exported `MAIN_CONTENT_ID`:
+
+```tsx
+import { MAIN_CONTENT_ID, SkipNav } from "@/components/skip-nav";
+
+<body>
+  <SkipNav />
+  <header>{/* Navigation */}</header>
+  <main id={MAIN_CONTENT_ID}>{/* Page content */}</main>
+</body>
+```
+
+On activation, focus moves to the target, not just the scroll position, so the next <Kbd>Tab</Kbd> continues from the main content. The URL hash doesn't change, so the skip doesn't add a history entry.
+
+[Read the docs](/docs/utilities/skip-nav)
+
+### Base UI utilities
+
+[Hitbox](/docs/utilities/hitbox), [Pending](/docs/utilities/pending), and [Visually Hidden](/docs/utilities/visually-hidden) had Base UI docs but no Base UI registry entries, so installing them in a Base UI project failed. They now install for both bases.
