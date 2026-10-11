@@ -8,12 +8,12 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
   CommandShortcut,
 } from "@/registry/bases/radix/ui/command";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "CommandPalette";
 const PAGE_NAME = "CommandPalettePage";
@@ -24,7 +24,6 @@ const LOADING_NAME = "CommandPaletteLoading";
 const BREADCRUMB_NAME = "CommandPaletteBreadcrumb";
 
 const DEFAULT_ROOT_PAGE = "root";
-const BOUNCE_DURATION = 100;
 
 interface CommandPaletteContextValue {
   pages: string[];
@@ -94,27 +93,6 @@ function CommandPalette(props: CommandPaletteProps) {
     () => new Map(),
   );
   const [loadingCount, setLoadingCount] = React.useState(0);
-  const [isBouncing, setIsBouncing] = React.useState(false);
-  const bounceTimeoutRef = React.useRef<number | null>(null);
-
-  React.useEffect(() => {
-    return () => {
-      if (bounceTimeoutRef.current) {
-        window.clearTimeout(bounceTimeoutRef.current);
-      }
-    };
-  }, []);
-
-  const bounce = React.useCallback(() => {
-    if (bounceTimeoutRef.current) {
-      window.clearTimeout(bounceTimeoutRef.current);
-    }
-    setIsBouncing(true);
-    bounceTimeoutRef.current = window.setTimeout(() => {
-      setIsBouncing(false);
-    }, BOUNCE_DURATION);
-  }, []);
-
   const onSearchChange = React.useCallback(
     (nextSearch: string) => {
       if (searchProp === undefined) setSearchState(nextSearch);
@@ -129,9 +107,8 @@ function CommandPalette(props: CommandPaletteProps) {
       if (pagesProp === undefined) setPagesState(nextPages);
       onPagesChange?.(nextPages);
       onSearchChange("");
-      bounce();
     },
-    [pagesProp, onPagesChange, onSearchChange, bounce],
+    [pagesProp, onPagesChange, onSearchChange],
   );
 
   const pushPage = React.useCallback(
@@ -216,11 +193,7 @@ function CommandPalette(props: CommandPaletteProps) {
     <CommandPaletteContext.Provider value={contextValue}>
       <Command
         data-slot="command-palette"
-        data-bouncing={isBouncing ? "" : undefined}
-        className={cn(
-          "h-auto transition-transform duration-100 data-bouncing:scale-[0.98] motion-reduce:transition-none motion-reduce:data-bouncing:scale-100",
-          className,
-        )}
+        className={cn("h-auto p-0", className)}
         onKeyDown={onKeyDown}
         {...commandProps}
       >
@@ -243,7 +216,7 @@ function CommandPaletteBreadcrumb({
     <nav
       aria-label="Breadcrumb"
       data-slot="command-palette-breadcrumb"
-      className={cn("px-2 pt-2 pb-1", className)}
+      className={cn("px-3 pt-3", className)}
       {...props}
     >
       <ol className="flex flex-wrap items-center gap-1">
@@ -268,20 +241,38 @@ function CommandPaletteBreadcrumb({
 
 function CommandPaletteInput({
   onValueChange,
+  className,
   ...props
-}: Omit<React.ComponentProps<typeof CommandInput>, "value">) {
+}: Omit<React.ComponentProps<typeof CommandPrimitive.Input>, "value">) {
   const { search, onSearchChange } = useCommandPaletteContext(INPUT_NAME);
 
   return (
-    <CommandInput
-      data-slot="command-palette-input"
-      value={search}
-      onValueChange={(nextSearch) => {
-        onSearchChange(nextSearch);
-        onValueChange?.(nextSearch);
-      }}
-      {...props}
-    />
+    <div
+      data-slot="command-palette-input-wrapper"
+      className="flex items-center gap-2 border-b px-3"
+    >
+      <IconPlaceholder
+        lucide="SearchIcon"
+        tabler="IconSearch"
+        hugeicons="Search01Icon"
+        phosphor="MagnifyingGlassIcon"
+        remixicon="RiSearchLine"
+        className="size-4 shrink-0 text-muted-foreground"
+      />
+      <CommandPrimitive.Input
+        data-slot="command-palette-input"
+        value={search}
+        onValueChange={(nextSearch) => {
+          onSearchChange(nextSearch);
+          onValueChange?.(nextSearch);
+        }}
+        className={cn(
+          "flex h-11 w-full bg-transparent text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+          className,
+        )}
+        {...props}
+      />
+    </div>
   );
 }
 
@@ -293,7 +284,7 @@ function CommandPaletteList({
     <CommandList
       data-slot="command-palette-list"
       className={cn(
-        "mt-1 [&_[cmdk-list-sizer]:has(>[cmdk-item])]:p-1",
+        "p-1 [&_[cmdk-list-sizer]:has(>[cmdk-item])]:p-1",
         className,
       )}
       {...props}
@@ -373,7 +364,7 @@ function CommandPaletteItem({
   return (
     <CommandItem
       data-slot="command-palette-item"
-      className={cn("[&>svg:last-child]:hidden", className)}
+      className={cn("scroll-my-1 [&>svg:last-child]:hidden", className)}
       onSelect={(value) => {
         onSelect?.(value);
         if (page) pushPage(page);

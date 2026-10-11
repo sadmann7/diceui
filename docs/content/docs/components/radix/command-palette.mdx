@@ -30,12 +30,6 @@ npx shadcn@latest add @diceui/command-palette
 
 <Steps className="pt-2">
 
-<Step>Install the following dependencies:</Step>
-
-```package-install
-cmdk
-```
-
 <Step>Install the command component from shadcn/ui.</Step>
 
 ```package-install
@@ -121,15 +115,6 @@ The root component. It keeps the stack of open pages and the search value, and c
 <AutoTypeTable
   path="./types/radix/command-palette.ts"
   name="CommandPaletteProps"
-/>
-
-<DataAttributesTable
-  data={[
-    {
-      title: "[data-bouncing]",
-      value: "Present briefly when a page opens or closes.",
-    },
-  ]}
 />
 
 ### CommandPaletteBreadcrumb
@@ -242,7 +227,7 @@ function OpenSettings() {
 
 ## Accessibility
 
-The input keeps focus while you move between pages. The breadcrumb is a labelled navigation landmark that marks the current page, and opening a page announces its label to screen readers. The open and close bounce is skipped when reduced motion is preferred.
+The input keeps focus while you move between pages. The breadcrumb is a labelled navigation landmark that marks the current page, and opening a page announces its label to screen readers.
 
 ### Keyboard Interactions
 
