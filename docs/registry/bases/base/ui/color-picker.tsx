@@ -1103,6 +1103,18 @@ function ColorPickerSwatch(props: DivProps) {
   });
 }
 
+function subscribeToEyeDropper() {
+  return () => {};
+}
+
+function getEyeDropperSnapshot() {
+  return !!window.EyeDropper;
+}
+
+function getEyeDropperServerSnapshot() {
+  return false;
+}
+
 function ColorPickerEyeDropper(props: React.ComponentProps<typeof Button>) {
   const { size: sizeProp, children, disabled, ...buttonProps } = props;
 
@@ -1132,7 +1144,11 @@ function ColorPickerEyeDropper(props: React.ComponentProps<typeof Button>) {
     }
   }, [color, store]);
 
-  const hasEyeDropper = typeof window !== "undefined" && !!window.EyeDropper;
+  const hasEyeDropper = React.useSyncExternalStore(
+    subscribeToEyeDropper,
+    getEyeDropperSnapshot,
+    getEyeDropperServerSnapshot,
+  );
 
   if (!hasEyeDropper) return null;
 
