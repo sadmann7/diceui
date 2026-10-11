@@ -31,6 +31,11 @@ const nextConfig: NextConfig = {
         permanent: false,
       },
       {
+        source: "/docs/utilities/:name((?!radix|base)[^/]+)",
+        destination: "/docs/utilities/base/:name",
+        permanent: false,
+      },
+      {
         source: "/docs/changelog/2026-09-data-table",
         destination: "/docs/changelog/2026-09-data-table-v9",
         permanent: true,
