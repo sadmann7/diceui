@@ -32,7 +32,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/docs/changelog/2026-09-data-table",
-        destination: "/docs/changelog/2026-09-data-table-data-grid",
+        destination: "/docs/changelog/2026-09-data-table-data-grid-v9",
         permanent: true,
       },
       {
