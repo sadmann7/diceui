@@ -95,13 +95,49 @@ export interface FacetedBadgeListProps extends EmptyProps<"div"> {}
 export interface FacetedBadgeProps
   extends EmptyProps<"span">, CompositionProps {}
 
-export interface FacetedContentProps extends EmptyProps<"div"> {}
+export interface FacetedContentProps extends EmptyProps<"div"> {
+  /**
+   * Whether the items are filtered by the search input. Set to `false` when you filter them yourself, such as with server-side search.
+   * @default true
+   */
+  shouldFilter?: boolean;
+
+  /**
+   * A custom filter that ranks each item against the search. Return a score between 0 and 1, where 0 hides the item.
+   *
+   * ```ts
+   * filter={(value, search, keywords) =>
+   *   value.startsWith(search) ? 1 : 0
+   * }
+   * ```
+   */
+  filter?: (value: string, search: string, keywords?: string[]) => number;
+
+  /**
+   * Whether keyboard navigation wraps from the last item to the first, and the reverse.
+   * @default false
+   */
+  loop?: boolean;
+}
 
 export interface FacetedInputProps extends EmptyProps<"input"> {}
 
 export interface FacetedListProps extends EmptyProps<"div"> {}
 
 export interface FacetedEmptyProps extends EmptyProps<"div"> {}
+
+export interface FacetedLoadingProps extends EmptyProps<"div"> {
+  /**
+   * The progress of the request, from 0 to 100, announced to screen readers.
+   */
+  progress?: number;
+
+  /**
+   * The accessible label of the loading indicator.
+   * @default "Loading..."
+   */
+  label?: string;
+}
 
 export interface FacetedGroupProps extends EmptyProps<"div"> {
   /**

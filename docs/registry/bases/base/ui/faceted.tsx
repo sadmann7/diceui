@@ -346,11 +346,22 @@ function FacetedBadge({
   });
 }
 
+interface FacetedContentProps
+  extends
+    React.ComponentProps<typeof PopoverContent>,
+    Pick<
+      React.ComponentProps<typeof Command>,
+      "shouldFilter" | "filter" | "loop"
+    > {}
+
 function FacetedContent({
   className,
   children,
+  shouldFilter,
+  filter,
+  loop,
   ...props
-}: React.ComponentProps<typeof PopoverContent>) {
+}: FacetedContentProps) {
   return (
     <PopoverContent
       data-slot="faceted-content"
@@ -359,7 +370,14 @@ function FacetedContent({
 
       {...props}
     >
-      <Command className="p-0.5">{children}</Command>
+      <Command
+        shouldFilter={shouldFilter}
+        filter={filter}
+        loop={loop}
+        className="p-0.5"
+      >
+        {children}
+      </Command>
     </PopoverContent>
   );
 }
@@ -377,6 +395,22 @@ function FacetedList(props: React.ComponentProps<typeof CommandList>) {
 
 function FacetedEmpty(props: React.ComponentProps<typeof CommandEmpty>) {
   return <CommandEmpty data-slot="faceted-empty" {...props} />;
+}
+
+function FacetedLoading({
+  className,
+  ...props
+}: React.ComponentProps<typeof CommandPrimitive.Loading>) {
+  return (
+    <CommandPrimitive.Loading
+      data-slot="faceted-loading"
+      className={cn(
+        "py-6 text-center text-sm text-muted-foreground",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 function FacetedGroup(props: React.ComponentProps<typeof CommandGroup>) {
@@ -424,10 +458,10 @@ interface FacetedItemProps extends React.ComponentProps<
 function FacetedItem({ value, onSelect, ...props }: FacetedItemProps) {
   const store = useFacetedStore("FacetedItem");
   const isSelected = useFacetedStoreSelector(store, (state) => {
-    const props = store.getProps();
+    const facetedProps = store.getProps();
     return getIsValueSelected(
-      getSelection(state, props),
-      props.multiple,
+      getSelection(state, facetedProps),
+      facetedProps.multiple,
       value,
     );
   });
@@ -532,6 +566,7 @@ export {
   FacetedItem,
   FacetedItemIndicator,
   FacetedList,
+  FacetedLoading,
   FacetedSeparator,
   FacetedTrigger,
   FacetedValue,

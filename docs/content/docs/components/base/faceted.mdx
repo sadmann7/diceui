@@ -68,6 +68,7 @@ import {
   FacetedItem,
   FacetedItemIndicator,
   FacetedList,
+  FacetedLoading,
   FacetedTrigger,
   FacetedValue,
 } from "@/components/ui/faceted";
@@ -80,6 +81,7 @@ return (
     <FacetedContent>
       <FacetedInput />
       <FacetedList>
+        <FacetedLoading />
         <FacetedEmpty />
         <FacetedGroup>
           <FacetedItem>
@@ -106,6 +108,12 @@ Set `multiple` to select more than one value. `FacetedItemIndicator` can show a 
 Split items into groups with headings, and separate them with `FacetedSeparator`.
 
 <ComponentTabs name="faceted-groups-demo" />
+
+### Async
+
+Search on the server by setting `shouldFilter={false}` on `FacetedContent` and controlling the search with `value` and `onValueChange` on `FacetedInput`. Show `FacetedLoading` while a request is pending. Keep the selected options in `items` so their badges stay labeled when they aren't in the current results.
+
+<ComponentTabs name="faceted-async-demo" />
 
 ### Controlled
 
@@ -194,6 +202,15 @@ Shown when no items match the search.
 <AutoTypeTable
   path="./types/base/faceted.ts"
   name="FacetedEmptyProps"
+/>
+
+### FacetedLoading
+
+Shown while results are loading, such as during a server search.
+
+<AutoTypeTable
+  path="./types/base/faceted.ts"
+  name="FacetedLoadingProps"
 />
 
 ### FacetedGroup

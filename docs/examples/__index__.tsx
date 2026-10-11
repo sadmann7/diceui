@@ -2421,6 +2421,19 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "faceted-async-demo": {
+        name: "faceted-async-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/base/examples/faceted-async-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
       "faceted-controlled-demo": {
         name: "faceted-controlled-demo",
         description: "",
@@ -4899,6 +4912,19 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         registryDependencies: ["button","faceted"],
         files: [{
           path: "registry/bases/radix/examples/faceted-groups-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "faceted-async-demo": {
+        name: "faceted-async-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","faceted"],
+        files: [{
+          path: "registry/bases/radix/examples/faceted-async-demo.tsx",
           type: "registry:example",
           target: ""
         }],

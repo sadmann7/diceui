@@ -2217,6 +2217,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "faceted-async-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "faceted"],
+    files: [
+      {
+        path: "examples/faceted-async-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "faceted-controlled-demo",
     type: "registry:example",
     registryDependencies: ["button", "faceted"],
