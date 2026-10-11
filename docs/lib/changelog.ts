@@ -19,10 +19,21 @@ export function getChangelogPages() {
     });
 }
 
+export const LATEST_CHANGELOG_COUNT = 5;
+
+export const MORE_UPDATES_ID = "more-updates";
+
 export function getChangelogToc() {
-  return getChangelogPages().map((page) => ({
+  const pages = getChangelogPages();
+  const toc = pages.slice(0, LATEST_CHANGELOG_COUNT).map((page) => ({
     title: page.data.title,
     url: `#${page.slugs[page.slugs.length - 1]}`,
     depth: 2,
   }));
+
+  if (pages.length > LATEST_CHANGELOG_COUNT) {
+    toc.push({ title: "More Updates", url: `#${MORE_UPDATES_ID}`, depth: 2 });
+  }
+
+  return toc;
 }
