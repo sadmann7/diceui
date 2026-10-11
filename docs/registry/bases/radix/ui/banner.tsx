@@ -6,8 +6,8 @@ import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
+import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -135,15 +135,15 @@ function Banners(props: BannersProps) {
     container: containerProp,
   } = props;
 
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const stateRef = useRefWithInit<StoreState>(() => ({
     banners: [],
     removing: new Set(),
     heights: new Map(),
   }));
-  const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
-  const timeoutsRef = useLazyRef<Map<string, ReturnType<typeof setTimeout>>>(
-    () => new Map(),
-  );
+  const listenersRef = useRefWithInit<Set<() => void>>(() => new Set());
+  const timeoutsRef = useRefWithInit<
+    Map<string, ReturnType<typeof setTimeout>>
+  >(() => new Map());
 
   const store: Store = React.useMemo(
     () => ({
@@ -499,11 +499,11 @@ function Banner(props: BannerProps) {
   const isInsideStore = store !== null;
   const isControlled = openProp !== undefined;
 
-  const openRef = useLazyRef(() => openProp ?? defaultOpen);
-  const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
+  const openRef = useRefWithInit(() => openProp ?? defaultOpen);
+  const listenersRef = useRefWithInit<Set<() => void>>(() => new Set());
   const bannerIdRef = React.useRef<string | null>(null);
-  const onDismissRef = useAsRef(onDismiss);
-  const onOpenChangeRef = useAsRef(onOpenChange);
+  const onDismissRef = useValueAsRef(onDismiss);
+  const onOpenChangeRef = useValueAsRef(onOpenChange);
 
   if (isControlled) {
     openRef.current = openProp;

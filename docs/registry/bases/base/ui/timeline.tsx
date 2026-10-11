@@ -4,11 +4,11 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { cva } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
 
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
 type Direction = "ltr" | "rtl";
@@ -167,8 +167,8 @@ function Timeline(props: TimelineProps) {
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     items: new Map(),
   }));
 

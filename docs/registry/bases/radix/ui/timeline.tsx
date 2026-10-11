@@ -9,7 +9,7 @@ import {
 import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
 
 type Direction = "ltr" | "rtl";
 type Orientation = "vertical" | "horizontal";
@@ -169,8 +169,8 @@ function Timeline(props: TimelineProps) {
 
   const dir = DirectionPrimitive.useDirection(dirProp);
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     items: new Map(),
   }));
 

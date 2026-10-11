@@ -4,6 +4,8 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import {
   autoUpdate,
   flip,
@@ -20,8 +22,6 @@ import { cn } from "cn";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/base/ui/button";
 
 const ROOT_NAME = "SelectionToolbar";
@@ -139,14 +139,14 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     open: openProp ?? false,
     selectedText: "",
     selectionRect: null,
   }));
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onOpenChange,
     onSelectionChange,
   });
@@ -604,7 +604,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
 
   const store = useStoreContext(ITEM_NAME);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onSelect: onSelectProp,
     onClick: onClickProp,
     onPointerDown: onPointerDownProp,

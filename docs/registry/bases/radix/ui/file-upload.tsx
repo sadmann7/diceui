@@ -7,8 +7,8 @@ import {
 } from "radix-ui";
 import * as React from "react";
 
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
+import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "FileUpload";
@@ -185,7 +185,7 @@ function useStoreContext(consumerName: string) {
 function useStore<T>(selector: (state: StoreState) => T): T {
   const store = useStoreContext("useStore");
 
-  const lastValueRef = useLazyRef<{ value: T; state: StoreState } | null>(
+  const lastValueRef = useRefWithInit<{ value: T; state: StoreState } | null>(
     () => null,
   );
 
@@ -292,13 +292,13 @@ function FileUpload(props: FileUploadProps) {
   const labelId = React.useId();
 
   const dir = DirectionPrimitive.useDirection(dirProp);
-  const listeners = useLazyRef(() => new Set<() => void>()).current;
-  const files = useLazyRef<Map<File, FileState>>(() => new Map()).current;
-  const urlCache = useLazyRef(() => new WeakMap<File, string>()).current;
+  const listeners = useRefWithInit(() => new Set<() => void>()).current;
+  const files = useRefWithInit<Map<File, FileState>>(() => new Map()).current;
+  const urlCache = useRefWithInit(() => new WeakMap<File, string>()).current;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const isControlled = value !== undefined;
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onValueChange,
     onAccept,
     onFileAccept,
@@ -458,7 +458,7 @@ function FileUpload(props: FileUploadProps) {
     [accept],
   );
 
-  const onProgress = useLazyRef(() => {
+  const onProgress = useRefWithInit(() => {
     let frame = 0;
     return (file: File, progress: number) => {
       if (frame) return;
@@ -748,7 +748,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
   const dragOver = useStore((state) => state.dragOver);
   const invalid = useStore((state) => state.invalid);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
     onDragOver: onDragOverProp,
     onDragEnter: onDragEnterProp,
@@ -940,7 +940,7 @@ function FileUploadTrigger(props: FileUploadTriggerProps) {
 
   const context = useFileUploadContext(TRIGGER_NAME);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
 

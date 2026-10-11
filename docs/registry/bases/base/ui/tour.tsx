@@ -5,6 +5,8 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import {
   autoUpdate,
   flip,
@@ -21,8 +23,6 @@ import { cn } from "cn";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/base/ui/button";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -133,9 +133,9 @@ function useFocusTrap(
   onCloseAutoFocus?: (event: CloseAutoFocusEvent) => void,
 ) {
   const lastFocusedElementRef = React.useRef<HTMLElement | null>(null);
-  const onOpenAutoFocusRef = useAsRef(onOpenAutoFocus);
-  const onCloseAutoFocusRef = useAsRef(onCloseAutoFocus);
-  const tourOpenRef = useAsRef(tourOpen);
+  const onOpenAutoFocusRef = useValueAsRef(onOpenAutoFocus);
+  const onCloseAutoFocusRef = useValueAsRef(onCloseAutoFocus);
+  const tourOpenRef = useValueAsRef(tourOpen);
 
   React.useEffect(() => {
     if (!enabled) return;
@@ -589,17 +589,17 @@ function Tour(props: TourProps) {
   const prevOpenRef = React.useRef<boolean | undefined>(undefined);
   const previouslyFocusedElementRef = React.useRef<HTMLElement | null>(null);
 
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const stateRef = useRefWithInit<StoreState>(() => ({
     open: openProp ?? defaultOpen,
     value: valueProp ?? defaultValue,
     steps: [],
     maskPath: "",
     spotlightRect: null,
   }));
-  const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
-  const stepIdsMapRef = useLazyRef<Map<string, number>>(() => new Map());
-  const stepIdCounterRef = useLazyRef(() => ({ current: 0 }));
-  const propsRef = useAsRef({
+  const listenersRef = useRefWithInit<Set<() => void>>(() => new Set());
+  const stepIdsMapRef = useRefWithInit<Map<string, number>>(() => new Map());
+  const stepIdCounterRef = useRefWithInit(() => ({ current: 0 }));
+  const propsRef = useValueAsRef({
     valueProp,
     onOpenChange,
     onValueChange,

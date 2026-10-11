@@ -2,13 +2,13 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { Button } from "@/registry/bases/base/ui/button";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -133,15 +133,15 @@ function Banners(props: BannersProps) {
     container: containerProp,
   } = props;
 
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const stateRef = useRefWithInit<StoreState>(() => ({
     banners: [],
     removing: new Set(),
     heights: new Map(),
   }));
-  const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
-  const timeoutsRef = useLazyRef<Map<string, ReturnType<typeof setTimeout>>>(
-    () => new Map(),
-  );
+  const listenersRef = useRefWithInit<Set<() => void>>(() => new Set());
+  const timeoutsRef = useRefWithInit<
+    Map<string, ReturnType<typeof setTimeout>>
+  >(() => new Map());
 
   const store: Store = React.useMemo(
     () => ({
@@ -497,11 +497,11 @@ function Banner(props: BannerProps) {
   const isInsideStore = store !== null;
   const isControlled = openProp !== undefined;
 
-  const openRef = useLazyRef(() => openProp ?? defaultOpen);
-  const listenersRef = useLazyRef<Set<() => void>>(() => new Set());
+  const openRef = useRefWithInit(() => openProp ?? defaultOpen);
+  const listenersRef = useRefWithInit<Set<() => void>>(() => new Set());
   const bannerIdRef = React.useRef<string | null>(null);
-  const onDismissRef = useAsRef(onDismiss);
-  const onOpenChangeRef = useAsRef(onOpenChange);
+  const onDismissRef = useValueAsRef(onDismiss);
+  const onOpenChangeRef = useValueAsRef(onOpenChange);
 
   if (isControlled) {
     openRef.current = openProp;

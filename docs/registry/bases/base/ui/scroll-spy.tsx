@@ -4,11 +4,11 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
 const ROOT_NAME = "ScrollSpy";
@@ -121,11 +121,11 @@ function ScrollSpy(props: ScrollSpyProps) {
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;
 
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const stateRef = useRefWithInit<StoreState>(() => ({
     value: value ?? defaultValue ?? "",
   }));
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const onValueChangeRef = useAsRef(onValueChange);
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const onValueChangeRef = useValueAsRef(onValueChange);
 
   const store = React.useMemo<Store>(() => {
     return {

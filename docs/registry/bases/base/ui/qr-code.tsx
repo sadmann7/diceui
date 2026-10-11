@@ -3,10 +3,9 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { cn } from "cn";
 import * as React from "react";
-
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 
 const ROOT_NAME = "QRCode";
 const CANVAS_NAME = "QRCodeCanvas";
@@ -114,8 +113,8 @@ function QRCode(props: QRCodeProps) {
 
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     dataUrl: null,
     svgString: null,
     isGenerating: false,

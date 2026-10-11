@@ -11,8 +11,8 @@ import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
+import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { Input } from "@/registry/bases/radix/ui/input";
 import {
@@ -510,8 +510,8 @@ function ColorPicker(props: ColorPickerProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => {
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => {
     const colorString = valueProp ?? defaultValue;
     const color = hexToRgb(colorString);
 
@@ -523,7 +523,7 @@ function ColorPicker(props: ColorPickerProps) {
     };
   });
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onValueChange,
     onOpenChange,
     onFormatChange,
@@ -785,7 +785,7 @@ function ColorPickerArea(props: DivProps) {
     ...areaProps
   } = props;
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onPointerDown: onPointerDownProp,
     onPointerMove: onPointerMoveProp,
     onPointerUp: onPointerUpProp,

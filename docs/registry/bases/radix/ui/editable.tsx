@@ -9,8 +9,8 @@ import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useAsRef } from "@/registry/bases/radix/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/radix/hooks/use-lazy-ref";
+import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
+import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 
 const ROOT_NAME = "Editable";
 const LABEL_NAME = "EditableLabel";
@@ -177,13 +177,13 @@ function Editable(props: EditableProps) {
   const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     value: valueProp ?? defaultValue,
     editing: editingProp ?? defaultEditing ?? false,
   }));
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onValueChange,
     onEditingChange,
     onCancel: onCancelProp,
@@ -409,7 +409,7 @@ function EditablePreview(props: EditablePreviewProps) {
   const value = useStore((state) => state.value);
   const editing = useStore((state) => state.editing);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
     onDoubleClick: onDoubleClickProp,
     onFocus: onFocusProp,
@@ -524,7 +524,7 @@ function EditableInput(props: EditableInputProps) {
   const inputRef = React.useRef<InputElement>(null);
   const composedRef = useComposedRefs(ref, inputRef);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onBlur: onBlurProp,
     onChange: onChangeProp,
     onKeyDown: onKeyDownProp,
@@ -739,7 +739,7 @@ function EditableCancel(props: EditableCancelProps) {
   const context = useEditableContext(CANCEL_NAME);
   const editing = useStore((state) => state.editing);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
 
@@ -781,7 +781,7 @@ function EditableSubmit(props: EditableSubmitProps) {
   const value = useStore((state) => state.value);
   const editing = useStore((state) => state.editing);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
 

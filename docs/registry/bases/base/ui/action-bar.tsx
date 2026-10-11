@@ -4,11 +4,11 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
 import { Button } from "@/registry/bases/base/ui/button";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 
@@ -146,7 +146,7 @@ function ActionBar(props: ActionBarProps) {
   const rootRef = React.useRef<RootElement>(null);
   const composedRef = useMergedRefs(ref, rootRef);
 
-  const propsRef = useAsRef({
+  const propsRef = useValueAsRef({
     onEscapeKeyDown,
     onOpenChange,
   });

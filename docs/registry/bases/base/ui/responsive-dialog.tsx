@@ -1,11 +1,11 @@
 "use client";
 
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
-import { useAsRef } from "@/registry/bases/base/hooks/use-as-ref";
-import { useLazyRef } from "@/registry/bases/base/hooks/use-lazy-ref";
 import { useIsMobile } from "@/registry/bases/base/hooks/use-mobile";
 import {
   Dialog,
@@ -84,13 +84,13 @@ function ResponsiveDialog({
 }: ResponsiveDialogProps) {
   const isMobile = useIsMobile(breakpoint);
 
-  const listenersRef = useLazyRef(() => new Set<() => void>());
-  const stateRef = useLazyRef<StoreState>(() => ({
+  const listenersRef = useRefWithInit(() => new Set<() => void>());
+  const stateRef = useRefWithInit<StoreState>(() => ({
     open: openProp ?? defaultOpen,
     isMobile,
   }));
 
-  const onOpenChangeRef = useAsRef(onOpenChangeProp);
+  const onOpenChangeRef = useValueAsRef(onOpenChangeProp);
 
   const store = React.useMemo<Store>(() => {
     return {

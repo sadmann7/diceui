@@ -42,4 +42,25 @@ export const hooks: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "use-ref-with-init",
+    type: "registry:hook",
+    files: [
+      {
+        path: "hooks/use-ref-with-init.ts",
+        type: "registry:hook",
+      },
+    ],
+  },
+  {
+    name: "use-value-as-ref",
+    type: "registry:hook",
+    files: [
+      {
+        path: "hooks/use-value-as-ref.ts",
+        type: "registry:hook",
+      },
+    ],
+    dependencies: ["radix-ui"],
+  },
 ];
