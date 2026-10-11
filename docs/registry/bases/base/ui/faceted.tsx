@@ -270,46 +270,41 @@ function FacetedValue({
   if (children != null) return children;
 
   // A single selection reads as text, like a select. Multiple selections render as badges.
-  if (selected.length === 0 || !store.getProps().multiple) {
-    const [item] = selected;
-
-    return (
-      <span
-        data-slot="faceted-value"
-        className={cn(
-          "flex w-full min-w-0 items-center gap-1",
-          !item && "text-muted-foreground",
-        )}
-      >
-        <span className="truncate">{item ? item.label : placeholder}</span>
-        <IconPlaceholder
-          lucide="ChevronDown"
-          tabler="IconChevronDown"
-          hugeicons="ArrowDown01Icon"
-          phosphor="CaretDownIcon"
-          remixicon="RiArrowDownSLine"
-          className="ml-auto size-4 shrink-0 text-muted-foreground"
-        />
-      </span>
-    );
-  }
-
-  if (selected.length > 2) {
-    return (
-      <FacetedBadgeList>
-        <FacetedBadge>{selected.length} selected</FacetedBadge>
-      </FacetedBadgeList>
-    );
-  }
+  const isMultiple = store.getProps().multiple;
+  const [item] = selected;
 
   return (
-    <FacetedBadgeList>
-      {selected.map((item) => (
-        <FacetedBadge key={item.value}>
-          <span className="truncate">{item.label}</span>
-        </FacetedBadge>
-      ))}
-    </FacetedBadgeList>
+    <span
+      data-slot="faceted-value"
+      className={cn(
+        "flex w-full min-w-0 items-center gap-1",
+        !item && "text-muted-foreground",
+      )}
+    >
+      {item && isMultiple ? (
+        <FacetedBadgeList>
+          {selected.length > 2 ? (
+            <FacetedBadge>{selected.length} selected</FacetedBadge>
+          ) : (
+            selected.map((selectedItem) => (
+              <FacetedBadge key={selectedItem.value}>
+                <span className="truncate">{selectedItem.label}</span>
+              </FacetedBadge>
+            ))
+          )}
+        </FacetedBadgeList>
+      ) : (
+        <span className="truncate">{item ? item.label : placeholder}</span>
+      )}
+      <IconPlaceholder
+        lucide="ChevronDown"
+        tabler="IconChevronDown"
+        hugeicons="ArrowDown01Icon"
+        phosphor="CaretDownIcon"
+        remixicon="RiArrowDownSLine"
+        className="ml-auto size-4 shrink-0 text-muted-foreground"
+      />
+    </span>
   );
 }
 
