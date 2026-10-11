@@ -1,4 +1,4 @@
-import { Demo, DemoItemGroup } from "@/components/demo";
+import { Demo, DemoItemGroup, DemoSeparator } from "@/components/demo";
 import { Shell } from "@/components/shell";
 import FacetedBaseDemo from "@/registry/bases/base/examples/faceted-demo";
 import FacetedMultipleBaseDemo from "@/registry/bases/base/examples/faceted-multiple-demo";
@@ -11,8 +11,9 @@ export default function PlaygroundPage() {
       <Demo>
         <DemoItemGroup>
           <FacetedBaseDemo />
-          <FacetedRadixDemo />
           <FacetedMultipleBaseDemo />
+          <DemoSeparator />
+          <FacetedRadixDemo />
           <FacetedMultipleRadixDemo />
         </DemoItemGroup>
       </Demo>
