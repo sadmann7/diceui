@@ -8,12 +8,12 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
   CommandShortcut,
 } from "@/registry/bases/base/ui/command";
-import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "CommandStack";
 const PAGE_NAME = "CommandStackPage";
@@ -278,7 +278,7 @@ function CommandStack({
     <CommandStackContext.Provider value={contextValue}>
       <Command
         data-slot="command-stack"
-        className={cn("h-auto p-0", className)}
+        className={cn("h-auto", className)}
         value={highlight}
         onValueChange={setHighlight}
         onKeyDown={onKeyDown}
@@ -303,7 +303,7 @@ function CommandStackBreadcrumb({
     <nav
       aria-label="Breadcrumb"
       data-slot="command-stack-breadcrumb"
-      className={cn("px-3 pt-3", className)}
+      className={cn("px-1 pt-1", className)}
       {...props}
     >
       <ol className="flex flex-wrap items-center gap-1">
@@ -328,38 +328,20 @@ function CommandStackBreadcrumb({
 
 function CommandStackInput({
   onValueChange,
-  className,
   ...props
-}: Omit<React.ComponentProps<typeof CommandPrimitive.Input>, "value">) {
+}: Omit<React.ComponentProps<typeof CommandInput>, "value">) {
   const { search, onSearchChange } = useCommandStackContext(INPUT_NAME);
 
   return (
-    <div
-      data-slot="command-stack-input-wrapper"
-      className="flex items-center gap-2 border-b px-3"
-    >
-      <IconPlaceholder
-        lucide="SearchIcon"
-        tabler="IconSearch"
-        hugeicons="Search01Icon"
-        phosphor="MagnifyingGlassIcon"
-        remixicon="RiSearchLine"
-        className="size-4 shrink-0 text-muted-foreground"
-      />
-      <CommandPrimitive.Input
-        data-slot="command-stack-input"
-        value={search}
-        onValueChange={(nextSearch) => {
-          onSearchChange(nextSearch);
-          onValueChange?.(nextSearch);
-        }}
-        className={cn(
-          "flex h-11 w-full bg-transparent text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
-          className,
-        )}
-        {...props}
-      />
-    </div>
+    <CommandInput
+      data-slot="command-stack-input"
+      value={search}
+      onValueChange={(nextSearch) => {
+        onSearchChange(nextSearch);
+        onValueChange?.(nextSearch);
+      }}
+      {...props}
+    />
   );
 }
 
@@ -370,10 +352,7 @@ function CommandStackList({
   return (
     <CommandList
       data-slot="command-stack-list"
-      className={cn(
-        "p-1 [&_[cmdk-list-sizer]:has(>[cmdk-item])]:p-1",
-        className,
-      )}
+      className={cn("[&_[cmdk-list-sizer]:has(>[cmdk-item])]:p-1", className)}
       {...props}
     />
   );
