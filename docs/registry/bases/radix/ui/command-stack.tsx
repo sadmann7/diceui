@@ -2,6 +2,7 @@
 
 import { Command as CommandPrimitive } from "cmdk";
 import { cn } from "cn";
+import { composeEventHandlers } from "radix-ui/internal";
 import * as React from "react";
 
 import {
@@ -450,6 +451,8 @@ function CommandStackItem({
   page,
   value,
   onSelect,
+  onPointerDownCapture,
+  onMouseDown,
   className,
   ...props
 }: CommandStackItemProps) {
@@ -476,6 +479,17 @@ function CommandStackItem({
         className,
       )}
       value={value}
+      onPointerDownCapture={composeEventHandlers(
+        onPointerDownCapture,
+        (event) => {
+          // A focusable item steals the input on pointerdown.
+          event.preventDefault();
+        },
+      )}
+      onMouseDown={composeEventHandlers(onMouseDown, (event) => {
+        // iOS Safari can emit a synthetic mousedown without a pointerdown.
+        event.preventDefault();
+      })}
       onSelect={(itemValue) => {
         onSelect?.(itemValue);
         if (page) {

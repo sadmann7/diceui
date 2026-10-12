@@ -151,7 +151,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["command"],
-    dependencies: ["cmdk"],
+    dependencies: ["cmdk", "radix-ui"],
   },
   {
     name: "compare-slider",
