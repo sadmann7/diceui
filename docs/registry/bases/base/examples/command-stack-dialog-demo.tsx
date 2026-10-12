@@ -96,7 +96,11 @@ export default function CommandStackDialogDemo() {
                 </CommandStackItem>
               </CommandStackGroup>
             </CommandStackPage>
-            <CommandStackPage value="projects" label="Projects">
+            <CommandStackPage
+              value="projects"
+              label="Projects"
+              placeholder="Search projects..."
+            >
               {projects.map((project) => (
                 <CommandStackItem key={project} onSelect={onRun}>
                   <FolderKanban />
@@ -104,7 +108,11 @@ export default function CommandStackDialogDemo() {
                 </CommandStackItem>
               ))}
             </CommandStackPage>
-            <CommandStackPage value="theme" label="Theme">
+            <CommandStackPage
+              value="theme"
+              label="Theme"
+              placeholder="Change theme..."
+            >
               <CommandStackItem onSelect={onRun}>
                 <Sun />
                 Light

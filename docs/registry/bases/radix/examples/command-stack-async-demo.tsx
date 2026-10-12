@@ -82,7 +82,12 @@ function RepositoryPages() {
   const { activePage } = useCommandStack();
 
   return repositories.map((repository) => (
-    <CommandStackPage key={repository} value={repository} label={repository}>
+    <CommandStackPage
+      key={repository}
+      value={repository}
+      label={repository}
+      placeholder="Search branches..."
+    >
       {activePage === repository && <BranchesPage repository={repository} />}
     </CommandStackPage>
   ));

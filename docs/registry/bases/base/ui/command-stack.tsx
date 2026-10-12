@@ -31,12 +31,17 @@ type CommandStackSelectionMode = "single" | "multiple";
 const EMPTY_VALUE: CommandStackValue = {};
 const NO_SELECTION: string[] = [];
 
+interface CommandStackPageData {
+  label?: React.ReactNode;
+  placeholder?: string;
+}
+
 interface CommandStackContextValue {
   pages: string[];
   activePage: string;
   search: string;
   value: CommandStackValue;
-  labels: Map<string, React.ReactNode>;
+  pageData: Map<string, CommandStackPageData>;
   isLoading: boolean;
   onSearchChange: (search: string) => void;
   pushPage: (page: string) => void;
@@ -48,7 +53,7 @@ interface CommandStackContextValue {
     itemValue: string,
     selectionMode: CommandStackSelectionMode,
   ) => void;
-  registerLabel: (page: string, label: React.ReactNode) => () => void;
+  registerPage: (page: string, data: CommandStackPageData) => () => void;
   registerLoading: () => () => void;
 }
 
@@ -167,9 +172,9 @@ function CommandStack({
 
   const search = searchProp ?? searchState;
 
-  const [labels, setLabels] = React.useState<Map<string, React.ReactNode>>(
-    () => new Map(),
-  );
+  const [pageData, setPageData] = React.useState<
+    Map<string, CommandStackPageData>
+  >(() => new Map());
   const [loadingCount, setLoadingCount] = React.useState(0);
   const onSearchChange = React.useCallback(
     (nextSearch: string) => {
@@ -203,11 +208,11 @@ function CommandStack({
     setPages(pages.slice(0, -1));
   }, [pages, setPages]);
 
-  const registerLabel = React.useCallback(
-    (page: string, label: React.ReactNode) => {
-      setLabels((prev) => new Map(prev).set(page, label));
+  const registerPage = React.useCallback(
+    (page: string, data: CommandStackPageData) => {
+      setPageData((prev) => new Map(prev).set(page, data));
       return () => {
-        setLabels((prev) => {
+        setPageData((prev) => {
           const next = new Map(prev);
           next.delete(page);
           return next;
@@ -245,7 +250,7 @@ function CommandStack({
       activePage,
       search,
       value,
-      labels,
+      pageData,
       isLoading: loadingCount > 0,
       onSearchChange,
       pushPage,
@@ -253,7 +258,7 @@ function CommandStack({
       setPages,
       setValue,
       selectItem,
-      registerLabel,
+      registerPage,
       registerLoading,
     }),
     [
@@ -261,7 +266,7 @@ function CommandStack({
       activePage,
       search,
       value,
-      labels,
+      pageData,
       loadingCount,
       onSearchChange,
       pushPage,
@@ -269,7 +274,7 @@ function CommandStack({
       setPages,
       setValue,
       selectItem,
-      registerLabel,
+      registerPage,
       registerLoading,
     ],
   );
@@ -286,7 +291,9 @@ function CommandStack({
       >
         {children}
         <span aria-live="polite" className="sr-only">
-          {pages.length > 1 ? (labels.get(activePage) ?? activePage) : null}
+          {pages.length > 1
+            ? (pageData.get(activePage)?.label ?? activePage)
+            : null}
         </span>
       </Command>
     </CommandStackContext.Provider>
@@ -297,7 +304,7 @@ function CommandStackBreadcrumb({
   className,
   ...props
 }: React.ComponentProps<"nav">) {
-  const { pages, labels } = useCommandStackContext(BREADCRUMB_NAME);
+  const { pages, pageData } = useCommandStackContext(BREADCRUMB_NAME);
 
   return (
     <nav
@@ -317,7 +324,7 @@ function CommandStackBreadcrumb({
               aria-current={isCurrent ? "page" : undefined}
               className="inline-flex h-5 items-center rounded-sm bg-muted px-1.5 text-xs font-medium text-muted-foreground aria-[current=page]:text-foreground"
             >
-              {labels.get(page) ?? page}
+              {pageData.get(page)?.label ?? page}
             </li>
           );
         })}
@@ -327,14 +334,17 @@ function CommandStackBreadcrumb({
 }
 
 function CommandStackInput({
+  placeholder,
   onValueChange,
   ...props
 }: Omit<React.ComponentProps<typeof CommandInput>, "value">) {
-  const { search, onSearchChange } = useCommandStackContext(INPUT_NAME);
+  const { activePage, search, pageData, onSearchChange } =
+    useCommandStackContext(INPUT_NAME);
 
   return (
     <CommandInput
       data-slot="command-stack-input"
+      placeholder={pageData.get(activePage)?.placeholder ?? placeholder}
       value={search}
       onValueChange={(nextSearch) => {
         onSearchChange(nextSearch);
@@ -391,6 +401,7 @@ function CommandStackLoading({
 interface CommandStackPageProps {
   value: string;
   label?: React.ReactNode;
+  placeholder?: string;
   selectionMode?: CommandStackSelectionMode;
   children?: React.ReactNode;
 }
@@ -398,15 +409,16 @@ interface CommandStackPageProps {
 function CommandStackPage({
   value,
   label,
+  placeholder,
   selectionMode,
   children,
 }: CommandStackPageProps) {
-  const { activePage, registerLabel } = useCommandStackContext(PAGE_NAME);
+  const { activePage, registerPage } = useCommandStackContext(PAGE_NAME);
 
   React.useEffect(() => {
-    if (label === undefined) return;
-    return registerLabel(value, label);
-  }, [value, label, registerLabel]);
+    if (label === undefined && placeholder === undefined) return;
+    return registerPage(value, { label, placeholder });
+  }, [value, label, placeholder, registerPage]);
 
   const pageContextValue = React.useMemo<CommandStackPageContextValue>(
     () => ({ value, selectionMode }),

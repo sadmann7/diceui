@@ -75,7 +75,11 @@ export default function CommandStackDemo() {
             </CommandStackItem>
           </CommandStackGroup>
         </CommandStackPage>
-        <CommandStackPage value="projects" label="Projects">
+        <CommandStackPage
+          value="projects"
+          label="Projects"
+          placeholder="Search projects..."
+        >
           {projects.map((project) => (
             <CommandStackItem key={project}>
               <FolderKanban />
@@ -83,7 +87,11 @@ export default function CommandStackDemo() {
             </CommandStackItem>
           ))}
         </CommandStackPage>
-        <CommandStackPage value="teams" label="Teams">
+        <CommandStackPage
+          value="teams"
+          label="Teams"
+          placeholder="Search teams..."
+        >
           {teams.map((team) => (
             <CommandStackItem key={team}>
               <Users />

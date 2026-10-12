@@ -68,6 +68,7 @@ export default function CommandStackControlledDemo() {
               key={section.value}
               value={section.value}
               label={section.label}
+              placeholder={`Search ${section.label.toLowerCase()} settings...`}
             >
               {section.items.map((item) => (
                 <CommandStackItem key={item}>{item}</CommandStackItem>

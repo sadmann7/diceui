@@ -114,6 +114,15 @@ export interface CommandStackPageProps {
   label?: React.ReactNode;
 
   /**
+   * The input's placeholder while the page is active. Falls back to the input's own `placeholder`.
+   *
+   * ```tsx
+   * <CommandStackPage value="projects" placeholder="Search projects..." />
+   * ```
+   */
+  placeholder?: string;
+
+  /**
    * Whether selecting an item toggles its `value` in the selection. With `"single"`, selecting another item replaces it.
    */
   selectionMode?: "single" | "multiple";

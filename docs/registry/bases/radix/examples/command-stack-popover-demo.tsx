@@ -90,6 +90,7 @@ export default function CommandStackPopoverDemo() {
                 key={filter.value}
                 value={filter.value}
                 label={filter.label}
+                placeholder={`Filter by ${filter.label.toLowerCase()}...`}
                 selectionMode="multiple"
               >
                 <CommandStackGroup heading={filter.label}>
