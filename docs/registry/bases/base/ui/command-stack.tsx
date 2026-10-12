@@ -110,23 +110,21 @@ interface CommandStackProps extends Omit<
   onSearchChange?: (search: string) => void;
 }
 
-function CommandStack(props: CommandStackProps) {
-  const {
-    pages: pagesProp,
-    defaultPages,
-    onPagesChange,
-    search: searchProp,
-    defaultSearch = "",
-    onSearchChange: onSearchChangeProp,
-    value: valueProp,
-    defaultValue = EMPTY_VALUE,
-    onValueChange,
-    onKeyDown: onKeyDownProp,
-    className,
-    children,
-    ...commandProps
-  } = props;
-
+function CommandStack({
+  pages: pagesProp,
+  defaultPages,
+  onPagesChange,
+  search: searchProp,
+  defaultSearch = "",
+  onSearchChange: onSearchChangeProp,
+  value: valueProp,
+  defaultValue = EMPTY_VALUE,
+  onValueChange,
+  onKeyDown: onKeyDownProp,
+  className,
+  children,
+  ...commandProps
+}: CommandStackProps) {
   const [pagesState, setPagesState] = React.useState<string[]>(
     () => defaultPages ?? [DEFAULT_ROOT_PAGE],
   );
@@ -381,7 +379,9 @@ function CommandStackList({
   );
 }
 
-function CommandStackEmpty(props: React.ComponentProps<typeof CommandEmpty>) {
+function CommandStackEmpty({
+  ...props
+}: React.ComponentProps<typeof CommandEmpty>) {
   const { isLoading } = useCommandStackContext(EMPTY_NAME);
 
   if (isLoading) return null;
@@ -443,7 +443,9 @@ function CommandStackPage({
   );
 }
 
-function CommandStackGroup(props: React.ComponentProps<typeof CommandGroup>) {
+function CommandStackGroup({
+  ...props
+}: React.ComponentProps<typeof CommandGroup>) {
   return <CommandGroup data-slot="command-stack-group" {...props} />;
 }
 
@@ -498,15 +500,15 @@ function CommandStackItem({
   );
 }
 
-function CommandStackShortcut(
-  props: React.ComponentProps<typeof CommandShortcut>,
-) {
+function CommandStackShortcut({
+  ...props
+}: React.ComponentProps<typeof CommandShortcut>) {
   return <CommandShortcut data-slot="command-stack-shortcut" {...props} />;
 }
 
-function CommandStackSeparator(
-  props: React.ComponentProps<typeof CommandSeparator>,
-) {
+function CommandStackSeparator({
+  ...props
+}: React.ComponentProps<typeof CommandSeparator>) {
   return <CommandSeparator data-slot="command-stack-separator" {...props} />;
 }
 
@@ -522,7 +524,7 @@ export {
   CommandStackPage,
   CommandStackSeparator,
   CommandStackShortcut,
+  useCommandStack,
   type CommandStackSelectionMode,
   type CommandStackValue,
-  useCommandStack,
 };
