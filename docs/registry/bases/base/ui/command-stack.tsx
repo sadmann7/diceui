@@ -25,16 +25,29 @@ const BREADCRUMB_NAME = "CommandStackBreadcrumb";
 
 const DEFAULT_ROOT_PAGE = "root";
 
+type CommandStackValue = Record<string, string[]>;
+type CommandStackSelectionMode = "single" | "multiple";
+
+const EMPTY_VALUE: CommandStackValue = {};
+const NO_SELECTION: string[] = [];
+
 interface CommandStackContextValue {
   pages: string[];
   activePage: string;
   search: string;
+  value: CommandStackValue;
   labels: Map<string, React.ReactNode>;
   isLoading: boolean;
   onSearchChange: (search: string) => void;
   pushPage: (page: string) => void;
   popPage: () => void;
   setPages: (pages: string[]) => void;
+  setValue: (value: CommandStackValue) => void;
+  selectItem: (
+    page: string,
+    itemValue: string,
+    selectionMode: CommandStackSelectionMode,
+  ) => void;
   registerLabel: (page: string, label: React.ReactNode) => () => void;
   registerLoading: () => () => void;
 }
@@ -50,14 +63,45 @@ function useCommandStackContext(consumerName: string) {
   return context;
 }
 
-function useCommandStack() {
-  const { pages, activePage, search, pushPage, popPage, setPages } =
-    useCommandStackContext("useCommandStack");
-
-  return { pages, activePage, search, pushPage, popPage, setPages };
+interface CommandStackPageContextValue {
+  value: string;
+  selectionMode?: CommandStackSelectionMode;
 }
 
-interface CommandStackProps extends React.ComponentProps<typeof Command> {
+const CommandStackPageContext =
+  React.createContext<CommandStackPageContextValue | null>(null);
+
+function useCommandStack() {
+  const {
+    pages,
+    activePage,
+    search,
+    value,
+    pushPage,
+    popPage,
+    setPages,
+    setValue,
+  } = useCommandStackContext("useCommandStack");
+
+  return {
+    pages,
+    activePage,
+    search,
+    value,
+    pushPage,
+    popPage,
+    setPages,
+    setValue,
+  };
+}
+
+interface CommandStackProps extends Omit<
+  React.ComponentProps<typeof Command>,
+  "value" | "defaultValue" | "onValueChange"
+> {
+  value?: CommandStackValue;
+  defaultValue?: CommandStackValue;
+  onValueChange?: (value: CommandStackValue) => void;
   pages?: string[];
   defaultPages?: string[];
   onPagesChange?: (pages: string[]) => void;
@@ -75,8 +119,8 @@ function CommandStack(props: CommandStackProps) {
     defaultSearch = "",
     onSearchChange: onSearchChangeProp,
     value: valueProp,
-    defaultValue = "",
-    onValueChange: onValueChangeProp,
+    defaultValue = EMPTY_VALUE,
+    onValueChange,
     onKeyDown: onKeyDownProp,
     className,
     children,
@@ -90,16 +134,39 @@ function CommandStack(props: CommandStackProps) {
   const activePage = pages[pages.length - 1] ?? DEFAULT_ROOT_PAGE;
 
   const [searchState, setSearchState] = React.useState(defaultSearch);
+  const [highlight, setHighlight] = React.useState("");
   const [valueState, setValueState] = React.useState(defaultValue);
   const value = valueProp ?? valueState;
 
-  const onValueChange = React.useCallback(
-    (nextValue: string) => {
+  const setValue = React.useCallback(
+    (nextValue: CommandStackValue) => {
       if (valueProp === undefined) setValueState(nextValue);
-      onValueChangeProp?.(nextValue);
+      onValueChange?.(nextValue);
     },
-    [valueProp, onValueChangeProp],
+    [valueProp, onValueChange],
   );
+
+  const selectItem = React.useCallback(
+    (
+      page: string,
+      itemValue: string,
+      selectionMode: CommandStackSelectionMode,
+    ) => {
+      const selected = value[page] ?? NO_SELECTION;
+      const isSelected = selected.includes(itemValue);
+      let nextSelected: string[];
+      if (selectionMode === "multiple") {
+        nextSelected = isSelected
+          ? selected.filter((item) => item !== itemValue)
+          : [...selected, itemValue];
+      } else {
+        nextSelected = isSelected ? [] : [itemValue];
+      }
+      setValue({ ...value, [page]: nextSelected });
+    },
+    [value, setValue],
+  );
+
   const search = searchProp ?? searchState;
 
   const [labels, setLabels] = React.useState<Map<string, React.ReactNode>>(
@@ -120,9 +187,9 @@ function CommandStack(props: CommandStackProps) {
       if (pagesProp === undefined) setPagesState(nextPages);
       onPagesChange?.(nextPages);
       onSearchChange("");
-      onValueChange("");
+      setHighlight("");
     },
-    [pagesProp, onPagesChange, onSearchChange, onValueChange],
+    [pagesProp, onPagesChange, onSearchChange],
   );
 
   const pushPage = React.useCallback(
@@ -179,12 +246,15 @@ function CommandStack(props: CommandStackProps) {
       pages,
       activePage,
       search,
+      value,
       labels,
       isLoading: loadingCount > 0,
       onSearchChange,
       pushPage,
       popPage,
       setPages,
+      setValue,
+      selectItem,
       registerLabel,
       registerLoading,
     }),
@@ -192,12 +262,15 @@ function CommandStack(props: CommandStackProps) {
       pages,
       activePage,
       search,
+      value,
       labels,
       loadingCount,
       onSearchChange,
       pushPage,
       popPage,
       setPages,
+      setValue,
+      selectItem,
       registerLabel,
       registerLoading,
     ],
@@ -208,8 +281,8 @@ function CommandStack(props: CommandStackProps) {
       <Command
         data-slot="command-stack"
         className={cn("h-auto p-0", className)}
-        value={value}
-        onValueChange={onValueChange}
+        value={highlight}
+        onValueChange={setHighlight}
         onKeyDown={onKeyDown}
         {...commandProps}
       >
@@ -339,10 +412,16 @@ function CommandStackLoading({
 interface CommandStackPageProps {
   value: string;
   label?: React.ReactNode;
+  selectionMode?: CommandStackSelectionMode;
   children?: React.ReactNode;
 }
 
-function CommandStackPage({ value, label, children }: CommandStackPageProps) {
+function CommandStackPage({
+  value,
+  label,
+  selectionMode,
+  children,
+}: CommandStackPageProps) {
   const { activePage, registerLabel } = useCommandStackContext(PAGE_NAME);
 
   React.useEffect(() => {
@@ -350,9 +429,18 @@ function CommandStackPage({ value, label, children }: CommandStackPageProps) {
     return registerLabel(value, label);
   }, [value, label, registerLabel]);
 
+  const pageContextValue = React.useMemo<CommandStackPageContextValue>(
+    () => ({ value, selectionMode }),
+    [value, selectionMode],
+  );
+
   if (activePage !== value) return null;
 
-  return children;
+  return (
+    <CommandStackPageContext.Provider value={pageContextValue}>
+      {children}
+    </CommandStackPageContext.Provider>
+  );
 }
 
 function CommandStackGroup(props: React.ComponentProps<typeof CommandGroup>) {
@@ -367,19 +455,43 @@ interface CommandStackItemProps extends React.ComponentProps<
 
 function CommandStackItem({
   page,
+  value,
   onSelect,
   className,
   ...props
 }: CommandStackItemProps) {
-  const { pushPage } = useCommandStackContext(ITEM_NAME);
+  const {
+    value: selection,
+    pushPage,
+    selectItem,
+  } = useCommandStackContext(ITEM_NAME);
+  const pageContext = React.useContext(CommandStackPageContext);
+  const selectionMode = page ? undefined : pageContext?.selectionMode;
+  const checked =
+    selectionMode && pageContext && value !== undefined
+      ? (selection[pageContext.value] ?? NO_SELECTION).includes(value)
+      : undefined;
 
   return (
     <CommandItem
       data-slot="command-stack-item"
-      className={cn("scroll-my-1 [&>svg:last-child]:hidden", className)}
-      onSelect={(value) => {
-        onSelect?.(value);
-        if (page) pushPage(page);
+      data-checked={checked}
+      aria-checked={checked}
+      className={cn(
+        "scroll-my-1",
+        checked === undefined && "[&>svg:last-child]:hidden",
+        className,
+      )}
+      value={value}
+      onSelect={(itemValue) => {
+        onSelect?.(itemValue);
+        if (page) {
+          pushPage(page);
+          return;
+        }
+        if (selectionMode && pageContext && value !== undefined) {
+          selectItem(pageContext.value, value, selectionMode);
+        }
       }}
       {...props}
     />
@@ -410,5 +522,7 @@ export {
   CommandStackPage,
   CommandStackSeparator,
   CommandStackShortcut,
+  type CommandStackSelectionMode,
+  type CommandStackValue,
   useCommandStack,
 };

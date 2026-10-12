@@ -90,7 +90,7 @@ return (
 
 ### Popover
 
-Put the stack in a popover for nested menus, such as a filter menu where each filter opens its options. Control `pages` to reset to the root page when the popover closes.
+Put the stack in a popover for nested menus, such as a filter menu where each filter opens its options. Set `selectionMode` on a page to make its items toggleable, and control the selection with `value` and `onValueChange`. The stack goes back to the root page whenever the popover closes.
 
 <ComponentTabs name="command-stack-popover-demo" />
 
@@ -188,7 +188,7 @@ A group of items with an optional heading.
 
 ### CommandStackItem
 
-A selectable item. Set `page` to open a page when it's selected.
+A selectable item. Set `page` to open a page when it's selected, or give it a `value` on a page with a `selectionMode` to make it toggleable.
 
 <AutoTypeTable
   path="./types/radix/command-stack.ts"
@@ -215,7 +215,7 @@ A line between groups.
 
 ### useCommandStack
 
-Reads and changes the stack's pages from any component inside it. It returns `pages`, `activePage`, `search`, `pushPage(page)`, `popPage()` and `setPages(pages)`.
+Reads and changes the stack's pages from any component inside it. It returns `pages`, `activePage`, `search`, `value`, `pushPage(page)`, `popPage()`, `setPages(pages)` and `setValue(value)`.
 
 ```tsx
 import { useCommandStack } from "@/components/ui/command-stack";

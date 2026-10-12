@@ -2,6 +2,26 @@ import type { EmptyProps } from "@/types";
 
 export interface CommandStackProps extends EmptyProps<"div"> {
   /**
+   * The controlled selected values, keyed by the page they were selected on. Only pages with a `selectionMode` add to it.
+   *
+   * ```ts
+   * value={{ status: ["Todo", "In Progress"], priority: ["High"] }}
+   * ```
+   */
+  value?: Record<string, string[]>;
+
+  /**
+   * The selected values when initially rendered. Use when you don't need to control the selection.
+   * @default {}
+   */
+  defaultValue?: Record<string, string[]>;
+
+  /**
+   * Event handler called when an item on a selectable page is toggled.
+   */
+  onValueChange?: (value: Record<string, string[]>) => void;
+
+  /**
    * The controlled stack of open pages. The first page is the root, and the last one is shown.
    *
    * ```ts
@@ -94,6 +114,11 @@ export interface CommandStackPageProps {
   label?: React.ReactNode;
 
   /**
+   * Whether selecting an item toggles its `value` in the selection. With `"single"`, selecting another item replaces it.
+   */
+  selectionMode?: "single" | "multiple";
+
+  /**
    * The content rendered while the page is active.
    */
   children?: React.ReactNode;
@@ -117,7 +142,7 @@ export interface CommandStackItemProps extends EmptyProps<"div"> {
   page?: string;
 
   /**
-   * The value used for filtering. Defaults to the item's text content.
+   * The value used for filtering and, on a page with a `selectionMode`, for selection. Defaults to the item's text content.
    */
   value?: string;
 

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  Check,
-  CircleDashed,
-  ListFilter,
-  SignalHigh,
-  User,
-} from "lucide-react";
+import { CircleDashed, ListFilter, SignalHigh, User } from "lucide-react";
 import * as React from "react";
 
 import { Button } from "@/registry/bases/base/ui/button";
@@ -18,6 +12,7 @@ import {
   CommandStackItem,
   CommandStackList,
   CommandStackPage,
+  type CommandStackValue,
 } from "@/registry/bases/base/ui/command-stack";
 import {
   Popover,
@@ -60,31 +55,12 @@ const filters = [
 ];
 
 export default function CommandStackPopoverDemo() {
-  const [open, setOpen] = React.useState(false);
-  const [pages, setPages] = React.useState(["root"]);
-  const [selected, setSelected] = React.useState<Record<string, string[]>>({});
+  const [value, setValue] = React.useState<CommandStackValue>({});
 
-  const selectedCount = Object.values(selected).flat().length;
-
-  function onOpenChange(nextOpen: boolean) {
-    setOpen(nextOpen);
-    if (!nextOpen) setPages(["root"]);
-  }
-
-  function onToggle(filter: string, option: string) {
-    setSelected((prevSelected) => {
-      const values = prevSelected[filter] ?? [];
-      return {
-        ...prevSelected,
-        [filter]: values.includes(option)
-          ? values.filter((value) => value !== option)
-          : [...values, option],
-      };
-    });
-  }
+  const selectedCount = Object.values(value).flat().length;
 
   return (
-    <Popover open={open} onOpenChange={onOpenChange}>
+    <Popover>
       <PopoverTrigger render={<Button variant="outline" />}>
         <ListFilter />
         Filter
@@ -95,7 +71,7 @@ export default function CommandStackPopoverDemo() {
         )}
       </PopoverTrigger>
       <PopoverContent align="start" className="w-56 p-0">
-        <CommandStack pages={pages} onPagesChange={setPages}>
+        <CommandStack value={value} onValueChange={setValue}>
           <CommandStackInput placeholder="Filter..." />
           <CommandStackList>
             <CommandStackEmpty>No results found.</CommandStackEmpty>
@@ -112,26 +88,14 @@ export default function CommandStackPopoverDemo() {
                 key={filter.value}
                 value={filter.value}
                 label={filter.label}
+                selectionMode="multiple"
               >
                 <CommandStackGroup heading={filter.label}>
-                  {filter.options.map((option) => {
-                    const isSelected =
-                      selected[filter.value]?.includes(option) ?? false;
-
-                    return (
-                      <CommandStackItem
-                        key={option}
-                        onSelect={() => onToggle(filter.value, option)}
-                      >
-                        {option}
-                        <Check
-                          className={
-                            isSelected ? "ml-auto" : "ml-auto opacity-0"
-                          }
-                        />
-                      </CommandStackItem>
-                    );
-                  })}
+                  {filter.options.map((option) => (
+                    <CommandStackItem key={option} value={option}>
+                      {option}
+                    </CommandStackItem>
+                  ))}
                 </CommandStackGroup>
               </CommandStackPage>
             ))}
