@@ -39,7 +39,7 @@ const items = groups.flatMap((group) => group.items);
 export default function FacetedGroupsDemo() {
   return (
     <Faceted items={items} multiple>
-      <FacetedTrigger render={<Button variant="outline" className="w-60" />}>
+      <FacetedTrigger render={<Button variant="outline" className="w-48" />}>
         <FacetedValue placeholder="Select produce..." />
       </FacetedTrigger>
       <FacetedContent>
