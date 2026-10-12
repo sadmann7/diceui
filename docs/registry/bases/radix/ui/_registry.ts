@@ -142,11 +142,11 @@ export const ui: Registry["items"] = [
     ],
   },
   {
-    name: "command-palette",
+    name: "command-stack",
     type: "registry:ui",
     files: [
       {
-        path: "ui/command-palette.tsx",
+        path: "ui/command-stack.tsx",
         type: "registry:ui",
       },
     ],

@@ -2239,45 +2239,56 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "command-palette-demo",
+    name: "command-stack-demo",
     type: "registry:example",
-    registryDependencies: ["command-palette"],
+    registryDependencies: ["command-stack"],
     files: [
       {
-        path: "examples/command-palette-demo.tsx",
+        path: "examples/command-stack-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "command-palette-dialog-demo",
+    name: "command-stack-dialog-demo",
     type: "registry:example",
-    registryDependencies: ["button", "command", "command-palette"],
+    registryDependencies: ["button", "command", "command-stack"],
     files: [
       {
-        path: "examples/command-palette-dialog-demo.tsx",
+        path: "examples/command-stack-dialog-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "command-palette-async-demo",
+    name: "command-stack-popover-demo",
     type: "registry:example",
-    registryDependencies: ["command-palette"],
+    registryDependencies: ["button", "command-stack", "popover"],
     files: [
       {
-        path: "examples/command-palette-async-demo.tsx",
+        path: "examples/command-stack-popover-demo.tsx",
         type: "registry:example",
       },
     ],
   },
   {
-    name: "command-palette-controlled-demo",
+    name: "command-stack-async-demo",
     type: "registry:example",
-    registryDependencies: ["button", "command-palette"],
+    registryDependencies: ["command-stack"],
     files: [
       {
-        path: "examples/command-palette-controlled-demo.tsx",
+        path: "examples/command-stack-async-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "command-stack-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "command-stack"],
+    files: [
+      {
+        path: "examples/command-stack-controlled-demo.tsx",
         type: "registry:example",
       },
     ],

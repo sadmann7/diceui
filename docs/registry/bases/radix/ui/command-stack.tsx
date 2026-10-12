@@ -15,17 +15,17 @@ import {
 } from "@/registry/bases/radix/ui/command";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
-const ROOT_NAME = "CommandPalette";
-const PAGE_NAME = "CommandPalettePage";
-const ITEM_NAME = "CommandPaletteItem";
-const INPUT_NAME = "CommandPaletteInput";
-const EMPTY_NAME = "CommandPaletteEmpty";
-const LOADING_NAME = "CommandPaletteLoading";
-const BREADCRUMB_NAME = "CommandPaletteBreadcrumb";
+const ROOT_NAME = "CommandStack";
+const PAGE_NAME = "CommandStackPage";
+const ITEM_NAME = "CommandStackItem";
+const INPUT_NAME = "CommandStackInput";
+const EMPTY_NAME = "CommandStackEmpty";
+const LOADING_NAME = "CommandStackLoading";
+const BREADCRUMB_NAME = "CommandStackBreadcrumb";
 
 const DEFAULT_ROOT_PAGE = "root";
 
-interface CommandPaletteContextValue {
+interface CommandStackContextValue {
   pages: string[];
   activePage: string;
   search: string;
@@ -39,25 +39,25 @@ interface CommandPaletteContextValue {
   registerLoading: () => () => void;
 }
 
-const CommandPaletteContext =
-  React.createContext<CommandPaletteContextValue | null>(null);
+const CommandStackContext =
+  React.createContext<CommandStackContextValue | null>(null);
 
-function useCommandPaletteContext(consumerName: string) {
-  const context = React.useContext(CommandPaletteContext);
+function useCommandStackContext(consumerName: string) {
+  const context = React.useContext(CommandStackContext);
   if (!context) {
     throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
 }
 
-function useCommandPalette() {
+function useCommandStack() {
   const { pages, activePage, search, pushPage, popPage, setPages } =
-    useCommandPaletteContext("useCommandPalette");
+    useCommandStackContext("useCommandStack");
 
   return { pages, activePage, search, pushPage, popPage, setPages };
 }
 
-interface CommandPaletteProps extends React.ComponentProps<typeof Command> {
+interface CommandStackProps extends React.ComponentProps<typeof Command> {
   pages?: string[];
   defaultPages?: string[];
   onPagesChange?: (pages: string[]) => void;
@@ -66,7 +66,7 @@ interface CommandPaletteProps extends React.ComponentProps<typeof Command> {
   onSearchChange?: (search: string) => void;
 }
 
-function CommandPalette(props: CommandPaletteProps) {
+function CommandStack(props: CommandStackProps) {
   const {
     pages: pagesProp,
     defaultPages,
@@ -74,6 +74,9 @@ function CommandPalette(props: CommandPaletteProps) {
     search: searchProp,
     defaultSearch = "",
     onSearchChange: onSearchChangeProp,
+    value: valueProp,
+    defaultValue = "",
+    onValueChange: onValueChangeProp,
     onKeyDown: onKeyDownProp,
     className,
     children,
@@ -87,6 +90,16 @@ function CommandPalette(props: CommandPaletteProps) {
   const activePage = pages[pages.length - 1] ?? DEFAULT_ROOT_PAGE;
 
   const [searchState, setSearchState] = React.useState(defaultSearch);
+  const [valueState, setValueState] = React.useState(defaultValue);
+  const value = valueProp ?? valueState;
+
+  const onValueChange = React.useCallback(
+    (nextValue: string) => {
+      if (valueProp === undefined) setValueState(nextValue);
+      onValueChangeProp?.(nextValue);
+    },
+    [valueProp, onValueChangeProp],
+  );
   const search = searchProp ?? searchState;
 
   const [labels, setLabels] = React.useState<Map<string, React.ReactNode>>(
@@ -107,8 +120,9 @@ function CommandPalette(props: CommandPaletteProps) {
       if (pagesProp === undefined) setPagesState(nextPages);
       onPagesChange?.(nextPages);
       onSearchChange("");
+      onValueChange("");
     },
-    [pagesProp, onPagesChange, onSearchChange],
+    [pagesProp, onPagesChange, onSearchChange, onValueChange],
   );
 
   const pushPage = React.useCallback(
@@ -160,7 +174,7 @@ function CommandPalette(props: CommandPaletteProps) {
     [onKeyDownProp, search, pages.length, popPage],
   );
 
-  const contextValue = React.useMemo<CommandPaletteContextValue>(
+  const contextValue = React.useMemo<CommandStackContextValue>(
     () => ({
       pages,
       activePage,
@@ -190,10 +204,12 @@ function CommandPalette(props: CommandPaletteProps) {
   );
 
   return (
-    <CommandPaletteContext.Provider value={contextValue}>
+    <CommandStackContext.Provider value={contextValue}>
       <Command
-        data-slot="command-palette"
+        data-slot="command-stack"
         className={cn("h-auto p-0", className)}
+        value={value}
+        onValueChange={onValueChange}
         onKeyDown={onKeyDown}
         {...commandProps}
       >
@@ -202,20 +218,20 @@ function CommandPalette(props: CommandPaletteProps) {
           {pages.length > 1 ? (labels.get(activePage) ?? activePage) : null}
         </span>
       </Command>
-    </CommandPaletteContext.Provider>
+    </CommandStackContext.Provider>
   );
 }
 
-function CommandPaletteBreadcrumb({
+function CommandStackBreadcrumb({
   className,
   ...props
 }: React.ComponentProps<"nav">) {
-  const { pages, labels } = useCommandPaletteContext(BREADCRUMB_NAME);
+  const { pages, labels } = useCommandStackContext(BREADCRUMB_NAME);
 
   return (
     <nav
       aria-label="Breadcrumb"
-      data-slot="command-palette-breadcrumb"
+      data-slot="command-stack-breadcrumb"
       className={cn("px-3 pt-3", className)}
       {...props}
     >
@@ -226,7 +242,7 @@ function CommandPaletteBreadcrumb({
           return (
             <li
               key={`${page}-${index}`}
-              data-slot="command-palette-breadcrumb-item"
+              data-slot="command-stack-breadcrumb-item"
               aria-current={isCurrent ? "page" : undefined}
               className="inline-flex h-5 items-center rounded-sm bg-muted px-1.5 text-xs font-medium text-muted-foreground aria-[current=page]:text-foreground"
             >
@@ -239,16 +255,16 @@ function CommandPaletteBreadcrumb({
   );
 }
 
-function CommandPaletteInput({
+function CommandStackInput({
   onValueChange,
   className,
   ...props
 }: Omit<React.ComponentProps<typeof CommandPrimitive.Input>, "value">) {
-  const { search, onSearchChange } = useCommandPaletteContext(INPUT_NAME);
+  const { search, onSearchChange } = useCommandStackContext(INPUT_NAME);
 
   return (
     <div
-      data-slot="command-palette-input-wrapper"
+      data-slot="command-stack-input-wrapper"
       className="flex items-center gap-2 border-b px-3"
     >
       <IconPlaceholder
@@ -260,7 +276,7 @@ function CommandPaletteInput({
         className="size-4 shrink-0 text-muted-foreground"
       />
       <CommandPrimitive.Input
-        data-slot="command-palette-input"
+        data-slot="command-stack-input"
         value={search}
         onValueChange={(nextSearch) => {
           onSearchChange(nextSearch);
@@ -276,13 +292,13 @@ function CommandPaletteInput({
   );
 }
 
-function CommandPaletteList({
+function CommandStackList({
   className,
   ...props
 }: React.ComponentProps<typeof CommandList>) {
   return (
     <CommandList
-      data-slot="command-palette-list"
+      data-slot="command-stack-list"
       className={cn(
         "p-1 [&_[cmdk-list-sizer]:has(>[cmdk-item])]:p-1",
         className,
@@ -292,25 +308,25 @@ function CommandPaletteList({
   );
 }
 
-function CommandPaletteEmpty(props: React.ComponentProps<typeof CommandEmpty>) {
-  const { isLoading } = useCommandPaletteContext(EMPTY_NAME);
+function CommandStackEmpty(props: React.ComponentProps<typeof CommandEmpty>) {
+  const { isLoading } = useCommandStackContext(EMPTY_NAME);
 
   if (isLoading) return null;
 
-  return <CommandEmpty data-slot="command-palette-empty" {...props} />;
+  return <CommandEmpty data-slot="command-stack-empty" {...props} />;
 }
 
-function CommandPaletteLoading({
+function CommandStackLoading({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Loading>) {
-  const { registerLoading } = useCommandPaletteContext(LOADING_NAME);
+  const { registerLoading } = useCommandStackContext(LOADING_NAME);
 
   React.useEffect(() => registerLoading(), [registerLoading]);
 
   return (
     <CommandPrimitive.Loading
-      data-slot="command-palette-loading"
+      data-slot="command-stack-loading"
       className={cn(
         "flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground",
         className,
@@ -320,18 +336,14 @@ function CommandPaletteLoading({
   );
 }
 
-interface CommandPalettePageProps {
+interface CommandStackPageProps {
   value: string;
   label?: React.ReactNode;
   children?: React.ReactNode;
 }
 
-function CommandPalettePage({
-  value,
-  label,
-  children,
-}: CommandPalettePageProps) {
-  const { activePage, registerLabel } = useCommandPaletteContext(PAGE_NAME);
+function CommandStackPage({ value, label, children }: CommandStackPageProps) {
+  const { activePage, registerLabel } = useCommandStackContext(PAGE_NAME);
 
   React.useEffect(() => {
     if (label === undefined) return;
@@ -343,27 +355,27 @@ function CommandPalettePage({
   return children;
 }
 
-function CommandPaletteGroup(props: React.ComponentProps<typeof CommandGroup>) {
-  return <CommandGroup data-slot="command-palette-group" {...props} />;
+function CommandStackGroup(props: React.ComponentProps<typeof CommandGroup>) {
+  return <CommandGroup data-slot="command-stack-group" {...props} />;
 }
 
-interface CommandPaletteItemProps extends React.ComponentProps<
+interface CommandStackItemProps extends React.ComponentProps<
   typeof CommandItem
 > {
   page?: string;
 }
 
-function CommandPaletteItem({
+function CommandStackItem({
   page,
   onSelect,
   className,
   ...props
-}: CommandPaletteItemProps) {
-  const { pushPage } = useCommandPaletteContext(ITEM_NAME);
+}: CommandStackItemProps) {
+  const { pushPage } = useCommandStackContext(ITEM_NAME);
 
   return (
     <CommandItem
-      data-slot="command-palette-item"
+      data-slot="command-stack-item"
       className={cn("scroll-my-1 [&>svg:last-child]:hidden", className)}
       onSelect={(value) => {
         onSelect?.(value);
@@ -374,29 +386,29 @@ function CommandPaletteItem({
   );
 }
 
-function CommandPaletteShortcut(
+function CommandStackShortcut(
   props: React.ComponentProps<typeof CommandShortcut>,
 ) {
-  return <CommandShortcut data-slot="command-palette-shortcut" {...props} />;
+  return <CommandShortcut data-slot="command-stack-shortcut" {...props} />;
 }
 
-function CommandPaletteSeparator(
+function CommandStackSeparator(
   props: React.ComponentProps<typeof CommandSeparator>,
 ) {
-  return <CommandSeparator data-slot="command-palette-separator" {...props} />;
+  return <CommandSeparator data-slot="command-stack-separator" {...props} />;
 }
 
 export {
-  CommandPalette,
-  CommandPaletteBreadcrumb,
-  CommandPaletteEmpty,
-  CommandPaletteGroup,
-  CommandPaletteInput,
-  CommandPaletteItem,
-  CommandPaletteList,
-  CommandPaletteLoading,
-  CommandPalettePage,
-  CommandPaletteSeparator,
-  CommandPaletteShortcut,
-  useCommandPalette,
+  CommandStack,
+  CommandStackBreadcrumb,
+  CommandStackEmpty,
+  CommandStackGroup,
+  CommandStackInput,
+  CommandStackItem,
+  CommandStackList,
+  CommandStackLoading,
+  CommandStackPage,
+  CommandStackSeparator,
+  CommandStackShortcut,
+  useCommandStack,
 };

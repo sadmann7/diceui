@@ -1,6 +1,6 @@
 import type { EmptyProps } from "@/types";
 
-export interface CommandPaletteProps extends EmptyProps<"div"> {
+export interface CommandStackProps extends EmptyProps<"div"> {
   /**
    * The controlled stack of open pages. The first page is the root, and the last one is shown.
    *
@@ -55,20 +55,20 @@ export interface CommandPaletteProps extends EmptyProps<"div"> {
   loop?: boolean;
 }
 
-export interface CommandPaletteBreadcrumbProps extends EmptyProps<"nav"> {}
+export interface CommandStackBreadcrumbProps extends EmptyProps<"nav"> {}
 
-export interface CommandPaletteInputProps extends EmptyProps<"input"> {
+export interface CommandStackInputProps extends EmptyProps<"input"> {
   /**
    * Event handler called when the search value changes.
    */
   onValueChange?: (search: string) => void;
 }
 
-export interface CommandPaletteListProps extends EmptyProps<"div"> {}
+export interface CommandStackListProps extends EmptyProps<"div"> {}
 
-export interface CommandPaletteEmptyProps extends EmptyProps<"div"> {}
+export interface CommandStackEmptyProps extends EmptyProps<"div"> {}
 
-export interface CommandPaletteLoadingProps extends EmptyProps<"div"> {
+export interface CommandStackLoadingProps extends EmptyProps<"div"> {
   /**
    * The progress of the request, from 0 to 100, announced to screen readers.
    */
@@ -81,7 +81,7 @@ export interface CommandPaletteLoadingProps extends EmptyProps<"div"> {
   label?: string;
 }
 
-export interface CommandPalettePageProps {
+export interface CommandStackPageProps {
   /**
    * The page's value. Items open it with `page`, and it appears in `pages`.
    */
@@ -99,19 +99,19 @@ export interface CommandPalettePageProps {
   children?: React.ReactNode;
 }
 
-export interface CommandPaletteGroupProps extends EmptyProps<"div"> {
+export interface CommandStackGroupProps extends EmptyProps<"div"> {
   /**
    * The heading shown above the group's items.
    */
   heading?: React.ReactNode;
 }
 
-export interface CommandPaletteItemProps extends EmptyProps<"div"> {
+export interface CommandStackItemProps extends EmptyProps<"div"> {
   /**
    * The page to open when the item is selected.
    *
    * ```tsx
-   * <CommandPaletteItem page="projects">Search projects...</CommandPaletteItem>
+   * <CommandStackItem page="projects">Search projects...</CommandStackItem>
    * ```
    */
   page?: string;
@@ -138,6 +138,6 @@ export interface CommandPaletteItemProps extends EmptyProps<"div"> {
   keywords?: string[];
 }
 
-export interface CommandPaletteShortcutProps extends EmptyProps<"span"> {}
+export interface CommandStackShortcutProps extends EmptyProps<"span"> {}
 
-export interface CommandPaletteSeparatorProps extends EmptyProps<"div"> {}
+export interface CommandStackSeparatorProps extends EmptyProps<"div"> {}

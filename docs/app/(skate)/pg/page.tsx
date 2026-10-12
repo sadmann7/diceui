@@ -1,21 +1,21 @@
 import { Demo, DemoItemGroup } from "@/components/demo";
 import { Shell } from "@/components/shell";
-import CommandPaletteControlledBaseDemo from "@/registry/bases/base/examples/command-palette-controlled-demo";
-import CommandPaletteBaseDemo from "@/registry/bases/base/examples/command-palette-demo";
+import CommandStackControlledBaseDemo from "@/registry/bases/base/examples/command-stack-controlled-demo";
+import CommandStackBaseDemo from "@/registry/bases/base/examples/command-stack-demo";
 import { Separator } from "@/registry/bases/base/ui/separator";
-import CommandPaletteControlledRadixDemo from "@/registry/bases/radix/examples/command-palette-controlled-demo";
-import CommandPaletteRadixDemo from "@/registry/bases/radix/examples/command-palette-demo";
+import CommandStackControlledRadixDemo from "@/registry/bases/radix/examples/command-stack-controlled-demo";
+import CommandStackRadixDemo from "@/registry/bases/radix/examples/command-stack-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
         <DemoItemGroup>
-          <CommandPaletteBaseDemo />
-          <CommandPaletteControlledBaseDemo />
+          <CommandStackBaseDemo />
+          <CommandStackControlledBaseDemo />
           <Separator />
-          <CommandPaletteRadixDemo />
-          <CommandPaletteControlledRadixDemo />
+          <CommandStackRadixDemo />
+          <CommandStackControlledRadixDemo />
         </DemoItemGroup>
       </Demo>
     </Shell>

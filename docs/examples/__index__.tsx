@@ -2447,52 +2447,65 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette-demo": {
-        name: "command-palette-demo",
+      "command-stack-demo": {
+        name: "command-stack-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["command-palette"],
+        registryDependencies: ["command-stack"],
         files: [{
-          path: "registry/bases/base/examples/command-palette-demo.tsx",
+          path: "registry/bases/base/examples/command-stack-demo.tsx",
           type: "registry:example",
           target: ""
         }],
         source: "",
         chunks: []
       },
-      "command-palette-dialog-demo": {
-        name: "command-palette-dialog-demo",
+      "command-stack-dialog-demo": {
+        name: "command-stack-dialog-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["button","command","command-palette"],
+        registryDependencies: ["button","command","command-stack"],
         files: [{
-          path: "registry/bases/base/examples/command-palette-dialog-demo.tsx",
+          path: "registry/bases/base/examples/command-stack-dialog-demo.tsx",
           type: "registry:example",
           target: ""
         }],
         source: "",
         chunks: []
       },
-      "command-palette-async-demo": {
-        name: "command-palette-async-demo",
+      "command-stack-popover-demo": {
+        name: "command-stack-popover-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["command-palette"],
+        registryDependencies: ["button","command-stack","popover"],
         files: [{
-          path: "registry/bases/base/examples/command-palette-async-demo.tsx",
+          path: "registry/bases/base/examples/command-stack-popover-demo.tsx",
           type: "registry:example",
           target: ""
         }],
         source: "",
         chunks: []
       },
-      "command-palette-controlled-demo": {
-        name: "command-palette-controlled-demo",
+      "command-stack-async-demo": {
+        name: "command-stack-async-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["button","command-palette"],
+        registryDependencies: ["command-stack"],
         files: [{
-          path: "registry/bases/base/examples/command-palette-controlled-demo.tsx",
+          path: "registry/bases/base/examples/command-stack-async-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-controlled-demo": {
+        name: "command-stack-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","command-stack"],
+        files: [{
+          path: "registry/bases/base/examples/command-stack-controlled-demo.tsx",
           type: "registry:example",
           target: ""
         }],
@@ -4996,52 +5009,65 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette-demo": {
-        name: "command-palette-demo",
+      "command-stack-demo": {
+        name: "command-stack-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["command-palette"],
+        registryDependencies: ["command-stack"],
         files: [{
-          path: "registry/bases/radix/examples/command-palette-demo.tsx",
+          path: "registry/bases/radix/examples/command-stack-demo.tsx",
           type: "registry:example",
           target: ""
         }],
         source: "",
         chunks: []
       },
-      "command-palette-dialog-demo": {
-        name: "command-palette-dialog-demo",
+      "command-stack-dialog-demo": {
+        name: "command-stack-dialog-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["button","command","command-palette"],
+        registryDependencies: ["button","command","command-stack"],
         files: [{
-          path: "registry/bases/radix/examples/command-palette-dialog-demo.tsx",
+          path: "registry/bases/radix/examples/command-stack-dialog-demo.tsx",
           type: "registry:example",
           target: ""
         }],
         source: "",
         chunks: []
       },
-      "command-palette-async-demo": {
-        name: "command-palette-async-demo",
+      "command-stack-popover-demo": {
+        name: "command-stack-popover-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["command-palette"],
+        registryDependencies: ["button","command-stack","popover"],
         files: [{
-          path: "registry/bases/radix/examples/command-palette-async-demo.tsx",
+          path: "registry/bases/radix/examples/command-stack-popover-demo.tsx",
           type: "registry:example",
           target: ""
         }],
         source: "",
         chunks: []
       },
-      "command-palette-controlled-demo": {
-        name: "command-palette-controlled-demo",
+      "command-stack-async-demo": {
+        name: "command-stack-async-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["button","command-palette"],
+        registryDependencies: ["command-stack"],
         files: [{
-          path: "registry/bases/radix/examples/command-palette-controlled-demo.tsx",
+          path: "registry/bases/radix/examples/command-stack-async-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-controlled-demo": {
+        name: "command-stack-controlled-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","command-stack"],
+        files: [{
+          path: "registry/bases/radix/examples/command-stack-controlled-demo.tsx",
           type: "registry:example",
           target: ""
         }],

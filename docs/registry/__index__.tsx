@@ -141,13 +141,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/base/ui/command-palette.tsx",
+          path: "registry/bases/base/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -989,13 +989,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/base/ui/command-palette.tsx",
+          path: "registry/bases/base/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -1837,13 +1837,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/base/ui/command-palette.tsx",
+          path: "registry/bases/base/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -2685,13 +2685,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/base/ui/command-palette.tsx",
+          path: "registry/bases/base/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -3533,13 +3533,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/base/ui/command-palette.tsx",
+          path: "registry/bases/base/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -4381,13 +4381,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/base/ui/command-palette.tsx",
+          path: "registry/bases/base/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -5229,13 +5229,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/base/ui/command-palette.tsx",
+          path: "registry/bases/base/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -6077,13 +6077,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/base/ui/command-palette.tsx",
+          path: "registry/bases/base/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -6912,13 +6912,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/radix/ui/command-palette.tsx",
+          path: "registry/bases/radix/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -7786,13 +7786,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/radix/ui/command-palette.tsx",
+          path: "registry/bases/radix/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -8660,13 +8660,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/radix/ui/command-palette.tsx",
+          path: "registry/bases/radix/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -9534,13 +9534,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/radix/ui/command-palette.tsx",
+          path: "registry/bases/radix/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -10408,13 +10408,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/radix/ui/command-palette.tsx",
+          path: "registry/bases/radix/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -11282,13 +11282,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/radix/ui/command-palette.tsx",
+          path: "registry/bases/radix/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -12156,13 +12156,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/radix/ui/command-palette.tsx",
+          path: "registry/bases/radix/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
@@ -13030,13 +13030,13 @@ export const Index: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-palette": {
-        name: "command-palette",
+      "command-stack": {
+        name: "command-stack",
         description: "",
         type: "registry:ui",
         registryDependencies: ["command"],
         files: [{
-          path: "registry/bases/radix/ui/command-palette.tsx",
+          path: "registry/bases/radix/ui/command-stack.tsx",
           type: "registry:ui",
           target: ""
         }],
