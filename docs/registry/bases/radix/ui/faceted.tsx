@@ -203,13 +203,9 @@ function Faceted<Multiple extends boolean = false>({
   const [openState, setOpenState] = React.useState(defaultOpen);
   const open = openProp ?? openState;
 
-  const storeRef = React.useRef<FacetedStore | null>(null);
-  storeRef.current ??= createFacetedStore({
-    value: value ?? defaultValue,
-    items,
-    multiple,
-  });
-  const store = storeRef.current;
+  const [store] = React.useState(() =>
+    createFacetedStore({ value: value ?? defaultValue, items, multiple }),
+  );
 
   useLayoutEffect(() => {
     store.controller = {

@@ -256,14 +256,14 @@ function CommandStack({
   const [searchState, setSearchState] = React.useState(defaultSearch);
   const search = searchProp ?? searchState;
 
-  const storeRef = React.useRef<CommandStackStore | null>(null);
-  storeRef.current ??= createCommandStackStore({
-    pages: pagesProp ?? defaultPages ?? [DEFAULT_ROOT_PAGE],
-    value: valueProp ?? defaultValue,
-    pageData: new Map(),
-    loadingCount: 0,
-  });
-  const store = storeRef.current;
+  const [store] = React.useState(() =>
+    createCommandStackStore({
+      pages: pagesProp ?? defaultPages ?? [DEFAULT_ROOT_PAGE],
+      value: valueProp ?? defaultValue,
+      pageData: new Map(),
+      loadingCount: 0,
+    }),
+  );
 
   useIsoLayoutEffect(() => {
     store.controller = {
