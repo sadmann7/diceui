@@ -200,8 +200,8 @@ function Faceted<Multiple extends boolean = false>({
   multiple = false as Multiple,
   ...props
 }: FacetedProps<Multiple>) {
-  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(defaultOpen);
-  const open = openProp ?? uncontrolledOpen;
+  const [internalOpen, setInternalOpen] = React.useState(defaultOpen);
+  const open = openProp ?? internalOpen;
 
   const [store] = React.useState(() =>
     createFacetedStore({ value: value ?? defaultValue, items, multiple }),
@@ -216,7 +216,7 @@ function Faceted<Multiple extends boolean = false>({
       },
       setOpen(nextOpen) {
         onOpenChange?.(nextOpen);
-        if (openProp === undefined) setUncontrolledOpen(nextOpen);
+        if (openProp === undefined) setInternalOpen(nextOpen);
       },
     };
   });

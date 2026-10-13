@@ -260,9 +260,8 @@ function CommandStack({
   children,
   ...props
 }: CommandStackProps) {
-  const [uncontrolledSearch, setUncontrolledSearch] =
-    React.useState(defaultSearch);
-  const search = searchProp ?? uncontrolledSearch;
+  const [internalSearch, setInternalSearch] = React.useState(defaultSearch);
+  const search = searchProp ?? internalSearch;
 
   const [store] = React.useState(() =>
     createCommandStackStore({
@@ -282,7 +281,7 @@ function CommandStack({
       setSearch: (nextSearch) => {
         if (Object.is(nextSearch, search)) return;
         onSearchChange?.(nextSearch);
-        if (searchProp === undefined) setUncontrolledSearch(nextSearch);
+        if (searchProp === undefined) setInternalSearch(nextSearch);
       },
     };
   });
