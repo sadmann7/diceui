@@ -17,7 +17,6 @@ import { Button } from "@/registry/bases/base/ui/button";
 import { CommandDialog } from "@/registry/bases/base/ui/command";
 import {
   CommandStack,
-  CommandStackBreadcrumb,
   CommandStackEmpty,
   CommandStackGroup,
   CommandStackInput,
@@ -58,7 +57,6 @@ export default function CommandStackDialogDemo() {
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandStack>
-          <CommandStackBreadcrumb />
           <CommandStackInput placeholder="Type a command or search..." />
           <CommandStackList>
             <CommandStackEmpty>No results found.</CommandStackEmpty>

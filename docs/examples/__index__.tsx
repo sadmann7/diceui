@@ -2499,13 +2499,13 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-stack-controlled-demo": {
-        name: "command-stack-controlled-demo",
+      "command-stack-workspace-demo": {
+        name: "command-stack-workspace-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["button","command-stack"],
+        registryDependencies: ["command-stack"],
         files: [{
-          path: "registry/bases/base/examples/command-stack-controlled-demo.tsx",
+          path: "registry/bases/base/examples/command-stack-workspace-demo.tsx",
           type: "registry:example",
           target: ""
         }],
@@ -5061,13 +5061,13 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
-      "command-stack-controlled-demo": {
-        name: "command-stack-controlled-demo",
+      "command-stack-workspace-demo": {
+        name: "command-stack-workspace-demo",
         description: "",
         type: "registry:example",
-        registryDependencies: ["button","command-stack"],
+        registryDependencies: ["command-stack"],
         files: [{
-          path: "registry/bases/radix/examples/command-stack-controlled-demo.tsx",
+          path: "registry/bases/radix/examples/command-stack-workspace-demo.tsx",
           type: "registry:example",
           target: ""
         }],

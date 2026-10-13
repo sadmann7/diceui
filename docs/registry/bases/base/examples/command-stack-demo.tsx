@@ -10,7 +10,6 @@ import {
 
 import {
   CommandStack,
-  CommandStackBreadcrumb,
   CommandStackEmpty,
   CommandStackGroup,
   CommandStackInput,
@@ -33,7 +32,6 @@ const teams = ["Design", "Engineering", "Product", "Customer Success"];
 export default function CommandStackDemo() {
   return (
     <CommandStack className="w-full max-w-md rounded-lg border shadow-md">
-      <CommandStackBreadcrumb />
       <CommandStackInput placeholder="What do you need?" />
       <CommandStackList>
         <CommandStackEmpty>No results found.</CommandStackEmpty>

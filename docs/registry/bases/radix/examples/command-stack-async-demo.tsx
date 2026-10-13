@@ -5,7 +5,6 @@ import * as React from "react";
 
 import {
   CommandStack,
-  CommandStackBreadcrumb,
   CommandStackEmpty,
   CommandStackGroup,
   CommandStackInput,
@@ -96,7 +95,6 @@ function RepositoryPages() {
 export default function CommandStackAsyncDemo() {
   return (
     <CommandStack className="w-full max-w-md rounded-lg border shadow-md">
-      <CommandStackBreadcrumb />
       <CommandStackInput placeholder="Search repositories..." />
       <CommandStackList>
         <CommandStackEmpty>No results found.</CommandStackEmpty>

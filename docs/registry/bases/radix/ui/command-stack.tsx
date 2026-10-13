@@ -453,7 +453,7 @@ function CommandStackLoading({
     <CommandPrimitive.Loading
       data-slot="command-stack-loading"
       className={cn(
-        "flex items-center justify-center gap-2 py-6 text-sm text-muted-foreground",
+        "py-6 text-sm text-muted-foreground *:flex *:items-center *:justify-center *:gap-2",
         className,
       )}
       {...props}
@@ -537,7 +537,6 @@ function CommandStackItem({
       data-checked={checked}
       aria-checked={checked}
       className={cn(
-        "scroll-my-1",
         checked === undefined && "[&>svg:last-child]:hidden",
         className,
       )}

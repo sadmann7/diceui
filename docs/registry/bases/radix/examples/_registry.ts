@@ -2283,12 +2283,12 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "command-stack-controlled-demo",
+    name: "command-stack-workspace-demo",
     type: "registry:example",
-    registryDependencies: ["button", "command-stack"],
+    registryDependencies: ["command-stack"],
     files: [
       {
-        path: "examples/command-stack-controlled-demo.tsx",
+        path: "examples/command-stack-workspace-demo.tsx",
         type: "registry:example",
       },
     ],
