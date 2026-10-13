@@ -120,7 +120,13 @@ export interface FacetedContentProps extends EmptyProps<"div"> {
   loop?: boolean;
 }
 
-export interface FacetedInputProps extends EmptyProps<"input"> {}
+export interface FacetedInputProps extends EmptyProps<"input"> {
+  /**
+   * The input's look. `default` is shadcn's filled search field. `line` is a plain row with a divider below it.
+   * @default "default"
+   */
+  variant?: "default" | "line";
+}
 
 export interface FacetedListProps extends EmptyProps<"div"> {}
 

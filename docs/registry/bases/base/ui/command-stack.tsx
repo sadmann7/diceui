@@ -11,12 +11,17 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
   CommandShortcut,
 } from "@/registry/bases/base/ui/command";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+} from "@/registry/bases/base/ui/input-group";
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const DEFAULT_ROOT_PAGE = "root";
 
@@ -239,7 +244,7 @@ interface CommandStackProps extends Omit<
 }
 
 function CommandStack({
-  pages: pagesProp,
+  pages,
   defaultPages,
   onPagesChange,
   search: searchProp,
@@ -253,12 +258,13 @@ function CommandStack({
   children,
   ...props
 }: CommandStackProps) {
-  const [searchState, setSearchState] = React.useState(defaultSearch);
-  const search = searchProp ?? searchState;
+  const [uncontrolledSearch, setUncontrolledSearch] =
+    React.useState(defaultSearch);
+  const search = searchProp ?? uncontrolledSearch;
 
   const [store] = React.useState(() =>
     createCommandStackStore({
-      pages: pagesProp ?? defaultPages ?? [DEFAULT_ROOT_PAGE],
+      pages: pages ?? defaultPages ?? [DEFAULT_ROOT_PAGE],
       value: valueProp ?? defaultValue,
       pageData: new Map(),
       loadingCount: 0,
@@ -267,21 +273,21 @@ function CommandStack({
 
   useIsoLayoutEffect(() => {
     store.controller = {
-      isPagesControlled: pagesProp !== undefined,
+      isPagesControlled: pages !== undefined,
       isValueControlled: valueProp !== undefined,
       onPagesChange,
       onValueChange,
       setSearch: (nextSearch) => {
         if (Object.is(nextSearch, search)) return;
         onSearchChange?.(nextSearch);
-        if (searchProp === undefined) setSearchState(nextSearch);
+        if (searchProp === undefined) setUncontrolledSearch(nextSearch);
       },
     };
   });
 
   useIsoLayoutEffect(() => {
-    store.sync({ pages: pagesProp, value: valueProp });
-  }, [store, pagesProp, valueProp]);
+    store.sync({ pages, value: valueProp });
+  }, [store, pages, valueProp]);
 
   const activePage = useCommandStackSelector(store, selectActivePage);
   const announcement = useCommandStackSelector(store, (state) =>
@@ -375,29 +381,145 @@ function CommandStackBreadcrumb({
   );
 }
 
+interface CommandStackInputProps extends Omit<
+  React.ComponentProps<typeof CommandPrimitive.Input>,
+  "value"
+> {
+  variant?: "default" | "line";
+}
+
 function CommandStackInput({
+  variant = "default",
   placeholder,
   onValueChange,
+  className,
   ...props
-}: Omit<React.ComponentProps<typeof CommandInput>, "value">) {
+}: CommandStackInputProps) {
   const store = useCommandStackStore("CommandStackInput");
   const search = React.useContext(CommandStackSearchContext);
+  const isNested = useCommandStackSelector(
+    store,
+    (state) => state.pages.length > 1,
+  );
   const pagePlaceholder = useCommandStackSelector(
     store,
     (state) => state.pageData.get(getActivePage(state.pages))?.placeholder,
   );
 
+  const inputProps = {
+    "data-slot": "command-stack-input",
+    placeholder: pagePlaceholder ?? placeholder,
+    value: search,
+    onValueChange: (nextSearch: string) => {
+      store.setSearch(nextSearch);
+      onValueChange?.(nextSearch);
+    },
+  };
+
+  if (variant === "line") {
+    return (
+      <div
+        data-slot="command-stack-input-wrapper"
+        data-variant="line"
+        className="-mx-1 -mt-1 mb-1 flex h-10 items-center gap-2 border-b px-4"
+      >
+        {isNested ? (
+          <CommandStackBack className="-m-1" />
+        ) : (
+          <IconPlaceholder
+            lucide="SearchIcon"
+            tabler="IconSearch"
+            hugeicons="Search01Icon"
+            phosphor="MagnifyingGlassIcon"
+            remixicon="RiSearchLine"
+            className="size-4 shrink-0 text-muted-foreground"
+          />
+        )}
+        <CommandPrimitive.Input
+          {...inputProps}
+          className={cn(
+            "h-full w-full bg-transparent text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+            className,
+          )}
+          {...props}
+        />
+      </div>
+    );
+  }
+
   return (
-    <CommandInput
-      data-slot="command-stack-input"
-      placeholder={pagePlaceholder ?? placeholder}
-      value={search}
-      onValueChange={(nextSearch) => {
-        store.setSearch(nextSearch);
-        onValueChange?.(nextSearch);
-      }}
-      {...props}
-    />
+    <div
+      data-slot="command-stack-input-wrapper"
+      data-variant="default"
+      className="p-1 pb-0"
+    >
+      <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
+        <CommandPrimitive.Input
+          {...inputProps}
+          className={cn(
+            "w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+            className,
+          )}
+          {...props}
+        />
+        <InputGroupAddon>
+          {isNested ? (
+            <InputGroupButton
+              size="icon-xs"
+              aria-label="Back"
+              data-slot="command-stack-back"
+              className="-me-1"
+              onPointerDown={(event) => event.preventDefault()}
+              onClick={store.popPage}
+            >
+              <IconPlaceholder
+                lucide="ChevronLeftIcon"
+                tabler="IconChevronLeft"
+                hugeicons="ArrowLeft01Icon"
+                phosphor="CaretLeftIcon"
+                remixicon="RiArrowLeftSLine"
+              />
+            </InputGroupButton>
+          ) : (
+            <IconPlaceholder
+              lucide="SearchIcon"
+              tabler="IconSearch"
+              hugeicons="Search01Icon"
+              phosphor="MagnifyingGlassIcon"
+              remixicon="RiSearchLine"
+              className="size-4 shrink-0 opacity-50"
+            />
+          )}
+        </InputGroupAddon>
+      </InputGroup>
+    </div>
+  );
+}
+
+function CommandStackBack({ className }: { className?: string }) {
+  const store = useCommandStackStore("CommandStackBack");
+
+  return (
+    <button
+      type="button"
+      aria-label="Back"
+      data-slot="command-stack-back"
+      className={cn(
+        "flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-hidden hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50",
+        className,
+      )}
+      onPointerDown={(event) => event.preventDefault()}
+      onClick={store.popPage}
+    >
+      <IconPlaceholder
+        lucide="ChevronLeftIcon"
+        tabler="IconChevronLeft"
+        hugeicons="ArrowLeft01Icon"
+        phosphor="CaretLeftIcon"
+        remixicon="RiArrowLeftSLine"
+        className="size-4"
+      />
+    </button>
   );
 }
 
@@ -518,6 +640,7 @@ function CommandStackItem({
   onPointerDownCapture,
   onMouseDown,
   className,
+  children,
   ...props
 }: CommandStackItemProps) {
   const store = useCommandStackStore("CommandStackItem");
@@ -563,7 +686,20 @@ function CommandStackItem({
         }
       }}
       {...props}
-    />
+    >
+      {children}
+      {page && (
+        <IconPlaceholder
+          lucide="ChevronRightIcon"
+          tabler="IconChevronRight"
+          hugeicons="ArrowRight01Icon"
+          phosphor="CaretRightIcon"
+          remixicon="RiArrowRightSLine"
+          data-slot="command-stack-item-indicator"
+          className="ml-auto text-muted-foreground [[class*='ml-auto']~&]:ml-0"
+        />
+      )}
+    </CommandItem>
   );
 }
 
