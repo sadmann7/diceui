@@ -2447,6 +2447,71 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         source: "",
         chunks: []
       },
+      "command-stack-demo": {
+        name: "command-stack-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["command-stack"],
+        files: [{
+          path: "registry/bases/base/examples/command-stack-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-dialog-demo": {
+        name: "command-stack-dialog-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","command","command-stack"],
+        files: [{
+          path: "registry/bases/base/examples/command-stack-dialog-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-popover-demo": {
+        name: "command-stack-popover-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","command-stack","popover"],
+        files: [{
+          path: "registry/bases/base/examples/command-stack-popover-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-async-demo": {
+        name: "command-stack-async-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["command-stack"],
+        files: [{
+          path: "registry/bases/base/examples/command-stack-async-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-workspace-demo": {
+        name: "command-stack-workspace-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["command-stack"],
+        files: [{
+          path: "registry/bases/base/examples/command-stack-workspace-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
   },  "radix": {
       "action-bar-demo": {
         name: "action-bar-demo",
@@ -4938,6 +5003,71 @@ export const ExamplesIndex: Record<string, Record<string, unknown>> = {
         registryDependencies: ["button","faceted"],
         files: [{
           path: "registry/bases/radix/examples/faceted-controlled-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-demo": {
+        name: "command-stack-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["command-stack"],
+        files: [{
+          path: "registry/bases/radix/examples/command-stack-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-dialog-demo": {
+        name: "command-stack-dialog-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","command","command-stack"],
+        files: [{
+          path: "registry/bases/radix/examples/command-stack-dialog-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-popover-demo": {
+        name: "command-stack-popover-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["button","command-stack","popover"],
+        files: [{
+          path: "registry/bases/radix/examples/command-stack-popover-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-async-demo": {
+        name: "command-stack-async-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["command-stack"],
+        files: [{
+          path: "registry/bases/radix/examples/command-stack-async-demo.tsx",
+          type: "registry:example",
+          target: ""
+        }],
+        source: "",
+        chunks: []
+      },
+      "command-stack-workspace-demo": {
+        name: "command-stack-workspace-demo",
+        description: "",
+        type: "registry:example",
+        registryDependencies: ["command-stack"],
+        files: [{
+          path: "registry/bases/radix/examples/command-stack-workspace-demo.tsx",
           type: "registry:example",
           target: ""
         }],

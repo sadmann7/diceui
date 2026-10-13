@@ -1,0 +1,259 @@
+---
+base: radix
+title: Command Stack
+description: A searchable command list with nested pages that works inline, in a popover, or in a dialog.
+new: true
+links:
+  api: /docs/components/radix/command-stack#api-reference
+---
+
+<ComponentTabs name="command-stack-demo" />
+
+## Installation
+
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```package-install
+npx shadcn@latest add @diceui/command-stack
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps className="pt-2">
+
+<Step>Install the command component from shadcn/ui.</Step>
+
+```package-install
+npx shadcn@latest add command
+```
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="command-stack" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</CodeTabs>
+
+## Layout
+
+Import the parts and compose them together.
+
+```tsx
+import {
+  CommandStack,
+  CommandStackBreadcrumb,
+  CommandStackEmpty,
+  CommandStackGroup,
+  CommandStackInput,
+  CommandStackItem,
+  CommandStackList,
+  CommandStackPage,
+  CommandStackShortcut,
+} from "@/components/ui/command-stack";
+
+return (
+  <CommandStack>
+    <CommandStackBreadcrumb />
+    <CommandStackInput />
+    <CommandStackList>
+      <CommandStackEmpty />
+      <CommandStackPage value="root">
+        <CommandStackGroup>
+          <CommandStackItem page="projects">
+            <CommandStackShortcut />
+          </CommandStackItem>
+        </CommandStackGroup>
+      </CommandStackPage>
+      <CommandStackPage value="projects">
+        <CommandStackItem />
+      </CommandStackPage>
+    </CommandStackList>
+  </CommandStack>
+)
+```
+
+## Examples
+
+### Popover
+
+Put the stack in a popover for nested menus, such as a filter menu where each filter opens its options. Set `selectionMode` on a page to make its items toggleable, and control the selection with `value` and `onValueChange`. The stack goes back to the root page whenever the popover closes.
+
+<ComponentTabs name="command-stack-popover-demo" />
+
+### Command Palette
+
+Render the stack inside `CommandDialog` to build a command palette. This example opens with <Kbd>⌘ J</Kbd>, since <Kbd>⌘ K</Kbd> opens the docs search.
+
+<ComponentTabs name="command-stack-dialog-demo" />
+
+### Workspace
+
+A workspace menu that nests pages several levels deep, from members to a member's role. Items can show avatars, descriptions and trailing details.
+
+<ComponentTabs name="command-stack-workspace-demo" />
+
+### Async
+
+Load a page's items when it opens. `useCommandStack` gives access to the active page, and `CommandStackLoading` hides the empty state while items load.
+
+<ComponentTabs name="command-stack-async-demo" />
+
+## API Reference
+
+### CommandStack
+
+The root component. It keeps the stack of open pages and the search value, and clears the search whenever the page changes.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackProps"
+/>
+
+### CommandStackBreadcrumb
+
+Shows the open pages, using each page's `label`.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackBreadcrumbProps"
+/>
+
+### CommandStackInput
+
+The search input. Pressing <Kbd>Backspace</Kbd> while it's empty goes back a page.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackInputProps"
+/>
+
+### CommandStackList
+
+The scrollable list of pages, groups and items.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackListProps"
+/>
+
+### CommandStackEmpty
+
+Shown when no items match the search. It stays hidden while a `CommandStackLoading` is rendered.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackEmptyProps"
+/>
+
+### CommandStackLoading
+
+Shown while a page's items load.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackLoadingProps"
+/>
+
+### CommandStackPage
+
+A page of items. Only the active page renders its children.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackPageProps"
+/>
+
+### CommandStackGroup
+
+A group of items with an optional heading.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackGroupProps"
+/>
+
+### CommandStackItem
+
+A selectable item. Set `page` to open a page when it's selected, or give it a `value` on a page with a `selectionMode` to make it toggleable.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackItemProps"
+/>
+
+### CommandStackShortcut
+
+A keyboard shortcut hint shown at the end of an item.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackShortcutProps"
+/>
+
+### CommandStackSeparator
+
+A line between groups.
+
+<AutoTypeTable
+  path="./types/radix/command-stack.ts"
+  name="CommandStackSeparatorProps"
+/>
+
+### useCommandStack
+
+Reads and changes the stack's pages from any component inside it. It returns `pages`, `activePage`, `search`, `value`, `pushPage(page)`, `popPage()`, `setPages(pages)` and `setValue(value)`.
+
+```tsx
+import { useCommandStack } from "@/components/ui/command-stack";
+
+function OpenSettings() {
+  const { pushPage } = useCommandStack();
+
+  return (
+    <CommandStackItem onSelect={() => pushPage("settings")}>
+      Settings
+    </CommandStackItem>
+  );
+}
+```
+
+## Accessibility
+
+The input keeps focus while you move between pages. The breadcrumb is a labelled navigation landmark that marks the current page, and opening a page announces its label to screen readers.
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["ArrowDown", "ArrowUp"],
+      description: "Moves the highlight to the next or previous item.",
+    },
+    {
+      keys: ["Home", "End"],
+      description: "Moves the highlight to the first or last item.",
+    },
+    {
+      keys: ["Enter"],
+      description: "Selects the highlighted item, opening its page if it has one.",
+    },
+    {
+      keys: ["Backspace"],
+      description: "When the input is empty, goes back to the previous page.",
+    },
+  ]}
+/>

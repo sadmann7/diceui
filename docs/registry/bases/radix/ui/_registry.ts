@@ -142,6 +142,18 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "command-stack",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/command-stack.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: ["command"],
+    dependencies: ["cmdk", "radix-ui"],
+  },
+  {
     name: "compare-slider",
     type: "registry:ui",
     dependencies: ["radix-ui"],

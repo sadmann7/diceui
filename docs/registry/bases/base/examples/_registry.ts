@@ -2167,4 +2167,59 @@ export const examples: Registry["items"] = [
       },
     ],
   },
+  {
+    name: "command-stack-demo",
+    type: "registry:example",
+    registryDependencies: ["command-stack"],
+    files: [
+      {
+        path: "examples/command-stack-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "command-stack-dialog-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "command", "command-stack"],
+    files: [
+      {
+        path: "examples/command-stack-dialog-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "command-stack-popover-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "command-stack", "popover"],
+    files: [
+      {
+        path: "examples/command-stack-popover-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "command-stack-async-demo",
+    type: "registry:example",
+    registryDependencies: ["command-stack"],
+    files: [
+      {
+        path: "examples/command-stack-async-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "command-stack-workspace-demo",
+    type: "registry:example",
+    registryDependencies: ["command-stack"],
+    files: [
+      {
+        path: "examples/command-stack-workspace-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
 ];
