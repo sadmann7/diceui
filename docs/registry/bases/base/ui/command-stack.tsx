@@ -1,6 +1,8 @@
 "use client";
 
 import { mergeProps } from "@base-ui/react/merge-props";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { Command as CommandPrimitive } from "cmdk";
 import { cn } from "cn";
 import * as React from "react";
@@ -20,6 +22,7 @@ const ROOT_NAME = "CommandStack";
 const PAGE_NAME = "CommandStackPage";
 const ITEM_NAME = "CommandStackItem";
 const INPUT_NAME = "CommandStackInput";
+const LIST_NAME = "CommandStackList";
 const EMPTY_NAME = "CommandStackEmpty";
 const LOADING_NAME = "CommandStackLoading";
 const BREADCRUMB_NAME = "CommandStackBreadcrumb";
@@ -138,7 +141,18 @@ function CommandStack({
   const activePage = pages[pages.length - 1] ?? DEFAULT_ROOT_PAGE;
 
   const [searchState, setSearchState] = React.useState(defaultSearch);
-  const [highlight, setHighlight] = React.useState("");
+  const [isResettingHighlight, setIsResettingHighlight] = React.useState(false);
+  const [prevActivePage, setPrevActivePage] = React.useState(activePage);
+
+  if (prevActivePage !== activePage) {
+    setPrevActivePage(activePage);
+    setIsResettingHighlight(true);
+  }
+
+  React.useEffect(() => {
+    if (isResettingHighlight) setIsResettingHighlight(false);
+  }, [isResettingHighlight]);
+
   const [valueState, setValueState] = React.useState(defaultValue);
   const value = valueProp ?? valueState;
 
@@ -191,7 +205,6 @@ function CommandStack({
       if (pagesProp === undefined) setPagesState(nextPages);
       onPagesChange?.(nextPages);
       onSearchChange("");
-      setHighlight("");
     },
     [pagesProp, onPagesChange, onSearchChange],
   );
@@ -285,8 +298,7 @@ function CommandStack({
       <Command
         data-slot="command-stack"
         className={cn("h-auto", className)}
-        value={highlight}
-        onValueChange={setHighlight}
+        value={isResettingHighlight ? "" : undefined}
         onKeyDown={onKeyDown}
         {...commandProps}
       >
@@ -358,10 +370,20 @@ function CommandStackInput({
 
 function CommandStackList({
   className,
+  ref,
   ...props
 }: React.ComponentProps<typeof CommandList>) {
+  const { activePage } = useCommandStackContext(LIST_NAME);
+  const listRef = React.useRef<HTMLDivElement>(null);
+  const composedRef = useMergedRefs(ref, listRef);
+
+  useIsoLayoutEffect(() => {
+    if (listRef.current) listRef.current.scrollTop = 0;
+  }, [activePage]);
+
   return (
     <CommandList
+      ref={composedRef}
       data-slot="command-stack-list"
       className={cn("[&_[cmdk-list-sizer]:has(>[cmdk-item])]:p-1", className)}
       {...props}

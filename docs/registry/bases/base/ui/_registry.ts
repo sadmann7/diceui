@@ -148,7 +148,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["command"],
-    dependencies: ["@base-ui/react", "cmdk"],
+    dependencies: ["@base-ui/react", "@base-ui/utils", "cmdk"],
   },
   {
     name: "compare-slider",
