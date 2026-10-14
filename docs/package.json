@@ -58,7 +58,7 @@
     "qrcode": "^1.5.4",
     "radix-ui": "^1.6.7",
     "react": "catalog:",
-    "react-day-picker": "9.14.0",
+    "react-day-picker": "^10.0.2",
     "react-dom": "catalog:",
     "react-hook-form": "^7.87.0",
     "rehype-pretty-code": "^0.14.5",

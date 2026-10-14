@@ -1,0 +1,38 @@
+---
+title: October 2026 - Data Grid Table Features
+description: Data Grid behavior moved into TanStack Table features, with row actions, an action bar, and cell selection.
+date: 2026-10-15T12:00:00Z
+---
+
+[Data Grid](/docs/components/data-grid) now runs editing, navigation, clipboard, search, and selection as TanStack Table features. Components subscribe only to the state they render, so large grids re-render less.
+
+- **Row actions.** `getDataGridActionsColumn` adds a menu of actions to each row, and `getDataTableActionsColumn` does the same for [Data Table](/docs/components/data-table).
+- **Action bar.** The `actionBar` prop on `DataGrid` renders while rows or a range of cells are selected.
+- **Cell selection.** Select a range of cells with the mouse or keyboard, and resize or move columns with the keyboard.
+- **Editing.** `enableCellEditing` turns editing off for the whole grid or for a single column.
+
+### Migrating
+
+This release has breaking changes. Reinstall all Data Grid files together, because the components, hook, and `lib` files depend on each other.
+
+- **Table meta is gone.** Read state and call actions through the table and cell instead, such as `cell.setValue()`, `cell.startEditing()`, `table.stopEditing()`, and `table.scrollToCell()`. Custom cell variants spread their props onto `DataGridCellWrapper`.
+- **`useDataGrid` returns less.** Pass its result to `DataGrid` as before. Values like `searchState`, `focusedCell`, and `virtualItems` now live in table state.
+- **`onRowAdd` returns a row id.** Return `{ rowId, columnId? }` to focus the new row.
+- **Data slots are renamed** from `grid-*` to `data-grid-*`.
+
+```tsx
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  onDataChange: setData,
+  onRowAdd: () => {
+    const row = { id: crypto.randomUUID() };
+    setData((prev) => [...prev, row]);
+    return { rowId: row.id, columnId: "name" };
+  },
+});
+
+return <DataGrid {...dataGridProps} table={table} />;
+```
+
+[Read the docs](/docs/components/data-grid)

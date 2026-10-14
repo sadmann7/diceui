@@ -323,13 +323,14 @@ export default function DataGridDemo() {
   );
 
   const onRowAdd = React.useCallback(() => {
-    setData((prev) => [...prev, { id: faker.string.nanoid() }]);
+    const id = faker.string.nanoid();
+    setData((prev) => [...prev, { id }]);
 
     return {
-      rowIndex: data.length,
+      rowId: id,
       columnId: "trickName",
     };
-  }, [data.length]);
+  }, []);
 
   const { table, ...dataGridProps } = useDataGrid({
     columns,
@@ -348,7 +349,7 @@ export default function DataGridDemo() {
 
   return (
     <>
-      <DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} />
+      <DataGridKeyboardShortcuts enablePaste enableRowAdd />
       <DataGrid {...dataGridProps} table={table} height={340} />
     </>
   );

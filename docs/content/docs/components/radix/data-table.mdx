@@ -58,6 +58,12 @@ links:
     ```package-install
     npx shadcn@latest add "@diceui/data-table-select-column"
     ```
+
+    [`getDataTableActionsColumn`](#row-actions):
+
+    ```package-install
+    npx shadcn@latest add "@diceui/data-table-actions-column"
+    ```
   </Step>
 </Steps>
 
@@ -67,10 +73,8 @@ Import the components and compose them together:
 
 ```tsx
 import { DataTable } from "@/components/data-table/data-table";
-import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
-import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
-import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu";
 import { DataTableSortMenu } from "@/components/data-table/data-table-sort-menu";
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar";
 import { useDataTable } from "@/hooks/use-data-table";
 
 const { table } = useDataTable({
@@ -79,20 +83,29 @@ const { table } = useDataTable({
   pageCount,
 });
 
-// With standard toolbar
-<DataTable table={table}>
-  <DataTableToolbar table={table}>
-    <DataTableSortMenu table={table} />
-  </DataTableToolbar>
-</DataTable>
+return (
+  <DataTable table={table}>
+    <DataTableToolbar table={table}>
+      <DataTableSortMenu table={table} />
+    </DataTableToolbar>
+  </DataTable>
+);
+```
 
-// With advanced toolbar
-<DataTable table={table}>
-  <DataTableAdvancedToolbar table={table}>
-    <DataTableFilterMenu table={table} />
-    <DataTableSortMenu table={table} />
-  </DataTableAdvancedToolbar>
-</DataTable>
+For the advanced toolbar with a filter menu, swap the toolbar:
+
+```tsx
+import { DataTableAdvancedToolbar } from "@/components/data-table/data-table-advanced-toolbar";
+import { DataTableFilterMenu } from "@/components/data-table/data-table-filter-menu";
+
+return (
+  <DataTable table={table}>
+    <DataTableAdvancedToolbar table={table}>
+      <DataTableFilterMenu table={table} />
+      <DataTableSortMenu table={table} />
+    </DataTableAdvancedToolbar>
+  </DataTable>
+);
 ```
 
 ## Walkthrough
@@ -296,6 +309,31 @@ cell: ({ row }) => (
   </Subscribe>
 ),
 ```
+
+## Row Actions
+
+Use `getDataTableActionsColumn` to add a menu of actions to each row:
+
+```tsx
+import { getDataTableActionsColumn } from "@/components/data-table/data-table-actions-column";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+
+const columns = React.useMemo<ColumnDef<DataTableFeatures, Project>[]>(
+  () => [
+    // ...other columns
+    getDataTableActionsColumn({
+      actions: ({ row }) => (
+        <DropdownMenuItem onClick={() => onRowDelete(row.original)}>
+          Delete
+        </DropdownMenuItem>
+      ),
+    }),
+  ],
+  [onRowDelete],
+);
+```
+
+Pin it to the end with `initialState.columnPinning.end`, like `{ start: ["select"], end: ["actions"] }`.
 
 ## Client and Server Mode
 
@@ -618,6 +656,15 @@ The main data table component.
 <AutoTypeTable
   path="./types/radix/data-table.ts"
   name="DataTableProps"
+/>
+
+### getDataTableActionsColumn
+
+A utility function that returns an actions column with a dropdown menu for each row.
+
+<AutoTypeTable
+  path="./types/radix/data-table.ts"
+  name="GetDataTableActionsColumnProps"
 />
 
 ### DataTableColumnHeader

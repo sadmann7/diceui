@@ -1,29 +1,27 @@
 import type {
   Cell,
   ColumnDef,
-  ColumnPinningState,
   Header,
+  ReactTable,
   Row,
   RowData,
-  Table,
-  TableMeta,
   TableOptions,
-  ColumnVisibilityState,
 } from "@tanstack/react-table";
-import type { VirtualItem } from "@tanstack/react-virtual";
+import type {
+  VirtualItem,
+  Virtualizer,
+  VirtualizerOptions,
+} from "@tanstack/react-virtual";
 import type * as React from "react";
 
 import type { DataGridFeatures } from "@/lib/data-grid-features";
 import type {
   CellPosition,
+  CellPresence,
   CellUpdate,
-  ContextMenuState,
-  DataGridTableMeta,
   Direction,
   FileCellData,
-  PasteDialogState,
   RowHeightValue,
-  SearchState,
 } from "@/lib/data-grid-types";
 import type { PopoverContent } from "@/registry/bases/radix/ui/popover";
 import type { EmptyProps } from "@/types";
@@ -46,7 +44,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
 
   /**
    * Event handler called when adding a new row.
-   * Should return the position to focus after adding the row, or null to prevent default behavior.
+   * Return the new row's id, and optionally a column, to focus it, or null to skip focusing.
    * Can be async to support server-side row creation.
    *
    * ```ts
@@ -61,7 +59,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    */
   onRowAdd?: (
     event?: React.MouseEvent<HTMLDivElement>,
-  ) => Partial<CellPosition> | Promise<Partial<CellPosition> | null> | null;
+  ) => RowAddResult | Promise<RowAddResult | null> | null;
 
   /**
    * Event handler called when adding multiple rows at once.
@@ -216,6 +214,12 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   enablePaste?: boolean;
 
   /**
+   * Whether cells can be edited. Set it to `false` to keep the grid navigable and selectable without editing. Columns can also set `enableCellEditing` on their own.
+   * @default true
+   */
+  enableCellEditing?: boolean;
+
+  /**
    * Whether the grid is read-only.
    * When true, prevents all editing operations across the entire grid.
    * @default false
@@ -223,44 +227,44 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   readOnly?: boolean;
 }
 
+export interface RowAddResult {
+  /**
+   * The id of the added row, used to focus it.
+   */
+  rowId: string;
+
+  /**
+   * The column to focus in the added row. Defaults to the first navigable column.
+   */
+  columnId?: string;
+}
+
 export interface DataGridProps<
   TData extends RowData,
 > extends EmptyProps<"div"> {
   /**
    * The table instance from useDataGrid hook.
-   * Contains the table state, columns, and data.
+   * Holds the grid's state and APIs, such as `table.stopEditing` and `table.scrollToCell`.
    */
-  table: Table<DataGridFeatures, TData>;
-
-  /**
-   * The table meta from useDataGrid hook.
-   * Contains table-level callbacks and state management.
-   */
-  tableMeta: TableMeta<DataGridFeatures, TData>;
-
-  /**
-   * Array of column definitions for the data grid.
-   * Used internally for column rendering and management.
-   */
-  columns: Array<unknown>;
+  table: ReactTable<DataGridFeatures, TData>;
 
   /**
    * Reference to the main grid container element.
    * Used for focus management and scroll handling.
    */
-  dataGridRef: React.RefObject<HTMLDivElement>;
+  dataGridRef: React.RefObject<HTMLDivElement | null>;
 
   /**
    * Reference to the header container element.
    * Used for measuring header height in scroll calculations.
    */
-  headerRef: React.RefObject<HTMLDivElement>;
+  headerRef: React.RefObject<HTMLDivElement | null>;
 
   /**
    * Reference to the footer container element.
    * Used for measuring footer height in scroll calculations.
    */
-  footerRef: React.RefObject<HTMLDivElement>;
+  footerRef: React.RefObject<HTMLDivElement | null>;
 
   /**
    * Map of row indexes to their DOM elements.
@@ -269,22 +273,45 @@ export interface DataGridProps<
   rowMapRef: React.RefObject<Map<number, HTMLDivElement>>;
 
   /**
-   * Total size of all virtualized rows in pixels.
-   * Used to set the scroll container height.
+   * Event handlers and styles for the grid body, from useDataGrid.
    */
-  virtualTotalSize: number;
+  dataGridBodyProps: React.HTMLAttributes<HTMLDivElement>;
 
   /**
-   * Array of virtual items currently visible in the viewport.
-   * Each item contains index, size, and position information.
+   * Reference to the row virtualizer, set once the grid renders its rows.
    */
-  virtualItems: VirtualItem[];
+  rowVirtualizerRef: React.RefObject<Virtualizer<
+    HTMLDivElement,
+    Element
+  > | null>;
 
   /**
-   * Callback function to measure row elements for virtualization.
-   * Called with row DOM nodes to update virtual measurements.
+   * Options passed to the row virtualizer.
    */
-  measureElement: (node: Element | null) => void;
+  rowVirtualizerOptions: Pick<
+    VirtualizerOptions<HTMLDivElement, Element>,
+    "overscan" | "measureElement"
+  >;
+
+  /**
+   * CSS variables for column sizing.
+   * Applied to the grid for dynamic column width management.
+   */
+  columnSizeVars: React.CSSProperties;
+
+  /**
+   * Event handler called when adding a new row.
+   * Only defined when `onRowAdd` is provided to useDataGrid.
+   * Handles the row addition interaction from the grid footer.
+   */
+  onRowAdd?: (
+    event?: React.MouseEvent<HTMLDivElement>,
+  ) => RowAddResult | Promise<RowAddResult | null> | null;
+
+  /**
+   * Whether to apply a layout fix for pinned columns in Firefox.
+   */
+  adjustLayout: boolean;
 
   /**
    * Text direction for the grid.
@@ -301,81 +328,20 @@ export interface DataGridProps<
   height?: number;
 
   /**
-   * Search state and handlers.
-   * Only defined when `enableSearch` is true in useDataGrid.
-   * Provides search query, matches, and navigation functions.
-   */
-  searchState?: SearchState;
-
-  /**
-   * CSS variables for column sizing.
-   * Applied to the grid for dynamic column width management.
-   */
-  columnSizeVars: React.CSSProperties;
-
-  /**
-   * Map of row indexes to sets of selected cell keys.
-   * Used to efficiently track multi-cell selection per row.
-   */
-  cellSelectionMap: Map<string, Set<string>> | null;
-
-  /**
-   * Map of row indexes to sets of column IDs with search matches.
-   * Used for efficient row-level search match tracking.
-   */
-  searchMatchesByRow: Map<string, Set<string>> | null;
-
-  /**
-   * The currently active search match position.
-   * Used to highlight the specific match being navigated to.
-   */
-  activeSearchMatch: CellPosition | null;
-
-  /**
-   * The currently focused cell position.
-   * Used to render focus ring and handle navigation.
-   */
-  focusedCell: CellPosition | null;
-
-  /**
-   * The currently editing cell position.
-   * Used to show edit mode UI in the focused cell.
-   */
-  editingCell: CellPosition | null;
-
-  /**
-   * The height of rows in the grid.
-   * Controls the vertical spacing and row dimensions.
-   */
-  rowHeight: RowHeightValue;
-
-  /**
-   * Context menu state including position and open state.
-   * Used to render the right-click context menu at the correct position.
-   */
-  contextMenu: { open: boolean; x: number; y: number };
-
-  /**
-   * Paste dialog state for handling clipboard operations.
-   * Shows when pasted data exceeds available rows.
-   */
-  pasteDialog: { open: boolean; rowsNeeded: number; clipboardText: string };
-
-  /**
-   * Event handler called when adding a new row.
-   * Only defined when `onRowAdd` is provided to useDataGrid.
-   * Handles the row addition interaction from the grid footer.
-   */
-  onRowAdd?: (
-    event?: React.MouseEvent<HTMLDivElement>,
-  ) => Partial<CellPosition> | Promise<Partial<CellPosition> | null> | null;
-
-  /**
    * Whether columns should stretch to fill available space.
    * When true, columns grow to fill the grid width.
    * @default false
    */
   stretchColumns?: boolean;
+
+  /**
+   * Rendered while rows or a range of cells are selected, such as an `ActionBar` with bulk actions.
+   *
+   * ```tsx
+   * <DataGrid {...dataGridProps} table={table} actionBar={<DataGridActionBar table={table} />} />
+   * ```
+   */
+  actionBar?: React.ReactNode;
 }
 
 export type GetDataGridSelectColumnProps<TData extends RowData> = Partial<
@@ -384,6 +350,71 @@ export type GetDataGridSelectColumnProps<TData extends RowData> = Partial<
   /**
    * The width of the select column in pixels.
    * @default 40
+   */
+  size?: number;
+
+  /**
+   * Whether the column can be hidden via the view menu.
+   * @default false
+   */
+  enableHiding?: boolean;
+
+  /**
+   * Whether the column can be resized.
+   * @default false
+   */
+  enableResizing?: boolean;
+
+  /**
+   * Whether the column can be sorted.
+   * @default false
+   */
+  enableSorting?: boolean;
+
+  /**
+   * Whether to show each row's number in place of its checkbox until the row is hovered or selected.
+   * @default false
+   */
+  enableRowMarkers?: boolean;
+
+  /**
+   * Whether the checkboxes are disabled.
+   * @default false
+   */
+  readOnly?: boolean;
+
+  /**
+   * The size of the clickable area around each checkbox.
+   * @default "default"
+   */
+  hitboxSize?: "default" | "sm" | "lg";
+};
+
+export type GetDataGridActionsColumnProps<TData extends RowData> = Omit<
+  Partial<ColumnDef<DataGridFeatures, TData>>,
+  "id" | "header" | "cell"
+> & {
+  /**
+   * Renders the row's menu items, such as `DropdownMenuItem`s.
+   *
+   * ```tsx
+   * getDataGridActionsColumn({
+   *   actions: ({ row }) => (
+   *     <DropdownMenuItem onClick={() => onRowDelete(row.original)}>
+   *       Delete
+   *     </DropdownMenuItem>
+   *   ),
+   * })
+   * ```
+   */
+  actions: (context: {
+    row: Row<DataGridFeatures, TData>;
+    table: ReactTable<DataGridFeatures, TData>;
+  }) => React.ReactNode;
+
+  /**
+   * The width of the actions column in pixels.
+   * @default 56
    */
   size?: number;
 
@@ -415,45 +446,32 @@ export interface DataGridColumnHeaderProps<TData extends RowData> {
    * <DataGridColumnHeader header={header} table={table} />
    * ```
    */
-  header: Header<DataGridFeatures, TData, unknown>;
+  header: Header<DataGridFeatures, TData>;
 
   /**
    * The table instance.
    * Used to access table state and trigger actions like sorting.
    */
-  table: Table<DataGridFeatures, TData>;
+  table: ReactTable<DataGridFeatures, TData>;
 }
 
 export interface DataGridCellProps<TData extends RowData> {
   /**
    * The cell instance from TanStack Table.
-   * Contains the cell value, column, and row information.
+   * Contains the cell value, column, and row, and the grid's cell APIs such as `cell.startEditing`.
    */
-  cell: Cell<DataGridFeatures, TData, unknown>;
+  cell: Cell<DataGridFeatures, TData>;
 
   /**
-   * The table meta from useDataGrid hook.
-   * Used to access grid state and callbacks for rendering the appropriate cell variant.
+   * The index of the cell's column among the visible columns.
    */
-  tableMeta: DataGridTableMeta;
-
-  /**
-   * The row ID for this cell.
-   * Used for cell positioning and data updates.
-   */
-  rowId: string;
+  columnIndex: number;
 
   /**
    * The height of the row.
    * Used to size multi-line cell content.
    */
   rowHeight: RowHeightValue;
-
-  /**
-   * The column ID for this cell.
-   * Used to identify the cell when updating data.
-   */
-  columnId: string;
 
   /**
    * Whether the cell is currently focused.
@@ -486,6 +504,11 @@ export interface DataGridCellProps<TData extends RowData> {
   isActiveSearchMatch: boolean;
 
   /**
+   * Another user's presence on this cell, in multiplayer grids.
+   */
+  presence: CellPresence | null;
+
+  /**
    * Whether the cell is read-only.
    * When true, prevents editing and shows read-only UI.
    */
@@ -505,203 +528,35 @@ export interface DataGridRowProps<
   row: Row<DataGridFeatures, TData>;
 
   /**
-   * The table meta from useDataGrid hook.
-   * Contains table-level callbacks and state management.
-   */
-  tableMeta: TableMeta<DataGridFeatures, TData>;
-
-  /**
    * The virtual item representing this row.
    * Contains positioning and measurement data for virtualization.
    */
   virtualItem: VirtualItem;
-
-  /**
-   * Callback function to measure the row element for virtualization.
-   * Called with the row DOM node to update virtual measurements.
-   */
-  measureElement: (node: Element | null) => void;
-
-  /**
-   * Map of row indexes to their DOM elements.
-   * Used for efficient scroll positioning and navigation.
-   */
-  rowMapRef: React.RefObject<Map<number, HTMLDivElement>>;
-
-  /**
-   * The height of the row.
-   * Determines row dimensions based on the selected height option.
-   */
-  rowHeight: RowHeightValue;
-
-  /**
-   * Column visibility state from TanStack Table.
-   * Determines which columns should be rendered.
-   */
-  columnVisibility: ColumnVisibilityState;
-
-  /**
-   * Column pinning state from TanStack Table.
-   * Determines which columns are pinned to left or right.
-   */
-  columnPinning: ColumnPinningState;
-
-  /**
-   * The currently focused cell position.
-   * Used to determine which cell should show focus ring.
-   */
-  focusedCell: CellPosition | null;
-
-  /**
-   * The currently editing cell position.
-   * Used to determine which cell should show edit mode UI.
-   */
-  editingCell: CellPosition | null;
-
-  /**
-   * Set of selected cell keys for this row.
-   * Used to render selection highlights for multi-cell selection.
-   */
-  cellSelectionKeys: Set<string>;
-
-  /**
-   * Set of column IDs that have search matches in this row.
-   * Used to efficiently highlight search matches per row.
-   */
-  searchMatchColumns: Set<string> | null;
-
-  /**
-   * The currently active search match position.
-   * Only provided when the active match is in this row.
-   */
-  activeSearchMatch: CellPosition | null;
-
-  /**
-   * Text direction for the grid.
-   * Used for RTL support in pinning and layout.
-   */
-  dir: Direction;
-
-  /**
-   * The ids of columns whose cells cannot be edited.
-   */
-  readOnlyColumnIds: Set<string>;
-
-  /**
-   * Whether columns should stretch to fill available space.
-   * When true, columns grow to fill the grid width.
-   */
-  stretchColumns: boolean;
 }
 
-export interface DataGridSearchProps {
+export interface DataGridSearchProps<TData extends RowData> {
   /**
-   * The current search query string.
-   * Updated as the user types in the search input.
+   * The table instance from useDataGrid hook.
+   * The search reads its open state, query, and matches from the table, and opens with Ctrl+F (or Cmd+F on Mac) when `enableSearch` is set.
    *
    * ```tsx
-   * searchQuery="John Doe"
+   * <DataGridSearch table={table} />
    * ```
    */
-  searchQuery: string;
-
-  /**
-   * Event handler called when the search query changes.
-   * Called on every keystroke in the search input.
-   *
-   * ```tsx
-   * onSearchQueryChange={(query) => console.log(query)}
-   * ```
-   */
-  onSearchQueryChange: (query: string) => void;
-
-  /**
-   * Array of cell positions that match the current search query.
-   * Empty when no search is active or no matches found.
-   *
-   * ```tsx
-   * searchMatches={[{ rowId: "row-1", columnId: "name" }]}
-   * ```
-   */
-  searchMatches: CellPosition[];
-
-  /**
-   * The index of the currently active match in the searchMatches array.
-   * -1 when no match is active.
-   *
-   * ```tsx
-   * matchIndex={0}
-   * ```
-   */
-  matchIndex: number;
-
-  /**
-   * Whether the search dialog is currently open.
-   * Controlled by the Ctrl+F / Cmd+F keyboard shortcut.
-   *
-   * ```tsx
-   * searchOpen={true}
-   * ```
-   */
-  searchOpen: boolean;
-
-  /**
-   * Event handler called when the search dialog open state changes.
-   * Called when opening via Ctrl+F or closing via Escape.
-   *
-   * ```tsx
-   * onSearchOpenChange={(open) => console.log(open)}
-   * ```
-   */
-  onSearchOpenChange: (open: boolean) => void;
-
-  /**
-   * Function to navigate to the next search match.
-   * Wraps around to the first match when reaching the end.
-   *
-   * ```tsx
-   * onNavigateToNextMatch={() => goToNextMatch()}
-   * ```
-   */
-  onNavigateToNextMatch: () => void;
-
-  /**
-   * Function to navigate to the previous search match.
-   * Wraps around to the last match when reaching the beginning.
-   *
-   * ```tsx
-   * onNavigateToPrevMatch={() => goToPrevMatch()}
-   * ```
-   */
-  onNavigateToPrevMatch: () => void;
-
-  /**
-   * Function to perform a search with the given query.
-   * Finds all matching cells and updates searchMatches.
-   *
-   * ```tsx
-   * onSearch={(query) => performSearch(query)}
-   * ```
-   */
-  onSearch: (query: string) => void;
+  table: ReactTable<DataGridFeatures, TData>;
 }
 
 export interface DataGridContextMenuProps<TData extends RowData> {
   /**
-   * The table meta from useDataGrid hook.
-   * Used to access grid state and trigger context menu actions.
+   * The table instance from useDataGrid hook.
+   * The menu reads its open state and position from the table.
    */
-  tableMeta: DataGridTableMeta;
+  table: ReactTable<DataGridFeatures, TData>;
 
   /**
-   * The column definitions of the grid.
+   * Reference to the grid container element, used to return focus after the menu closes.
    */
-  columns: ReadonlyArray<ColumnDef<DataGridFeatures, TData>>;
-
-  /**
-   * The context menu state from useDataGrid hook.
-   */
-  contextMenu: ContextMenuState;
+  dataGridRef: React.RefObject<HTMLDivElement | null>;
 }
 
 export interface DataGridSortMenuProps<
@@ -715,7 +570,7 @@ export interface DataGridSortMenuProps<
    * <DataGridSortMenu table={table} />
    * ```
    */
-  table: Table<DataGridFeatures, TData>;
+  table: ReactTable<DataGridFeatures, TData>;
 
   /**
    * Whether the menu trigger is disabled.
@@ -735,7 +590,7 @@ export interface DataGridRowHeightMenuProps<
    * <DataGridRowHeightMenu table={table} />
    * ```
    */
-  table: Table<DataGridFeatures, TData>;
+  table: ReactTable<DataGridFeatures, TData>;
 
   /**
    * Whether the menu trigger is disabled.
@@ -755,7 +610,7 @@ export interface DataGridViewMenuProps<
    * <DataGridViewMenu table={table} />
    * ```
    */
-  table: Table<DataGridFeatures, TData>;
+  table: ReactTable<DataGridFeatures, TData>;
 
   /**
    * Whether the menu trigger is disabled.
@@ -775,7 +630,7 @@ export interface DataGridFilterMenuProps<
    * <DataGridFilterMenu table={table} />
    * ```
    */
-  table: Table<DataGridFeatures, TData>;
+  table: ReactTable<DataGridFeatures, TData>;
 
   /**
    * Whether the menu trigger is disabled.
@@ -786,24 +641,14 @@ export interface DataGridFilterMenuProps<
 
 export interface DataGridPasteDialogProps<TData extends RowData> {
   /**
-   * The table meta from useDataGrid hook.
-   * Contains callbacks for handling paste operations.
+   * The table instance from useDataGrid hook.
+   * The dialog opens when a paste needs more rows than the grid has.
    *
    * ```tsx
-   * <DataGridPasteDialog tableMeta={tableMeta} pasteDialog={pasteDialog} />
+   * <DataGridPasteDialog table={table} />
    * ```
    */
-  tableMeta: TableMeta<DataGridFeatures, TData>;
-
-  /**
-   * The paste dialog state.
-   * Controls dialog visibility and paste operation details.
-   *
-   * ```tsx
-   * pasteDialog={{ open: true, rowsNeeded: 5, clipboardText: "..." }}
-   * ```
-   */
-  pasteDialog: PasteDialogState;
+  table: ReactTable<DataGridFeatures, TData>;
 }
 
 export interface DataGridKeyboardShortcutsProps {

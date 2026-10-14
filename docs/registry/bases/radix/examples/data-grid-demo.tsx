@@ -9,7 +9,7 @@ import type { DataGridFeatures } from "@/lib/data-grid-features";
 
 import { DataGrid } from "@/components/data-grid/data-grid";
 import { DataGridKeyboardShortcuts } from "@/components/data-grid/data-grid-keyboard-shortcuts";
-import { useDataGrid } from "@/hooks/use-data-grid";
+import { useDataGrid } from "@/registry/bases/radix/hooks/use-data-grid";
 
 interface SkateTrick {
   id: string;
@@ -324,13 +324,14 @@ export default function DataGridDemo() {
   );
 
   const onRowAdd = React.useCallback(() => {
-    setData((prev) => [...prev, { id: faker.string.nanoid() }]);
+    const id = faker.string.nanoid();
+    setData((prev) => [...prev, { id }]);
 
     return {
-      rowIndex: data.length,
+      rowId: id,
       columnId: "trickName",
     };
-  }, [data.length]);
+  }, []);
 
   const { table, ...dataGridProps } = useDataGrid({
     columns,
@@ -349,7 +350,7 @@ export default function DataGridDemo() {
 
   return (
     <>
-      <DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} />
+      <DataGridKeyboardShortcuts enablePaste enableRowAdd />
       <DataGrid {...dataGridProps} table={table} height={340} />
     </>
   );

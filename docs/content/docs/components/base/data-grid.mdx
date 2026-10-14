@@ -28,6 +28,12 @@ links:
     npx shadcn@latest add "@diceui/data-grid-select-column"
     ```
 
+    [`getDataGridActionsColumn`](#getdatagridactionscolumn):
+
+    ```package-install
+    npx shadcn@latest add "@diceui/data-grid-actions-column"
+    ```
+
     [`DataGridSortMenu`](#datagridsortmenu):
 
     ```package-install
@@ -144,7 +150,7 @@ export default function DataGridToolbarDemo() {
         <DataGridViewMenu table={table} />
       </div>
       
-      <DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} />
+      <DataGridKeyboardShortcuts />
       <DataGrid table={table} {...dataGridProps} />
     </div>
   );
@@ -194,8 +200,12 @@ const { table, ...dataGridProps } = useDataGrid({
   enableSearch: true, // Enable search (Ctrl/Cmd+F)
 });
 
-// Pass search state to keyboard shortcuts for proper shortcuts display
-<DataGridKeyboardShortcuts enableSearch={!!dataGridProps.searchState} />
+return (
+  <>
+    <DataGridKeyboardShortcuts enableSearch />
+    <DataGrid {...dataGridProps} table={table} />
+  </>
+);
 ```
 
 ### With Paste Support
@@ -636,6 +646,44 @@ getDataGridSelectColumn<YourData>({
 
 The shift-click functionality is handled automatically by the `useDataGrid` hook when you include the select column.
 
+## Row Actions
+
+Add a menu of actions to each row with `getDataGridActionsColumn`, and show bulk actions for the selection with the `actionBar` prop. The action bar renders while rows or a range of cells are selected.
+
+```tsx
+import { getDataGridActionsColumn } from "@/components/data-grid/data-grid-actions-column";
+import { getDataGridSelectColumn } from "@/components/data-grid/data-grid-select-column";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+
+const columns = React.useMemo(() => [
+  getDataGridSelectColumn(),
+  // ... other columns
+  getDataGridActionsColumn({
+    actions: ({ row }) => (
+      <DropdownMenuItem onClick={() => onRowDelete(row.original)}>
+        Delete
+      </DropdownMenuItem>
+    ),
+  }),
+], [onRowDelete]);
+
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  initialState: {
+    columnPinning: { start: ["select"], end: ["actions"] },
+  },
+});
+
+return (
+  <DataGrid
+    {...dataGridProps}
+    table={table}
+    actionBar={<TasksActionBar table={table} />}
+  />
+);
+```
+
 ## Cell Architecture
 
 The Data Grid uses a three-layer cell composition pattern:
@@ -646,7 +694,7 @@ The Data Grid uses a three-layer cell composition pattern:
 
 ```tsx
 // Cell composition flow
-<DataGridCell cell={cell} table={table} />
+<DataGridCell {...cellProps} />
   ↓
 <ShortTextCell {...props} />  // Based on variant
   ↓
@@ -670,40 +718,24 @@ You can create custom cell variants by implementing the `DataGridCellProps` inte
 import { DataGridCellWrapper } from "@/components/data-grid/data-grid-cell-wrapper";
 import type { DataGridCellProps } from "@/lib/data-grid-types";
 
-export function CustomCell<TData>({
-  cell,
-  tableMeta,
-  rowId,
-  columnId,
-  rowHeight,
-  isFocused,
-  isEditing,
-  isSelected,
-  isSearchMatch,
-  isActiveSearchMatch,
-  readOnly,
-}: DataGridCellProps<TData>) {
+export function CustomCell<TData>(props: DataGridCellProps<TData>) {
+  const { cell, isEditing, readOnly } = props;
   const value = cell.getValue() as CustomCellValue;
-  
+
+  function onCommit(nextValue: CustomCellValue) {
+    if (!readOnly) cell.setValue(nextValue);
+    cell.table.stopEditing();
+  }
+
   return (
-    <DataGridCellWrapper
-      cell={cell}
-      tableMeta={tableMeta}
-      rowId={rowId}
-      columnId={columnId}
-      rowHeight={rowHeight}
-      isEditing={isEditing}
-      isFocused={isFocused}
-      isSelected={isSelected}
-      isSearchMatch={isSearchMatch}
-      isActiveSearchMatch={isActiveSearchMatch}
-      readOnly={readOnly}
-    >
+    <DataGridCellWrapper {...props}>
       {/* Your custom cell content */}
     </DataGridCellWrapper>
   );
 }
 ```
+
+Cells read and write data through the cell, with `cell.getValue()` and `cell.setValue()`, and control edit mode with `cell.startEditing()` and `cell.table.stopEditing()`.
 
 ## Column Configuration
 
@@ -746,8 +778,8 @@ const { table, ...dataGridProps } = useDataGrid({
   columns,
   initialState: {
     columnPinning: {
-      left: ["select", "name"], // Pin to left side
-      right: ["actions"], // Pin to right side
+      start: ["select", "name"], // Pin to the start side
+      end: ["actions"], // Pin to the end side
     },
   },
 });
@@ -829,6 +861,15 @@ A utility function that returns a reusable select column definition for the data
 <AutoTypeTable
   path="./types/base/data-grid.ts"
   name="GetDataGridSelectColumnProps"
+/>
+
+### getDataGridActionsColumn
+
+A utility function that returns an actions column with a dropdown menu for each row.
+
+<AutoTypeTable
+  path="./types/base/data-grid.ts"
+  name="GetDataGridActionsColumnProps"
 />
 
 ### DataGridColumnHeader
