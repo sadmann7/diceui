@@ -9,8 +9,6 @@ export default function PlaygroundPage() {
       <Demo>
         <DemoItemGroup>
           <CommandStackBaseDemo />
-        </DemoItemGroup>
-        <DemoItemGroup>
           <CommandStackRadixDemo />
         </DemoItemGroup>
       </Demo>
