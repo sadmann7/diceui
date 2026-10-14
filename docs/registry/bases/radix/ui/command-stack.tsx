@@ -454,7 +454,7 @@ function CommandStackInput({
       data-variant="default"
       className="p-1 pb-0"
     >
-      <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
+      <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:ps-2!">
         <CommandPrimitive.Input
           {...inputProps}
           className={cn(
@@ -479,6 +479,7 @@ function CommandStackInput({
                 hugeicons="ArrowLeft01Icon"
                 phosphor="CaretLeftIcon"
                 remixicon="RiArrowLeftSLine"
+                className="rtl:rotate-180"
               />
             </InputGroupButton>
           ) : (
@@ -518,7 +519,7 @@ function CommandStackBack({ className }: { className?: string }) {
         hugeicons="ArrowLeft01Icon"
         phosphor="CaretLeftIcon"
         remixicon="RiArrowLeftSLine"
-        className="size-4"
+        className="size-4 rtl:rotate-180"
       />
     </button>
   );
@@ -695,7 +696,7 @@ function CommandStackItem({
           phosphor="CaretRightIcon"
           remixicon="RiArrowRightSLine"
           data-slot="command-stack-item-indicator"
-          className="ml-auto text-muted-foreground [[class*='ml-auto']~&]:ml-0"
+          className="ms-auto text-muted-foreground rtl:rotate-180 [[class*='ms-auto']~&]:ms-0"
         />
       )}
     </CommandItem>
