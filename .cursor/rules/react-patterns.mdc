@@ -63,46 +63,63 @@ const [data, setData] = useState(null);
 
 ### ✅ Prefer: State machine
 
+For compound components, keep shared state in a store that each part subscribes to with a selector, like `Faceted` and `CommandStack`:
+
+- Create the store once with a lazy `React.useState` initializer. Don't read `ref.current` during render.
+- Copy controlled props into the store in a layout effect, without calling change callbacks.
+- Actions call the change callback first, then write the store only when the value is uncontrolled.
+- Keep callbacks and controlled flags on a non-reactive `controller`, updated in a layout effect.
+- Keep values bound to a text input, like a search query, in React state instead of the store.
+- Use `useIsoLayoutEffect` from `@base-ui/utils/useIsoLayoutEffect` in Base UI components, and `useLayoutEffect` from `radix-ui/internal` in Radix components. Use `useRefWithInit` only for refs read and written outside render.
+
 ```tsx
-function useLazyRef<T>(fn: () => T) {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = fn();
-  }
-
-  return ref as React.RefObject<T>;
+interface StoreState {
+  value: string;
 }
 
-interface Store<T> {
-  subscribe: (callback: () => void) => () => void
-  getState: () => T
-  setState: <K extends keyof T>(key: K, value: T[K]) => void
-  notify: () => void
+interface Controller {
+  isValueControlled: boolean;
+  onValueChange?: (value: string) => void;
 }
 
-function createStore<T>(
-  listenersRef: React.RefObject<Set<() => void>>,
-  stateRef: React.RefObject<T>,
-  onValueChange?: Partial<{
-    [K in keyof T]: (value: T[K], store: Store<T>) => void
-  }>
-): Store<T> {
-  const store: Store<T> = {
-      subscribe: (cb) => {
-          listenersRef.current.add(cb);
-      return () => listenersRef.current.delete(cb);
+interface Store {
+  controller: Controller;
+  subscribe: (callback: () => void) => () => void;
+  getState: () => StoreState;
+  notify: () => void;
+  sync: (changes: Partial<StoreState>) => void;
+  setValue: (value: string) => void;
+}
+
+function createStore(state: StoreState): Store {
+  const listeners = new Set<() => void>();
+
+  const store: Store = {
+    controller: { isValueControlled: false },
+    subscribe: (callback) => {
+      listeners.add(callback);
+      return () => listeners.delete(callback);
     },
-    getState: () => stateRef.current,
-    setState: (key, value) => {
-      if (Object.is(stateRef.current[key], value)) return;
-      stateRef.current[key] = value;
-      onValueChange?.[key]?.(value, store);
-      store.notify();
-    },
+    getState: () => state,
     notify: () => {
-      for (const cb of listenersRef.current) {
-        cb();
+      for (const callback of listeners) {
+        callback();
+      }
+    },
+    sync: (changes) => {
+      let hasChanged = false;
+      for (const key of Object.keys(changes) as (keyof StoreState)[]) {
+        if (Object.is(state[key], changes[key])) continue;
+        Object.assign(state, { [key]: changes[key] });
+        hasChanged = true;
+      }
+      if (hasChanged) store.notify();
+    },
+    setValue: (value) => {
+      store.controller.onValueChange?.(value);
+      if (!store.controller.isValueControlled) {
+        state.value = value;
+        store.notify();
       }
     },
   };
@@ -110,14 +127,32 @@ function createStore<T>(
   return store;
 }
 
-function useStoreSelector<T, U>(
-  store: Store<T>,
-  selector: (state: T) => U
-): U {
-  return React.useSyncExternalStore(
-    store.subscribe,
-    () => selector(store.getState()),
-    () => selector(store.getState()),
+function useStoreSelector<T>(
+  store: Store,
+  selector: (state: StoreState) => T,
+): T {
+  const getSnapshot = () => selector(store.getState());
+  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+}
+
+function Root({ value, defaultValue = "", onValueChange, children }: RootProps) {
+  const [store] = React.useState(() =>
+    createStore({ value: value ?? defaultValue }),
+  );
+
+  useIsoLayoutEffect(() => {
+    store.controller = {
+      isValueControlled: value !== undefined,
+      onValueChange,
+    };
+  });
+
+  useIsoLayoutEffect(() => {
+    if (value !== undefined) store.sync({ value });
+  }, [store, value]);
+
+  return (
+    <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
   );
 }
 ```
