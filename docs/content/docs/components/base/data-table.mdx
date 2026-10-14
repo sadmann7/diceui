@@ -58,6 +58,12 @@ links:
     ```package-install
     npx shadcn@latest add "@diceui/data-table-select-column"
     ```
+
+    [`getDataTableActionsColumn`](#row-actions):
+
+    ```package-install
+    npx shadcn@latest add "@diceui/data-table-actions-column"
+    ```
   </Step>
 </Steps>
 
@@ -296,6 +302,31 @@ cell: ({ row }) => (
   </Subscribe>
 ),
 ```
+
+## Row Actions
+
+Use `getDataTableActionsColumn` to add a menu of actions to each row:
+
+```tsx
+import { getDataTableActionsColumn } from "@/components/data-table/data-table-actions-column";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+
+const columns = React.useMemo<ColumnDef<DataTableFeatures, Project>[]>(
+  () => [
+    // ...other columns
+    getDataTableActionsColumn({
+      actions: ({ row }) => (
+        <DropdownMenuItem onClick={() => onRowDelete(row.original)}>
+          Delete
+        </DropdownMenuItem>
+      ),
+    }),
+  ],
+  [onRowDelete],
+);
+```
+
+Pin it to the end with `initialState.columnPinning.end`, like `{ start: ["select"], end: ["actions"] }`.
 
 ## Client and Server Mode
 
@@ -618,6 +649,15 @@ The main data table component.
 <AutoTypeTable
   path="./types/base/data-table.ts"
   name="DataTableProps"
+/>
+
+### getDataTableActionsColumn
+
+A utility function that returns an actions column with a dropdown menu for each row.
+
+<AutoTypeTable
+  path="./types/base/data-table.ts"
+  name="GetDataTableActionsColumnProps"
 />
 
 ### DataTableColumnHeader

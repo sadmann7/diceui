@@ -1,6 +1,9 @@
 import type {
+  CellContext,
   Column,
+  ColumnDef,
   ReactTable,
+  Row,
   RowData,
   TableOptions,
 } from "@tanstack/react-table";
@@ -284,3 +287,47 @@ export interface DataTableSkeletonProps extends EmptyProps<"div"> {
    */
   shrinkZero?: boolean;
 }
+
+export type GetDataTableActionsColumnProps<TData extends RowData> = Omit<
+  Partial<ColumnDef<DataTableFeatures, TData>>,
+  "id" | "header" | "cell"
+> & {
+  /**
+   * Renders the row's menu items, such as `DropdownMenuItem`s.
+   *
+   * ```tsx
+   * getDataTableActionsColumn({
+   *   actions: ({ row }) => (
+   *     <DropdownMenuItem onClick={() => onRowDelete(row.original)}>
+   *       Delete
+   *     </DropdownMenuItem>
+   *   ),
+   * })
+   * ```
+   */
+  actions: (context: CellContext<DataTableFeatures, TData>) => React.ReactNode;
+
+  /**
+   * The accessible label of each row's menu trigger.
+   * @default (row) => `Open actions for row ${row.getDisplayIndex() + 1}`
+   */
+  getAriaLabel?: (row: Row<DataTableFeatures, TData>) => string;
+
+  /**
+   * The width of the actions column in pixels.
+   * @default 48
+   */
+  size?: number;
+
+  /**
+   * Whether the column can be hidden via the view options.
+   * @default false
+   */
+  enableHiding?: boolean;
+
+  /**
+   * Whether the column can be sorted.
+   * @default false
+   */
+  enableSorting?: boolean;
+};
