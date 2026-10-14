@@ -11,8 +11,9 @@
     "prefix": ""
   },
   "iconLibrary": "lucide",
+  "rtl": true,
   "aliases": {
-    "components": "@/components",
+    "components": "@/registry/bases/base/components",
     "utils": "@/lib/utils",
     "ui": "@/registry/bases/base/ui",
     "lib": "@/lib",

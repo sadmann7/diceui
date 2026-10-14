@@ -200,8 +200,12 @@ const { table, ...dataGridProps } = useDataGrid({
   enableSearch: true, // Enable search (Ctrl/Cmd+F)
 });
 
-// Show the search shortcut in the shortcuts dialog
-<DataGridKeyboardShortcuts enableSearch />
+return (
+  <>
+    <DataGridKeyboardShortcuts enableSearch />
+    <DataGrid {...dataGridProps} table={table} />
+  </>
+);
 ```
 
 ### With Paste Support
@@ -671,11 +675,13 @@ const { table, ...dataGridProps } = useDataGrid({
   },
 });
 
-<DataGrid
-  {...dataGridProps}
-  table={table}
-  actionBar={<TasksActionBar table={table} />}
-/>
+return (
+  <DataGrid
+    {...dataGridProps}
+    table={table}
+    actionBar={<TasksActionBar table={table} />}
+  />
+);
 ```
 
 ## Cell Architecture
