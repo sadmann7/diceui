@@ -71,6 +71,21 @@ interface CommandStackStore {
   registerLoading: () => () => void;
 }
 
+function scrollWhenFocused(node: HTMLElement | null) {
+  if (!node) return;
+  node.scrollIntoView = (options) => {
+    if (node.closest("[cmdk-root]")?.contains(document.activeElement)) {
+      HTMLElement.prototype.scrollIntoView.call(node, options);
+    }
+  };
+}
+
+function scrollHeadingWhenFocused(node: HTMLDivElement | null) {
+  scrollWhenFocused(
+    node?.querySelector<HTMLElement>("[cmdk-group-heading]") ?? null,
+  );
+}
+
 function getActivePage(pages: string[]) {
   return pages[pages.length - 1] ?? DEFAULT_ROOT_PAGE;
 }
@@ -622,9 +637,18 @@ function CommandStackPage({
 }
 
 function CommandStackGroup({
+  ref,
   ...props
 }: React.ComponentProps<typeof CommandGroup>) {
-  return <CommandGroup data-slot="command-stack-group" {...props} />;
+  const composedRef = useMergedRefs(ref, scrollHeadingWhenFocused);
+
+  return (
+    <CommandGroup
+      ref={composedRef}
+      data-slot="command-stack-group"
+      {...props}
+    />
+  );
 }
 
 interface CommandStackItemProps extends React.ComponentProps<
@@ -641,9 +665,11 @@ function CommandStackItem({
   onMouseDown,
   className,
   children,
+  ref,
   ...props
 }: CommandStackItemProps) {
   const store = useCommandStackStore("CommandStackItem");
+  const composedRef = useMergedRefs(ref, scrollWhenFocused);
   const pageContext = React.useContext(CommandStackPageContext);
   const selectionMode = page ? undefined : pageContext?.selectionMode;
   const checked = useCommandStackSelector(store, (state) =>
@@ -654,6 +680,7 @@ function CommandStackItem({
 
   return (
     <CommandItem
+      ref={composedRef}
       data-slot="command-stack-item"
       data-checked={checked}
       aria-checked={checked}
