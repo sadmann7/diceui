@@ -147,7 +147,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["command"],
+    registryDependencies: ["command", "input-group"],
     dependencies: ["@base-ui/react", "@base-ui/utils", "cmdk"],
   },
   {

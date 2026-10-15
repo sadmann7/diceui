@@ -119,7 +119,17 @@ export interface FacetedContentProps extends EmptyProps<"div"> {
   loop?: boolean;
 }
 
-export interface FacetedInputProps extends EmptyProps<"input"> {}
+export interface FacetedInputProps extends EmptyProps<"input"> {
+  /**
+   * The visual style of the input.
+   *
+   * - `default`: A rounded, filled field inset from the edges.
+   * - `line`: A full-width row with a border below it.
+   *
+   * @default "default"
+   */
+  variant?: "default" | "line";
+}
 
 export interface FacetedListProps extends EmptyProps<"div"> {}
 

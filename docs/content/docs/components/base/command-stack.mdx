@@ -96,7 +96,7 @@ Put the stack in a popover for nested menus, such as a filter menu where each fi
 
 ### Command Palette
 
-Render the stack inside `CommandDialog` to build a command palette. This example opens with <Kbd>⌘ J</Kbd>, since <Kbd>⌘ K</Kbd> opens the docs search.
+Render the stack inside `CommandDialog` to build a command palette. This example uses the `line` input and opens with <Kbd>⌘ J</Kbd>, since <Kbd>⌘ K</Kbd> opens the docs search.
 
 <ComponentTabs name="command-stack-dialog-demo" />
 
@@ -134,7 +134,7 @@ Shows the open pages, using each page's `label`.
 
 ### CommandStackInput
 
-The search input. Pressing <Kbd>Backspace</Kbd> while it's empty goes back a page.
+The search input. Pressing <Kbd>Backspace</Kbd> while it's empty goes back a page. Set `variant="line"` for a plain row with a divider below it.
 
 <AutoTypeTable
   path="./types/base/command-stack.ts"
@@ -188,7 +188,7 @@ A group of items with an optional heading.
 
 ### CommandStackItem
 
-A selectable item. Set `page` to open a page when it's selected, or give it a `value` on a page with a `selectionMode` to make it toggleable.
+A selectable item. Set `page` to open a page when it's selected, which also shows a chevron, or give it a `value` on a page with a `selectionMode` to make it toggleable.
 
 <AutoTypeTable
   path="./types/base/command-stack.ts"
@@ -233,7 +233,7 @@ function OpenSettings() {
 
 ## Accessibility
 
-The input keeps focus while you move between pages. The breadcrumb is a labelled navigation landmark that marks the current page, and opening a page announces its label to screen readers.
+The input keeps focus while you move between pages. On a nested page, the input shows a back button labelled "Back". The breadcrumb is a labelled navigation landmark that marks the current page, and opening a page announces its label to screen readers.
 
 ### Keyboard Interactions
 

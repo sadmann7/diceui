@@ -57,7 +57,10 @@ export default function CommandStackDialogDemo() {
       </Button>
       <CommandDialog open={open} onOpenChange={setOpen}>
         <CommandStack>
-          <CommandStackInput placeholder="Type a command or search..." />
+          <CommandStackInput
+            variant="line"
+            placeholder="Type a command or search..."
+          />
           <CommandStackList>
             <CommandStackEmpty>No results found.</CommandStackEmpty>
             <CommandStackPage value="root" label="Home">

@@ -150,7 +150,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["command"],
+    registryDependencies: ["command", "input-group"],
     dependencies: ["cmdk", "radix-ui"],
   },
   {

@@ -200,8 +200,8 @@ function Faceted<Multiple extends boolean = false>({
   multiple = false as Multiple,
   ...props
 }: FacetedProps<Multiple>) {
-  const [openState, setOpenState] = React.useState(defaultOpen);
-  const open = openProp ?? openState;
+  const [internalOpen, setInternalOpen] = React.useState(defaultOpen);
+  const open = openProp ?? internalOpen;
 
   const [store] = React.useState(() =>
     createFacetedStore({ value: value ?? defaultValue, items, multiple }),
@@ -216,7 +216,7 @@ function Faceted<Multiple extends boolean = false>({
       },
       setOpen(nextOpen) {
         onOpenChange?.(nextOpen);
-        if (openProp === undefined) setOpenState(nextOpen);
+        if (openProp === undefined) setInternalOpen(nextOpen);
       },
     };
   });
@@ -397,8 +397,47 @@ function FacetedContent({
   );
 }
 
-function FacetedInput({ ...props }: React.ComponentProps<typeof CommandInput>) {
-  return <CommandInput data-slot="faceted-input" {...props} />;
+interface FacetedInputProps extends React.ComponentProps<
+  typeof CommandPrimitive.Input
+> {
+  variant?: "default" | "line";
+}
+
+function FacetedInput({
+  variant = "default",
+  className,
+  ...props
+}: FacetedInputProps) {
+  if (variant === "line") {
+    return (
+      <div
+        data-slot="faceted-input-wrapper"
+        data-variant="line"
+        className="-mx-0.5 -mt-0.5 mb-0.5 flex h-9 items-center gap-2 border-b px-3.5"
+      >
+        <IconPlaceholder
+          lucide="SearchIcon"
+          tabler="IconSearch"
+          hugeicons="Search01Icon"
+          phosphor="MagnifyingGlassIcon"
+          remixicon="RiSearchLine"
+          className="size-4 shrink-0 text-muted-foreground"
+        />
+        <CommandPrimitive.Input
+          data-slot="faceted-input"
+          className={cn(
+            "h-full w-full bg-transparent text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
+            className,
+          )}
+          {...props}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <CommandInput data-slot="faceted-input" className={className} {...props} />
+  );
 }
 
 function FacetedList({ ...props }: React.ComponentProps<typeof CommandList>) {
