@@ -79,7 +79,11 @@ export interface CommandStackBreadcrumbProps extends EmptyProps<"nav"> {}
 
 export interface CommandStackInputProps extends EmptyProps<"input"> {
   /**
-   * The input's look. `default` is shadcn's filled search field. `line` is a plain row with a divider below it. In both, a back button replaces the search icon on nested pages.
+   * The visual style of the input.
+   *
+   * - `default`: A rounded, filled field inset from the edges.
+   * - `line`: A full-width row with a border below it.
+   *
    * @default "default"
    */
   variant?: "default" | "line";
