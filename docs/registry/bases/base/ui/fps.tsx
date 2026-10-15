@@ -14,10 +14,10 @@ const fpsVariants = cva(
         absolute: "absolute",
       },
       position: {
-        "top-left": "top-4 left-4",
-        "top-right": "top-4 right-4",
-        "bottom-left": "bottom-4 left-4",
-        "bottom-right": "right-4 bottom-4",
+        "top-left": "top-4 [left:--spacing(4)]",
+        "top-right": "top-4 [right:--spacing(4)]",
+        "bottom-left": "bottom-4 [left:--spacing(4)]",
+        "bottom-right": "[right:--spacing(4)] bottom-4",
       },
       status: {
         good: "text-primary",

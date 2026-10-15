@@ -30,6 +30,7 @@
     "**/.next/**",
     "**/.turbo/**",
     "**/.source/**",
+    "**/ui-rtl/**",
     "**/public/**",
     "pnpm-lock.yaml",
     "**/*.md",

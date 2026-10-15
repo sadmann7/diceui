@@ -8,7 +8,7 @@ import {
   TimelineItem,
   TimelineTime,
   TimelineTitle,
-} from "@/registry/bases/radix/ui/timeline";
+} from "@/registry/bases/radix/ui-rtl/timeline";
 
 const timelineItems = [
   {

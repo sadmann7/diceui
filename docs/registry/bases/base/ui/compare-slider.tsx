@@ -428,7 +428,7 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
           "absolute z-50 flex items-center justify-center",
           isVertical
             ? "left-0 h-10 w-full -translate-y-1/2"
-            : "top-0 h-full w-10 -translate-x-1/2",
+            : "top-0 h-full w-10 [translate:-50%_0]",
           interaction === "drag" && "cursor-grab active:cursor-grabbing",
           className,
         ),

@@ -253,7 +253,7 @@ function FacetedTrigger({
     <PopoverTrigger
       data-slot="faceted-trigger"
       className={cn(
-        "justify-between text-left has-[>[data-slot=faceted-value]]:transition-[color,background-color,border-color,box-shadow] has-[>[data-slot=faceted-value]>[data-slot=faceted-badge-list]]:ps-1",
+        "justify-between text-left has-[>[data-slot=faceted-value]]:transition-[color,background-color,border-color,box-shadow] has-[>[data-slot=faceted-value]>[data-slot=faceted-badge-list]]:pl-1",
         className,
       )}
       {...props}

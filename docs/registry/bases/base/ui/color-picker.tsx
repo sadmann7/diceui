@@ -918,7 +918,7 @@ function ColorPickerArea(props: DivProps) {
               />
             </div>
             <div
-              className="absolute size-3 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-sm"
+              className="absolute size-3 -translate-1/2 rounded-full border-2 border-white shadow-sm"
               style={{
                 left: `${hsv?.s ?? 0}%`,
                 top: `${100 - (hsv?.v ?? 0)}%`,
@@ -1302,9 +1302,9 @@ const inputGroupItemVariants = cva(
   {
     variants: {
       position: {
-        first: "rounded-e-none",
-        middle: "-ms-px rounded-none border-l-0",
-        last: "-ms-px rounded-s-none border-l-0",
+        first: "rounded-r-none",
+        middle: "-ml-px rounded-none border-l-0",
+        last: "-ml-px rounded-l-none border-l-0",
         isolated: "",
       },
     },

@@ -130,9 +130,9 @@ const segmentedInputItemVariants = cva("", {
   variants: {
     position: {
       isolated: "",
-      first: "rounded-e-none",
-      middle: "-ms-px rounded-none border-l-0",
-      last: "-ms-px rounded-s-none border-l-0",
+      first: "rounded-r-none",
+      middle: "-ml-px rounded-none border-l-0",
+      last: "-ml-px rounded-l-none border-l-0",
     },
     orientation: {
       horizontal: "",

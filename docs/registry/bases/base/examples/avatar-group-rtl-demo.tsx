@@ -2,8 +2,8 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-} from "@/registry/bases/base/ui/avatar";
-import { AvatarGroup } from "@/registry/bases/base/ui/avatar-group";
+} from "@/registry/bases/base/ui-rtl/avatar";
+import { AvatarGroup } from "@/registry/bases/base/ui-rtl/avatar-group";
 
 const avatars = [
   {

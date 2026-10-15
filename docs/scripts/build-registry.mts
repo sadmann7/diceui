@@ -17,6 +17,7 @@ import { DEFAULT_BASE, DEFAULT_STYLE } from "../lib/constants";
 import { BASES } from "../registry/bases";
 import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
+import { getRtlDir, getRtlFiles } from "./rtl.mts";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
 const STYLES_PATH = path.join(REGISTRY_PATH, "styles");
@@ -244,9 +245,11 @@ async function buildPublicItems() {
 
             let content: string;
             try {
-              content = await fs.readFile(
-                path.join(baseSrcRoot, file.path),
-                "utf8",
+              content = (
+                await fs.readFile(path.join(baseSrcRoot, file.path), "utf8")
+              ).replaceAll(
+                `@/registry/bases/${baseName}/ui-rtl/`,
+                `@/registry/bases/${baseName}/ui/`,
               );
             } catch {
               return null;
@@ -303,6 +306,23 @@ async function buildPublicItems() {
   }
 }
 
+// ----------------------------------------------------------------------------
+// Build registry/bases/{base}/ui-rtl for the *-rtl-demo examples.
+// ----------------------------------------------------------------------------
+async function buildRtlUi() {
+  for (const base of BASES) {
+    const baseName = base.name as RegistryBase;
+    const rtlDir = getRtlDir(process.cwd(), baseName);
+    const files = await getRtlFiles(process.cwd(), baseName);
+
+    await rimraf(rtlDir);
+    await fs.mkdir(rtlDir, { recursive: true });
+    for (const [name, content] of files) {
+      await fs.writeFile(path.join(rtlDir, name), content);
+    }
+  }
+}
+
 try {
   const totalStart = performance.now();
 
@@ -315,6 +335,9 @@ try {
       process.exit(1);
     }
   }
+
+  console.log("↔️  Building ui-rtl...");
+  await buildRtlUi();
 
   console.log("🧹 Cleaning styles output directory...");
   await rimraf(STYLES_PATH);

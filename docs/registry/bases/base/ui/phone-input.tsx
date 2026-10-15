@@ -820,7 +820,7 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
       {...inputProps}
       ref={composedRef}
       className={cn(
-        "h-full flex-1 rounded-l-none rounded-r-md border-0 bg-transparent shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:bg-transparent aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:bg-transparent dark:disabled:bg-transparent dark:aria-invalid:ring-destructive/40",
+        "h-full flex-1 rounded-l-none rounded-r-md border-0 bg-transparent shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:bg-transparent aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 rtl:rounded-l-md rtl:rounded-r-none dark:bg-transparent dark:disabled:bg-transparent dark:aria-invalid:ring-destructive/40",
         className,
       )}
       placeholder={placeholder}
