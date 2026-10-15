@@ -63,5 +63,9 @@ jobs:
         uses: actions/checkout@v7
       - uses: ./.github/setup
 
+      # The rtl demos import registry/bases/*/ui-rtl, which build:registry generates.
+      - name: Build registry
+        run: pnpm build:registry
+
       - name: Typecheck
         run: pnpm typecheck

@@ -12,12 +12,12 @@ import {
   type registryItemTypeSchema,
   registrySchema,
 } from "shadcn/schema";
+import { transformDirection } from "shadcn/utils";
 
 import { DEFAULT_BASE, DEFAULT_STYLE } from "../lib/constants";
 import { BASES } from "../registry/bases";
 import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
-import { getRtlDir, getRtlFiles } from "./rtl.mts";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
 const STYLES_PATH = path.join(REGISTRY_PATH, "styles");
@@ -307,18 +307,65 @@ async function buildPublicItems() {
 }
 
 // ----------------------------------------------------------------------------
-// Build registry/bases/{base}/ui-rtl for the *-rtl-demo examples.
+// Build registry/bases/{base}/ui-rtl for the *-rtl-demo examples: the ui files
+// they import, run through the shadcn rtl transform. Gitignored.
 // ----------------------------------------------------------------------------
+const FILE_HEADER = /^\/\*\*[\s\S]*?\*\/\n\n?/;
+
 async function buildRtlUi() {
   for (const base of BASES) {
     const baseName = base.name as RegistryBase;
-    const rtlDir = getRtlDir(process.cwd(), baseName);
-    const files = await getRtlFiles(process.cwd(), baseName);
+    const baseDir = path.join(process.cwd(), "registry", "bases", baseName);
+    const rtlDir = path.join(baseDir, "ui-rtl");
+    const uiImport = new RegExp(
+      `@/registry/bases/${baseName}/ui/([\\w-]+)`,
+      "g",
+    );
+    const rtlImport = new RegExp(
+      `@/registry/bases/${baseName}/ui-rtl/([\\w-]+)`,
+      "g",
+    );
+
+    const queue: string[] = [];
+    for (const file of await fs.readdir(path.join(baseDir, "examples"))) {
+      if (!file.endsWith("-rtl-demo.tsx")) continue;
+
+      const content = await fs.readFile(
+        path.join(baseDir, "examples", file),
+        "utf8",
+      );
+      for (const [, name] of content.matchAll(rtlImport)) {
+        if (name) queue.push(name);
+      }
+    }
 
     await rimraf(rtlDir);
     await fs.mkdir(rtlDir, { recursive: true });
-    for (const [name, content] of files) {
-      await fs.writeFile(path.join(rtlDir, name), content);
+
+    const built = new Set<string>();
+    while (queue.length > 0) {
+      const name = queue.pop();
+      if (!name || built.has(name)) continue;
+      built.add(name);
+
+      const source = await fs.readFile(
+        path.join(baseDir, "ui", `${name}.tsx`),
+        "utf8",
+      );
+      const header = source.match(FILE_HEADER)?.[0] ?? "";
+      const content = await transformDirection(
+        source.slice(header.length),
+        true,
+      );
+
+      await fs.writeFile(
+        path.join(rtlDir, `${name}.tsx`),
+        header +
+          content.replace(uiImport, (_, dependency: string) => {
+            queue.push(dependency);
+            return `@/registry/bases/${baseName}/ui-rtl/${dependency}`;
+          }),
+      );
     }
   }
 }

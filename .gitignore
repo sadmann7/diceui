@@ -64,3 +64,6 @@ Thumbs.db
 /docs/public/r/styles/*
 !/docs/public/r/styles/index.json
 /docs/public/r/*.json
+
+# rtl copies of ui/ for the *-rtl-demo examples (rebuilt by `pnpm build:registry`).
+/docs/registry/bases/*/ui-rtl/
