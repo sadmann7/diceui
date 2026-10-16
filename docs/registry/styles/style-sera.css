@@ -200,11 +200,11 @@
 
   /* MARK: Color Picker */
   .cn-color-picker-content {
-    @apply flex w-[340px] flex-col gap-6 p-4;
+    @apply flex w-85 flex-col gap-6 p-4;
   }
 
   .cn-color-picker-content-2 {
-    @apply flex w-[340px] flex-col gap-6 p-4;
+    @apply flex w-85 flex-col gap-6 p-4;
   }
 
   .cn-color-picker-area {
@@ -1390,7 +1390,7 @@
   }
 
   .cn-phone-input-country-select-5 {
-    @apply w-[300px] p-0;
+    @apply w-75 p-0;
   }
 
   .cn-phone-input-country-select-6 {
@@ -1530,7 +1530,7 @@
   }
 
   .cn-relative-time-card {
-    @apply flex w-full max-w-[420px] flex-col gap-2 p-3;
+    @apply flex w-full max-w-105 flex-col gap-2 p-3;
   }
 
   .cn-relative-time-card-2 {
@@ -1653,7 +1653,7 @@
   }
 
   .cn-speed-dial-content {
-    @apply absolute z-50 flex gap-[var(--speed-dial-gap)] data-[state=closed]:pointer-events-none;
+    @apply absolute z-50 flex gap-(--speed-dial-gap) data-[state=closed]:pointer-events-none;
   }
 
   .cn-speed-dial-content-side-top {
@@ -1673,7 +1673,7 @@
   }
 
   .cn-speed-dial-item {
-    @apply flex items-center gap-2 transition-all [transition-delay:var(--speed-dial-delay)] [transition-duration:var(--speed-dial-animation-duration)] data-[state=closed]:opacity-0 data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=open]:opacity-100;
+    @apply flex items-center gap-2 transition-all [transition-delay:var(--speed-dial-delay)] duration-(--speed-dial-animation-duration) data-[state=closed]:opacity-0 data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=open]:opacity-100;
   }
 
   .cn-speed-dial-item-side-top {
@@ -1812,7 +1812,7 @@
   }
 
   .cn-status-indicator {
-    @apply relative flex size-2 shrink-0 rounded-full before:absolute before:inset-0 before:animate-ping before:rounded-full before:bg-inherit after:absolute after:inset-[2px] after:rounded-full after:bg-inherit;
+    @apply relative flex size-2 shrink-0 rounded-full before:absolute before:inset-0 before:animate-ping before:rounded-full before:bg-inherit after:absolute after:inset-0.5 after:rounded-full after:bg-inherit;
   }
 
   .cn-status-label {
@@ -1895,7 +1895,7 @@
   }
 
   .cn-timeline-dot {
-    @apply relative z-10 flex size-[var(--timeline-dot-size)] shrink-0 items-center justify-center rounded-full border-2 bg-background;
+    @apply relative z-10 flex size-(--timeline-dot-size) shrink-0 items-center justify-center rounded-full border-2 bg-background;
   }
 
   .cn-timeline-dot-status-completed {
@@ -1940,7 +1940,7 @@
 
   /* MARK: Tags Input */
   .cn-tags-input {
-    @apply flex w-[380px] flex-col gap-2;
+    @apply flex w-95 flex-col gap-2;
   }
 
   .cn-tags-input-label {
@@ -2009,27 +2009,27 @@
   }
 
   .cn-time-picker-hour {
-    @apply scrollbar-none flex max-h-[200px] flex-col gap-1 overflow-y-auto p-1.5;
+    @apply scrollbar-none flex max-h-50 flex-col gap-1 overflow-y-auto p-1.5;
   }
 
   .cn-time-picker-hour-2 {
-    @apply scrollbar-none flex max-h-[200px] flex-col gap-1 overflow-y-auto p-1.5;
+    @apply scrollbar-none flex max-h-50 flex-col gap-1 overflow-y-auto p-1.5;
   }
 
   .cn-time-picker-minute {
-    @apply scrollbar-none flex max-h-[200px] flex-col gap-1 overflow-y-auto p-1.5;
+    @apply scrollbar-none flex max-h-50 flex-col gap-1 overflow-y-auto p-1.5;
   }
 
   .cn-time-picker-minute-2 {
-    @apply scrollbar-none flex max-h-[200px] flex-col gap-1 overflow-y-auto p-1.5;
+    @apply scrollbar-none flex max-h-50 flex-col gap-1 overflow-y-auto p-1.5;
   }
 
   .cn-time-picker-second {
-    @apply scrollbar-none flex max-h-[200px] flex-col gap-1 overflow-y-auto p-1.5;
+    @apply scrollbar-none flex max-h-50 flex-col gap-1 overflow-y-auto p-1.5;
   }
 
   .cn-time-picker-second-2 {
-    @apply scrollbar-none flex max-h-[200px] flex-col gap-1 overflow-y-auto p-1.5;
+    @apply scrollbar-none flex max-h-50 flex-col gap-1 overflow-y-auto p-1.5;
   }
 
   .cn-time-picker-period {
@@ -2196,19 +2196,19 @@
 
   /* MARK: Marquee */
   .cn-marquee-edge-side-left-radix {
-    @apply top-0 [left:0] h-full bg-gradient-to-r from-background to-transparent;
+    @apply top-0 [left:0] h-full bg-linear-to-r from-background to-transparent;
   }
 
   .cn-marquee-edge-side-right-radix {
-    @apply top-0 [right:0] h-full bg-gradient-to-l from-background to-transparent;
+    @apply top-0 [right:0] h-full bg-linear-to-l from-background to-transparent;
   }
 
   .cn-marquee-edge-side-top-radix {
-    @apply top-0 left-0 w-full bg-gradient-to-b from-background to-transparent;
+    @apply top-0 left-0 w-full bg-linear-to-b from-background to-transparent;
   }
 
   .cn-marquee-edge-side-bottom-radix {
-    @apply bottom-0 left-0 w-full bg-gradient-to-t from-background to-transparent;
+    @apply bottom-0 left-0 w-full bg-linear-to-t from-background to-transparent;
   }
 
   /* MARK: Media Player */

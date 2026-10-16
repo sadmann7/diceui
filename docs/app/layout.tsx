@@ -8,6 +8,7 @@ import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { siteConfig } from "@/config/site";
 import { DEFAULT_STYLE } from "@/lib/constants";
 import { fontMono, fontSans } from "@/lib/fonts";
+import { getStyleScript } from "@/lib/style";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/registry/bases/radix/ui/sonner";
 import "@/styles/globals.css";
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={cn(
           "isolate min-h-screen font-sans antialiased",
           `style-${DEFAULT_STYLE}`,
@@ -72,6 +74,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           fontMono.variable,
         )}
       >
+        <script dangerouslySetInnerHTML={{ __html: getStyleScript() }} />
         <Script defer src="https://assets.onedollarstats.com/stonks.js" />
         <TailwindIndicator />
         <Toaster />

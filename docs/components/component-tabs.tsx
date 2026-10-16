@@ -10,6 +10,7 @@ import {
   MdxTabsList,
   MdxTabsTrigger,
 } from "@/components/mdx-tabs";
+import { StyleSwitcher } from "@/components/style-switcher";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
 
@@ -66,6 +67,7 @@ export function ComponentTabs({
           <MdxTabsTrigger value="Preview">Preview</MdxTabsTrigger>
           <MdxTabsTrigger value="Code">Code</MdxTabsTrigger>
         </MdxTabsList>
+        <StyleSwitcher className="ml-auto" />
       </div>
       <MdxTabsContent
         value="Preview"
