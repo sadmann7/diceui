@@ -17,7 +17,7 @@
   }
 
   .cn-action-bar-separator {
-    @apply bg-border/50 in-data-[slot=action-bar-selection]:ml-0.5 in-data-[slot=action-bar-selection]:h-4 in-data-[slot=action-bar-selection]:w-px;
+    @apply bg-border in-data-[slot=action-bar-selection]:ml-0.5 in-data-[slot=action-bar-selection]:h-4 in-data-[slot=action-bar-selection]:w-px;
   }
 
   /* MARK: Angle Slider */
@@ -137,7 +137,7 @@
   }
 
   .cn-banner-close {
-    @apply size-4;
+    @apply size-3.5;
   }
 
   /* MARK: Checkbox Group */
@@ -166,7 +166,7 @@
   }
 
   .cn-checkbox-group-item-4 {
-    @apply size-4;
+    @apply size-3.5;
   }
 
   .cn-checkbox-group-description {
@@ -450,7 +450,7 @@
   }
 
   .cn-combobox-item-2 {
-    @apply absolute flex size-4 items-center justify-center;
+    @apply absolute flex size-3.5 items-center justify-center;
   }
 
   .cn-combobox-item-3 {
@@ -651,7 +651,7 @@
   }
 
   .cn-faceted-badge {
-    @apply flex h-[calc(--spacing(5.25))] w-fit max-w-full min-w-0 items-center justify-center gap-1 rounded-4xl bg-input/60 px-1.5 text-xs font-medium whitespace-nowrap text-muted-foreground [&_svg]:pointer-events-none [&_svg]:size-3 [&_svg]:shrink-0;
+    @apply flex h-[calc(--spacing(5.25))] w-fit max-w-full min-w-0 items-center justify-center gap-1 rounded-4xl bg-input/60 px-1.5 text-xs font-medium whitespace-nowrap text-foreground [&_svg]:pointer-events-none [&_svg]:size-3 [&_svg]:shrink-0;
   }
 
   .cn-faceted-content {
@@ -785,7 +785,7 @@
 
   /* MARK: Fps */
   .cn-fps {
-    @apply z-50 flex shrink-0 items-center gap-2.5 rounded-xl border bg-background/80 px-3 py-2 font-mono text-sm text-muted-foreground backdrop-blur-sm;
+    @apply z-50 flex shrink-0 items-center gap-2.5 rounded-xl border bg-background/80 px-3 py-2 font-mono text-sm text-foreground backdrop-blur-sm;
   }
 
   .cn-fps-strategy-fixed {
@@ -1000,7 +1000,7 @@
   }
 
   .cn-media-player-controls {
-    @apply pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-200 in-[:fullscreen]:px-6 in-[:fullscreen]:py-4 data-visible:pointer-events-auto data-visible:opacity-100;
+    @apply pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-200 in-[:fullscreen]:px-4 in-[:fullscreen]:py-4 data-visible:pointer-events-auto data-visible:opacity-100;
   }
 
   .cn-media-player-loading {
@@ -1012,7 +1012,7 @@
   }
 
   .cn-media-player-error {
-    @apply pointer-events-auto absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80 text-destructive backdrop-blur-sm;
+    @apply pointer-events-auto absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80 text-white backdrop-blur-sm;
   }
 
   .cn-media-player-error-2 {
@@ -1052,7 +1052,7 @@
   }
 
   .cn-media-player-volume-indicator-2 {
-    @apply flex animate-in flex-col items-center gap-3 rounded-lg bg-black/30 px-4 p-4 text-destructive backdrop-blur-xs duration-200 fade-in-0 zoom-in-95;
+    @apply flex animate-in flex-col items-center gap-3 rounded-lg bg-black/30 px-4 py-4 text-white backdrop-blur-xs duration-200 fade-in-0 zoom-in-95;
   }
 
   .cn-media-player-volume-indicator-3 {
@@ -1140,7 +1140,7 @@
   }
 
   .cn-media-player-seek-7 {
-    @apply flex flex-col items-center gap-1.5 rounded-md border bg-background text-muted-foreground shadow-sm dark:bg-popover;
+    @apply flex flex-col items-center gap-1.5 rounded-md border bg-background text-foreground shadow-sm dark:bg-popover;
   }
 
   .cn-media-player-seek-thumbnail {
@@ -1300,15 +1300,15 @@
   }
 
   .cn-media-player-tooltip {
-    @apply text-muted-foreground focus-visible:ring-ring/50;
+    @apply text-foreground focus-visible:ring-ring/50;
   }
 
   .cn-media-player-tooltip-2 {
-    @apply text-muted-foreground focus-visible:ring-ring/50;
+    @apply text-foreground focus-visible:ring-ring/50;
   }
 
   .cn-media-player-tooltip-3 {
-    @apply flex items-center gap-2 border bg-muted px-3 py-1 font-medium text-muted-foreground data-[side=top]:mb-3.5 dark:bg-popover [&>span]:hidden;
+    @apply flex items-center gap-2 border bg-accent px-3 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-popover [&>span]:hidden;
   }
 
   .cn-media-player-tooltip-4 {
@@ -1316,7 +1316,7 @@
   }
 
   .cn-media-player-tooltip-5 {
-    @apply rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-muted-foreground shadow-xs select-none;
+    @apply rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs select-none;
   }
 
   .cn-media-player-tooltip-6 {
@@ -1324,7 +1324,7 @@
   }
 
   .cn-media-player-tooltip-7 {
-    @apply rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-muted-foreground shadow-xs select-none;
+    @apply rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-foreground shadow-xs select-none;
   }
 
   .cn-media-player-tooltip-8 {
@@ -1358,11 +1358,11 @@
   }
 
   .cn-phone-input-country-select {
-    @apply flex h-full shrink-0 items-center gap-2 rounded-4xl border-r border-input bg-input/30 px-3 text-sm transition-colors hover:bg-muted hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40;
+    @apply flex h-full shrink-0 items-center gap-2 rounded-4xl border-r border-input bg-input/30 px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40;
   }
 
   .cn-phone-input-country-select-2 {
-    @apply h-6 w-6 rounded bg-muted/50;
+    @apply h-4 w-6 rounded bg-muted/50;
   }
 
   .cn-phone-input-country-select-3 {
@@ -1435,7 +1435,7 @@
   }
 
   .cn-presentation-thumbnail-item {
-    @apply relative flex w-full cursor-pointer gap-1.5 rounded-md border p-1.5 ring-2 ring-transparent transition-[color,ring] duration-100 outline-none hover:bg-muted focus:ring-ring data-active:bg-accent;
+    @apply relative flex w-full cursor-pointer gap-1.5 rounded-md border p-1.5 ring-2 ring-transparent transition-[color,ring] duration-100 outline-none hover:bg-accent focus:ring-ring data-active:bg-accent;
   }
 
   .cn-presentation-thumbnail-list {
@@ -1472,7 +1472,19 @@
   }
 
   .cn-qr-code-qrcode-skeleton {
-    @apply absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-muted;
+    @apply absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-accent;
+  }
+
+  .cn-presentation-zoom-select-trigger {
+    @apply h-6 w-22 gap-1 rounded-md py-0 pr-1.5 pl-3 text-xs [&_svg:not([class*='size-'])]:size-3;
+  }
+
+  .cn-presentation-zoom-select-content {
+    @apply min-w-22 p-0.5;
+  }
+
+  .cn-presentation-zoom-select-item {
+    @apply py-0.5 pr-6 pl-1.5 text-xs [&_svg:not([class*='size-'])]:size-3;
   }
 
   /* MARK: Rating */
@@ -1490,7 +1502,7 @@
   }
 
   .cn-relative-time-card-timezone-card-2 {
-    @apply w-fit rounded bg-muted px-1 text-xs font-medium;
+    @apply w-fit rounded bg-accent px-1 text-xs font-medium;
   }
 
   .cn-relative-time-card-timezone-card-3 {
@@ -1615,7 +1627,12 @@
   }
 
   .cn-selection-toolbar-separator {
-    @apply mx-0.5 h-6 w-px bg-border/50;
+    @apply mx-0.5 h-6 w-px bg-border;
+  }
+
+  /* MARK: Skip Nav */
+  .cn-skip-nav {
+    @apply sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-100 focus-visible:rounded-md focus-visible:bg-background focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium focus-visible:text-foreground focus-visible:shadow-2xl focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none;
   }
 
   /* MARK: Sortable */
@@ -1677,7 +1694,7 @@
   }
 
   .cn-speed-dial-action {
-    @apply size-11 shrink-0 rounded-full bg-muted shadow-2xl;
+    @apply size-11 shrink-0 rounded-full bg-accent shadow-2xl;
   }
 
   .cn-speed-dial-label {
@@ -1702,7 +1719,7 @@
   }
 
   .cn-stack-item {
-    @apply rounded-lg border bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-md;
+    @apply rounded-lg border bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-2xl;
   }
 
   /* MARK: Stat */
@@ -1805,7 +1822,7 @@
 
   /* MARK: Stepper */
   .cn-stepper {
-    @apply flex gap-4;
+    @apply flex gap-6;
   }
 
   .cn-stepper-list {
@@ -1829,7 +1846,7 @@
   }
 
   .cn-stepper-separator {
-    @apply bg-border/50 transition-colors data-[state=active]:bg-primary data-[state=completed]:bg-primary;
+    @apply bg-border transition-colors data-[state=active]:bg-primary data-[state=completed]:bg-primary;
   }
 
   .cn-stepper-title {
@@ -1903,7 +1920,7 @@
   }
 
   .cn-timeline-connector-is-completed-false {
-    @apply bg-border/50;
+    @apply bg-border;
   }
 
   .cn-timeline-header {
@@ -1952,7 +1969,7 @@
   }
 
   .cn-tags-input-item-4 {
-    @apply size-4;
+    @apply size-3.5;
   }
 
   /* MARK: Time Picker */
@@ -1989,7 +2006,7 @@
   }
 
   .cn-time-picker-column-item {
-    @apply w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-muted hover:text-accent-foreground focus:border-ring focus:ring-[3px] focus:ring-ring/50 focus:outline-none data-selected:bg-primary data-selected:text-primary-foreground data-selected:hover:bg-primary data-selected:hover:text-primary-foreground;
+    @apply w-full rounded-xl px-3 py-2 text-left text-sm hover:bg-accent hover:text-accent-foreground focus:border-ring focus:ring-[3px] focus:ring-ring/50 focus:outline-none data-selected:bg-primary data-selected:text-primary-foreground data-selected:hover:bg-primary data-selected:hover:text-primary-foreground;
   }
 
   .cn-time-picker-hour {
@@ -2221,7 +2238,7 @@
   }
 
   .cn-media-player-seek-6-radix {
-    @apply flex flex-col items-center gap-1.5 rounded-md border bg-background text-muted-foreground shadow-sm dark:bg-popover;
+    @apply flex flex-col items-center gap-1.5 rounded-md border bg-background text-foreground shadow-sm dark:bg-popover;
   }
 
   .cn-media-player-seek-7-radix {
@@ -2269,7 +2286,7 @@
   }
 
   .cn-media-player-tooltip-2-radix {
-    @apply flex items-center gap-2 border bg-muted px-3 py-1 font-medium text-muted-foreground data-[side=top]:mb-3.5 dark:bg-popover [&>span]:hidden;
+    @apply flex items-center gap-2 border bg-accent px-3 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-popover [&>span]:hidden;
   }
 
   .cn-media-player-tooltip-3-radix {
@@ -2277,7 +2294,7 @@
   }
 
   .cn-media-player-tooltip-4-radix {
-    @apply rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-muted-foreground shadow-xs select-none;
+    @apply rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs select-none;
   }
 
   .cn-media-player-tooltip-5-radix {
@@ -2285,7 +2302,7 @@
   }
 
   .cn-media-player-tooltip-6-radix {
-    @apply rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-muted-foreground shadow-xs select-none;
+    @apply rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-foreground shadow-xs select-none;
   }
 
   .cn-media-player-tooltip-7-radix {
@@ -2318,7 +2335,7 @@
   }
 
   .cn-qr-code-skeleton {
-    @apply absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-muted;
+    @apply absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-accent;
   }
 
   /* MARK: Time Picker */

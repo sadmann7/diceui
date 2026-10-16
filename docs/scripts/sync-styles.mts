@@ -54,21 +54,48 @@ function getFamily(token: string) {
   return /^p[xytrblse]?$/.test(match[1]!) ? "p" : match[1]!;
 }
 
-// The class in `classes` that does the same job as `token`, if any.
-function findCounterpart(token: string, classes: string[]) {
+// The class in `classes` that does the same job as `token`, if any. Strict
+// means the same property, so `p-4` isn't a counterpart of `py-4`.
+function findCounterpart(token: string, classes: string[], strict = false) {
   return (
     classes.find((other) => unimportant(other) === token) ??
-    classes.find(
-      (other) =>
-        unimportant(other) !== token &&
-        twMerge(`${token} ${unimportant(other)}`) === unimportant(other),
-    )
+    classes.find((other) => {
+      const value = unimportant(other);
+      return (
+        value !== token &&
+        twMerge(`${token} ${value}`) === value &&
+        (!strict || twMerge(`${value} ${token}`) === token)
+      );
+    })
   );
 }
 
 // A value built on another component's CSS variable, like Card's
 // `py-(--card-spacing)`, which means nothing outside that component.
 const usesVariable = (token: string) => /\(--|var\(--/.test(token);
+
+// Colors mean something specific to each part (a hover highlight, a
+// destructive state), so only a matched shadcn part may change them.
+function isColor(token: string) {
+  const utility = getUtility(token).utility.replace(/^-/, "");
+  if (
+    /^(bg|fill|stroke|from|via|to|accent|caret|decoration|placeholder)-/.test(
+      utility,
+    )
+  ) {
+    return true;
+  }
+  if (utility.startsWith("text-")) {
+    return !/^text-(xs|sm|base|lg|xl|\d+xl|\[\d)/.test(utility);
+  }
+  if (/^border(-[xytrblse])?-/.test(utility)) {
+    return !/^border(-[xytrblse])?-(\d+|\[\d)/.test(utility);
+  }
+  if (/^(ring|outline)-/.test(utility)) {
+    return !/^(ring|outline)-(\d+|inset|offset|\[\d)/.test(utility);
+  }
+  return false;
+}
 
 // A border the style adds that New York doesn't have, like Sera's underline
 // `border-b-input` next to `border-transparent`.
@@ -122,7 +149,7 @@ export function createStyleGenerator(roles: Roles) {
         const target = split(roles[marker]?.[style] ?? "");
         const newYork = split(roles[marker]?.[SOURCE_STYLE] ?? "");
         for (const token of tokens) {
-          const counterpart = findCounterpart(token, target);
+          const counterpart = findCounterpart(token, target, true);
           if (
             counterpart &&
             usesVariable(counterpart) &&
@@ -157,6 +184,34 @@ export function createStyleGenerator(roles: Roles) {
       return [style, map] as const;
     }),
   );
+
+  // A change every style makes the same way, like `h-4` to `h-6`, is shadcn
+  // updating its components rather than a style, so ours keep their value.
+  for (const token of new Set(
+    styleNames.flatMap((style) => [...fallback[style]!.keys()]),
+  )) {
+    const values = new Set(
+      styleNames.map((style) => fallback[style]!.get(token)),
+    );
+    if (values.size === 1) {
+      for (const style of styleNames) fallback[style]!.delete(token);
+    }
+  }
+
+  // Prefixed classes like `focus-visible:rounded-md` change like the bare
+  // class, keeping their prefix.
+  function getFallback(token: string, style: string) {
+    if (isColor(token)) return undefined;
+    const exact = fallback[style]!.get(token);
+    if (exact !== undefined) return exact;
+    const { variants, utility } = getUtility(token);
+    const mapped = variants ? fallback[style]!.get(utility) : undefined;
+    const important = token.endsWith("!") ? "!" : "";
+    return mapped
+      ?.split(" ")
+      .map((value) => `${variants}${unimportant(value)}${important}`)
+      .join(" ");
+  }
 
   // The shadcn part a marker copies: the one explaining most of its visual
   // classes, preferring the same kind of part, with coverage breaking ties.
@@ -228,7 +283,7 @@ export function createStyleGenerator(roles: Roles) {
                 ),
             )
           : undefined;
-      result.push(...split(radius ?? fallback[style]!.get(token) ?? token));
+      result.push(...split(radius ?? getFallback(token, style) ?? token));
     }
 
     for (const other of target) {
