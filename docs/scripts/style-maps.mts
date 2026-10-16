@@ -12,18 +12,19 @@ const STYLES_SRC_PATH = path.join(process.cwd(), "registry", "styles");
 const GENERATED_PATH = path.join(STYLES_SRC_PATH, "__generated__");
 
 export async function getStyleMaps() {
-  const read = (name: string) =>
-    fs
-      .readFile(path.join(STYLES_SRC_PATH, `style-${name}.css`), "utf8")
-      .catch(() => null);
-  const defaultCss = await read(DEFAULT_STYLE);
+  const read = (file: string) =>
+    fs.readFile(path.join(STYLES_SRC_PATH, file), "utf8").catch(() => null);
+  const defaultCss = await read(`style-${DEFAULT_STYLE}.css`);
   if (!defaultCss) throw new Error(`Missing style-${DEFAULT_STYLE}.css`);
 
   const mapsByCss = new Map<string, StyleMap>();
   return new Map(
     await Promise.all(
       STYLES.map(async (style) => {
-        const css = (await read(style.name)) ?? defaultCss;
+        const css = [
+          (await read(`style-${style.name}.css`)) ?? defaultCss,
+          await read(`shadcn/style-${style.name}.css`),
+        ].join("\n");
         if (!mapsByCss.has(css)) mapsByCss.set(css, createStyleMap(css));
         return [style.name, mapsByCss.get(css)!] as const;
       }),

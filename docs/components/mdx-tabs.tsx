@@ -8,7 +8,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/registry/bases/radix/ui/tabs";
+} from "@/styles/radix-nova/ui/tabs";
 
 type MdxTabsVariant = "line" | "default";
 

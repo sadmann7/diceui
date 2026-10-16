@@ -12,7 +12,7 @@ import {
 } from "@/components/mdx-tabs";
 import { StyleSwitcher } from "@/components/style-switcher";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
+import { Skeleton } from "@/styles/radix-nova/ui/skeleton";
 
 function getExampleComponent(base: string, name: string) {
   if (base === "base") {

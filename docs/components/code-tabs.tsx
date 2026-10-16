@@ -2,7 +2,7 @@
 
 import type * as React from "react";
 
-import type { Tabs } from "@/registry/bases/radix/ui/tabs";
+import type { Tabs } from "@/styles/radix-nova/ui/tabs";
 
 import { MdxTabs } from "@/components/mdx-tabs";
 import { type Config, useConfig } from "@/hooks/use-config";

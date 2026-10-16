@@ -50,6 +50,7 @@
     "scripts/style-maps.mts",
     "scripts/sync-styles.mts",
     "scripts/compile-style-worker.mts",
+    "scripts/sync-shadcn.mts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     ".next\\dev/types/**/*.ts"

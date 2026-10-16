@@ -5,7 +5,7 @@ import * as React from "react";
 
 import { CopyButton } from "@/components/copy-button";
 import { cn } from "@/lib/utils";
-import { Button } from "@/registry/bases/radix/ui/button";
+import { Button } from "@/styles/radix-nova/ui/button";
 
 import { Icons } from "./icons";
 

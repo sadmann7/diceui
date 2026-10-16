@@ -21,6 +21,7 @@
     "**/.source/**",
     "**/ui-rtl/**",
     "**/__generated__/**",
+    "docs/styles/*-nova/**",
     "**/public/**",
     "pnpm-lock.yaml"
   ],

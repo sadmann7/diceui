@@ -10,7 +10,7 @@ import { DEFAULT_STYLE } from "@/lib/constants";
 import { fontMono, fontSans } from "@/lib/fonts";
 import { getStyleScript } from "@/lib/style";
 import { cn } from "@/lib/utils";
-import { Toaster } from "@/registry/bases/radix/ui/sonner";
+import { Toaster } from "@/styles/radix-nova/ui/sonner";
 import "@/styles/globals.css";
 import "@/styles/registry-styles.css";
 

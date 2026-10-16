@@ -365,6 +365,46 @@ async function buildPublicItems() {
 // ----------------------------------------------------------------------------
 const FILE_HEADER = /^\/\*\*[\s\S]*?\*\/\n\n?/;
 
+// ----------------------------------------------------------------------------
+// Build styles/{base}-{DEFAULT_STYLE}/ui: every ui file compiled with the
+// default style, for the docs' own UI so it ignores the style switcher.
+// Gitignored.
+// ----------------------------------------------------------------------------
+async function buildDocsUi() {
+  const styleMap = (await getStyleMaps()).get(DEFAULT_STYLE)!;
+
+  for (const base of BASES) {
+    const baseName = base.name as RegistryBase;
+    const uiDir = path.join(process.cwd(), "registry", "bases", baseName, "ui");
+    const outDir = path.join(
+      process.cwd(),
+      "styles",
+      `${baseName}-${DEFAULT_STYLE}`,
+      "ui",
+    );
+
+    await rimraf(outDir);
+    await fs.mkdir(outDir, { recursive: true });
+
+    const files = (await fs.readdir(uiDir)).filter((file) =>
+      file.endsWith(".tsx"),
+    );
+    await Promise.all(
+      files.map(async (file) => {
+        const source = await fs.readFile(path.join(uiDir, file), "utf8");
+        const content = await compileStyle(source, styleMap);
+        await fs.writeFile(
+          path.join(outDir, file),
+          content.replaceAll(
+            `@/registry/bases/${baseName}/ui/`,
+            `@/styles/${baseName}-${DEFAULT_STYLE}/ui/`,
+          ),
+        );
+      }),
+    );
+  }
+}
+
 async function buildRtlUi() {
   const styleMap = (await getStyleMaps()).get(DEFAULT_STYLE)!;
 
@@ -443,6 +483,9 @@ try {
 
   console.log("↔️  Building ui-rtl...");
   await buildRtlUi();
+
+  console.log("📚 Building docs ui...");
+  await buildDocsUi();
 
   if (process.argv.includes("--styles")) {
     await Promise.all(workers.map((worker) => worker.terminate()));
