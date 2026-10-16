@@ -8,6 +8,11 @@ const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  turbopack: {
+    resolveAlias: {
+      cn: "./lib/cn.ts",
+    },
+  },
   images: {
     remotePatterns: [
       {

@@ -56,7 +56,7 @@ describe("MaskInput", () => {
     test("applies default className", () => {
       render(<MaskInput data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input");
-      expect(input).toHaveClass("flex", "h-9", "w-full");
+      expect(input).toHaveClass("cn-mask-input");
     });
 
     test("merges custom className", () => {

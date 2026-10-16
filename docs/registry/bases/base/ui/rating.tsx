@@ -474,7 +474,7 @@ function Rating(props: RatingProps) {
         tabIndex: isTabbingBackOut || focusableItemCount === 0 ? -1 : 0,
         ref: composedRef,
         className: cn(
-          "flex gap-1 text-primary outline-none",
+          "cn-rating",
           orientation === "horizontal"
             ? "flex-row items-center"
             : "flex-col items-start",
@@ -927,8 +927,7 @@ function RatingItem(props: RatingItemProps) {
         } as React.CSSProperties,
         ref: composedRef,
         className: cn(
-          "inline-flex items-center justify-center rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50",
-          "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill) [&_svg:not([class*='size-'])]:size-full",
+          "cn-rating-item",
           context.size === "sm"
             ? "size-4"
             : context.size === "lg"

@@ -7,6 +7,8 @@
 
 @import "shadcn/tailwind.css";
 
+@source "../registry/styles/__generated__/style-maps.ts";
+
 @custom-variant style-vega (&:where(.style-vega *));
 @custom-variant style-nova (&:where(.style-nova *));
 @custom-variant style-lyra (&:where(.style-lyra *));

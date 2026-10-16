@@ -6,10 +6,12 @@ import { Providers } from "@/components/providers";
 import { ReactScan } from "@/components/react-scan";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { siteConfig } from "@/config/site";
+import { DEFAULT_STYLE } from "@/lib/constants";
 import { fontMono, fontSans } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/registry/bases/radix/ui/sonner";
 import "@/styles/globals.css";
+import "@/styles/registry-styles.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -65,6 +67,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body
         className={cn(
           "isolate min-h-screen font-sans antialiased",
+          `style-${DEFAULT_STYLE}`,
           fontSans.variable,
           fontMono.variable,
         )}

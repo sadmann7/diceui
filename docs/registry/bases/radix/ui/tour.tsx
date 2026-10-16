@@ -1240,10 +1240,7 @@ function TourStep(props: TourStepProps) {
         onPointerDownCapture={onPointerDownCapture}
         onFocusCapture={onFocusCapture}
         onBlurCapture={onBlurCapture}
-        className={cn(
-          "fixed z-50 flex w-80 flex-col gap-4 rounded-lg border bg-popover p-4 text-popover-foreground shadow-md outline-none",
-          className,
-        )}
+        className={cn("cn-tour-step", className)}
         style={{
           ...style,
           ...floatingStyles,
@@ -1287,10 +1284,7 @@ function TourSpotlight(props: TourSpotlightProps) {
       data-slot="tour-spotlight"
       data-state={getDataState(open)}
       {...backdropProps}
-      className={cn(
-        "fixed inset-0 z-50 bg-black/80 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0",
-        className,
-      )}
+      className={cn("cn-tour-spotlight", className)}
       style={{
         clipPath: maskPath,
         ...style,
@@ -1319,10 +1313,7 @@ function TourSpotlightRing(props: TourSpotlightRingProps) {
       data-slot="tour-spotlight-ring"
       data-state={getDataState(open)}
       {...ringProps}
-      className={cn(
-        "pointer-events-none fixed z-50 border-ring ring-[3px] ring-ring/50",
-        className,
-      )}
+      className={cn("cn-tour-spotlight-ring", className)}
       style={{
         left: spotlightRect.x,
         top: spotlightRect.y,
@@ -1414,7 +1405,7 @@ function TourArrow(props: TourArrowProps) {
         width={width}
         height={height}
         {...arrowProps}
-        className={cn("block fill-popover stroke-border", className)}
+        className={cn("cn-tour-arrow", className)}
       >
         {asChild ? children : <polygon points="0,0 30,0 15,10" />}
       </svg>
@@ -1434,10 +1425,7 @@ function TourHeader(props: DivProps) {
       data-slot="tour-header"
       dir={context.dir}
       {...headerProps}
-      className={cn(
-        "flex flex-col gap-1.5 text-center sm:text-left",
-        className,
-      )}
+      className={cn("cn-tour-header", className)}
     />
   );
 }
@@ -1454,10 +1442,7 @@ function TourTitle(props: DivProps) {
       data-slot="tour-title"
       dir={context.dir}
       {...titleProps}
-      className={cn(
-        "text-lg leading-none font-semibold tracking-tight",
-        className,
-      )}
+      className={cn("cn-tour-title", className)}
     />
   );
 }
@@ -1474,7 +1459,7 @@ function TourDescription(props: DivProps) {
       data-slot="tour-description"
       dir={context.dir}
       {...descriptionProps}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("cn-tour-description", className)}
     />
   );
 }
@@ -1509,10 +1494,7 @@ function TourClose(props: TourCloseProps) {
     <ClosePrimitive
       type="button"
       aria-label="Close tour"
-      className={cn(
-        "absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        className,
-      )}
+      className={cn("cn-tour-close", className)}
       onClick={onClick}
       {...closeButtonProps}
     >
@@ -1522,7 +1504,7 @@ function TourClose(props: TourCloseProps) {
         hugeicons="Cancel01Icon"
         phosphor="XIcon"
         remixicon="RiCloseLine"
-        className="size-4"
+        className="cn-tour-close-2"
       />
     </ClosePrimitive>
   );
@@ -1667,7 +1649,7 @@ function TourStepCounter(props: TourStepCounterProps) {
     <StepCounterPrimitive
       data-slot="tour-step-counter"
       {...stepCounterProps}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("cn-tour-step-counter", className)}
     >
       {children ?? format(value + 1, steps.length)}
     </StepCounterPrimitive>
@@ -1694,10 +1676,7 @@ function TourFooter(props: DivProps) {
       dir={context.dir}
       {...footerProps}
       ref={composedRef}
-      className={cn(
-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className,
-      )}
+      className={cn("cn-tour-footer", className)}
     />
   );
 }

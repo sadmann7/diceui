@@ -90,14 +90,17 @@ function TimezoneCard(props: TimezoneCardProps) {
       role="region"
       aria-label={`Time in ${timezoneName}: ${formattedDate} ${formattedTime}`}
       {...cardProps}
-      className="flex items-center justify-between gap-2 text-sm text-muted-foreground"
+      className="cn-relative-time-card-timezone-card"
     >
-      <span className="w-fit rounded bg-accent px-1 text-xs font-medium">
+      <span className="cn-relative-time-card-timezone-card-2">
         {timezoneName}
       </span>
-      <div className="flex items-center gap-2">
+      <div className="cn-relative-time-card-timezone-card-3">
         <time dateTime={date.toISOString()}>{formattedDate}</time>
-        <time className="tabular-nums" dateTime={date.toISOString()}>
+        <time
+          className="cn-relative-time-card-timezone-card-4"
+          dateTime={date.toISOString()}
+        >
           {formattedTime}
         </time>
       </div>
@@ -105,21 +108,18 @@ function TimezoneCard(props: TimezoneCardProps) {
   );
 }
 
-const triggerVariants = cva(
-  "inline-flex w-fit items-center justify-center text-sm text-foreground/70 transition-colors hover:text-foreground/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none",
-  {
-    variants: {
-      variant: {
-        default: "",
-        muted: "text-foreground/50 hover:text-foreground/70",
-        ghost: "hover:underline",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
+const triggerVariants = cva("cn-relative-time-card-trigger", {
+  variants: {
+    variant: {
+      default: "",
+      muted: "cn-relative-time-card-trigger-variant-muted",
+      ghost: "cn-relative-time-card-trigger-variant-ghost",
     },
   },
-);
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
 interface RelativeTimeCardProps
   extends
@@ -225,15 +225,12 @@ function RelativeTimeCard(props: RelativeTimeCardProps) {
         avoidCollisions={avoidCollisions}
         collisionBoundary={collisionBoundary}
         collisionPadding={collisionPadding}
-        className="flex w-full max-w-[420px] flex-col gap-2 p-3"
+        className="cn-relative-time-card"
       >
-        <time
-          dateTime={date.toISOString()}
-          className="text-sm text-muted-foreground"
-        >
+        <time dateTime={date.toISOString()} className="cn-relative-time-card-2">
           {formattedTime}
         </time>
-        <div role="list" className="flex flex-col gap-1">
+        <div role="list" className="cn-relative-time-card-3">
           {timezones.map((timezone) => (
             <TimezoneCard
               key={timezone}

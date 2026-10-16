@@ -36,7 +36,7 @@ const scrollerVariants = cva("", {
       ],
     },
     hideScrollbar: {
-      true: "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+      true: "cn-scroller-hide-scrollbar-true",
       false: "",
     },
   },
@@ -263,7 +263,7 @@ function Scroller(props: ScrollerProps) {
 
   if (withNavigation) {
     return (
-      <div className="relative w-full">
+      <div className="cn-scroller">
         {navigationButtons}
         {ScrollerImpl}
       </div>
@@ -273,22 +273,19 @@ function Scroller(props: ScrollerProps) {
   return ScrollerImpl;
 }
 
-const scrollButtonVariants = cva(
-  "absolute z-10 transition-opacity [&>svg]:size-4 [&>svg]:opacity-80 hover:[&>svg]:opacity-100",
-  {
-    variants: {
-      direction: {
-        up: "top-2 left-1/2 -translate-x-1/2",
-        down: "bottom-2 left-1/2 -translate-x-1/2",
-        left: "top-1/2 [left:--spacing(2)] -translate-y-1/2",
-        right: "top-1/2 [right:--spacing(2)] -translate-y-1/2",
-      },
-    },
-    defaultVariants: {
-      direction: "up",
+const scrollButtonVariants = cva("cn-scroller-scroll-button", {
+  variants: {
+    direction: {
+      up: "cn-scroller-scroll-button-direction-up",
+      down: "cn-scroller-scroll-button-direction-down",
+      left: "cn-scroller-scroll-button-direction-left",
+      right: "cn-scroller-scroll-button-direction-right",
     },
   },
-);
+  defaultVariants: {
+    direction: "up",
+  },
+});
 
 const directionToIcon: Record<ScrollDirection, React.ElementType> = {
   up: ChevronUp,

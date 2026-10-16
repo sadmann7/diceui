@@ -319,7 +319,7 @@ function ScrollSpy(props: ScrollSpyProps) {
           dir={dir}
           {...rootProps}
           className={cn(
-            "flex",
+            "cn-scroll-spy",
             orientation === "horizontal" ? "flex-row" : "flex-col",
             className,
           )}
@@ -347,7 +347,7 @@ function ScrollSpyNav(props: ScrollSpyNavProps) {
       dir={dir}
       {...navProps}
       className={cn(
-        "flex gap-2",
+        "cn-scroll-spy-nav",
         orientation === "horizontal" ? "flex-col" : "flex-row",
         className,
       )}
@@ -385,10 +385,7 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
       data-state={isActive ? "active" : "inactive"}
       {...linkProps}
       href={asChild ? undefined : `#${linkValue}`}
-      className={cn(
-        "rounded px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground",
-        className,
-      )}
+      className={cn("cn-scroll-spy-link", className)}
       onClick={onLinkClick}
     />
   );
@@ -411,7 +408,7 @@ function ScrollSpyViewport(props: ScrollSpyViewportProps) {
       data-slot="scroll-spy-viewport"
       dir={dir}
       {...viewportProps}
-      className={cn("flex flex-1 flex-col gap-8", className)}
+      className={cn("cn-scroll-spy-viewport", className)}
     />
   );
 }

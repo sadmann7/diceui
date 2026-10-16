@@ -755,7 +755,7 @@ function ColorPickerContent(
       <ContentPrimitive
         data-slot="color-picker-content"
         {...popoverContentProps}
-        className={cn("flex w-[340px] flex-col gap-4 p-4", className)}
+        className={cn("cn-color-picker-content", className)}
       >
         {children}
       </ContentPrimitive>
@@ -767,7 +767,7 @@ function ColorPickerContent(
       data-slot="color-picker-content"
       asChild={asChild}
       {...popoverContentProps}
-      className={cn("flex w-[340px] flex-col gap-4 p-4", className)}
+      className={cn("cn-color-picker-content-2", className)}
     >
       {children}
     </PopoverContent>
@@ -870,7 +870,7 @@ function ColorPickerArea(props: DivProps) {
       data-slot="color-picker-area"
       {...areaProps}
       className={cn(
-        "relative h-40 w-full cursor-crosshair touch-none rounded-sm border",
+        "cn-color-picker-area",
         context.disabled && "pointer-events-none opacity-50",
         className,
       )}
@@ -879,28 +879,28 @@ function ColorPickerArea(props: DivProps) {
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     >
-      <div className="absolute inset-0 overflow-hidden rounded-sm">
+      <div className="cn-color-picker-area-2">
         <div
-          className="absolute inset-0"
+          className="cn-color-picker-area-3"
           style={{
             backgroundColor: `rgb(${backgroundHue.r}, ${backgroundHue.g}, ${backgroundHue.b})`,
           }}
         />
         <div
-          className="absolute inset-0"
+          className="cn-color-picker-area-4"
           style={{
             background: "linear-gradient(to right, #fff, transparent)",
           }}
         />
         <div
-          className="absolute inset-0"
+          className="cn-color-picker-area-5"
           style={{
             background: "linear-gradient(to bottom, transparent, #000)",
           }}
         />
       </div>
       <div
-        className="absolute size-3 -translate-1/2 rounded-full border-2 border-white shadow-sm"
+        className="cn-color-picker-area-6"
         style={{
           left: `${hsv?.s ?? 0}%`,
           top: `${100 - (hsv?.v ?? 0)}%`,
@@ -940,18 +940,15 @@ function ColorPickerHueSlider(
       {...sliderProps}
       max={360}
       step={1}
-      className={cn(
-        "relative flex w-full touch-none items-center select-none",
-        className,
-      )}
+      className={cn("cn-color-picker-hue-slider", className)}
       value={[hsv?.h ?? 0]}
       onValueChange={onValueChange}
       disabled={context.disabled}
     >
-      <SliderPrimitive.Track className="relative h-3 w-full grow overflow-hidden rounded-full bg-[linear-gradient(to_right,#ff0000_0%,#ffff00_16.66%,#00ff00_33.33%,#00ffff_50%,#0000ff_66.66%,#ff00ff_83.33%,#ff0000_100%)]">
-        <SliderPrimitive.Range className="absolute h-full" />
+      <SliderPrimitive.Track className="cn-color-picker-hue-slider-2-radix">
+        <SliderPrimitive.Range className="cn-color-picker-hue-slider-3-radix" />
       </SliderPrimitive.Track>
-      <SliderPrimitive.Thumb className="block size-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50" />
+      <SliderPrimitive.Thumb className="cn-color-picker-hue-slider-4" />
     </SliderPrimitive.Root>
   );
 }
@@ -987,15 +984,12 @@ function ColorPickerAlphaSlider(
       max={100}
       step={1}
       disabled={context.disabled}
-      className={cn(
-        "relative flex w-full touch-none items-center select-none",
-        className,
-      )}
+      className={cn("cn-color-picker-alpha-slider", className)}
       value={[Math.round((color?.a ?? 1) * 100)]}
       onValueChange={onValueChange}
     >
       <SliderPrimitive.Track
-        className="relative h-3 w-full grow overflow-hidden rounded-full"
+        className="cn-color-picker-alpha-slider-2-radix"
         style={{
           background:
             "linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)",
@@ -1004,14 +998,14 @@ function ColorPickerAlphaSlider(
         }}
       >
         <div
-          className="absolute inset-0 rounded-full"
+          className="cn-color-picker-alpha-slider-3-radix"
           style={{
             background: `linear-gradient(to right, transparent, ${gradientColor})`,
           }}
         />
-        <SliderPrimitive.Range className="absolute h-full" />
+        <SliderPrimitive.Range className="cn-color-picker-alpha-slider-4-radix" />
       </SliderPrimitive.Track>
-      <SliderPrimitive.Thumb className="block size-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50" />
+      <SliderPrimitive.Thumb className="cn-color-picker-alpha-slider-5" />
     </SliderPrimitive.Root>
   );
 }
@@ -1058,7 +1052,7 @@ function ColorPickerSwatch(props: DivProps) {
       data-slot="color-picker-swatch"
       {...swatchProps}
       className={cn(
-        "box-border size-8 rounded-sm border shadow-sm",
+        "cn-color-picker-swatch",
         context.disabled && "opacity-50",
         className,
       )}
@@ -1259,22 +1253,19 @@ function ColorPickerInput(props: ColorPickerInputProps) {
   }
 }
 
-const inputGroupItemVariants = cva(
-  "h-8 [-moz-appearance:textfield] focus-visible:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none",
-  {
-    variants: {
-      position: {
-        first: "rounded-r-none",
-        middle: "-ml-px rounded-none border-l-0",
-        last: "-ml-px rounded-l-none border-l-0",
-        isolated: "",
-      },
-    },
-    defaultVariants: {
-      position: "isolated",
+const inputGroupItemVariants = cva("cn-color-picker-input-group-item", {
+  variants: {
+    position: {
+      first: "cn-color-picker-input-group-item-position-first",
+      middle: "cn-color-picker-input-group-item-position-middle",
+      last: "cn-color-picker-input-group-item-position-last",
+      isolated: "",
     },
   },
-);
+  defaultVariants: {
+    position: "isolated",
+  },
+});
 
 interface InputGroupItemProps
   extends
@@ -1342,7 +1333,7 @@ function HexInput(props: FormatInputProps) {
         position="isolated"
         {...inputProps}
         placeholder="#000000"
-        className={cn("font-mono", className)}
+        className={cn("cn-color-picker-hex-input", className)}
         value={hexValue}
         onChange={onHexChange}
         disabled={context.disabled}
@@ -1353,14 +1344,14 @@ function HexInput(props: FormatInputProps) {
   return (
     <div
       data-slot="color-picker-input-wrapper"
-      className={cn("flex items-center", className)}
+      className={cn("cn-color-picker-input-wrapper", className)}
     >
       <InputGroupItem
         aria-label="Hex color value"
         position="first"
         {...inputProps}
         placeholder="#000000"
-        className="flex-1 font-mono"
+        className="cn-color-picker-hex-input-2"
         value={hexValue}
         onChange={onHexChange}
         disabled={context.disabled}
@@ -1374,7 +1365,7 @@ function HexInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="w-14"
+        className="cn-color-picker-hex-input-3"
         value={alphaValue}
         onChange={onAlphaChange}
         disabled={context.disabled}
@@ -1413,7 +1404,7 @@ function RgbInput(props: FormatInputProps) {
   return (
     <div
       data-slot="color-picker-input-wrapper"
-      className={cn("flex items-center", className)}
+      className={cn("cn-color-picker-input-wrapper-2", className)}
     >
       <InputGroupItem
         aria-label="Red color component (0-255)"
@@ -1424,7 +1415,7 @@ function RgbInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="255"
-        className="w-14"
+        className="cn-color-picker-rgb-input"
         value={rValue}
         onChange={onChannelChange("r", 255)}
         disabled={context.disabled}
@@ -1438,7 +1429,7 @@ function RgbInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="255"
-        className="w-14"
+        className="cn-color-picker-rgb-input-2"
         value={gValue}
         onChange={onChannelChange("g", 255)}
         disabled={context.disabled}
@@ -1452,7 +1443,7 @@ function RgbInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="255"
-        className="w-14"
+        className="cn-color-picker-rgb-input-3"
         value={bValue}
         onChange={onChannelChange("b", 255)}
         disabled={context.disabled}
@@ -1467,7 +1458,7 @@ function RgbInput(props: FormatInputProps) {
           pattern="[0-9]*"
           min="0"
           max="100"
-          className="w-14"
+          className="cn-color-picker-rgb-input-4"
           value={alphaValue}
           onChange={onChannelChange("a", 100, true)}
           disabled={context.disabled}
@@ -1516,7 +1507,7 @@ function HslInput(props: FormatInputProps) {
   return (
     <div
       data-slot="color-picker-input-wrapper"
-      className={cn("flex items-center", className)}
+      className={cn("cn-color-picker-input-wrapper-3", className)}
     >
       <InputGroupItem
         aria-label="Hue degree (0-360)"
@@ -1527,7 +1518,7 @@ function HslInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="360"
-        className="w-14"
+        className="cn-color-picker-hsl-input"
         value={hsl.h}
         onChange={onHslChannelChange("h", 360)}
         disabled={context.disabled}
@@ -1541,7 +1532,7 @@ function HslInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="w-14"
+        className="cn-color-picker-hsl-input-2"
         value={hsl.s}
         onChange={onHslChannelChange("s", 100)}
         disabled={context.disabled}
@@ -1555,7 +1546,7 @@ function HslInput(props: FormatInputProps) {
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="w-14"
+        className="cn-color-picker-hsl-input-3"
         value={hsl.l}
         onChange={onHslChannelChange("l", 100)}
         disabled={context.disabled}
@@ -1570,7 +1561,7 @@ function HslInput(props: FormatInputProps) {
           pattern="[0-9]*"
           min="0"
           max="100"
-          className="w-14"
+          className="cn-color-picker-hsl-input-4"
           value={alphaValue}
           onChange={onAlphaChange}
           disabled={context.disabled}
@@ -1623,7 +1614,7 @@ function HsbInput(props: HsbInputProps) {
   return (
     <div
       data-slot="color-picker-input-wrapper"
-      className={cn("flex items-center", className)}
+      className={cn("cn-color-picker-input-wrapper-4", className)}
     >
       <InputGroupItem
         aria-label="Hue degree (0-360)"
@@ -1634,7 +1625,7 @@ function HsbInput(props: HsbInputProps) {
         pattern="[0-9]*"
         min="0"
         max="360"
-        className="w-14"
+        className="cn-color-picker-hsb-input"
         value={hsv?.h ?? 0}
         onChange={onHsvChannelChange("h", 360)}
         disabled={context.disabled}
@@ -1648,7 +1639,7 @@ function HsbInput(props: HsbInputProps) {
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="w-14"
+        className="cn-color-picker-hsb-input-2"
         value={hsv?.s ?? 0}
         onChange={onHsvChannelChange("s", 100)}
         disabled={context.disabled}
@@ -1662,7 +1653,7 @@ function HsbInput(props: HsbInputProps) {
         pattern="[0-9]*"
         min="0"
         max="100"
-        className="w-14"
+        className="cn-color-picker-hsb-input-3"
         value={hsv?.v ?? 0}
         onChange={onHsvChannelChange("v", 100)}
         disabled={context.disabled}
@@ -1677,7 +1668,7 @@ function HsbInput(props: HsbInputProps) {
           pattern="[0-9]*"
           min="0"
           max="100"
-          className="w-14"
+          className="cn-color-picker-hsb-input-4"
           value={alphaValue}
           onChange={onAlphaChange}
           disabled={context.disabled}

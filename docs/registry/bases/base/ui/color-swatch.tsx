@@ -6,21 +6,18 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
 
-const colorSwatchVariants = cva(
-  "box-border rounded-sm border bg-clip-padding shadow-sm data-disabled:pointer-events-none data-disabled:opacity-50",
-  {
-    variants: {
-      size: {
-        default: "size-8",
-        sm: "size-6",
-        lg: "size-12",
-      },
-    },
-    defaultVariants: {
-      size: "default",
+const colorSwatchVariants = cva("cn-color-swatch", {
+  variants: {
+    size: {
+      default: "cn-color-swatch-size-default",
+      sm: "cn-color-swatch-size-sm",
+      lg: "cn-color-swatch-size-lg",
     },
   },
-);
+  defaultVariants: {
+    size: "default",
+  },
+});
 
 function getIsCssColor(v: string): boolean {
   try {

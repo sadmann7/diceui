@@ -557,11 +557,7 @@ function AngleSlider(props: AngleSliderProps) {
     props: mergeProps<"div">(
       {
         dir,
-        className: cn(
-          "relative touch-none select-none",
-          disabled && "opacity-50",
-          className,
-        ),
+        className: cn("cn-angle-slider", disabled && "opacity-50", className),
         style: {
           width: `${size * 2 + 40}px`,
           height: `${size * 2 + 40}px`,
@@ -624,7 +620,7 @@ function AngleSliderTrack(props: React.ComponentProps<"svg">) {
       width={center * 2}
       height={center * 2}
       {...trackProps}
-      className={cn("absolute inset-0", className)}
+      className={cn("cn-angle-slider-track", className)}
     >
       {isFullCircle ? (
         <circle
@@ -637,7 +633,7 @@ function AngleSliderTrack(props: React.ComponentProps<"svg">) {
           strokeWidth={thickness}
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
-          className="stroke-muted"
+          className="cn-angle-slider-track-rail"
         />
       ) : (
         <path
@@ -648,7 +644,7 @@ function AngleSliderTrack(props: React.ComponentProps<"svg">) {
           strokeWidth={thickness}
           strokeLinecap="round"
           vectorEffect="non-scaling-stroke"
-          className="stroke-muted"
+          className="cn-angle-slider-track-rail-2"
         />
       )}
       {children}
@@ -710,7 +706,7 @@ function AngleSliderRange(props: React.ComponentProps<"path">) {
       strokeLinecap="round"
       vectorEffect="non-scaling-stroke"
       {...rangeProps}
-      className={cn("stroke-primary", className)}
+      className={cn("cn-angle-slider-range", className)}
     />
   );
 }
@@ -796,10 +792,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
         "aria-valuemax": max,
         "aria-orientation": "vertical" as const,
         tabIndex: disabled ? undefined : 0,
-        className: cn(
-          "block size-4 shrink-0 rounded-full border border-primary bg-background shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50",
-          className,
-        ),
+        className: cn("cn-angle-slider-thumb", className),
         onFocus,
         ref: composedRef,
       },
@@ -889,10 +882,7 @@ function AngleSliderValue(props: AngleSliderValueProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn(
-          "pointer-events-none flex items-center justify-center text-sm font-medium text-foreground select-none",
-          className,
-        ),
+        className: cn("cn-angle-slider-value", className),
         style: {
           ...valueStyle,
           ...style,

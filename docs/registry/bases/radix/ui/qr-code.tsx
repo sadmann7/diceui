@@ -280,7 +280,7 @@ function QRCode(props: QRCodeProps) {
         <RootPrimitive
           data-slot="qr-code"
           {...rootProps}
-          className={cn(className, "relative flex flex-col items-center gap-2")}
+          className={cn(className, "cn-qr-code")}
           style={
             {
               "--qr-code-size": `${size}px`,
@@ -315,7 +315,7 @@ function QRCodeCanvas(props: QRCodeCanvasProps) {
       width={context.size}
       height={context.size}
       className={cn(
-        "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
+        "cn-qr-code-canvas",
         !generationKey && "invisible",
         className,
       )}
@@ -341,10 +341,7 @@ function QRCodeSvg(props: QRCodeSvgProps) {
     <SvgPrimitive
       data-slot="qr-code-svg"
       {...svgProps}
-      className={cn(
-        "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
-        className,
-      )}
+      className={cn("cn-qr-code-svg", className)}
       style={{ width: context.size, height: context.size, ...style }}
       dangerouslySetInnerHTML={{ __html: svgString }}
     />
@@ -373,10 +370,7 @@ function QRCodeImage(props: QRCodeImageProps) {
       alt={alt}
       width={context.size}
       height={context.size}
-      className={cn(
-        "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
-        className,
-      )}
+      className={cn("cn-qr-code-image", className)}
     />
   );
 }
@@ -436,7 +430,7 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
       type="button"
       data-slot="qr-code-download"
       {...buttonProps}
-      className={cn("max-w-(--qr-code-size)", className)}
+      className={cn("cn-qr-code-download", className)}
       onClick={onClick}
     >
       {children ?? `Download ${format.toUpperCase()}`}
@@ -457,10 +451,7 @@ function QRCodeOverlay(props: QRCodeOverlayProps) {
     <OverlayPrimitive
       data-slot="qr-code-overlay"
       {...overlayProps}
-      className={cn(
-        "absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-background",
-        className,
-      )}
+      className={cn("cn-qr-code-overlay", className)}
     />
   );
 }
@@ -487,10 +478,7 @@ function QRCodeSkeleton(props: QRCodeSkeletonProps) {
     <SkeletonPrimitive
       data-slot="qr-code-skeleton"
       {...skeletonProps}
-      className={cn(
-        "absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-accent",
-        className,
-      )}
+      className={cn("cn-qr-code-skeleton", className)}
       style={{
         width: context.size,
         height: context.size,

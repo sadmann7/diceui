@@ -12,7 +12,7 @@ function CheckboxGroup({
   return (
     <CheckboxGroupPrimitive.Root
       data-slot="checkbox-group"
-      className={cn("peer flex flex-col gap-3.5", className)}
+      className={cn("cn-checkbox-group peer", className)}
       {...props}
     />
   );
@@ -25,10 +25,7 @@ function CheckboxGroupLabel({
   return (
     <CheckboxGroupPrimitive.Label
       data-slot="checkbox-group-label"
-      className={cn(
-        "text-sm leading-none text-foreground/70 peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-        className,
-      )}
+      className={cn("cn-checkbox-group-label", className)}
       {...props}
     />
   );
@@ -41,10 +38,7 @@ function CheckboxGroupList({
   return (
     <CheckboxGroupPrimitive.List
       data-slot="checkbox-group-list"
-      className={cn(
-        "flex gap-3 data-[orientation=horizontal]:flex-row data-[orientation=vertical]:flex-col",
-        className,
-      )}
+      className={cn("cn-checkbox-group-list", className)}
       {...props}
     />
   );
@@ -56,17 +50,14 @@ function CheckboxGroupItem({
   ...props
 }: React.ComponentProps<typeof CheckboxGroupPrimitive.Item>) {
   return (
-    <label className="flex w-fit items-center gap-2 text-sm leading-none select-none has-data-invalid:text-destructive has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50">
+    <label className="cn-checkbox-group-item">
       <CheckboxGroupPrimitive.Item
         data-slot="checkbox-group-item"
-        className={cn(
-          "size-4 shrink-0 rounded-sm border border-primary shadow-sm focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-invalid:border-destructive [&[data-state=checked]:not([data-invalid])]:bg-primary [&[data-state=checked]:not([data-invalid])]:text-primary-foreground [&[data-state=checked][data-invalid]]:bg-destructive [&[data-state=checked][data-invalid]]:text-primary-foreground [&[data-state=unchecked][data-invalid]]:bg-transparent",
-          className,
-        )}
+        className={cn("cn-checkbox-group-item-2", className)}
         {...props}
       >
         <CheckboxGroupPrimitive.Indicator
-          className="flex items-center justify-center text-current"
+          className="cn-checkbox-group-item-3"
           asChild
         >
           <IconPlaceholder
@@ -75,7 +66,7 @@ function CheckboxGroupItem({
             hugeicons="Tick02Icon"
             phosphor="CheckIcon"
             remixicon="RiCheckLine"
-            className="size-3.5"
+            className="cn-checkbox-group-item-4"
           />
         </CheckboxGroupPrimitive.Indicator>
       </CheckboxGroupPrimitive.Item>
@@ -91,10 +82,7 @@ function CheckboxGroupDescription({
   return (
     <CheckboxGroupPrimitive.Description
       data-slot="checkbox-group-description"
-      className={cn(
-        "text-[0.8rem] leading-none text-muted-foreground data-invalid:text-destructive",
-        className,
-      )}
+      className={cn("cn-checkbox-group-description", className)}
       {...props}
     />
   );
@@ -107,10 +95,7 @@ function CheckboxGroupMessage({
   return (
     <CheckboxGroupPrimitive.Message
       data-slot="checkbox-group-message"
-      className={cn(
-        "text-[0.8rem] leading-none text-muted-foreground data-invalid:text-destructive",
-        className,
-      )}
+      className={cn("cn-checkbox-group-message", className)}
       {...props}
     />
   );

@@ -267,7 +267,7 @@ function Banners(props: BannersProps) {
       data-side={side}
       data-strategy={strategy}
       className={cn(
-        "pointer-events-none right-0 left-0 isolate z-50",
+        "cn-banner-container",
         strategy === "fixed" && "fixed",
         strategy === "static" && "relative",
         strategy === "sticky" && "sticky",
@@ -320,25 +320,20 @@ function useBanners() {
   );
 }
 
-const bannerVariants = cva(
-  "pointer-events-auto relative flex w-full items-center gap-3 border-b px-4 py-3 text-sm motion-reduce:transition-none",
-  {
-    variants: {
-      variant: {
-        default: "bg-card text-card-foreground",
-        info: "bg-blue-50 text-blue-900 dark:bg-blue-950 dark:text-blue-50",
-        success:
-          "bg-green-50 text-green-900 dark:bg-green-950 dark:text-green-50",
-        warning:
-          "bg-yellow-50 text-yellow-900 dark:bg-yellow-950 dark:text-yellow-50",
-        destructive: "bg-red-50 text-red-900 dark:bg-red-950 dark:text-red-50",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
+const bannerVariants = cva("cn-banner", {
+  variants: {
+    variant: {
+      default: "cn-banner-variant-default",
+      info: "cn-banner-variant-info",
+      success: "cn-banner-variant-success",
+      warning: "cn-banner-variant-warning",
+      destructive: "cn-banner-variant-destructive",
     },
   },
-);
+  defaultVariants: {
+    variant: "default",
+  },
+});
 
 interface BannerImplProps {
   banner: BannerData;
@@ -603,7 +598,7 @@ function BannerIcon(props: DivProps) {
   return (
     <IconPrimitive
       data-slot="banner-icon"
-      className={cn("flex shrink-0 items-center [&>svg]:size-4", className)}
+      className={cn("cn-banner-icon", className)}
       {...iconProps}
     />
   );
@@ -617,7 +612,7 @@ function BannerContent(props: DivProps) {
   return (
     <ContentPrimitive
       data-slot="banner-content"
-      className={cn("flex min-w-0 flex-1 flex-col gap-1", className)}
+      className={cn("cn-banner-content", className)}
       {...contentProps}
     />
   );
@@ -629,7 +624,7 @@ function BannerTitle(props: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="banner-title"
-      className={cn("text-sm leading-none font-medium", className)}
+      className={cn("cn-banner-title", className)}
       {...titleProps}
     />
   );
@@ -641,7 +636,7 @@ function BannerDescription(props: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="banner-description"
-      className={cn("text-xs opacity-90", className)}
+      className={cn("cn-banner-description", className)}
       {...descriptionProps}
     />
   );
@@ -655,7 +650,7 @@ function BannerActions(props: DivProps) {
   return (
     <ActionsPrimitive
       data-slot="banner-actions"
-      className={cn("flex items-center gap-2", className)}
+      className={cn("cn-banner-actions", className)}
       {...actionsProps}
     />
   );
@@ -694,7 +689,7 @@ function BannerClose(props: React.ComponentProps<typeof Button>) {
           hugeicons="Cancel01Icon"
           phosphor="XIcon"
           remixicon="RiCloseLine"
-          className="size-3.5"
+          className="cn-banner-close"
         />
       )}
     </Button>

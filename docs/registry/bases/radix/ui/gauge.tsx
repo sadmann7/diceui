@@ -335,10 +335,7 @@ function Gauge(props: GaugeProps) {
         data-min={min}
         data-percentage={percentage}
         {...rootProps}
-        className={cn(
-          "relative inline-flex w-fit flex-col items-center justify-center",
-          className,
-        )}
+        className={cn("cn-gauge", className)}
       />
     </GaugeContext.Provider>
   );
@@ -363,7 +360,7 @@ function GaugeIndicator(props: React.ComponentProps<"svg">) {
       width={size}
       height={size}
       {...indicatorProps}
-      className={cn("transform", className)}
+      className={cn("cn-gauge-indicator", className)}
     />
   );
 }
@@ -386,7 +383,7 @@ function GaugeTrack(props: PathProps) {
       strokeLinecap="round"
       vectorEffect="non-scaling-stroke"
       {...trackProps}
-      className={cn("text-muted-foreground/20", className)}
+      className={cn("cn-gauge-track", className)}
     />
   );
 }
@@ -433,10 +430,7 @@ function GaugeRange(props: PathProps) {
       strokeDashoffset={strokeDashoffset}
       vectorEffect="non-scaling-stroke"
       {...rangeProps}
-      className={cn(
-        "text-primary transition-[stroke-dashoffset] duration-700 ease-out",
-        className,
-      )}
+      className={cn("cn-gauge-range", className)}
     />
   );
 }
@@ -458,10 +452,7 @@ function GaugeValueText(props: DivProps) {
         top: `${arcCenterY}px`,
         ...style,
       }}
-      className={cn(
-        "absolute right-0 left-0 flex -translate-y-1/2 items-center justify-center text-2xl font-semibold",
-        className,
-      )}
+      className={cn("cn-gauge-value-text", className)}
     >
       {children ?? valueText}
     </ValueTextPrimitive>
@@ -480,10 +471,7 @@ function GaugeLabel(props: DivProps) {
       id={labelId}
       data-state={state}
       {...labelProps}
-      className={cn(
-        "mt-2 text-sm font-medium text-muted-foreground",
-        className,
-      )}
+      className={cn("cn-gauge-label", className)}
     />
   );
 }

@@ -7,17 +7,7 @@ import { Separator } from "@/registry/bases/base/ui/separator";
 
 function Stat({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
-      data-slot="stat"
-      className={cn(
-        "grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 rounded-lg border bg-card p-4 text-card-foreground shadow-sm",
-        "**:data-[slot=stat-label]:col-span-1 **:data-[slot=stat-value]:col-span-1",
-        "**:data-[slot=stat-indicator]:col-start-2 **:data-[slot=stat-indicator]:row-span-2 **:data-[slot=stat-indicator]:row-start-1 **:data-[slot=stat-indicator]:self-start",
-        "**:data-[slot=stat-description]:col-span-2 **:data-[slot=stat-separator]:col-span-2 **:data-[slot=stat-trend]:col-span-2",
-        className,
-      )}
-      {...props}
-    />
+    <div data-slot="stat" className={cn("cn-stat", className)} {...props} />
   );
 }
 
@@ -25,40 +15,33 @@ function StatLabel({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="stat-label"
-      className={cn("text-sm font-medium text-muted-foreground", className)}
+      className={cn("cn-stat-label", className)}
       {...props}
     />
   );
 }
 
-const statIndicatorVariants = cva(
-  "flex shrink-0 items-center justify-center [&_svg]:pointer-events-none",
-  {
-    variants: {
-      variant: {
-        default: "text-muted-foreground [&_svg:not([class*='size-'])]:size-5",
-        icon: "size-8 rounded-md border [&_svg:not([class*='size-'])]:size-3.5",
-        badge:
-          "h-6 min-w-6 rounded-sm border px-1.5 text-xs font-medium [&_svg:not([class*='size-'])]:size-3",
-        action:
-          "size-8 cursor-pointer rounded-md transition-colors hover:bg-muted/50 [&_svg:not([class*='size-'])]:size-4",
-      },
-      color: {
-        default: "bg-muted text-muted-foreground",
-        success:
-          "border-green-500/20 bg-green-500/10 text-green-600 dark:text-green-400",
-        info: "border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400",
-        warning:
-          "border-orange-500/20 bg-orange-500/10 text-orange-600 dark:text-orange-400",
-        error: "border-destructive/20 bg-destructive/10 text-destructive",
-      },
+const statIndicatorVariants = cva("cn-stat-indicator", {
+  variants: {
+    variant: {
+      default: "cn-stat-indicator-variant-default",
+      icon: "cn-stat-indicator-variant-icon",
+      badge: "cn-stat-indicator-variant-badge",
+      action: "cn-stat-indicator-variant-action",
     },
-    defaultVariants: {
-      variant: "default",
-      color: "default",
+    color: {
+      default: "cn-stat-indicator-color-default",
+      success: "cn-stat-indicator-color-success",
+      info: "cn-stat-indicator-color-info",
+      warning: "cn-stat-indicator-color-warning",
+      error: "cn-stat-indicator-color-error",
     },
   },
-);
+  defaultVariants: {
+    variant: "default",
+    color: "default",
+  },
+});
 
 interface StatIndicatorProps
   extends
@@ -86,7 +69,7 @@ function StatValue({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="stat-value"
-      className={cn("text-2xl font-semibold tracking-tight", className)}
+      className={cn("cn-stat-value", className)}
       {...props}
     />
   );
@@ -102,7 +85,7 @@ function StatTrend({
       data-slot="stat-trend"
       data-trend={trend}
       className={cn(
-        "inline-flex items-center gap-1 text-xs font-medium [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3",
+        "cn-stat-trend",
         {
           "text-green-600 dark:text-green-400": trend === "up",
           "text-red-600 dark:text-red-400": trend === "down",
@@ -116,14 +99,20 @@ function StatTrend({
 }
 
 function StatSeparator({ ...props }: React.ComponentProps<typeof Separator>) {
-  return <Separator data-slot="stat-separator" className="my-2" {...props} />;
+  return (
+    <Separator
+      data-slot="stat-separator"
+      className="cn-stat-separator"
+      {...props}
+    />
+  );
 }
 
 function StatDescription({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="stat-description"
-      className={cn("text-xs text-muted-foreground", className)}
+      className={cn("cn-stat-description", className)}
       {...props}
     />
   );

@@ -608,10 +608,7 @@ function PhoneInput(props: PhoneInputProps) {
         role: "group",
         id: rootId,
         ref: composedRef,
-        className: cn(
-          "relative flex h-10 w-full items-center rounded-md border border-input bg-background transition-colors has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot][aria-invalid=true]]:ring-[3px] has-[[data-slot][aria-invalid=true]]:ring-destructive/20 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 data-disabled:cursor-not-allowed data-disabled:opacity-50",
-          className,
-        ),
+        className: cn("cn-phone-input", className),
       },
       rootProps,
     ),
@@ -686,17 +683,14 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
       <PopoverTrigger
         data-slot="phone-input-country-select"
         disabled={isDisabled}
-        className={cn(
-          "flex h-full shrink-0 items-center gap-2 rounded-l-md border-r border-input bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40",
-          className,
-        )}
+        className={cn("cn-phone-input-country-select", className)}
       >
         {!countryContext ? (
-          <div className="h-4 w-6 rounded bg-muted/50" />
+          <div className="cn-phone-input-country-select-2" />
         ) : (
           showFlag &&
           countryContext.flag && (
-            <div className="w-6 text-lg leading-none">
+            <div className="cn-phone-input-country-select-3">
               {countryContext.flag}
             </div>
           )
@@ -707,10 +701,10 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
           hugeicons="ArrowDown01Icon"
           phosphor="CaretDownIcon"
           remixicon="RiArrowDownSLine"
-          className="size-4 opacity-50"
+          className="cn-phone-input-country-select-4"
         />
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-0" align="start">
+      <PopoverContent className="cn-phone-input-country-select-5" align="start">
         <Command>
           <CommandInput placeholder="Search country..." />
           <CommandList>
@@ -729,10 +723,16 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
                   }}
                 >
                   {showFlag && c.flag && (
-                    <span className="text-lg">{c.flag}</span>
+                    <span className="cn-phone-input-country-select-6">
+                      {c.flag}
+                    </span>
                   )}
-                  <span className="flex-1">{c.name}</span>
-                  <span className="text-muted-foreground">{c.dialCode}</span>
+                  <span className="cn-phone-input-country-select-7">
+                    {c.name}
+                  </span>
+                  <span className="cn-phone-input-country-select-8">
+                    {c.dialCode}
+                  </span>
                   <IconPlaceholder
                     lucide="Check"
                     tabler="IconCheck"
@@ -740,7 +740,7 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
                     phosphor="CheckIcon"
                     remixicon="RiCheckLine"
                     className={cn(
-                      "size-4",
+                      "cn-phone-input-country-select-9",
                       country === c.code ? "opacity-100" : "opacity-0",
                     )}
                   />
@@ -819,10 +819,7 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
       required={isRequired}
       {...inputProps}
       ref={composedRef}
-      className={cn(
-        "h-full flex-1 rounded-l-none rounded-r-md border-0 bg-transparent shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:bg-transparent aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 rtl:rounded-l-md rtl:rounded-r-none dark:bg-transparent dark:disabled:bg-transparent dark:aria-invalid:ring-destructive/40",
-        className,
-      )}
+      className={cn("cn-phone-input-field", className)}
       placeholder={placeholder}
       value={displayValue}
       onChange={onChange}

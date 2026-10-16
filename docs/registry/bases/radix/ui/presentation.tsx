@@ -26,7 +26,7 @@ function Presentation({
   return (
     <PresentationPrimitive.Root
       data-slot="presentation"
-      className={cn("relative flex overflow-hidden", className)}
+      className={cn("cn-presentation", className)}
       {...props}
     />
   );
@@ -39,10 +39,7 @@ function PresentationContent({
   return (
     <div
       data-slot="presentation-content"
-      className={cn(
-        "relative isolate flex flex-1 flex-col overflow-hidden",
-        className,
-      )}
+      className={cn("cn-presentation-content", className)}
       {...props}
     />
   );
@@ -59,10 +56,7 @@ function PresentationViewport({
       autoFit={autoFit}
       autoFitPadding={autoFitPadding}
       data-slot="presentation-viewport"
-      className={cn(
-        "flex flex-1 items-center justify-center overflow-hidden bg-background",
-        className,
-      )}
+      className={cn("cn-presentation-viewport", className)}
       {...props}
     />
   );
@@ -75,7 +69,7 @@ function PresentationSlide({
   return (
     <PresentationPrimitive.Slide
       data-slot="presentation-slide"
-      className={cn("border", className)}
+      className={cn("cn-presentation-slide", className)}
       {...props}
     />
   );
@@ -88,7 +82,7 @@ function PresentationSelection({
   return (
     <PresentationPrimitive.Selection
       data-slot="presentation-selection"
-      className={cn("[--presentation-selection:var(--ring)]", className)}
+      className={cn("cn-presentation-selection", className)}
       {...props}
     />
   );
@@ -102,10 +96,7 @@ function PresentationLoading({
   return (
     <PresentationPrimitive.Loading
       data-slot="presentation-loading"
-      className={cn(
-        "absolute inset-0 z-10 flex items-center justify-center text-sm text-muted-foreground",
-        className,
-      )}
+      className={cn("cn-presentation-loading", className)}
       {...props}
     >
       {children ?? ((progress) => <span>Loading… {progress}%</span>)}
@@ -121,10 +112,7 @@ function PresentationError({
   return (
     <PresentationPrimitive.Error
       data-slot="presentation-error"
-      className={cn(
-        "absolute inset-0 z-10 flex items-center justify-center text-sm text-destructive",
-        className,
-      )}
+      className={cn("cn-presentation-error", className)}
       {...props}
     >
       {children ?? ((error: Error) => <span>{error.message}</span>)}
@@ -139,10 +127,7 @@ function PresentationThumbnailItemPreview({
   return (
     <PresentationPrimitive.ThumbnailItemPreview
       data-slot="presentation-thumbnail-item-preview"
-      className={cn(
-        "w-full overflow-hidden rounded-sm data-pending:animate-pulse data-pending:bg-muted",
-        className,
-      )}
+      className={cn("cn-presentation-thumbnail-item-preview", className)}
       {...props}
     />
   );
@@ -155,10 +140,7 @@ function PresentationThumbnailItemNumber({
   return (
     <PresentationPrimitive.ThumbnailItemNumber
       data-slot="presentation-thumbnail-item-number"
-      className={cn(
-        "block text-center font-mono text-xs leading-none text-muted-foreground tabular-nums",
-        className,
-      )}
+      className={cn("cn-presentation-thumbnail-item-number", className)}
       {...props}
     />
   );
@@ -172,11 +154,7 @@ function PresentationThumbnailItem({
   return (
     <PresentationPrimitive.ThumbnailItem
       data-slot="presentation-thumbnail-item"
-      className={cn(
-        "relative flex w-full cursor-pointer gap-1.5 rounded-md border p-1.5 outline-none hover:bg-accent",
-        "ring-2 ring-transparent transition-[color,ring] duration-100 focus:ring-ring data-active:bg-accent",
-        className,
-      )}
+      className={cn("cn-presentation-thumbnail-item", className)}
       {...props}
     >
       {children ?? (
@@ -263,7 +241,7 @@ function PresentationThumbnailList({
           variant="outline"
           size="icon-sm"
           ref={triggerRef}
-          className="absolute top-2 left-2 z-10 bg-background/80 backdrop-blur-sm"
+          className="cn-presentation-thumbnail-list"
           onClick={() => setOpen((value) => !value)}
         >
           <IconPlaceholder
@@ -284,7 +262,7 @@ function PresentationThumbnailList({
         ref={listRef}
         render={<aside />}
         className={cn(
-          "flex w-40 shrink-0 flex-col gap-2 overflow-y-auto border-r bg-background p-1.5",
+          "cn-presentation-thumbnail-list-2",
           isMobile && "absolute inset-y-0 left-0 z-20 transition-transform",
           isHidden && "-translate-x-full",
           className,

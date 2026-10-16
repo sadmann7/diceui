@@ -47,7 +47,7 @@ export async function ComponentSource({
   let registryPath: string | undefined;
 
   if (name) {
-    const item = getRegistryItem(name, base);
+    const item = await getRegistryItem(name, base);
     code = item?.files?.[0]?.content;
     registryPath = item?.files?.[0]?.path;
   }

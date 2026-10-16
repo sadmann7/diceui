@@ -392,7 +392,7 @@ function Marquee(props: MarqueeProps) {
         tabIndex: pauseOnKeyboard ? 0 : undefined,
         ref: composedRef,
         className: cn(
-          "relative flex overflow-hidden motion-reduce:animate-none",
+          "cn-marquee",
           orientation === "vertical" && "h-full flex-col",
           orientation === "horizontal" && "w-full",
           paused && "**:paused",
@@ -415,56 +415,53 @@ function Marquee(props: MarqueeProps) {
 
   return (
     <MarqueeContext.Provider value={contextValue}>
-      <div data-slot="marquee-wrapper" className="grid">
+      <div data-slot="marquee-wrapper" className="cn-marquee-wrapper">
         {element}
       </div>
     </MarqueeContext.Provider>
   );
 }
 
-const marqueeContentVariants = cva(
-  "flex min-w-full shrink-0 gap-(--marquee-gap)",
-  {
-    variants: {
-      side: {
-        left: "animate-marquee-left",
-        right: "animate-marquee-right",
-        top: "min-h-full min-w-auto animate-marquee-up flex-col",
-        bottom: "min-h-full min-w-auto animate-marquee-down flex-col",
-      },
-      dir: {
-        ltr: "",
-        rtl: "",
-      },
-      pauseOnHover: {
-        true: "group-hover:[animation-play-state:paused]",
-        false: "",
-      },
-      reverse: {
-        true: "[animation-direction:reverse]",
-        false: "",
-      },
+const marqueeContentVariants = cva("cn-marquee-content", {
+  variants: {
+    side: {
+      left: "cn-marquee-content-side-left",
+      right: "cn-marquee-content-side-right",
+      top: "cn-marquee-content-side-top",
+      bottom: "cn-marquee-content-side-bottom",
     },
-    compoundVariants: [
-      {
-        side: "left",
-        dir: "rtl",
-        className: "animate-marquee-left-rtl",
-      },
-      {
-        side: "right",
-        dir: "rtl",
-        className: "animate-marquee-right-rtl",
-      },
-    ],
-    defaultVariants: {
-      side: "left",
-      dir: "ltr",
-      pauseOnHover: false,
-      reverse: false,
+    dir: {
+      ltr: "",
+      rtl: "",
+    },
+    pauseOnHover: {
+      true: "cn-marquee-content-pause-on-hover-true",
+      false: "",
+    },
+    reverse: {
+      true: "cn-marquee-content-reverse-true",
+      false: "",
     },
   },
-);
+  compoundVariants: [
+    {
+      side: "left",
+      dir: "rtl",
+      className: "animate-marquee-left-rtl",
+    },
+    {
+      side: "right",
+      dir: "rtl",
+      className: "animate-marquee-right-rtl",
+    },
+  ],
+  defaultVariants: {
+    side: "left",
+    dir: "ltr",
+    pauseOnHover: false,
+    reverse: false,
+  },
+});
 
 interface MarqueeContentProps
   extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
@@ -556,10 +553,7 @@ function MarqueeContent(props: MarqueeContentProps) {
     <>
       <div
         ref={composedRef}
-        className={cn(
-          "flex shrink-0 gap-(--marquee-gap)",
-          isVertical && "flex-col",
-        )}
+        className={cn("cn-marquee-content-2", isVertical && "flex-col")}
       >
         {children}
       </div>
@@ -615,7 +609,7 @@ function MarqueeItem({ className, render, ...itemProps }: MarqueeItemProps) {
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
-      { className: cn("shrink-0", className) },
+      { className: cn("cn-marquee-item", className) },
       itemProps,
     ),
     render,
@@ -629,15 +623,13 @@ interface MarqueeEdgeProps
     React.ComponentProps<"div">,
     useRender.ComponentProps<"div"> {}
 
-const marqueeEdgeVariants = cva("pointer-events-none absolute z-10", {
+const marqueeEdgeVariants = cva("cn-marquee-edge", {
   variants: {
     side: {
-      left: "top-0 [left:0] h-full bg-linear-to-r from-background to-transparent",
-      right:
-        "top-0 [right:0] h-full bg-linear-to-l from-background to-transparent",
-      top: "top-0 left-0 w-full bg-linear-to-b from-background to-transparent",
-      bottom:
-        "bottom-0 left-0 w-full bg-linear-to-t from-background to-transparent",
+      left: "cn-marquee-edge-side-left",
+      right: "cn-marquee-edge-side-right",
+      top: "cn-marquee-edge-side-top",
+      bottom: "cn-marquee-edge-side-bottom",
     },
     size: {
       default: "",

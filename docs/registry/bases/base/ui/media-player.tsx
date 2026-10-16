@@ -734,19 +734,13 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
             onMouseMove,
             onKeyDown,
             onKeyUp,
-            className: cn(
-              "dark relative isolate flex size-full flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 data-disabled:pointer-events-none data-disabled:opacity-50 [&_video]:relative [&_video]:object-contain",
-              "in-[:fullscreen]:flex in-[:fullscreen]:h-full in-[:fullscreen]:max-h-screen in-[:fullscreen]:flex-col in-[:fullscreen]:justify-between data-[state=fullscreen]:[&_video]:size-full",
-              "**:data-slider:relative [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default",
-              "[&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]!",
-              className,
-            ),
+            className: cn("cn-media-player-impl dark", className),
             children: (
               <>
-                <span id={labelId} className="sr-only">
+                <span id={labelId} className="cn-media-player-impl-2">
                   {label ?? "Media player"}
                 </span>
-                <span id={descriptionId} className="sr-only">
+                <span id={descriptionId} className="cn-media-player-impl-3">
                   {isVideo
                     ? "Video player with custom controls for playback, volume, seeking, and more. Use space bar to play/pause, arrow keys (←/→) to seek, and arrow keys (↑/↓) to adjust volume."
                     : "Audio player with custom controls for playback, volume, seeking, and more. Use space bar to play/pause, Shift + arrow keys (←/→) to seek, and arrow keys (↑/↓) to adjust volume."}
@@ -858,10 +852,7 @@ function MediaPlayerControls(props: DivProps) {
     props: mergeProps<"div">(
       {
         dir: context.dir,
-        className: cn(
-          "dark pointer-events-none absolute right-0 bottom-0 left-0 z-50 flex items-center gap-2 px-4 py-3 opacity-0 transition-opacity duration-200 in-[:fullscreen]:px-6 in-[:fullscreen]:py-4 data-visible:pointer-events-auto data-visible:opacity-100",
-          className,
-        ),
+        className: cn("cn-media-player-controls dark", className),
       },
       controlsProps,
     ),
@@ -926,10 +917,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
       {
         role: "status",
         "aria-live": "polite" as const,
-        className: cn(
-          "pointer-events-none absolute inset-0 z-50 flex animate-in items-center justify-center duration-200 fade-in-0 zoom-in-95",
-          className,
-        ),
+        className: cn("cn-media-player-loading", className),
         children: children ?? (
           <IconPlaceholder
             lucide="Loader2Icon"
@@ -937,7 +925,7 @@ function MediaPlayerLoading(props: MediaPlayerLoadingProps) {
             hugeicons="Loading03Icon"
             phosphor="SpinnerIcon"
             remixicon="RiLoader4Line"
-            className="size-20 animate-spin stroke-[.0938rem] text-primary"
+            className="cn-media-player-loading-2"
           />
         ),
       },
@@ -1068,29 +1056,22 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
         "aria-describedby": descriptionId,
         "aria-labelledby": labelId,
         "aria-live": "assertive" as const,
-        className: cn(
-          "pointer-events-auto absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80 text-white backdrop-blur-sm",
-          className,
-        ),
+        className: cn("cn-media-player-error", className),
         children: children ?? (
-          <div className="flex max-w-md flex-col items-center gap-4 px-6 py-8 text-center">
+          <div className="cn-media-player-error-2">
             <IconPlaceholder
               lucide="AlertTriangleIcon"
               tabler="IconAlertTriangle"
               hugeicons="Alert02Icon"
               phosphor="WarningIcon"
               remixicon="RiAlertLine"
-              className="size-12 text-destructive"
+              className="cn-media-player-error-3"
             />
-            <div className="flex flex-col gap-px text-center">
-              <h3 className="text-xl font-semibold tracking-tight">
-                {errorLabel}
-              </h3>
-              <p className="text-sm leading-relaxed text-balance text-muted-foreground">
-                {errorDescription}
-              </p>
+            <div className="cn-media-player-error-4">
+              <h3 className="cn-media-player-error-5">{errorLabel}</h3>
+              <p className="cn-media-player-error-6">{errorDescription}</p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="cn-media-player-error-7">
               <Button
                 variant="secondary"
                 size="sm"
@@ -1104,7 +1085,7 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
                     hugeicons="Loading03Icon"
                     phosphor="SpinnerIcon"
                     remixicon="RiLoader4Line"
-                    className="animate-spin"
+                    className="cn-media-player-error-8"
                   />
                 ) : (
                   <IconPlaceholder
@@ -1130,7 +1111,7 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
                     hugeicons="Loading03Icon"
                     phosphor="SpinnerIcon"
                     remixicon="RiLoader4Line"
-                    className="animate-spin"
+                    className="cn-media-player-error-9"
                   />
                 ) : (
                   <IconPlaceholder
@@ -1185,13 +1166,10 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
         role: "status",
         "aria-live": "polite" as const,
         "aria-label": `Volume ${mediaMuted ? "muted" : `${volumePercentage}%`}`,
-        className: cn(
-          "pointer-events-none absolute inset-0 z-50 flex items-center justify-center",
-          className,
-        ),
+        className: cn("cn-media-player-volume-indicator", className),
         children: (
-          <div className="flex animate-in flex-col items-center gap-3 rounded-lg bg-black/30 px-6 py-4 text-white backdrop-blur-xs duration-200 fade-in-0 zoom-in-95">
-            <div className="flex items-center gap-2">
+          <div className="cn-media-player-volume-indicator-2">
+            <div className="cn-media-player-volume-indicator-3">
               {mediaVolumeLevel === "off" || mediaMuted ? (
                 <IconPlaceholder
                   lucide="VolumeXIcon"
@@ -1199,7 +1177,7 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
                   hugeicons="VolumeOffIcon"
                   phosphor="SpeakerSlashIcon"
                   remixicon="RiVolumeMuteLine"
-                  className="size-6"
+                  className="cn-media-player-volume-indicator-4"
                 />
               ) : mediaVolumeLevel === "high" ? (
                 <IconPlaceholder
@@ -1208,7 +1186,7 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
                   hugeicons="VolumeHighIcon"
                   phosphor="SpeakerHighIcon"
                   remixicon="RiVolumeUpLine"
-                  className="size-6"
+                  className="cn-media-player-volume-indicator-5"
                 />
               ) : (
                 <IconPlaceholder
@@ -1217,19 +1195,19 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
                   hugeicons="VolumeLowIcon"
                   phosphor="SpeakerLowIcon"
                   remixicon="RiVolumeDownLine"
-                  className="size-6"
+                  className="cn-media-player-volume-indicator-6"
                 />
               )}
-              <span className="text-sm font-medium tabular-nums">
+              <span className="cn-media-player-volume-indicator-7">
                 {mediaMuted ? "Muted" : `${volumePercentage}%`}
               </span>
             </div>
-            <div className="flex items-center gap-1">
+            <div className="cn-media-player-volume-indicator-8">
               {Array.from({ length: barCount }, (_, index) => (
                 <div
                   key={index}
                   className={cn(
-                    "w-1.5 rounded-full transition-all duration-150",
+                    "cn-media-player-volume-indicator-9",
                     index < activeBarCount && !mediaMuted
                       ? "scale-100 bg-white"
                       : "scale-90 bg-white/30",
@@ -1267,10 +1245,7 @@ function MediaPlayerControlsOverlay(props: DivProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn(
-          "pointer-events-none absolute inset-0 -z-10 bg-linear-to-t from-black/80 to-transparent opacity-0 transition-opacity duration-200 data-visible:opacity-100",
-          className,
-        ),
+        className: cn("cn-media-player-controls-overlay", className),
       },
       overlayProps,
     ),
@@ -1324,10 +1299,7 @@ function MediaPlayerPlay(props: React.ComponentProps<typeof Button>) {
         {...playButtonProps}
         variant="ghost"
         size="icon"
-        className={cn(
-          "size-8 [&_svg:not([class*='fill-'])]:fill-current",
-          className,
-        )}
+        className={cn("cn-media-player-play-button", className)}
         onClick={onPlayToggle}
       >
         {children ??
@@ -1405,7 +1377,7 @@ function MediaPlayerSeekBackward(props: MediaPlayerSeekBackwardProps) {
         {...seekBackwardProps}
         variant="ghost"
         size="icon"
-        className={cn("size-8", className)}
+        className={cn("cn-media-player-seek-backward", className)}
         onClick={onSeekBackward}
       >
         {children ?? (
@@ -1479,7 +1451,7 @@ function MediaPlayerSeekForward(props: MediaPlayerSeekForwardProps) {
         {...seekForwardProps}
         variant="ghost"
         size="icon"
-        className={cn("size-8", className)}
+        className={cn("cn-media-player-seek-forward", className)}
         onClick={onSeekForward}
       >
         {children ?? (
@@ -2098,7 +2070,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           role="presentation"
           aria-hidden="true"
           data-slot="media-player-seek-chapter-separator"
-          className="absolute top-0 h-full bg-zinc-50 dark:bg-zinc-950"
+          className="cn-media-player-seek-chapter-separator"
           style={{
             width: ".1563rem",
             left: `${position}%`,
@@ -2137,7 +2109,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   }, [thumbnail?.coords, thumbnail?.src]);
 
   const SeekSlider = (
-    <div data-slot="media-player-seek-container" className="relative w-full">
+    <div
+      data-slot="media-player-seek-container"
+      className="cn-media-player-seek-container"
+    >
       <SliderPrimitive.Root
         aria-controls={context.mediaId}
         aria-valuetext={`${currentTime} of ${duration}`}
@@ -2150,10 +2125,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         min={seekableStart}
         max={seekableEnd}
         step={0.01}
-        className={cn(
-          "relative flex w-full touch-none items-center select-none data-disabled:pointer-events-none data-disabled:opacity-50",
-          className,
-        )}
+        className={cn("cn-media-player-seek", className)}
         value={[displayValue]}
         onValueChange={onSeek}
         onValueCommitted={onSeekCommit}
@@ -2161,20 +2133,20 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
         onPointerLeave={onPointerLeave}
         onPointerMove={onPointerMove}
       >
-        <SliderPrimitive.Control className="relative flex w-full items-center">
-          <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-primary/40">
+        <SliderPrimitive.Control className="cn-media-player-seek-2">
+          <SliderPrimitive.Track className="cn-media-player-seek-3">
             <div
               data-slot="media-player-seek-buffered"
-              className="absolute h-full bg-primary/70 will-change-[width]"
+              className="cn-media-player-seek-buffered"
               style={{
                 width: `${bufferedProgress * 100}%`,
               }}
             />
-            <SliderPrimitive.Indicator className="absolute h-full bg-primary will-change-[width]" />
+            <SliderPrimitive.Indicator className="cn-media-player-seek-4" />
             {seekState.isHovering && seekableEnd > 0 && (
               <div
                 data-slot="media-player-seek-hover-range"
-                className="absolute h-full bg-primary/70 will-change-[width,opacity]"
+                className="cn-media-player-seek-hover-range"
                 style={{
                   width: `var(${SEEK_HOVER_PERCENT}, 0%)`,
                   transition: "opacity 150ms ease-out",
@@ -2183,7 +2155,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             )}
             {chapterSeparators}
           </SliderPrimitive.Track>
-          <SliderPrimitive.Thumb className="relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50" />
+          <SliderPrimitive.Thumb className="cn-media-player-seek-5" />
         </SliderPrimitive.Control>
       </SliderPrimitive.Root>
       {!withoutTooltip &&
@@ -2193,7 +2165,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
           <MediaPlayerPortal>
             <div
               ref={tooltipRef}
-              className="pointer-events-none z-50 contain-[layout_style] [transition:opacity_150ms_ease-in-out] backface-hidden"
+              className="cn-media-player-seek-6"
               style={{
                 position: "fixed" as const,
                 left: `var(${SEEK_TOOLTIP_X}, 0rem)`,
@@ -2205,7 +2177,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
             >
               <div
                 className={cn(
-                  "flex flex-col items-center gap-1.5 rounded-md border bg-background text-foreground shadow-sm dark:bg-zinc-900",
+                  "cn-media-player-seek-7",
                   thumbnail && "min-h-10",
                   !thumbnail && currentChapterCue && "px-3 py-1.5",
                 )}
@@ -2213,7 +2185,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 {thumbnail?.src && (
                   <div
                     data-slot="media-player-seek-thumbnail"
-                    className="overflow-hidden rounded-md rounded-b-none"
+                    className="cn-media-player-seek-thumbnail"
                     style={{
                       width: `${SPRITE_CONTAINER_WIDTH}px`,
                       height: `${SPRITE_CONTAINER_HEIGHT}px`,
@@ -2225,7 +2197,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                       <img
                         src={thumbnail.src}
                         alt={`Preview at ${hoverTime}`}
-                        className="size-full object-cover"
+                        className="cn-media-player-seek-8"
                       />
                     )}
                   </div>
@@ -2233,7 +2205,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 {currentChapterCue && (
                   <div
                     data-slot="media-player-seek-chapter-title"
-                    className="line-clamp-2 max-w-48 text-center text-xs text-balance"
+                    className="cn-media-player-seek-chapter-title"
                   >
                     {currentChapterCue.text}
                   </div>
@@ -2241,7 +2213,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
                 <div
                   data-slot="media-player-seek-time"
                   className={cn(
-                    "text-center text-xs whitespace-nowrap tabular-nums",
+                    "cn-media-player-seek-time",
                     thumbnail && "pb-1.5",
                     !(thumbnail || currentChapterCue) && "px-2.5 py-1",
                   )}
@@ -2259,10 +2231,10 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
   if (withTime) {
     return (
-      <div className="flex w-full items-center gap-2">
-        <span className="text-sm tabular-nums">{currentTime}</span>
+      <div className="cn-media-player-seek-9">
+        <span className="cn-media-player-seek-10">{currentTime}</span>
         {SeekSlider}
-        <span className="text-sm tabular-nums">{remainingTime}</span>
+        <span className="cn-media-player-seek-11">{remainingTime}</span>
       </div>
     );
   }
@@ -2338,7 +2310,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
       data-disabled={isDisabled ? "" : undefined}
       data-slot="media-player-volume-container"
       className={cn(
-        "group flex items-center",
+        "cn-media-player-volume-container group",
         expandable
           ? "gap-0 group-focus-within:gap-2 group-hover:gap-1.5"
           : "gap-1.5",
@@ -2356,7 +2328,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
           data-state={mediaMuted ? "on" : "off"}
           variant="ghost"
           size="icon"
-          className="size-8"
+          className="cn-media-player-volume-trigger"
           disabled={isDisabled}
           onClick={onMute}
         >
@@ -2398,7 +2370,7 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
         max={1}
         step={0.1}
         className={cn(
-          "relative flex touch-none items-center select-none",
+          "cn-media-player-volume",
           expandable
             ? "w-0 opacity-0 transition-[width,opacity] duration-200 ease-in-out group-focus-within:w-16 group-focus-within:opacity-100 group-hover:w-16 group-hover:opacity-100"
             : "w-16",
@@ -2409,11 +2381,11 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
         onValueChange={onVolumeChange}
         onValueCommitted={onVolumeCommit}
       >
-        <SliderPrimitive.Control className="relative flex w-full items-center">
-          <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-zinc-500">
-            <SliderPrimitive.Indicator className="absolute h-full bg-primary will-change-[width]" />
+        <SliderPrimitive.Control className="cn-media-player-volume-2">
+          <SliderPrimitive.Track className="cn-media-player-volume-3">
+            <SliderPrimitive.Indicator className="cn-media-player-volume-4" />
           </SliderPrimitive.Track>
-          <SliderPrimitive.Thumb className="block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50" />
+          <SliderPrimitive.Thumb className="cn-media-player-volume-5" />
         </SliderPrimitive.Control>
       </SliderPrimitive.Root>
     </div>
@@ -2464,11 +2436,11 @@ function MediaPlayerTime(props: MediaPlayerTimeProps) {
     times[variant]
   ) : (
     <>
-      <span className="tabular-nums">{times.current}</span>
+      <span className="cn-media-player-time">{times.current}</span>
       <span role="separator" aria-hidden="true" aria-valuenow={0} tabIndex={-1}>
         /
       </span>
-      <span className="tabular-nums">{times.duration}</span>
+      <span className="cn-media-player-time-2">{times.duration}</span>
     </>
   );
 
@@ -2559,7 +2531,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
               {...playbackSpeedProps}
               variant="ghost"
               size="icon"
-              className={cn("h-8 w-16 aria-expanded:bg-accent/50", className)}
+              className={cn("cn-media-player-playback-speed", className)}
             >
               {mediaPlaybackRate}x
             </Button>
@@ -2570,12 +2542,12 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
         container={context.portalContainer}
         sideOffset={sideOffset}
         align="center"
-        className="min-w-(--anchor-width) data-[side=top]:mb-3.5"
+        className="cn-media-player-playback-speed-2"
       >
         {speeds.map((speed) => (
           <DropdownMenuItem
             key={speed}
-            className="justify-between"
+            className="cn-media-player-playback-speed-3"
             onClick={() => onPlaybackRateChange(speed)}
           >
             {speed}x
@@ -2656,7 +2628,7 @@ function MediaPlayerLoop(props: MediaPlayerLoopProps) {
         {...loopProps}
         variant="ghost"
         size="icon"
-        className={cn("size-8", className)}
+        className={cn("cn-media-player-loop", className)}
         onClick={onLoopToggle}
       >
         {children ??
@@ -2667,7 +2639,7 @@ function MediaPlayerLoop(props: MediaPlayerLoopProps) {
               hugeicons="RepeatIcon"
               phosphor="RepeatIcon"
               remixicon="RiRepeatLine"
-              className="text-muted-foreground"
+              className="cn-media-player-loop-2"
             />
           ) : (
             <IconPlaceholder
@@ -2725,7 +2697,7 @@ function MediaPlayerFullscreen(props: MediaPlayerFullscreenProps) {
         {...fullscreenProps}
         variant="ghost"
         size="icon"
-        className={cn("size-8", className)}
+        className={cn("cn-media-player-fullscreen", className)}
         onClick={onFullscreen}
       >
         {children ??
@@ -2815,7 +2787,7 @@ function MediaPlayerPiP(props: MediaPlayerPiPProps) {
         {...pipButtonProps}
         variant="ghost"
         size="icon"
-        className={cn("size-8", className)}
+        className={cn("cn-media-player-pip", className)}
         onClick={onPictureInPicture}
       >
         {typeof children === "function"
@@ -2880,7 +2852,7 @@ function MediaPlayerCaptions(props: React.ComponentProps<typeof Button>) {
         {...captionsProps}
         variant="ghost"
         size="icon"
-        className={cn("size-8", className)}
+        className={cn("cn-media-player-captions", className)}
         onClick={onCaptionsToggle}
       >
         {children ??
@@ -2945,7 +2917,7 @@ function MediaPlayerDownload(props: React.ComponentProps<typeof Button>) {
         {...downloadProps}
         variant="ghost"
         size="icon"
-        className={cn("size-8", className)}
+        className={cn("cn-media-player-download", className)}
         onClick={onDownload}
       >
         {children ?? (
@@ -3093,7 +3065,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
               {...settingsProps}
               variant="ghost"
               size="icon"
-              className={cn("size-8 aria-expanded:bg-accent/50", className)}
+              className={cn("cn-media-player-settings", className)}
             >
               <IconPlaceholder
                 lucide="SettingsIcon"
@@ -3111,13 +3083,15 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
         side="top"
         sideOffset={sideOffset}
         container={context.portalContainer}
-        className="w-56 data-[side=top]:mb-3.5"
+        className="cn-media-player-settings-2"
       >
-        <DropdownMenuLabel className="sr-only">Settings</DropdownMenuLabel>
+        <DropdownMenuLabel className="cn-media-player-settings-3">
+          Settings
+        </DropdownMenuLabel>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            <span className="flex-1">Speed</span>
-            <Badge variant="outline" className="rounded-sm">
+            <span className="cn-media-player-settings-4">Speed</span>
+            <Badge variant="outline" className="cn-media-player-settings-5">
               {mediaPlaybackRate}x
             </Badge>
           </DropdownMenuSubTrigger>
@@ -3125,7 +3099,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
             {speeds.map((speed) => (
               <DropdownMenuItem
                 key={speed}
-                className="justify-between"
+                className="cn-media-player-settings-6"
                 onClick={() => onPlaybackRateChange(speed)}
               >
                 {speed}x
@@ -3145,14 +3119,14 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
         {context.isVideo && mediaRenditionList.length > 0 && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-              <span className="flex-1">Quality</span>
-              <Badge variant="outline" className="rounded-sm">
+              <span className="cn-media-player-settings-7">Quality</span>
+              <Badge variant="outline" className="cn-media-player-settings-8">
                 {selectedRenditionLabel}
               </Badge>
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               <DropdownMenuItem
-                className="justify-between"
+                className="cn-media-player-settings-9"
                 onClick={() => onRenditionChange("auto")}
               >
                 Auto
@@ -3185,7 +3159,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
                   return (
                     <DropdownMenuItem
                       key={rendition.id}
-                      className="justify-between"
+                      className="cn-media-player-settings-10"
                       onClick={() => onRenditionChange(rendition.id ?? "")}
                     >
                       {label}
@@ -3206,14 +3180,14 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
         )}
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
-            <span className="flex-1">Captions</span>
-            <Badge variant="outline" className="rounded-sm">
+            <span className="cn-media-player-settings-11">Captions</span>
+            <Badge variant="outline" className="cn-media-player-settings-12">
               {selectedSubtitleLabel}
             </Badge>
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent>
             <DropdownMenuItem
-              className="justify-between"
+              className="cn-media-player-settings-13"
               onClick={onSubtitlesToggle}
             >
               Off
@@ -3235,7 +3209,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
               return (
                 <DropdownMenuItem
                   key={`${subtitleTrack.kind}-${subtitleTrack.label}-${subtitleTrack.language}`}
-                  className="justify-between"
+                  className="cn-media-player-settings-14"
                   onClick={() => onShowSubtitleTrack(subtitleTrack)}
                 >
                   {subtitleTrack.label}
@@ -3300,12 +3274,9 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
   if ((!tooltip && !shortcut) || context.withoutTooltip) return <>{children}</>;
 
   const trigger = React.isValidElement(children) ? (
-    <TooltipTrigger
-      className="text-foreground focus-visible:ring-ring/50"
-      render={children}
-    />
+    <TooltipTrigger className="cn-media-player-tooltip" render={children} />
   ) : (
-    <TooltipTrigger className="text-foreground focus-visible:ring-ring/50">
+    <TooltipTrigger className="cn-media-player-tooltip-2">
       {children}
     </TooltipTrigger>
   );
@@ -3317,17 +3288,17 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
         <TooltipContent
           container={context.portalContainer}
           sideOffset={tooltipSideOffset}
-          className="flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-zinc-900 [&>span]:hidden"
+          className="cn-media-player-tooltip-3"
         >
           <p>{tooltip}</p>
           {Array.isArray(shortcut) ? (
-            <div className="flex items-center gap-1">
+            <div className="cn-media-player-tooltip-4">
               {shortcut.map((shortcutKey) => (
-                <kbd
-                  key={shortcutKey}
-                  className="rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs select-none"
-                >
-                  <abbr title={shortcutKey} className="no-underline">
+                <kbd key={shortcutKey} className="cn-media-player-tooltip-5">
+                  <abbr
+                    title={shortcutKey}
+                    className="cn-media-player-tooltip-6"
+                  >
                     {shortcutKey}
                   </abbr>
                 </kbd>
@@ -3335,11 +3306,8 @@ function MediaPlayerTooltip(props: MediaPlayerTooltipProps) {
             </div>
           ) : (
             shortcut && (
-              <kbd
-                key={shortcut}
-                className="rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-foreground shadow-xs select-none"
-              >
-                <abbr title={shortcut} className="no-underline">
+              <kbd key={shortcut} className="cn-media-player-tooltip-7">
+                <abbr title={shortcut} className="cn-media-player-tooltip-8">
                   {shortcut}
                 </abbr>
               </kbd>

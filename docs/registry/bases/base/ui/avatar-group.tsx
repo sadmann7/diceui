@@ -4,11 +4,11 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
 
-const avatarGroupVariants = cva("flex items-center", {
+const avatarGroupVariants = cva("cn-avatar-group", {
   variants: {
     orientation: {
-      horizontal: "flex-row",
-      vertical: "flex-col",
+      horizontal: "cn-avatar-group-orientation-horizontal",
+      vertical: "cn-avatar-group-orientation-vertical",
     },
     dir: {
       ltr: "",
@@ -106,9 +106,7 @@ function AvatarGroup(props: AvatarGroupProps) {
                   renderOverflow ? (
                     renderOverflow(overflowCount)
                   ) : (
-                    <div className="inline-flex size-full items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
-                      +{overflowCount}
-                    </div>
+                    <div className="cn-avatar-group-2">+{overflowCount}</div>
                   )
                 }
                 index={visibleItems.length}
@@ -216,11 +214,7 @@ function AvatarGroupItem(props: AvatarGroupItemProps) {
 
   return React.cloneElement(child, {
     ...itemProps,
-    className: cn(
-      "size-full shrink-0 overflow-hidden rounded-full [&_img]:size-full",
-      className,
-      child.props.className,
-    ),
+    className: cn("cn-avatar-group-item", className, child.props.className),
     style: {
       ...maskStyle,
       ...style,

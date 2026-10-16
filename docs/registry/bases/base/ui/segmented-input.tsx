@@ -110,7 +110,7 @@ function SegmentedInput(props: SegmentedInputProps) {
             "aria-orientation": orientation,
             dir,
             className: cn(
-              "flex",
+              "cn-segmented-input",
               orientation === "horizontal" ? "flex-row" : "flex-col",
               className,
             ),
@@ -135,18 +135,18 @@ const segmentedInputItemVariants = cva("", {
   variants: {
     position: {
       isolated: "",
-      first: "rounded-r-none",
-      middle: "-ml-px rounded-none border-l-0",
-      last: "-ml-px rounded-l-none border-l-0",
+      first: "cn-segmented-input-item-position-first",
+      middle: "cn-segmented-input-item-position-middle",
+      last: "cn-segmented-input-item-position-last",
     },
     orientation: {
       horizontal: "",
       vertical: "",
     },
     size: {
-      sm: "h-8 px-2 text-xs",
-      default: "h-9 px-3",
-      lg: "h-11 px-4",
+      sm: "cn-segmented-input-item-size-sm",
+      default: "cn-segmented-input-item-size-default",
+      lg: "cn-segmented-input-item-size-lg",
     },
   },
   compoundVariants: [

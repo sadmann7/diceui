@@ -12,7 +12,7 @@ function TagsInput({
   return (
     <TagsInputPrimitive.Root
       data-slot="tags-input"
-      className={cn("flex w-[380px] flex-col gap-2", className)}
+      className={cn("cn-tags-input", className)}
       {...props}
     />
   );
@@ -25,10 +25,7 @@ function TagsInputLabel({
   return (
     <TagsInputPrimitive.Label
       data-slot="tags-input-label"
-      className={cn(
-        "text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-        className,
-      )}
+      className={cn("cn-tags-input-label", className)}
       {...props}
     />
   );
@@ -38,10 +35,7 @@ function TagsInputList({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="tags-input-list"
-      className={cn(
-        "flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
-        className,
-      )}
+      className={cn("cn-tags-input-list", className)}
       {...props}
     />
   );
@@ -54,10 +48,7 @@ function TagsInputInput({
   return (
     <TagsInputPrimitive.Input
       data-slot="tags-input-input"
-      className={cn(
-        "flex-1 bg-transparent outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
-        className,
-      )}
+      className={cn("cn-tags-input-input", className)}
       {...props}
     />
   );
@@ -71,23 +62,20 @@ function TagsInputItem({
   return (
     <TagsInputPrimitive.Item
       data-slot="tags-input-item"
-      className={cn(
-        "inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent px-2.5 py-1 text-sm focus:outline-hidden data-editable:select-none data-editing:bg-transparent data-editing:ring-1 data-editing:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50 [&:not([data-editing])]:pr-1.5 [&[data-highlighted]:not([data-editing])]:bg-accent [&[data-highlighted]:not([data-editing])]:text-accent-foreground",
-        className,
-      )}
+      className={cn("cn-tags-input-item", className)}
       {...props}
     >
-      <TagsInputPrimitive.ItemText className="truncate">
+      <TagsInputPrimitive.ItemText className="cn-tags-input-item-2">
         {children}
       </TagsInputPrimitive.ItemText>
-      <TagsInputPrimitive.ItemDelete className="size-4 shrink-0 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100">
+      <TagsInputPrimitive.ItemDelete className="cn-tags-input-item-3">
         <IconPlaceholder
           lucide="X"
           tabler="IconX"
           hugeicons="Cancel01Icon"
           phosphor="XIcon"
           remixicon="RiCloseLine"
-          className="size-3.5"
+          className="cn-tags-input-item-4"
         />
       </TagsInputPrimitive.ItemDelete>
     </TagsInputPrimitive.Item>

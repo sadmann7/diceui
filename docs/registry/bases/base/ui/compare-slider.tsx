@@ -271,7 +271,7 @@ function CompareSlider(props: CompareSliderProps) {
         "aria-valuenow": value,
         tabIndex: 0,
         className: cn(
-          "relative isolate touch-none overflow-hidden transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+          "cn-compare-slider",
           orientation === "horizontal" ? "w-full" : "h-full",
           className,
         ),
@@ -327,7 +327,7 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
         role: "img",
         "aria-labelledby": label ? labelId : undefined,
         "aria-hidden": label ? undefined : "true",
-        className: cn("absolute inset-0 h-full w-full object-cover", className),
+        className: cn("cn-compare-slider-before", className),
         style: {
           clipPath,
           ...style,
@@ -380,7 +380,7 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
         role: "img",
         "aria-labelledby": label ? labelId : undefined,
         "aria-hidden": label ? undefined : "true",
-        className: cn("absolute inset-0 h-full w-full object-cover", className),
+        className: cn("cn-compare-slider-after", className),
         style: {
           clipPath,
           ...style,
@@ -425,7 +425,7 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
         role: "presentation",
         "aria-hidden": "true",
         className: cn(
-          "absolute z-50 flex items-center justify-center",
+          "cn-compare-slider-handle",
           isVertical
             ? "left-0 h-10 w-full -translate-y-1/2"
             : "top-0 h-full w-10 [translate:-50%_0]",
@@ -443,16 +443,16 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
             <>
               <div
                 className={cn(
-                  "absolute bg-background",
+                  "cn-compare-slider-handle-2",
                   isVertical
                     ? "top-1/2 h-1 w-full -translate-y-1/2"
                     : "left-1/2 h-full w-1 -translate-x-1/2",
                 )}
               />
               {interaction === "drag" && (
-                <div className="z-50 flex aspect-square size-11 shrink-0 items-center justify-center rounded-full bg-background p-2 [&_svg]:size-4 [&_svg]:stroke-3 [&_svg]:text-muted-foreground [&_svg]:select-none">
+                <div className="cn-compare-slider-handle-3">
                   {isVertical ? (
-                    <div className="flex flex-col items-center">
+                    <div className="cn-compare-slider-handle-4">
                       <IconPlaceholder
                         lucide="ChevronUpIcon"
                         tabler="IconChevronUp"
@@ -469,7 +469,7 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
                       />
                     </div>
                   ) : (
-                    <div className="flex items-center">
+                    <div className="cn-compare-slider-handle-5">
                       <IconPlaceholder
                         lucide="ChevronLeftIcon"
                         tabler="IconChevronLeft"
@@ -517,7 +517,7 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
     props: mergeProps<"div">(
       {
         className: cn(
-          "absolute z-20 rounded-md border border-border bg-background/80 px-3 py-1.5 text-sm font-medium backdrop-blur-sm",
+          "cn-compare-slider-label",
           isVertical
             ? side === "before"
               ? "top-2 left-2"

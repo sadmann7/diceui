@@ -552,10 +552,9 @@ function SelectionToolbar(props: SelectionToolbarProps) {
             data-state={open ? "open" : "closed"}
             {...rootProps}
             className={cn(
-              "flex items-center gap-1 rounded-lg border bg-card px-1.5 py-1.5 shadow-lg outline-none",
+              "cn-selection-toolbar",
               isPositioned &&
                 "animate-in duration-200 fade-in-0 zoom-in-95 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
-              "motion-reduce:animate-none motion-reduce:transition-none",
               className,
             )}
             style={{
@@ -671,7 +670,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
       variant="ghost"
       size="icon"
       {...itemProps}
-      className={cn("size-8", className)}
+      className={cn("cn-selection-toolbar-item", className)}
       ref={composedRef}
       onPointerDown={onPointerDown}
       onClick={onClick}
@@ -692,7 +691,7 @@ function SelectionToolbarSeparator(props: DivProps) {
       aria-hidden="true"
       data-slot="selection-toolbar-separator"
       {...separatorProps}
-      className={cn("mx-0.5 h-6 w-px bg-border", className)}
+      className={cn("cn-selection-toolbar-separator", className)}
     />
   );
 }

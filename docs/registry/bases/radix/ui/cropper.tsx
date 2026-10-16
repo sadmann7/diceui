@@ -684,7 +684,7 @@ function Cropper(props: CropperProps) {
       <CropperContext.Provider value={contextValue}>
         <div
           data-slot="cropper-wrapper"
-          className={cn("relative size-full overflow-hidden", className)}
+          className={cn("cn-cropper-wrapper", className)}
         >
           <CropperImpl {...rootProps} />
         </div>
@@ -1281,10 +1281,7 @@ function CropperImpl(props: CropperImplProps) {
       tabIndex={0}
       {...rootImplProps}
       ref={composedRef}
-      className={cn(
-        "absolute inset-0 flex cursor-move touch-none items-center justify-center overflow-hidden outline-none select-none",
-        className,
-      )}
+      className={cn("cn-cropper-radix", className)}
       onKeyUp={onKeyUp}
       onKeyDown={onKeyDown}
       onMouseDown={onMouseDown}
@@ -1293,13 +1290,13 @@ function CropperImpl(props: CropperImplProps) {
   );
 }
 
-const cropperMediaVariants = cva("will-change-transform", {
+const cropperMediaVariants = cva("cn-cropper-media", {
   variants: {
     objectFit: {
-      contain: "absolute inset-0 m-auto max-h-full max-w-full",
-      cover: "h-auto w-full",
-      "horizontal-cover": "h-auto w-full",
-      "vertical-cover": "h-full w-auto",
+      contain: "cn-cropper-media-object-fit-contain",
+      cover: "cn-cropper-media-object-fit-cover",
+      "horizontal-cover": "cn-cropper-media-object-fit-horizontal-cover",
+      "vertical-cover": "cn-cropper-media-object-fit-vertical-cover",
     },
   },
   defaultVariants: {
@@ -1709,25 +1706,22 @@ function CropperVideo(props: CropperVideoProps) {
   );
 }
 
-const cropperAreaVariants = cva(
-  "absolute top-1/2 left-1/2 box-border -translate-x-1/2 -translate-y-1/2 overflow-hidden border border-[2.5px] border-white/90 shadow-[0_0_0_9999em_rgba(0,0,0,0.5)]",
-  {
-    variants: {
-      shape: {
-        rectangle: "",
-        circle: "rounded-full",
-      },
-      withGrid: {
-        true: "before:absolute before:top-0 before:right-1/3 before:bottom-0 before:left-1/3 before:box-border before:border before:border-t-0 before:border-b-0 before:border-white/50 before:content-[''] after:absolute after:top-1/3 after:right-0 after:bottom-1/3 after:left-0 after:box-border after:border after:border-r-0 after:border-l-0 after:border-white/50 after:content-['']",
-        false: "",
-      },
+const cropperAreaVariants = cva("cn-cropper-area", {
+  variants: {
+    shape: {
+      rectangle: "",
+      circle: "cn-cropper-area-shape-circle",
     },
-    defaultVariants: {
-      shape: "rectangle",
-      withGrid: false,
+    withGrid: {
+      true: "cn-cropper-area-with-grid-true",
+      false: "",
     },
   },
-);
+  defaultVariants: {
+    shape: "rectangle",
+    withGrid: false,
+  },
+});
 
 interface CropperAreaProps
   extends DivProps, VariantProps<typeof cropperAreaVariants> {
