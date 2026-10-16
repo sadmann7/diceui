@@ -10,7 +10,6 @@ type StyleMap = Record<string, string>;
 const styleMaps = new Map<string, StyleMap>([[DEFAULT_STYLE, defaultStyleMap]]);
 const pending = new Map<string, Promise<void>>();
 
-// The style `cn-*` markers expand to, set by `StyleScope` while previews render.
 let markerStyle = DEFAULT_STYLE;
 
 export function getMarkerStyle() {

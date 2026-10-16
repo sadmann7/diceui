@@ -220,9 +220,6 @@ async function buildRootIndex() {
 
 // ----------------------------------------------------------------------------
 // Build public/r/styles/{base}-{style}/{name}.json with inlined file content.
-//
-// Files with cn-* markers are compiled with the style's map from
-// registry/styles/style-{style}.css, falling back to the default style.
 // ----------------------------------------------------------------------------
 const compiledSources = new Map<string, Promise<string>>();
 const workers = Array.from(

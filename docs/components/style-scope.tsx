@@ -5,8 +5,6 @@ import * as React from "react";
 import { getStyleMap, loadStyleMap, setMarkerStyle } from "@/lib/marker-style";
 import { getServerStyle, getStyle, subscribeStyle } from "@/lib/style";
 
-// Renders registry components in the selected style, the way the shadcn CLI
-// compiles them, and remounts them once that style's classes have loaded.
 export function StyleScope({ children }: { children: React.ReactNode }) {
   const selected = React.useSyncExternalStore(
     subscribeStyle,

@@ -249,8 +249,6 @@ async function getRegistryNames(dir: string) {
   );
 }
 
-// Every shadcn marker with its New York classes and its classes in each
-// style, which `styles:sync` uses to restyle our components per style.
 async function syncRoles(styleRules: Record<string, Map<string, string>>) {
   const newYorkNames = await getRegistryNames("new-york-v4/ui");
   const names = [...(await getRegistryNames("bases/radix/ui"))].filter((name) =>

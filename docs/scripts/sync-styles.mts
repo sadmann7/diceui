@@ -4,11 +4,8 @@ import { twMerge } from "tailwind-merge";
 
 import { STYLES } from "../registry/styles";
 
-// Our markers are written once, in shadcn's New York classes, in
-// `style-new-york.css`. Each style is generated from it with what shadcn's own
-// components teach (`shadcn/roles.json`, from `pnpm shadcn:sync`): a marker
-// that copies a shadcn part takes that part's classes in the style, and other
-// classes follow how shadcn's styles change them most of the time.
+// Generates every style from `style-new-york.css` using how shadcn's own parts
+// change per style (`shadcn/roles.json`, from `pnpm shadcn:sync`).
 
 const STYLES_SRC_PATH = path.join(process.cwd(), "registry", "styles");
 const SOURCE_STYLE = "new-york";
@@ -38,7 +35,6 @@ function getUtility(token: string) {
   };
 }
 
-// The visual family of a class; layout classes have none and never change.
 function getFamily(token: string) {
   const match = getUtility(token)
     .utility.replace(/^-/, "")
@@ -54,8 +50,7 @@ function getFamily(token: string) {
   return /^p[xytrblse]?$/.test(match[1]!) ? "p" : match[1]!;
 }
 
-// The class in `classes` that does the same job as `token`, if any. Strict
-// means the same property, so `p-4` isn't a counterpart of `py-4`.
+// `strict` requires the same property, so `p-4` isn't a counterpart of `py-4`.
 function findCounterpart(token: string, classes: string[], strict = false) {
   return (
     classes.find((other) => unimportant(other) === token) ??
@@ -97,8 +92,6 @@ function isColor(token: string) {
   return false;
 }
 
-// A border the style adds that New York doesn't have, like Sera's underline
-// `border-b-input` next to `border-transparent`.
 function isAddedBorder(other: string, newYork: string[]) {
   const value = unimportant(other);
   return (
@@ -113,14 +106,12 @@ function isAddedBorder(other: string, newYork: string[]) {
   );
 }
 
-// The part a marker is, by name: `cn-editable-input` -> "input".
 const getKind = (marker: string) =>
   marker
     .replace(/(-\d+|-radix)+$/, "")
     .split("-")
     .pop();
 
-// `py-[2px]` (as some shadcn styles write it) on Tailwind's scale: `py-0.5`.
 function toSpacingScale(token: string) {
   return token.replace(
     /^(.*?)(-?(?:p[xytrblse]?|m[xytrblse]?|gap(?:-[xy])?|size|[hw]|min-[hw]|max-[hw]|inset(?:-[xy])?|top|right|bottom|left|start|end)-)\[(\d+)px\](!?)$/,
@@ -150,7 +141,6 @@ export function getRoleHints(css: string) {
 export function createStyleGenerator(roles: Roles) {
   const styleNames = STYLES.map((style) => style.name);
 
-  // Per shadcn marker, the New York classes some style changes.
   const sensitive = new Map<string, Set<string>>();
   const allSensitive = new Set<string>();
   for (const [marker, classesByStyle] of Object.entries(roles)) {
@@ -168,7 +158,6 @@ export function createStyleGenerator(roles: Roles) {
     for (const token of changed) allSensitive.add(token);
   }
 
-  // For classes no shadcn part explains: how most parts change them.
   const fallback = Object.fromEntries(
     styleNames.map((style) => {
       const votes = new Map<string, Map<string, number>>();
@@ -225,8 +214,6 @@ export function createStyleGenerator(roles: Roles) {
     }
   }
 
-  // Prefixed classes like `focus-visible:rounded-md` change like the bare
-  // class, keeping their prefix.
   function getFallback(token: string, style: string) {
     if (isColor(token)) return undefined;
     const exact = fallback[style]!.get(token);
@@ -240,8 +227,6 @@ export function createStyleGenerator(roles: Roles) {
       .join(" ");
   }
 
-  // The shadcn part a marker copies: the one explaining most of its visual
-  // classes, preferring the same kind of part, with coverage breaking ties.
   function findRole(tokens: string[], name: string) {
     const mine = tokens.filter((token) => allSensitive.has(token));
     const kind = getKind(name);

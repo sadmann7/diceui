@@ -25,9 +25,8 @@ function getStrings(node: ts.Node) {
   return strings.filter((value) => value.trim()).join(" ");
 }
 
-// Collects the class strings of a component file, keyed so a marker source
-// (`bases/radix/ui`) lines up with its compiled copy (`new-york-v4/ui`): by
-// `data-slot`, by `cva()` variant, or by position inside a function.
+// Keys line a marker source up with its `new-york-v4` copy: by `data-slot`,
+// `cva()` variant, or position inside a function.
 function getClassStrings(source: string) {
   const file = ts.createSourceFile(
     "component.tsx",
@@ -111,8 +110,6 @@ function getClassStrings(source: string) {
   return classes;
 }
 
-// The New York classes behind each marker in a component: the compiled
-// string minus the structural classes the marker source keeps inline.
 export function getNewYorkClasses(markerSource: string, newYorkSource: string) {
   const markerClasses = getClassStrings(markerSource);
   const newYorkClasses = getClassStrings(newYorkSource);
