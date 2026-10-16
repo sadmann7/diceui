@@ -1,11 +1,11 @@
 .style-luma {
   /* MARK: Action Bar */
   .cn-action-bar {
-    @apply fixed z-50 animate-in rounded-3xl border bg-card shadow-lg duration-250 fade-in-0 outline-none zoom-in-95 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)] data-[side=bottom]:slide-in-from-bottom-4 data-[side=top]:slide-in-from-top-4 motion-reduce:animate-none motion-reduce:transition-none;
+    @apply fixed z-50 animate-in rounded-4xl border bg-card shadow-xl duration-250 fade-in-0 outline-none zoom-in-95 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)] data-[side=bottom]:slide-in-from-bottom-4 data-[side=top]:slide-in-from-top-4 motion-reduce:animate-none motion-reduce:transition-none;
   }
 
   .cn-action-bar-selection {
-    @apply flex items-center gap-1 rounded-sm border px-2 py-1 text-sm font-medium tabular-nums;
+    @apply flex items-center gap-1 rounded-2xl border px-2 py-0.75 text-sm font-medium tabular-nums;
   }
 
   .cn-action-bar-group {
@@ -13,11 +13,11 @@
   }
 
   .cn-action-bar-close {
-    @apply rounded-xs opacity-70 outline-none hover:opacity-100 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5;
+    @apply rounded-2xl opacity-70 outline-none hover:opacity-100 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5;
   }
 
   .cn-action-bar-separator {
-    @apply bg-border in-data-[slot=action-bar-selection]:ml-0.5 in-data-[slot=action-bar-selection]:h-4 in-data-[slot=action-bar-selection]:w-px;
+    @apply bg-border/50 in-data-[slot=action-bar-selection]:ml-0.5 in-data-[slot=action-bar-selection]:h-4 in-data-[slot=action-bar-selection]:w-px;
   }
 
   /* MARK: Angle Slider */
@@ -42,11 +42,11 @@
   }
 
   .cn-angle-slider-thumb {
-    @apply block size-4 shrink-0 rounded-full border border-primary bg-background shadow-sm ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
+    @apply block size-4 shrink-0 rounded-full border border-primary bg-background shadow-md ring-black/10 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
   }
 
   .cn-angle-slider-value {
-    @apply pointer-events-none flex items-center justify-center text-sm font-medium text-foreground select-none;
+    @apply pointer-events-none flex items-center justify-center text-xs font-medium text-muted-foreground select-none;
   }
 
   /* MARK: Avatar Group */
@@ -63,7 +63,7 @@
   }
 
   .cn-avatar-group-2 {
-    @apply inline-flex size-full items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground;
+    @apply inline-flex size-full items-center justify-center rounded-3xl bg-muted text-xs font-medium text-muted-foreground;
   }
 
   .cn-avatar-group-item {
@@ -72,7 +72,7 @@
 
   /* MARK: Badge Overflow */
   .cn-badge-overflow-render-content {
-    @apply inline-flex h-5 shrink-0 items-center rounded-md border px-3 text-xs font-semibold;
+    @apply inline-flex h-5.5 shrink-0 items-center rounded-3xl border px-1.5 text-xs font-medium;
   }
 
   .cn-badge-overflow {
@@ -84,7 +84,7 @@
   }
 
   .cn-badge-overflow-3 {
-    @apply inline-flex h-5 shrink-0 items-center rounded-md border px-3 text-xs font-semibold;
+    @apply inline-flex h-5.5 shrink-0 items-center rounded-md border px-1.5 text-xs font-medium;
   }
 
   /* MARK: Banner */
@@ -137,7 +137,7 @@
   }
 
   .cn-banner-close {
-    @apply size-3.5;
+    @apply size-4;
   }
 
   /* MARK: Checkbox Group */
@@ -154,11 +154,11 @@
   }
 
   .cn-checkbox-group-item {
-    @apply flex w-fit items-center gap-2 text-sm leading-none select-none has-data-invalid:text-destructive has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50;
+    @apply flex w-fit items-center gap-2.5 text-sm leading-none select-none has-data-invalid:text-destructive has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50;
   }
 
   .cn-checkbox-group-item-2 {
-    @apply size-4 shrink-0 rounded-sm border border-primary shadow-sm focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-invalid:border-destructive [&[data-state=checked]:not([data-invalid])]:bg-primary [&[data-state=checked]:not([data-invalid])]:text-primary-foreground [&[data-state=checked][data-invalid]]:bg-destructive [&[data-state=checked][data-invalid]]:text-primary-foreground [&[data-state=unchecked][data-invalid]]:bg-transparent;
+    @apply size-4 shrink-0 rounded-full border border-primary shadow-md focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-invalid:border-destructive [&[data-state=checked]:not([data-invalid])]:bg-primary [&[data-state=checked]:not([data-invalid])]:text-primary-foreground [&[data-state=checked][data-invalid]]:bg-destructive [&[data-state=checked][data-invalid]]:text-primary-foreground [&[data-state=unchecked][data-invalid]]:bg-transparent;
   }
 
   .cn-checkbox-group-item-3 {
@@ -166,7 +166,7 @@
   }
 
   .cn-checkbox-group-item-4 {
-    @apply size-3.5;
+    @apply size-4;
   }
 
   .cn-checkbox-group-description {
@@ -200,19 +200,19 @@
 
   /* MARK: Color Picker */
   .cn-color-picker-content {
-    @apply flex w-85 flex-col gap-6 p-6;
+    @apply flex w-85 flex-col gap-6 p-4;
   }
 
   .cn-color-picker-content-2 {
-    @apply flex w-85 flex-col gap-6 p-6;
+    @apply flex w-85 flex-col gap-6 p-4;
   }
 
   .cn-color-picker-area {
-    @apply relative h-40 w-full cursor-crosshair touch-none rounded-sm border;
+    @apply relative h-40 w-full cursor-crosshair touch-none rounded-2xl border;
   }
 
   .cn-color-picker-area-2 {
-    @apply absolute inset-0 overflow-hidden rounded-sm;
+    @apply absolute inset-0 overflow-hidden rounded-2xl;
   }
 
   .cn-color-picker-area-3 {
@@ -228,7 +228,7 @@
   }
 
   .cn-color-picker-area-6 {
-    @apply absolute size-3 -translate-1/2 rounded-full border-2 border-white shadow-sm;
+    @apply absolute size-3 -translate-1/2 rounded-full border-2 border-white shadow-md;
   }
 
   .cn-color-picker-hue-slider {
@@ -268,11 +268,11 @@
   }
 
   .cn-color-picker-swatch {
-    @apply box-border size-8 rounded-sm border shadow-sm;
+    @apply box-border size-8 rounded-sm border shadow-md;
   }
 
   .cn-color-picker-input-group-item {
-    @apply h-9 [-moz-appearance:textfield] focus-visible:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none;
+    @apply h-8 [-moz-appearance:textfield] focus-visible:z-10 focus-visible:ring-1 [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none;
   }
 
   .cn-color-picker-input-group-item-position-first {
@@ -365,7 +365,7 @@
 
   /* MARK: Color Swatch */
   .cn-color-swatch {
-    @apply box-border rounded-sm border bg-clip-padding shadow-sm data-disabled:pointer-events-none data-disabled:opacity-50;
+    @apply box-border rounded-2xl border bg-clip-padding shadow-md data-disabled:pointer-events-none data-disabled:opacity-50;
   }
 
   .cn-color-swatch-size-default {
@@ -382,19 +382,19 @@
 
   /* MARK: Combobox */
   .cn-combobox-label {
-    @apply px-0.5 py-1.5 text-sm font-semibold;
+    @apply px-0.5 py-2.5 text-xs font-medium;
   }
 
   .cn-combobox-anchor {
-    @apply relative flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 shadow-xs data-focused:ring-1 data-focused:ring-ring;
+    @apply relative flex h-9 w-full items-center justify-between gap-2 rounded-3xl border border-transparent bg-input/50 px-3 py-1 data-focused:ring-1 data-focused:ring-ring;
   }
 
   .cn-combobox-input {
-    @apply flex h-9 w-full rounded-md bg-transparent text-base placeholder:text-muted-foreground focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm;
+    @apply flex h-9 w-full rounded-3xl bg-input/50 text-base placeholder:text-muted-foreground focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm;
   }
 
   .cn-combobox-trigger {
-    @apply flex shrink-0 items-center justify-center rounded-r-md border-input bg-transparent text-muted-foreground transition-colors hover:text-foreground/80 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex shrink-0 items-center justify-center rounded-3xl border-transparent bg-input/50 text-muted-foreground transition-colors hover:text-foreground/80 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .cn-combobox-trigger-2 {
@@ -402,7 +402,7 @@
   }
 
   .cn-combobox-cancel {
-    @apply absolute top-1/2 right-1 flex size-6 -translate-y-1/2 items-center justify-center rounded-sm bg-background opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none;
+    @apply absolute top-1/2 right-1 flex size-6 -translate-y-1/2 items-center justify-center rounded-2xl bg-background opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none;
   }
 
   .cn-combobox-badge-list {
@@ -410,7 +410,7 @@
   }
 
   .cn-combobox-badge-item {
-    @apply inline-flex items-center justify-between gap-1 rounded-sm bg-secondary px-2 py-0.5;
+    @apply inline-flex items-center justify-between gap-1 rounded-2xl bg-secondary px-3 py-0.5;
   }
 
   .cn-combobox-badge-item-2 {
@@ -426,7 +426,7 @@
   }
 
   .cn-combobox-content {
-    @apply relative z-50 max-h-fit min-w-(--dice-anchor-width) origin-(--dice-transform-origin) overflow-hidden rounded-md border bg-popover p-1.5 text-popover-foreground shadow-lg data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95;
+    @apply relative z-50 max-h-fit min-w-(--dice-anchor-width) origin-(--dice-transform-origin) overflow-hidden rounded-3xl border bg-popover p-1.5 text-popover-foreground shadow-lg data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95;
   }
 
   .cn-combobox-loading {
@@ -442,15 +442,15 @@
   }
 
   .cn-combobox-group-label {
-    @apply px-2 py-1.5 text-xs font-semibold text-muted-foreground;
+    @apply px-3 py-2.5 text-xs font-medium text-muted-foreground;
   }
 
   .cn-combobox-item {
-    @apply relative flex w-full cursor-default items-center rounded-sm py-1.5 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50;
+    @apply relative flex w-full cursor-default items-center rounded-2xl py-2 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50;
   }
 
   .cn-combobox-item-2 {
-    @apply absolute flex size-3.5 items-center justify-center;
+    @apply absolute flex size-4 items-center justify-center;
   }
 
   .cn-combobox-item-3 {
@@ -458,7 +458,7 @@
   }
 
   .cn-combobox-separator {
-    @apply -mx-1.5 my-1.5 h-px bg-muted;
+    @apply -mx-1 my-1 h-px bg-muted;
   }
 
   /* MARK: Command Stack */
@@ -471,7 +471,7 @@
   }
 
   .cn-command-stack-breadcrumb {
-    @apply px-1 pt-1;
+    @apply px-1.5 pt-1;
   }
 
   .cn-command-stack-breadcrumb-2 {
@@ -479,11 +479,11 @@
   }
 
   .cn-command-stack-breadcrumb-item {
-    @apply inline-flex h-5 items-center rounded-sm bg-muted px-3 text-xs font-medium text-muted-foreground aria-[current=page]:text-foreground;
+    @apply inline-flex h-5.5 items-center rounded-3xl bg-input px-2 text-xs font-medium text-muted-foreground aria-[current=page]:text-foreground;
   }
 
   .cn-command-stack-input-wrapper {
-    @apply -mx-1.5 -mt-1 mb-1 flex h-10 items-center gap-2 border-b px-4;
+    @apply -mx-1 -mt-1 mb-1 flex h-10 items-center gap-2 border-b px-4;
   }
 
   .cn-command-stack-input {
@@ -503,7 +503,7 @@
   }
 
   .cn-command-stack-back-2 {
-    @apply flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-hidden hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50;
+    @apply flex size-6 shrink-0 items-center justify-center rounded-2xl text-muted-foreground outline-hidden hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/30;
   }
 
   .cn-command-stack-back-3 {
@@ -511,7 +511,7 @@
   }
 
   .cn-command-stack-list {
-    @apply [&_[cmdk-list-sizer]:has(>[cmdk-item])]:p-1.5;
+    @apply [&_[cmdk-list-sizer]:has(>[cmdk-item])]:p-1;
   }
 
   .cn-command-stack-loading {
@@ -556,7 +556,7 @@
   }
 
   .cn-compare-slider-label {
-    @apply absolute z-20 rounded-md border border-border bg-background/80 px-3 py-1.5 text-sm font-medium backdrop-blur-sm;
+    @apply absolute z-20 rounded-md border border-border bg-background/80 px-3 py-2.5 text-xs font-medium backdrop-blur-sm;
   }
 
   /* MARK: Cropper */
@@ -614,11 +614,11 @@
   }
 
   .cn-editable-preview {
-    @apply cursor-text truncate rounded-sm border border-transparent py-1 text-base focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-empty:text-muted-foreground data-readonly:cursor-default md:text-sm data-disabled:cursor-not-allowed data-disabled:opacity-50;
+    @apply cursor-text truncate rounded-2xl border border-transparent py-1 text-base focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-empty:text-muted-foreground data-readonly:cursor-default md:text-sm data-disabled:cursor-not-allowed data-disabled:opacity-50;
   }
 
   .cn-editable-input {
-    @apply flex rounded-sm border border-input bg-transparent py-1 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm;
+    @apply flex rounded-3xl border border-transparent bg-input/50 py-1 text-base transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm;
   }
 
   .cn-editable-toolbar {
@@ -651,7 +651,7 @@
   }
 
   .cn-faceted-badge {
-    @apply flex h-[calc(--spacing(5.25))] w-fit max-w-full min-w-0 items-center justify-center gap-1 rounded-sm bg-input/60 px-3 text-xs font-medium whitespace-nowrap text-foreground [&_svg]:pointer-events-none [&_svg]:size-3 [&_svg]:shrink-0;
+    @apply flex h-[calc(--spacing(5.25))] w-fit max-w-full min-w-0 items-center justify-center gap-1 rounded-3xl bg-input/60 px-1.5 text-xs font-medium whitespace-nowrap text-muted-foreground [&_svg]:pointer-events-none [&_svg]:size-3 [&_svg]:shrink-0;
   }
 
   .cn-faceted-content {
@@ -679,7 +679,7 @@
   }
 
   .cn-faceted-command-item {
-    @apply relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-muted data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-selected:*:[svg]:text-foreground;
+    @apply relative flex cursor-default items-center gap-2.5 rounded-2xl px-3 py-2 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-muted data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-selected:*:[svg]:text-foreground;
   }
 
   .cn-faceted-item-indicator {
@@ -716,7 +716,7 @@
   }
 
   .cn-file-upload-dropzone {
-    @apply relative flex flex-col items-center justify-center gap-2 rounded-3xl border-2 border-dashed p-6 transition-colors outline-none select-none hover:bg-accent/30 focus-visible:border-ring/50 data-dragging:border-primary/30 data-dragging:bg-accent/30 data-invalid:border-destructive data-invalid:ring-destructive/20 data-disabled:pointer-events-none;
+    @apply relative flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 transition-colors outline-none select-none hover:bg-accent/30 focus-visible:border-ring/50 data-dragging:border-primary/30 data-dragging:bg-accent/30 data-invalid:border-destructive data-invalid:ring-destructive/20 data-disabled:pointer-events-none;
   }
 
   .cn-file-upload-list {
@@ -724,7 +724,7 @@
   }
 
   .cn-file-upload-item {
-    @apply relative flex items-center gap-2.5 rounded-md border p-3;
+    @apply relative flex items-center gap-3.5 rounded-md border p-3;
   }
 
   .cn-file-upload-item-2 {
@@ -776,7 +776,7 @@
   }
 
   .cn-file-upload-item-progress-6 {
-    @apply relative h-1.5 w-full overflow-hidden rounded-full bg-primary/20;
+    @apply relative h-1.5 w-full overflow-hidden rounded-full bg-muted;
   }
 
   .cn-file-upload-item-progress-7 {
@@ -785,7 +785,7 @@
 
   /* MARK: Fps */
   .cn-fps {
-    @apply z-50 flex shrink-0 items-center gap-2 rounded-sm border bg-background/80 px-3 py-1.5 font-mono text-sm text-foreground backdrop-blur-sm;
+    @apply z-50 flex shrink-0 items-center gap-2.5 rounded-2xl border bg-background/80 px-3 py-2 font-mono text-sm text-muted-foreground backdrop-blur-sm;
   }
 
   .cn-fps-strategy-fixed {
@@ -846,7 +846,7 @@
   }
 
   .cn-gauge-value-text {
-    @apply absolute right-0 left-0 flex -translate-y-1/2 items-center justify-center text-2xl font-semibold;
+    @apply absolute right-0 left-0 flex -translate-y-1/2 items-center justify-center text-2xl font-medium;
   }
 
   .cn-gauge-label {
@@ -859,7 +859,7 @@
   }
 
   .cn-kanban-column {
-    @apply flex size-full flex-col gap-2 rounded-3xl border bg-muted p-4 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:bg-card;
+    @apply flex size-full flex-col gap-2 rounded-lg border bg-muted p-2.5 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:bg-card;
   }
 
   .cn-kanban-column-handle {
@@ -905,11 +905,11 @@
   }
 
   .cn-listbox-group-label {
-    @apply px-2 pt-1 text-sm font-medium text-muted-foreground;
+    @apply px-3 pt-1 text-xs font-medium text-muted-foreground;
   }
 
   .cn-listbox-item {
-    @apply flex w-full cursor-default items-center justify-between gap-2 rounded-md p-6 ring-1 ring-border outline-hidden select-none focus-visible:ring-ring data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50;
+    @apply flex w-full cursor-default items-center justify-between gap-2 rounded-md p-4 ring-1 ring-border outline-hidden select-none focus-visible:ring-ring data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50;
   }
 
   .cn-listbox-item-indicator {
@@ -983,12 +983,12 @@
 
   /* MARK: Mask Input */
   .cn-mask-input {
-    @apply flex h-9 w-full min-w-0 rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-8 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:aria-invalid:ring-destructive/40;
+    @apply flex h-9 w-full min-w-0 rounded-3xl border border-transparent bg-input/50 px-3 py-1 text-base transition-[color,box-shadow] outline-none selection:bg-primary selection:text-primary-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:aria-invalid:ring-destructive/40;
   }
 
   /* MARK: Media Player */
   .cn-media-player-impl {
-    @apply relative isolate flex size-full flex-col overflow-hidden rounded-3xl bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 in-[:fullscreen]:flex in-[:fullscreen]:h-full in-[:fullscreen]:max-h-screen in-[:fullscreen]:flex-col in-[:fullscreen]:justify-between **:data-slider:relative data-disabled:pointer-events-none data-disabled:opacity-50 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-9 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default [&_video]:relative [&_video]:object-contain data-[state=fullscreen]:[&_video]:size-full [&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]!;
+    @apply relative isolate flex size-full flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 in-[:fullscreen]:flex in-[:fullscreen]:h-full in-[:fullscreen]:max-h-screen in-[:fullscreen]:flex-col in-[:fullscreen]:justify-between **:data-slider:relative data-disabled:pointer-events-none data-disabled:opacity-50 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default [&_video]:relative [&_video]:object-contain data-[state=fullscreen]:[&_video]:size-full [&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]!;
   }
 
   .cn-media-player-impl-2 {
@@ -1012,11 +1012,11 @@
   }
 
   .cn-media-player-error {
-    @apply pointer-events-auto absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80 text-white backdrop-blur-sm;
+    @apply pointer-events-auto absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/80 text-destructive backdrop-blur-sm;
   }
 
   .cn-media-player-error-2 {
-    @apply flex max-w-md flex-col items-center gap-6 px-6 py-8 text-center;
+    @apply flex max-w-md flex-col items-center gap-6 px-4 py-8 text-center;
   }
 
   .cn-media-player-error-3 {
@@ -1028,7 +1028,7 @@
   }
 
   .cn-media-player-error-5 {
-    @apply text-xl font-semibold tracking-tight;
+    @apply text-xl font-medium tracking-tight;
   }
 
   .cn-media-player-error-6 {
@@ -1052,7 +1052,7 @@
   }
 
   .cn-media-player-volume-indicator-2 {
-    @apply flex animate-in flex-col items-center gap-3 rounded-3xl bg-black/30 px-6 py-4 text-white backdrop-blur-xs duration-200 fade-in-0 zoom-in-95;
+    @apply flex animate-in flex-col items-center gap-3 rounded-lg bg-black/30 px-4 p-4 text-destructive backdrop-blur-xs duration-200 fade-in-0 zoom-in-95;
   }
 
   .cn-media-player-volume-indicator-3 {
@@ -1132,7 +1132,7 @@
   }
 
   .cn-media-player-seek-5 {
-    @apply relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
+    @apply relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-md ring-black/10 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
   }
 
   .cn-media-player-seek-6 {
@@ -1140,7 +1140,7 @@
   }
 
   .cn-media-player-seek-7 {
-    @apply flex flex-col items-center gap-1.5 rounded-md border bg-background text-foreground shadow-sm dark:bg-popover;
+    @apply flex flex-col items-center gap-1.5 rounded-md border bg-background text-muted-foreground shadow-md dark:bg-popover;
   }
 
   .cn-media-player-seek-thumbnail {
@@ -1196,7 +1196,7 @@
   }
 
   .cn-media-player-volume-5 {
-    @apply block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
+    @apply block size-2.5 shrink-0 rounded-full bg-primary shadow-md ring-black/10 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
   }
 
   .cn-media-player-time {
@@ -1208,7 +1208,7 @@
   }
 
   .cn-media-player-playback-speed {
-    @apply h-9 w-16 aria-expanded:bg-accent/50;
+    @apply h-8 w-16 aria-expanded:bg-accent/50;
   }
 
   .cn-media-player-playback-speed-2 {
@@ -1260,7 +1260,7 @@
   }
 
   .cn-media-player-settings-5 {
-    @apply rounded-sm;
+    @apply rounded-2xl;
   }
 
   .cn-media-player-settings-6 {
@@ -1272,7 +1272,7 @@
   }
 
   .cn-media-player-settings-8 {
-    @apply rounded-sm;
+    @apply rounded-2xl;
   }
 
   .cn-media-player-settings-9 {
@@ -1288,7 +1288,7 @@
   }
 
   .cn-media-player-settings-12 {
-    @apply rounded-sm;
+    @apply rounded-2xl;
   }
 
   .cn-media-player-settings-13 {
@@ -1300,15 +1300,15 @@
   }
 
   .cn-media-player-tooltip {
-    @apply text-foreground focus-visible:ring-ring/50;
+    @apply text-muted-foreground focus-visible:ring-ring/30;
   }
 
   .cn-media-player-tooltip-2 {
-    @apply text-foreground focus-visible:ring-ring/50;
+    @apply text-muted-foreground focus-visible:ring-ring/30;
   }
 
   .cn-media-player-tooltip-3 {
-    @apply flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-popover [&>span]:hidden;
+    @apply flex items-center gap-2 border bg-muted px-3 py-1 font-medium text-muted-foreground data-[side=top]:mb-3.5 dark:bg-popover [&>span]:hidden;
   }
 
   .cn-media-player-tooltip-4 {
@@ -1316,7 +1316,7 @@
   }
 
   .cn-media-player-tooltip-5 {
-    @apply rounded border bg-secondary px-3 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs select-none;
+    @apply rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-muted-foreground shadow-xs select-none;
   }
 
   .cn-media-player-tooltip-6 {
@@ -1324,7 +1324,7 @@
   }
 
   .cn-media-player-tooltip-7 {
-    @apply rounded border bg-secondary px-3 py-px font-mono text-[11.2px] text-foreground shadow-xs select-none;
+    @apply rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-muted-foreground shadow-xs select-none;
   }
 
   .cn-media-player-tooltip-8 {
@@ -1337,32 +1337,32 @@
   }
 
   .cn-mention-label {
-    @apply px-0.5 py-1.5 text-sm font-semibold;
+    @apply px-0.5 py-2.5 text-xs font-medium;
   }
 
   .cn-mention-input {
-    @apply flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-xs placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex w-full rounded-3xl border border-transparent bg-input/50 px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .cn-mention-content {
-    @apply relative z-50 min-w-32 overflow-hidden rounded-md border bg-popover p-1.5 text-popover-foreground shadow-lg data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95;
+    @apply relative z-50 min-w-32 overflow-hidden rounded-3xl border bg-popover p-1.5 text-popover-foreground shadow-lg data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95;
   }
 
   .cn-mention-item {
-    @apply relative flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50;
+    @apply relative flex w-full cursor-default items-center gap-2.5 rounded-2xl px-3 py-2 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50;
   }
 
   /* MARK: Phone Input */
   .cn-phone-input {
-    @apply relative flex h-10 w-full items-center rounded-md border border-input bg-background transition-colors has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot][aria-invalid=true]]:ring-[3px] has-[[data-slot][aria-invalid=true]]:ring-destructive/20 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 data-disabled:cursor-not-allowed data-disabled:opacity-50;
+    @apply relative flex h-10 w-full items-center rounded-4xl border border-transparent bg-background transition-colors has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot=input-group-control]:focus-visible]:ring-ring/30 has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot][aria-invalid=true]]:ring-[3px] has-[[data-slot][aria-invalid=true]]:ring-destructive/20 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 data-disabled:cursor-not-allowed data-disabled:opacity-50;
   }
 
   .cn-phone-input-country-select {
-    @apply flex h-full shrink-0 items-center gap-2 rounded-l-md border-r border-input bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40;
+    @apply flex h-full shrink-0 items-center gap-2 rounded-3xl border-r border-transparent bg-input/50 px-3 text-sm transition-colors hover:bg-muted hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40;
   }
 
   .cn-phone-input-country-select-2 {
-    @apply h-4 w-6 rounded bg-muted/50;
+    @apply h-6 w-6 rounded bg-muted/50;
   }
 
   .cn-phone-input-country-select-3 {
@@ -1394,7 +1394,7 @@
   }
 
   .cn-phone-input-field {
-    @apply h-full flex-1 rounded-l-none rounded-r-md border-0 bg-transparent shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:bg-transparent aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 rtl:rounded-l-md rtl:rounded-r-none dark:bg-transparent dark:disabled:bg-transparent dark:aria-invalid:ring-destructive/40;
+    @apply h-full flex-1 rounded-2xl border-0 bg-input/50 shadow-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:bg-transparent aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 rtl:rounded-l-md rtl:rounded-r-none dark:bg-transparent dark:disabled:bg-transparent dark:aria-invalid:ring-destructive/40;
   }
 
   /* MARK: Presentation */
@@ -1427,7 +1427,7 @@
   }
 
   .cn-presentation-thumbnail-item-preview {
-    @apply w-full overflow-hidden rounded-sm data-pending:animate-pulse data-pending:bg-muted;
+    @apply w-full overflow-hidden rounded-2xl data-pending:animate-pulse data-pending:bg-muted;
   }
 
   .cn-presentation-thumbnail-item-number {
@@ -1435,7 +1435,7 @@
   }
 
   .cn-presentation-thumbnail-item {
-    @apply relative flex w-full cursor-pointer gap-1.5 rounded-md border p-1.5 ring-2 ring-transparent transition-[color,ring] duration-100 outline-none hover:bg-accent focus:ring-ring data-active:bg-accent;
+    @apply relative flex w-full cursor-pointer gap-1.5 rounded-md border p-1.5 ring-2 ring-transparent transition-[color,ring] duration-100 outline-none hover:bg-muted focus:ring-ring data-active:bg-accent;
   }
 
   .cn-presentation-thumbnail-list {
@@ -1468,11 +1468,11 @@
   }
 
   .cn-qr-code-qrcode-overlay {
-    @apply absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-background;
+    @apply absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl bg-background;
   }
 
   .cn-qr-code-qrcode-skeleton {
-    @apply absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-accent;
+    @apply absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-muted;
   }
 
   /* MARK: Rating */
@@ -1481,7 +1481,7 @@
   }
 
   .cn-rating-item {
-    @apply inline-flex items-center justify-center rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill) [&_svg:not([class*='size-'])]:size-full;
+    @apply inline-flex items-center justify-center rounded transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg]:transition-colors [&_svg]:duration-200 data-[state=empty]:[&_svg]:fill-transparent data-[state=full]:[&_svg]:fill-current data-[state=partial]:[&_svg]:fill-(--partial-fill) [&_svg:not([class*='size-'])]:size-full;
   }
 
   /* MARK: Relative Time Card */
@@ -1490,7 +1490,7 @@
   }
 
   .cn-relative-time-card-timezone-card-2 {
-    @apply w-fit rounded bg-accent px-1 text-xs font-medium;
+    @apply w-fit rounded bg-muted px-1.5 text-xs font-medium;
   }
 
   .cn-relative-time-card-timezone-card-3 {
@@ -1540,7 +1540,7 @@
   }
 
   .cn-scroll-spy-link {
-    @apply rounded px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground;
+    @apply rounded-3xl px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-accent-foreground data-[state=active]:bg-accent data-[state=active]:text-foreground;
   }
 
   .cn-scroll-spy-viewport {
@@ -1594,7 +1594,7 @@
   }
 
   .cn-segmented-input-item-size-sm {
-    @apply h-9 px-2 text-xs;
+    @apply h-8 px-3 text-xs;
   }
 
   .cn-segmented-input-item-size-default {
@@ -1607,7 +1607,7 @@
 
   /* MARK: Selection Toolbar */
   .cn-selection-toolbar {
-    @apply flex items-center gap-1 rounded-3xl border bg-card px-3 py-1.5 shadow-lg outline-none motion-reduce:animate-none motion-reduce:transition-none;
+    @apply flex items-center gap-1 rounded-lg border bg-card px-1.5 py-2 shadow-xl outline-none motion-reduce:animate-none motion-reduce:transition-none;
   }
 
   .cn-selection-toolbar-item {
@@ -1615,7 +1615,7 @@
   }
 
   .cn-selection-toolbar-separator {
-    @apply mx-0.5 h-6 w-px bg-border;
+    @apply mx-0.5 h-6 w-px bg-border/50;
   }
 
   /* MARK: Sortable */
@@ -1677,11 +1677,11 @@
   }
 
   .cn-speed-dial-action {
-    @apply size-11 shrink-0 rounded-full bg-accent shadow-lg;
+    @apply size-11 shrink-0 rounded-full bg-muted shadow-lg;
   }
 
   .cn-speed-dial-label {
-    @apply pointer-events-none rounded-md bg-popover px-2 py-1 text-sm whitespace-nowrap text-popover-foreground shadow-lg;
+    @apply pointer-events-none rounded-full bg-popover px-3 py-1 text-sm whitespace-nowrap text-popover-foreground shadow-lg;
   }
 
   /* MARK: Stack */
@@ -1702,12 +1702,12 @@
   }
 
   .cn-stack-item {
-    @apply rounded-3xl border bg-card p-6 shadow-sm transition-shadow duration-200 hover:shadow-lg;
+    @apply rounded-lg border bg-card p-4 shadow-md transition-shadow duration-200 hover:shadow-md;
   }
 
   /* MARK: Stat */
   .cn-stat {
-    @apply grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 rounded-3xl border bg-card p-6 text-card-foreground shadow-sm **:data-[slot=stat-description]:col-span-2 **:data-[slot=stat-indicator]:col-start-2 **:data-[slot=stat-indicator]:row-span-2 **:data-[slot=stat-indicator]:row-start-1 **:data-[slot=stat-indicator]:self-start **:data-[slot=stat-label]:col-span-1 **:data-[slot=stat-separator]:col-span-2 **:data-[slot=stat-trend]:col-span-2 **:data-[slot=stat-value]:col-span-1;
+    @apply grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 rounded-lg border bg-card p-4 text-card-foreground shadow-md **:data-[slot=stat-description]:col-span-2 **:data-[slot=stat-indicator]:col-start-2 **:data-[slot=stat-indicator]:row-span-2 **:data-[slot=stat-indicator]:row-start-1 **:data-[slot=stat-indicator]:self-start **:data-[slot=stat-label]:col-span-1 **:data-[slot=stat-separator]:col-span-2 **:data-[slot=stat-trend]:col-span-2 **:data-[slot=stat-value]:col-span-1;
   }
 
   .cn-stat-label {
@@ -1727,7 +1727,7 @@
   }
 
   .cn-stat-indicator-variant-badge {
-    @apply h-6 min-w-6 rounded-sm border px-3 text-xs font-medium [&_svg:not([class*='size-'])]:size-3;
+    @apply h-6 min-w-6 rounded-3xl border px-1.5 text-xs font-medium [&_svg:not([class*='size-'])]:size-3;
   }
 
   .cn-stat-indicator-variant-action {
@@ -1755,7 +1755,7 @@
   }
 
   .cn-stat-value {
-    @apply text-2xl font-semibold tracking-tight;
+    @apply text-2xl font-medium tracking-tight;
   }
 
   .cn-stat-trend {
@@ -1772,7 +1772,7 @@
 
   /* MARK: Status */
   .cn-status {
-    @apply inline-flex w-fit shrink-0 items-center gap-1.5 overflow-hidden rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap transition-colors;
+    @apply inline-flex w-fit shrink-0 items-center gap-1.5 overflow-hidden rounded-3xl border px-2.5 py-1 text-xs font-medium whitespace-nowrap transition-colors;
   }
 
   .cn-status-variant-default {
@@ -1805,7 +1805,7 @@
 
   /* MARK: Stepper */
   .cn-stepper {
-    @apply flex gap-6;
+    @apply flex gap-4;
   }
 
   .cn-stepper-list {
@@ -1817,7 +1817,7 @@
   }
 
   .cn-stepper-trigger {
-    @apply inline-flex items-center justify-center gap-3 rounded-md text-left transition-all outline-none not-has-data-[slot=description]:rounded-full not-has-data-[slot=title]:rounded-full focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4;
+    @apply inline-flex items-center justify-center gap-3 rounded-3xl text-left transition-all outline-none not-has-data-[slot=description]:rounded-full not-has-data-[slot=title]:rounded-full focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4;
   }
 
   .cn-stepper-indicator {
@@ -1829,7 +1829,7 @@
   }
 
   .cn-stepper-separator {
-    @apply bg-border transition-colors data-[state=active]:bg-primary data-[state=completed]:bg-primary;
+    @apply bg-border/50 transition-colors data-[state=active]:bg-primary data-[state=completed]:bg-primary;
   }
 
   .cn-stepper-title {
@@ -1903,7 +1903,7 @@
   }
 
   .cn-timeline-connector-is-completed-false {
-    @apply bg-border;
+    @apply bg-border/50;
   }
 
   .cn-timeline-header {
@@ -1911,7 +1911,7 @@
   }
 
   .cn-timeline-title {
-    @apply leading-none font-semibold;
+    @apply text-base font-medium;
   }
 
   .cn-timeline-description {
@@ -1932,7 +1932,7 @@
   }
 
   .cn-tags-input-list {
-    @apply flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50;
+    @apply flex min-h-10 w-full flex-wrap items-center gap-1.5 rounded-3xl border border-transparent bg-background px-3 py-1 text-sm focus-within:ring-1 focus-within:ring-ring disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .cn-tags-input-input {
@@ -1940,7 +1940,7 @@
   }
 
   .cn-tags-input-item {
-    @apply inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded border bg-transparent px-3 py-1 text-sm focus:outline-hidden data-editable:select-none data-editing:bg-transparent data-editing:ring-1 data-editing:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50 [&:not([data-editing])]:pr-1.5 [&[data-highlighted]:not([data-editing])]:bg-accent [&[data-highlighted]:not([data-editing])]:text-accent-foreground;
+    @apply inline-flex max-w-[calc(100%-8px)] items-center gap-1.5 rounded-3xl border bg-input/50 px-3 py-1 text-sm focus:outline-hidden data-editable:select-none data-editing:bg-transparent data-editing:ring-1 data-editing:ring-ring data-disabled:cursor-not-allowed data-disabled:opacity-50 [&:not([data-editing])]:pr-1.5 [&[data-highlighted]:not([data-editing])]:bg-accent [&[data-highlighted]:not([data-editing])]:text-accent-foreground;
   }
 
   .cn-tags-input-item-2 {
@@ -1948,11 +1948,11 @@
   }
 
   .cn-tags-input-item-3 {
-    @apply size-4 shrink-0 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100;
+    @apply size-4 shrink-0 rounded-2xl opacity-70 ring-offset-background transition-opacity hover:opacity-100;
   }
 
   .cn-tags-input-item-4 {
-    @apply size-3.5;
+    @apply size-4;
   }
 
   /* MARK: Time Picker */
@@ -1965,7 +1965,7 @@
   }
 
   .cn-time-picker-input-group {
-    @apply flex h-10 w-full cursor-text items-center gap-0.5 rounded-md border border-input bg-background px-3 py-2 shadow-xs transition-shadow outline-none has-[input:focus]:border-ring has-[input:focus]:ring-[3px] has-[input:focus]:ring-ring/50;
+    @apply flex h-10 w-full cursor-text items-center gap-0.5 rounded-4xl border border-transparent bg-background px-3 py-2 transition-shadow outline-none has-[input:focus]:border-ring has-[input:focus]:ring-[3px] has-[input:focus]:ring-ring/50;
   }
 
   .cn-time-picker-input {
@@ -1981,7 +1981,7 @@
   }
 
   .cn-time-picker-content-2 {
-    @apply z-50 flex w-auto max-w-(--anchor-width) origin-(--transform-origin) rounded-3xl bg-popover p-0 text-sm text-popover-foreground shadow-lg ring-1 ring-foreground/10 outline-hidden duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95;
+    @apply z-50 flex w-auto max-w-(--anchor-width) origin-(--transform-origin) rounded-3xl bg-popover p-0 text-sm text-popover-foreground shadow-lg ring-1 ring-foreground/5 outline-hidden duration-100 data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95;
   }
 
   .cn-time-picker-column {
@@ -1989,7 +1989,7 @@
   }
 
   .cn-time-picker-column-item {
-    @apply w-full rounded px-3 py-1.5 text-left text-sm hover:bg-accent hover:text-accent-foreground focus:border-ring focus:ring-[3px] focus:ring-ring/50 focus:outline-none data-selected:bg-primary data-selected:text-primary-foreground data-selected:hover:bg-primary data-selected:hover:text-primary-foreground;
+    @apply w-full rounded-2xl px-3 py-2 text-left text-sm hover:bg-muted hover:text-accent-foreground focus:border-ring focus:ring-[3px] focus:ring-ring/50 focus:outline-none data-selected:bg-primary data-selected:text-primary-foreground data-selected:hover:bg-primary data-selected:hover:text-primary-foreground;
   }
 
   .cn-time-picker-hour {
@@ -2025,12 +2025,12 @@
   }
 
   .cn-time-picker-clear {
-    @apply inline-flex items-center justify-center rounded-sm text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50;
+    @apply inline-flex items-center justify-center rounded-3xl text-sm font-medium transition-colors hover:bg-muted hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50;
   }
 
   /* MARK: Tour */
   .cn-tour-step {
-    @apply fixed z-50 flex w-80 flex-col gap-6 rounded-3xl border bg-popover p-6 text-popover-foreground shadow-lg outline-none;
+    @apply fixed z-50 flex w-80 flex-col gap-6 rounded-3xl border bg-popover p-4 text-popover-foreground shadow-lg outline-none;
   }
 
   .cn-tour-spotlight {
@@ -2038,7 +2038,7 @@
   }
 
   .cn-tour-spotlight-ring {
-    @apply pointer-events-none fixed z-50 border-ring ring-[3px] ring-ring/50;
+    @apply pointer-events-none fixed z-50 border-ring ring-[3px] ring-black/10;
   }
 
   .cn-tour-arrow {
@@ -2050,7 +2050,7 @@
   }
 
   .cn-tour-title {
-    @apply text-lg leading-none font-semibold tracking-tight;
+    @apply text-base leading-none font-medium tracking-tight;
   }
 
   .cn-tour-description {
@@ -2079,7 +2079,7 @@
   }
 
   .cn-badge-overflow-2-radix {
-    @apply inline-flex h-5 shrink-0 items-center rounded-md border px-3 text-xs font-semibold;
+    @apply inline-flex h-5.5 shrink-0 items-center rounded-md border px-1.5 text-xs font-medium;
   }
 
   .cn-badge-overflow-3-radix {
@@ -2087,7 +2087,7 @@
   }
 
   .cn-badge-overflow-4 {
-    @apply inline-flex h-5 shrink-0 items-center rounded-md border px-3 text-xs font-semibold;
+    @apply inline-flex h-5.5 shrink-0 items-center rounded-md border px-1.5 text-xs font-medium;
   }
 
   .cn-badge-overflow-5 {
@@ -2171,7 +2171,7 @@
   }
 
   .cn-file-upload-progress-3 {
-    @apply relative h-1.5 w-full overflow-hidden rounded-full bg-primary/20;
+    @apply relative h-1.5 w-full overflow-hidden rounded-full bg-muted;
   }
 
   .cn-file-upload-item-progress-4-radix {
@@ -2197,7 +2197,7 @@
 
   /* MARK: Media Player */
   .cn-media-player {
-    @apply relative isolate flex size-full flex-col overflow-hidden rounded-3xl bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 in-[:fullscreen]:flex in-[:fullscreen]:h-full in-[:fullscreen]:max-h-screen in-[:fullscreen]:flex-col in-[:fullscreen]:justify-between **:data-slider:relative data-disabled:pointer-events-none data-disabled:opacity-50 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-9 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default [&_video]:relative [&_video]:object-contain data-[state=fullscreen]:[&_video]:size-full [&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]!;
+    @apply relative isolate flex size-full flex-col overflow-hidden rounded-lg bg-background outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 in-[:fullscreen]:flex in-[:fullscreen]:h-full in-[:fullscreen]:max-h-screen in-[:fullscreen]:flex-col in-[:fullscreen]:justify-between **:data-slider:relative data-disabled:pointer-events-none data-disabled:opacity-50 [&_[data-slider]::before]:absolute [&_[data-slider]::before]:inset-x-0 [&_[data-slider]::before]:-top-4 [&_[data-slider]::before]:-bottom-2 [&_[data-slider]::before]:z-10 [&_[data-slider]::before]:h-8 [&_[data-slider]::before]:cursor-pointer [&_[data-slider]::before]:content-[''] [&_[data-slot='media-player-seek']:not([data-hovering])::before]:cursor-default [&_video]:relative [&_video]:object-contain data-[state=fullscreen]:[&_video]:size-full [&_video::-webkit-media-text-track-display]:top-auto! [&_video::-webkit-media-text-track-display]:bottom-[4%]! [&_video::-webkit-media-text-track-display]:mb-0! data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[13%]! data-[state=fullscreen]:[&_video::-webkit-media-text-track-display]:bottom-[7%]! data-[state=fullscreen]:data-controls-visible:[&_video::-webkit-media-text-track-display]:bottom-[9%]!;
   }
 
   .cn-media-player-impl-radix {
@@ -2213,7 +2213,7 @@
   }
 
   .cn-media-player-seek-4-radix {
-    @apply relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
+    @apply relative z-10 block size-2.5 shrink-0 rounded-full bg-primary shadow-md ring-black/10 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
   }
 
   .cn-media-player-seek-5-radix {
@@ -2221,7 +2221,7 @@
   }
 
   .cn-media-player-seek-6-radix {
-    @apply flex flex-col items-center gap-1.5 rounded-md border bg-background text-foreground shadow-sm dark:bg-popover;
+    @apply flex flex-col items-center gap-1.5 rounded-md border bg-background text-muted-foreground shadow-md dark:bg-popover;
   }
 
   .cn-media-player-seek-7-radix {
@@ -2245,7 +2245,7 @@
   }
 
   .cn-media-player-volume-4-radix {
-    @apply block size-2.5 shrink-0 rounded-full bg-primary shadow-sm ring-ring/50 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
+    @apply block size-2.5 shrink-0 rounded-full bg-primary shadow-md ring-black/10 transition-[color,box-shadow] will-change-transform hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50;
   }
 
   .cn-media-player-time-radix {
@@ -2269,7 +2269,7 @@
   }
 
   .cn-media-player-tooltip-2-radix {
-    @apply flex items-center gap-2 border bg-accent px-2 py-1 font-medium text-foreground data-[side=top]:mb-3.5 dark:bg-popover [&>span]:hidden;
+    @apply flex items-center gap-2 border bg-muted px-3 py-1 font-medium text-muted-foreground data-[side=top]:mb-3.5 dark:bg-popover [&>span]:hidden;
   }
 
   .cn-media-player-tooltip-3-radix {
@@ -2277,7 +2277,7 @@
   }
 
   .cn-media-player-tooltip-4-radix {
-    @apply rounded border bg-secondary px-3 py-0.5 font-mono text-[11.2px] text-foreground shadow-xs select-none;
+    @apply rounded border bg-secondary px-1.5 py-0.5 font-mono text-[11.2px] text-muted-foreground shadow-xs select-none;
   }
 
   .cn-media-player-tooltip-5-radix {
@@ -2285,7 +2285,7 @@
   }
 
   .cn-media-player-tooltip-6-radix {
-    @apply rounded border bg-secondary px-3 py-px font-mono text-[11.2px] text-foreground shadow-xs select-none;
+    @apply rounded border bg-secondary px-1.5 py-px font-mono text-[11.2px] text-muted-foreground shadow-xs select-none;
   }
 
   .cn-media-player-tooltip-7-radix {
@@ -2314,11 +2314,11 @@
   }
 
   .cn-qr-code-overlay {
-    @apply absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-background;
+    @apply absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl bg-background;
   }
 
   .cn-qr-code-skeleton {
-    @apply absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-accent;
+    @apply absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-muted;
   }
 
   /* MARK: Time Picker */

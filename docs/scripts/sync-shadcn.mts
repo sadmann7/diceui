@@ -3,6 +3,7 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 
 import { STYLES } from "../registry/styles";
+import { getNewYorkClasses } from "./shadcn-roles.mts";
 
 const SHADCN_REF = "c2477f311c19982ef6e246085438e6cfec3e35ea";
 const SHADCN_RAW = `https://raw.githubusercontent.com/shadcn-ui/ui/${SHADCN_REF}/apps/v4/registry`;
@@ -191,7 +192,33 @@ async function syncComponents() {
   return written;
 }
 
-async function syncStyles(components: string[]) {
+async function fetchStyleRules() {
+  return Object.fromEntries(
+    await Promise.all(
+      STYLES.map(async (style) => {
+        const css = await fetchText(
+          `${SHADCN_RAW}/styles/style-${style.name}.css`,
+        );
+        if (css === null) {
+          throw new Error(`Missing shadcn style-${style.name}.css`);
+        }
+        const rules = new Map(
+          [
+            ...css.matchAll(
+              /^ {2}\.(cn-[\w-]+) \{\n {4}@apply ([^;]+);\n {2}\}$/gm,
+            ),
+          ].map((m) => [m[1]!, m[2]!]),
+        );
+        return [style.name, rules] as const;
+      }),
+    ),
+  );
+}
+
+async function syncStyles(
+  components: string[],
+  styleRules: Record<string, Map<string, string>>,
+) {
   const sources = await Promise.all(
     components.map((file) => fs.readFile(file, "utf8")),
   );
@@ -201,14 +228,11 @@ async function syncStyles(components: string[]) {
 
   await fs.mkdir(SHADCN_STYLES_PATH, { recursive: true });
   for (const style of STYLES) {
-    const css = await fetchText(`${SHADCN_RAW}/styles/style-${style.name}.css`);
-    if (css === null) throw new Error(`Missing shadcn style-${style.name}.css`);
-
-    const rules = [
-      ...css.matchAll(/^ {2}\.(cn-[\w-]+) \{\n {4}@apply ([^;]+);\n {2}\}$/gm),
-    ]
-      .filter((m) => markers.has(m[1]!))
-      .map((m) => `  .${m[1]} {\n    @apply ${m[2]};\n  }`);
+    const rules = [...styleRules[style.name]!]
+      .filter(([marker]) => markers.has(marker))
+      .map(
+        ([marker, classes]) => `  .${marker} {\n    @apply ${classes};\n  }`,
+      );
 
     await fs.writeFile(
       path.join(SHADCN_STYLES_PATH, `style-${style.name}.css`),
@@ -217,11 +241,68 @@ async function syncStyles(components: string[]) {
   }
 }
 
+async function getRegistryNames(dir: string) {
+  const registry = await fetchText(`${SHADCN_RAW}/${dir}/_registry.ts`);
+  if (registry === null) throw new Error(`Missing ${dir}/_registry.ts`);
+  return new Set(
+    [...registry.matchAll(/"ui\/([a-z0-9-]+)\.tsx"/g)].map((m) => m[1]!),
+  );
+}
+
+// Every shadcn marker with its New York classes and its classes in each
+// style, which `styles:sync` uses to restyle our components per style.
+async function syncRoles(styleRules: Record<string, Map<string, string>>) {
+  const newYorkNames = await getRegistryNames("new-york-v4/ui");
+  const names = [...(await getRegistryNames("bases/radix/ui"))].filter((name) =>
+    newYorkNames.has(name),
+  );
+
+  const newYorkClasses: Record<string, string> = {};
+  await Promise.all(
+    names.map(async (name) => {
+      const [markerSource, newYorkSource] = await Promise.all([
+        fetchText(`${SHADCN_RAW}/bases/radix/ui/${name}.tsx`),
+        fetchText(`${SHADCN_RAW}/new-york-v4/ui/${name}.tsx`),
+      ]);
+      if (markerSource === null || newYorkSource === null) return;
+      Object.assign(
+        newYorkClasses,
+        getNewYorkClasses(markerSource, newYorkSource),
+      );
+    }),
+  );
+
+  const roles = Object.fromEntries(
+    Object.entries(newYorkClasses)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([marker, newYork]) => [
+        marker,
+        {
+          "new-york": newYork,
+          ...Object.fromEntries(
+            STYLES.map((style) => [
+              style.name,
+              styleRules[style.name]!.get(marker) ?? "",
+            ]),
+          ),
+        },
+      ]),
+  );
+
+  await fs.writeFile(
+    path.join(SHADCN_STYLES_PATH, "roles.json"),
+    `${JSON.stringify(roles, null, 2)}\n`,
+  );
+  return Object.keys(roles).length;
+}
+
 const components = await syncComponents();
-await syncStyles(components);
+const styleRules = await fetchStyleRules();
+await syncStyles(components, styleRules);
+const roleCount = await syncRoles(styleRules);
 execFileSync("oxfmt", ["--write", ...components], {
   stdio: "inherit",
 });
 console.log(
-  `Synced ${components.length} components from shadcn-ui/ui@${SHADCN_REF.slice(0, 7)}`,
+  `Synced ${components.length} components and ${roleCount} style roles from shadcn-ui/ui@${SHADCN_REF.slice(0, 7)}`,
 );

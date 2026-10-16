@@ -193,7 +193,6 @@ export const examples: Registry["items"] = [
   {
     name: "checkbox-group-demo",
     type: "registry:example",
-    dependencies: ["@diceui/checkbox-group"],
     registryDependencies: ["checkbox-group"],
     files: [
       {
@@ -1261,7 +1260,7 @@ export const examples: Registry["items"] = [
   {
     name: "mention-demo",
     type: "registry:example",
-    dependencies: ["@diceui/mention"],
+    registryDependencies: ["mention", "textarea"],
     files: [
       {
         path: "examples/mention-demo.tsx",
@@ -1963,8 +1962,7 @@ export const examples: Registry["items"] = [
   {
     name: "tags-input-demo",
     type: "registry:example",
-    dependencies: ["@diceui/tags-input"],
-    registryDependencies: ["tags-input"],
+    registryDependencies: ["button", "tags-input"],
     files: [
       {
         path: "examples/tags-input-demo.tsx",

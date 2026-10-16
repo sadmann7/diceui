@@ -1,73 +1,270 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { twMerge } from "tailwind-merge";
 
-import { DEFAULT_STYLE } from "../lib/constants";
+import { STYLES } from "../registry/styles";
+
+// Our markers are written once, in shadcn's New York classes, in
+// `style-new-york.css`. Each style is generated from it with what shadcn's own
+// components teach (`shadcn/roles.json`, from `pnpm shadcn:sync`): a marker
+// that copies a shadcn part takes that part's classes in the style, and other
+// classes follow how shadcn's styles change them most of the time.
 
 const STYLES_SRC_PATH = path.join(process.cwd(), "registry", "styles");
+const SOURCE_STYLE = "new-york";
 const RULE = /^ {2}\.(cn-[\w-]+) \{\n {4}@apply ([^;]+);\n {2}\}$/gm;
 
-function split(cls: string): [string, string] {
-  let depth = 0;
-  let last = -1;
-  for (let i = 0; i < cls.length; i++) {
-    const c = cls[i];
-    if (c === "[" || c === "(") depth++;
-    else if (c === "]" || c === ")") depth--;
-    else if (c === ":" && depth === 0) last = i;
-  }
-  return last === -1
-    ? ["", cls]
-    : [cls.slice(0, last + 1), cls.slice(last + 1)];
-}
-
-export function mapClasses(classes: string, rules: Record<string, string>) {
-  return classes
-    .split(/\s+/)
-    .map((token) => {
-      const [variant, raw] = split(token);
-      const important = raw.endsWith("!") ? "!" : "";
-      const value = important ? raw.slice(0, -1) : raw;
-
-      let mapped = rules[value];
-      const side = value.match(
-        /^rounded-(t|r|b|l|s|e|tl|tr|br|bl|ss|se|es|ee)-(.+)$/,
-      );
-      const sideBase = side && rules[`rounded-${side[2]}`];
-      if (!mapped && side && sideBase) {
-        mapped = sideBase.replace(/^rounded-/, `rounded-${side[1]}-`);
-      }
-
-      return mapped ? `${variant}${mapped}${important}` : token;
-    })
-    .join(" ");
-}
+type Roles = Record<string, Record<string, string>>;
 
 export function getRules(css: string) {
   return new Map([...css.matchAll(RULE)].map((m) => [m[1]!, m[2]!]));
 }
 
-export async function syncStyles() {
-  const defaultCss = await fs.readFile(
-    path.join(STYLES_SRC_PATH, `style-${DEFAULT_STYLE}.css`),
-    "utf8",
-  );
-  const rulesByStyle: Record<string, Record<string, string>> = JSON.parse(
-    await fs.readFile(path.join(STYLES_SRC_PATH, "style-rules.json"), "utf8"),
-  );
+const split = (classes: string) => classes.split(/\s+/).filter(Boolean);
+const unimportant = (token: string) => token.replace(/!$/, "");
 
-  for (const [style, rules] of Object.entries(rulesByStyle)) {
-    const file = path.join(STYLES_SRC_PATH, `style-${style}.css`);
-    const existing = getRules(await fs.readFile(file, "utf8").catch(() => ""));
-
-    const css = defaultCss
-      .replace(`.style-${DEFAULT_STYLE} {`, `.style-${style} {`)
-      .replace(RULE, (_, marker: string, classes: string) => {
-        const applied = existing.get(marker) ?? mapClasses(classes, rules);
-        return `  .${marker} {\n    @apply ${applied};\n  }`;
-      });
-
-    await fs.writeFile(file, css);
+function getUtility(token: string) {
+  let depth = 0;
+  let end = 0;
+  for (let i = 0; i < token.length; i++) {
+    const char = token[i];
+    if (char === "[" || char === "(") depth++;
+    else if (char === "]" || char === ")") depth--;
+    else if (char === ":" && depth === 0) end = i + 1;
   }
+  return {
+    variants: token.slice(0, end),
+    utility: unimportant(token.slice(end)),
+  };
+}
+
+// The visual family of a class; layout classes have none and never change.
+function getFamily(token: string) {
+  const match = getUtility(token)
+    .utility.replace(/^-/, "")
+    .match(
+      /^(rounded|min-h|h|p[xytrblse]?|gap|text|font|tracking|leading|shadow|ring|bg|border|size)(?=-|$)/,
+    );
+  if (
+    !match ||
+    /^border-(solid|dashed|dotted|none)$/.test(getUtility(token).utility)
+  ) {
+    return null;
+  }
+  return /^p[xytrblse]?$/.test(match[1]!) ? "p" : match[1]!;
+}
+
+// The class in `classes` that does the same job as `token`, if any.
+function findCounterpart(token: string, classes: string[]) {
+  return (
+    classes.find((other) => unimportant(other) === token) ??
+    classes.find(
+      (other) =>
+        unimportant(other) !== token &&
+        twMerge(`${token} ${unimportant(other)}`) === unimportant(other),
+    )
+  );
+}
+
+// A value built on another component's CSS variable, like Card's
+// `py-(--card-spacing)`, which means nothing outside that component.
+const usesVariable = (token: string) => /\(--|var\(--/.test(token);
+
+// A border the style adds that New York doesn't have, like Sera's underline
+// `border-b-input` next to `border-transparent`.
+function isAddedBorder(other: string, newYork: string[]) {
+  const value = unimportant(other);
+  return (
+    getFamily(other) === "border" &&
+    !usesVariable(other) &&
+    !newYork.some(
+      (token) =>
+        token === value ||
+        (twMerge(`${token} ${value}`) === value &&
+          twMerge(`${value} ${token}`) === token),
+    )
+  );
+}
+
+export function createStyleGenerator(roles: Roles) {
+  const styleNames = STYLES.map((style) => style.name);
+
+  // Per shadcn marker, the New York classes some style changes.
+  const sensitive = new Map<string, Set<string>>();
+  const allSensitive = new Set<string>();
+  for (const [marker, classesByStyle] of Object.entries(roles)) {
+    const changed = split(classesByStyle[SOURCE_STYLE] ?? "").filter(
+      (token) =>
+        getFamily(token) &&
+        styleNames.some((style) => {
+          const target = split(classesByStyle[style] ?? "");
+          const counterpart = findCounterpart(token, target);
+          return !counterpart || unimportant(counterpart) !== token;
+        }),
+    );
+    if (!changed.length) continue;
+    sensitive.set(marker, new Set(changed));
+    for (const token of changed) allSensitive.add(token);
+  }
+
+  // For classes no shadcn part explains: how most parts change them.
+  const fallback = Object.fromEntries(
+    styleNames.map((style) => {
+      const votes = new Map<string, Map<string, number>>();
+      for (const [marker, tokens] of sensitive) {
+        const target = split(roles[marker]?.[style] ?? "");
+        const newYork = split(roles[marker]?.[SOURCE_STYLE] ?? "");
+        for (const token of tokens) {
+          const counterpart = findCounterpart(token, target);
+          if (
+            counterpart &&
+            usesVariable(counterpart) &&
+            !usesVariable(token)
+          ) {
+            continue;
+          }
+          const added =
+            counterpart && getFamily(token) === "border"
+              ? target.filter(
+                  (other) =>
+                    getUtility(other).variants === getUtility(token).variants &&
+                    isAddedBorder(other, newYork),
+                )
+              : [];
+          const value = counterpart
+            ? [unimportant(counterpart), ...added].join(" ")
+            : "";
+          const tally = votes.get(token) ?? new Map<string, number>();
+          tally.set(value, (tally.get(value) ?? 0) + 1);
+          votes.set(token, tally);
+        }
+      }
+      const map = new Map<string, string>();
+      for (const [token, tally] of votes) {
+        const total = [...tally.values()].reduce((a, b) => a + b, 0);
+        const [best, count] = [...tally].sort((a, b) => b[1] - a[1])[0]!;
+        if (best && best !== token && count / total >= 0.5) {
+          map.set(token, best);
+        }
+      }
+      return [style, map] as const;
+    }),
+  );
+
+  // The part a marker is, by name: `cn-editable-input` -> "input".
+  const getKind = (marker: string) =>
+    marker
+      .replace(/(-\d+|-radix)+$/, "")
+      .split("-")
+      .pop();
+
+  // The shadcn part a marker copies: the one explaining most of its visual
+  // classes, preferring the same kind of part, with coverage breaking ties.
+  function findRole(tokens: string[], name: string) {
+    const mine = tokens.filter((token) => allSensitive.has(token));
+    const kind = getKind(name);
+    let role: string | null = null;
+    let score = 0;
+    for (const [marker, changed] of sensitive) {
+      const shared = mine.filter((token) => changed.has(token)).length;
+      const sameKind = getKind(marker) === kind;
+      if (shared < (sameKind ? 2 : 3)) continue;
+      const value =
+        shared / mine.length +
+        (shared / changed.size) * 0.1 +
+        (sameKind ? 0.3 : 0);
+      if (value > score) {
+        score = value;
+        role = marker;
+      }
+    }
+    return score >= 0.6 ? role : null;
+  }
+
+  return function generate(classes: string, style: string, name: string) {
+    const tokens = split(classes);
+    const role = findRole(tokens, name);
+    const changed = role ? sensitive.get(role)! : new Set<string>();
+    const target = role ? split(roles[role]?.[style] ?? "") : [];
+    const newYork = role ? split(roles[role]?.[SOURCE_STYLE] ?? "") : [];
+    const rewritten = new Set<string>();
+    const result: string[] = [];
+    const familyKey = (token: string) =>
+      `${getUtility(token).variants}${getFamily(token)}`;
+
+    for (const token of tokens) {
+      if (changed.has(token)) {
+        const counterpart = findCounterpart(token, target);
+        if (
+          counterpart &&
+          (!usesVariable(counterpart) || usesVariable(token))
+        ) {
+          result.push(counterpart);
+          rewritten.add(familyKey(token));
+          continue;
+        }
+        // Styles drop shadows; anything else the part may get from a parent.
+        const dropsShadow =
+          !counterpart &&
+          getFamily(token) === "shadow" &&
+          !target.some((other) => familyKey(other) === familyKey(token));
+        if (!dropsShadow) result.push(token);
+        continue;
+      }
+      // The matched part's radius wins over a slightly different one of ours.
+      const radius =
+        role && getFamily(token) === "rounded"
+          ? target.find(
+              (other) =>
+                getFamily(other) === "rounded" &&
+                getUtility(other).variants === getUtility(token).variants &&
+                !usesVariable(other) &&
+                newYork.some(
+                  (source) =>
+                    getFamily(source) === "rounded" &&
+                    getUtility(source).variants ===
+                      getUtility(token).variants &&
+                    findCounterpart(source, [other]),
+                ),
+            )
+          : undefined;
+      result.push(...split(radius ?? fallback[style]!.get(token) ?? token));
+    }
+
+    for (const other of target) {
+      if (rewritten.has(familyKey(other)) && isAddedBorder(other, newYork)) {
+        result.push(other);
+      }
+    }
+
+    return [...new Set(result)].join(" ");
+  };
+}
+
+export async function syncStyles() {
+  const [sourceCss, roles] = await Promise.all([
+    fs.readFile(
+      path.join(STYLES_SRC_PATH, `style-${SOURCE_STYLE}.css`),
+      "utf8",
+    ),
+    fs
+      .readFile(path.join(STYLES_SRC_PATH, "shadcn", "roles.json"), "utf8")
+      .then((json) => JSON.parse(json) as Roles),
+  ]);
+  const generate = createStyleGenerator(roles);
+
+  await Promise.all(
+    STYLES.map(({ name }) => {
+      const css = sourceCss
+        .replace(`.style-${SOURCE_STYLE} {`, `.style-${name} {`)
+        .replace(
+          RULE,
+          (_, marker: string, classes: string) =>
+            `  .${marker} {\n    @apply ${generate(classes, name, marker)};\n  }`,
+        );
+      return fs.writeFile(path.join(STYLES_SRC_PATH, `style-${name}.css`), css);
+    }),
+  );
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
