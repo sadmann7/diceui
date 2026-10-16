@@ -182,7 +182,7 @@ function Stack(props: StackProps) {
             onMouseLeave,
             onPointerDown,
             onPointerUp,
-            className: cn("relative w-full", className),
+            className: cn("cn-stack", className),
             style: {
               "--gap": `${gap}px`,
               "--offset": `${offset}px`,
@@ -207,33 +207,30 @@ function Stack(props: StackProps) {
   );
 }
 
-const stackItemWrapperVariants = cva(
-  "absolute w-full transition-all duration-300 ease-out",
-  {
-    variants: {
-      side: {
-        top: [
-          "top-0 left-0 origin-top",
-          "translate-y-[calc(var(--translate)*-1)] scale-[var(--item-scale)]",
-          "after:absolute after:top-full after:left-0 after:w-full after:content-['']",
-        ],
-        bottom: [
-          "bottom-0 left-0 origin-bottom",
-          "translate-y-[var(--translate)] scale-[var(--item-scale)]",
-          "after:absolute after:bottom-full after:left-0 after:w-full after:content-['']",
-        ],
-      },
-      isExpanded: {
-        true: "after:h-[calc(var(--gap)+1px)]",
-        false: "",
-      },
-      isVisible: {
-        true: "",
-        false: "pointer-events-none",
-      },
+const stackItemWrapperVariants = cva("cn-stack-item-wrapper", {
+  variants: {
+    side: {
+      top: [
+        "top-0 left-0 origin-top",
+        "translate-y-[calc(var(--translate)*-1)] scale-[var(--item-scale)]",
+        "after:absolute after:top-full after:left-0 after:w-full after:content-['']",
+      ],
+      bottom: [
+        "bottom-0 left-0 origin-bottom",
+        "translate-y-[var(--translate)] scale-[var(--item-scale)]",
+        "after:absolute after:bottom-full after:left-0 after:w-full after:content-['']",
+      ],
+    },
+    isExpanded: {
+      true: "cn-stack-item-wrapper-is-expanded-true",
+      false: "",
+    },
+    isVisible: {
+      true: "",
+      false: "cn-stack-item-wrapper-is-visible-false",
     },
   },
-);
+});
 
 type StackItemWrapperElement = React.ComponentRef<typeof StackItemWrapper>;
 
@@ -336,10 +333,7 @@ function StackItem(props: StackItemProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn(
-          "rounded-lg border bg-card p-4 shadow-sm transition-shadow duration-200 hover:shadow-md",
-          className,
-        ),
+        className: cn("cn-stack-item", className),
       },
       itemProps,
     ),

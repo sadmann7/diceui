@@ -66,7 +66,7 @@ export default function EditableTodoListDemo() {
           >
             <EditableArea className="flex-1">
               <EditablePreview
-                className={cn("w-full rounded-md px-1.5 py-1", {
+                className={cn("w-full px-1.5 py-1", {
                   "text-muted-foreground line-through": todo.completed,
                 })}
               />

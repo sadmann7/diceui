@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { siteConfig } from "@/config/site";
 import { source } from "@/lib/source";
-import { Button } from "@/registry/bases/radix/ui/button";
+import { Button } from "@/styles/radix-nova/ui/button";
 
 const firstComponentUrl =
   source

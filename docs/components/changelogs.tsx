@@ -8,7 +8,7 @@ import {
 } from "@/lib/changelog";
 import { DEFAULT_BASE } from "@/lib/constants";
 import { cn } from "@/lib/utils";
-import { Separator } from "@/registry/bases/radix/ui/separator";
+import { Separator } from "@/styles/radix-nova/ui/separator";
 
 export function Changelogs() {
   const pages = getChangelogPages();

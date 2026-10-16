@@ -252,10 +252,7 @@ function FacetedTrigger({
   return (
     <PopoverTrigger
       data-slot="faceted-trigger"
-      className={cn(
-        "justify-between text-left has-[>[data-slot=faceted-value]]:transition-[color,background-color,border-color,box-shadow] has-[>[data-slot=faceted-value]>[data-slot=faceted-badge-list]]:ps-1",
-        className,
-      )}
+      className={cn("cn-faceted-trigger", className)}
       {...props}
     />
   );
@@ -289,7 +286,7 @@ function FacetedValue({
     <span
       data-slot="faceted-value"
       className={cn(
-        "flex w-full min-w-0 items-center gap-1",
+        "cn-faceted-value",
         values.length === 0 && "text-muted-foreground",
       )}
     >
@@ -300,13 +297,15 @@ function FacetedValue({
           ) : (
             selected.map((selectedItem) => (
               <FacetedBadge key={selectedItem.value}>
-                <span className="truncate">{selectedItem.label}</span>
+                <span className="cn-faceted-value-2">{selectedItem.label}</span>
               </FacetedBadge>
             ))
           )}
         </FacetedBadgeList>
       ) : (
-        <span className="truncate">{item ? item.label : placeholder}</span>
+        <span className="cn-faceted-value-3">
+          {item ? item.label : placeholder}
+        </span>
       )}
       <IconPlaceholder
         lucide="ChevronDown"
@@ -314,7 +313,7 @@ function FacetedValue({
         hugeicons="ArrowDown01Icon"
         phosphor="CaretDownIcon"
         remixicon="RiArrowDownSLine"
-        className="ml-auto size-4 shrink-0 text-muted-foreground"
+        className="cn-faceted-value-4"
       />
     </span>
   );
@@ -327,10 +326,7 @@ function FacetedBadgeList({
   return (
     <div
       data-slot="faceted-badge-list"
-      className={cn(
-        "flex w-max max-w-full flex-wrap items-center gap-1",
-        className,
-      )}
+      className={cn("cn-faceted-badge-list", className)}
       {...props}
     />
   );
@@ -350,10 +346,7 @@ function FacetedBadge({
   return (
     <Comp
       data-slot="faceted-badge"
-      className={cn(
-        "flex h-[calc(--spacing(5.25))] w-fit max-w-full min-w-0 items-center justify-center gap-1 rounded-sm bg-input/60 px-1.5 text-xs font-medium whitespace-nowrap text-foreground [&_svg]:pointer-events-none [&_svg]:size-3 [&_svg]:shrink-0",
-        className,
-      )}
+      className={cn("cn-faceted-badge", className)}
       {...props}
     />
   );
@@ -380,7 +373,7 @@ function FacetedContent({
       data-slot="faceted-content"
       align="start"
       className={cn(
-        "w-50 origin-(--radix-popover-content-transform-origin) p-0",
+        "cn-faceted-content-radix cn-menu-target cn-menu-translucent",
         className,
       )}
       {...props}
@@ -389,7 +382,7 @@ function FacetedContent({
         shouldFilter={shouldFilter}
         filter={filter}
         loop={loop}
-        className="p-0.5"
+        className="cn-faceted-content-2"
       >
         {children}
       </Command>
@@ -413,7 +406,7 @@ function FacetedInput({
       <div
         data-slot="faceted-input-wrapper"
         data-variant="line"
-        className="-mx-0.5 -mt-0.5 mb-0.5 flex h-9 items-center gap-2 border-b px-3.5"
+        className="cn-faceted-input-wrapper"
       >
         <IconPlaceholder
           lucide="SearchIcon"
@@ -421,14 +414,11 @@ function FacetedInput({
           hugeicons="Search01Icon"
           phosphor="MagnifyingGlassIcon"
           remixicon="RiSearchLine"
-          className="size-4 shrink-0 text-muted-foreground"
+          className="cn-faceted-input"
         />
         <CommandPrimitive.Input
           data-slot="faceted-input"
-          className={cn(
-            "h-full w-full bg-transparent text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
-            className,
-          )}
+          className={cn("cn-faceted-input-2", className)}
           {...props}
         />
       </div>
@@ -455,10 +445,7 @@ function FacetedLoading({
   return (
     <CommandPrimitive.Loading
       data-slot="faceted-loading"
-      className={cn(
-        "py-6 text-center text-sm text-muted-foreground",
-        className,
-      )}
+      className={cn("cn-faceted-loading", className)}
       {...props}
     />
   );
@@ -476,10 +463,7 @@ function FacetedCommandItem({
 }: React.ComponentProps<typeof CommandPrimitive.Item>) {
   return (
     <CommandPrimitive.Item
-      className={cn(
-        "group/command-item relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-muted data-selected:text-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 data-selected:*:[svg]:text-foreground",
-        className,
-      )}
+      className={cn("cn-faceted-command-item group/command-item", className)}
       onPointerDownCapture={composeEventHandlers(
         onPointerDownCapture,
         (event) => {
@@ -533,16 +517,11 @@ function FacetedItemIndicator({
   return (
     <span
       data-slot="faceted-item-indicator"
-      className={cn(
-        "ml-auto grid place-items-center *:col-start-1 *:row-start-1",
-        className,
-      )}
+      className={cn("cn-faceted-item-indicator", className)}
       {...props}
     >
       {children != null && (
-        <span className="font-mono text-xs group-data-checked/command-item:invisible">
-          {children}
-        </span>
+        <span className="cn-faceted-item-indicator-2">{children}</span>
       )}
       <IconPlaceholder
         lucide="Check"
@@ -550,7 +529,7 @@ function FacetedItemIndicator({
         hugeicons="Tick02Icon"
         phosphor="CheckIcon"
         remixicon="RiCheckLine"
-        className="invisible group-data-checked/command-item:visible"
+        className="cn-faceted-item-indicator-3"
       />
     </span>
   );
@@ -576,7 +555,7 @@ function FacetedClear({
       <FacetedGroup>
         <FacetedCommandItem
           data-slot="faceted-clear"
-          className={cn("justify-center text-center", className)}
+          className={cn("cn-faceted-clear", className)}
           onSelect={(value) => {
             onSelect?.(value);
             store.clear();
@@ -597,7 +576,7 @@ function FacetedSeparator({
     <CommandSeparator
       data-slot="faceted-separator"
       aria-hidden="true"
-      className="mx-0 my-0.5 w-full"
+      className="cn-faceted-separator"
       {...props}
     />
   );

@@ -667,7 +667,7 @@ function KanbanBoard(props: KanbanBoardProps) {
         "aria-orientation": context.orientation,
         ref,
         className: cn(
-          "flex size-full gap-4",
+          "cn-kanban-board",
           context.orientation === "horizontal" ? "flex-row" : "flex-col",
           className,
         ),
@@ -817,7 +817,7 @@ function KanbanColumn(props: KanbanColumnProps) {
         ref: composedRef,
         style: composedStyle,
         className: cn(
-          "flex size-full flex-col gap-2 rounded-lg border bg-zinc-100 p-2.5 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:bg-zinc-900",
+          "cn-kanban-column",
           {
             "touch-none select-none": asHandle,
             "cursor-default": context.flatCursor,
@@ -892,7 +892,7 @@ function KanbanColumnHandle(props: KanbanColumnHandleProps) {
         ref: composedRef,
         disabled: isDisabled,
         className: cn(
-          "select-none disabled:pointer-events-none disabled:opacity-50",
+          "cn-kanban-column-handle",
           context.flatCursor
             ? "cursor-default"
             : "cursor-grab data-dragging:cursor-grabbing",
@@ -1017,7 +1017,7 @@ function KanbanItem(props: KanbanItemProps) {
         ref: composedRef,
         style: composedStyle,
         className: cn(
-          "focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:outline-hidden",
+          "cn-kanban-item",
           {
             "touch-none select-none": asHandle,
             "cursor-default": context.flatCursor,
@@ -1083,7 +1083,7 @@ function KanbanItemHandle(props: KanbanItemHandleProps) {
         ref: composedRef,
         disabled: isDisabled,
         className: cn(
-          "select-none disabled:pointer-events-none disabled:opacity-50",
+          "cn-kanban-item-handle",
           context.flatCursor
             ? "cursor-default"
             : "cursor-grab data-dragging:cursor-grabbing",

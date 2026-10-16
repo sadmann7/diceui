@@ -1901,6 +1901,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "checkbox-group-demo",
+    type: "registry:example",
+    registryDependencies: ["checkbox-group"],
+    files: [
+      {
+        path: "examples/checkbox-group-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "checkbox-group-animated-demo",
     type: "registry:example",
     dependencies: ["@diceui/checkbox-group"],
@@ -1944,6 +1955,17 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/checkbox-group-validation-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "combobox-demo",
+    type: "registry:example",
+    registryDependencies: ["combobox"],
+    files: [
+      {
+        path: "examples/combobox-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -2049,6 +2071,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "mention-demo",
+    type: "registry:example",
+    registryDependencies: ["mention", "textarea"],
+    files: [
+      {
+        path: "examples/mention-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "mention-custom-filter-demo",
     type: "registry:example",
     dependencies: ["@diceui/mention"],
@@ -2066,6 +2099,17 @@ export const examples: Registry["items"] = [
     files: [
       {
         path: "examples/mention-custom-trigger-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "tags-input-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "tags-input"],
+    files: [
+      {
+        path: "examples/tags-input-demo.tsx",
         type: "registry:example",
       },
     ],

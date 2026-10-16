@@ -10,8 +10,10 @@ import {
   MdxTabsList,
   MdxTabsTrigger,
 } from "@/components/mdx-tabs";
+import { StyleScope } from "@/components/style-scope";
+import { StyleSwitcher } from "@/components/style-switcher";
 import { cn } from "@/lib/utils";
-import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
+import { Skeleton } from "@/styles/radix-nova/ui/skeleton";
 
 function getExampleComponent(base: string, name: string) {
   if (base === "base") {
@@ -66,6 +68,7 @@ export function ComponentTabs({
           <MdxTabsTrigger value="Preview">Preview</MdxTabsTrigger>
           <MdxTabsTrigger value="Code">Code</MdxTabsTrigger>
         </MdxTabsList>
+        <StyleSwitcher className="ml-auto" />
       </div>
       <MdxTabsContent
         value="Preview"
@@ -88,9 +91,11 @@ export function ComponentTabs({
             className,
           )}
         >
-          <React.Suspense fallback={<Skeleton className="size-full" />}>
-            <Component />
-          </React.Suspense>
+          <StyleScope>
+            <React.Suspense fallback={<Skeleton className="size-full" />}>
+              <Component />
+            </React.Suspense>
+          </StyleScope>
         </div>
       </MdxTabsContent>
       <MdxTabsContent

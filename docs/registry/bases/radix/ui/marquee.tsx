@@ -388,7 +388,7 @@ function Marquee(props: MarqueeProps) {
 
   return (
     <MarqueeContext.Provider value={contextValue}>
-      <div data-slot="marquee-wrapper" className="grid">
+      <div data-slot="marquee-wrapper" className="cn-marquee-wrapper">
         <MarqueePrimitive
           role="marquee"
           aria-live="off"
@@ -399,7 +399,7 @@ function Marquee(props: MarqueeProps) {
           {...marqueeProps}
           ref={composedRef}
           className={cn(
-            "relative flex overflow-hidden motion-reduce:animate-none",
+            "cn-marquee",
             orientation === "vertical" && "h-full flex-col",
             orientation === "horizontal" && "w-full",
             paused && "[&_*]:[animation-play-state:paused]",
@@ -416,49 +416,46 @@ function Marquee(props: MarqueeProps) {
   );
 }
 
-const marqueeContentVariants = cva(
-  "flex min-w-full shrink-0 gap-(--marquee-gap)",
-  {
-    variants: {
-      side: {
-        left: "animate-marquee-left",
-        right: "animate-marquee-right",
-        top: "min-h-full min-w-auto animate-marquee-up flex-col",
-        bottom: "min-h-full min-w-auto animate-marquee-down flex-col",
-      },
-      dir: {
-        ltr: "",
-        rtl: "",
-      },
-      pauseOnHover: {
-        true: "group-hover:[animation-play-state:paused]",
-        false: "",
-      },
-      reverse: {
-        true: "[animation-direction:reverse]",
-        false: "",
-      },
+const marqueeContentVariants = cva("cn-marquee-content", {
+  variants: {
+    side: {
+      left: "cn-marquee-content-side-left",
+      right: "cn-marquee-content-side-right",
+      top: "cn-marquee-content-side-top",
+      bottom: "cn-marquee-content-side-bottom",
     },
-    compoundVariants: [
-      {
-        side: "left",
-        dir: "rtl",
-        className: "animate-marquee-left-rtl",
-      },
-      {
-        side: "right",
-        dir: "rtl",
-        className: "animate-marquee-right-rtl",
-      },
-    ],
-    defaultVariants: {
-      side: "left",
-      dir: "ltr",
-      pauseOnHover: false,
-      reverse: false,
+    dir: {
+      ltr: "",
+      rtl: "",
+    },
+    pauseOnHover: {
+      true: "cn-marquee-content-pause-on-hover-true",
+      false: "",
+    },
+    reverse: {
+      true: "cn-marquee-content-reverse-true",
+      false: "",
     },
   },
-);
+  compoundVariants: [
+    {
+      side: "left",
+      dir: "rtl",
+      className: "animate-marquee-left-rtl",
+    },
+    {
+      side: "right",
+      dir: "rtl",
+      className: "animate-marquee-right-rtl",
+    },
+  ],
+  defaultVariants: {
+    side: "left",
+    dir: "ltr",
+    pauseOnHover: false,
+    reverse: false,
+  },
+});
 
 function MarqueeContent(props: DivProps) {
   const {
@@ -554,10 +551,7 @@ function MarqueeContent(props: DivProps) {
       >
         <div
           ref={composedRef}
-          className={cn(
-            "flex shrink-0 gap-(--marquee-gap)",
-            isVertical && "flex-col",
-          )}
+          className={cn("cn-marquee-content-2", isVertical && "flex-col")}
         >
           {children}
         </div>
@@ -594,20 +588,18 @@ function MarqueeItem(props: DivProps) {
     <ItemPrimitive
       data-slot="marquee-item"
       {...itemProps}
-      className={cn("shrink-0", className)}
+      className={cn("cn-marquee-item", className)}
     />
   );
 }
 
-const marqueeEdgeVariants = cva("pointer-events-none absolute z-10", {
+const marqueeEdgeVariants = cva("cn-marquee-edge", {
   variants: {
     side: {
-      left: "top-0 left-0 h-full bg-gradient-to-r from-background to-transparent",
-      right:
-        "top-0 right-0 h-full bg-gradient-to-l from-background to-transparent",
-      top: "top-0 left-0 w-full bg-gradient-to-b from-background to-transparent",
-      bottom:
-        "bottom-0 left-0 w-full bg-gradient-to-t from-background to-transparent",
+      left: "cn-marquee-edge-side-left-radix",
+      right: "cn-marquee-edge-side-right-radix",
+      top: "cn-marquee-edge-side-top-radix",
+      bottom: "cn-marquee-edge-side-bottom-radix",
     },
     size: {
       default: "",

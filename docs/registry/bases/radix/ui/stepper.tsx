@@ -366,7 +366,7 @@ function Stepper(props: StepperProps) {
           dir={dir}
           {...rootProps}
           className={cn(
-            "flex gap-6",
+            "cn-stepper",
             orientation === "horizontal" ? "w-full flex-col" : "flex-row",
             className,
           )}
@@ -568,7 +568,7 @@ function StepperList(props: DivProps) {
         {...listProps}
         ref={composedRef}
         className={cn(
-          "flex outline-none",
+          "cn-stepper-list",
           orientation === "horizontal"
             ? "flex-row items-center"
             : "flex-col items-start",
@@ -661,7 +661,7 @@ function StepperItem(props: StepperItemProps) {
         {...itemProps}
         ref={ref}
         className={cn(
-          "relative flex items-center not-last:flex-1",
+          "cn-stepper-item",
           orientation === "horizontal" ? "flex-row" : "flex-col",
           className,
         )}
@@ -966,11 +966,7 @@ function StepperTrigger(props: ButtonProps) {
       tabIndex={isTabStop ? 0 : -1}
       {...triggerProps}
       ref={composedRef}
-      className={cn(
-        "inline-flex items-center justify-center gap-3 rounded-md text-left transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-        "not-has-data-[slot=description]:rounded-full not-has-data-[slot=title]:rounded-full",
-        className,
-      )}
+      className={cn("cn-stepper-trigger", className)}
       onClick={onClick}
       onFocus={onFocus}
       onKeyDown={onKeyDown}
@@ -1007,10 +1003,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
       dir={context.dir}
       {...indicatorProps}
       ref={ref}
-      className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-muted bg-background text-sm font-medium text-muted-foreground transition-colors data-[state=active]:border-primary data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=completed]:border-primary data-[state=completed]:bg-primary data-[state=completed]:text-primary-foreground",
-        className,
-      )}
+      className={cn("cn-stepper-indicator", className)}
     >
       {typeof children === "function" ? (
         children(dataState)
@@ -1023,7 +1016,7 @@ function StepperIndicator(props: StepperIndicatorProps) {
           hugeicons="Tick02Icon"
           phosphor="CheckIcon"
           remixicon="RiCheckLine"
-          className="size-4"
+          className="cn-stepper-indicator-2"
         />
       ) : (
         stepPosition
@@ -1080,7 +1073,7 @@ function StepperSeparator(props: StepperSeparatorProps) {
       {...separatorProps}
       ref={ref}
       className={cn(
-        "bg-border transition-colors data-[state=active]:bg-primary data-[state=completed]:bg-primary",
+        "cn-stepper-separator",
         orientation === "horizontal" ? "h-px flex-1" : "h-10 w-px",
         className,
       )}
@@ -1109,7 +1102,7 @@ function StepperTitle(props: StepperTitleProps) {
       dir={context.dir}
       {...titleProps}
       ref={ref}
-      className={cn("text-sm font-medium", className)}
+      className={cn("cn-stepper-title cn-font-heading", className)}
     />
   );
 }
@@ -1135,7 +1128,7 @@ function StepperDescription(props: StepperDescriptionProps) {
       dir={context.dir}
       {...descriptionProps}
       ref={ref}
-      className={cn("text-xs text-muted-foreground", className)}
+      className={cn("cn-stepper-description", className)}
     />
   );
 }
@@ -1174,7 +1167,7 @@ function StepperContent(props: StepperContentProps) {
       dir={context.dir}
       {...contentProps}
       ref={ref}
-      className={cn("flex-1 outline-none", className)}
+      className={cn("cn-stepper-content", className)}
     />
   );
 }

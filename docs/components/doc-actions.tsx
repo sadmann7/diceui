@@ -6,17 +6,17 @@ import * as React from "react";
 
 import { siteConfig } from "@/config/site";
 import { cn } from "@/lib/utils";
-import { Button } from "@/registry/bases/base/ui/button";
+import { Button } from "@/styles/base-nova/ui/button";
 import {
   ButtonGroup,
   ButtonGroupSeparator,
-} from "@/registry/bases/base/ui/button-group";
+} from "@/styles/base-nova/ui/button-group";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/registry/bases/base/ui/dropdown-menu";
+} from "@/styles/base-nova/ui/dropdown-menu";
 
 const markdownCache = new Map<string, string>();
 

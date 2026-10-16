@@ -300,7 +300,7 @@ function KeyValue(props: KeyValueProps) {
             {
               id,
               ref: composedRef,
-              className: cn("flex flex-col gap-2", className),
+              className: cn("cn-key-value", className),
             },
             rootProps,
           ),
@@ -350,7 +350,7 @@ function KeyValueList(props: KeyValueListProps) {
         role: "list",
         "aria-orientation": orientation,
         className: cn(
-          "flex",
+          "cn-key-value-list",
           orientation === "vertical" ? "flex-col gap-2" : "flex-row gap-2",
           className,
         ),
@@ -398,7 +398,7 @@ function KeyValueItem(props: KeyValueItemProps) {
     props: mergeProps<"div">(
       {
         role: "listitem",
-        className: cn("flex items-start gap-2", className),
+        className: cn("cn-key-value-item", className),
       },
       itemProps,
     ),
@@ -709,7 +709,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
       placeholder={context.valuePlaceholder}
       {...valueInputProps}
       className={cn(
-        "field-sizing-content min-h-9 resize-none",
+        "cn-key-value-value-input",
         maxRows && "overflow-y-auto",
         className,
       )}
@@ -867,7 +867,7 @@ function KeyValueError(props: KeyValueErrorProps) {
       {
         id: getErrorId(context.rootId, itemData.id, field),
         role: "alert",
-        className: cn("text-sm font-medium text-destructive", className),
+        className: cn("cn-key-value-error", className),
         children: error,
       },
       errorProps,

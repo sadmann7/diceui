@@ -8,6 +8,11 @@ const withMDX = createMDX();
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  turbopack: {
+    resolveAlias: {
+      cn: "./lib/cn.ts",
+    },
+  },
   images: {
     remotePatterns: [
       {
@@ -69,6 +74,10 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
+      {
+        source: "/r/:style(new-york|new-york-v4|default)/:name.json",
+        destination: "/r/styles/radix-vega/:name.json",
+      },
       {
         source: "/r/:style/:name.json",
         destination: "/r/styles/:style/:name.json",

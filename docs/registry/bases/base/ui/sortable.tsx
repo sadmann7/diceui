@@ -464,7 +464,7 @@ function SortableItem(props: SortableItemProps) {
         ref: composedRef,
         style: composedStyle,
         className: cn(
-          "focus-visible:ring-1 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:outline-hidden",
+          "cn-sortable-item",
           {
             "touch-none select-none": asHandle,
             "cursor-default": context.flatCursor,
@@ -530,7 +530,7 @@ function SortableItemHandle(props: SortableItemHandleProps) {
         ref: composedRef,
         disabled: isDisabled,
         className: cn(
-          "select-none disabled:pointer-events-none disabled:opacity-50",
+          "cn-sortable-item-handle",
           context.flatCursor
             ? "cursor-default"
             : "cursor-grab data-dragging:cursor-grabbing",

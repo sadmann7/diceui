@@ -313,7 +313,7 @@ function Editable(props: EditableProps) {
           {...rootProps}
           id={id}
           ref={composedRef}
-          className={cn("flex min-w-0 flex-col gap-2", className)}
+          className={cn("cn-editable", className)}
         />
         {isFormControl && (
           <VisuallyHiddenInput
@@ -351,10 +351,7 @@ function EditableLabel(props: EditableLabelProps) {
       ref={ref}
       id={context.labelId}
       htmlFor={context.inputId}
-      className={cn(
-        "text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70 data-required:after:ml-0.5 data-required:after:text-destructive data-required:after:content-['*']",
-        className,
-      )}
+      className={cn("cn-editable-label", className)}
     >
       {children}
     </LabelPrimitive>
@@ -381,10 +378,7 @@ function EditableArea(props: EditableAreaProps) {
       dir={context.dir}
       {...areaProps}
       ref={ref}
-      className={cn(
-        "relative inline-block min-w-0 data-disabled:cursor-not-allowed data-disabled:opacity-50",
-        className,
-      )}
+      className={cn("cn-editable-area", className)}
     />
   );
 }
@@ -487,10 +481,7 @@ function EditablePreview(props: EditablePreviewProps) {
       onDoubleClick={onDoubleClick}
       onFocus={onFocus}
       onKeyDown={onKeyDown}
-      className={cn(
-        "cursor-text truncate rounded-sm border border-transparent py-1 text-base focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-empty:text-muted-foreground data-readonly:cursor-default md:text-sm data-disabled:cursor-not-allowed data-disabled:opacity-50",
-        className,
-      )}
+      className={cn("cn-editable-preview", className)}
     >
       {value || context.placeholder}
     </PreviewPrimitive>
@@ -652,7 +643,7 @@ function EditableInput(props: EditableInputProps) {
       onChange={onChange}
       onKeyDown={onKeyDown}
       className={cn(
-        "flex rounded-sm border border-input bg-transparent py-1 text-base shadow-xs transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+        "cn-editable-input",
         context.autosize ? "w-auto" : "w-full",
         className,
       )}
@@ -722,7 +713,7 @@ function EditableToolbar(props: EditableToolbarProps) {
       {...toolbarProps}
       ref={ref}
       className={cn(
-        "flex items-center gap-2",
+        "cn-editable-toolbar",
         orientation === "vertical" && "flex-col",
         className,
       )}

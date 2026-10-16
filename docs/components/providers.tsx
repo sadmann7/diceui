@@ -9,8 +9,8 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { DocSearchDialog } from "@/components/doc-search-dialog";
 import { HashHistorySync } from "@/components/hash-history-sync";
 import { ThemeShortcut } from "@/components/theme-shortcut";
-import { TooltipProvider as BaseTooltipProvider } from "@/registry/bases/base/ui/tooltip";
-import { TooltipProvider as RadixTooltipProvider } from "@/registry/bases/radix/ui/tooltip";
+import { TooltipProvider as BaseTooltipProvider } from "@/styles/base-nova/ui/tooltip";
+import { TooltipProvider as RadixTooltipProvider } from "@/styles/radix-nova/ui/tooltip";
 
 const store = createStore();
 

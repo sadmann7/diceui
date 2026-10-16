@@ -28,8 +28,6 @@ function PresentationZoomSelect({
 }: PresentationZoomSelectProps) {
   const { zoom, isAutoFit, setZoom, setAutoFit } = useZoom();
   const percentage = `${Math.round(zoom * 100)}%`;
-  const itemClassName =
-    "py-0.5 pr-6 pl-1.5 text-xs [&_svg:not([class*='size-'])]:size-3";
 
   return (
     <Select
@@ -41,25 +39,22 @@ function PresentationZoomSelect({
     >
       <SelectTrigger
         size="sm"
-        className={cn(
-          "h-6 w-22 gap-1 rounded-md py-0 pr-1.5 pl-2 text-xs [&_svg:not([class*='size-'])]:size-3",
-          className,
-        )}
+        className={cn("cn-presentation-zoom-select-trigger", className)}
         {...props}
       >
         <SelectValue>
           {isAutoFit ? `Fit · ${percentage}` : percentage}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent className="min-w-22 p-0.5">
-        <SelectItem value="fit" className={itemClassName}>
+      <SelectContent className="cn-presentation-zoom-select-content">
+        <SelectItem value="fit" className="cn-presentation-zoom-select-item">
           Fit
         </SelectItem>
         {levels.map((level) => (
           <SelectItem
             key={level}
             value={String(level)}
-            className={itemClassName}
+            className="cn-presentation-zoom-select-item"
           >
             {`${level * 100}%`}
           </SelectItem>

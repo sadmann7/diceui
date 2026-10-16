@@ -198,10 +198,7 @@ function Swap(props: SwapProps) {
         "aria-pressed": isClickMode ? swapped : undefined,
         "aria-disabled": disabled,
         tabIndex: isClickMode && !disabled ? 0 : undefined,
-        className: cn(
-          "relative inline-flex cursor-pointer items-center justify-center select-none data-disabled:cursor-not-allowed data-disabled:opacity-50",
-          className,
-        ),
+        className: cn("cn-swap", className),
         onClick,
         onMouseEnter,
         onMouseLeave,
@@ -231,13 +228,7 @@ function SwapOn({ render, className, ...props }: SwapOnProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn(
-          "transition-all duration-300 data-[state=off]:absolute data-[state=off]:opacity-0 data-[state=on]:opacity-100 motion-reduce:transition-none",
-          "[*[data-animation=rotate]_&]:data-[state=off]:rotate-180 [*[data-animation=rotate]_&]:data-[state=on]:rotate-0 motion-reduce:[*[data-animation=rotate]_&]:data-[state=off]:rotate-0",
-          "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(180deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(0deg)] motion-reduce:[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(0deg)]",
-          "[*[data-animation=scale]_&]:data-[state=off]:scale-0 [*[data-animation=scale]_&]:data-[state=on]:scale-100 motion-reduce:[*[data-animation=scale]_&]:data-[state=off]:scale-100",
-          className,
-        ),
+        className: cn("cn-swap-on", className),
       },
       props,
     ),
@@ -259,13 +250,7 @@ function SwapOff({ render, className, ...props }: SwapOffProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn(
-          "transition-all duration-300 data-[state=off]:opacity-100 data-[state=on]:absolute data-[state=on]:opacity-0 motion-reduce:transition-none",
-          "[*[data-animation=rotate]_&]:data-[state=off]:rotate-0 [*[data-animation=rotate]_&]:data-[state=on]:rotate-180 motion-reduce:[*[data-animation=rotate]_&]:data-[state=on]:rotate-0",
-          "[*[data-animation=flip]_&]:data-[state=off]:transform-[rotateY(0deg)] [*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(180deg)] motion-reduce:[*[data-animation=flip]_&]:data-[state=on]:transform-[rotateY(0deg)]",
-          "[*[data-animation=scale]_&]:data-[state=off]:scale-100 [*[data-animation=scale]_&]:data-[state=on]:scale-0 motion-reduce:[*[data-animation=scale]_&]:data-[state=on]:scale-100",
-          className,
-        ),
+        className: cn("cn-swap-off", className),
       },
       props,
     ),

@@ -5,13 +5,9 @@ import { useRender } from "@base-ui/react/use-render";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-} from "lucide-react";
 import * as React from "react";
+
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const DATA_TOP_SCROLL = "data-top-scroll";
 const DATA_BOTTOM_SCROLL = "data-bottom-scroll";
@@ -37,7 +33,7 @@ const scrollerVariants = cva("", {
       ],
     },
     hideScrollbar: {
-      true: "[scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+      true: "cn-scroller-hide-scrollbar-true",
       false: "",
     },
   },
@@ -272,7 +268,7 @@ function Scroller(props: ScrollerProps) {
 
   if (withNavigation) {
     return (
-      <div className="relative w-full">
+      <div className="cn-scroller">
         {navigationButtons}
         {ScrollerImpl}
       </div>
@@ -282,29 +278,58 @@ function Scroller(props: ScrollerProps) {
   return ScrollerImpl;
 }
 
-const scrollButtonVariants = cva(
-  "absolute z-10 transition-opacity [&>svg]:size-4 [&>svg]:opacity-80 hover:[&>svg]:opacity-100",
-  {
-    variants: {
-      direction: {
-        up: "top-2 left-1/2 -translate-x-1/2",
-        down: "bottom-2 left-1/2 -translate-x-1/2",
-        left: "top-1/2 left-2 -translate-y-1/2",
-        right: "top-1/2 right-2 -translate-y-1/2",
-      },
-    },
-    defaultVariants: {
-      direction: "up",
+const scrollButtonVariants = cva("cn-scroller-scroll-button", {
+  variants: {
+    direction: {
+      up: "cn-scroller-scroll-button-direction-up",
+      down: "cn-scroller-scroll-button-direction-down",
+      left: "cn-scroller-scroll-button-direction-left",
+      right: "cn-scroller-scroll-button-direction-right",
     },
   },
-);
+  defaultVariants: {
+    direction: "up",
+  },
+});
 
-const directionToIcon: Record<ScrollDirection, React.ElementType> = {
-  up: ChevronUp,
-  down: ChevronDown,
-  left: ChevronLeft,
-  right: ChevronRight,
-} as const;
+const directionToIcon: Record<ScrollDirection, React.ReactNode> = {
+  up: (
+    <IconPlaceholder
+      lucide="ChevronUpIcon"
+      tabler="IconChevronUp"
+      hugeicons="ArrowUp01Icon"
+      phosphor="CaretUpIcon"
+      remixicon="RiArrowUpSLine"
+    />
+  ),
+  down: (
+    <IconPlaceholder
+      lucide="ChevronDownIcon"
+      tabler="IconChevronDown"
+      hugeicons="ArrowDown01Icon"
+      phosphor="CaretDownIcon"
+      remixicon="RiArrowDownSLine"
+    />
+  ),
+  left: (
+    <IconPlaceholder
+      lucide="ChevronLeftIcon"
+      tabler="IconChevronLeft"
+      hugeicons="ArrowLeft01Icon"
+      phosphor="CaretLeftIcon"
+      remixicon="RiArrowLeftSLine"
+    />
+  ),
+  right: (
+    <IconPlaceholder
+      lucide="ChevronRightIcon"
+      tabler="IconChevronRight"
+      hugeicons="ArrowRight01Icon"
+      phosphor="CaretRightIcon"
+      remixicon="RiArrowRightSLine"
+    />
+  ),
+};
 
 interface ScrollButtonProps extends React.ComponentProps<"button"> {
   direction: ScrollDirection;
@@ -377,8 +402,6 @@ function ScrollButton(props: ScrollButtonProps) {
     return () => onAutoScrollStop();
   }, [onAutoScrollStop]);
 
-  const Icon = directionToIcon[direction];
-
   return (
     <button
       type="button"
@@ -387,7 +410,7 @@ function ScrollButton(props: ScrollButtonProps) {
       ref={ref}
       className={cn(scrollButtonVariants({ direction, className }))}
     >
-      <Icon />
+      {directionToIcon[direction]}
     </button>
   );
 }

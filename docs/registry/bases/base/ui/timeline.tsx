@@ -103,47 +103,44 @@ function useTimelineContext(consumerName: string) {
   return context;
 }
 
-const timelineVariants = cva(
-  "relative flex [--timeline-connector-thickness:0.125rem] [--timeline-dot-size:0.875rem]",
-  {
-    variants: {
-      orientation: {
-        vertical: "flex-col",
-        horizontal: "flex-row items-start",
-      },
-      variant: {
-        default: "",
-        alternate: "",
-      },
+const timelineVariants = cva("cn-timeline", {
+  variants: {
+    orientation: {
+      vertical: "cn-timeline-orientation-vertical",
+      horizontal: "cn-timeline-orientation-horizontal",
     },
-    compoundVariants: [
-      {
-        orientation: "vertical",
-        variant: "default",
-        class: "gap-6",
-      },
-      {
-        orientation: "horizontal",
-        variant: "default",
-        class: "gap-8",
-      },
-      {
-        orientation: "vertical",
-        variant: "alternate",
-        class: "relative w-full gap-3",
-      },
-      {
-        orientation: "horizontal",
-        variant: "alternate",
-        class: "items-center gap-4",
-      },
-    ],
-    defaultVariants: {
-      orientation: "vertical",
-      variant: "default",
+    variant: {
+      default: "",
+      alternate: "",
     },
   },
-);
+  compoundVariants: [
+    {
+      orientation: "vertical",
+      variant: "default",
+      class: "gap-6",
+    },
+    {
+      orientation: "horizontal",
+      variant: "default",
+      class: "gap-8",
+    },
+    {
+      orientation: "vertical",
+      variant: "alternate",
+      class: "relative w-full gap-3",
+    },
+    {
+      orientation: "horizontal",
+      variant: "alternate",
+      class: "items-center gap-4",
+    },
+  ],
+  defaultVariants: {
+    orientation: "vertical",
+    variant: "default",
+  },
+});
 
 interface TimelineProps
   extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {
@@ -270,7 +267,7 @@ function useTimelineItemContext(consumerName: string) {
   return context;
 }
 
-const timelineItemVariants = cva("relative flex", {
+const timelineItemVariants = cva("cn-timeline-item", {
   variants: {
     orientation: {
       vertical: "",
@@ -392,7 +389,7 @@ function TimelineItem(props: TimelineItemProps) {
   );
 }
 
-const timelineContentVariants = cva("flex-1", {
+const timelineContentVariants = cva("cn-timeline-content", {
   variants: {
     orientation: {
       vertical: "",
@@ -466,67 +463,64 @@ function TimelineContent(props: TimelineContentProps) {
   });
 }
 
-const timelineDotVariants = cva(
-  "relative z-10 flex size-[var(--timeline-dot-size)] shrink-0 items-center justify-center rounded-full border-2 bg-background",
-  {
-    variants: {
-      status: {
-        completed: "border-primary",
-        active: "border-primary",
-        pending: "border-border",
-      },
-      orientation: {
-        vertical: "",
-        horizontal: "",
-      },
-      variant: {
-        default: "",
-        alternate: "",
-      },
-      isAlternateRight: {
-        true: "",
-        false: "",
-      },
+const timelineDotVariants = cva("cn-timeline-dot", {
+  variants: {
+    status: {
+      completed: "cn-timeline-dot-status-completed",
+      active: "cn-timeline-dot-status-active",
+      pending: "cn-timeline-dot-status-pending",
     },
-    compoundVariants: [
-      {
-        variant: "alternate",
-        orientation: "vertical",
-        isAlternateRight: false,
-        class:
-          "absolute -right-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] bg-background",
-      },
-      {
-        variant: "alternate",
-        orientation: "vertical",
-        isAlternateRight: true,
-        class:
-          "absolute -left-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] bg-background",
-      },
-      {
-        variant: "alternate",
-        orientation: "horizontal",
-        class: "row-start-2 bg-background",
-      },
-      {
-        variant: "alternate",
-        status: "completed",
-        class: "bg-background",
-      },
-      {
-        variant: "alternate",
-        status: "active",
-        class: "bg-background",
-      },
-    ],
-    defaultVariants: {
-      status: "pending",
-      orientation: "vertical",
-      variant: "default",
-      isAlternateRight: false,
+    orientation: {
+      vertical: "",
+      horizontal: "",
+    },
+    variant: {
+      default: "",
+      alternate: "",
+    },
+    isAlternateRight: {
+      true: "",
+      false: "",
     },
   },
-);
+  compoundVariants: [
+    {
+      variant: "alternate",
+      orientation: "vertical",
+      isAlternateRight: false,
+      class:
+        "absolute -right-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] bg-background",
+    },
+    {
+      variant: "alternate",
+      orientation: "vertical",
+      isAlternateRight: true,
+      class:
+        "absolute -left-[calc(var(--timeline-dot-size)/2-var(--timeline-connector-thickness)/2)] bg-background",
+    },
+    {
+      variant: "alternate",
+      orientation: "horizontal",
+      class: "row-start-2 bg-background",
+    },
+    {
+      variant: "alternate",
+      status: "completed",
+      class: "bg-background",
+    },
+    {
+      variant: "alternate",
+      status: "active",
+      class: "bg-background",
+    },
+  ],
+  defaultVariants: {
+    status: "pending",
+    orientation: "vertical",
+    variant: "default",
+    isAlternateRight: false,
+  },
+});
 
 interface TimelineDotProps
   extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
@@ -562,11 +556,11 @@ function TimelineDot(props: TimelineDotProps) {
   });
 }
 
-const timelineConnectorVariants = cva("absolute z-0", {
+const timelineConnectorVariants = cva("cn-timeline-connector", {
   variants: {
     isCompleted: {
-      true: "bg-primary",
-      false: "bg-border",
+      true: "cn-timeline-connector-is-completed-true",
+      false: "cn-timeline-connector-is-completed-false",
     },
     orientation: {
       vertical: "",
@@ -685,7 +679,7 @@ function TimelineHeader(props: TimelineHeaderProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("flex flex-col gap-1", className),
+        className: cn("cn-timeline-header", className),
       },
       headerProps,
     ),
@@ -706,7 +700,7 @@ function TimelineTitle(props: TimelineTitleProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("leading-none font-semibold", className),
+        className: cn("cn-timeline-title cn-font-heading", className),
       },
       titleProps,
     ),
@@ -727,7 +721,7 @@ function TimelineDescription(props: TimelineDescriptionProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("text-sm text-muted-foreground", className),
+        className: cn("cn-timeline-description", className),
       },
       descriptionProps,
     ),
@@ -748,7 +742,7 @@ function TimelineTime(props: TimelineTimeProps) {
     defaultTagName: "time",
     props: mergeProps<"time">(
       {
-        className: cn("text-xs text-muted-foreground", className),
+        className: cn("cn-timeline-time", className),
       },
       timeProps,
     ),

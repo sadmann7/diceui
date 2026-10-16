@@ -160,7 +160,7 @@ export default function FileUploadChatInputDemo() {
               type="button"
               size="icon"
               variant="ghost"
-              className="size-7 rounded-sm"
+              className="size-7"
             >
               <Paperclip className="size-3.5" />
               <span className="sr-only">Attach file</span>
@@ -168,7 +168,7 @@ export default function FileUploadChatInputDemo() {
           </FileUploadTrigger>
           <Button
             size="icon"
-            className="size-7 rounded-sm"
+            className="size-7"
             disabled={!input.trim() || isUploading}
           >
             <ArrowUp className="size-3.5" />

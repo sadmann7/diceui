@@ -15,7 +15,7 @@ const Listbox = (({
       data-slot="listbox"
       orientation={orientation}
       className={cn(
-        "flex gap-2 focus-visible:outline-none",
+        "cn-listbox",
         orientation === "vertical" &&
           "flex-col *:data-[slot=listbox-group]:flex-col",
         className,
@@ -32,7 +32,7 @@ function ListboxGroup({
   return (
     <ListboxPrimitive.Group
       data-slot="listbox-group"
-      className={cn("flex flex-col gap-2", className)}
+      className={cn("cn-listbox-group", className)}
       {...props}
     />
   );
@@ -45,10 +45,7 @@ function ListboxGroupLabel({
   return (
     <ListboxPrimitive.GroupLabel
       data-slot="listbox-group-label"
-      className={cn(
-        "px-2 pt-1 text-sm font-medium text-muted-foreground",
-        className,
-      )}
+      className={cn("cn-listbox-group-label", className)}
       {...props}
     />
   );
@@ -61,10 +58,7 @@ function ListboxItem({
   return (
     <ListboxPrimitive.Item
       data-slot="listbox-item"
-      className={cn(
-        "flex w-full cursor-default items-center justify-between gap-2 rounded-md p-4 ring-1 ring-border outline-hidden select-none focus-visible:ring-ring data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
-        className,
-      )}
+      className={cn("cn-listbox-item", className)}
       {...props}
     />
   );
@@ -84,7 +78,7 @@ function ListboxItemIndicator({
         hugeicons="Tick02Icon"
         phosphor="CheckIcon"
         remixicon="RiCheckLine"
-        className="size-4"
+        className="cn-listbox-item-indicator"
       />
     </ListboxPrimitive.ItemIndicator>
   );

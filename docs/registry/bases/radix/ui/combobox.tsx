@@ -25,7 +25,7 @@ function ComboboxLabel({
   return (
     <ComboboxPrimitive.Label
       data-slot="combobox-label"
-      className={cn("px-0.5 py-1.5 text-sm font-semibold", className)}
+      className={cn("cn-combobox-label", className)}
       {...props}
     />
   );
@@ -38,10 +38,7 @@ function ComboboxAnchor({
   return (
     <ComboboxPrimitive.Anchor
       data-slot="combobox-anchor"
-      className={cn(
-        "relative flex h-9 w-full items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 shadow-xs data-focused:ring-1 data-focused:ring-ring",
-        className,
-      )}
+      className={cn("cn-combobox-anchor", className)}
       {...props}
     />
   );
@@ -54,10 +51,7 @@ function ComboboxInput({
   return (
     <ComboboxPrimitive.Input
       data-slot="combobox-input"
-      className={cn(
-        "flex h-9 w-full rounded-md bg-transparent text-base placeholder:text-muted-foreground focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        className,
-      )}
+      className={cn("cn-combobox-input", className)}
       {...props}
     />
   );
@@ -71,10 +65,7 @@ function ComboboxTrigger({
   return (
     <ComboboxPrimitive.Trigger
       data-slot="combobox-trigger"
-      className={cn(
-        "flex shrink-0 items-center justify-center rounded-r-md border-input bg-transparent text-muted-foreground transition-colors hover:text-foreground/80 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
-        className,
-      )}
+      className={cn("cn-combobox-trigger", className)}
       {...props}
     >
       {children || (
@@ -84,7 +75,7 @@ function ComboboxTrigger({
           hugeicons="ArrowDown01Icon"
           phosphor="CaretDownIcon"
           remixicon="RiArrowDownSLine"
-          className="size-4"
+          className="cn-combobox-trigger-2"
         />
       )}
     </ComboboxPrimitive.Trigger>
@@ -98,10 +89,7 @@ function ComboboxCancel({
   return (
     <ComboboxPrimitive.Cancel
       data-slot="combobox-cancel"
-      className={cn(
-        "absolute top-1/2 right-1 flex size-6 -translate-y-1/2 items-center justify-center rounded-sm bg-background opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none",
-        className,
-      )}
+      className={cn("cn-combobox-cancel", className)}
       {...props}
     />
   );
@@ -114,7 +102,7 @@ function ComboboxBadgeList({
   return (
     <ComboboxPrimitive.BadgeList
       data-slot="combobox-badge-list"
-      className={cn("flex flex-wrap items-center gap-1.5", className)}
+      className={cn("cn-combobox-badge-list", className)}
       {...props}
     />
   );
@@ -128,18 +116,13 @@ function ComboboxBadgeItem({
   return (
     <ComboboxPrimitive.BadgeItem
       data-slot="combobox-badge-item"
-      className={cn(
-        "inline-flex items-center justify-between gap-1 rounded-sm bg-secondary px-2 py-0.5",
-        className,
-      )}
+      className={cn("cn-combobox-badge-item", className)}
       {...props}
     >
-      <span className="truncate text-[13px] text-secondary-foreground">
-        {children}
-      </span>
+      <span className="cn-combobox-badge-item-2">{children}</span>
       <ComboboxPrimitive.BadgeItemDelete
         data-slot="combobox-badge-item-delete"
-        className="shrink-0 rounded p-0.5 opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-hidden data-highlighted:bg-destructive"
+        className="cn-combobox-badge-item-delete"
       >
         <IconPlaceholder
           lucide="X"
@@ -147,7 +130,7 @@ function ComboboxBadgeItem({
           hugeicons="Cancel01Icon"
           phosphor="XIcon"
           remixicon="RiCloseLine"
-          className="size-3"
+          className="cn-combobox-badge-item-3"
         />
       </ComboboxPrimitive.BadgeItemDelete>
     </ComboboxPrimitive.BadgeItem>
@@ -166,7 +149,7 @@ function ComboboxContent({
         data-slot="combobox-content"
         sideOffset={sideOffset}
         className={cn(
-          "relative z-50 max-h-fit min-w-(--dice-anchor-width) origin-(--dice-transform-origin) overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95",
+          "cn-combobox-content cn-menu-target cn-menu-translucent",
           className,
         )}
         {...props}
@@ -184,7 +167,7 @@ function ComboboxLoading({
   return (
     <ComboboxPrimitive.Loading
       data-slot="combobox-loading"
-      className={cn("py-6 text-center text-sm", className)}
+      className={cn("cn-combobox-loading", className)}
       {...props}
     >
       Loading...
@@ -199,7 +182,7 @@ function ComboboxEmpty({
   return (
     <ComboboxPrimitive.Empty
       data-slot="combobox-empty"
-      className={cn("py-6 text-center text-sm", className)}
+      className={cn("cn-combobox-empty", className)}
       {...props}
     />
   );
@@ -212,7 +195,7 @@ function ComboboxGroup({
   return (
     <ComboboxPrimitive.Group
       data-slot="combobox-group"
-      className={cn("overflow-hidden", className)}
+      className={cn("cn-combobox-group", className)}
       {...props}
     />
   );
@@ -225,10 +208,7 @@ function ComboboxGroupLabel({
   return (
     <ComboboxPrimitive.GroupLabel
       data-slot="combobox-group-label"
-      className={cn(
-        "px-2 py-1.5 text-xs font-semibold text-muted-foreground",
-        className,
-      )}
+      className={cn("cn-combobox-group-label", className)}
       {...props}
     />
   );
@@ -246,17 +226,14 @@ function ComboboxItem({
     <ComboboxPrimitive.Item
       data-slot="combobox-item"
       className={cn(
-        "relative flex w-full cursor-default items-center rounded-sm py-1.5 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
+        "cn-combobox-item",
         outset ? "pr-8 pl-2" : "pr-2 pl-8",
         className,
       )}
       {...props}
     >
       <ComboboxPrimitive.ItemIndicator
-        className={cn(
-          "absolute flex size-3.5 items-center justify-center",
-          outset ? "right-2" : "left-2",
-        )}
+        className={cn("cn-combobox-item-2", outset ? "right-2" : "left-2")}
       >
         <IconPlaceholder
           lucide="Check"
@@ -264,7 +241,7 @@ function ComboboxItem({
           hugeicons="Tick02Icon"
           phosphor="CheckIcon"
           remixicon="RiCheckLine"
-          className="size-4"
+          className="cn-combobox-item-3"
         />
       </ComboboxPrimitive.ItemIndicator>
       <ComboboxPrimitive.ItemText>{children}</ComboboxPrimitive.ItemText>
@@ -279,7 +256,7 @@ function ComboboxSeparator({
   return (
     <ComboboxPrimitive.Separator
       data-slot="combobox-separator"
-      className={cn("-mx-1 my-1 h-px bg-muted", className)}
+      className={cn("cn-combobox-separator", className)}
       {...props}
     />
   );

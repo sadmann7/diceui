@@ -345,13 +345,13 @@ function CommandStack({
       <CommandStackSearchContext.Provider value={search}>
         <Command
           data-slot="command-stack"
-          className={cn("h-auto", className)}
+          className={cn("cn-command-stack", className)}
           value={isResettingHighlight ? "" : undefined}
           onKeyDown={onKeyDown}
           {...props}
         >
           {children}
-          <span aria-live="polite" className="sr-only">
+          <span aria-live="polite" className="cn-command-stack-2">
             {announcement}
           </span>
         </Command>
@@ -372,10 +372,10 @@ function CommandStackBreadcrumb({
     <nav
       aria-label="Breadcrumb"
       data-slot="command-stack-breadcrumb"
-      className={cn("px-1 pt-1", className)}
+      className={cn("cn-command-stack-breadcrumb", className)}
       {...props}
     >
-      <ol className="flex flex-wrap items-center gap-1">
+      <ol className="cn-command-stack-breadcrumb-2">
         {pages.map((page, index) => {
           const isCurrent = index === pages.length - 1;
 
@@ -384,7 +384,7 @@ function CommandStackBreadcrumb({
               key={`${page}-${index}`}
               data-slot="command-stack-breadcrumb-item"
               aria-current={isCurrent ? "page" : undefined}
-              className="inline-flex h-5 items-center rounded-sm bg-muted px-1.5 text-xs font-medium text-muted-foreground aria-[current=page]:text-foreground"
+              className="cn-command-stack-breadcrumb-item"
             >
               {pageData.get(page)?.label ?? page}
             </li>
@@ -435,10 +435,10 @@ function CommandStackInput({
       <div
         data-slot="command-stack-input-wrapper"
         data-variant="line"
-        className="-mx-1 -mt-1 mb-1 flex h-10 items-center gap-2 border-b px-4"
+        className="cn-command-stack-input-wrapper"
       >
         {isNested ? (
-          <CommandStackBack className="-m-1" />
+          <CommandStackBack className="cn-command-stack-input" />
         ) : (
           <IconPlaceholder
             lucide="SearchIcon"
@@ -446,15 +446,12 @@ function CommandStackInput({
             hugeicons="Search01Icon"
             phosphor="MagnifyingGlassIcon"
             remixicon="RiSearchLine"
-            className="size-4 shrink-0 text-muted-foreground"
+            className="cn-command-stack-input-2"
           />
         )}
         <CommandPrimitive.Input
           {...inputProps}
-          className={cn(
-            "h-full w-full bg-transparent text-sm outline-hidden placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50",
-            className,
-          )}
+          className={cn("cn-command-stack-input-3", className)}
           {...props}
         />
       </div>
@@ -465,13 +462,13 @@ function CommandStackInput({
     <div
       data-slot="command-stack-input-wrapper"
       data-variant="default"
-      className="p-1 pb-0"
+      className="cn-command-input-wrapper"
     >
-      <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:ps-2!">
+      <InputGroup className="cn-command-input-group">
         <CommandPrimitive.Input
           {...inputProps}
           className={cn(
-            "w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+            "cn-command-input outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
             className,
           )}
           {...props}
@@ -482,7 +479,7 @@ function CommandStackInput({
               size="icon-xs"
               aria-label="Back"
               data-slot="command-stack-back"
-              className="-me-1"
+              className="cn-command-stack-back"
               onPointerDown={(event) => event.preventDefault()}
               onClick={store.popPage}
             >
@@ -492,7 +489,7 @@ function CommandStackInput({
                 hugeicons="ArrowLeft01Icon"
                 phosphor="CaretLeftIcon"
                 remixicon="RiArrowLeftSLine"
-                className="rtl:rotate-180"
+                className="cn-rtl-flip"
               />
             </InputGroupButton>
           ) : (
@@ -502,7 +499,7 @@ function CommandStackInput({
               hugeicons="Search01Icon"
               phosphor="MagnifyingGlassIcon"
               remixicon="RiSearchLine"
-              className="size-4 shrink-0 opacity-50"
+              className="cn-command-input-icon"
             />
           )}
         </InputGroupAddon>
@@ -519,10 +516,7 @@ function CommandStackBack({ className }: { className?: string }) {
       type="button"
       aria-label="Back"
       data-slot="command-stack-back"
-      className={cn(
-        "flex size-6 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-hidden hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring/50",
-        className,
-      )}
+      className={cn("cn-command-stack-back-2", className)}
       onPointerDown={(event) => event.preventDefault()}
       onClick={store.popPage}
     >
@@ -532,7 +526,7 @@ function CommandStackBack({ className }: { className?: string }) {
         hugeicons="ArrowLeft01Icon"
         phosphor="CaretLeftIcon"
         remixicon="RiArrowLeftSLine"
-        className="size-4 rtl:rotate-180"
+        className="cn-command-stack-back-3 cn-rtl-flip"
       />
     </button>
   );
@@ -556,7 +550,7 @@ function CommandStackList({
     <CommandList
       ref={composedRef}
       data-slot="command-stack-list"
-      className={cn("[&_[cmdk-list-sizer]:has(>[cmdk-item])]:p-1", className)}
+      className={cn("cn-command-stack-list", className)}
       {...props}
     />
   );
@@ -594,10 +588,7 @@ function CommandStackLoading({
   return (
     <CommandPrimitive.Loading
       data-slot="command-stack-loading"
-      className={cn(
-        "py-6 text-sm text-muted-foreground *:flex *:items-center *:justify-center *:gap-2",
-        className,
-      )}
+      className={cn("cn-command-stack-loading", className)}
       {...props}
     />
   );
@@ -692,6 +683,7 @@ function CommandStackItem({
       data-checked={checked}
       aria-checked={checked}
       className={cn(
+        "cn-command-stack-item",
         checked === undefined && "[&>svg:last-child]:hidden",
         className,
       )}
@@ -730,7 +722,7 @@ function CommandStackItem({
           phosphor="CaretRightIcon"
           remixicon="RiArrowRightSLine"
           data-slot="command-stack-item-indicator"
-          className="ms-auto text-muted-foreground rtl:rotate-180 [[class*='ms-auto']~&]:ms-0"
+          className="cn-command-stack-item-indicator cn-rtl-flip"
         />
       )}
     </CommandItem>

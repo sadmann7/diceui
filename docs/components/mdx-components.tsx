@@ -30,15 +30,15 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-} from "@/registry/bases/radix/ui/alert";
-import { Kbd } from "@/registry/bases/radix/ui/kbd";
+} from "@/styles/radix-nova/ui/alert";
+import { Kbd } from "@/styles/radix-nova/ui/kbd";
 import {
   Table,
   TableCell,
   TableHead,
   TableRow,
-} from "@/registry/bases/radix/ui/table";
-import { Tabs } from "@/registry/bases/radix/ui/tabs";
+} from "@/styles/radix-nova/ui/table";
+import { Tabs } from "@/styles/radix-nova/ui/tabs";
 
 const ComponentSource = dynamic(() =>
   import("@/components/component-source").then((mod) => ({

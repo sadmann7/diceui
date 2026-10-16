@@ -288,7 +288,7 @@ function ResponsiveDialogContent({
     return (
       <DrawerContent
         data-variant="drawer"
-        className={cn("px-4 pb-4", className)}
+        className={cn("cn-responsive-dialog-content", className)}
         style={resolvedStyle}
         {...props}
       />

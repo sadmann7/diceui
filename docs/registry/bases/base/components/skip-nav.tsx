@@ -21,10 +21,7 @@ function SkipNav(props: React.ComponentProps<"a">) {
       {...mergeProps<"a">(
         {
           href,
-          className: cn(
-            "sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-100 focus-visible:rounded-md focus-visible:bg-background focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium focus-visible:text-foreground focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none",
-            className,
-          ),
+          className: cn("cn-skip-nav", className),
           onClick: (event) => {
             if (event.defaultPrevented) return;
             skipToTarget(event, href);

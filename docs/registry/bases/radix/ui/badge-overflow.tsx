@@ -187,7 +187,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     <>
       <div
         ref={measureRef}
-        className="pointer-events-none invisible absolute flex flex-wrap"
+        className="cn-badge-overflow-radix"
         style={{ gap: badgeGap }}
       >
         {items.map((item, index) => (
@@ -198,9 +198,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
         {renderOverflow ? (
           renderOverflow(99)
         ) : (
-          <div className="inline-flex h-5 shrink-0 items-center rounded-md border px-1.5 text-xs font-semibold">
-            +99
-          </div>
+          <div className="cn-badge-overflow-2-radix">+99</div>
         )}
       </div>
       {isMeasured ? (
@@ -208,7 +206,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
           data-slot="badge-overflow"
           {...rootProps}
           ref={composedRef}
-          className={cn("flex flex-wrap", className)}
+          className={cn("cn-badge-overflow-3-radix", className)}
           style={{
             gap: badgeGap,
             ...style,
@@ -223,9 +221,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
             (renderOverflow ? (
               renderOverflow(hiddenCount)
             ) : (
-              <div className="inline-flex h-5 shrink-0 items-center rounded-md border px-1.5 text-xs font-semibold">
-                +{hiddenCount}
-              </div>
+              <div className="cn-badge-overflow-4">+{hiddenCount}</div>
             ))}
         </Comp>
       ) : (
@@ -233,7 +229,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
           data-slot="badge-overflow"
           {...rootProps}
           ref={composedRef}
-          className={cn("flex flex-wrap", className)}
+          className={cn("cn-badge-overflow-5", className)}
           style={{
             gap: badgeGap,
             minHeight: placeholderHeight,

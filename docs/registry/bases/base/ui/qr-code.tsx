@@ -275,7 +275,7 @@ function QRCode(props: QRCodeProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("relative flex flex-col items-center gap-2", className),
+        className: cn("cn-qr-code-qrcode", className),
         style: {
           "--qr-code-size": `${size}px`,
           ...style,
@@ -318,7 +318,7 @@ function QRCodeCanvas({
         width: context.size,
         height: context.size,
         className: cn(
-          "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
+          "cn-qr-code-qrcode-canvas",
           !generationKey && "invisible",
           className,
         ),
@@ -341,10 +341,7 @@ function QRCodeSvg({ render, className, style, ...svgProps }: QRCodeSvgProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn(
-          "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
-          className,
-        ),
+        className: cn("cn-qr-code-qrcode-svg", className),
         style: { width: context.size, height: context.size, ...style },
         dangerouslySetInnerHTML: svgString ? { __html: svgString } : undefined,
       },
@@ -381,10 +378,7 @@ function QRCodeImage({
         alt,
         width: context.size,
         height: context.size,
-        className: cn(
-          "relative max-h-(--qr-code-size) max-w-(--qr-code-size)",
-          className,
-        ),
+        className: cn("cn-qr-code-qrcode-image", className),
       },
       imageProps,
     ),
@@ -450,7 +444,7 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
     props: mergeProps<"button">(
       {
         type: "button",
-        className: cn("max-w-(--qr-code-size)", className),
+        className: cn("cn-qr-code-qrcode-download", className),
         onClick,
         children: children ?? `Download ${format.toUpperCase()}`,
       },
@@ -473,10 +467,7 @@ function QRCodeOverlay({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn(
-          "absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-sm bg-background",
-          className,
-        ),
+        className: cn("cn-qr-code-qrcode-overlay", className),
       },
       overlayProps,
     ),
@@ -505,10 +496,7 @@ function QRCodeSkeleton({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn(
-          "absolute max-h-(--qr-code-size) max-w-(--qr-code-size) animate-pulse bg-accent",
-          className,
-        ),
+        className: cn("cn-qr-code-qrcode-skeleton", className),
         style: {
           width: context.size,
           height: context.size,

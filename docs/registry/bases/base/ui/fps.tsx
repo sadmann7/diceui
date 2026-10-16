@@ -5,33 +5,30 @@ import { cn } from "cn";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-const fpsVariants = cva(
-  "z-50 flex shrink-0 items-center gap-2 rounded-sm border bg-background/80 px-3 py-1.5 font-mono text-sm text-foreground backdrop-blur-sm",
-  {
-    variants: {
-      strategy: {
-        fixed: "fixed",
-        absolute: "absolute",
-      },
-      position: {
-        "top-left": "top-4 left-4",
-        "top-right": "top-4 right-4",
-        "bottom-left": "bottom-4 left-4",
-        "bottom-right": "right-4 bottom-4",
-      },
-      status: {
-        good: "text-primary",
-        warning: "text-orange-500",
-        error: "text-destructive",
-      },
+const fpsVariants = cva("cn-fps", {
+  variants: {
+    strategy: {
+      fixed: "cn-fps-strategy-fixed",
+      absolute: "cn-fps-strategy-absolute",
     },
-    defaultVariants: {
-      strategy: "fixed",
-      position: "top-right",
-      status: "good",
+    position: {
+      "top-left": "cn-fps-position-top-left",
+      "top-right": "cn-fps-position-top-right",
+      "bottom-left": "cn-fps-position-bottom-left",
+      "bottom-right": "cn-fps-position-bottom-right",
+    },
+    status: {
+      good: "cn-fps-status-good",
+      warning: "cn-fps-status-warning",
+      error: "cn-fps-status-error",
     },
   },
-);
+  defaultVariants: {
+    strategy: "fixed",
+    position: "top-right",
+    status: "good",
+  },
+});
 
 interface FpsProps
   extends
@@ -121,7 +118,7 @@ function Fps(props: FpsProps) {
       className={cn(fpsVariants({ strategy, position, status }), className)}
     >
       {label && (
-        <span data-slot="fps-label" className="text-muted-foreground">
+        <span data-slot="fps-label" className="cn-fps-label">
           {label}:
         </span>
       )}

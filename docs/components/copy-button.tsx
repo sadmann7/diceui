@@ -6,7 +6,7 @@ import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { CheckIcon, ClipboardIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
-import { Button } from "@/registry/bases/radix/ui/button";
+import { Button } from "@/styles/radix-nova/ui/button";
 
 interface CopyButtonProps extends React.ComponentProps<typeof Button> {
   value: string;

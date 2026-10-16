@@ -145,7 +145,7 @@ function TaskCard({ task, ...props }: TaskCardProps) {
                     ? "default"
                     : "secondary"
               }
-              className="pointer-events-none h-5 rounded-sm px-1.5 text-[11px] capitalize"
+              className="pointer-events-none h-5 px-1.5 text-[11px] capitalize"
             >
               {task.priority}
             </Badge>
@@ -180,7 +180,7 @@ function TaskColumn({ value, tasks, ...props }: TaskColumnProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-sm font-semibold">{COLUMN_TITLES[value]}</span>
-          <Badge variant="secondary" className="pointer-events-none rounded-sm">
+          <Badge variant="secondary" className="pointer-events-none">
             {tasks.length}
           </Badge>
         </div>

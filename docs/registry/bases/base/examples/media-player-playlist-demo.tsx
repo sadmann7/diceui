@@ -218,7 +218,7 @@ export default function MediaPlayerPlaylistDemo() {
       onPause={onPause}
       onEnded={onEnded}
       onKeyDown={onKeyDown}
-      className="w-full max-w-2xl overflow-hidden rounded-lg border bg-background shadow-lg"
+      className="w-full max-w-2xl overflow-hidden border bg-background shadow-lg"
     >
       <MediaPlayerAudio
         ref={audioRef}

@@ -19,6 +19,9 @@
     "**/.next/**",
     "**/.turbo/**",
     "**/.source/**",
+    "**/ui-rtl/**",
+    "**/__generated__/**",
+    "docs/styles/*-nova/**",
     "**/public/**",
     "pnpm-lock.yaml"
   ],
@@ -81,6 +84,12 @@
       "rules": {
         "unicorn/consistent-function-scoping": "off",
         "no-shadow": "off"
+      }
+    },
+    {
+      "files": ["docs/scripts/**"],
+      "rules": {
+        "unicorn/require-post-message-target-origin": "off"
       }
     }
   ]

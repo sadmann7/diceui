@@ -5,7 +5,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/registry/bases/radix/ui/table";
+} from "@/styles/radix-nova/ui/table";
 
 interface PropsTableProps {
   variant: "default" | "title" | "css-variable";

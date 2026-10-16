@@ -1,4 +1,4 @@
-import { Kbd } from "@/registry/bases/radix/ui/kbd";
+import { Kbd } from "@/styles/radix-nova/ui/kbd";
 import {
   Table,
   TableBody,
@@ -6,7 +6,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/registry/bases/radix/ui/table";
+} from "@/styles/radix-nova/ui/table";
 
 interface KeyboardShortcutsTableProps {
   data: {

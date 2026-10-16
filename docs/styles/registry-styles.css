@@ -1,0 +1,19 @@
+@reference "./globals.css";
+
+@import "../registry/styles/style-vega.css" layer(base);
+@import "../registry/styles/style-nova.css" layer(base);
+@import "../registry/styles/style-maia.css" layer(base);
+@import "../registry/styles/style-lyra.css" layer(base);
+@import "../registry/styles/style-mira.css" layer(base);
+@import "../registry/styles/style-luma.css" layer(base);
+@import "../registry/styles/style-sera.css" layer(base);
+@import "../registry/styles/style-rhea.css" layer(base);
+
+@import "../registry/styles/shadcn/style-vega.css" layer(base);
+@import "../registry/styles/shadcn/style-nova.css" layer(base);
+@import "../registry/styles/shadcn/style-maia.css" layer(base);
+@import "../registry/styles/shadcn/style-lyra.css" layer(base);
+@import "../registry/styles/shadcn/style-mira.css" layer(base);
+@import "../registry/styles/shadcn/style-luma.css" layer(base);
+@import "../registry/styles/shadcn/style-sera.css" layer(base);
+@import "../registry/styles/shadcn/style-rhea.css" layer(base);

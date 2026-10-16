@@ -209,10 +209,7 @@ function CircularProgress(props: CircularProgressProps) {
         data-min={min}
         data-percentage={percentage}
         {...rootProps}
-        className={cn(
-          "relative inline-flex w-fit items-center justify-center",
-          className,
-        )}
+        className={cn("cn-circular-progress", className)}
       >
         {children}
         {label && <div id={labelId}>{label}</div>}
@@ -239,7 +236,7 @@ function CircularProgressIndicator(props: React.ComponentProps<"svg">) {
       width={context.size}
       height={context.size}
       {...indicatorProps}
-      className={cn("-rotate-90 transform", className)}
+      className={cn("cn-circular-progress-indicator", className)}
     />
   );
 }
@@ -263,7 +260,7 @@ function CircularProgressTrack(props: React.ComponentProps<"circle">) {
       strokeLinecap="round"
       vectorEffect="non-scaling-stroke"
       {...trackProps}
-      className={cn("text-muted-foreground/20", className)}
+      className={cn("cn-circular-progress-track", className)}
     />
   );
 }
@@ -299,7 +296,7 @@ function CircularProgressRange(props: React.ComponentProps<"circle">) {
       vectorEffect="non-scaling-stroke"
       {...rangeProps}
       className={cn(
-        "origin-center text-primary transition-all duration-300 ease-in-out",
+        "cn-circular-progress-range",
         context.state === "indeterminate" &&
           "motion-safe:[animation:var(--animate-spin-around)] motion-reduce:animate-none",
         className,
@@ -324,10 +321,7 @@ function CircularProgressValueText(props: CircularProgressValueTextProps) {
       id={context.valueTextId}
       data-state={context.state}
       {...valueTextProps}
-      className={cn(
-        "absolute inset-0 flex items-center justify-center text-sm font-medium",
-        className,
-      )}
+      className={cn("cn-circular-progress-value-text", className)}
     >
       {children ?? context.valueText}
     </ValueTextPrimitive>

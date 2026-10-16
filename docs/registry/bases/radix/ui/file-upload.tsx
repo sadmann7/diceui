@@ -698,7 +698,7 @@ function FileUpload(props: FileUploadProps) {
           data-slot="file-upload"
           dir={dir}
           {...rootProps}
-          className={cn("relative flex flex-col gap-2", className)}
+          className={cn("cn-file-upload", className)}
         >
           {children}
           <input
@@ -710,13 +710,13 @@ function FileUpload(props: FileUploadProps) {
             tabIndex={-1}
             accept={accept}
             name={name}
-            className="sr-only"
+            className="cn-file-upload-2"
             disabled={disabled}
             multiple={multiple}
             required={required}
             onChange={onInputChange}
           />
-          <div id={labelId} className="sr-only">
+          <div id={labelId} className="cn-file-upload-3">
             {label ?? "File upload"}
           </div>
         </RootPrimitive>
@@ -916,10 +916,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       dir={context.dir}
       tabIndex={context.disabled ? undefined : 0}
       {...dropzoneProps}
-      className={cn(
-        "relative flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 transition-colors outline-none select-none hover:bg-accent/30 focus-visible:border-ring/50 data-dragging:border-primary/30 data-dragging:bg-accent/30 data-invalid:border-destructive data-invalid:ring-destructive/20 data-disabled:pointer-events-none",
-        className,
-      )}
+      className={cn("cn-file-upload-dropzone", className)}
       onClick={onClick}
       onDragEnter={onDragEnter}
       onDragLeave={onDragLeave}
@@ -1004,7 +1001,7 @@ function FileUploadList(props: FileUploadListProps) {
       dir={context.dir}
       {...listProps}
       className={cn(
-        "flex flex-col gap-2 data-[state=active]:animate-in data-[state=active]:fade-in-0 data-[state=active]:slide-in-from-top-2 data-[state=inactive]:animate-out data-[state=inactive]:fade-out-0 data-[state=inactive]:slide-out-to-top-2",
+        "cn-file-upload-list",
         orientation === "horizontal" && "flex-row overflow-x-auto p-1.5",
         className,
       )}
@@ -1092,13 +1089,10 @@ function FileUploadItem(props: FileUploadItemProps) {
         data-slot="file-upload-item"
         dir={context.dir}
         {...itemProps}
-        className={cn(
-          "relative flex items-center gap-2.5 rounded-md border p-3",
-          className,
-        )}
+        className={cn("cn-file-upload-item", className)}
       >
         {props.children}
-        <span id={statusId} className="sr-only">
+        <span id={statusId} className="cn-file-upload-item-2">
           {statusText}
         </span>
       </ItemPrimitive>
@@ -1127,7 +1121,11 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
         }
 
         return (
-          <img src={url} alt={file.name} className="size-full object-cover" />
+          <img
+            src={url}
+            alt={file.name}
+            className="cn-file-upload-item-preview"
+          />
         );
       }
 
@@ -1156,10 +1154,7 @@ function FileUploadItemPreview(props: FileUploadItemPreviewProps) {
       aria-labelledby={itemContext.nameId}
       data-slot="file-upload-preview"
       {...previewProps}
-      className={cn(
-        "relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border bg-accent/50 [&>svg]:size-10",
-        className,
-      )}
+      className={cn("cn-file-upload-preview", className)}
     >
       {onPreviewRender(itemContext.fileState.file)}
       {children}
@@ -1193,14 +1188,14 @@ function FileUploadItemMetadata(props: FileUploadItemMetadataProps) {
       data-slot="file-upload-metadata"
       dir={context.dir}
       {...metadataProps}
-      className={cn("flex min-w-0 flex-1 flex-col", className)}
+      className={cn("cn-file-upload-metadata", className)}
     >
       {children ?? (
         <>
           <span
             id={itemContext.nameId}
             className={cn(
-              "truncate text-sm font-medium",
+              "cn-file-upload-item-metadata-radix",
               size === "sm" && "text-[13px] leading-snug font-normal",
             )}
           >
@@ -1209,7 +1204,7 @@ function FileUploadItemMetadata(props: FileUploadItemMetadataProps) {
           <span
             id={itemContext.sizeId}
             className={cn(
-              "truncate text-xs text-muted-foreground",
+              "cn-file-upload-item-metadata-2-radix",
               size === "sm" && "text-[11px] leading-snug",
             )}
           >
@@ -1218,7 +1213,7 @@ function FileUploadItemMetadata(props: FileUploadItemMetadataProps) {
           {itemContext.fileState.error && (
             <span
               id={itemContext.messageId}
-              className="text-xs text-destructive"
+              className="cn-file-upload-item-metadata-3-radix"
             >
               {itemContext.fileState.error}
             </span>
@@ -1271,13 +1266,10 @@ function FileUploadItemProgress(props: FileUploadItemProgressProps) {
           aria-labelledby={itemContext.nameId}
           data-slot="file-upload-progress"
           {...progressProps}
-          className={cn(
-            "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
-            className,
-          )}
+          className={cn("cn-file-upload-progress", className)}
         >
           <svg
-            className="-rotate-90 transform"
+            className="cn-file-upload-item-progress-radix"
             width={size}
             height={size}
             viewBox={`0 0 ${size} ${size}`}
@@ -1285,14 +1277,14 @@ function FileUploadItemProgress(props: FileUploadItemProgressProps) {
             stroke="currentColor"
           >
             <circle
-              className="text-primary/20"
+              className="cn-file-upload-item-progress-2-radix"
               strokeWidth="2"
               cx={size / 2}
               cy={size / 2}
               r={(size - 4) / 2}
             />
             <circle
-              className="text-primary transition-[stroke-dashoffset] duration-300 ease-linear"
+              className="cn-file-upload-item-progress-3-radix"
               strokeWidth="2"
               strokeLinecap="round"
               strokeDasharray={circumference}
@@ -1320,10 +1312,7 @@ function FileUploadItemProgress(props: FileUploadItemProgressProps) {
           aria-labelledby={itemContext.nameId}
           data-slot="file-upload-progress"
           {...progressProps}
-          className={cn(
-            "absolute inset-0 bg-primary/50 transition-[clip-path] duration-300 ease-linear",
-            className,
-          )}
+          className={cn("cn-file-upload-progress-2", className)}
           style={{
             clipPath: `inset(${topInset}% 0% 0% 0%)`,
           }}
@@ -1342,13 +1331,10 @@ function FileUploadItemProgress(props: FileUploadItemProgressProps) {
           aria-labelledby={itemContext.nameId}
           data-slot="file-upload-progress"
           {...progressProps}
-          className={cn(
-            "relative h-1.5 w-full overflow-hidden rounded-full bg-primary/20",
-            className,
-          )}
+          className={cn("cn-file-upload-progress-3", className)}
         >
           <div
-            className="h-full w-full flex-1 bg-primary transition-transform duration-300 ease-linear"
+            className="cn-file-upload-item-progress-4-radix"
             style={{
               transform: `translateX(-${100 - itemContext.fileState.progress}%)`,
             }}

@@ -2,7 +2,7 @@ import { ArrowRight, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 import { cn, getIsExternalLink } from "@/lib/utils";
-import { Button } from "@/registry/bases/radix/ui/button";
+import { Button } from "@/styles/radix-nova/ui/button";
 
 interface DynamicLinkProps
   extends

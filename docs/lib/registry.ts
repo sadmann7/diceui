@@ -1,7 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
+import { transformStyle } from "shadcn/utils";
 
-import { DEFAULT_BASE } from "@/lib/constants";
+import { DEFAULT_BASE, DEFAULT_STYLE } from "@/lib/constants";
+import { STYLE_MAPS } from "@/registry/styles/__generated__/style-maps";
 
 const SOURCE_DIRS = ["ui", "components", "lib", "hooks", "internal"];
 const SOURCE_EXTENSIONS = [".tsx", ".ts"];
@@ -37,16 +39,30 @@ function resolveSourcePath(
   return candidates.find((p) => fs.existsSync(p)) ?? null;
 }
 
-export function getRegistryItem(
+const compiledSources = new Map<string, Promise<string>>();
+
+function compileSource(source: string) {
+  if (!source.includes("cn-")) return source;
+
+  if (!compiledSources.has(source)) {
+    compiledSources.set(
+      source,
+      transformStyle(source, { styleMap: STYLE_MAPS[DEFAULT_STYLE] ?? {} }),
+    );
+  }
+  return compiledSources.get(source)!;
+}
+
+export async function getRegistryItem(
   name: string,
   base = DEFAULT_BASE,
   fileName?: string,
-): { files: [{ content: string; path: string }] } | null {
+): Promise<{ files: [{ content: string; path: string }] } | null> {
   const filePath = resolveSourcePath(name, base, fileName);
   if (!filePath) return null;
 
   try {
-    const raw = fs.readFileSync(filePath, "utf-8");
+    const raw = await compileSource(fs.readFileSync(filePath, "utf-8"));
     const cwd = process.cwd();
     const relative = filePath
       .replace(path.join(cwd, `registry/bases/${base}/`), "")

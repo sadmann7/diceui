@@ -295,7 +295,7 @@ function SpeedDial(props: SpeedDialProps) {
     props: mergeProps<"div">(
       {
         ref: composedRefs,
-        className: cn("relative flex flex-col items-end", className),
+        className: cn("cn-speed-dial", className),
         onPointerDownCapture,
       },
       rootProps,
@@ -463,7 +463,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
       size="icon"
       {...triggerProps}
       ref={composedRef}
-      className={cn("size-11 rounded-full", className)}
+      className={cn("cn-speed-dial-trigger", className)}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -506,22 +506,19 @@ const SpeedDialItemImpl = React.memo(function SpeedDialItemImpl({
   );
 });
 
-const speedDialContentVariants = cva(
-  "absolute z-50 flex gap-[var(--speed-dial-gap)] data-[state=closed]:pointer-events-none",
-  {
-    variants: {
-      side: {
-        top: "flex-col-reverse items-end",
-        bottom: "flex-col items-end",
-        left: "flex-row-reverse items-center",
-        right: "flex-row items-center",
-      },
-    },
-    defaultVariants: {
-      side: "top",
+const speedDialContentVariants = cva("cn-speed-dial-content", {
+  variants: {
+    side: {
+      top: "cn-speed-dial-content-side-top",
+      bottom: "cn-speed-dial-content-side-bottom",
+      left: "cn-speed-dial-content-side-left",
+      right: "cn-speed-dial-content-side-right",
     },
   },
-);
+  defaultVariants: {
+    side: "top",
+  },
+});
 
 interface SpeedDialContentProps
   extends DivProps, VariantProps<typeof speedDialContentVariants> {
@@ -864,40 +861,37 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   return element;
 }
 
-const speedDialItemVariants = cva(
-  "flex items-center gap-2 transition-all [transition-delay:var(--speed-dial-delay)] [transition-duration:var(--speed-dial-animation-duration)] data-[state=closed]:opacity-0 data-[state=open]:translate-x-0 data-[state=open]:translate-y-0 data-[state=open]:opacity-100",
-  {
-    variants: {
-      side: {
-        top: "justify-end",
-        bottom: "justify-end",
-        left: "flex-row-reverse justify-start",
-        right: "justify-start",
-      },
-    },
-    compoundVariants: [
-      {
-        side: "top",
-        className: "data-[state=closed]:translate-y-2",
-      },
-      {
-        side: "bottom",
-        className: "data-[state=closed]:-translate-y-2",
-      },
-      {
-        side: "left",
-        className: "data-[state=closed]:translate-x-2",
-      },
-      {
-        side: "right",
-        className: "data-[state=closed]:-translate-x-2",
-      },
-    ],
-    defaultVariants: {
-      side: "top",
+const speedDialItemVariants = cva("cn-speed-dial-item", {
+  variants: {
+    side: {
+      top: "cn-speed-dial-item-side-top",
+      bottom: "cn-speed-dial-item-side-bottom",
+      left: "cn-speed-dial-item-side-left",
+      right: "cn-speed-dial-item-side-right",
     },
   },
-);
+  compoundVariants: [
+    {
+      side: "top",
+      className: "data-[state=closed]:translate-y-2",
+    },
+    {
+      side: "bottom",
+      className: "data-[state=closed]:-translate-y-2",
+    },
+    {
+      side: "left",
+      className: "data-[state=closed]:translate-x-2",
+    },
+    {
+      side: "right",
+      className: "data-[state=closed]:-translate-x-2",
+    },
+  ],
+  defaultVariants: {
+    side: "top",
+  },
+});
 
 interface SpeedDialItemContextValue {
   actionId: string;
@@ -1051,10 +1045,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
       disabled={disabled}
       ref={composedRefs}
       {...actionProps}
-      className={cn(
-        "size-11 shrink-0 rounded-full bg-accent shadow-md",
-        className,
-      )}
+      className={cn("cn-speed-dial-action", className)}
       onClick={onClick}
     />
   );
@@ -1068,10 +1059,7 @@ function SpeedDialLabel({ render, className, ...props }: DivProps) {
     props: mergeProps<"div">(
       {
         id: labelId,
-        className: cn(
-          "pointer-events-none rounded-md bg-popover px-2 py-1 text-sm whitespace-nowrap text-popover-foreground shadow-md",
-          className,
-        ),
+        className: cn("cn-speed-dial-label", className),
       },
       props,
     ),

@@ -5,7 +5,7 @@ import {
   MarqueeContent,
   MarqueeEdge,
   MarqueeItem,
-} from "@/registry/bases/radix/ui/marquee";
+} from "@/registry/bases/radix/ui-rtl/marquee";
 
 const features = [
   {

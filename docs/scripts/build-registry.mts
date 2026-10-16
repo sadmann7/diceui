@@ -5,18 +5,26 @@
 import type { z } from "zod";
 
 import { promises as fs } from "node:fs";
+import { availableParallelism } from "node:os";
 import path from "node:path";
+import { Worker } from "node:worker_threads";
 import { rimraf } from "rimraf";
 import {
   type RegistryItem,
   type registryItemTypeSchema,
   registrySchema,
 } from "shadcn/schema";
+import { transformDirection } from "shadcn/utils";
 
 import { DEFAULT_BASE, DEFAULT_STYLE } from "../lib/constants";
 import { BASES } from "../registry/bases";
 import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
+import {
+  getStyleMaps,
+  type StyleMap,
+  writeStyleMapsModule,
+} from "./style-maps.mts";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
 const STYLES_PATH = path.join(REGISTRY_PATH, "styles");
@@ -212,92 +220,243 @@ async function buildRootIndex() {
 
 // ----------------------------------------------------------------------------
 // Build public/r/styles/{base}-{style}/{name}.json with inlined file content.
-//
-// Runs once per base (for DEFAULT_STYLE), then copies per-item JSON files to
-// the remaining style directories. Per-style copies are byte-identical so
-// `{style}` in a consumer URL does not 404. Visual differences are CSS-only.
 // ----------------------------------------------------------------------------
+const compiledSources = new Map<string, Promise<string>>();
+const workers = Array.from(
+  { length: Math.max(1, availableParallelism() - 1) },
+  () =>
+    new Worker(new URL("./compile-style-worker.mts", import.meta.url), {
+      execArgv: ["--import", "tsx"],
+    }),
+);
+const pending = new Map<number, (result: string) => void>();
+let nextId = 0;
+
+for (const worker of workers) {
+  worker.on("message", ({ id, result }: { id: number; result: string }) => {
+    pending.get(id)?.(result);
+    pending.delete(id);
+  });
+}
+
+function compileStyle(content: string, styleMap: StyleMap) {
+  const markers = [...new Set(content.match(/\bcn-[\w-]+/g) ?? [])];
+  const key = [
+    content,
+    ...markers.map((marker) => styleMap[marker] ?? ""),
+  ].join("\0");
+
+  if (!compiledSources.has(key)) {
+    const id = nextId++;
+    const relevant = Object.fromEntries(
+      markers.flatMap((marker) =>
+        styleMap[marker] ? [[marker, styleMap[marker]]] : [],
+      ),
+    );
+    compiledSources.set(
+      key,
+      new Promise((resolve) => {
+        pending.set(id, resolve);
+        workers[id % workers.length]!.postMessage({
+          id,
+          content,
+          styleMap: relevant,
+        });
+      }),
+    );
+  }
+  return compiledSources.get(key)!;
+}
+
 async function buildPublicItems() {
+  const styleMaps = await getStyleMaps();
+
   for (const base of BASES) {
     const baseName = base.name as RegistryBase;
     const registry = registries[baseName];
     const baseSrcRoot = path.join(process.cwd(), "registry", "bases", baseName);
 
-    // Build all per-item JSON files once, into the default style directory
-    const defaultStyleDir = path.join(
-      STYLES_PATH,
-      `${baseName}-${DEFAULT_STYLE}`,
+    const items = registry.items.filter(
+      (item) =>
+        REGISTRY_INDEX_WHITELIST.includes(item.type) && item.name !== "index",
     );
-    await fs.mkdir(defaultStyleDir, { recursive: true });
 
-    for (const item of registry.items) {
-      if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) continue;
-      if (item.name === "index") continue;
+    await Promise.all(
+      items.map(async (item) => {
+        const sources = (
+          await Promise.all(
+            (item.files ?? []).map(async (_file) => {
+              const file =
+                typeof _file === "string"
+                  ? { path: _file, type: item.type, target: "" }
+                  : _file;
 
-      const files = (
+              let content: string;
+              try {
+                content = (
+                  await fs.readFile(path.join(baseSrcRoot, file.path), "utf8")
+                ).replaceAll(
+                  `@/registry/bases/${baseName}/ui-rtl/`,
+                  `@/registry/bases/${baseName}/ui/`,
+                );
+              } catch {
+                return null;
+              }
+
+              return {
+                path: file.path,
+                type: file.type,
+                content,
+                target: (file as { target?: string }).target ?? "",
+              };
+            }),
+          )
+        ).filter((file): file is NonNullable<typeof file> => file !== null);
+
+        const dependencies = getItemDependencies(
+          item,
+          sources.map((file) => file.content),
+        );
+        itemDependencyCache.set(`${baseName}:${item.name}`, dependencies);
+
         await Promise.all(
-          (item.files ?? []).map(async (_file) => {
-            const file =
-              typeof _file === "string"
-                ? { path: _file, type: item.type, target: "" }
-                : _file;
+          STYLES.map(async (style) => {
+            const styleDir = path.join(
+              STYLES_PATH,
+              `${baseName}-${style.name}`,
+            );
+            await fs.mkdir(styleDir, { recursive: true });
 
-            let content: string;
-            try {
-              content = await fs.readFile(
-                path.join(baseSrcRoot, file.path),
-                "utf8",
-              );
-            } catch {
-              return null;
-            }
+            const styleMap = styleMaps.get(style.name)!;
+            const files = await Promise.all(
+              sources.map(async (file) =>
+                file.content.includes("cn-")
+                  ? {
+                      ...file,
+                      content: await compileStyle(file.content, styleMap),
+                    }
+                  : file,
+              ),
+            );
 
-            return {
-              path: file.path,
-              type: file.type,
-              content,
-              target: (file as { target?: string }).target ?? "",
-            };
+            await fs.writeFile(
+              path.join(styleDir, `${item.name}.json`),
+              JSON.stringify(
+                { ...item, files, ...(dependencies && { dependencies }) },
+                null,
+                2,
+              ),
+              "utf8",
+            );
           }),
-        )
-      ).filter((file): file is NonNullable<typeof file> => file !== null);
+        );
+      }),
+    );
+  }
+}
 
-      const dependencies = getItemDependencies(
-        item,
-        files.map((file) => file.content),
-      );
-      itemDependencyCache.set(`${baseName}:${item.name}`, dependencies);
+// ----------------------------------------------------------------------------
+// Build registry/bases/{base}/ui-rtl for the *-rtl-demo examples: the ui files
+// they import, compiled with the default style and run through the shadcn rtl
+// transform. Gitignored.
+// ----------------------------------------------------------------------------
+const FILE_HEADER = /^\/\*\*[\s\S]*?\*\/\n\n?/;
 
-      await fs.writeFile(
-        path.join(defaultStyleDir, `${item.name}.json`),
-        JSON.stringify(
-          { ...item, files, ...(dependencies && { dependencies }) },
-          null,
-          2,
-        ),
+// ----------------------------------------------------------------------------
+// Build styles/{base}-{DEFAULT_STYLE}/ui: every ui file compiled with the
+// default style, for the docs' own UI so it ignores the style switcher.
+// Gitignored.
+// ----------------------------------------------------------------------------
+async function buildDocsUi() {
+  const styleMap = (await getStyleMaps()).get(DEFAULT_STYLE)!;
+
+  for (const base of BASES) {
+    const baseName = base.name as RegistryBase;
+    const uiDir = path.join(process.cwd(), "registry", "bases", baseName, "ui");
+    const outDir = path.join(
+      process.cwd(),
+      "styles",
+      `${baseName}-${DEFAULT_STYLE}`,
+      "ui",
+    );
+
+    await rimraf(outDir);
+    await fs.mkdir(outDir, { recursive: true });
+
+    const files = (await fs.readdir(uiDir)).filter((file) =>
+      file.endsWith(".tsx"),
+    );
+    await Promise.all(
+      files.map(async (file) => {
+        const source = await fs.readFile(path.join(uiDir, file), "utf8");
+        const content = await compileStyle(source, styleMap);
+        await fs.writeFile(
+          path.join(outDir, file),
+          content.replaceAll(
+            `@/registry/bases/${baseName}/ui/`,
+            `@/styles/${baseName}-${DEFAULT_STYLE}/ui/`,
+          ),
+        );
+      }),
+    );
+  }
+}
+
+async function buildRtlUi() {
+  const styleMap = (await getStyleMaps()).get(DEFAULT_STYLE)!;
+
+  for (const base of BASES) {
+    const baseName = base.name as RegistryBase;
+    const baseDir = path.join(process.cwd(), "registry", "bases", baseName);
+    const rtlDir = path.join(baseDir, "ui-rtl");
+    const uiImport = new RegExp(
+      `@/registry/bases/${baseName}/ui/([\\w-]+)`,
+      "g",
+    );
+    const rtlImport = new RegExp(
+      `@/registry/bases/${baseName}/ui-rtl/([\\w-]+)`,
+      "g",
+    );
+
+    const queue: string[] = [];
+    for (const file of await fs.readdir(path.join(baseDir, "examples"))) {
+      if (!file.endsWith("-rtl-demo.tsx")) continue;
+
+      const content = await fs.readFile(
+        path.join(baseDir, "examples", file),
         "utf8",
       );
+      for (const [, name] of content.matchAll(rtlImport)) {
+        if (name) queue.push(name);
+      }
     }
 
-    // Copy per-item JSON files to every other style directory for this base.
-    for (const style of STYLES) {
-      if (style.name === DEFAULT_STYLE) continue;
+    await rimraf(rtlDir);
+    await fs.mkdir(rtlDir, { recursive: true });
 
-      const styleDir = path.join(STYLES_PATH, `${baseName}-${style.name}`);
-      await fs.mkdir(styleDir, { recursive: true });
+    const built = new Set<string>();
+    while (queue.length > 0) {
+      const name = queue.pop();
+      if (!name || built.has(name)) continue;
+      built.add(name);
 
-      const builtFiles = (await fs.readdir(defaultStyleDir)).filter(
-        (f) =>
-          f.endsWith(".json") && f !== "registry.json" && f !== "index.json",
+      const source = await fs.readFile(
+        path.join(baseDir, "ui", `${name}.tsx`),
+        "utf8",
+      );
+      const header = source.match(FILE_HEADER)?.[0] ?? "";
+      const content = await transformDirection(
+        await compileStyle(source.slice(header.length), styleMap),
+        true,
       );
 
-      await Promise.all(
-        builtFiles.map((file) =>
-          fs.copyFile(
-            path.join(defaultStyleDir, file),
-            path.join(styleDir, file),
-          ),
-        ),
+      await fs.writeFile(
+        path.join(rtlDir, `${name}.tsx`),
+        header +
+          content.replace(uiImport, (_, dependency: string) => {
+            queue.push(dependency);
+            return `@/registry/bases/${baseName}/ui-rtl/${dependency}`;
+          }),
       );
     }
   }
@@ -314,6 +473,20 @@ try {
       console.error(`Error in ${baseName} registry:`, result.error);
       process.exit(1);
     }
+  }
+
+  console.log("🎨 Building style maps...");
+  await writeStyleMapsModule();
+
+  console.log("↔️  Building ui-rtl...");
+  await buildRtlUi();
+
+  console.log("📚 Building docs ui...");
+  await buildDocsUi();
+
+  if (process.argv.includes("--styles")) {
+    await Promise.all(workers.map((worker) => worker.terminate()));
+    process.exit(0);
   }
 
   console.log("🧹 Cleaning styles output directory...");
@@ -341,6 +514,7 @@ try {
 
   const elapsed = ((performance.now() - totalStart) / 1000).toFixed(2);
   console.log(`\n✅ Build complete in ${elapsed}s!`);
+  await Promise.all(workers.map((worker) => worker.terminate()));
 } catch (error) {
   console.error(error);
   process.exit(1);

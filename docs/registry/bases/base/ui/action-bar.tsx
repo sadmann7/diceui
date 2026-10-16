@@ -198,10 +198,7 @@ function ActionBar(props: ActionBarProps) {
         dir,
         ref: composedRef,
         className: cn(
-          "fixed z-50 rounded-lg border bg-card shadow-lg outline-none",
-          "animate-in duration-250 fade-in-0 zoom-in-95 [animation-timing-function:cubic-bezier(0.16,1,0.3,1)]",
-          "data-[side=bottom]:slide-in-from-bottom-4 data-[side=top]:slide-in-from-top-4",
-          "motion-reduce:animate-none motion-reduce:transition-none",
+          "cn-action-bar",
           orientation === "horizontal"
             ? "flex flex-row items-center gap-2 px-2 py-1.5"
             : "flex flex-col items-start gap-2 px-1.5 py-2",
@@ -245,10 +242,7 @@ function ActionBarSelection(props: DivProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn(
-          "flex items-center gap-1 rounded-sm border px-2 py-1 text-sm font-medium tabular-nums",
-          className,
-        ),
+        className: cn("cn-action-bar-selection", className),
       },
       selectionProps,
     ),
@@ -407,7 +401,7 @@ function ActionBarGroup(props: DivProps) {
         tabIndex: isTabbingBackOut || focusableItemCount === 0 ? -1 : 0,
         ref: composedRef,
         className: cn(
-          "flex gap-2 outline-none",
+          "cn-action-bar-group",
           orientation === "horizontal"
             ? "items-center"
             : "w-full flex-col items-start",
@@ -634,10 +628,7 @@ function ActionBarClose({
     props: mergeProps<"button">(
       {
         type: "button" as const,
-        className: cn(
-          "rounded-xs opacity-70 outline-none hover:opacity-100 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
-          className,
-        ),
+        className: cn("cn-action-bar-close", className),
         onClick: onCloseClick,
       },
       props,
@@ -672,7 +663,7 @@ function ActionBarSeparator(props: ActionBarSeparatorProps) {
         "aria-orientation": orientation,
         "aria-hidden": "true" as const,
         className: cn(
-          "bg-border in-data-[slot=action-bar-selection]:ml-0.5 in-data-[slot=action-bar-selection]:h-4 in-data-[slot=action-bar-selection]:w-px",
+          "cn-action-bar-separator",
           orientation === "horizontal" ? "h-6 w-px" : "h-px w-full",
           className,
         ),
