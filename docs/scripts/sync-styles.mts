@@ -120,6 +120,23 @@ const getKind = (marker: string) =>
     .split("-")
     .pop();
 
+// `py-[2px]` (as some shadcn styles write it) on Tailwind's scale: `py-0.5`.
+function toSpacingScale(token: string) {
+  return token.replace(
+    /^(.*?)(-?(?:p[xytrblse]?|m[xytrblse]?|gap(?:-[xy])?|size|[hw]|min-[hw]|max-[hw]|inset(?:-[xy])?|top|right|bottom|left|start|end)-)\[(\d+)px\](!?)$/,
+    (
+      match,
+      variants: string,
+      utility: string,
+      px: string,
+      important: string,
+    ) =>
+      Number(px) % 2 === 0
+        ? `${variants}${utility}${Number(px) / 4}${important}`
+        : match,
+  );
+}
+
 export function createStyleGenerator(roles: Roles) {
   const styleNames = STYLES.map((style) => style.name);
 
@@ -292,7 +309,7 @@ export function createStyleGenerator(roles: Roles) {
       }
     }
 
-    return [...new Set(result)].join(" ");
+    return [...new Set(result.map(toSpacingScale))].join(" ");
   };
 }
 

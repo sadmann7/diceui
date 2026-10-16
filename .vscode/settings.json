@@ -31,6 +31,14 @@
     "docs/styles/globals.css": ["docs/**"]
   },
   "tailwindCSS.classFunctions": ["cn", "cva", "clsx", "twMerge"],
+  "tailwindCSS.files.exclude": [
+    "**/.git/**",
+    "**/node_modules/**",
+    "**/.hg/**",
+    "**/.svn/**",
+    "**/registry/styles/style-{vega,nova,maia,lyra,mira,luma,sera,rhea}.css",
+    "**/registry/styles/shadcn/**"
+  ],
   "css.lint.unknownAtRules": "ignore",
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "js/ts.tsdk.promptToUseWorkspaceVersion": true,

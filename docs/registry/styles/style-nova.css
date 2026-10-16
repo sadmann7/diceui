@@ -5,7 +5,7 @@
   }
 
   .cn-action-bar-selection {
-    @apply flex items-center gap-1 rounded-sm border px-1.5 py-[2px] text-sm font-medium tabular-nums;
+    @apply flex items-center gap-1 rounded-sm border px-1.5 py-0.5 text-sm font-medium tabular-nums;
   }
 
   .cn-action-bar-group {
