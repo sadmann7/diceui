@@ -579,7 +579,6 @@ function CommandStackEmpty({
   return (
     <CommandEmpty
       data-slot="command-stack-empty"
-      // cmdk renders Empty before items register, so the server HTML has it.
       className={cn("[[cmdk-list]:has([cmdk-item])_&]:hidden", className)}
       {...props}
     />
