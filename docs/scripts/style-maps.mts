@@ -2,6 +2,7 @@ import { watch } from "node:fs";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { createStyleMap } from "shadcn/utils";
+import { twMerge } from "tailwind-merge";
 
 import { DEFAULT_STYLE } from "../lib/constants";
 import { STYLES } from "../registry/styles";
@@ -38,13 +39,24 @@ export function getMarkerClasses(styleMaps: Map<string, StyleMap>) {
   return Object.fromEntries(
     Object.entries(defaultMap).map(([marker, classes]) => {
       const defaultClasses = new Set(classes.split(/\s+/));
+      const importantClasses = [...defaultClasses].filter((token) =>
+        token.endsWith("!"),
+      );
       const overrides = [...styleMaps]
         .filter(([style]) => style !== DEFAULT_STYLE)
         .flatMap(([style, styleMap]) =>
           (styleMap[marker] ?? "")
             .split(/\s+/)
             .filter((token) => token && !defaultClasses.has(token))
-            .map((token) => `style-${style}:${token}`),
+            .map((token) => {
+              // An override must also be important to beat an important
+              // default class it replaces, like nova's `rounded-xl!`.
+              const important = `${token.replace(/!$/, "")}!`;
+              const replacesImportant = importantClasses.some(
+                (cls) => twMerge(cls, important) === important,
+              );
+              return `style-${style}:${replacesImportant ? important : token}`;
+            }),
         );
 
       return [marker, [classes, ...overrides].join(" ")];
