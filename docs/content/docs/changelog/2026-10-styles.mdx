@@ -11,7 +11,7 @@ Dice UI components now follow the same style system as shadcn/ui.
 Every component ships in all shadcn/ui styles: Vega, Nova, Maia, Lyra, Mira, Luma, Sera, and Rhea. The CLI installs the version that matches the `style` in your `components.json`, so a Base UI project on Lyra gets Lyra's radius, spacing, and type scale:
 
 ```package-install
-npx shadcn@latest add @diceui/stepper
+npx shadcn@latest add @diceui/action-bar
 ```
 
 Each style follows shadcn/ui's own components, so an input, popup, or menu item in Dice UI matches its shadcn counterpart in that style. Nova now matches shadcn/ui's Nova too, which is denser than before (for example `h-8 rounded-lg` inputs instead of `h-9 rounded-md`).
@@ -30,5 +30,7 @@ Installed components now pick up the rest of your shadcn/ui setup:
 ### RTL
 
 Set `rtl: true` in `components.json` and the CLI converts directional classes to logical ones (`ml-*` to `ms-*`, `left-*` to `start-*`) and flips directional icons as it installs.
+
+[Data Table](/docs/components/data-table) and [Data Grid](/docs/components/data-grid) install from [tablecn](https://tablecn.com), which doesn't support styles yet, so they install in the same style for every project for now.
 
 Components you've already installed keep working. Reinstall them to pick up your style and config.
