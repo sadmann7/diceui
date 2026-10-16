@@ -33,6 +33,7 @@
     "**/ui-rtl/**",
     "**/__generated__/**",
     "docs/styles/*-nova/**",
+    "docs/registry/styles/**/*.css",
     "**/public/**",
     "pnpm-lock.yaml",
     "**/*.md",

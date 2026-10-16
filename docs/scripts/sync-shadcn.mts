@@ -219,7 +219,7 @@ async function syncStyles(components: string[]) {
 
 const components = await syncComponents();
 await syncStyles(components);
-execFileSync("oxfmt", ["--write", ...components, SHADCN_STYLES_PATH], {
+execFileSync("oxfmt", ["--write", ...components], {
   stdio: "inherit",
 });
 console.log(
