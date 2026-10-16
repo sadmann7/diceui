@@ -683,6 +683,7 @@ function CommandStackItem({
       data-checked={checked}
       aria-checked={checked}
       className={cn(
+        "cn-command-stack-item",
         checked === undefined && "[&>svg:last-child]:hidden",
         className,
       )}

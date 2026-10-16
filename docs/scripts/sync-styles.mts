@@ -137,6 +137,16 @@ function toSpacingScale(token: string) {
   );
 }
 
+// `/* @role cn-dropdown-menu-content */` above a rule in the source pins the
+// shadcn part it copies, for rules the generator can't match on its own.
+export function getRoleHints(css: string) {
+  return new Map(
+    [...css.matchAll(/\/\* @role (cn-[\w-]+) \*\/\n {2}\.(cn-[\w-]+) \{/g)].map(
+      (m) => [m[2]!, m[1]!],
+    ),
+  );
+}
+
 export function createStyleGenerator(roles: Roles) {
   const styleNames = STYLES.map((style) => style.name);
 
@@ -253,9 +263,14 @@ export function createStyleGenerator(roles: Roles) {
     return score >= 0.6 ? role : null;
   }
 
-  return function generate(classes: string, style: string, name: string) {
+  return function generate(
+    classes: string,
+    style: string,
+    name: string,
+    hint?: string,
+  ) {
     const tokens = split(classes);
-    const role = findRole(tokens, name);
+    const role = hint && sensitive.has(hint) ? hint : findRole(tokens, name);
     const changed = role ? sensitive.get(role)! : new Set<string>();
     const target = role ? split(roles[role]?.[style] ?? "") : [];
     const newYork = role ? split(roles[role]?.[SOURCE_STYLE] ?? "") : [];
@@ -346,6 +361,12 @@ export async function syncStyles() {
   ]);
   const generate = createStyleGenerator(roles);
   const markers = new Set(getRules(sourceCss).keys());
+  const hints = getRoleHints(sourceCss);
+  for (const [marker, role] of hints) {
+    if (!roles[role]) {
+      throw new Error(`${marker} has @role ${role}, which isn't a shadcn part`);
+    }
+  }
 
   await Promise.all(
     STYLES.map(async ({ name }) => {
@@ -355,7 +376,7 @@ export async function syncStyles() {
         .replace(
           RULE,
           (_, marker: string, classes: string) =>
-            `  .${marker} {\n    @apply ${overrides.get(marker) ?? generate(classes, name, marker)};\n  }`,
+            `  .${marker} {\n    @apply ${overrides.get(marker) ?? generate(classes, name, marker, hints.get(marker))};\n  }`,
         );
       return fs.writeFile(path.join(STYLES_SRC_PATH, `style-${name}.css`), css);
     }),

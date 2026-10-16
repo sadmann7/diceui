@@ -8,13 +8,16 @@ import { STYLES } from "@/registry/styles";
 import {
   createStyleGenerator,
   getOverridesPath,
+  getRoleHints,
   getRules,
 } from "@/scripts/sync-styles.mts";
 
 const read = (file: string) =>
   readFileSync(path.join(import.meta.dirname, file), "utf8");
 
-const sourceRules = getRules(read("style-new-york.css"));
+const sourceCss = read("style-new-york.css");
+const sourceRules = getRules(sourceCss);
+const roleHints = getRoleHints(sourceCss);
 const generate = createStyleGenerator(JSON.parse(read("shadcn/roles.json")));
 
 describe.each(STYLES.map((style) => style.name))("style-%s.css", (style) => {
@@ -37,7 +40,8 @@ describe.each(STYLES.map((style) => style.name))("style-%s.css", (style) => {
   test("is up to date with `pnpm styles:sync`", () => {
     for (const [marker, classes] of sourceRules) {
       expect(rules.get(marker), marker).toBe(
-        overrides.get(marker) ?? generate(classes, style, marker),
+        overrides.get(marker) ??
+          generate(classes, style, marker, roleHints.get(marker)),
       );
     }
   });

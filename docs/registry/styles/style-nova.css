@@ -462,8 +462,9 @@
   }
 
   /* MARK: Command Stack */
+  /* @role cn-dropdown-menu-content */
   .cn-command-stack {
-    @apply h-auto;
+    @apply h-auto rounded-lg;
   }
 
   .cn-command-stack-2 {
@@ -516,6 +517,11 @@
 
   .cn-command-stack-loading {
     @apply py-6 text-sm text-muted-foreground *:flex *:items-center *:justify-center *:gap-1.5;
+  }
+
+  /* @role cn-dropdown-menu-item */
+  .cn-command-stack-item {
+    @apply rounded-md;
   }
 
   .cn-command-stack-item-indicator {
