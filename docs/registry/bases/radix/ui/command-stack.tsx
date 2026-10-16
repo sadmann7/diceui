@@ -565,6 +565,7 @@ function CommandStackList({
 }
 
 function CommandStackEmpty({
+  className,
   ...props
 }: React.ComponentProps<typeof CommandEmpty>) {
   const store = useCommandStackStore("CommandStackEmpty");
@@ -575,7 +576,13 @@ function CommandStackEmpty({
 
   if (isLoading) return null;
 
-  return <CommandEmpty data-slot="command-stack-empty" {...props} />;
+  return (
+    <CommandEmpty
+      data-slot="command-stack-empty"
+      className={cn("[[cmdk-list]:has([cmdk-item])_&]:hidden", className)}
+      {...props}
+    />
+  );
 }
 
 function CommandStackLoading({
