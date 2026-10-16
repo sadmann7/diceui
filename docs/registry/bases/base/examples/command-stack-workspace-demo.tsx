@@ -102,7 +102,7 @@ export default function CommandStackWorkspaceDemo() {
     <CommandStack
       value={value}
       onValueChange={onValueChange}
-      className="w-full max-w-md rounded-lg border shadow-md"
+      className="w-full max-w-md border shadow-md"
     >
       <CommandStackInput placeholder="Search workspace..." />
       <CommandStackList>

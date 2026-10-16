@@ -164,7 +164,7 @@ export default function FileUploadChatInputDemo() {
                 type="button"
                 size="icon"
                 variant="ghost"
-                className="size-7 rounded-sm"
+                className="size-7"
                 {...props}
               >
                 <Paperclip className="size-3.5" />
@@ -174,7 +174,7 @@ export default function FileUploadChatInputDemo() {
           />
           <Button
             size="icon"
-            className="size-7 rounded-sm"
+            className="size-7"
             disabled={!input.trim() || isUploading}
           >
             <ArrowUp className="size-3.5" />

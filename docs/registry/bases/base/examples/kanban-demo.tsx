@@ -101,10 +101,7 @@ export default function KanbanDemo() {
                 <span className="text-sm font-semibold">
                   {COLUMN_TITLES[columnValue]}
                 </span>
-                <Badge
-                  variant="secondary"
-                  className="pointer-events-none rounded-sm"
-                >
+                <Badge variant="secondary" className="pointer-events-none">
                   {tasks.length}
                 </Badge>
               </div>
@@ -137,7 +134,7 @@ export default function KanbanDemo() {
                               ? "default"
                               : "secondary"
                         }
-                        className="pointer-events-none h-5 rounded-sm px-1.5 text-[11px] capitalize"
+                        className="pointer-events-none h-5 px-1.5 text-[11px] capitalize"
                       >
                         {task.priority}
                       </Badge>

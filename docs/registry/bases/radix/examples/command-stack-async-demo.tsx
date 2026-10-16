@@ -94,7 +94,7 @@ function RepositoryPages() {
 
 export default function CommandStackAsyncDemo() {
   return (
-    <CommandStack className="w-full max-w-md rounded-lg border shadow-md">
+    <CommandStack className="w-full max-w-md border shadow-md">
       <CommandStackInput placeholder="Search repositories..." />
       <CommandStackList>
         <CommandStackEmpty>No results found.</CommandStackEmpty>

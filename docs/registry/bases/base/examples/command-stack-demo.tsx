@@ -31,7 +31,7 @@ const teams = ["Design", "Engineering", "Product", "Customer Success"];
 
 export default function CommandStackDemo() {
   return (
-    <CommandStack className="w-full max-w-md rounded-lg border shadow-md">
+    <CommandStack className="w-full max-w-md border shadow-md">
       <CommandStackInput placeholder="What do you need?" />
       <CommandStackList>
         <CommandStackEmpty>No results found.</CommandStackEmpty>
