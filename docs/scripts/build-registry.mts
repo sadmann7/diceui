@@ -444,6 +444,11 @@ try {
   console.log("↔️  Building ui-rtl...");
   await buildRtlUi();
 
+  if (process.argv.includes("--styles")) {
+    await Promise.all(workers.map((worker) => worker.terminate()));
+    process.exit(0);
+  }
+
   console.log("🧹 Cleaning styles output directory...");
   await rimraf(STYLES_PATH);
   await fs.mkdir(STYLES_PATH, { recursive: true });

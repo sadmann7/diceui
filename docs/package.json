@@ -6,6 +6,7 @@
     "build": "pnpm build:registry && next build",
     "generate:content": "fumadocs-mdx",
     "build:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/build-registry.mts",
+    "build:styles": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/build-registry.mts --styles",
     "validate:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/validate-registry.mts",
     "clean:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/clean-registry.mts",
     "test:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/test-registry.mts",
