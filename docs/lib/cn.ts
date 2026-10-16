@@ -1,4 +1,4 @@
-import { clsx, createEngine, twJoin, wrapClsx } from "cn/engine";
+import { createEngine, wrapClsx } from "cn/engine";
 import tables from "cn/tables";
 
 import { MARKER_CLASSES } from "@/registry/styles/__generated__/style-maps";
@@ -18,6 +18,5 @@ const cn = wrapClsx(
   (input) => engine.mergeString(expandMarkers(input)),
   engine,
 );
-const twMerge = engine.merge;
 
-export { clsx, cn, createEngine, twJoin, twMerge };
+export { cn };
