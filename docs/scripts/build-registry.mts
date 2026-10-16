@@ -5,14 +5,16 @@
 import type { z } from "zod";
 
 import { promises as fs } from "node:fs";
+import { availableParallelism } from "node:os";
 import path from "node:path";
+import { Worker } from "node:worker_threads";
 import { rimraf } from "rimraf";
 import {
   type RegistryItem,
   type registryItemTypeSchema,
   registrySchema,
 } from "shadcn/schema";
-import { transformDirection, transformStyle } from "shadcn/utils";
+import { transformDirection } from "shadcn/utils";
 
 import { DEFAULT_BASE, DEFAULT_STYLE } from "../lib/constants";
 import { BASES } from "../registry/bases";
@@ -222,21 +224,51 @@ async function buildRootIndex() {
 // Files with cn-* markers are compiled with the style's map from
 // registry/styles/style-{style}.css, falling back to the default style.
 // ----------------------------------------------------------------------------
-const compiledByStyleMap = new WeakMap<
-  StyleMap,
-  Map<string, Promise<string>>
->();
+const compiledSources = new Map<string, Promise<string>>();
+const workers = Array.from(
+  { length: Math.max(1, availableParallelism() - 1) },
+  () =>
+    new Worker(new URL("./compile-style-worker.mts", import.meta.url), {
+      execArgv: ["--import", "tsx"],
+    }),
+);
+const pending = new Map<number, (result: string) => void>();
+let nextId = 0;
+
+for (const worker of workers) {
+  worker.on("message", ({ id, result }: { id: number; result: string }) => {
+    pending.get(id)?.(result);
+    pending.delete(id);
+  });
+}
 
 function compileStyle(content: string, styleMap: StyleMap) {
-  let compiled = compiledByStyleMap.get(styleMap);
-  if (!compiled) {
-    compiled = new Map();
-    compiledByStyleMap.set(styleMap, compiled);
+  const markers = [...new Set(content.match(/\bcn-[\w-]+/g) ?? [])];
+  const key = [
+    content,
+    ...markers.map((marker) => styleMap[marker] ?? ""),
+  ].join("\0");
+
+  if (!compiledSources.has(key)) {
+    const id = nextId++;
+    const relevant = Object.fromEntries(
+      markers.flatMap((marker) =>
+        styleMap[marker] ? [[marker, styleMap[marker]]] : [],
+      ),
+    );
+    compiledSources.set(
+      key,
+      new Promise((resolve) => {
+        pending.set(id, resolve);
+        workers[id % workers.length]!.postMessage({
+          id,
+          content,
+          styleMap: relevant,
+        });
+      }),
+    );
   }
-  if (!compiled.has(content)) {
-    compiled.set(content, transformStyle(content, { styleMap }));
-  }
-  return compiled.get(content)!;
+  return compiledSources.get(key)!;
 }
 
 async function buildPublicItems() {
@@ -247,73 +279,82 @@ async function buildPublicItems() {
     const registry = registries[baseName];
     const baseSrcRoot = path.join(process.cwd(), "registry", "bases", baseName);
 
-    for (const item of registry.items) {
-      if (!REGISTRY_INDEX_WHITELIST.includes(item.type)) continue;
-      if (item.name === "index") continue;
+    const items = registry.items.filter(
+      (item) =>
+        REGISTRY_INDEX_WHITELIST.includes(item.type) && item.name !== "index",
+    );
 
-      const sources = (
+    await Promise.all(
+      items.map(async (item) => {
+        const sources = (
+          await Promise.all(
+            (item.files ?? []).map(async (_file) => {
+              const file =
+                typeof _file === "string"
+                  ? { path: _file, type: item.type, target: "" }
+                  : _file;
+
+              let content: string;
+              try {
+                content = (
+                  await fs.readFile(path.join(baseSrcRoot, file.path), "utf8")
+                ).replaceAll(
+                  `@/registry/bases/${baseName}/ui-rtl/`,
+                  `@/registry/bases/${baseName}/ui/`,
+                );
+              } catch {
+                return null;
+              }
+
+              return {
+                path: file.path,
+                type: file.type,
+                content,
+                target: (file as { target?: string }).target ?? "",
+              };
+            }),
+          )
+        ).filter((file): file is NonNullable<typeof file> => file !== null);
+
+        const dependencies = getItemDependencies(
+          item,
+          sources.map((file) => file.content),
+        );
+        itemDependencyCache.set(`${baseName}:${item.name}`, dependencies);
+
         await Promise.all(
-          (item.files ?? []).map(async (_file) => {
-            const file =
-              typeof _file === "string"
-                ? { path: _file, type: item.type, target: "" }
-                : _file;
+          STYLES.map(async (style) => {
+            const styleDir = path.join(
+              STYLES_PATH,
+              `${baseName}-${style.name}`,
+            );
+            await fs.mkdir(styleDir, { recursive: true });
 
-            let content: string;
-            try {
-              content = (
-                await fs.readFile(path.join(baseSrcRoot, file.path), "utf8")
-              ).replaceAll(
-                `@/registry/bases/${baseName}/ui-rtl/`,
-                `@/registry/bases/${baseName}/ui/`,
-              );
-            } catch {
-              return null;
-            }
+            const styleMap = styleMaps.get(style.name)!;
+            const files = await Promise.all(
+              sources.map(async (file) =>
+                file.content.includes("cn-")
+                  ? {
+                      ...file,
+                      content: await compileStyle(file.content, styleMap),
+                    }
+                  : file,
+              ),
+            );
 
-            return {
-              path: file.path,
-              type: file.type,
-              content,
-              target: (file as { target?: string }).target ?? "",
-            };
+            await fs.writeFile(
+              path.join(styleDir, `${item.name}.json`),
+              JSON.stringify(
+                { ...item, files, ...(dependencies && { dependencies }) },
+                null,
+                2,
+              ),
+              "utf8",
+            );
           }),
-        )
-      ).filter((file): file is NonNullable<typeof file> => file !== null);
-
-      const dependencies = getItemDependencies(
-        item,
-        sources.map((file) => file.content),
-      );
-      itemDependencyCache.set(`${baseName}:${item.name}`, dependencies);
-
-      for (const style of STYLES) {
-        const styleDir = path.join(STYLES_PATH, `${baseName}-${style.name}`);
-        await fs.mkdir(styleDir, { recursive: true });
-
-        const styleMap = styleMaps.get(style.name)!;
-        const files = await Promise.all(
-          sources.map(async (file) =>
-            file.content.includes("cn-")
-              ? {
-                  ...file,
-                  content: await compileStyle(file.content, styleMap),
-                }
-              : file,
-          ),
         );
-
-        await fs.writeFile(
-          path.join(styleDir, `${item.name}.json`),
-          JSON.stringify(
-            { ...item, files, ...(dependencies && { dependencies }) },
-            null,
-            2,
-          ),
-          "utf8",
-        );
-      }
-    }
+      }),
+    );
   }
 }
 
@@ -428,6 +469,7 @@ try {
 
   const elapsed = ((performance.now() - totalStart) / 1000).toFixed(2);
   console.log(`\n✅ Build complete in ${elapsed}s!`);
+  await Promise.all(workers.map((worker) => worker.terminate()));
 } catch (error) {
   console.error(error);
   process.exit(1);

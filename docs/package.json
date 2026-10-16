@@ -11,6 +11,7 @@
     "test:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/test-registry.mts",
     "dev": "pnpm styles:dev & next dev --turbopack",
     "styles:dev": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/style-maps.mts --watch",
+    "styles:sync": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-styles.mts && oxfmt --write ./registry/styles",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
