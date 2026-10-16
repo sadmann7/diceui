@@ -3,8 +3,12 @@
 import { ChevronDownIcon } from "lucide-react";
 import * as React from "react";
 
-import { DEFAULT_STYLE } from "@/lib/constants";
-import { STYLE_NAMES, STYLE_STORAGE_KEY } from "@/lib/style";
+import {
+  getServerStyle,
+  getStyle,
+  setStyle,
+  subscribeStyle,
+} from "@/lib/style";
 import { cn } from "@/lib/utils";
 import { STYLES } from "@/registry/styles";
 import { Button } from "@/styles/radix-nova/ui/button";
@@ -16,35 +20,14 @@ import {
   DropdownMenuTrigger,
 } from "@/styles/radix-nova/ui/dropdown-menu";
 
-const listeners = new Set<() => void>();
-
-function getStyle() {
-  const match = document.body.className.match(/\bstyle-([\w-]+)/);
-  return match?.[1] ?? DEFAULT_STYLE;
-}
-
-function setStyle(style: string) {
-  document.body.classList.remove(...STYLE_NAMES.map((name) => `style-${name}`));
-  document.body.classList.add(`style-${style}`);
-  try {
-    localStorage.setItem(STYLE_STORAGE_KEY, style);
-  } catch {}
-  for (const listener of listeners) listener();
-}
-
-function subscribe(listener: () => void) {
-  listeners.add(listener);
-  return () => listeners.delete(listener);
-}
-
 export function StyleSwitcher({
   className,
   ...props
 }: React.ComponentProps<typeof Button>) {
   const style = React.useSyncExternalStore(
-    subscribe,
+    subscribeStyle,
     getStyle,
-    () => DEFAULT_STYLE,
+    getServerStyle,
   );
   const title = STYLES.find((item) => item.name === style)?.title ?? style;
 

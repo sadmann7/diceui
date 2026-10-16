@@ -10,6 +10,7 @@ import {
   MdxTabsList,
   MdxTabsTrigger,
 } from "@/components/mdx-tabs";
+import { StyleScope } from "@/components/style-scope";
 import { StyleSwitcher } from "@/components/style-switcher";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/styles/radix-nova/ui/skeleton";
@@ -90,9 +91,11 @@ export function ComponentTabs({
             className,
           )}
         >
-          <React.Suspense fallback={<Skeleton className="size-full" />}>
-            <Component />
-          </React.Suspense>
+          <StyleScope>
+            <React.Suspense fallback={<Skeleton className="size-full" />}>
+              <Component />
+            </React.Suspense>
+          </StyleScope>
         </div>
       </MdxTabsContent>
       <MdxTabsContent

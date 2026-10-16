@@ -462,12 +462,15 @@ function CommandStackInput({
     <div
       data-slot="command-stack-input-wrapper"
       data-variant="default"
-      className="cn-command-stack-input-wrapper-2"
+      className="cn-command-input-wrapper"
     >
-      <InputGroup className="cn-command-stack-input-4">
+      <InputGroup className="cn-command-input-group">
         <CommandPrimitive.Input
           {...inputProps}
-          className={cn("cn-command-stack-input-5", className)}
+          className={cn(
+            "cn-command-input outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+            className,
+          )}
           {...props}
         />
         <InputGroupAddon>
@@ -496,7 +499,7 @@ function CommandStackInput({
               hugeicons="Search01Icon"
               phosphor="MagnifyingGlassIcon"
               remixicon="RiSearchLine"
-              className="cn-command-stack-input-6"
+              className="cn-command-input-icon"
             />
           )}
         </InputGroupAddon>
