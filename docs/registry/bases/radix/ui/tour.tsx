@@ -1442,7 +1442,7 @@ function TourTitle(props: DivProps) {
       data-slot="tour-title"
       dir={context.dir}
       {...titleProps}
-      className={cn("cn-tour-title", className)}
+      className={cn("cn-tour-title cn-font-heading", className)}
     />
   );
 }

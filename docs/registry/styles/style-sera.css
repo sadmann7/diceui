@@ -875,7 +875,7 @@
   }
 
   .cn-kanban-column {
-    @apply flex size-full flex-col gap-2 rounded-none border bg-zinc-100 p-4 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:bg-zinc-900;
+    @apply flex size-full flex-col gap-2 rounded-none border bg-muted p-4 aria-disabled:pointer-events-none aria-disabled:opacity-50 dark:bg-card;
   }
 
   .cn-kanban-column-handle {
@@ -1116,7 +1116,7 @@
   }
 
   .cn-media-player-seek-chapter-separator {
-    @apply absolute top-0 h-full bg-zinc-50 dark:bg-zinc-950;
+    @apply absolute top-0 h-full bg-background;
   }
 
   .cn-media-player-seek-container {
@@ -1156,7 +1156,7 @@
   }
 
   .cn-media-player-seek-7 {
-    @apply flex flex-col items-center gap-1.5 rounded-none border bg-background text-foreground shadow-sm dark:bg-zinc-900;
+    @apply flex flex-col items-center gap-1.5 rounded-none border bg-background text-foreground shadow-sm dark:bg-popover;
   }
 
   .cn-media-player-seek-thumbnail {
@@ -1324,7 +1324,7 @@
   }
 
   .cn-media-player-tooltip-3 {
-    @apply flex items-center gap-2 border bg-accent px-2 py-2 font-semibold text-foreground data-[side=top]:mb-3.5 dark:bg-zinc-900 [&>span]:hidden;
+    @apply flex items-center gap-2 border bg-accent px-2 py-2 font-semibold text-foreground data-[side=top]:mb-3.5 dark:bg-popover [&>span]:hidden;
   }
 
   .cn-media-player-tooltip-4 {
@@ -2237,7 +2237,7 @@
   }
 
   .cn-media-player-seek-6-radix {
-    @apply flex flex-col items-center gap-1.5 rounded-none border bg-background text-foreground shadow-sm dark:bg-zinc-900;
+    @apply flex flex-col items-center gap-1.5 rounded-none border bg-background text-foreground shadow-sm dark:bg-popover;
   }
 
   .cn-media-player-seek-7-radix {
@@ -2285,7 +2285,7 @@
   }
 
   .cn-media-player-tooltip-2-radix {
-    @apply flex items-center gap-2 border bg-accent px-2 py-2 font-semibold text-foreground data-[side=top]:mb-3.5 dark:bg-zinc-900 [&>span]:hidden;
+    @apply flex items-center gap-2 border bg-accent px-2 py-2 font-semibold text-foreground data-[side=top]:mb-3.5 dark:bg-popover [&>span]:hidden;
   }
 
   .cn-media-player-tooltip-3-radix {

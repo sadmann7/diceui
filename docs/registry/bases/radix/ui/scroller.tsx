@@ -2,15 +2,11 @@
 
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
-import {
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
-  ChevronUp,
-} from "lucide-react";
 import { Slot as SlotPrimitive } from "radix-ui";
 import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
+
+import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const DATA_TOP_SCROLL = "data-top-scroll";
 const DATA_BOTTOM_SCROLL = "data-bottom-scroll";
@@ -287,12 +283,44 @@ const scrollButtonVariants = cva("cn-scroller-scroll-button", {
   },
 });
 
-const directionToIcon: Record<ScrollDirection, React.ElementType> = {
-  up: ChevronUp,
-  down: ChevronDown,
-  left: ChevronLeft,
-  right: ChevronRight,
-} as const;
+const directionToIcon: Record<ScrollDirection, React.ReactNode> = {
+  up: (
+    <IconPlaceholder
+      lucide="ChevronUpIcon"
+      tabler="IconChevronUp"
+      hugeicons="ArrowUp01Icon"
+      phosphor="CaretUpIcon"
+      remixicon="RiArrowUpSLine"
+    />
+  ),
+  down: (
+    <IconPlaceholder
+      lucide="ChevronDownIcon"
+      tabler="IconChevronDown"
+      hugeicons="ArrowDown01Icon"
+      phosphor="CaretDownIcon"
+      remixicon="RiArrowDownSLine"
+    />
+  ),
+  left: (
+    <IconPlaceholder
+      lucide="ChevronLeftIcon"
+      tabler="IconChevronLeft"
+      hugeicons="ArrowLeft01Icon"
+      phosphor="CaretLeftIcon"
+      remixicon="RiArrowLeftSLine"
+    />
+  ),
+  right: (
+    <IconPlaceholder
+      lucide="ChevronRightIcon"
+      tabler="IconChevronRight"
+      hugeicons="ArrowRight01Icon"
+      phosphor="CaretRightIcon"
+      remixicon="RiArrowRightSLine"
+    />
+  ),
+};
 
 interface ScrollButtonProps extends React.ComponentProps<"button"> {
   direction: ScrollDirection;
@@ -365,8 +393,6 @@ function ScrollButton(props: ScrollButtonProps) {
     return () => onAutoScrollStop();
   }, [onAutoScrollStop]);
 
-  const Icon = directionToIcon[direction];
-
   return (
     <button
       type="button"
@@ -375,7 +401,7 @@ function ScrollButton(props: ScrollButtonProps) {
       ref={ref}
       className={cn(scrollButtonVariants({ direction, className }))}
     >
-      <Icon />
+      {directionToIcon[direction]}
     </button>
   );
 }

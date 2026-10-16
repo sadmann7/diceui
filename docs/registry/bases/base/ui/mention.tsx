@@ -51,7 +51,10 @@ function MentionContent({
     <MentionPrimitive.Portal>
       <MentionPrimitive.Content
         data-slot="mention-content"
-        className={cn("cn-mention-content", className)}
+        className={cn(
+          "cn-mention-content cn-menu-target cn-menu-translucent",
+          className,
+        )}
         {...props}
       >
         {children}

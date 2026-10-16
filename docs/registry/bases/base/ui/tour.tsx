@@ -1483,7 +1483,7 @@ function TourTitle(props: DivProps) {
     props: mergeProps<"div">(
       {
         dir: context.dir,
-        className: cn("cn-tour-title", className),
+        className: cn("cn-tour-title cn-font-heading", className),
       },
       titleProps,
     ),

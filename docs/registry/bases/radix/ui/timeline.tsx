@@ -655,7 +655,7 @@ function TimelineTitle(props: DivProps) {
     <TitlePrimitive
       data-slot="timeline-title"
       {...titleProps}
-      className={cn("cn-timeline-title", className)}
+      className={cn("cn-timeline-title cn-font-heading", className)}
     />
   );
 }

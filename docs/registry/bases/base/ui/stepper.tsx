@@ -1137,7 +1137,7 @@ function StepperTitle(props: StepperTitleProps) {
         id: titleId,
         dir: context.dir,
         ref,
-        className: cn("cn-stepper-title", className),
+        className: cn("cn-stepper-title cn-font-heading", className),
       },
       titleProps,
     ),

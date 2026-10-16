@@ -1,0 +1,32 @@
+---
+title: October 2026 - Styles and RTL
+description: Components now install in your shadcn/ui style, follow your icon library, heading font, and menu color, and support RTL.
+date: 2026-10-16T10:00:00Z
+---
+
+Dice UI components now follow the same style system as shadcn/ui.
+
+### Styles
+
+Every component ships in all shadcn/ui styles: Vega, Nova, Maia, Lyra, Mira, Luma, Sera, and Rhea. The CLI installs the version that matches the `style` in your `components.json`, so a Base UI project on Lyra gets Lyra's radius, spacing, and type scale:
+
+```package-install
+npx shadcn@latest add @diceui/stepper
+```
+
+Use the style switcher on any component preview to see how it looks in each style.
+
+### Your project config
+
+Installed components now pick up the rest of your shadcn/ui setup:
+
+- **Icons** come from your `iconLibrary` (Lucide, Tabler, Hugeicons, Phosphor, or Remix Icon).
+- **Titles** in Banner, Stepper, Timeline, and Tour use `font-heading` when your CSS defines `--font-heading`.
+- **Popups** in Combobox, Faceted, Mention, and Time Picker follow your `menuColor`, including the translucent options.
+- **Surfaces** in Kanban and Media Player use theme tokens like `bg-muted` and `bg-popover` instead of fixed grays, so they follow your base color.
+
+### RTL
+
+Set `rtl: true` in `components.json` and the CLI converts directional classes to logical ones (`ml-*` to `ms-*`, `left-*` to `start-*`) and flips directional icons as it installs.
+
+Components you've already installed keep working. Reinstall them to pick up your style and config.

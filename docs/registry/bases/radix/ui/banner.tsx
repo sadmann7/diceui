@@ -624,7 +624,7 @@ function BannerTitle(props: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="banner-title"
-      className={cn("cn-banner-title", className)}
+      className={cn("cn-banner-title cn-font-heading", className)}
       {...titleProps}
     />
   );

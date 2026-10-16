@@ -148,7 +148,10 @@ function ComboboxContent({
       <ComboboxPrimitive.Content
         data-slot="combobox-content"
         sideOffset={sideOffset}
-        className={cn("cn-combobox-content", className)}
+        className={cn(
+          "cn-combobox-content cn-menu-target cn-menu-translucent",
+          className,
+        )}
         {...props}
       >
         {children}

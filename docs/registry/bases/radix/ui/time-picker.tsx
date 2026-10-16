@@ -1592,7 +1592,10 @@ function TimePickerContent(props: TimePickerContentProps) {
         align={align}
         sideOffset={sideOffset}
         {...contentProps}
-        className={cn("cn-time-picker-content-radix", className)}
+        className={cn(
+          "cn-time-picker-content-radix cn-menu-target cn-menu-translucent",
+          className,
+        )}
         onOpenAutoFocus={onOpenAutoFocus}
         onInteractOutside={onInteractOutside}
       />

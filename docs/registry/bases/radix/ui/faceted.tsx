@@ -372,7 +372,10 @@ function FacetedContent({
     <PopoverContent
       data-slot="faceted-content"
       align="start"
-      className={cn("cn-faceted-content-radix", className)}
+      className={cn(
+        "cn-faceted-content-radix cn-menu-target cn-menu-translucent",
+        className,
+      )}
       {...props}
     >
       <Command

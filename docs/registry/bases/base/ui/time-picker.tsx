@@ -1618,7 +1618,10 @@ function TimePickerContent(props: TimePickerContentProps) {
             data-slot="time-picker-content"
             initialFocus={resolvedInitialFocus}
             {...contentProps}
-            className={cn("cn-time-picker-content-2", className)}
+            className={cn(
+              "cn-time-picker-content-2 cn-menu-target cn-menu-translucent",
+              className,
+            )}
           />
         </PopoverPrimitive.Positioner>
       </PopoverPrimitive.Portal>
