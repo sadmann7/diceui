@@ -86,6 +86,13 @@ function isAddedBorder(other: string, newYork: string[]) {
   );
 }
 
+// The part a marker is, by name: `cn-editable-input` -> "input".
+const getKind = (marker: string) =>
+  marker
+    .replace(/(-\d+|-radix)+$/, "")
+    .split("-")
+    .pop();
+
 export function createStyleGenerator(roles: Roles) {
   const styleNames = STYLES.map((style) => style.name);
 
@@ -150,13 +157,6 @@ export function createStyleGenerator(roles: Roles) {
       return [style, map] as const;
     }),
   );
-
-  // The part a marker is, by name: `cn-editable-input` -> "input".
-  const getKind = (marker: string) =>
-    marker
-      .replace(/(-\d+|-radix)+$/, "")
-      .split("-")
-      .pop();
 
   // The shadcn part a marker copies: the one explaining most of its visual
   // classes, preferring the same kind of part, with coverage breaking ties.
@@ -241,6 +241,27 @@ export function createStyleGenerator(roles: Roles) {
   };
 }
 
+// Hand-tuned rules for a style, in `overrides/style-<name>.css`, win over the
+// generated ones, for parts the generator can't get right on its own.
+export function getOverridesPath(style: string) {
+  return path.join(STYLES_SRC_PATH, "overrides", `style-${style}.css`);
+}
+
+async function getOverrides(style: string, markers: Set<string>) {
+  const css = await fs
+    .readFile(getOverridesPath(style), "utf8")
+    .catch(() => "");
+  const overrides = getRules(css);
+  for (const marker of overrides.keys()) {
+    if (!markers.has(marker)) {
+      throw new Error(
+        `overrides/style-${style}.css overrides ${marker}, which isn't in style-${SOURCE_STYLE}.css`,
+      );
+    }
+  }
+  return overrides;
+}
+
 export async function syncStyles() {
   const [sourceCss, roles] = await Promise.all([
     fs.readFile(
@@ -252,15 +273,17 @@ export async function syncStyles() {
       .then((json) => JSON.parse(json) as Roles),
   ]);
   const generate = createStyleGenerator(roles);
+  const markers = new Set(getRules(sourceCss).keys());
 
   await Promise.all(
-    STYLES.map(({ name }) => {
+    STYLES.map(async ({ name }) => {
+      const overrides = await getOverrides(name, markers);
       const css = sourceCss
         .replace(`.style-${SOURCE_STYLE} {`, `.style-${name} {`)
         .replace(
           RULE,
           (_, marker: string, classes: string) =>
-            `  .${marker} {\n    @apply ${generate(classes, name, marker)};\n  }`,
+            `  .${marker} {\n    @apply ${overrides.get(marker) ?? generate(classes, name, marker)};\n  }`,
         );
       return fs.writeFile(path.join(STYLES_SRC_PATH, `style-${name}.css`), css);
     }),

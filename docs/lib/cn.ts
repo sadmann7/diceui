@@ -2,8 +2,7 @@ import { createEngine, wrapClsx } from "cn/engine";
 import tables from "cn/tables";
 
 import { DEFAULT_STYLE } from "@/lib/constants";
-import { getMarkerStyle } from "@/lib/marker-style";
-import { STYLE_MAPS } from "@/registry/styles/__generated__/style-maps";
+import { getMarkerStyle, getStyleMap } from "@/lib/marker-style";
 
 const engine = createEngine(tables);
 
@@ -16,7 +15,7 @@ const cnByStyle = new Map<string, Cn>();
 function getStyleCn(style: string) {
   let styleCn = cnByStyle.get(style);
   if (!styleCn) {
-    const styleMap = STYLE_MAPS[style] ?? STYLE_MAPS[DEFAULT_STYLE] ?? {};
+    const styleMap = getStyleMap(style) ?? {};
     const expandMarkers = (input: string) =>
       input.includes("cn-")
         ? input.replace(/\bcn-[\w-]+/g, (marker) => styleMap[marker] ?? marker)
@@ -27,6 +26,10 @@ function getStyleCn(style: string) {
   return styleCn;
 }
 
-const cn: Cn = (...inputs) => getStyleCn(getMarkerStyle())(...inputs);
+// Until a style's map has loaded, markers expand to the default style.
+const cn: Cn = (...inputs) => {
+  const style = getMarkerStyle();
+  return getStyleCn(getStyleMap(style) ? style : DEFAULT_STYLE)(...inputs);
+};
 
 export { cn };
