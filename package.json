@@ -1,6 +1,6 @@
 {
   "name": "diceui",
-  "packageManager": "pnpm@11.24.0",
+  "packageManager": "pnpm@12.14.0",
   "engines": {
     "node": ">=22.13.0"
   },
