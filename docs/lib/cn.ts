@@ -32,7 +32,6 @@ const cn: Cn = (...inputs) => {
   return getStyleCn(getStyleMap(style) ? style : DEFAULT_STYLE)(...inputs);
 };
 
-// shadcn's own code imports `twMerge` from `cn`, which resolves here.
 const twMerge = (...inputs: Parameters<typeof twJoin>) =>
   engine.mergeString(twJoin(...inputs));
 
