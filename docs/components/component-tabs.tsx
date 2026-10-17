@@ -12,6 +12,7 @@ import {
 } from "@/components/mdx-tabs";
 import { StyleScope } from "@/components/style-scope";
 import { StyleSwitcher } from "@/components/style-switcher";
+import { useNearViewport } from "@/hooks/use-near-viewport";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/styles/radix-nova/ui/skeleton";
 
@@ -40,31 +41,6 @@ interface ComponentTabsProps extends React.ComponentProps<typeof MdxTabs> {
   lazy?: boolean;
 }
 
-function useNearViewport(
-  ref: React.RefObject<HTMLElement | null>,
-  enabled: boolean,
-) {
-  const [isNear, setIsNear] = React.useState(!enabled);
-
-  React.useEffect(() => {
-    const element = ref.current;
-    if (isNear || !element) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        setIsNear(true);
-        observer.disconnect();
-      },
-      { rootMargin: "400px 0px" },
-    );
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [ref, isNear]);
-
-  return isNear;
-}
-
 export function ComponentTabs({
   name,
   base,
@@ -77,7 +53,7 @@ export function ComponentTabs({
   ...props
 }: ComponentTabsProps) {
   const previewRef = React.useRef<HTMLDivElement>(null);
-  const isNearViewport = useNearViewport(previewRef, lazy);
+  const isNearViewport = useNearViewport(previewRef, { enabled: lazy });
   const code = React.Children.toArray(children)[0] as React.ReactElement;
 
   const Component = React.useMemo(
