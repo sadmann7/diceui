@@ -98,6 +98,7 @@ export function useMdxComponents(
   components: Partial<MDXComponents>,
   base: RegistryBase,
 ): MDXComponents {
+  let demoCount = 0;
   const headings = Object.fromEntries(
     ["h1", "h2", "h3", "h4", "h5", "h6"].map((level) => [
       level,
@@ -162,7 +163,13 @@ export function useMdxComponents(
       ...props
     }: Omit<React.ComponentProps<typeof ComponentTabs>, "base"> & {
       base?: RegistryBase;
-    }) => <ComponentTabs {...props} base={baseProp ?? base} />,
+    }) => (
+      <ComponentTabs
+        {...props}
+        base={baseProp ?? base}
+        lazy={demoCount++ > 0}
+      />
+    ),
     ComponentSource: ({
       ...props
     }: React.ComponentProps<typeof ComponentSource>) => (

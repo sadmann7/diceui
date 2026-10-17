@@ -12,6 +12,7 @@ import {
 } from "@/components/mdx-tabs";
 import { StyleScope } from "@/components/style-scope";
 import { StyleSwitcher } from "@/components/style-switcher";
+import { useNearViewport } from "@/hooks/use-near-viewport";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/styles/radix-nova/ui/skeleton";
 
@@ -37,6 +38,7 @@ interface ComponentTabsProps extends React.ComponentProps<typeof MdxTabs> {
   align?: "start" | "center" | "end";
   preventPreviewFocus?: boolean;
   scalePreview?: boolean;
+  lazy?: boolean;
 }
 
 export function ComponentTabs({
@@ -46,9 +48,12 @@ export function ComponentTabs({
   align = "center",
   preventPreviewFocus,
   scalePreview,
+  lazy = false,
   className,
   ...props
 }: ComponentTabsProps) {
+  const previewRef = React.useRef<HTMLDivElement>(null);
+  const isNearViewport = useNearViewport(previewRef, { enabled: lazy });
   const code = React.Children.toArray(children)[0] as React.ReactElement;
 
   const Component = React.useMemo(
@@ -80,6 +85,7 @@ export function ComponentTabs({
         )}
       >
         <div
+          ref={previewRef}
           className={cn(
             "flex h-115 w-full justify-center p-10",
             {
@@ -91,11 +97,15 @@ export function ComponentTabs({
             className,
           )}
         >
-          <StyleScope>
-            <React.Suspense fallback={<Skeleton className="size-full" />}>
-              <Component />
-            </React.Suspense>
-          </StyleScope>
+          {isNearViewport ? (
+            <StyleScope>
+              <React.Suspense fallback={<Skeleton className="size-full" />}>
+                <Component />
+              </React.Suspense>
+            </StyleScope>
+          ) : (
+            <Skeleton className="size-full" />
+          )}
         </div>
       </MdxTabsContent>
       <MdxTabsContent
