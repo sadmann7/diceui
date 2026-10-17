@@ -37,6 +37,32 @@ interface ComponentTabsProps extends React.ComponentProps<typeof MdxTabs> {
   align?: "start" | "center" | "end";
   preventPreviewFocus?: boolean;
   scalePreview?: boolean;
+  lazy?: boolean;
+}
+
+function useNearViewport(
+  ref: React.RefObject<HTMLElement | null>,
+  enabled: boolean,
+) {
+  const [isNear, setIsNear] = React.useState(!enabled);
+
+  React.useEffect(() => {
+    const element = ref.current;
+    if (isNear || !element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry?.isIntersecting) return;
+        setIsNear(true);
+        observer.disconnect();
+      },
+      { rootMargin: "400px 0px" },
+    );
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref, isNear]);
+
+  return isNear;
 }
 
 export function ComponentTabs({
@@ -46,9 +72,12 @@ export function ComponentTabs({
   align = "center",
   preventPreviewFocus,
   scalePreview,
+  lazy = false,
   className,
   ...props
 }: ComponentTabsProps) {
+  const previewRef = React.useRef<HTMLDivElement>(null);
+  const isNearViewport = useNearViewport(previewRef, lazy);
   const code = React.Children.toArray(children)[0] as React.ReactElement;
 
   const Component = React.useMemo(
@@ -80,6 +109,7 @@ export function ComponentTabs({
         )}
       >
         <div
+          ref={previewRef}
           className={cn(
             "flex h-115 w-full justify-center p-10",
             {
@@ -91,11 +121,15 @@ export function ComponentTabs({
             className,
           )}
         >
-          <StyleScope>
-            <React.Suspense fallback={<Skeleton className="size-full" />}>
-              <Component />
-            </React.Suspense>
-          </StyleScope>
+          {isNearViewport ? (
+            <StyleScope>
+              <React.Suspense fallback={<Skeleton className="size-full" />}>
+                <Component />
+              </React.Suspense>
+            </StyleScope>
+          ) : (
+            <Skeleton className="size-full" />
+          )}
         </div>
       </MdxTabsContent>
       <MdxTabsContent
