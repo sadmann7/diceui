@@ -22,7 +22,7 @@ import { DEFAULT_BASE, DEFAULT_STYLE } from "../lib/constants";
 import { BASES } from "../registry/bases";
 import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
-import { writeIconsModule } from "./icons.mts";
+import { writeIconsModule } from "./build-icons.mts";
 import {
   getStyleMaps,
   type StyleMap,

@@ -48,7 +48,7 @@
     "scripts/clean-registry.mts",
     "scripts/test-registry.mts",
     "scripts/style-maps.mts",
-    "scripts/icons.mts",
+    "scripts/build-icons.mts",
     "scripts/sync-styles.mts",
     "scripts/compile-style-worker.mts",
     "scripts/sync-shadcn.mts",

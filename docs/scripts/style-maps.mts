@@ -5,7 +5,7 @@ import { createStyleMap } from "shadcn/utils";
 
 import { DEFAULT_STYLE } from "../lib/constants";
 import { STYLES } from "../registry/styles";
-import { writeIconsModule } from "./icons.mts";
+import { writeIconsModule } from "./build-icons.mts";
 
 export type StyleMap = ReturnType<typeof createStyleMap>;
 
