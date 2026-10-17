@@ -1,6 +1,6 @@
 {
   "name": "diceui",
-  "packageManager": "pnpm@11.24.0",
+  "packageManager": "pnpm@12.14.0",
   "engines": {
     "node": ">=22.13.0"
   },
@@ -43,7 +43,7 @@
     "oxlint": "catalog:",
     "oxlint-tsgolint": "catalog:",
     "rimraf": "^6.1.3",
-    "turbo": "^2.10.12",
+    "turbo": "^2.11.8",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vite-tsconfig-paths": "^6.1.1",

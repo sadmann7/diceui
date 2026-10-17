@@ -1,4 +1,4 @@
-import { createEngine, wrapClsx } from "cn/engine";
+import { createEngine, twJoin, wrapClsx } from "cn/engine";
 import tables from "cn/tables";
 
 import { DEFAULT_STYLE } from "@/lib/constants";
@@ -32,4 +32,7 @@ const cn: Cn = (...inputs) => {
   return getStyleCn(getStyleMap(style) ? style : DEFAULT_STYLE)(...inputs);
 };
 
-export { cn };
+const twMerge = (...inputs: Parameters<typeof twJoin>) =>
+  engine.mergeString(twJoin(...inputs));
+
+export { cn, twMerge };

@@ -34,7 +34,7 @@
     "dev": "tsdown --watch",
     "build": "tsdown",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run --config ../../vitest.config.ts"
   },
   "peerDependencies": {
     "@types/react": "*",
