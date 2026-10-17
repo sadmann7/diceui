@@ -98,7 +98,6 @@ export function useMdxComponents(
   components: Partial<MDXComponents>,
   base: RegistryBase,
 ): MDXComponents {
-  // The first demo on a page renders right away; the rest load near the viewport.
   let demoCount = 0;
   const headings = Object.fromEntries(
     ["h1", "h2", "h3", "h4", "h5", "h6"].map((level) => [
