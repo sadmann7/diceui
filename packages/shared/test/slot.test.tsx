@@ -73,11 +73,10 @@ describe("Slot", () => {
     );
 
     const element = screen.getByText("Styled Content");
-    expect(element).toHaveStyle({
-      color: "rgb(0, 0, 255)", // Child's color overrides slot's color
-      fontSize: "16px",
-      fontWeight: "bold",
-    });
+    // Child's color overrides slot's color
+    expect(element).toHaveStyle(
+      "color: rgb(0, 0, 255); font-size: 16px; font-weight: 700;",
+    );
   });
 
   it("handles nested slots correctly", () => {
