@@ -16,7 +16,7 @@
     "styles:sync": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-styles.mts",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run --config ../vitest.config.ts",
+    "test": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/icons.mts && vitest run --config ../vitest.config.ts",
     "shadcn": "pnpm dlx shadcn@latest"
   },
   "dependencies": {

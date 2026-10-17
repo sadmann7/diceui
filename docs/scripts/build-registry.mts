@@ -4,7 +4,9 @@
 
 import type { z } from "zod";
 
-import { promises as fs } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, promises as fs, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 import { availableParallelism } from "node:os";
 import path from "node:path";
 import { Worker } from "node:worker_threads";
@@ -20,6 +22,7 @@ import { DEFAULT_BASE, DEFAULT_STYLE } from "../lib/constants";
 import { BASES } from "../registry/bases";
 import { type RegistryBase, registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
+import { writeIconsModule } from "./icons.mts";
 import {
   getStyleMaps,
   type StyleMap,
@@ -222,6 +225,25 @@ async function buildRootIndex() {
 // Build public/r/styles/{base}-{style}/{name}.json with inlined file content.
 // ----------------------------------------------------------------------------
 const compiledSources = new Map<string, Promise<string>>();
+
+// Compiled sources persist in `.next/cache`, which Vercel restores between
+// deployments, so unchanged files skip `transformStyle`.
+const COMPILE_CACHE_PATH = path.join(process.cwd(), ".next/cache/registry");
+const COMPILE_CACHE_VERSION = (() => {
+  let dir = path.dirname(
+    createRequire(import.meta.url).resolve("shadcn/utils"),
+  );
+  for (;;) {
+    const manifest = path.join(dir, "package.json");
+    if (existsSync(manifest)) {
+      const pkg = JSON.parse(readFileSync(manifest, "utf8"));
+      if (pkg.name === "shadcn") return `1:${pkg.version}`;
+    }
+    dir = path.dirname(dir);
+  }
+})();
+const usedCacheFiles = new Set<string>();
+
 const workers = Array.from(
   { length: Math.max(1, availableParallelism() - 1) },
   () =>
@@ -253,15 +275,27 @@ function compileStyle(content: string, styleMap: StyleMap) {
         styleMap[marker] ? [[marker, styleMap[marker]]] : [],
       ),
     );
+    const file = `${createHash("sha256")
+      .update(COMPILE_CACHE_VERSION)
+      .update("\0")
+      .update(key)
+      .digest("hex")}.tsx`;
+    usedCacheFiles.add(file);
+    const cachePath = path.join(COMPILE_CACHE_PATH, file);
     compiledSources.set(
       key,
-      new Promise((resolve) => {
-        pending.set(id, resolve);
-        workers[id % workers.length]!.postMessage({
-          id,
-          content,
-          styleMap: relevant,
+      fs.readFile(cachePath, "utf8").catch(async () => {
+        const result = await new Promise<string>((resolve) => {
+          pending.set(id, resolve);
+          workers[id % workers.length]!.postMessage({
+            id,
+            content,
+            styleMap: relevant,
+          });
         });
+        await fs.mkdir(COMPILE_CACHE_PATH, { recursive: true });
+        await fs.writeFile(cachePath, result);
+        return result;
       }),
     );
   }
@@ -476,7 +510,7 @@ try {
   }
 
   console.log("🎨 Building style maps...");
-  await writeStyleMapsModule();
+  await Promise.all([writeStyleMapsModule(), writeIconsModule()]);
 
   console.log("↔️  Building ui-rtl...");
   await buildRtlUi();
@@ -511,6 +545,13 @@ try {
   for (const style of STYLE_COMBINATIONS) {
     console.log(`   ✅ ${style.name}`);
   }
+
+  const cached = await fs.readdir(COMPILE_CACHE_PATH).catch(() => []);
+  await Promise.all(
+    cached
+      .filter((file) => !usedCacheFiles.has(file))
+      .map((file) => fs.rm(path.join(COMPILE_CACHE_PATH, file))),
+  );
 
   const elapsed = ((performance.now() - totalStart) / 1000).toFixed(2);
   console.log(`\n✅ Build complete in ${elapsed}s!`);
