@@ -5,10 +5,12 @@ import { createStyleMap } from "shadcn/utils";
 
 import { DEFAULT_STYLE } from "../lib/constants";
 import { STYLES } from "../registry/styles";
+import { writeIconsModule } from "./build-icons.mts";
 
 export type StyleMap = ReturnType<typeof createStyleMap>;
 
-const STYLES_SRC_PATH = path.join(process.cwd(), "registry", "styles");
+const REGISTRY_PATH = path.join(process.cwd(), "registry");
+const STYLES_SRC_PATH = path.join(REGISTRY_PATH, "styles");
 const GENERATED_PATH = path.join(STYLES_SRC_PATH, "__generated__");
 
 export async function getStyleMaps() {
@@ -72,15 +74,26 @@ export async function writeStyleMapsModule() {
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  await writeStyleMapsModule();
+  await Promise.all([writeStyleMapsModule(), writeIconsModule()]);
 
   if (process.argv.includes("--watch")) {
-    let timer: ReturnType<typeof setTimeout> | undefined;
+    let stylesTimer: ReturnType<typeof setTimeout> | undefined;
     watch(STYLES_SRC_PATH, (_event, filename) => {
       if (!filename?.endsWith(".css")) return;
-      clearTimeout(timer);
-      timer = setTimeout(() => {
+      clearTimeout(stylesTimer);
+      stylesTimer = setTimeout(() => {
         writeStyleMapsModule().catch((error: unknown) => console.error(error));
+      }, 50);
+    });
+
+    let iconsTimer: ReturnType<typeof setTimeout> | undefined;
+    watch(REGISTRY_PATH, { recursive: true }, (_event, filename) => {
+      if (!filename?.endsWith(".tsx") || filename.includes("__generated__")) {
+        return;
+      }
+      clearTimeout(iconsTimer);
+      iconsTimer = setTimeout(() => {
+        writeIconsModule().catch((error: unknown) => console.error(error));
       }, 50);
     });
   }

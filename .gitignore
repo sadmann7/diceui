@@ -68,4 +68,5 @@ Thumbs.db
 # rtl copies of ui/ for the *-rtl-demo examples (rebuilt by `pnpm build:registry`).
 /docs/registry/bases/*/ui-rtl/
 /docs/registry/styles/__generated__/
+/docs/registry/icons/__generated__/
 /docs/styles/*-nova/

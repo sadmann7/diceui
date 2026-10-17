@@ -1,7 +1,8 @@
 import type * as React from "react";
 
 import { cn } from "cn";
-import * as icons from "lucide-react";
+
+import * as icons from "@/registry/icons/__generated__/lucide";
 
 interface IconPlaceholderProps extends React.ComponentProps<"svg"> {
   lucide: string;

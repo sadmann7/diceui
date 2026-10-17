@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 declare global {
   interface Window {
     stonks?: {
@@ -8,20 +6,15 @@ declare global {
   }
 }
 
-const eventSchema = z.object({
-  name: z.enum(["copy_code", "copy_install_command"]),
-  properties: z.record(z.string(), z.string()).optional(),
-});
-
-type Event = z.infer<typeof eventSchema>;
+interface Event {
+  name: "copy_code" | "copy_install_command";
+  properties?: Record<string, string>;
+}
 
 function trackEvent(input: Event) {
-  const parsedInput = eventSchema.safeParse(input);
+  if (typeof window === "undefined" || !window.stonks) return;
 
-  if (!parsedInput.success || !(typeof window !== "undefined" && window.stonks))
-    return;
-
-  window.stonks.event(parsedInput.data.name, parsedInput.data.properties);
+  window.stonks.event(input.name, input.properties);
 }
 
 export {
