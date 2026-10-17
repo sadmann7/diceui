@@ -9,23 +9,23 @@ export function useNearViewport(
   ref: React.RefObject<HTMLElement | null>,
   { enabled = true, rootMargin = "400px 0px" }: UseNearViewportOptions = {},
 ) {
-  const [isNear, setIsNear] = React.useState(!enabled);
+  const [isNearViewport, setIsNearViewport] = React.useState(!enabled);
 
   React.useEffect(() => {
     const element = ref.current;
-    if (isNear || !element) return;
+    if (isNearViewport || !element) return;
 
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry?.isIntersecting) return;
-        setIsNear(true);
+        setIsNearViewport(true);
         observer.disconnect();
       },
       { rootMargin },
     );
     observer.observe(element);
     return () => observer.disconnect();
-  }, [ref, isNear, rootMargin]);
+  }, [ref, isNearViewport, rootMargin]);
 
-  return isNear;
+  return isNearViewport;
 }
