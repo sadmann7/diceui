@@ -3,7 +3,11 @@
 import { Command as CommandPrimitive } from "cmdk";
 import { cn } from "cn";
 import { Slot } from "radix-ui";
-import { composeEventHandlers, useLayoutEffect } from "radix-ui/internal";
+import {
+  composeEventHandlers,
+  useComposedRefs,
+  useLayoutEffect,
+} from "radix-ui/internal";
 import * as React from "react";
 
 import {
@@ -167,6 +171,37 @@ function useFacetedStoreSelector<T>(
 ): T {
   const getSnapshot = () => selector(store.getState());
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+}
+
+function useActiveDescendant(
+  inputRef: React.RefObject<HTMLInputElement | null>,
+) {
+  React.useEffect(() => {
+    const input = inputRef.current;
+    const root = input?.closest("[cmdk-root]");
+    if (!input || !root) return;
+
+    // cmdk's own aria-activedescendant lags behind the highlighted item.
+    const onSync = () => {
+      const id = root.querySelector("[cmdk-item][aria-selected='true']")?.id;
+      if (!id) {
+        input.removeAttribute("aria-activedescendant");
+        return;
+      }
+      if (input.getAttribute("aria-activedescendant") !== id) {
+        input.setAttribute("aria-activedescendant", id);
+      }
+    };
+
+    onSync();
+    const observer = new MutationObserver(onSync);
+    observer.observe(root, {
+      subtree: true,
+      childList: true,
+      attributeFilter: ["aria-selected", "aria-activedescendant"],
+    });
+    return () => observer.disconnect();
+  }, [inputRef]);
 }
 
 const FacetedStoreContext = React.createContext<FacetedStore | null>(null);
@@ -399,8 +434,14 @@ interface FacetedInputProps extends React.ComponentProps<
 function FacetedInput({
   variant = "default",
   className,
+  ref,
   ...props
 }: FacetedInputProps) {
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const composedRef = useComposedRefs(ref, inputRef);
+
+  useActiveDescendant(inputRef);
+
   if (variant === "line") {
     return (
       <div
@@ -417,6 +458,7 @@ function FacetedInput({
           className="cn-faceted-input"
         />
         <CommandPrimitive.Input
+          ref={composedRef}
           data-slot="faceted-input"
           className={cn("cn-faceted-input-2", className)}
           {...props}
@@ -426,7 +468,12 @@ function FacetedInput({
   }
 
   return (
-    <CommandInput data-slot="faceted-input" className={className} {...props} />
+    <CommandInput
+      ref={composedRef}
+      data-slot="faceted-input"
+      className={className}
+      {...props}
+    />
   );
 }
 
@@ -469,6 +516,11 @@ function FacetedCommandItem({
         (event) => {
           // A focusable item steals the input on pointerdown.
           event.preventDefault();
+          if (event.pointerType === "touch") return;
+          event.currentTarget
+            .closest("[cmdk-root]")
+            ?.querySelector<HTMLInputElement>("[cmdk-input]")
+            ?.focus();
         },
       )}
       onMouseDown={composeEventHandlers(onMouseDown, (event) => {
