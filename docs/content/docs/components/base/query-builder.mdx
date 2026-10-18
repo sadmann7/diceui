@@ -2,6 +2,7 @@
 base: base
 title: Query Builder
 description: A composable query builder for nested filter rules and groups, with parameterized SQL output.
+new: true
 links:
   api: /docs/components/base/query-builder#api-reference
 ---
@@ -60,10 +61,10 @@ import {
   QueryBuilder,
   QueryBuilderAddGroup,
   QueryBuilderAddRule,
-  QueryBuilderCombinator,
+  QueryBuilderConnector,
   QueryBuilderField,
   QueryBuilderGroup,
-  QueryBuilderGroupHeader,
+  QueryBuilderGroupContent,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
@@ -74,20 +75,21 @@ import {
 return (
   <QueryBuilder fields={fields}>
     <QueryBuilderGroup>
-      <QueryBuilderGroupHeader>
-        <QueryBuilderCombinator />
+      <QueryBuilderConnector />
+      <QueryBuilderGroupContent>
+        <QueryBuilderRules>
+          <QueryBuilderRule>
+            <QueryBuilderConnector />
+            <QueryBuilderField />
+            <QueryBuilderOperator />
+            <QueryBuilderValue />
+            <QueryBuilderRemove />
+          </QueryBuilderRule>
+        </QueryBuilderRules>
+        <QueryBuilderAddRule />
+        <QueryBuilderAddGroup />
         <QueryBuilderRemove />
-      </QueryBuilderGroupHeader>
-      <QueryBuilderRules>
-        <QueryBuilderRule>
-          <QueryBuilderField />
-          <QueryBuilderOperator />
-          <QueryBuilderValue />
-          <QueryBuilderRemove />
-        </QueryBuilderRule>
-      </QueryBuilderRules>
-      <QueryBuilderAddRule />
-      <QueryBuilderAddGroup />
+      </QueryBuilderGroupContent>
     </QueryBuilderGroup>
   </QueryBuilder>
 );
@@ -100,6 +102,12 @@ return (
 Turn the query into a parameterized `WHERE` clause with `formatQuery`. Values only ever go into `params`, and columns come from your `fields`, so the output is safe to pass to your database driver.
 
 <ComponentTabs name="query-builder-sql-demo" />
+
+### Filtering data
+
+Filter rows in the browser with `matchesQuery`, which follows the same rules as the SQL output.
+
+<ComponentTabs name="query-builder-filter-demo" />
 
 ## Query
 
@@ -204,6 +212,24 @@ A group of rules. Renders the root group, and repeats for every nested group.
   ]}
 />
 
+### QueryBuilderGroupContent
+
+The group's rules and actions. Nested groups draw it as a box.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderGroupContentProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-depth]",
+      value: "How deep the group is nested, starting at 0 for the root group.",
+    },
+  ]}
+/>
+
 ### QueryBuilderGroupHeader
 
 Holds the group's controls, like the combinator and remove button.
@@ -236,6 +262,24 @@ A single rule.
     {
       title: "[data-operator]",
       value: "The rule's operator.",
+    },
+  ]}
+/>
+
+### QueryBuilderConnector
+
+Joins a rule or nested group to the ones before it: "Where" for the first, a select for the group's combinator on the second, and "And" or "Or" after that. Renders nothing outside `QueryBuilderRules`, like on the root group.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderConnectorProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-type]",
+      value: ['"rule"', '"group"'],
     },
   ]}
 />

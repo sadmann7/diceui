@@ -1269,6 +1269,17 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "query-builder-filter-demo",
+    type: "registry:example",
+    registryDependencies: ["query-builder", "table"],
+    files: [
+      {
+        path: "examples/query-builder-filter-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "rating-demo",
     type: "registry:example",
     registryDependencies: ["rating"],

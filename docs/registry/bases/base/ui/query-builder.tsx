@@ -91,6 +91,14 @@ const GroupTemplateContext = React.createContext<QueryBuilderGroupProps | null>(
   null,
 );
 
+interface NodeContextValue {
+  index: number;
+  group: QueryGroup;
+}
+
+// A rule's or nested group's place in the group that holds it.
+const NodeContext = React.createContext<NodeContextValue | null>(null);
+
 const RuleContext = React.createContext<QueryRule | null>(null);
 
 function useRuleContext(consumerName: string) {
@@ -199,7 +207,7 @@ function QueryBuilderGroup({
     props: mergeProps<"div">(
       {
         role: "group",
-        className: cn("cn-query-builder-group flex flex-col", className),
+        className: cn("cn-query-builder-group flex", className),
       },
       groupProps,
     ),
@@ -243,6 +251,29 @@ function QueryBuilderGroupHeader({
   });
 }
 
+function QueryBuilderGroupContent({
+  className,
+  render,
+  ...contentProps
+}: DivProps) {
+  const { depth } = useGroupContext("QueryBuilderGroupContent");
+
+  return useRender({
+    defaultTagName: "div",
+    props: mergeProps<"div">(
+      {
+        className: cn(
+          "cn-query-builder-group-content @container flex flex-col",
+          className,
+        ),
+      },
+      contentProps,
+    ),
+    render,
+    state: { slot: "query-builder-group-content", depth: String(depth) },
+  });
+}
+
 function QueryBuilderRules({
   className,
   children,
@@ -260,17 +291,19 @@ function QueryBuilderRules({
         className: cn("cn-query-builder-rules flex flex-col", className),
         children: (
           <>
-            {group.rules.map((node) =>
-              getIsQueryGroup(node) ? (
-                <NestedGroupContext.Provider key={node.id} value={node}>
-                  <QueryBuilderGroup {...template} />
-                </NestedGroupContext.Provider>
-              ) : (
-                <RuleContext.Provider key={node.id} value={node}>
-                  {children}
-                </RuleContext.Provider>
-              ),
-            )}
+            {group.rules.map((node, index) => (
+              <NodeContext.Provider key={node.id} value={{ index, group }}>
+                {getIsQueryGroup(node) ? (
+                  <NestedGroupContext.Provider value={node}>
+                    <QueryBuilderGroup {...template} />
+                  </NestedGroupContext.Provider>
+                ) : (
+                  <RuleContext.Provider value={node}>
+                    {children}
+                  </RuleContext.Provider>
+                )}
+              </NodeContext.Provider>
+            ))}
           </>
         ),
       },
@@ -353,6 +386,77 @@ function QueryBuilderCombinator({
         ))}
       </SelectContent>
     </Select>
+  );
+}
+
+const CONNECTOR_LABELS: Record<QueryCombinator, string> = {
+  and: "And",
+  or: "Or",
+};
+
+const CONNECTOR_ITEMS = (["and", "or"] as const).map((value) => ({
+  value,
+  label: CONNECTOR_LABELS[value],
+}));
+
+interface QueryBuilderConnectorProps extends React.ComponentProps<"div"> {}
+
+// "Where" before the first rule, the group's combinator before the second, and
+// its label before the rest. Renders nothing in the root group's own header.
+function QueryBuilderConnector({
+  className,
+  ...connectorProps
+}: QueryBuilderConnectorProps) {
+  const { disabled } = useQueryBuilderContext("QueryBuilderConnector");
+  const node = React.useContext(NodeContext);
+  const { update } = useQueryActions("QueryBuilderConnector");
+
+  if (!node) return null;
+
+  const { index, group } = node;
+  const target = group.rules[index];
+
+  return (
+    <div
+      data-slot="query-builder-connector"
+      data-type={target && getIsQueryGroup(target) ? "group" : "rule"}
+      {...connectorProps}
+      className={cn("cn-query-builder-connector flex items-center", className)}
+    >
+      {index === 1 ? (
+        <Select
+          items={CONNECTOR_ITEMS}
+          value={group.combinator}
+          onValueChange={(combinator) => {
+            if (!combinator) return;
+            update(group.id, (item) => ({
+              ...item,
+              combinator: combinator as QueryCombinator,
+            }));
+          }}
+          disabled={disabled}
+        >
+          <SelectTrigger
+            size="sm"
+            aria-label="Combinator"
+            className="cn-query-builder-connector-select"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {CONNECTOR_ITEMS.map((item) => (
+              <SelectItem key={item.value} value={item.value}>
+                {item.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      ) : (
+        <span className="cn-query-builder-connector-label">
+          {index === 0 ? "Where" : CONNECTOR_LABELS[group.combinator]}
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -625,6 +729,7 @@ function QueryBuilderValue({
   return (
     <div
       data-slot="query-builder-value"
+      data-operator={rule.operator}
       {...valueProps}
       className={cn("cn-query-builder-value flex items-center", className)}
     >
@@ -780,8 +885,10 @@ export {
   QueryBuilderAddGroup,
   QueryBuilderAddRule,
   QueryBuilderCombinator,
+  QueryBuilderConnector,
   QueryBuilderField,
   QueryBuilderGroup,
+  QueryBuilderGroupContent,
   QueryBuilderGroupHeader,
   QueryBuilderOperator,
   QueryBuilderRemove,

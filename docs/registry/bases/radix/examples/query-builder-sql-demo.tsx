@@ -12,10 +12,10 @@ import {
   QueryBuilder,
   QueryBuilderAddGroup,
   QueryBuilderAddRule,
-  QueryBuilderCombinator,
+  QueryBuilderConnector,
   QueryBuilderField,
   QueryBuilderGroup,
-  QueryBuilderGroupHeader,
+  QueryBuilderGroupContent,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
@@ -65,7 +65,11 @@ const defaultQuery: QueryGroup = {
   ],
 };
 
-const dialects: SqlDialect[] = ["postgres", "mysql", "sqlite"];
+const dialects: { label: string; value: SqlDialect }[] = [
+  { label: "Postgres", value: "postgres" },
+  { label: "MySQL", value: "mysql" },
+  { label: "SQLite", value: "sqlite" },
+];
 
 export default function QueryBuilderSqlDemo() {
   const [query, setQuery] = React.useState(defaultQuery);
@@ -76,29 +80,28 @@ export default function QueryBuilderSqlDemo() {
     <div className="flex w-full max-w-2xl flex-col gap-4">
       <QueryBuilder fields={fields} value={query} onValueChange={setQuery}>
         <QueryBuilderGroup>
-          <QueryBuilderGroupHeader>
-            Match
-            <QueryBuilderCombinator />
-            of the following
-            <QueryBuilderRemove className="ms-auto" />
-          </QueryBuilderGroupHeader>
-          <QueryBuilderRules>
-            <QueryBuilderRule>
-              <QueryBuilderField />
-              <QueryBuilderOperator />
-              <QueryBuilderValue />
-              <QueryBuilderRemove />
-            </QueryBuilderRule>
-          </QueryBuilderRules>
-          <div className="flex gap-2">
-            <QueryBuilderAddRule />
-            <QueryBuilderAddGroup />
-          </div>
+          <QueryBuilderConnector />
+          <QueryBuilderGroupContent>
+            <QueryBuilderRules>
+              <QueryBuilderRule>
+                <QueryBuilderConnector />
+                <QueryBuilderField />
+                <QueryBuilderOperator />
+                <QueryBuilderValue />
+                <QueryBuilderRemove />
+              </QueryBuilderRule>
+            </QueryBuilderRules>
+            <div className="flex items-center gap-1">
+              <QueryBuilderAddRule />
+              <QueryBuilderAddGroup />
+              <QueryBuilderRemove className="ms-auto" />
+            </div>
+          </QueryBuilderGroupContent>
         </QueryBuilderGroup>
       </QueryBuilder>
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Generated SQL</span>
+      <div className="overflow-hidden rounded-lg border">
+        <div className="flex items-center justify-between border-b bg-muted/30 py-1.5 ps-3 pe-1.5">
+          <span className="text-sm font-medium">SQL</span>
           <Select
             value={dialect}
             onValueChange={(value) => setDialect(value as SqlDialect)}
@@ -106,18 +109,26 @@ export default function QueryBuilderSqlDemo() {
             <SelectTrigger size="sm" aria-label="SQL dialect" className="w-28">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent align="end">
               {dialects.map((item) => (
-                <SelectItem key={item} value={item}>
-                  {item}
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-        <pre className="overflow-x-auto rounded-md bg-muted p-3 font-mono text-xs">
-          {sql ? `WHERE ${sql}` : "-- no rules yet"}
-          {params.length > 0 && `\n\n-- params: ${JSON.stringify(params)}`}
+        <pre className="p-3 font-mono text-xs leading-relaxed break-words whitespace-pre-wrap">
+          {sql ? (
+            <code>WHERE {sql}</code>
+          ) : (
+            <code className="text-muted-foreground">-- Add a rule</code>
+          )}
+          {params.length > 0 && (
+            <code className="mt-2 block text-muted-foreground">
+              -- {JSON.stringify(params)}
+            </code>
+          )}
         </pre>
       </div>
     </div>
