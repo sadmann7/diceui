@@ -1502,7 +1502,11 @@
   }
 
   .cn-query-builder-group {
-    @apply gap-3 rounded-lg border p-3 data-[depth=0]:border-0 data-[depth=0]:p-0;
+    @apply items-start gap-2;
+  }
+
+  .cn-query-builder-group-content {
+    @apply min-w-0 flex-1 gap-2 data-[depth=0]:min-w-72 data-[depth=0]:gap-3 not-data-[depth=0]:rounded-lg not-data-[depth=0]:border not-data-[depth=0]:bg-muted/30 not-data-[depth=0]:p-2;
   }
 
   .cn-query-builder-group-header {
@@ -1521,16 +1525,28 @@
     @apply w-20;
   }
 
+  .cn-query-builder-connector {
+    @apply h-8 w-18 shrink-0 data-[type=group]:mt-2;
+  }
+
+  .cn-query-builder-connector-select {
+    @apply w-full;
+  }
+
+  .cn-query-builder-connector-label {
+    @apply ps-2 text-sm text-muted-foreground;
+  }
+
   .cn-query-builder-field {
-    @apply w-32;
+    @apply w-28 @max-[26rem]:w-auto @max-[26rem]:min-w-0 @max-[26rem]:flex-1;
   }
 
   .cn-query-builder-operator {
-    @apply w-36;
+    @apply w-32 @max-[26rem]:w-auto @max-[26rem]:min-w-0 @max-[26rem]:flex-1;
   }
 
   .cn-query-builder-value {
-    @apply min-w-32 flex-1 gap-2;
+    @apply min-w-28 flex-1 gap-2 @max-[26rem]:order-last @max-[26rem]:basis-full @max-[26rem]:ps-20 data-[operator=isBetween]:order-last data-[operator=isBetween]:basis-full data-[operator=isBetween]:ps-20;
   }
 
   .cn-query-builder-value-separator {
@@ -1562,7 +1578,7 @@
   }
 
   .cn-query-builder-remove {
-    @apply text-muted-foreground;
+    @apply ms-auto text-muted-foreground;
   }
 
   /* MARK: Rating */
