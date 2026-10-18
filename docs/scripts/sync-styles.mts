@@ -9,6 +9,7 @@ import { STYLES } from "../registry/styles";
 
 const STYLES_SRC_PATH = path.join(process.cwd(), "registry", "styles");
 const SOURCE_STYLE = "new-york";
+const SIDE_RADIUS = /^rounded-(tl|tr|br|bl|ss|se|es|ee|t|r|b|l|s|e)(?=-|$)/;
 const RULE = /^ {2}\.(cn-[\w-]+) \{\n {4}@apply ([^;]+);\n {2}\}$/gm;
 
 type Roles = Record<string, Record<string, string>>;
@@ -264,6 +265,27 @@ export function createStyleGenerator(roles: Roles) {
     const familyKey = (token: string) =>
       `${getUtility(token).variants}${getFamily(token)}`;
 
+    // The matched part's radius wins over a slightly different one of ours.
+    const mapRadius = (token: string) => {
+      const radius =
+        role && getFamily(token) === "rounded"
+          ? target.find(
+              (other) =>
+                getFamily(other) === "rounded" &&
+                getUtility(other).variants === getUtility(token).variants &&
+                !usesVariable(other) &&
+                newYork.some(
+                  (source) =>
+                    getFamily(source) === "rounded" &&
+                    getUtility(source).variants ===
+                      getUtility(token).variants &&
+                    findCounterpart(source, [other]),
+                ),
+            )
+          : undefined;
+      return split(radius ?? getFallback(token, style) ?? token);
+    };
+
     for (const token of tokens) {
       if (changed.has(token)) {
         const counterpart = findCounterpart(token, target);
@@ -283,24 +305,24 @@ export function createStyleGenerator(roles: Roles) {
         if (!dropsShadow) result.push(token);
         continue;
       }
-      // The matched part's radius wins over a slightly different one of ours.
-      const radius =
-        role && getFamily(token) === "rounded"
-          ? target.find(
-              (other) =>
-                getFamily(other) === "rounded" &&
-                getUtility(other).variants === getUtility(token).variants &&
-                !usesVariable(other) &&
-                newYork.some(
-                  (source) =>
-                    getFamily(source) === "rounded" &&
-                    getUtility(source).variants ===
-                      getUtility(token).variants &&
-                    findCounterpart(source, [other]),
-                ),
-            )
-          : undefined;
-      result.push(...split(radius ?? getFallback(token, style) ?? token));
+      // A one-sided radius takes the style's size and keeps its side.
+      const { variants, utility } = getUtility(token);
+      const side = utility.match(SIDE_RADIUS)?.[1];
+      if (side) {
+        const size = utility.slice(`rounded-${side}`.length);
+        if (size === "-none") {
+          result.push(token);
+          continue;
+        }
+        const important = token.endsWith("!") ? "!" : "";
+        result.push(
+          ...mapRadius(`${variants}rounded${size}${important}`).map((value) =>
+            value.replace(/(^|:)rounded(?=-|!|$)/, `$1rounded-${side}`),
+          ),
+        );
+        continue;
+      }
+      result.push(...mapRadius(token));
     }
 
     for (const other of target) {
