@@ -788,5 +788,4 @@ export {
   QueryBuilderRule,
   QueryBuilderRules,
   QueryBuilderValue,
-  type QueryBuilderProps,
 };
