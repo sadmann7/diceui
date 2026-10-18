@@ -409,6 +409,7 @@ function CommandStackInput({
   placeholder,
   onValueChange,
   className,
+  ref,
   ...props
 }: CommandStackInputProps) {
   const store = useCommandStackStore("CommandStackInput");
@@ -421,9 +422,38 @@ function CommandStackInput({
     store,
     (state) => state.pageData.get(getActivePage(state.pages))?.placeholder,
   );
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const composedRef = useComposedRefs(ref, inputRef);
 
-  const inputProps = {
-    "data-slot": "command-stack-input",
+  React.useEffect(() => {
+    const input = inputRef.current;
+    const root = input?.closest("[cmdk-root]");
+    if (!input || !root) return;
+
+    // cmdk's own aria-activedescendant lags behind the highlighted item.
+    const onSync = () => {
+      const id = root.querySelector("[cmdk-item][aria-selected='true']")?.id;
+      if (!id) {
+        input.removeAttribute("aria-activedescendant");
+        return;
+      }
+      if (input.getAttribute("aria-activedescendant") !== id) {
+        input.setAttribute("aria-activedescendant", id);
+      }
+    };
+
+    onSync();
+    const observer = new MutationObserver(onSync);
+    observer.observe(root, {
+      subtree: true,
+      childList: true,
+      attributeFilter: ["aria-selected", "aria-activedescendant"],
+    });
+    return () => observer.disconnect();
+  }, []);
+
+  const inputProps: React.ComponentProps<typeof CommandPrimitive.Input> = {
+    ref: composedRef,
     placeholder: pagePlaceholder ?? placeholder,
     value: search,
     onValueChange: (nextSearch: string) => {
@@ -452,6 +482,7 @@ function CommandStackInput({
           />
         )}
         <CommandPrimitive.Input
+          data-slot="command-stack-input"
           {...inputProps}
           className={cn("cn-command-stack-input-3", className)}
           {...props}
@@ -468,6 +499,7 @@ function CommandStackInput({
     >
       <InputGroup className="cn-command-input-group">
         <CommandPrimitive.Input
+          data-slot="command-stack-input"
           {...inputProps}
           className={cn(
             "cn-command-input outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
@@ -695,6 +727,11 @@ function CommandStackItem({
         (event) => {
           // A focusable item steals the input on pointerdown.
           event.preventDefault();
+          if (event.pointerType === "touch") return;
+          event.currentTarget
+            .closest("[cmdk-root]")
+            ?.querySelector<HTMLInputElement>("[cmdk-input]")
+            ?.focus();
         },
       )}
       onMouseDown={composeEventHandlers(onMouseDown, (event) => {
