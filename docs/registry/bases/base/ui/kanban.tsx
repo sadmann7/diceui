@@ -742,7 +742,8 @@ function KanbanColumn(props: KanbanColumnProps) {
     ...columnProps
   } = props;
 
-  const id = React.useId();
+  const instanceId = React.useId();
+  const id = columnProps.id ?? instanceId;
   const context = useKanbanContext(COLUMN_NAME);
   const inBoard = React.useContext(KanbanBoardContext);
   const inOverlay = React.useContext(KanbanOverlayContext);
@@ -951,7 +952,8 @@ function KanbanItem(props: KanbanItemProps) {
     ...itemProps
   } = props;
 
-  const id = React.useId();
+  const instanceId = React.useId();
+  const id = itemProps.id ?? instanceId;
   const context = useKanbanContext(ITEM_NAME);
   const inBoard = React.useContext(KanbanBoardContext);
   const inOverlay = React.useContext(KanbanOverlayContext);
