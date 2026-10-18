@@ -391,8 +391,8 @@ async function buildPublicItems() {
 
 // ----------------------------------------------------------------------------
 // Build registry/bases/{base}/ui-rtl for the *-rtl-demo examples: the ui files
-// they import, compiled with the default style and run through the shadcn rtl
-// transform. Gitignored.
+// they import, run through the shadcn rtl transform. Markers stay, and `cnRtl`
+// expands them with the current style's RTL classes. Gitignored.
 // ----------------------------------------------------------------------------
 const FILE_HEADER = /^\/\*\*[\s\S]*?\*\/\n\n?/;
 
@@ -437,8 +437,6 @@ async function buildDocsUi() {
 }
 
 async function buildRtlUi() {
-  const styleMap = (await getStyleMaps()).get(DEFAULT_STYLE)!;
-
   for (const base of BASES) {
     const baseName = base.name as RegistryBase;
     const baseDir = path.join(process.cwd(), "registry", "bases", baseName);
@@ -479,9 +477,11 @@ async function buildRtlUi() {
         "utf8",
       );
       const header = source.match(FILE_HEADER)?.[0] ?? "";
-      const content = await transformDirection(
-        await compileStyle(source.slice(header.length), styleMap),
-        true,
+      const content = (
+        await transformDirection(source.slice(header.length), true)
+      ).replace(
+        /import \{ cn \} from "cn";/,
+        'import { cnRtl as cn } from "@/lib/cn";',
       );
 
       await fs.writeFile(
