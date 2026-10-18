@@ -670,6 +670,22 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "query-builder",
+    type: "registry:ui",
+    dependencies: ["radix-ui"],
+    registryDependencies: ["button", "dropdown-menu", "input", "select"],
+    files: [
+      {
+        path: "ui/query-builder.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/query-builder.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "rating",
     type: "registry:ui",
     dependencies: ["radix-ui"],
