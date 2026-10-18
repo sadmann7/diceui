@@ -225,37 +225,6 @@ interface CommandStackPageContextValue {
 const CommandStackPageContext =
   React.createContext<CommandStackPageContextValue | null>(null);
 
-function useActiveDescendant(
-  inputRef: React.RefObject<HTMLInputElement | null>,
-) {
-  React.useEffect(() => {
-    const input = inputRef.current;
-    const root = input?.closest("[cmdk-root]");
-    if (!input || !root) return;
-
-    // cmdk's own aria-activedescendant lags behind the highlighted item.
-    const onSync = () => {
-      const id = root.querySelector("[cmdk-item][aria-selected='true']")?.id;
-      if (!id) {
-        input.removeAttribute("aria-activedescendant");
-        return;
-      }
-      if (input.getAttribute("aria-activedescendant") !== id) {
-        input.setAttribute("aria-activedescendant", id);
-      }
-    };
-
-    onSync();
-    const observer = new MutationObserver(onSync);
-    observer.observe(root, {
-      subtree: true,
-      childList: true,
-      attributeFilter: ["aria-selected", "aria-activedescendant"],
-    });
-    return () => observer.disconnect();
-  }, [inputRef]);
-}
-
 function useCommandStack() {
   const store = useCommandStackStore("useCommandStack");
   const pages = useCommandStackSelector(store, selectPages);
@@ -454,7 +423,32 @@ function CommandStackInput({
   const inputRef = React.useRef<HTMLInputElement>(null);
   const composedRef = useMergedRefs(ref, inputRef);
 
-  useActiveDescendant(inputRef);
+  React.useEffect(() => {
+    const input = inputRef.current;
+    const root = input?.closest("[cmdk-root]");
+    if (!input || !root) return;
+
+    // cmdk's own aria-activedescendant lags behind the highlighted item.
+    const onSync = () => {
+      const id = root.querySelector("[cmdk-item][aria-selected='true']")?.id;
+      if (!id) {
+        input.removeAttribute("aria-activedescendant");
+        return;
+      }
+      if (input.getAttribute("aria-activedescendant") !== id) {
+        input.setAttribute("aria-activedescendant", id);
+      }
+    };
+
+    onSync();
+    const observer = new MutationObserver(onSync);
+    observer.observe(root, {
+      subtree: true,
+      childList: true,
+      attributeFilter: ["aria-selected", "aria-activedescendant"],
+    });
+    return () => observer.disconnect();
+  }, []);
 
   const inputProps = {
     "data-slot": "command-stack-input",
