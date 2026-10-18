@@ -450,8 +450,7 @@ function CommandStackInput({
     return () => observer.disconnect();
   }, []);
 
-  const inputProps = {
-    "data-slot": "command-stack-input",
+  const inputProps: React.ComponentProps<typeof CommandPrimitive.Input> = {
     ref: composedRef,
     placeholder: pagePlaceholder ?? placeholder,
     value: search,
@@ -481,6 +480,7 @@ function CommandStackInput({
           />
         )}
         <CommandPrimitive.Input
+          data-slot="command-stack-input"
           {...inputProps}
           className={cn("cn-command-stack-input-3", className)}
           {...props}
@@ -497,6 +497,7 @@ function CommandStackInput({
     >
       <InputGroup className="cn-command-input-group">
         <CommandPrimitive.Input
+          data-slot="command-stack-input"
           {...inputProps}
           className={cn(
             "cn-command-input outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
