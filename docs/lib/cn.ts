@@ -43,7 +43,6 @@ function getLoadedStyle() {
 // Until a style's map has loaded, markers expand to the default style.
 const cn: Cn = (...inputs) => getStyleCn(getLoadedStyle(), false)(...inputs);
 
-// For the docs' RTL demos, whose ui files the RTL transform has already run on.
 const cnRtl: Cn = (...inputs) => getStyleCn(getLoadedStyle(), true)(...inputs);
 
 const twMerge = (...inputs: Parameters<typeof twJoin>) =>

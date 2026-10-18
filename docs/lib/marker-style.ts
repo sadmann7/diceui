@@ -9,7 +9,6 @@ type StyleMap = Record<string, string>;
 
 // The default style ships with the page; the others load when selected.
 const styleMaps = new Map<string, StyleMap>([[DEFAULT_STYLE, defaultStyleMap]]);
-// Only the markers whose classes change in RTL.
 const rtlStyleMaps = new Map<string, StyleMap>([
   [DEFAULT_STYLE, defaultRtlStyleMap],
 ]);

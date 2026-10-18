@@ -34,8 +34,6 @@ export async function getStyleMaps() {
   );
 }
 
-// The markers whose classes the RTL transform changes, with their RTL classes,
-// for the docs' RTL demos.
 async function getRtlOverrides(styleMap: StyleMap) {
   const entries = Object.entries(styleMap);
   const source = `export const a = (\n  <>\n${entries
