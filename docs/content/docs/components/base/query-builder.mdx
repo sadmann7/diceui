@@ -1,0 +1,303 @@
+---
+base: base
+title: Query Builder
+description: A composable query builder for nested filter rules and groups, with parameterized SQL output.
+links:
+  api: /docs/components/base/query-builder#api-reference
+---
+
+<ComponentTabs name="query-builder-demo" />
+
+## Installation
+
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```package-install
+npx shadcn@latest add @diceui/query-builder
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps className="pt-2">
+
+<Step>Install the following dependencies:</Step>
+
+```package-install
+@base-ui/react
+```
+
+<Step>Copy and paste the following utilities into your `lib` directory.</Step>
+
+<ComponentSource src="./registry/bases/base/lib/query-builder.ts" title="lib/query-builder.ts" />
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="query-builder" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</CodeTabs>
+
+## Layout
+
+Import the parts, and compose them together. `QueryBuilderRules` renders its children once per rule, and nested groups reuse the layout of the group that holds them.
+
+```tsx
+import {
+  QueryBuilder,
+  QueryBuilderAddGroup,
+  QueryBuilderAddRule,
+  QueryBuilderCombinator,
+  QueryBuilderField,
+  QueryBuilderGroup,
+  QueryBuilderGroupHeader,
+  QueryBuilderOperator,
+  QueryBuilderRemove,
+  QueryBuilderRule,
+  QueryBuilderRules,
+  QueryBuilderValue,
+} from "@/components/ui/query-builder";
+
+return (
+  <QueryBuilder fields={fields}>
+    <QueryBuilderGroup>
+      <QueryBuilderGroupHeader>
+        <QueryBuilderCombinator />
+        <QueryBuilderRemove />
+      </QueryBuilderGroupHeader>
+      <QueryBuilderRules>
+        <QueryBuilderRule>
+          <QueryBuilderField />
+          <QueryBuilderOperator />
+          <QueryBuilderValue />
+          <QueryBuilderRemove />
+        </QueryBuilderRule>
+      </QueryBuilderRules>
+      <QueryBuilderAddRule />
+      <QueryBuilderAddGroup />
+    </QueryBuilderGroup>
+  </QueryBuilder>
+);
+```
+
+## Examples
+
+### SQL
+
+Turn the query into a parameterized `WHERE` clause with `formatQuery`. Values only ever go into `params`, and columns come from your `fields`, so the output is safe to pass to your database driver.
+
+<ComponentTabs name="query-builder-sql-demo" />
+
+## Query
+
+A query is a tree of groups and rules. Groups combine their rules with `and` or `or`, and can be negated with `not`.
+
+```ts
+const query: QueryGroup = {
+  id: "root",
+  combinator: "and",
+  rules: [
+    { id: "1", field: "status", operator: "eq", value: "todo" },
+    {
+      id: "2",
+      combinator: "or",
+      rules: [
+        { id: "3", field: "estimate", operator: "gte", value: "5" },
+        { id: "4", field: "title", operator: "iLike", value: "bug" },
+      ],
+    },
+  ],
+};
+```
+
+Values are strings, or string arrays for `isBetween`, `inArray` and `notInArray`, so a query serializes cleanly to JSON or the URL. Dates use `YYYY-MM-DD` and match the whole day. Rules that aren't filled in yet are skipped.
+
+### Fields and operators
+
+| Type          | Operators                                                                 |
+| ------------- | ------------------------------------------------------------------------- |
+| `text`        | `iLike`, `notILike`, `eq`, `ne`, `isEmpty`, `isNotEmpty`                  |
+| `number`      | `eq`, `ne`, `lt`, `lte`, `gt`, `gte`, `isBetween`, `isEmpty`, `isNotEmpty` |
+| `date`        | `eq`, `ne`, `lt`, `gt`, `lte`, `gte`, `isBetween`, `isEmpty`, `isNotEmpty` |
+| `boolean`     | `eq`, `ne`                                                                |
+| `select`      | `eq`, `ne`, `inArray`, `notInArray`, `isEmpty`, `isNotEmpty`              |
+| `multiSelect` | `inArray`, `notInArray`, `isEmpty`, `isNotEmpty`                          |
+
+Pass `operators` on a field to narrow or reorder its list.
+
+### On the server
+
+```ts
+import { formatQuery } from "@/lib/query-builder";
+
+const { sql, params } = formatQuery(query, fields, { dialect: "postgres" });
+const result = await db.query(
+  `SELECT * FROM tasks${sql ? ` WHERE ${sql}` : ""}`,
+  params,
+);
+```
+
+`dialect` is `postgres` (the default, with `$1` placeholders), `mysql` or `sqlite` (with `?` placeholders). Set `column` on a field to map it to a different column, like `created_at` or `tasks.title`.
+
+### On the client
+
+`matchesQuery` checks a row against the same query in the browser, with the same rules as the SQL output.
+
+```ts
+import { matchesQuery } from "@/lib/query-builder";
+
+const rows = tasks.filter((task) => matchesQuery(task, query, fields));
+```
+
+## API Reference
+
+### QueryBuilder
+
+The root component. Holds the query and the fields it can use.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled.",
+    },
+  ]}
+/>
+
+### QueryBuilderGroup
+
+A group of rules. Renders the root group, and repeats for every nested group.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderGroupProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-depth]",
+      value: "How deep the group is nested, starting at 0 for the root group.",
+    },
+    {
+      title: "[data-combinator]",
+      value: ['"and"', '"or"'],
+    },
+  ]}
+/>
+
+### QueryBuilderGroupHeader
+
+Holds the group's controls, like the combinator and remove button.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderGroupHeaderProps"
+/>
+
+### QueryBuilderRules
+
+Renders the group's rules and nested groups. Its children are the layout for each rule.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderRulesProps"
+/>
+
+### QueryBuilderRule
+
+A single rule.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderRuleProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-operator]",
+      value: "The rule's operator.",
+    },
+  ]}
+/>
+
+### QueryBuilderCombinator, QueryBuilderField and QueryBuilderOperator
+
+Selects for the group's combinator and the rule's field and operator. They accept the props of `SelectTrigger`.
+
+### QueryBuilderValue
+
+The rule's value. Renders an input, a select, a multi-select or a range, based on the field type and operator, and nothing for `isEmpty` and `isNotEmpty`.
+
+### QueryBuilderAddRule
+
+Adds a rule to the group, using the first field.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderAddRuleProps"
+/>
+
+### QueryBuilderAddGroup
+
+Adds a nested group with one rule. Hidden once the group is at `maxDepth`.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderAddGroupProps"
+/>
+
+### QueryBuilderRemove
+
+Removes the rule it's in, or the group when used outside a rule. Hidden in the root group.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderRemoveProps"
+/>
+
+## Accessibility
+
+Groups render with `role="group"`, and rules as a list. The selects and menus follow the [Select](https://base-ui.com/react/components/select) and [Menu](https://base-ui.com/react/components/menu) keyboard patterns.
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Tab"],
+      description: "Moves focus to the next control.",
+    },
+    {
+      keys: ["Enter", "Space"],
+      description: "Opens the focused select or menu, or activates the focused button.",
+    },
+    {
+      keys: ["ArrowUp", "ArrowDown"],
+      description: "Moves between options in an open select or menu.",
+    },
+    {
+      keys: ["Escape"],
+      description: "Closes the open select or menu.",
+    },
+  ]}
+/>
