@@ -297,6 +297,23 @@ export function createStyleGenerator(roles: Roles) {
           rewritten.add(familyKey(token));
           continue;
         }
+        // A style that moves a background out of `dark:`, like Luma's
+        // `bg-input/50`, replaces ours.
+        const background =
+          !counterpart &&
+          getFamily(token) === "bg" &&
+          getUtility(token).variants === "dark:"
+            ? target.filter(
+                (other) =>
+                  getFamily(other) === "bg" &&
+                  !getUtility(other).variants &&
+                  !newYork.includes(other),
+              )
+            : [];
+        if (background.length) {
+          result.push(...background);
+          continue;
+        }
         // Styles drop shadows; anything else the part may get from a parent.
         const dropsShadow =
           !counterpart &&
