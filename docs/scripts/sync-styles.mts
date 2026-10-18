@@ -9,6 +9,7 @@ import { STYLES } from "../registry/styles";
 
 const STYLES_SRC_PATH = path.join(process.cwd(), "registry", "styles");
 const SOURCE_STYLE = "new-york";
+const SIDE_RADIUS = /^rounded-(tl|tr|br|bl|ss|se|es|ee|t|r|b|l|s|e)(?=-|$)/;
 const RULE = /^ {2}\.(cn-[\w-]+) \{\n {4}@apply ([^;]+);\n {2}\}$/gm;
 
 type Roles = Record<string, Record<string, string>>;
@@ -264,26 +265,8 @@ export function createStyleGenerator(roles: Roles) {
     const familyKey = (token: string) =>
       `${getUtility(token).variants}${getFamily(token)}`;
 
-    for (const token of tokens) {
-      if (changed.has(token)) {
-        const counterpart = findCounterpart(token, target);
-        if (
-          counterpart &&
-          (!usesVariable(counterpart) || usesVariable(token))
-        ) {
-          result.push(counterpart);
-          rewritten.add(familyKey(token));
-          continue;
-        }
-        // Styles drop shadows; anything else the part may get from a parent.
-        const dropsShadow =
-          !counterpart &&
-          getFamily(token) === "shadow" &&
-          !target.some((other) => familyKey(other) === familyKey(token));
-        if (!dropsShadow) result.push(token);
-        continue;
-      }
-      // The matched part's radius wins over a slightly different one of ours.
+    // The matched part's radius wins over a slightly different one of ours.
+    const mapRadius = (token: string) => {
       const radius =
         role && getFamily(token) === "rounded"
           ? target.find(
@@ -300,7 +283,63 @@ export function createStyleGenerator(roles: Roles) {
                 ),
             )
           : undefined;
-      result.push(...split(radius ?? getFallback(token, style) ?? token));
+      return split(radius ?? getFallback(token, style) ?? token);
+    };
+
+    for (const token of tokens) {
+      if (changed.has(token)) {
+        const counterpart = findCounterpart(token, target);
+        if (
+          counterpart &&
+          (!usesVariable(counterpart) || usesVariable(token))
+        ) {
+          result.push(counterpart);
+          rewritten.add(familyKey(token));
+          continue;
+        }
+        // A style that moves a background out of `dark:`, like Luma's
+        // `bg-input/50`, replaces ours.
+        const background =
+          !counterpart &&
+          getFamily(token) === "bg" &&
+          getUtility(token).variants === "dark:"
+            ? target.filter(
+                (other) =>
+                  getFamily(other) === "bg" &&
+                  !getUtility(other).variants &&
+                  !newYork.includes(other),
+              )
+            : [];
+        if (background.length) {
+          result.push(...background);
+          continue;
+        }
+        // Styles drop shadows; anything else the part may get from a parent.
+        const dropsShadow =
+          !counterpart &&
+          getFamily(token) === "shadow" &&
+          !target.some((other) => familyKey(other) === familyKey(token));
+        if (!dropsShadow) result.push(token);
+        continue;
+      }
+      // A one-sided radius takes the style's size and keeps its side.
+      const { variants, utility } = getUtility(token);
+      const side = utility.match(SIDE_RADIUS)?.[1];
+      if (side) {
+        const size = utility.slice(`rounded-${side}`.length);
+        if (size === "-none" || size.startsWith("-[")) {
+          result.push(token);
+          continue;
+        }
+        const important = token.endsWith("!") ? "!" : "";
+        result.push(
+          ...mapRadius(`${variants}rounded${size}${important}`).map((value) =>
+            value.replace(/(^|:)rounded(?=-|!|$)/, `$1rounded-${side}`),
+          ),
+        );
+        continue;
+      }
+      result.push(...mapRadius(token));
     }
 
     for (const other of target) {

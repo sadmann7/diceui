@@ -83,7 +83,7 @@ export function ComponentSourceImpl({
         )}
       >
         <div
-          className="[&>pre]:max-h-none [&>pre]:overflow-visible [&>pre]:bg-secondary/50 [&>pre]:px-4 [&>pre]:py-4 [&>pre]:text-sm"
+          className="[&>pre]:max-h-none [&>pre]:overflow-x-auto [&>pre]:bg-secondary/50 [&>pre]:px-4 [&>pre]:py-4 [&>pre]:text-sm"
           dangerouslySetInnerHTML={{ __html: highlightedCode }}
         />
         {!open && (
