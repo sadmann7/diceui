@@ -12,8 +12,7 @@ const engine = createEngine(tables);
 
 type Cn = ReturnType<typeof wrapClsx>;
 
-// `wrapClsx` caches by its arguments, so each style and direction gets its own
-// instance: one shared cache would keep returning the first style's classes.
+// `wrapClsx` caches results by input, so each style and direction needs its own instance.
 const cnByStyle = new Map<string, Cn>();
 
 function getStyleCn(style: string, rtl: boolean) {
