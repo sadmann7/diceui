@@ -11,10 +11,10 @@ import {
   QueryBuilder,
   QueryBuilderAddGroup,
   QueryBuilderAddRule,
-  QueryBuilderCombinator,
+  QueryBuilderConnector,
   QueryBuilderField,
   QueryBuilderGroup,
-  QueryBuilderGroupHeader,
+  QueryBuilderGroupContent,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
@@ -44,14 +44,8 @@ const defaultQuery: QueryGroup = {
   combinator: "and",
   rules: [
     { id: "status", field: "status", operator: "eq", value: "todo" },
-    {
-      id: "estimate-or-title",
-      combinator: "or",
-      rules: [
-        { id: "estimate", field: "estimate", operator: "gte", value: "5" },
-        { id: "title", field: "title", operator: "iLike", value: "bug" },
-      ],
-    },
+    { id: "estimate", field: "estimate", operator: "gte", value: "5" },
+    { id: "title", field: "title", operator: "iLike", value: "bug" },
   ],
 };
 
@@ -66,24 +60,23 @@ export default function QueryBuilderDemo() {
       className="w-full max-w-2xl"
     >
       <QueryBuilderGroup>
-        <QueryBuilderGroupHeader>
-          Match
-          <QueryBuilderCombinator />
-          of the following
-          <QueryBuilderRemove className="ms-auto" />
-        </QueryBuilderGroupHeader>
-        <QueryBuilderRules>
-          <QueryBuilderRule>
-            <QueryBuilderField />
-            <QueryBuilderOperator />
-            <QueryBuilderValue />
-            <QueryBuilderRemove />
-          </QueryBuilderRule>
-        </QueryBuilderRules>
-        <div className="flex gap-2">
-          <QueryBuilderAddRule />
-          <QueryBuilderAddGroup />
-        </div>
+        <QueryBuilderConnector />
+        <QueryBuilderGroupContent>
+          <QueryBuilderRules>
+            <QueryBuilderRule>
+              <QueryBuilderConnector />
+              <QueryBuilderField />
+              <QueryBuilderOperator />
+              <QueryBuilderValue />
+              <QueryBuilderRemove />
+            </QueryBuilderRule>
+          </QueryBuilderRules>
+          <div className="flex items-center gap-1">
+            <QueryBuilderAddRule />
+            <QueryBuilderAddGroup />
+            <QueryBuilderRemove className="ms-auto" />
+          </div>
+        </QueryBuilderGroupContent>
       </QueryBuilderGroup>
     </QueryBuilder>
   );

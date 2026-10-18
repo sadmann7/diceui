@@ -66,6 +66,11 @@ export interface QueryBuilderProps extends EmptyProps<"div">, CompositionProps {
 export interface QueryBuilderGroupProps
   extends EmptyProps<"div">, CompositionProps {}
 
+export interface QueryBuilderGroupContentProps
+  extends EmptyProps<"div">, CompositionProps {}
+
+export interface QueryBuilderConnectorProps extends EmptyProps<"div"> {}
+
 export interface QueryBuilderGroupHeaderProps
   extends EmptyProps<"div">, CompositionProps {}
 
