@@ -1363,8 +1363,9 @@
     @apply relative flex h-11 w-full items-center rounded-none border border-transparent bg-background transition-colors has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 has-[[data-slot][aria-invalid=true]]:border-destructive has-[[data-slot][aria-invalid=true]]:ring-[3px] has-[[data-slot][aria-invalid=true]]:ring-destructive/20 dark:bg-input/30 dark:has-[[data-slot][aria-invalid=true]]:ring-destructive/40 data-disabled:cursor-not-allowed data-disabled:opacity-50 border-b-input;
   }
 
+  /* @role cn-input-group-button */
   .cn-phone-input-country-select {
-    @apply flex h-full shrink-0 items-center gap-2 rounded-l-none border-r border-transparent bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 border-b-input;
+    @apply flex h-full shrink-0 items-center gap-2 rounded-l-[inherit] border-r border-input bg-transparent px-3 text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40;
   }
 
   .cn-phone-input-country-select-2 {
@@ -1399,8 +1400,9 @@
     @apply size-4;
   }
 
+  /* @role cn-input-group-input */
   .cn-phone-input-field {
-    @apply h-full flex-1 rounded-l-none rounded-r-none border-0 bg-transparent shadow-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:bg-transparent aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:bg-transparent dark:disabled:bg-transparent dark:aria-invalid:ring-destructive/40;
+    @apply h-full flex-1 rounded-l-none rounded-r-[inherit] border-0 bg-transparent focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/50 disabled:bg-transparent aria-invalid:border-destructive aria-invalid:ring-[3px] aria-invalid:ring-destructive/20 dark:bg-transparent dark:disabled:bg-transparent dark:aria-invalid:ring-destructive/40;
   }
 
   /* MARK: Presentation */

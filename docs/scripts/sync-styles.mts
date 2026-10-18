@@ -310,7 +310,7 @@ export function createStyleGenerator(roles: Roles) {
       const side = utility.match(SIDE_RADIUS)?.[1];
       if (side) {
         const size = utility.slice(`rounded-${side}`.length);
-        if (size === "-none") {
+        if (size === "-none" || size.startsWith("-[")) {
           result.push(token);
           continue;
         }
