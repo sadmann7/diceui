@@ -1,0 +1,50 @@
+---
+title: October 2026 - Data Grid Performance
+description: Data Grid stays smooth at 100k rows, with keyboard row inserts, better copying, and a new onRowAdd signature.
+date: 2026-10-19T12:00:00Z
+---
+
+[Data Grid](/docs/components/data-grid) now stays smooth at 100k rows. It virtualizes columns as well as rows, shows lightweight preview cells while you scroll, and reuses row elements instead of remounting them. Sorting, searching and filtering cache their work, so large grids respond faster as you type.
+
+- **Insert rows from the keyboard.** <Kbd>Shift</Kbd> + <Kbd>Enter</Kbd> on a cell inserts a row below it.
+- **Cell menu from the keyboard.** <Kbd>Shift</Kbd> + <Kbd>F10</Kbd> opens the focused cell's context menu.
+- **Copying.** <Kbd>Ctrl</Kbd> / <Kbd>Cmd</Kbd> + <Kbd>C</Kbd> copies checked rows, and values with tabs, line breaks or a leading quote are quoted, so multi-line text pastes into one cell.
+- **Focus.** Deleting rows moves keyboard focus to the next row's first data cell, and `onCellFocus` lets you follow it.
+- **Editing.** Text and URL cells scroll to the caret when editing starts.
+- **Row action labels.** `getDataGridActionsColumn` takes `getAriaLabel(row)` to name each row's menu trigger, like `getDataTableActionsColumn`.
+- **Custom renderers.** A column's own `cell` and `header` render through TanStack Table's `flexRender`, so renderers that use hooks, `memo` or `forwardRef` work.
+
+### Migrating
+
+This release has breaking changes. Reinstall all Data Grid files together, because the components, hook, and `lib` files depend on each other. It adds a new file, `data-grid-cell-preview.tsx`.
+
+- **`onRowAdd` receives `eventDetails`.** It used to receive the click event. Now it gets one object with a `reason`: `"add-row-press"` for the add row button, `"insert-below"` for <Kbd>Shift</Kbd> + <Kbd>Enter</Kbd> (with the `afterRowId` to insert after), or `"paste"` when a paste needs more rows. Call `eventDetails.cancel()` to skip focusing the new row.
+- **`onScrollToCell` is now `onCellScroll`.** This only matters if you set the grid's table options yourself.
+- **`flexRender` moved.** It's no longer exported from `lib/data-grid-utils`. Import it from `@tanstack/react-table` instead.
+- **Columns with their own `cell` render it.** A column with a `cell` renderer and no `meta.cell.variant` now shows that renderer, read-only, instead of the default text editor. Add `meta.cell.variant` to keep it editable.
+
+```tsx
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  onDataChange: setData,
+  onRowAdd: (eventDetails) => {
+    const row = { id: crypto.randomUUID() };
+    const afterRowId =
+      eventDetails.reason === "insert-below"
+        ? eventDetails.afterRowId
+        : undefined;
+
+    setData((prev) => {
+      const index = prev.findIndex((item) => item.id === afterRowId);
+      return index === -1
+        ? [...prev, row]
+        : [...prev.slice(0, index + 1), row, ...prev.slice(index + 1)];
+    });
+
+    return { rowId: row.id, columnId: "name" };
+  },
+});
+```
+
+[Read the docs](/docs/components/data-grid)
