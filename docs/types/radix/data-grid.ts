@@ -26,6 +26,18 @@ import type {
 import type { PopoverContent } from "@/registry/bases/radix/ui/popover";
 import type { EmptyProps } from "@/types";
 
+type RowAddEventDetails = (
+  | {
+      reason: "add-row-press";
+      event?:
+        | React.MouseEvent<HTMLDivElement>
+        | React.KeyboardEvent<HTMLDivElement>;
+    }
+  | { reason: "insert-below"; event: KeyboardEvent; afterRowId: string }
+  | { reason: "paste"; event?: undefined }
+) & {
+  cancel: () => void;
+};
 export interface UseDataGridProps<TData extends RowData> extends Pick<
   TableOptions<DataGridFeatures, TData>,
   "data" | "columns" | "getRowId" | "defaultColumn" | "initialState" | "state"
@@ -44,11 +56,14 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
 
   /**
    * Event handler called when adding a new row.
+   * `eventDetails.reason` is `"add-row-press"` for the footer button, `"insert-below"`
+   * for Shift+Enter on a cell (with `afterRowId`), or `"paste"` when a paste needs more rows.
+   * Call `eventDetails.cancel()` to skip focusing the new row.
    * Return the new row's id, and optionally a column, to focus it, or null to skip focusing.
    * Can be async to support server-side row creation.
    *
    * ```ts
-   * onRowAdd={async () => {
+   * onRowAdd={async (eventDetails) => {
    *   const newRow = await createRow()
    *   setData(prev => [...prev, newRow])
    *
@@ -58,7 +73,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    * ```
    */
   onRowAdd?: (
-    event?: React.MouseEvent<HTMLDivElement>,
+    eventDetails: RowAddEventDetails,
   ) => RowAddResult | Promise<RowAddResult | null> | null;
 
   /**
@@ -305,8 +320,10 @@ export interface DataGridProps<
    * Handles the row addition interaction from the grid footer.
    */
   onRowAdd?: (
-    event?: React.MouseEvent<HTMLDivElement>,
-  ) => RowAddResult | Promise<RowAddResult | null> | null;
+    event?:
+      | React.MouseEvent<HTMLDivElement>
+      | React.KeyboardEvent<HTMLDivElement>,
+  ) => Promise<void>;
 
   /**
    * Whether to apply a layout fix for pinned columns in Firefox.
@@ -411,6 +428,12 @@ export type GetDataGridActionsColumnProps<TData extends RowData> = Omit<
     row: Row<DataGridFeatures, TData>;
     table: ReactTable<DataGridFeatures, TData>;
   }) => React.ReactNode;
+
+  /**
+   * The accessible label of each row's menu trigger.
+   * @default (row) => `Open actions for row ${row.getDisplayIndex() + 1}`
+   */
+  getAriaLabel?: (row: Row<DataGridFeatures, TData>) => string;
 
   /**
    * The width of the actions column in pixels.

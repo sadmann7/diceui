@@ -1,7 +1,6 @@
 "use client";
 
-import type { RowData } from "@tanstack/react-table";
-
+import { flexRender, type RowData } from "@tanstack/react-table";
 import { cn } from "cn";
 import * as React from "react";
 import { toast } from "sonner";
@@ -27,6 +26,7 @@ import {
   getTextCellValue,
   getUrlHref,
   insertTextAtSelection,
+  moveCaretToEnd,
   parseLocalDate,
   replaceEditableText,
 } from "@/lib/data-grid-utils";
@@ -61,6 +61,19 @@ import { Skeleton } from "@/registry/bases/radix/ui/skeleton";
 import { Textarea } from "@/registry/bases/radix/ui/textarea";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
+// The cell's padding on each side (px-2), so editors line up with its edge
+const CELL_PADDING = 8;
+
+export function CustomCell<TData extends RowData>(
+  props: DataGridCellProps<TData>,
+) {
+  return (
+    <DataGridCellWrapper<TData> {...props}>
+      {flexRender(props.cell.column.columnDef.cell, props.cell.getContext())}
+    </DataGridCellWrapper>
+  );
+}
+
 export function ShortTextCell<TData extends RowData>(
   props: DataGridCellProps<TData>,
 ) {
@@ -82,7 +95,6 @@ export function ShortTextCell<TData extends RowData>(
   }
 
   const onBlur = React.useCallback(() => {
-    // Read the current value directly from the DOM to avoid stale state
     const currentValue = cellRef.current?.textContent ?? "";
     if (!readOnly && currentValue !== initialValue) {
       cell.setValue(currentValue);
@@ -151,13 +163,10 @@ export function ShortTextCell<TData extends RowData>(
       if (pendingChar) {
         replaceEditableText(cellRef.current, pendingChar);
       } else if (cellRef.current.textContent) {
-        const range = document.createRange();
-        const selection = window.getSelection();
-        range.selectNodeContents(cellRef.current);
-        range.collapse(false);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
+        moveCaretToEnd(cellRef.current);
       }
+    } else if (!isEditing && wasEditing && cellRef.current) {
+      cellRef.current.scrollLeft = 0;
     }
   }, [isEditing, value]);
 
@@ -242,16 +251,13 @@ export function LongTextCell<TData extends RowData>(
     [cell, value, initialValue, readOnly],
   );
 
-  const onOpenAutoFocus: NonNullable<
-    React.ComponentProps<typeof PopoverContent>["onOpenAutoFocus"]
-  > = React.useCallback((event) => {
+  const onOpenAutoFocus = React.useCallback((event: Event) => {
     event.preventDefault();
     if (textareaRef.current) {
       textareaRef.current.focus();
       const length = textareaRef.current.value.length;
       textareaRef.current.setSelectionRange(length, length);
 
-      // Insert the typed character after focus settles
       if (pendingCharRef.current) {
         const char = pendingCharRef.current;
         pendingCharRef.current = null;
@@ -318,7 +324,6 @@ export function LongTextCell<TData extends RowData>(
         });
         return;
       }
-      // Stop propagation to prevent grid navigation
       event.stopPropagation();
     },
     [cell, onSave, onCancel, value, initialValue],
@@ -552,12 +557,7 @@ export function UrlCell<TData extends RowData>(
         queueMicrotask(() => {
           if (cellRef.current && cellRef.current.contentEditable === "true") {
             cellRef.current.textContent = event.key;
-            const range = document.createRange();
-            const selection = window.getSelection();
-            range.selectNodeContents(cellRef.current);
-            range.collapse(false);
-            selection?.removeAllRanges();
-            selection?.addRange(range);
+            moveCaretToEnd(cellRef.current);
           }
         });
       }
@@ -572,7 +572,6 @@ export function UrlCell<TData extends RowData>(
         return;
       }
 
-      // Check if URL was rejected due to dangerous protocol
       const href = getUrlHref(value);
       if (!href) {
         event.preventDefault();
@@ -580,7 +579,6 @@ export function UrlCell<TData extends RowData>(
         return;
       }
 
-      // Stop propagation to prevent grid from interfering with link navigation
       event.stopPropagation();
     },
     [isEditing, value],
@@ -598,13 +596,10 @@ export function UrlCell<TData extends RowData>(
       }
 
       if (cellRef.current.textContent) {
-        const range = document.createRange();
-        const selection = window.getSelection();
-        range.selectNodeContents(cellRef.current);
-        range.collapse(false);
-        selection?.removeAllRanges();
-        selection?.addRange(range);
+        moveCaretToEnd(cellRef.current);
       }
+    } else if (!isEditing && wasEditing && cellRef.current) {
+      cellRef.current.scrollLeft = 0;
     }
   }, [isEditing, value]);
 
@@ -715,7 +710,6 @@ export function CheckboxCell<TData extends RowData>(
   const onCheckboxMouseDown = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       event.stopPropagation();
-      // Keep focus on the cell, not the checkbox inside it
       event.preventDefault();
       cell.table.setFocusedCell(cell.row.id, cell.column.id);
       containerRef.current?.focus();
@@ -735,9 +729,9 @@ export function CheckboxCell<TData extends RowData>(
       {...props}
       ref={containerRef}
       isEditing={false}
-      className="flex size-full justify-center"
       onClick={onWrapperClick}
       onKeyDown={onWrapperKeyDown}
+      className="flex size-full justify-center"
     >
       <Checkbox
         aria-label={getColumnLabel(cell.column)}
@@ -799,7 +793,6 @@ export function SelectCell<TData extends RowData>(
     [cell, readOnly],
   );
 
-  // The select's trigger unmounts once editing stops, so return focus to the cell
   const onCloseAutoFocus = React.useCallback((event: Event) => {
     event.preventDefault();
     const container = containerRef.current;
@@ -838,7 +831,7 @@ export function SelectCell<TData extends RowData>(
     >
       {isEditing ? (
         <Select
-          value={value}
+          value={value ?? ""}
           onValueChange={onValueChange}
           open={isEditing}
           onOpenChange={onOpenChange}
@@ -858,11 +851,13 @@ export function SelectCell<TData extends RowData>(
           <SelectContent
             aria-label={getColumnLabel(cell.column)}
             data-grid-cell-editor=""
-            // compensate for the wrapper padding
+            position="popper"
             align="start"
-            alignOffset={-8}
-            sideOffset={-8}
-            className="min-w-[calc(var(--radix-select-trigger-width)+16px)]"
+            alignOffset={-CELL_PADDING}
+            sideOffset={-CELL_PADDING}
+            style={{
+              minWidth: `calc(var(--radix-select-trigger-width) + ${CELL_PADDING * 2}px)`,
+            }}
             onCloseAutoFocus={onCloseAutoFocus}
           >
             <SelectGroup>
@@ -890,7 +885,7 @@ export function SelectCell<TData extends RowData>(
 export function MultiSelectCell<TData extends RowData>(
   props: DataGridCellProps<TData>,
 ) {
-  const { cell, rowHeight, isEditing, readOnly } = props;
+  const { cell, width, rowHeight, isEditing, readOnly } = props;
   const rowId = cell.row.id;
   const columnId = cell.column.id;
   const cellValue = React.useMemo(() => {
@@ -983,9 +978,7 @@ export function MultiSelectCell<TData extends RowData>(
     [cell, readOnly],
   );
 
-  const onOpenAutoFocus: NonNullable<
-    React.ComponentProps<typeof PopoverContent>["onOpenAutoFocus"]
-  > = React.useCallback((event) => {
+  const onOpenAutoFocus = React.useCallback((event: Event) => {
     event.preventDefault();
     inputRef.current?.focus();
   }, []);
@@ -1033,7 +1026,7 @@ export function MultiSelectCell<TData extends RowData>(
   );
 
   const displayLabels = selectedValues
-    .map((val) => optionByValue.get(val)?.label ?? val)
+    .map((value) => optionByValue.get(value)?.label ?? value)
     .filter(Boolean);
 
   const selectedValuesSet = React.useMemo(
@@ -1047,7 +1040,7 @@ export function MultiSelectCell<TData extends RowData>(
     useBadgeOverflow({
       items: displayLabels,
       getLabel: (label) => label,
-      containerRef,
+      containerWidth: width,
       lineCount,
     });
 
@@ -1188,14 +1181,12 @@ export function DateCell<TData extends RowData>(
     setValue(initialValue);
   }
 
-  // Parse date as local time to avoid timezone shifts
   const selectedDate = value ? (parseLocalDate(value) ?? undefined) : undefined;
 
   const onDateSelect = React.useCallback(
     (date: Date | undefined) => {
       if (!date || readOnly) return;
 
-      // Format using local date components to avoid timezone issues
       const formattedDate = formatDateToString(date);
       setValue(formattedDate);
       cell.setValue(formattedDate);
@@ -1248,7 +1239,7 @@ export function DateCell<TData extends RowData>(
             aria-label={getColumnLabel(cell.column)}
             data-grid-cell-editor=""
             align="start"
-            alignOffset={-8}
+            alignOffset={-CELL_PADDING}
             className="w-auto p-0"
           >
             <Calendar
@@ -1269,7 +1260,7 @@ export function DateCell<TData extends RowData>(
 export function FileCell<TData extends RowData>(
   props: DataGridCellProps<TData>,
 ) {
-  const { cell, rowHeight, isEditing, isFocused, readOnly } = props;
+  const { cell, width, rowHeight, isEditing, isFocused, readOnly } = props;
   const rowId = cell.row.id;
   const columnId = cell.column.id;
   const cellValue = React.useMemo(
@@ -1684,17 +1675,11 @@ export function FileCell<TData extends RowData>(
     [cell, readOnly],
   );
 
-  const onEscapeKeyDown: NonNullable<
-    React.ComponentProps<typeof PopoverContent>["onEscapeKeyDown"]
-  > = React.useCallback((event) => {
-    // Prevent the escape key from propagating to the data grid's keyboard handler
-    // which would call blurCell() and remove focus from the cell
+  const onEscapeKeyDown = React.useCallback((event: Event) => {
     event.stopPropagation();
   }, []);
 
-  const onOpenAutoFocus: NonNullable<
-    React.ComponentProps<typeof PopoverContent>["onOpenAutoFocus"]
-  > = React.useCallback((event) => {
+  const onOpenAutoFocus = React.useCallback((event: Event) => {
     event.preventDefault();
     queueMicrotask(() => {
       dropzoneRef.current?.focus();
@@ -1742,7 +1727,7 @@ export function FileCell<TData extends RowData>(
     useBadgeOverflow({
       items: files,
       getLabel: (file) => file.name,
-      containerRef,
+      containerWidth: width,
       lineCount,
       cacheKeyPrefix: "file",
       iconSize: 12,
@@ -1753,14 +1738,14 @@ export function FileCell<TData extends RowData>(
     <DataGridCellWrapper<TData>
       {...props}
       ref={containerRef}
-      className={cn({
-        "ring-1 ring-primary/80 ring-inset": isDraggingOver,
-      })}
       onDragEnter={onCellDragEnter}
       onDragLeave={onCellDragLeave}
       onDragOver={onCellDragOver}
       onDrop={onCellDrop}
       onKeyDown={onWrapperKeyDown}
+      className={cn({
+        "ring-1 ring-primary/80 ring-inset": isDraggingOver,
+      })}
     >
       {isEditing ? (
         <Popover open={isEditing} onOpenChange={onOpenChange}>

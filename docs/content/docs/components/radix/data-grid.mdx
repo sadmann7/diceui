@@ -159,13 +159,23 @@ export default function DataGridToolbarDemo() {
 
 ### With Row Management
 
-Add and delete rows with callbacks:
+Add and delete rows with callbacks. `onRowAdd` receives an `eventDetails` object whose `reason` says where the row came from: the footer's add row button (`"add-row-press"`), <Kbd>Shift</Kbd> + <Kbd>Enter</Kbd> on a cell (`"insert-below"`, with the `afterRowId` to insert after), or a paste that needs more rows (`"paste"`).
 
 ```tsx
-const onRowAdd = React.useCallback(() => {
+const onRowAdd = React.useCallback((eventDetails) => {
+  const afterRowId =
+    eventDetails.reason === "insert-below" ? eventDetails.afterRowId : undefined;
   const newRow = { id: generateId() };
-  setData((prev) => [...prev, newRow]);
-  
+
+  setData((prev) => {
+    const index = afterRowId
+      ? prev.findIndex((row) => row.id === afterRowId)
+      : -1;
+    return index === -1
+      ? [...prev, newRow]
+      : [...prev.slice(0, index + 1), newRow, ...prev.slice(index + 1)];
+  });
+
   return {
     rowId: newRow.id,
     columnId: "name", // Focus this column after creating the new row
