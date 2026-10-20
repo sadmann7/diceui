@@ -74,6 +74,12 @@ export interface QueryBuilderConnectorProps extends EmptyProps<"div"> {}
 export interface QueryBuilderGroupHeaderProps
   extends EmptyProps<"div">, RenderProps {}
 
+export interface QueryBuilderGroupTitleProps
+  extends EmptyProps<"div">, RenderProps {}
+
+export interface QueryBuilderGroupFooterProps
+  extends EmptyProps<"div">, RenderProps {}
+
 export interface QueryBuilderRulesProps
   extends EmptyProps<"div">, RenderProps {}
 
