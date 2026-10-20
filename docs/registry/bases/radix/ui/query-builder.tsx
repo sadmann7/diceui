@@ -221,14 +221,62 @@ function QueryBuilderGroupHeader({
   className,
   ...headerProps
 }: DivProps) {
+  const { depth } = useGroupContext("QueryBuilderGroupHeader");
   const HeaderPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
     <HeaderPrimitive
       data-slot="query-builder-group-header"
+      data-depth={depth}
       {...headerProps}
       className={cn(
-        "cn-query-builder-group-header flex flex-wrap items-center",
+        "cn-query-builder-group-header flex items-center",
+        className,
+      )}
+    />
+  );
+}
+
+const GROUP_TITLES: Record<QueryCombinator, string> = {
+  and: "All of the following are true…",
+  or: "Any of the following are true…",
+};
+
+function QueryBuilderGroupTitle({
+  asChild,
+  className,
+  children,
+  ...titleProps
+}: DivProps) {
+  const { group } = useGroupContext("QueryBuilderGroupTitle");
+  const TitlePrimitive = asChild ? SlotPrimitive.Slot : "div";
+
+  return (
+    <TitlePrimitive
+      data-slot="query-builder-group-title"
+      {...titleProps}
+      className={cn("cn-query-builder-group-title", className)}
+    >
+      {children ?? GROUP_TITLES[group.combinator]}
+    </TitlePrimitive>
+  );
+}
+
+function QueryBuilderGroupFooter({
+  asChild,
+  className,
+  ...footerProps
+}: DivProps) {
+  const { depth } = useGroupContext("QueryBuilderGroupFooter");
+  const FooterPrimitive = asChild ? SlotPrimitive.Slot : "div";
+
+  return (
+    <FooterPrimitive
+      data-slot="query-builder-group-footer"
+      data-depth={depth}
+      {...footerProps}
+      className={cn(
+        "cn-query-builder-group-footer flex items-center",
         className,
       )}
     />
@@ -527,12 +575,11 @@ function keepValue(rule: QueryRule, operator: QueryOperator) {
   );
 }
 
-interface QueryBuilderValueProps extends React.ComponentProps<"div"> {}
+interface QueryBuilderValueProps {
+  className?: string;
+}
 
-function QueryBuilderValue({
-  className,
-  ...valueProps
-}: QueryBuilderValueProps) {
+function QueryBuilderValue({ className }: QueryBuilderValueProps) {
   const { fields, disabled } = useQueryBuilderContext("QueryBuilderValue");
   const rule = useRuleContext("QueryBuilderValue");
   const { update } = useQueryActions("QueryBuilderValue");
@@ -552,45 +599,53 @@ function QueryBuilderValue({
         ? "date"
         : "text";
 
-  let control: React.ReactNode;
+  const valueClassName = cn("cn-query-builder-value", className);
 
   if (rule.operator === "isBetween") {
     const [start = "", end = ""] = Array.isArray(rule.value) ? rule.value : [];
-    control = (
+    return (
       <>
         <Input
           type={inputType}
           aria-label={`${field.label} from`}
+          data-slot="query-builder-value"
+          data-operator={rule.operator}
           value={start}
           onChange={(event) => onChange([event.target.value, end])}
           disabled={disabled}
-          className="cn-query-builder-input"
+          className={valueClassName}
         />
         <span className="cn-query-builder-value-separator">and</span>
         <Input
           type={inputType}
           aria-label={`${field.label} to`}
+          data-slot="query-builder-value"
+          data-operator={rule.operator}
           value={end}
           onChange={(event) => onChange([start, event.target.value])}
           disabled={disabled}
-          className="cn-query-builder-input"
+          className={valueClassName}
         />
       </>
     );
-  } else if (rule.operator === "inArray" || rule.operator === "notInArray") {
+  }
+
+  if (rule.operator === "inArray" || rule.operator === "notInArray") {
     const selected = Array.isArray(rule.value) ? rule.value : [];
     const labels = (field.options ?? [])
       .filter((option) => selected.includes(option.value))
       .map((option) => option.label);
-    control = (
+    return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
             variant="outline"
             size="sm"
             aria-label={field.label}
+            data-slot="query-builder-value"
+            data-operator={rule.operator}
             disabled={disabled}
-            className="cn-query-builder-multi-select"
+            className={cn("cn-query-builder-multi-select", valueClassName)}
           >
             <span className="truncate">
               {labels.length > 0
@@ -627,7 +682,9 @@ function QueryBuilderValue({
         </DropdownMenuContent>
       </DropdownMenu>
     );
-  } else if (
+  }
+
+  if (
     field.type === "boolean" ||
     field.type === "select" ||
     field.type === "multiSelect"
@@ -639,7 +696,7 @@ function QueryBuilderValue({
             { label: "False", value: "false" },
           ]
         : (field.options ?? []);
-    control = (
+    return (
       <Select
         value={typeof rule.value === "string" ? rule.value : ""}
         onValueChange={onChange}
@@ -648,7 +705,9 @@ function QueryBuilderValue({
         <SelectTrigger
           size="sm"
           aria-label={field.label}
-          className="cn-query-builder-select"
+          data-slot="query-builder-value"
+          data-operator={rule.operator}
+          className={valueClassName}
         >
           <SelectValue placeholder={field.placeholder ?? "Select a value"} />
         </SelectTrigger>
@@ -661,29 +720,20 @@ function QueryBuilderValue({
         </SelectContent>
       </Select>
     );
-  } else {
-    control = (
-      <Input
-        type={inputType}
-        aria-label={field.label}
-        placeholder={field.placeholder ?? "Enter a value"}
-        value={typeof rule.value === "string" ? rule.value : ""}
-        onChange={(event) => onChange(event.target.value)}
-        disabled={disabled}
-        className="cn-query-builder-input"
-      />
-    );
   }
 
   return (
-    <div
+    <Input
+      type={inputType}
+      aria-label={field.label}
+      placeholder={field.placeholder ?? "Enter a value"}
+      value={typeof rule.value === "string" ? rule.value : ""}
+      onChange={(event) => onChange(event.target.value)}
+      disabled={disabled}
       data-slot="query-builder-value"
       data-operator={rule.operator}
-      {...valueProps}
-      className={cn("cn-query-builder-value flex items-center", className)}
-    >
-      {control}
-    </div>
+      className={valueClassName}
+    />
   );
 }
 
@@ -763,7 +813,12 @@ function QueryBuilderAddGroup({
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented || !field) return;
-        add(group.id, createQueryGroup("and", [createQueryRule(field)]));
+        add(
+          group.id,
+          createQueryGroup(group.combinator === "and" ? "or" : "and", [
+            createQueryRule(field),
+          ]),
+        );
       }}
       className={cn("cn-query-builder-add-group", className)}
     >
@@ -818,11 +873,11 @@ function QueryBuilderRemove({
     >
       {children ?? (
         <IconPlaceholder
-          lucide="XIcon"
-          tabler="IconX"
-          hugeicons="Cancel01Icon"
-          phosphor="XIcon"
-          remixicon="RiCloseLine"
+          lucide="Trash2Icon"
+          tabler="IconTrash"
+          hugeicons="Delete02Icon"
+          phosphor="TrashIcon"
+          remixicon="RiDeleteBinLine"
         />
       )}
     </Button>
@@ -838,7 +893,9 @@ export {
   QueryBuilderField,
   QueryBuilderGroup,
   QueryBuilderGroupContent,
+  QueryBuilderGroupFooter,
   QueryBuilderGroupHeader,
+  QueryBuilderGroupTitle,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
