@@ -134,7 +134,7 @@ Filter rows in the browser with `matchesQuery`, which follows the same rules as 
 
 A Linear-style filter bar built with [Command Stack](/docs/components/base/command-stack). `getQuerySelection` and `setQuerySelection` keep the menu and the query in sync.
 
-<ComponentTabs name="query-builder-command-filter-demo" />
+<ComponentTabs name="query-builder-command-filter-demo" align="start" />
 
 ## Query
 
@@ -349,7 +349,7 @@ Joins a rule or nested group to the ones before it: "Where" for the first, a sel
 
 ### QueryBuilderField and QueryBuilderOperator
 
-Searchable [Faceted](/docs/components/base/faceted) pickers for the rule's field and operator. Changing the field resets the rule, and changing the operator keeps the value, turning a single value into a list (or a list into its first value) when switching between "is" and "is any of". They accept the props of `Button`.
+Searchable [Faceted](/docs/components/base/faceted) pickers for the rule's field and operator. Changing the field resets the rule, and changing the operator keeps the value, turning a single value into a list (or a list into its first value) when switching between "is" and "is any of". They accept the props of `Button`. The chevron in the field, operator and value pickers has `data-slot="query-builder-select-icon"`, so a class like `**:data-[slot=query-builder-select-icon]:hidden` on a wrapper hides it.
 
 ### QueryBuilderCombinator
 

@@ -164,7 +164,7 @@ export default function QueryBuilderCommandFilterDemo() {
           <QueryBuilderGroupContent className="flex-row flex-wrap items-center data-[depth=0]:min-w-0">
             <QueryBuilderRules className="contents">
               <QueryBuilderRule>
-                <ButtonGroup>
+                <ButtonGroup className="**:data-[slot=query-builder-select-icon]:hidden">
                   <QueryBuilderField className="w-auto" />
                   <QueryBuilderOperator className="w-auto" />
                   <QueryBuilderValue className="w-auto max-w-48" />
