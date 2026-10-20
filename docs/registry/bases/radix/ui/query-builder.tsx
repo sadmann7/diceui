@@ -528,6 +528,7 @@ function QueryBuilderField({
             hugeicons="ArrowDown01Icon"
             phosphor="CaretDownIcon"
             remixicon="RiArrowDownSLine"
+            data-slot="query-builder-select-icon"
             className="cn-query-builder-select-icon"
           />
         </Button>
@@ -607,6 +608,7 @@ function QueryBuilderOperator({
             hugeicons="ArrowDown01Icon"
             phosphor="CaretDownIcon"
             remixicon="RiArrowDownSLine"
+            data-slot="query-builder-select-icon"
             className="cn-query-builder-select-icon"
           />
         </Button>
@@ -839,6 +841,7 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
               hugeicons="ArrowDown01Icon"
               phosphor="CaretDownIcon"
               remixicon="RiArrowDownSLine"
+              data-slot="query-builder-select-icon"
               className="cn-query-builder-select-icon"
             />
           </Button>

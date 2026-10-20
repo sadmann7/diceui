@@ -575,6 +575,7 @@ function QueryBuilderField({
           hugeicons="ArrowDown01Icon"
           phosphor="CaretDownIcon"
           remixicon="RiArrowDownSLine"
+          data-slot="query-builder-select-icon"
           className="cn-query-builder-select-icon"
         />
       </FacetedTrigger>
@@ -654,6 +655,7 @@ function QueryBuilderOperator({
           hugeicons="ArrowDown01Icon"
           phosphor="CaretDownIcon"
           remixicon="RiArrowDownSLine"
+          data-slot="query-builder-select-icon"
           className="cn-query-builder-select-icon"
         />
       </FacetedTrigger>
@@ -888,6 +890,7 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
             hugeicons="ArrowDown01Icon"
             phosphor="CaretDownIcon"
             remixicon="RiArrowDownSLine"
+            data-slot="query-builder-select-icon"
             className="cn-query-builder-select-icon"
           />
         </FacetedTrigger>
