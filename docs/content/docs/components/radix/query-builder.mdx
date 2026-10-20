@@ -54,9 +54,10 @@ radix-ui
 
 ## Layout
 
-Import the parts, and compose them together. `QueryBuilderRules` renders its children once per rule, and nested groups reuse the layout of the group that holds them.
+Import the parts, and compose them together. `QueryBuilderRules` renders its children once per rule, and nested groups reuse the layout of the group that holds them. Wrap a rule's controls in a `ButtonGroup` to join them into one control.
 
 ```tsx
+import { ButtonGroup } from "@/components/ui/button-group";
 import {
   QueryBuilder,
   QueryBuilderAddGroup,
@@ -65,6 +66,9 @@ import {
   QueryBuilderField,
   QueryBuilderGroup,
   QueryBuilderGroupContent,
+  QueryBuilderGroupFooter,
+  QueryBuilderGroupHeader,
+  QueryBuilderGroupTitle,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
@@ -77,23 +81,34 @@ return (
     <QueryBuilderGroup>
       <QueryBuilderConnector />
       <QueryBuilderGroupContent>
+        <QueryBuilderGroupHeader className="data-[depth=0]:hidden">
+          <QueryBuilderGroupTitle />
+          <QueryBuilderAddRule />
+          <QueryBuilderAddGroup />
+          <QueryBuilderRemove />
+        </QueryBuilderGroupHeader>
         <QueryBuilderRules>
           <QueryBuilderRule>
             <QueryBuilderConnector />
-            <QueryBuilderField />
-            <QueryBuilderOperator />
-            <QueryBuilderValue />
-            <QueryBuilderRemove />
+            <ButtonGroup>
+              <QueryBuilderField />
+              <QueryBuilderOperator />
+              <QueryBuilderValue />
+              <QueryBuilderRemove variant="outline" />
+            </ButtonGroup>
           </QueryBuilderRule>
         </QueryBuilderRules>
-        <QueryBuilderAddRule />
-        <QueryBuilderAddGroup />
-        <QueryBuilderRemove />
+        <QueryBuilderGroupFooter className="not-data-[depth=0]:hidden">
+          <QueryBuilderAddRule />
+          <QueryBuilderAddGroup />
+        </QueryBuilderGroupFooter>
       </QueryBuilderGroupContent>
     </QueryBuilderGroup>
   </QueryBuilder>
 );
 ```
+
+Use `data-depth` to show the header only on nested groups and the footer only on the root, as above.
 
 ## Examples
 
@@ -232,11 +247,47 @@ The group's rules and actions. Nested groups draw it as a box.
 
 ### QueryBuilderGroupHeader
 
-Holds the group's controls, like the combinator and remove button.
+Holds the group's title and actions.
 
 <AutoTypeTable
   path="./types/radix/query-builder.ts"
   name="QueryBuilderGroupHeaderProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-depth]",
+      value: "How deep the group is nested, starting at 0 for the root group.",
+    },
+  ]}
+/>
+
+### QueryBuilderGroupTitle
+
+Describes the group, like "Any of the following are true…", based on its combinator. Pass children to change the text.
+
+<AutoTypeTable
+  path="./types/radix/query-builder.ts"
+  name="QueryBuilderGroupTitleProps"
+/>
+
+### QueryBuilderGroupFooter
+
+Holds actions below the group's rules.
+
+<AutoTypeTable
+  path="./types/radix/query-builder.ts"
+  name="QueryBuilderGroupFooterProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-depth]",
+      value: "How deep the group is nested, starting at 0 for the root group.",
+    },
+  ]}
 />
 
 ### QueryBuilderRules
@@ -290,7 +341,7 @@ Selects for the group's combinator and the rule's field and operator. They accep
 
 ### QueryBuilderValue
 
-The rule's value. Renders an input, a select, a multi-select or a range, based on the field type and operator, and nothing for `isEmpty` and `isNotEmpty`.
+The rule's value. Renders an input, a select, a multi-select or a range, based on the field type and operator, and nothing for `isEmpty` and `isNotEmpty`. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
 
 ### QueryBuilderAddRule
 
@@ -303,7 +354,7 @@ Adds a rule to the group, using the first field.
 
 ### QueryBuilderAddGroup
 
-Adds a nested group with one rule. Hidden once the group is at `maxDepth`.
+Adds a nested group with one rule. The new group uses the opposite of its parent's combinator, since a group that matches its parent changes nothing. Hidden once the group is at `maxDepth`.
 
 <AutoTypeTable
   path="./types/radix/query-builder.ts"

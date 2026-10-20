@@ -1,5 +1,6 @@
 "use client";
 
+import { ListPlusIcon, PlusIcon } from "lucide-react";
 import * as React from "react";
 
 import {
@@ -8,6 +9,7 @@ import {
   type QueryGroup,
   type SqlDialect,
 } from "@/registry/bases/base/lib/query-builder";
+import { ButtonGroup } from "@/registry/bases/base/ui/button-group";
 import {
   QueryBuilder,
   QueryBuilderAddGroup,
@@ -16,6 +18,9 @@ import {
   QueryBuilderField,
   QueryBuilderGroup,
   QueryBuilderGroupContent,
+  QueryBuilderGroupFooter,
+  QueryBuilderGroupHeader,
+  QueryBuilderGroupTitle,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
@@ -57,10 +62,10 @@ const defaultQuery: QueryGroup = {
       value: ["todo", "in-progress"],
     },
     {
-      id: "due-date",
-      field: "dueDate",
+      id: "estimate",
+      field: "estimate",
       operator: "isBetween",
-      value: ["2026-10-01", "2026-10-31"],
+      value: ["3", "8"],
     },
   ],
 };
@@ -77,25 +82,36 @@ export default function QueryBuilderSqlDemo() {
   const { sql, params } = formatQuery(query, fields, { dialect });
 
   return (
-    <div className="flex w-full max-w-xl flex-col gap-4">
+    <div className="flex w-full max-w-lg flex-col gap-4">
       <QueryBuilder fields={fields} value={query} onValueChange={setQuery}>
         <QueryBuilderGroup>
           <QueryBuilderConnector />
           <QueryBuilderGroupContent>
+            <QueryBuilderGroupHeader className="data-[depth=0]:hidden">
+              <QueryBuilderGroupTitle />
+              <QueryBuilderAddRule size="icon-sm" aria-label="Add rule">
+                <PlusIcon />
+              </QueryBuilderAddRule>
+              <QueryBuilderAddGroup size="icon-sm" aria-label="Add group">
+                <ListPlusIcon />
+              </QueryBuilderAddGroup>
+              <QueryBuilderRemove />
+            </QueryBuilderGroupHeader>
             <QueryBuilderRules>
               <QueryBuilderRule>
                 <QueryBuilderConnector />
-                <QueryBuilderField />
-                <QueryBuilderOperator />
-                <QueryBuilderValue />
-                <QueryBuilderRemove />
+                <ButtonGroup>
+                  <QueryBuilderField />
+                  <QueryBuilderOperator />
+                  <QueryBuilderValue />
+                  <QueryBuilderRemove variant="outline" />
+                </ButtonGroup>
               </QueryBuilderRule>
             </QueryBuilderRules>
-            <div className="flex items-center gap-1">
+            <QueryBuilderGroupFooter className="not-data-[depth=0]:hidden">
               <QueryBuilderAddRule />
               <QueryBuilderAddGroup />
-              <QueryBuilderRemove className="ms-auto" />
-            </div>
+            </QueryBuilderGroupFooter>
           </QueryBuilderGroupContent>
         </QueryBuilderGroup>
       </QueryBuilder>

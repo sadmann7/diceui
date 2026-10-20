@@ -7,7 +7,7 @@ export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
-        <DemoItemGroup className="w-full max-w-xl">
+        <DemoItemGroup className="w-full max-w-lg">
           <QueryBuilderRadixDemo />
           <QueryBuilderBaseDemo />
         </DemoItemGroup>

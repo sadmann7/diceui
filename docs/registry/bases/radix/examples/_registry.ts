@@ -1408,7 +1408,7 @@ export const examples: Registry["items"] = [
   {
     name: "query-builder-demo",
     type: "registry:example",
-    registryDependencies: ["query-builder"],
+    registryDependencies: ["query-builder", "button-group"],
     files: [
       {
         path: "examples/query-builder-demo.tsx",
@@ -1419,7 +1419,7 @@ export const examples: Registry["items"] = [
   {
     name: "query-builder-sql-demo",
     type: "registry:example",
-    registryDependencies: ["query-builder"],
+    registryDependencies: ["query-builder", "button-group"],
     files: [
       {
         path: "examples/query-builder-sql-demo.tsx",
@@ -1430,7 +1430,7 @@ export const examples: Registry["items"] = [
   {
     name: "query-builder-filter-demo",
     type: "registry:example",
-    registryDependencies: ["query-builder", "table"],
+    registryDependencies: ["query-builder", "button-group", "table"],
     files: [
       {
         path: "examples/query-builder-filter-demo.tsx",

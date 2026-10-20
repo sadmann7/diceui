@@ -1506,11 +1506,19 @@
   }
 
   .cn-query-builder-group-content {
-    @apply min-w-0 flex-1 gap-2 data-[depth=0]:min-w-72 data-[depth=0]:gap-3 not-data-[depth=0]:rounded-lg not-data-[depth=0]:border not-data-[depth=0]:bg-muted/30 not-data-[depth=0]:p-2;
+    @apply min-w-0 flex-1 gap-2 data-[depth=0]:min-w-72 not-data-[depth=0]:rounded-lg not-data-[depth=0]:border not-data-[depth=0]:bg-muted/30 not-data-[depth=0]:p-2;
   }
 
   .cn-query-builder-group-header {
-    @apply gap-2 text-sm text-muted-foreground;
+    @apply gap-1 ps-1.5 text-sm text-muted-foreground;
+  }
+
+  .cn-query-builder-group-title {
+    @apply flex-1 truncate;
+  }
+
+  .cn-query-builder-group-footer {
+    @apply gap-1;
   }
 
   .cn-query-builder-rules {
@@ -1518,7 +1526,7 @@
   }
 
   .cn-query-builder-rule {
-    @apply gap-2;
+    @apply gap-2 @max-[28rem]:flex-nowrap @max-[28rem]:*:data-[slot=button-group]:min-w-0 @max-[28rem]:*:data-[slot=button-group]:flex-1 has-data-[operator=isBetween]:flex-nowrap has-data-[operator=isBetween]:*:data-[slot=button-group]:min-w-0 has-data-[operator=isBetween]:*:data-[slot=button-group]:flex-1;
   }
 
   .cn-query-builder-combinator {
@@ -1538,31 +1546,23 @@
   }
 
   .cn-query-builder-field {
-    @apply w-28 @max-[30.5rem]:w-auto @max-[30.5rem]:min-w-0 @max-[30.5rem]:flex-1;
+    @apply w-24 @max-[28rem]:w-auto @max-[28rem]:min-w-0 @max-[28rem]:flex-1;
   }
 
   .cn-query-builder-operator {
-    @apply w-32 @max-[30.5rem]:w-auto @max-[30.5rem]:min-w-0 @max-[30.5rem]:flex-1;
+    @apply w-28 @max-[28rem]:w-auto @max-[28rem]:min-w-0 @max-[28rem]:flex-1;
   }
 
   .cn-query-builder-value {
-    @apply max-w-48 min-w-28 flex-1 gap-2 @max-[30.5rem]:order-last @max-[30.5rem]:max-w-none @max-[30.5rem]:basis-full @max-[30.5rem]:ps-20 data-[operator=isBetween]:order-last data-[operator=isBetween]:max-w-none data-[operator=isBetween]:basis-full data-[operator=isBetween]:ps-20;
+    @apply h-8 w-32 @max-[28rem]:w-auto @max-[28rem]:min-w-0 @max-[28rem]:flex-1 data-[operator=isBetween]:w-auto data-[operator=isBetween]:min-w-0 data-[operator=isBetween]:flex-1;
   }
 
   .cn-query-builder-value-separator {
-    @apply text-sm text-muted-foreground;
-  }
-
-  .cn-query-builder-input {
-    @apply h-8 min-w-0 flex-1;
-  }
-
-  .cn-query-builder-select {
-    @apply min-w-0 flex-1;
+    @apply flex h-8 items-center border-y border-e border-input bg-muted px-3 text-sm text-muted-foreground;
   }
 
   .cn-query-builder-multi-select {
-    @apply min-w-0 flex-1 justify-between font-normal;
+    @apply justify-between font-normal;
   }
 
   .cn-query-builder-multi-select-icon {
