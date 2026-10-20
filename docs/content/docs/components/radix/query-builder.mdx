@@ -132,7 +132,7 @@ Filter rows in the browser with `matchesQuery`, which follows the same rules as 
 
 ### Command filter
 
-A Linear-style filter bar. Pick a field and its values from a [Command Stack](/docs/components/radix/command-stack) menu, and each filter shows up as a chip you can edit in place. `getQuerySelection` reads the query as one list of values per field, the shape a multi-select menu works with, and `setQuerySelection` writes a menu's selection back as one rule per field. Picking a second value switches "is" to "is any of", and fields whose values didn't change are left alone.
+A Linear-style filter bar built with [Command Stack](/docs/components/radix/command-stack). `getQuerySelection` and `setQuerySelection` keep the menu and the query in sync.
 
 <ComponentTabs name="query-builder-command-filter-demo" />
 
