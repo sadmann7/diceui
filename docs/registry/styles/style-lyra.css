@@ -1537,8 +1537,9 @@
     @apply h-7 w-18 shrink-0 data-[type=group]:mt-2;
   }
 
+  /* @role cn-button */
   .cn-query-builder-connector-select {
-    @apply w-full;
+    @apply w-full rounded-none data-[size=sm]:rounded-none;
   }
 
   .cn-query-builder-connector-label {
