@@ -130,6 +130,12 @@ Filter rows in the browser with `matchesQuery`, which follows the same rules as 
 
 <ComponentTabs name="query-builder-filter-demo" />
 
+### Command filter
+
+A Linear-style filter bar. Pick a field and its values from a [Command Stack](/docs/components/base/command-stack) menu, and each filter shows up as a chip you can edit in place. `setQueryRuleValues` turns the menu's selection into rules, so picking a second value switches "is" to "is any of".
+
+<ComponentTabs name="query-builder-command-filter-demo" />
+
 ## Query
 
 A query is a tree of groups and rules. Groups combine their rules with `and` or `or`, and can be negated with `not`.
