@@ -161,17 +161,25 @@ export function getDefaultQueryValue(
   return "";
 }
 
-const ARRAY_OPERATORS: QueryOperator[] = ["isBetween", "inArray", "notInArray"];
+function getIsListOperator(operator: QueryOperator) {
+  return operator === "inArray" || operator === "notInArray";
+}
 
-function getIsValueKept(rule: QueryRule, operator: QueryOperator) {
-  const needsValue = operator !== "isEmpty" && operator !== "isNotEmpty";
-  return (
-    needsValue &&
-    rule.value !== undefined &&
-    ARRAY_OPERATORS.includes(rule.operator) ===
-      ARRAY_OPERATORS.includes(operator) &&
-    (rule.operator === "isBetween") === (operator === "isBetween")
-  );
+function getQueryValueForOperator(
+  rule: QueryRule,
+  operator: QueryOperator,
+): QueryValue | undefined {
+  const { value } = rule;
+  if (operator === "isEmpty" || operator === "isNotEmpty") return undefined;
+  if ((rule.operator === "isBetween") !== (operator === "isBetween")) {
+    return undefined;
+  }
+  if (getIsListOperator(operator)) {
+    if (Array.isArray(value)) return value;
+    return value ? [value] : undefined;
+  }
+  if (Array.isArray(value) && operator !== "isBetween") return value[0];
+  return value;
 }
 
 export function setQueryRuleOperator(
@@ -182,9 +190,9 @@ export function setQueryRuleOperator(
   return {
     ...rule,
     operator,
-    value: getIsValueKept(rule, operator)
-      ? rule.value
-      : getDefaultQueryValue(field, operator),
+    value:
+      getQueryValueForOperator(rule, operator) ??
+      getDefaultQueryValue(field, operator),
   };
 }
 
