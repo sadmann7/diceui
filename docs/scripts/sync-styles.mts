@@ -267,24 +267,35 @@ export function createStyleGenerator(roles: Roles) {
       `${getUtility(token).variants}${getFamily(token)}`;
 
     // The matched part's radius wins over a slightly different one of ours.
+    const findRadius = (variants: string) =>
+      target.find(
+        (other) =>
+          getFamily(other) === "rounded" &&
+          getUtility(other).variants === variants &&
+          !usesVariable(other) &&
+          newYork.some(
+            (source) =>
+              getFamily(source) === "rounded" &&
+              getUtility(source).variants === variants &&
+              findCounterpart(source, [other]),
+          ),
+      );
+    // A variant the part doesn't style, like `data-[size=sm]:`, takes the
+    // part's base radius when it repeats ours.
     const mapRadius = (token: string) => {
-      const radius =
-        role && getFamily(token) === "rounded"
-          ? target.find(
-              (other) =>
-                getFamily(other) === "rounded" &&
-                getUtility(other).variants === getUtility(token).variants &&
-                !usesVariable(other) &&
-                newYork.some(
-                  (source) =>
-                    getFamily(source) === "rounded" &&
-                    getUtility(source).variants ===
-                      getUtility(token).variants &&
-                    findCounterpart(source, [other]),
-                ),
-            )
-          : undefined;
-      return split(radius ?? getFallback(token, style) ?? token);
+      if (!role || getFamily(token) !== "rounded") {
+        return split(getFallback(token, style) ?? token);
+      }
+      const { variants, utility } = getUtility(token);
+      const radius = findRadius(variants);
+      if (radius) return split(radius);
+      const base =
+        variants && newYork.includes(utility) ? findRadius("") : undefined;
+      return split(
+        base
+          ? `${variants}${getUtility(base).utility}`
+          : (getFallback(token, style) ?? token),
+      );
     };
 
     for (const token of tokens) {
