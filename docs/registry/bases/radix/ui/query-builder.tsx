@@ -11,6 +11,7 @@ import {
   getQueryOperatorLabel,
   getQueryOperators,
   getIsQueryGroup,
+  getIsQueryRuleMultiple,
   type QueryCombinator,
   type QueryField,
   type QueryFieldOption,
@@ -21,12 +22,14 @@ import {
   type QueryValue,
   removeQueryNode,
   setQueryRuleOperator,
+  setQueryRuleValues,
   updateQueryNode,
 } from "@/registry/bases/radix/lib/query-builder";
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
   Faceted,
   FacetedBadge,
+  FacetedClear,
   FacetedContent,
   FacetedEmpty,
   FacetedGroup,
@@ -717,9 +720,7 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
   const { update } = useQueryActions("QueryBuilderValue");
   const field = fields.find((item) => item.name === rule.field);
 
-  if (!field || rule.operator === "isEmpty" || rule.operator === "isNotEmpty") {
-    return null;
-  }
+  if (!field) return null;
 
   const onChange = (value: QueryValue) =>
     update(rule.id, (node) => ({ ...node, value }));
@@ -732,6 +733,19 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
         : "text";
 
   const valueClassName = cn("cn-query-builder-value", className);
+
+  if (rule.operator === "isEmpty" || rule.operator === "isNotEmpty") {
+    return (
+      <Input
+        aria-hidden="true"
+        tabIndex={-1}
+        disabled
+        data-slot="query-builder-value"
+        data-operator={rule.operator}
+        className={valueClassName}
+      />
+    );
+  }
 
   if (rule.operator === "isBetween") {
     const [start = "", end = ""] = Array.isArray(rule.value) ? rule.value : [];
@@ -774,8 +788,7 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
             { label: "False", value: "false" },
           ]
         : (field.options ?? []);
-    const multiple =
-      rule.operator === "inArray" || rule.operator === "notInArray";
+    const multiple = getIsQueryRuleMultiple(rule, field);
     const selected = options.filter((option) =>
       getSelectedValues(rule.value).includes(option.value),
     );
@@ -785,8 +798,16 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
       <Faceted
         items={options}
         multiple={multiple}
-        value={rule.value}
-        onValueChange={(next) => onChange(next ?? (multiple ? [] : ""))}
+        value={multiple ? getSelectedValues(rule.value) : rule.value}
+        onValueChange={(next) =>
+          update(rule.id, (node) =>
+            setQueryRuleValues(
+              node as QueryRule,
+              field,
+              getSelectedValues(next),
+            ),
+          )
+        }
       >
         <FacetedTrigger asChild>
           <Button
@@ -835,6 +856,7 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
                 </FacetedItem>
               ))}
             </FacetedGroup>
+            {multiple && <FacetedClear />}
           </FacetedList>
         </FacetedContent>
       </Faceted>
