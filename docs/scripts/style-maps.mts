@@ -6,6 +6,7 @@ import { createStyleMap, transformDirection } from "shadcn/utils";
 import { DEFAULT_STYLE } from "../lib/constants";
 import { STYLES } from "../registry/styles";
 import { writeIconsModule } from "./build-icons.mts";
+import { writeFileIfChanged } from "./write-files.mts";
 
 export type StyleMap = ReturnType<typeof createStyleMap>;
 
@@ -71,10 +72,9 @@ export async function writeStyleMapsModule() {
   );
   const stylesPath = path.join(GENERATED_PATH, "styles");
 
-  await fs.mkdir(stylesPath, { recursive: true });
   await Promise.all([
     // Every style, for the server and for Tailwind to scan.
-    fs.writeFile(
+    writeFileIfChanged(
       path.join(GENERATED_PATH, "style-maps.ts"),
       `${HEADER}export const STYLE_MAPS: Record<string, Record<string, string>> = ${JSON.stringify(
         Object.fromEntries(styleMaps),
@@ -88,12 +88,12 @@ export async function writeStyleMapsModule() {
     ),
     // One module per style, so the docs load only the style in use.
     ...[...styleMaps].map(([style, styleMap]) =>
-      fs.writeFile(
+      writeFileIfChanged(
         path.join(stylesPath, `${style}.ts`),
         `${HEADER}const styleMap: Record<string, string> = ${JSON.stringify(styleMap, null, 2)};\n\nexport const rtlStyleMap: Record<string, string> = ${JSON.stringify(rtlOverrides.get(style), null, 2)};\n\nexport default styleMap;\n`,
       ),
     ),
-    fs.writeFile(
+    writeFileIfChanged(
       path.join(GENERATED_PATH, "style-map-loaders.ts"),
       `${HEADER}import defaultStyleMap, { rtlStyleMap as defaultRtlStyleMap } from "./styles/${DEFAULT_STYLE}";\n\nexport { defaultRtlStyleMap, defaultStyleMap };\n\nexport const styleMapLoaders: Record<string, () => Promise<{ default: Record<string, string>; rtlStyleMap: Record<string, string> }>> = {\n${[
         ...styleMaps.keys(),

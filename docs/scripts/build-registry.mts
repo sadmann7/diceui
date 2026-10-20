@@ -28,6 +28,7 @@ import {
   type StyleMap,
   writeStyleMapsModule,
 } from "./style-maps.mts";
+import { removeStaleFiles, writeFileIfChanged } from "./write-files.mts";
 
 const REGISTRY_PATH = path.join(process.cwd(), "public/r");
 const STYLES_PATH = path.join(REGISTRY_PATH, "styles");
@@ -414,17 +415,15 @@ async function buildDocsUi() {
       "ui",
     );
 
-    await rimraf(outDir);
-    await fs.mkdir(outDir, { recursive: true });
-
     const files = (await fs.readdir(uiDir)).filter((file) =>
       file.endsWith(".tsx"),
     );
+    await removeStaleFiles(outDir, new Set(files));
     await Promise.all(
       files.map(async (file) => {
         const source = await fs.readFile(path.join(uiDir, file), "utf8");
         const content = await compileStyle(source, styleMap);
-        await fs.writeFile(
+        await writeFileIfChanged(
           path.join(outDir, file),
           content.replaceAll(
             `@/registry/bases/${baseName}/ui/`,
@@ -463,9 +462,6 @@ async function buildRtlUi() {
       }
     }
 
-    await rimraf(rtlDir);
-    await fs.mkdir(rtlDir, { recursive: true });
-
     const built = new Set<string>();
     while (queue.length > 0) {
       const name = queue.pop();
@@ -484,7 +480,7 @@ async function buildRtlUi() {
         'import { cnRtl as cn } from "@/lib/cn";',
       );
 
-      await fs.writeFile(
+      await writeFileIfChanged(
         path.join(rtlDir, `${name}.tsx`),
         header +
           content.replace(uiImport, (_, dependency: string) => {
@@ -493,6 +489,11 @@ async function buildRtlUi() {
           }),
       );
     }
+
+    await removeStaleFiles(
+      rtlDir,
+      new Set([...built].map((name) => `${name}.tsx`)),
+    );
   }
 }
 
