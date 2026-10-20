@@ -56,7 +56,7 @@ const defaultQuery: QueryGroup = {
   rules: [
     { id: "status", field: "status", operator: "eq", value: "todo" },
     { id: "estimate", field: "estimate", operator: "gte", value: "5" },
-    { id: "title", field: "title", operator: "iLike", value: "bug" },
+    { id: "title", field: "title", operator: "iLike", value: "kickflip" },
   ],
 };
 
