@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 import type {
   QueryField,
@@ -12,7 +12,32 @@ import * as RadixQueryBuilder from "@/registry/bases/radix/ui/query-builder";
 
 afterEach(cleanup);
 
+beforeAll(() => {
+  globalThis.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+});
+
 const titleField: QueryField = { name: "title", label: "Title", type: "text" };
+
+function StatusIcon(props: React.SVGProps<SVGSVGElement>) {
+  return <svg {...props} />;
+}
+
+function getStatusField(withIcons: boolean): QueryField {
+  return {
+    name: "status",
+    label: "Status",
+    type: "select",
+    options: ["todo", "doing", "done"].map((value) => ({
+      label: value,
+      value,
+      icon: withIcons ? StatusIcon : undefined,
+    })),
+  };
+}
 
 function getAddedGroup(onValueChange: ReturnType<typeof vi.fn>) {
   const query = onValueChange.mock.lastCall?.[0] as QueryGroup | undefined;
@@ -52,4 +77,71 @@ describe.each([
       });
     },
   );
+
+  test.each([
+    [false, [], "Select values"],
+    [false, ["todo"], "todo"],
+    [false, ["todo", "done"], "tododone"],
+    [true, ["todo", "done"], "tododone"],
+  ])(
+    "shows selected labels without icons (icons: %s, value: %j)",
+    (withIcons, value, text) => {
+      render(
+        <QueryBuilder.QueryBuilder
+          fields={[getStatusField(withIcons)]}
+          value={{
+            id: "root",
+            combinator: "and",
+            rules: [{ id: "1", field: "status", operator: "inArray", value }],
+          }}
+        >
+          <QueryBuilder.QueryBuilderGroup>
+            <QueryBuilder.QueryBuilderGroupContent>
+              <QueryBuilder.QueryBuilderRules>
+                <QueryBuilder.QueryBuilderRule>
+                  <QueryBuilder.QueryBuilderValue />
+                </QueryBuilder.QueryBuilderRule>
+              </QueryBuilder.QueryBuilderRules>
+            </QueryBuilder.QueryBuilderGroupContent>
+          </QueryBuilder.QueryBuilderGroup>
+        </QueryBuilder.QueryBuilder>,
+      );
+
+      const name = `Status: ${value.join(", ") || "no value"}`;
+      const trigger = screen.getByRole("button", { name });
+      expect(trigger.textContent).toBe(text);
+      expect(trigger.querySelectorAll("svg")).toHaveLength(1);
+    },
+  );
+
+  test("names the field and operator triggers with their current choice", () => {
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField]}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [{ id: "1", field: "title", operator: "iLike", value: "" }],
+        }}
+      >
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderRules>
+              <QueryBuilder.QueryBuilderRule>
+                <QueryBuilder.QueryBuilderField />
+                <QueryBuilder.QueryBuilderOperator />
+              </QueryBuilder.QueryBuilderRule>
+            </QueryBuilder.QueryBuilderRules>
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Field: Title" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Operator: contains" }),
+    ).toBeInTheDocument();
+  });
 });

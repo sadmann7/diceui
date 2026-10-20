@@ -165,7 +165,7 @@ Values are strings, or string arrays for `isBetween`, `inArray` and `notInArray`
 | `select`      | `eq`, `ne`, `inArray`, `notInArray`, `isEmpty`, `isNotEmpty`              |
 | `multiSelect` | `inArray`, `notInArray`, `isEmpty`, `isNotEmpty`                          |
 
-Pass `operators` on a field to narrow or reorder its list.
+Pass `operators` on a field to narrow or reorder its list. Options can take an `icon`, which shows next to the label in the picker.
 
 ### On the server
 
@@ -351,7 +351,7 @@ A select for the group's combinator. It accepts the props of `SelectTrigger`.
 
 ### QueryBuilderValue
 
-The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/base/faceted) picker for select and boolean fields (with multiple selection for `inArray` and `notInArray`), based on the field type and operator, and nothing for `isEmpty` and `isNotEmpty`. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
+The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/base/faceted) picker for select and boolean fields (with multiple selection for `inArray` and `notInArray`, showing as many selected labels as fit, then `+N`), based on the field type and operator, and nothing for `isEmpty` and `isNotEmpty`. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
 
 ### QueryBuilderAddRule
 
@@ -383,6 +383,8 @@ Removes the rule it's in, or the group when used outside a rule. Hidden in the r
 ## Accessibility
 
 Groups render with `role="group"`, and rules as a list. The combinator follows the [Select](https://base-ui.com/react/components/select) keyboard pattern, and the field, operator and value pickers follow [Faceted](/docs/components/base/faceted).
+
+The field, operator and value pickers include their current choice in their accessible name, like "Field: Status" or "Status: Todo, In progress", so the whole selection is announced even when some values are behind `+N`. Option icons are decorative, and when several values are selected the value picker lists them in its `title`. Give options icons that differ by shape, not only by color.
 
 ### Keyboard Interactions
 

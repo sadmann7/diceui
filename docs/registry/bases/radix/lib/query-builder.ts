@@ -1,3 +1,5 @@
+import type * as React from "react";
+
 export type QueryFieldType =
   | "text"
   | "number"
@@ -28,6 +30,7 @@ export type QueryValue = string | string[];
 export interface QueryFieldOption {
   label: string;
   value: string;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
 export interface QueryField {
