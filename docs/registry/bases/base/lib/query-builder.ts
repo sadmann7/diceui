@@ -60,6 +60,8 @@ export interface QueryGroup {
 
 export type QueryNode = QueryRule | QueryGroup;
 
+export type QuerySelection = Record<string, string[]>;
+
 export const QUERY_OPERATORS: Record<QueryFieldType, QueryOperator[]> = {
   text: ["iLike", "notILike", "eq", "ne", "isEmpty", "isNotEmpty"],
   number: [
@@ -237,6 +239,54 @@ export function setQueryRuleValues(
     operator,
     value: getIsListOperator(operator) ? values : (values[0] ?? ""),
   };
+}
+
+function getRuleValues(rule: QueryRule) {
+  if (Array.isArray(rule.value)) return rule.value;
+  return rule.value ? [rule.value] : [];
+}
+
+function getIsSameValues(a: string[], b: string[]) {
+  return a.length === b.length && a.every((value, index) => value === b[index]);
+}
+
+export function getQuerySelection(query: QueryGroup): QuerySelection {
+  const selection: QuerySelection = {};
+  for (const node of query.rules) {
+    if (getIsQueryGroup(node) || selection[node.field]) continue;
+    selection[node.field] = getRuleValues(node);
+  }
+  return selection;
+}
+
+export function setQuerySelection(
+  query: QueryGroup,
+  fields: QueryField[],
+  selection: QuerySelection,
+): QueryGroup {
+  const current = getQuerySelection(query);
+  let rules = query.rules;
+  for (const field of fields) {
+    const values = selection[field.name] ?? [];
+    if (getIsSameValues(values, current[field.name] ?? [])) continue;
+    const rule = rules.find(
+      (node): node is QueryRule =>
+        !getIsQueryGroup(node) && node.field === field.name,
+    );
+    if (values.length === 0) {
+      rules = rules.filter((node) => node !== rule);
+    } else if (rule) {
+      rules = rules.map((node) =>
+        node === rule ? setQueryRuleValues(rule, field, values) : node,
+      );
+    } else {
+      rules = [
+        ...rules,
+        setQueryRuleValues(createQueryRule(field), field, values),
+      ];
+    }
+  }
+  return rules === query.rules ? query : { ...query, rules };
 }
 
 export function updateQueryNode(
