@@ -14,6 +14,7 @@ import {
   getIsQueryGroup,
   type QueryCombinator,
   type QueryField,
+  type QueryFieldOption,
   type QueryGroup,
   type QueryNode,
   type QueryOperator,
@@ -26,6 +27,7 @@ import {
 import { Button } from "@/registry/bases/base/ui/button";
 import {
   Faceted,
+  FacetedBadge,
   FacetedContent,
   FacetedEmpty,
   FacetedGroup,
@@ -524,6 +526,7 @@ function QueryBuilderField({
   const { fields, disabled } = useQueryBuilderContext("QueryBuilderField");
   const rule = useRuleContext("QueryBuilderField");
   const { update } = useQueryActions("QueryBuilderField");
+  const current = fields.find((field) => field.name === rule.field);
 
   return (
     <Faceted
@@ -540,7 +543,7 @@ function QueryBuilderField({
           <Button
             variant="outline"
             size="sm"
-            aria-label="Field"
+            aria-label={current ? `Field: ${current.label}` : "Field"}
             data-slot="query-builder-field"
             disabled={disabled}
             {...triggerProps}
@@ -626,7 +629,7 @@ function QueryBuilderOperator({
           <Button
             variant="outline"
             size="sm"
-            aria-label="Operator"
+            aria-label={`Operator: ${getQueryOperatorLabel(rule.operator, field.type)}`}
             data-slot="query-builder-operator"
             disabled={disabled}
             {...triggerProps}
@@ -666,6 +669,87 @@ function QueryBuilderOperator({
         </FacetedList>
       </FacetedContent>
     </Faceted>
+  );
+}
+
+function getSelectedValues(value: QueryValue | undefined) {
+  if (Array.isArray(value)) return value;
+  return value ? [value] : [];
+}
+
+function QueryBuilderValueList({ options }: { options: QueryFieldOption[] }) {
+  const listRef = React.useRef<HTMLSpanElement>(null);
+  const [visibleCount, setVisibleCount] = React.useState(options.length);
+
+  React.useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+
+    function measure() {
+      if (!list) return;
+      const widths = Array.from(
+        list.querySelectorAll<HTMLElement>(
+          "[data-slot=query-builder-value-item]",
+        ),
+        (item) => {
+          const label = item.lastElementChild;
+          if (!label) return item.getBoundingClientRect().width;
+          return (
+            item.getBoundingClientRect().width -
+            label.getBoundingClientRect().width +
+            label.scrollWidth
+          );
+        },
+      );
+      const gap = Number.parseFloat(getComputedStyle(list).columnGap) || 0;
+      const available = list.getBoundingClientRect().width;
+      const total = widths.reduce((sum, width) => sum + width + gap, -gap);
+      if (total <= available) {
+        setVisibleCount(widths.length);
+        return;
+      }
+      const badge = list.querySelector("[data-slot=faceted-badge]");
+      let used = badge?.getBoundingClientRect().width ?? 24;
+      let count = 0;
+      for (const width of widths) {
+        if (used + gap + width > available) break;
+        used += gap + width;
+        count++;
+      }
+      setVisibleCount(Math.max(1, count));
+    }
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(list);
+    return () => observer.disconnect();
+  });
+
+  const hiddenCount = Math.max(0, options.length - visibleCount);
+
+  return (
+    <span
+      ref={listRef}
+      data-slot="query-builder-value-list"
+      className="cn-query-builder-value-list"
+    >
+      {options.map(({ label, value }, index) => (
+        <span
+          key={value}
+          data-slot="query-builder-value-item"
+          data-hidden={index >= visibleCount ? "" : undefined}
+          data-separator={index < visibleCount - 1 ? "" : undefined}
+          className="cn-query-builder-value-item"
+        >
+          <span className="cn-query-builder-value-label">{label}</span>
+        </span>
+      ))}
+      {hiddenCount > 0 && (
+        <FacetedBadge className="cn-query-builder-value-count">
+          +{hiddenCount}
+        </FacetedBadge>
+      )}
+    </span>
   );
 }
 
@@ -738,6 +822,10 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
         : (field.options ?? []);
     const multiple =
       rule.operator === "inArray" || rule.operator === "notInArray";
+    const selected = options.filter((option) =>
+      getSelectedValues(rule.value).includes(option.value),
+    );
+    const selectedLabels = selected.map((option) => option.label).join(", ");
 
     return (
       <Faceted
@@ -751,7 +839,8 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
             <Button
               variant="outline"
               size="sm"
-              aria-label={field.label}
+              aria-label={`${field.label}: ${selectedLabels || "no value"}`}
+              title={selected.length > 1 ? selectedLabels : undefined}
               data-slot="query-builder-value"
               data-operator={rule.operator}
               disabled={disabled}
@@ -760,19 +849,17 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
           }
         >
           <FacetedValue>
-            {(items) => (
-              <span
-                className={cn(
-                  "cn-query-builder-select-value",
-                  items.length === 0 && "text-muted-foreground",
-                )}
-              >
-                {items.length > 0
-                  ? items.map((item) => item.label).join(", ")
-                  : (field.placeholder ??
-                    (multiple ? "Select values" : "Select a value"))}
-              </span>
-            )}
+            {() => {
+              if (selected.length > 0) {
+                return <QueryBuilderValueList options={selected} />;
+              }
+              return (
+                <span className="cn-query-builder-select-value text-muted-foreground">
+                  {field.placeholder ??
+                    (multiple ? "Select values" : "Select a value")}
+                </span>
+              );
+            }}
           </FacetedValue>
           <IconPlaceholder
             lucide="ChevronDownIcon"
@@ -790,6 +877,7 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
             <FacetedGroup>
               {options.map((option) => (
                 <FacetedItem key={option.value} value={option.value}>
+                  {option.icon && <option.icon aria-hidden="true" />}
                   <span className="flex-1 truncate">{option.label}</span>
                   <FacetedItemIndicator />
                 </FacetedItem>
