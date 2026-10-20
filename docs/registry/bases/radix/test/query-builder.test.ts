@@ -292,20 +292,46 @@ describe("query tree helpers", () => {
 });
 
 describe("setQueryRuleOperator", () => {
-  test("keeps a value the new operator can use", () => {
+  test("keeps a value between operators of the same shape", () => {
     expect(
       setQueryRuleOperator(rule("estimate", "gt", "5"), estimateField, "lte"),
     ).toMatchObject({ operator: "lte", value: "5" });
     expect(
       setQueryRuleOperator(
-        rule("status", "inArray", ["todo"]),
+        rule("status", "inArray", ["todo", "done"]),
         statusField,
         "notInArray",
       ),
-    ).toMatchObject({ operator: "notInArray", value: ["todo"] });
+    ).toMatchObject({ operator: "notInArray", value: ["todo", "done"] });
   });
 
-  test("resets the value when its shape changes", () => {
+  test("wraps a single value when switching to a list operator", () => {
+    expect(
+      setQueryRuleOperator(
+        rule("status", "eq", "todo"),
+        statusField,
+        "inArray",
+      ),
+    ).toMatchObject({ operator: "inArray", value: ["todo"] });
+    expect(
+      setQueryRuleOperator(rule("status", "eq", ""), statusField, "notInArray"),
+    ).toMatchObject({ operator: "notInArray", value: [] });
+  });
+
+  test("keeps the first value when switching to a single-value operator", () => {
+    expect(
+      setQueryRuleOperator(
+        rule("status", "inArray", ["todo", "done"]),
+        statusField,
+        "ne",
+      ),
+    ).toMatchObject({ operator: "ne", value: "todo" });
+    expect(
+      setQueryRuleOperator(rule("status", "inArray", []), statusField, "eq"),
+    ).toMatchObject({ operator: "eq", value: "" });
+  });
+
+  test("resets the value for ranges and empty checks", () => {
     expect(
       setQueryRuleOperator(
         rule("estimate", "gt", "5"),
@@ -315,11 +341,11 @@ describe("setQueryRuleOperator", () => {
     ).toMatchObject({ operator: "isBetween", value: ["", ""] });
     expect(
       setQueryRuleOperator(
-        rule("status", "inArray", ["todo"]),
-        statusField,
-        "eq",
+        rule("estimate", "isBetween", ["3", "8"]),
+        estimateField,
+        "gt",
       ),
-    ).toMatchObject({ operator: "eq", value: "" });
+    ).toMatchObject({ operator: "gt", value: "" });
     expect(
       setQueryRuleOperator(
         rule("title", "iLike", "bug"),
