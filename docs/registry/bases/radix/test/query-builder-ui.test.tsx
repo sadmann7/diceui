@@ -82,6 +82,7 @@ describe.each([
     [false, [], "Select values"],
     [false, ["todo"], "todo"],
     [false, ["todo", "done"], "tododone"],
+    [false, ["done", "todo"], "donetodo"],
     [true, ["todo", "done"], "tododone"],
   ])(
     "shows selected labels without icons (icons: %s, value: %j)",
