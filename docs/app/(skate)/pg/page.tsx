@@ -8,10 +8,10 @@ export default function PlaygroundPage() {
     <Shell>
       <Demo>
         <DemoItemGroup>
-          <QueryBuilderRadixDemo />
+          <QueryBuilderBaseDemo />
         </DemoItemGroup>
         <DemoItemGroup>
-          <QueryBuilderBaseDemo />
+          <QueryBuilderRadixDemo />
         </DemoItemGroup>
       </Demo>
     </Shell>

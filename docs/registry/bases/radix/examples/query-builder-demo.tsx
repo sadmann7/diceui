@@ -1,6 +1,12 @@
 "use client";
 
-import { ListPlusIcon, PlusIcon } from "lucide-react";
+import {
+  CircleCheckIcon,
+  CircleDashedIcon,
+  CircleDotIcon,
+  ListPlusIcon,
+  PlusIcon,
+} from "lucide-react";
 import * as React from "react";
 
 import type {
@@ -34,9 +40,9 @@ const fields: QueryField[] = [
     label: "Status",
     type: "select",
     options: [
-      { label: "Todo", value: "todo" },
-      { label: "In progress", value: "in-progress" },
-      { label: "Done", value: "done" },
+      { label: "Todo", value: "todo", icon: CircleDashedIcon },
+      { label: "In progress", value: "in-progress", icon: CircleDotIcon },
+      { label: "Done", value: "done", icon: CircleCheckIcon },
     ],
   },
   { name: "estimate", label: "Estimate", type: "number" },

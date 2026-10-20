@@ -1570,6 +1570,22 @@
     @apply min-w-0 truncate;
   }
 
+  .cn-query-builder-value-list {
+    @apply relative flex min-w-0 flex-1 items-center gap-1 overflow-hidden;
+  }
+
+  .cn-query-builder-value-item {
+    @apply relative flex min-w-0 shrink-0 items-center first:shrink data-hidden:invisible data-hidden:absolute data-separator:after:absolute data-separator:after:start-full data-separator:after:content-[','];
+  }
+
+  .cn-query-builder-value-label {
+    @apply truncate;
+  }
+
+  .cn-query-builder-value-count {
+    @apply shrink-0;
+  }
+
   .cn-query-builder-select-icon {
     @apply size-4 shrink-0 opacity-50;
   }
