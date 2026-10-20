@@ -1561,12 +1561,16 @@
     @apply flex h-8 items-center border-y border-e border-input bg-muted px-2 text-sm text-muted-foreground;
   }
 
-  .cn-query-builder-multi-select {
-    @apply justify-between font-normal;
+  .cn-query-builder-select {
+    @apply justify-between gap-1 font-normal;
   }
 
-  .cn-query-builder-multi-select-icon {
-    @apply size-4 opacity-50;
+  .cn-query-builder-select-value {
+    @apply min-w-0 truncate;
+  }
+
+  .cn-query-builder-select-icon {
+    @apply size-4 shrink-0 opacity-50;
   }
 
   .cn-query-builder-add-rule {

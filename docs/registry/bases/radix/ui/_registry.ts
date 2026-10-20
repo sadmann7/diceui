@@ -673,7 +673,7 @@ export const ui: Registry["items"] = [
     name: "query-builder",
     type: "registry:ui",
     dependencies: ["radix-ui"],
-    registryDependencies: ["button", "dropdown-menu", "input", "select"],
+    registryDependencies: ["button", "input", "select", "@diceui/faceted"],
     files: [
       {
         path: "ui/query-builder.tsx",
