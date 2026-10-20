@@ -351,7 +351,9 @@ A select for the group's combinator. It accepts the props of `SelectTrigger`.
 
 ### QueryBuilderValue
 
-The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/radix/faceted) picker for select and boolean fields (with multiple selection for `inArray` and `notInArray`, showing as many selected labels as fit, then `+N`), based on the field type and operator, and nothing for `isEmpty` and `isNotEmpty`. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
+The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/radix/faceted) picker for select and boolean fields, based on the field type and operator, and nothing for `isEmpty` and `isNotEmpty`. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
+
+Select fields take several values whenever their `operators` include both forms, like Linear's filters: picking a second value switches `eq` to `inArray` ("is" to "is any of") and `ne` to `notInArray`, and going back to one value switches back. Use `setQueryRuleValues` to do the same outside the picker. The trigger shows as many selected labels as fit, then `+N`, and the menu has a Clear action while anything is selected.
 
 ### QueryBuilderAddRule
 

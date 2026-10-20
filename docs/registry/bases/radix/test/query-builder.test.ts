@@ -5,12 +5,14 @@ import {
   createQueryGroup,
   createQueryRule,
   formatQuery,
+  getIsQueryRuleMultiple,
   matchesQuery,
   type QueryField,
   type QueryGroup,
   type QueryRule,
   removeQueryNode,
   setQueryRuleOperator,
+  setQueryRuleValues,
   updateQueryNode,
 } from "@/registry/bases/radix/lib/query-builder";
 
@@ -353,5 +355,71 @@ describe("setQueryRuleOperator", () => {
         "isEmpty",
       ),
     ).toMatchObject({ operator: "isEmpty", value: undefined });
+  });
+});
+
+describe("setQueryRuleValues", () => {
+  test("switches to a list operator when a second value is picked", () => {
+    expect(
+      setQueryRuleValues(rule("status", "eq", "todo"), statusField, [
+        "todo",
+        "done",
+      ]),
+    ).toMatchObject({ operator: "inArray", value: ["todo", "done"] });
+    expect(
+      setQueryRuleValues(rule("status", "ne", "todo"), statusField, [
+        "todo",
+        "done",
+      ]),
+    ).toMatchObject({ operator: "notInArray", value: ["todo", "done"] });
+  });
+
+  test("switches back to a single-value operator at one value", () => {
+    expect(
+      setQueryRuleValues(
+        rule("status", "inArray", ["todo", "done"]),
+        statusField,
+        ["done"],
+      ),
+    ).toMatchObject({ operator: "eq", value: "done" });
+    expect(
+      setQueryRuleValues(
+        rule("status", "notInArray", ["todo", "done"]),
+        statusField,
+        ["done"],
+      ),
+    ).toMatchObject({ operator: "ne", value: "done" });
+  });
+
+  test("keeps the operator when the selection is cleared", () => {
+    expect(
+      setQueryRuleValues(rule("status", "eq", "todo"), statusField, []),
+    ).toMatchObject({ operator: "eq", value: "" });
+    expect(
+      setQueryRuleValues(
+        rule("status", "inArray", ["todo", "done"]),
+        statusField,
+        [],
+      ),
+    ).toMatchObject({ operator: "inArray", value: [] });
+  });
+
+  test("stays on the operator when its counterpart isn't allowed", () => {
+    const singleOnly: QueryField = { ...statusField, operators: ["eq", "ne"] };
+    expect(
+      setQueryRuleValues(rule("status", "eq", "todo"), singleOnly, [
+        "todo",
+        "done",
+      ]),
+    ).toMatchObject({ operator: "eq", value: "todo" });
+    expect(getIsQueryRuleMultiple(rule("status", "eq"), singleOnly)).toBe(
+      false,
+    );
+    expect(getIsQueryRuleMultiple(rule("status", "eq"), statusField)).toBe(
+      true,
+    );
+    expect(getIsQueryRuleMultiple(rule("archived", "eq"), archivedField)).toBe(
+      false,
+    );
   });
 });

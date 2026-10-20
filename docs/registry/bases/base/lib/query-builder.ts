@@ -199,6 +199,46 @@ export function setQueryRuleOperator(
   };
 }
 
+const OPERATOR_COUNTERPARTS: Partial<Record<QueryOperator, QueryOperator>> = {
+  eq: "inArray",
+  ne: "notInArray",
+  inArray: "eq",
+  notInArray: "ne",
+};
+
+function getOperatorCounterpart(operator: QueryOperator, field: QueryField) {
+  const counterpart = OPERATOR_COUNTERPARTS[operator];
+  return counterpart && getQueryOperators(field).includes(counterpart)
+    ? counterpart
+    : undefined;
+}
+
+export function getIsQueryRuleMultiple(rule: QueryRule, field: QueryField) {
+  return (
+    getIsListOperator(rule.operator) ||
+    getOperatorCounterpart(rule.operator, field) !== undefined
+  );
+}
+
+export function setQueryRuleValues(
+  rule: QueryRule,
+  field: QueryField,
+  values: string[],
+): QueryRule {
+  const counterpart = getOperatorCounterpart(rule.operator, field);
+  const operator =
+    counterpart &&
+    values.length > 0 &&
+    values.length > 1 !== getIsListOperator(rule.operator)
+      ? counterpart
+      : rule.operator;
+  return {
+    ...rule,
+    operator,
+    value: getIsListOperator(operator) ? values : (values[0] ?? ""),
+  };
+}
+
 export function updateQueryNode(
   root: QueryGroup,
   id: string,
