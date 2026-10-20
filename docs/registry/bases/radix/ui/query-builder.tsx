@@ -791,8 +791,8 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
           ]
         : (field.options ?? []);
     const multiple = getIsQueryRuleMultiple(rule, field);
-    const selected = options.filter((option) =>
-      getSelectedValues(rule.value).includes(option.value),
+    const selected = getSelectedValues(rule.value).flatMap((value) =>
+      options.filter((option) => option.value === value),
     );
     const selectedLabels = selected.map((option) => option.label).join(", ");
 
