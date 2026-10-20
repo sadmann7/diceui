@@ -8,7 +8,6 @@ import {
   addQueryNode,
   createQueryGroup,
   createQueryRule,
-  getDefaultQueryValue,
   getQueryOperatorLabel,
   getQueryOperators,
   getIsQueryGroup,
@@ -20,6 +19,7 @@ import {
   type QueryRule,
   type QueryValue,
   removeQueryNode,
+  setQueryRuleOperator,
   updateQueryNode,
 } from "@/registry/bases/radix/lib/query-builder";
 import { Button } from "@/registry/bases/radix/ui/button";
@@ -96,7 +96,6 @@ interface NodeContextValue {
   group: QueryGroup;
 }
 
-// A rule's or nested group's place in the group that holds it.
 const NodeContext = React.createContext<NodeContextValue | null>(null);
 
 const RuleContext = React.createContext<QueryRule | null>(null);
@@ -411,8 +410,6 @@ const CONNECTOR_LABELS: Record<QueryCombinator, string> = {
 
 interface QueryBuilderConnectorProps extends React.ComponentProps<"div"> {}
 
-// "Where" before the first rule, the group's combinator before the second, and
-// its label before the rest. Renders nothing in the root group's own header.
 function QueryBuilderConnector({
   className,
   ...connectorProps
@@ -530,13 +527,9 @@ function QueryBuilderOperator({
       value={rule.operator}
       onValueChange={(next) => {
         const operator = next as QueryOperator;
-        update(rule.id, (node) => ({
-          ...node,
-          operator,
-          value: keepValue(node as QueryRule, operator)
-            ? (node as QueryRule).value
-            : getDefaultQueryValue(field, operator),
-        }));
+        update(rule.id, (node) =>
+          setQueryRuleOperator(node as QueryRule, field, operator),
+        );
       }}
       disabled={disabled}
     >
@@ -557,21 +550,6 @@ function QueryBuilderOperator({
         ))}
       </SelectContent>
     </Select>
-  );
-}
-
-const ARRAY_OPERATORS: QueryOperator[] = ["isBetween", "inArray", "notInArray"];
-
-// Switching between operators that take the same kind of value keeps it.
-function keepValue(rule: QueryRule, operator: QueryOperator) {
-  const wasArray = ARRAY_OPERATORS.includes(rule.operator);
-  const isArray = ARRAY_OPERATORS.includes(operator);
-  const needsValue = operator !== "isEmpty" && operator !== "isNotEmpty";
-  return (
-    needsValue &&
-    rule.value !== undefined &&
-    wasArray === isArray &&
-    (rule.operator === "isBetween") === (operator === "isBetween")
   );
 }
 
@@ -851,7 +829,6 @@ function QueryBuilderRemove({
   const group = useGroupContext("QueryBuilderRemove");
   const { remove } = useQueryActions("QueryBuilderRemove");
 
-  // Outside a rule it removes the group, and the root group can't be removed.
   const id = rule?.id ?? (group.isRoot ? undefined : group.group.id);
   if (!id) return null;
 

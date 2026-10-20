@@ -10,6 +10,7 @@ import {
   type QueryGroup,
   type QueryRule,
   removeQueryNode,
+  setQueryRuleOperator,
   updateQueryNode,
 } from "@/registry/bases/radix/lib/query-builder";
 
@@ -287,5 +288,44 @@ describe("query tree helpers", () => {
       operator: "eq",
       value: "true",
     });
+  });
+});
+
+describe("setQueryRuleOperator", () => {
+  test("keeps a value the new operator can use", () => {
+    expect(
+      setQueryRuleOperator(rule("estimate", "gt", "5"), estimateField, "lte"),
+    ).toMatchObject({ operator: "lte", value: "5" });
+    expect(
+      setQueryRuleOperator(
+        rule("status", "inArray", ["todo"]),
+        statusField,
+        "notInArray",
+      ),
+    ).toMatchObject({ operator: "notInArray", value: ["todo"] });
+  });
+
+  test("resets the value when its shape changes", () => {
+    expect(
+      setQueryRuleOperator(
+        rule("estimate", "gt", "5"),
+        estimateField,
+        "isBetween",
+      ),
+    ).toMatchObject({ operator: "isBetween", value: ["", ""] });
+    expect(
+      setQueryRuleOperator(
+        rule("status", "inArray", ["todo"]),
+        statusField,
+        "eq",
+      ),
+    ).toMatchObject({ operator: "eq", value: "" });
+    expect(
+      setQueryRuleOperator(
+        rule("title", "iLike", "bug"),
+        titleField,
+        "isEmpty",
+      ),
+    ).toMatchObject({ operator: "isEmpty", value: undefined });
   });
 });
