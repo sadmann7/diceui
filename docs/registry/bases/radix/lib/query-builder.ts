@@ -161,6 +161,33 @@ export function getDefaultQueryValue(
   return "";
 }
 
+const ARRAY_OPERATORS: QueryOperator[] = ["isBetween", "inArray", "notInArray"];
+
+function getIsValueKept(rule: QueryRule, operator: QueryOperator) {
+  const needsValue = operator !== "isEmpty" && operator !== "isNotEmpty";
+  return (
+    needsValue &&
+    rule.value !== undefined &&
+    ARRAY_OPERATORS.includes(rule.operator) ===
+      ARRAY_OPERATORS.includes(operator) &&
+    (rule.operator === "isBetween") === (operator === "isBetween")
+  );
+}
+
+export function setQueryRuleOperator(
+  rule: QueryRule,
+  field: QueryField,
+  operator: QueryOperator,
+): QueryRule {
+  return {
+    ...rule,
+    operator,
+    value: getIsValueKept(rule, operator)
+      ? rule.value
+      : getDefaultQueryValue(field, operator),
+  };
+}
+
 export function updateQueryNode(
   root: QueryGroup,
   id: string,
@@ -218,7 +245,6 @@ function getIsFilled(value: unknown) {
   return typeof value === "string" && value.trim() !== "";
 }
 
-// A rule counts once it has everything its operator needs.
 export function getIsQueryRuleActive(rule: QueryRule, field?: QueryField) {
   if (!field || !getQueryOperators(field).includes(rule.operator)) {
     return false;
@@ -516,9 +542,7 @@ function formatGroup(
   return group.not ? `NOT (${sql})` : sql;
 }
 
-// Turns a query into a parameterized WHERE clause. Only fields in `fields` are
-// used, so column names never come from user input. Returns an empty `sql`
-// when no rule is filled in.
+// Columns only come from `fields`, so column names never come from user input.
 export function formatQuery(
   query: QueryGroup,
   fields: QueryField[],
