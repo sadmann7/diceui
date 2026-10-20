@@ -1406,6 +1406,23 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "query-builder-command-filter-demo",
+    type: "registry:example",
+    registryDependencies: [
+      "query-builder",
+      "button",
+      "button-group",
+      "command-stack",
+      "popover",
+    ],
+    files: [
+      {
+        path: "examples/query-builder-command-filter-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "query-builder-demo",
     type: "registry:example",
     registryDependencies: ["query-builder", "button-group"],
