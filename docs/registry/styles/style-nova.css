@@ -1538,15 +1538,15 @@
   }
 
   .cn-query-builder-field {
-    @apply w-28 @max-[26rem]:w-auto @max-[26rem]:min-w-0 @max-[26rem]:flex-1;
+    @apply w-28 @max-[30.5rem]:w-auto @max-[30.5rem]:min-w-0 @max-[30.5rem]:flex-1;
   }
 
   .cn-query-builder-operator {
-    @apply w-32 @max-[26rem]:w-auto @max-[26rem]:min-w-0 @max-[26rem]:flex-1;
+    @apply w-32 @max-[30.5rem]:w-auto @max-[30.5rem]:min-w-0 @max-[30.5rem]:flex-1;
   }
 
   .cn-query-builder-value {
-    @apply min-w-28 flex-1 gap-1.5 @max-[26rem]:order-last @max-[26rem]:basis-full @max-[26rem]:ps-20 data-[operator=isBetween]:order-last data-[operator=isBetween]:basis-full data-[operator=isBetween]:ps-20;
+    @apply max-w-48 min-w-28 flex-1 gap-1.5 @max-[30.5rem]:order-last @max-[30.5rem]:max-w-none @max-[30.5rem]:basis-full @max-[30.5rem]:ps-20 data-[operator=isBetween]:order-last data-[operator=isBetween]:max-w-none data-[operator=isBetween]:basis-full data-[operator=isBetween]:ps-20;
   }
 
   .cn-query-builder-value-separator {
@@ -1578,7 +1578,7 @@
   }
 
   .cn-query-builder-remove {
-    @apply ms-auto text-muted-foreground;
+    @apply text-muted-foreground;
   }
 
   /* MARK: Rating */

@@ -57,7 +57,7 @@ export default function QueryBuilderDemo() {
       fields={fields}
       value={query}
       onValueChange={setQuery}
-      className="w-full max-w-2xl"
+      className="w-full max-w-xl"
     >
       <QueryBuilderGroup>
         <QueryBuilderConnector />

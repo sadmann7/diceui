@@ -77,7 +77,7 @@ export default function QueryBuilderSqlDemo() {
   const { sql, params } = formatQuery(query, fields, { dialect });
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-4">
+    <div className="flex w-full max-w-xl flex-col gap-4">
       <QueryBuilder fields={fields} value={query} onValueChange={setQuery}>
         <QueryBuilderGroup>
           <QueryBuilderConnector />

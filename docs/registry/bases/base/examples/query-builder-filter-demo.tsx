@@ -76,7 +76,7 @@ export default function QueryBuilderFilterDemo() {
   );
 
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-4">
+    <div className="flex w-full max-w-xl flex-col gap-4">
       <QueryBuilder fields={fields} value={query} onValueChange={setQuery}>
         <QueryBuilderGroup>
           <QueryBuilderConnector />
