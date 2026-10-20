@@ -6,12 +6,14 @@ import {
   createQueryRule,
   formatQuery,
   getIsQueryRuleMultiple,
+  getQuerySelection,
   matchesQuery,
   type QueryField,
   type QueryGroup,
   type QueryRule,
   removeQueryNode,
   setQueryRuleOperator,
+  setQuerySelection,
   setQueryRuleValues,
   updateQueryNode,
 } from "@/registry/bases/radix/lib/query-builder";
@@ -421,5 +423,69 @@ describe("setQueryRuleValues", () => {
     expect(getIsQueryRuleMultiple(rule("archived", "eq"), archivedField)).toBe(
       false,
     );
+  });
+});
+
+describe("query selection", () => {
+  const priorityField: QueryField = {
+    name: "priority",
+    label: "Priority",
+    type: "select",
+    options: [
+      { label: "High", value: "high" },
+      { label: "Low", value: "low" },
+    ],
+  };
+  const selectionFields = [statusField, priorityField];
+
+  test("reads one list of values per field", () => {
+    const query = group("and", [
+      rule("status", "inArray", ["todo", "done"]),
+      rule("priority", "eq", "high"),
+      rule("status", "eq", "done"),
+    ]);
+    expect(getQuerySelection(query)).toEqual({
+      status: ["todo", "done"],
+      priority: ["high"],
+    });
+  });
+
+  test("adds, updates and removes one rule per field", () => {
+    const query = group("and", [rule("status", "eq", "todo")]);
+
+    const added = setQuerySelection(query, selectionFields, {
+      status: ["todo", "done"],
+      priority: ["high"],
+    });
+    expect(added.rules).toMatchObject([
+      { field: "status", operator: "inArray", value: ["todo", "done"] },
+      { field: "priority", operator: "eq", value: "high" },
+    ]);
+
+    const removed = setQuerySelection(added, selectionFields, {
+      status: ["todo", "done"],
+      priority: [],
+    });
+    expect(removed.rules).toMatchObject([
+      { field: "status", operator: "inArray" },
+    ]);
+  });
+
+  test("leaves fields whose values didn't change alone", () => {
+    const query = group("and", [
+      rule("status", "isEmpty"),
+      rule("priority", "eq", "high"),
+    ]);
+    const next = setQuerySelection(query, selectionFields, {
+      ...getQuerySelection(query),
+      priority: ["high", "low"],
+    });
+    expect(next.rules).toMatchObject([
+      { field: "status", operator: "isEmpty" },
+      { field: "priority", operator: "inArray", value: ["high", "low"] },
+    ]);
+    expect(
+      setQuerySelection(query, selectionFields, getQuerySelection(query)),
+    ).toBe(query);
   });
 });
