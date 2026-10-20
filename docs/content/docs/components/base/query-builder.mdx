@@ -36,6 +36,12 @@ npx shadcn@latest add @diceui/query-builder
 @base-ui/react
 ```
 
+<Step>Install [Faceted](/docs/components/base/faceted), which the field, operator and value pickers use:</Step>
+
+```package-install
+npx shadcn@latest add @diceui/faceted
+```
+
 <Step>Copy and paste the following utilities into your `lib` directory.</Step>
 
 <ComponentSource src="./registry/bases/base/lib/query-builder.ts" title="lib/query-builder.ts" />
@@ -335,13 +341,17 @@ Joins a rule or nested group to the ones before it: "Where" for the first, a sel
   ]}
 />
 
-### QueryBuilderCombinator, QueryBuilderField and QueryBuilderOperator
+### QueryBuilderField and QueryBuilderOperator
 
-Selects for the group's combinator and the rule's field and operator. They accept the props of `SelectTrigger`.
+Searchable [Faceted](/docs/components/base/faceted) pickers for the rule's field and operator. Changing the field resets the rule, and changing the operator keeps the value when it still fits. They accept the props of `Button`.
+
+### QueryBuilderCombinator
+
+A select for the group's combinator. It accepts the props of `SelectTrigger`.
 
 ### QueryBuilderValue
 
-The rule's value. Renders an input, a select, a multi-select or a range, based on the field type and operator, and nothing for `isEmpty` and `isNotEmpty`. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
+The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/base/faceted) picker for select and boolean fields (with multiple selection for `inArray` and `notInArray`), based on the field type and operator, and nothing for `isEmpty` and `isNotEmpty`. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
 
 ### QueryBuilderAddRule
 
@@ -372,7 +382,7 @@ Removes the rule it's in, or the group when used outside a rule. Hidden in the r
 
 ## Accessibility
 
-Groups render with `role="group"`, and rules as a list. The selects and menus follow the [Select](https://base-ui.com/react/components/select) and [Menu](https://base-ui.com/react/components/menu) keyboard patterns.
+Groups render with `role="group"`, and rules as a list. The combinator follows the [Select](https://base-ui.com/react/components/select) keyboard pattern, and the field, operator and value pickers follow [Faceted](/docs/components/base/faceted).
 
 ### Keyboard Interactions
 
@@ -384,15 +394,15 @@ Groups render with `role="group"`, and rules as a list. The selects and menus fo
     },
     {
       keys: ["Enter", "Space"],
-      description: "Opens the focused select or menu, or activates the focused button.",
+      description: "Opens the focused select or picker, or activates the focused button.",
     },
     {
       keys: ["ArrowUp", "ArrowDown"],
-      description: "Moves between options in an open select or menu.",
+      description: "Moves between options in an open select or picker.",
     },
     {
       keys: ["Escape"],
-      description: "Closes the open select or menu.",
+      description: "Closes the open select or picker.",
     },
   ]}
 />

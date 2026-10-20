@@ -24,11 +24,17 @@ import {
 } from "@/registry/bases/radix/lib/query-builder";
 import { Button } from "@/registry/bases/radix/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/registry/bases/radix/ui/dropdown-menu";
+  Faceted,
+  FacetedContent,
+  FacetedEmpty,
+  FacetedGroup,
+  FacetedInput,
+  FacetedItem,
+  FacetedItemIndicator,
+  FacetedList,
+  FacetedTrigger,
+  FacetedValue,
+} from "@/registry/bases/radix/ui/faceted";
 import { Input } from "@/registry/bases/radix/ui/input";
 import {
   Select,
@@ -465,9 +471,7 @@ function QueryBuilderConnector({
   );
 }
 
-interface QueryBuilderFieldProps extends React.ComponentProps<
-  typeof SelectTrigger
-> {}
+interface QueryBuilderFieldProps extends React.ComponentProps<typeof Button> {}
 
 function QueryBuilderField({
   className,
@@ -478,37 +482,70 @@ function QueryBuilderField({
   const { update } = useQueryActions("QueryBuilderField");
 
   return (
-    <Select
+    <Faceted
+      items={fields.map((field) => ({ label: field.label, value: field.name }))}
       value={rule.field}
       onValueChange={(name) => {
         const field = fields.find((item) => item.name === name);
         if (!field) return;
         update(rule.id, () => ({ ...createQueryRule(field), id: rule.id }));
       }}
-      disabled={disabled}
     >
-      <SelectTrigger
-        size="sm"
-        aria-label="Field"
-        data-slot="query-builder-field"
-        {...triggerProps}
-        className={cn("cn-query-builder-field", className)}
-      >
-        <SelectValue placeholder="Field" />
-      </SelectTrigger>
-      <SelectContent>
-        {fields.map((field) => (
-          <SelectItem key={field.name} value={field.name}>
-            {field.label}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+      <FacetedTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          aria-label="Field"
+          data-slot="query-builder-field"
+          disabled={disabled}
+          {...triggerProps}
+          className={cn(
+            "cn-query-builder-field cn-query-builder-select",
+            className,
+          )}
+        >
+          <FacetedValue>
+            {([item]) => (
+              <span
+                className={cn(
+                  "cn-query-builder-select-value",
+                  !item && "text-muted-foreground",
+                )}
+              >
+                {item ? item.label : "Field"}
+              </span>
+            )}
+          </FacetedValue>
+          <IconPlaceholder
+            lucide="ChevronDownIcon"
+            tabler="IconChevronDown"
+            hugeicons="ArrowDown01Icon"
+            phosphor="CaretDownIcon"
+            remixicon="RiArrowDownSLine"
+            className="cn-query-builder-select-icon"
+          />
+        </Button>
+      </FacetedTrigger>
+      <FacetedContent align="start">
+        <FacetedInput placeholder="Search fields" />
+        <FacetedList>
+          <FacetedEmpty>No fields found.</FacetedEmpty>
+          <FacetedGroup>
+            {fields.map((field) => (
+              <FacetedItem key={field.name} value={field.name}>
+                <span className="flex-1 truncate">{field.label}</span>
+                <FacetedItemIndicator />
+              </FacetedItem>
+            ))}
+          </FacetedGroup>
+        </FacetedList>
+      </FacetedContent>
+    </Faceted>
   );
 }
 
 interface QueryBuilderOperatorProps extends React.ComponentProps<
-  typeof SelectTrigger
+  typeof Button
 > {}
 
 function QueryBuilderOperator({
@@ -522,34 +559,67 @@ function QueryBuilderOperator({
 
   if (!field) return null;
 
+  const operators = getQueryOperators(field).map((operator) => ({
+    label: getQueryOperatorLabel(operator, field.type),
+    value: operator,
+  }));
+
   return (
-    <Select
+    <Faceted
+      items={operators}
       value={rule.operator}
       onValueChange={(next) => {
-        const operator = next as QueryOperator;
+        if (!next) return;
         update(rule.id, (node) =>
-          setQueryRuleOperator(node as QueryRule, field, operator),
+          setQueryRuleOperator(node as QueryRule, field, next as QueryOperator),
         );
       }}
-      disabled={disabled}
     >
-      <SelectTrigger
-        size="sm"
-        aria-label="Operator"
-        data-slot="query-builder-operator"
-        {...triggerProps}
-        className={cn("cn-query-builder-operator", className)}
-      >
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {getQueryOperators(field).map((operator) => (
-          <SelectItem key={operator} value={operator}>
-            {getQueryOperatorLabel(operator, field.type)}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+      <FacetedTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          aria-label="Operator"
+          data-slot="query-builder-operator"
+          disabled={disabled}
+          {...triggerProps}
+          className={cn(
+            "cn-query-builder-operator cn-query-builder-select",
+            className,
+          )}
+        >
+          <FacetedValue>
+            {([item]) => (
+              <span className="cn-query-builder-select-value">
+                {item?.label}
+              </span>
+            )}
+          </FacetedValue>
+          <IconPlaceholder
+            lucide="ChevronDownIcon"
+            tabler="IconChevronDown"
+            hugeicons="ArrowDown01Icon"
+            phosphor="CaretDownIcon"
+            remixicon="RiArrowDownSLine"
+            className="cn-query-builder-select-icon"
+          />
+        </Button>
+      </FacetedTrigger>
+      <FacetedContent align="start">
+        <FacetedInput placeholder="Search operators" />
+        <FacetedList>
+          <FacetedEmpty>No operators found.</FacetedEmpty>
+          <FacetedGroup>
+            {operators.map((operator) => (
+              <FacetedItem key={operator.value} value={operator.value}>
+                <span className="flex-1 truncate">{operator.label}</span>
+                <FacetedItemIndicator />
+              </FacetedItem>
+            ))}
+          </FacetedGroup>
+        </FacetedList>
+      </FacetedContent>
+    </Faceted>
   );
 }
 
@@ -608,60 +678,6 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
     );
   }
 
-  if (rule.operator === "inArray" || rule.operator === "notInArray") {
-    const selected = Array.isArray(rule.value) ? rule.value : [];
-    const labels = (field.options ?? [])
-      .filter((option) => selected.includes(option.value))
-      .map((option) => option.label);
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="sm"
-            aria-label={field.label}
-            data-slot="query-builder-value"
-            data-operator={rule.operator}
-            disabled={disabled}
-            className={cn("cn-query-builder-multi-select", valueClassName)}
-          >
-            <span className="truncate">
-              {labels.length > 0
-                ? labels.join(", ")
-                : (field.placeholder ?? "Select values")}
-            </span>
-            <IconPlaceholder
-              lucide="ChevronDownIcon"
-              tabler="IconChevronDown"
-              hugeicons="ArrowDown01Icon"
-              phosphor="CaretDownIcon"
-              remixicon="RiArrowDownSLine"
-              className="cn-query-builder-multi-select-icon"
-            />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          {(field.options ?? []).map((option) => (
-            <DropdownMenuCheckboxItem
-              key={option.value}
-              checked={selected.includes(option.value)}
-              onSelect={(event) => event.preventDefault()}
-              onCheckedChange={(checked) =>
-                onChange(
-                  checked
-                    ? [...selected, option.value]
-                    : selected.filter((item) => item !== option.value),
-                )
-              }
-            >
-              {option.label}
-            </DropdownMenuCheckboxItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
-  }
-
   if (
     field.type === "boolean" ||
     field.type === "select" ||
@@ -674,29 +690,66 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
             { label: "False", value: "false" },
           ]
         : (field.options ?? []);
+    const multiple =
+      rule.operator === "inArray" || rule.operator === "notInArray";
+
     return (
-      <Select
-        value={typeof rule.value === "string" ? rule.value : ""}
-        onValueChange={onChange}
-        disabled={disabled}
+      <Faceted
+        items={options}
+        multiple={multiple}
+        value={rule.value}
+        onValueChange={(next) => onChange(next ?? (multiple ? [] : ""))}
       >
-        <SelectTrigger
-          size="sm"
-          aria-label={field.label}
-          data-slot="query-builder-value"
-          data-operator={rule.operator}
-          className={valueClassName}
-        >
-          <SelectValue placeholder={field.placeholder ?? "Select a value"} />
-        </SelectTrigger>
-        <SelectContent>
-          {options.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+        <FacetedTrigger asChild>
+          <Button
+            variant="outline"
+            size="sm"
+            aria-label={field.label}
+            data-slot="query-builder-value"
+            data-operator={rule.operator}
+            disabled={disabled}
+            className={cn("cn-query-builder-select", valueClassName)}
+          >
+            <FacetedValue>
+              {(items) => (
+                <span
+                  className={cn(
+                    "cn-query-builder-select-value",
+                    items.length === 0 && "text-muted-foreground",
+                  )}
+                >
+                  {items.length > 0
+                    ? items.map((item) => item.label).join(", ")
+                    : (field.placeholder ??
+                      (multiple ? "Select values" : "Select a value"))}
+                </span>
+              )}
+            </FacetedValue>
+            <IconPlaceholder
+              lucide="ChevronDownIcon"
+              tabler="IconChevronDown"
+              hugeicons="ArrowDown01Icon"
+              phosphor="CaretDownIcon"
+              remixicon="RiArrowDownSLine"
+              className="cn-query-builder-select-icon"
+            />
+          </Button>
+        </FacetedTrigger>
+        <FacetedContent align="start">
+          <FacetedInput placeholder={`Search ${field.label.toLowerCase()}`} />
+          <FacetedList>
+            <FacetedEmpty>No results.</FacetedEmpty>
+            <FacetedGroup>
+              {options.map((option) => (
+                <FacetedItem key={option.value} value={option.value}>
+                  <span className="flex-1 truncate">{option.label}</span>
+                  <FacetedItemIndicator />
+                </FacetedItem>
+              ))}
+            </FacetedGroup>
+          </FacetedList>
+        </FacetedContent>
+      </Faceted>
     );
   }
 

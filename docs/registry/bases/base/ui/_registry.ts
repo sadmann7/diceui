@@ -451,7 +451,7 @@ export const ui: Registry["items"] = [
     name: "query-builder",
     type: "registry:ui",
     dependencies: ["@base-ui/react"],
-    registryDependencies: ["button", "dropdown-menu", "input", "select"],
+    registryDependencies: ["button", "input", "select", "@diceui/faceted"],
     files: [
       {
         path: "ui/query-builder.tsx",
