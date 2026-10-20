@@ -3,6 +3,7 @@ import path from "node:path";
 import { twMerge } from "tailwind-merge";
 
 import { STYLES } from "../registry/styles";
+import { writeFileIfChanged } from "./write-files.mts";
 
 // Generates every style from `style-new-york.css` using how shadcn's own parts
 // change per style (`shadcn/roles.json`, from `pnpm shadcn:sync`).
@@ -402,7 +403,10 @@ export async function syncStyles() {
           (_, marker: string, classes: string) =>
             `  .${marker} {\n    @apply ${overrides.get(marker) ?? generate(classes, name, marker, hints.get(marker))};\n  }`,
         );
-      return fs.writeFile(path.join(STYLES_SRC_PATH, `style-${name}.css`), css);
+      return writeFileIfChanged(
+        path.join(STYLES_SRC_PATH, `style-${name}.css`),
+        css,
+      );
     }),
   );
 }
