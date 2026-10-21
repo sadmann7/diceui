@@ -1,15 +1,36 @@
 import type * as React from "react";
 
+import { cva, type VariantProps } from "class-variance-authority";
+
 import { cn } from "@/lib/utils";
 
-function Demo({ children, className, ...props }: React.ComponentProps<"div">) {
+const demoVariants = cva(
+  "mx-auto grid w-full grid-cols-1 place-items-center gap-4",
+  {
+    variants: {
+      size: {
+        sm: "max-w-lg",
+        default: "max-w-3xl",
+        lg: "max-w-5xl",
+      },
+    },
+    defaultVariants: {
+      size: "default",
+    },
+  },
+);
+
+function Demo({
+  size = "default",
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof demoVariants>) {
   return (
     <div
       data-slot="demo"
-      className={cn(
-        "mx-auto grid w-full max-w-3xl grid-cols-1 place-items-center gap-4",
-        className,
-      )}
+      data-size={size}
+      className={cn(demoVariants({ size }), className)}
       {...props}
     >
       {Array.isArray(children) ? (
@@ -36,19 +57,13 @@ function DemoItem({ className, ...props }: React.ComponentProps<"div">) {
   );
 }
 
-function DemoItemGroup({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
+function DemoItemGroup({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       data-slot="demo-item-group"
-      className={cn("flex flex-col gap-4", className)}
+      className={cn("flex w-full flex-col items-center gap-4", className)}
       {...props}
-    >
-      {children}
-    </div>
+    />
   );
 }
 
