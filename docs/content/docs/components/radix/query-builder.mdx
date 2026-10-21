@@ -87,7 +87,7 @@ return (
     <QueryBuilderGroup>
       <QueryBuilderConnector />
       <QueryBuilderGroupContent>
-        <QueryBuilderGroupHeader className="data-[depth=0]:hidden">
+        <QueryBuilderGroupHeader>
           <QueryBuilderGroupTitle />
           <QueryBuilderAddRule />
           <QueryBuilderAddGroup />
@@ -100,11 +100,11 @@ return (
               <QueryBuilderField />
               <QueryBuilderOperator />
               <QueryBuilderValue />
-              <QueryBuilderRemove variant="outline" />
+              <QueryBuilderRemove />
             </ButtonGroup>
           </QueryBuilderRule>
         </QueryBuilderRules>
-        <QueryBuilderGroupFooter className="not-data-[depth=0]:hidden">
+        <QueryBuilderGroupFooter>
           <QueryBuilderAddRule />
           <QueryBuilderAddGroup />
         </QueryBuilderGroupFooter>
@@ -114,7 +114,12 @@ return (
 );
 ```
 
-Use `data-depth` to show the header only on nested groups and the footer only on the root, as above.
+The header, content and footer carry `data-depth`, so you can show the header only on nested groups and the footer only on the root:
+
+```tsx
+<QueryBuilderGroupHeader className="data-[depth=0]:hidden" />
+<QueryBuilderGroupFooter className="not-data-[depth=0]:hidden" />
+```
 
 ## Examples
 
