@@ -1,6 +1,7 @@
 import type {
   Cell,
   ColumnDef,
+  ColumnPinningPosition,
   Header,
   ReactTable,
   Row,
@@ -18,7 +19,8 @@ import type { DataGridFeatures } from "@/lib/data-grid-features";
 import type {
   CellPosition,
   CellPresence,
-  CellUpdate,
+  CreateRowDetails,
+  DataChangeDetails,
   Direction,
   FileCellData,
   RowHeightValue,
@@ -26,109 +28,72 @@ import type {
 import type { PopoverContent } from "@/registry/bases/radix/ui/popover";
 import type { EmptyProps } from "@/types";
 
-type RowAddEventDetails = (
-  | {
-      reason: "add-row-press";
-      event?:
-        | React.MouseEvent<HTMLDivElement>
-        | React.KeyboardEvent<HTMLDivElement>;
-    }
-  | { reason: "insert-below"; event: KeyboardEvent; afterRowId: string }
-  | { reason: "paste"; event?: undefined }
-) & {
-  cancel: () => void;
-};
 export interface UseDataGridProps<TData extends RowData> extends Pick<
   TableOptions<DataGridFeatures, TData>,
   "data" | "columns" | "getRowId" | "defaultColumn" | "initialState" | "state"
 > {
   /**
-   * Event handler called when data changes due to cell edits.
-   * Receives the updated data array after changes are applied.
+   * Event handler called whenever the data changes, from edits, pastes,
+   * `table.updateCells`, added or deleted rows, or undo/redo.
+   * Receives the next data and details about what changed.
+   * Passing the data back is optional, since the grid keeps its own copy.
    *
    * ```ts
-   * onDataChange={(data) => {
+   * onDataChange={(data, { reason, changes, addedRows, removedRows }) => {
    *   setData(data)
+   *   saveChanges({ changes, addedRows, removedRows })
    * }}
    * ```
    */
-  onDataChange?: (data: TData[]) => void;
+  onDataChange?: (data: TData[], details: DataChangeDetails<TData>) => void;
 
   /**
-   * Event handler called when adding a new row.
-   * `eventDetails.reason` is `"add-row-press"` for the footer button, `"insert-below"`
+   * Creates a new row when the user adds one.
+   * `details.reason` is `"add-row-press"` for the footer button, `"insert-below"`
    * for Shift+Enter on a cell (with `afterRowId`), or `"paste"` when a paste needs more rows.
-   * Call `eventDetails.cancel()` to skip focusing the new row.
-   * Return the new row's id, and optionally a column, to focus it, or null to skip focusing.
+   * The grid inserts the returned row and focuses it. Return null to skip adding a row.
    * Can be async to support server-side row creation.
    *
    * ```ts
-   * onRowAdd={async (eventDetails) => {
-   *   const newRow = await createRow()
-   *   setData(prev => [...prev, newRow])
-   *
-   *   // Focus the cell under the "name" column in the new row
-   *   return { rowId: newRow.id, columnId: "name" }
+   * createRow={async () => {
+   *   const row = await createPerson()
+   *   return row
    * }}
    * ```
    */
-  onRowAdd?: (
-    eventDetails: RowAddEventDetails,
-  ) => RowAddResult | Promise<RowAddResult | null> | null;
+  createRow?: (
+    details: CreateRowDetails,
+  ) => TData | null | Promise<TData | null>;
 
   /**
-   * Event handler called when adding multiple rows at once.
-   * Used during paste operations when clipboard data exceeds available rows.
-   * More efficient than calling onRowAdd multiple times as it allows a single API call.
-   * Can be async to support server-side row creation.
-   *
-   * ```ts
-   * onRowsAdd={async (count) => {
-   *   await fetch('/api/people/bulk', {
-   *     method: 'POST',
-   *     body: JSON.stringify({ count })
-   *   })
-   *   const newRows = Array.from({ length: count }, () => ({ id: generateId() }))
-   *   setData(prev => [...prev, ...newRows])
-   * }}
-   * ```
+   * Whether users can delete rows, from the context menu or with Ctrl+Backspace.
+   * @default false
    */
-  onRowsAdd?: (count: number) => void | Promise<void>;
+  enableRowDeletion?: boolean;
 
   /**
-   * Event handler called when deleting rows.
-   * Receives both the row data objects and their row ids.
-   * Can be async to support server-side row deletion.
-   *
-   * ```ts
-   * onRowsDelete={async (rows, rowIds) => {
-   *   await deleteRowsFromServer(rows.map(r => r.id))
-   *   setData(prev => prev.filter(row => !rows.includes(row)))
-   * }}
-   * ```
+   * Whether undo/redo is enabled, with Ctrl+Z, Ctrl+Shift+Z and Ctrl+Y.
+   * Defaults to on unless the grid is read-only.
    */
-  onRowsDelete?: (rows: TData[], rowIds: string[]) => void | Promise<void>;
+  enableUndoRedo?: boolean;
 
   /**
-   * Event handler called after cells are pasted.
-   * Receives the cell updates that were applied.
-   * Can be async to support server-side persistence.
-   *
-   * ```ts
-   * onPaste={async (updates) => {
-   *   await saveCells(updates)
-   * }}
-   * ```
+   * Maximum number of undo steps to keep.
+   * @default 100
    */
-  onPaste?: (updates: Array<CellUpdate>) => void | Promise<void>;
+  maxHistory?: number;
 
   /**
-   * Event handler called when files are uploaded to a file cell.
-   * Should handle file upload to server/storage and return file metadata.
-   * Can be async to support server-side file uploads.
+   * How often, in milliseconds, `onDataChange` runs for `table.updateCells(updates, { batch: true })`.
+   * @default 500
+   */
+  batchUpdateDelay?: number;
+
+  /**
+   * Uploads files added to a file cell and returns their metadata.
    *
    * ```ts
-   * onFilesUpload={async ({ files, rowId, columnId }) => {
+   * uploadFiles={async ({ files, rowId, columnId }) => {
    *   const formData = new FormData()
    *   files.forEach(file => formData.append('files', file))
    *   const response = await fetch('/api/upload', {
@@ -146,19 +111,17 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    * }}
    * ```
    */
-  onFilesUpload?: (params: {
+  uploadFiles?: (params: {
     files: File[];
     rowId: string;
     columnId: string;
   }) => Promise<FileCellData[]>;
 
   /**
-   * Event handler called when files are deleted from a file cell.
-   * Should handle file deletion from server/storage.
-   * Can be async to support server-side file deletion.
+   * Deletes files removed from a file cell.
    *
    * ```ts
-   * onFilesDelete={async ({ fileIds, rowId, columnId }) => {
+   * deleteFiles={async ({ fileIds, rowId, columnId }) => {
    *   await fetch('/api/files/batch-delete', {
    *     method: 'DELETE',
    *     body: JSON.stringify({ fileIds })
@@ -166,7 +129,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    * }}
    * ```
    */
-  onFilesDelete?: (params: {
+  deleteFiles?: (params: {
     fileIds: string[];
     rowId: string;
     columnId: string;
@@ -223,7 +186,7 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   /**
    * Enable paste functionality with Ctrl+V (or Cmd+V on Mac) shortcut.
    * Allows pasting data from clipboard into the grid.
-   * Requires `onRowsAdd` to be provided for creating new rows when needed.
+   * Uses `createRow` to add rows when a paste runs past the last row.
    * @default false
    */
   enablePaste?: boolean;
@@ -240,18 +203,6 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    * @default false
    */
   readOnly?: boolean;
-}
-
-export interface RowAddResult {
-  /**
-   * The id of the added row, used to focus it.
-   */
-  rowId: string;
-
-  /**
-   * The column to focus in the added row. Defaults to the first navigable column.
-   */
-  columnId?: string;
 }
 
 export interface DataGridProps<
@@ -316,7 +267,7 @@ export interface DataGridProps<
 
   /**
    * Event handler called when adding a new row.
-   * Only defined when `onRowAdd` is provided to useDataGrid.
+   * Only defined when `createRow` is provided to useDataGrid.
    * Handles the row addition interaction from the grid footer.
    */
   onRowAdd?: (
@@ -536,9 +487,39 @@ export interface DataGridCellProps<TData extends RowData> {
    * When true, prevents editing and shows read-only UI.
    */
   readOnly: boolean;
+
+  /**
+   * The width of the cell's column.
+   */
+  width: number;
+
+  /**
+   * Which side the cell's column is pinned to, if any.
+   */
+  pinned: ColumnPinningPosition;
+
+  /**
+   * The offset of a pinned cell from its side of the grid.
+   */
+  pinnedOffset: number;
+
+  /**
+   * Whether the cell grows to fill the remaining width.
+   */
+  grow: boolean;
+
+  /**
+   * Whether to draw a border on the cell's start edge.
+   */
+  showStartBorder: boolean;
+
+  /**
+   * Whether to draw a border on the cell's end edge.
+   */
+  showEndBorder: boolean;
 }
 
-export interface DataGridCellWrapperProps<TData extends RowData>
+export interface DataGridCellElementProps<TData extends RowData>
   extends DataGridCellProps<TData>, EmptyProps<"div"> {}
 
 export interface DataGridRowProps<
@@ -690,7 +671,7 @@ export interface DataGridKeyboardShortcutsProps {
 
   /**
    * Whether to show the shortcuts related to undo/redo functionality.
-   * Should be set to true when using the useDataGridUndoRedo hook.
+   * Should be set to true unless the grid is read-only or `enableUndoRedo` is false.
    * Adds undo/redo shortcuts (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y) to the dialog.
    *
    * ```tsx
@@ -716,147 +697,29 @@ export interface DataGridKeyboardShortcutsProps {
 
   /**
    * Whether to show the shortcuts related to row addition.
-   * Should be set to true when `onRowAdd` is provided to useDataGrid.
+   * Should be set to true when `createRow` is provided to useDataGrid.
    * Adds row insertion shortcut (Shift+Enter) to the dialog.
    *
    * ```tsx
-   * <DataGridKeyboardShortcuts enableRowAdd />
+   * <DataGridKeyboardShortcuts enableRowCreation />
    * ```
    *
    * @default false
    */
-  enableRowAdd?: boolean;
+  enableRowCreation?: boolean;
 
   /**
    * Whether to show the shortcuts related to row deletion.
-   * Should be set to true when `onRowsDelete` is provided to useDataGrid.
+   * Should be set to true when `enableRowDeletion` is true in useDataGrid.
    * Adds row deletion shortcuts (Ctrl+Backspace, Ctrl+Delete) to the dialog.
    *
    * ```tsx
-   * <DataGridKeyboardShortcuts enableRowsDelete />
+   * <DataGridKeyboardShortcuts enableRowDeletion />
    * ```
    *
    * @default false
    */
-  enableRowsDelete?: boolean;
-}
-
-export interface UseDataGridUndoRedoProps<TData extends RowData> {
-  /**
-   * The data array for the grid.
-   * Used to track changes and apply undo/redo operations.
-   */
-  data: TData[];
-
-  /**
-   * Event handler called when data changes due to undo/redo.
-   * Receives the updated data array after applying the operation.
-   *
-   * ```tsx
-   * onDataChange={(data) => setData(data)}
-   * ```
-   */
-  onDataChange: (data: TData[]) => void;
-
-  /**
-   * Function to get a unique ID from a row.
-   * Used for ID-based tracking instead of index-based, making undo/redo robust against sorting/filtering.
-   *
-   * ```tsx
-   * getRowId={(row) => row.id}
-   * ```
-   */
-  getRowId: (row: TData) => string;
-
-  /**
-   * Maximum number of history entries to keep.
-   * Older entries are discarded when the limit is reached.
-   *
-   * @default 100
-   */
-  maxHistory?: number;
-
-  /**
-   * Whether undo/redo functionality is enabled.
-   * When false, keyboard shortcuts and history tracking are disabled.
-   *
-   * @default true
-   */
-  enabled?: boolean;
-}
-
-export interface UseDataGridUndoRedoReturn<TData extends RowData> {
-  /**
-   * Whether there are any actions to undo.
-   * Use this to conditionally enable/disable undo buttons.
-   */
-  canUndo: boolean;
-
-  /**
-   * Whether there are any actions to redo.
-   * Use this to conditionally enable/disable redo buttons.
-   */
-  canRedo: boolean;
-
-  /**
-   * Function to undo the last action.
-   * Shows a toast notification with the result.
-   */
-  onUndo: () => void;
-
-  /**
-   * Function to redo the last undone action.
-   * Shows a toast notification with the result.
-   */
-  onRedo: () => void;
-
-  /**
-   * Function to clear all history.
-   * Useful when resetting the grid state.
-   */
-  onClear: () => void;
-
-  /**
-   * Function to track cell updates for undo/redo.
-   * Call this when cells are modified to enable undoing those changes.
-   *
-   * ```tsx
-   * trackCellsUpdate([{
-   *   rowId: "row-1",
-   *   columnId: "name",
-   *   previousValue: "Old Name",
-   *   newValue: "New Name"
-   * }])
-   * ```
-   */
-  trackCellsUpdate: (
-    updates: Array<{
-      rowId: string;
-      columnId: string;
-      previousValue: unknown;
-      newValue: unknown;
-    }>,
-  ) => void;
-
-  /**
-   * Function to track row additions for undo/redo.
-   * Call this after adding new rows to enable undoing the addition.
-   *
-   * ```tsx
-   * trackRowsAdd([newRow1, newRow2])
-   * ```
-   */
-  trackRowsAdd: (rows: TData[]) => void;
-
-  /**
-   * Function to track row deletions for undo/redo.
-   * Call this before deleting rows to enable undoing the deletion.
-   *
-   * ```tsx
-   * trackRowsDelete([rowToDelete1, rowToDelete2])
-   * ```
-   */
-  trackRowsDelete: (rows: TData[]) => void;
+  enableRowDeletion?: boolean;
 }
 
 export interface DataGridSkeletonProps extends EmptyProps<"div"> {}

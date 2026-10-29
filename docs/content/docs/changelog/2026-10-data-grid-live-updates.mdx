@@ -1,0 +1,58 @@
+---
+title: October 2026 - Data Grid Live Updates
+description: Data Grid gets live cell updates, built-in undo/redo, and one onDataChange for every change, with renamed row and file props.
+date: 2026-10-29T12:00:00Z
+---
+
+[Data Grid](/docs/components/data-grid) now has a single data flow. Every change, whether it comes from an edit, a paste, your code, added or deleted rows, or undo/redo, comes out of `onDataChange`, and each update re-renders only the cells it changes.
+
+- **Change details.** `onDataChange(data, details)` tells you why the data changed (`reason`) and what changed (`changes`, `addedRows`, `removedRows`), so you can save just that. Passing the data back is optional, since the grid keeps its own copy.
+- **Live cell updates.** `table.updateCells` changes values from your code and re-renders only the changed cells. Pass `{ batch: true }` for live data: visible cells update once a frame, and `onDataChange` runs at most every `batchUpdateDelay` milliseconds.
+- **Direct cell writes.** A column's `meta.writeCell(element, value)` writes values straight into its cells, skipping React for the fastest updates.
+- **Built-in undo/redo.** Edits, pastes, cell updates and row changes go into the history, with <Kbd>Ctrl</Kbd> / <Kbd>Cmd</Kbd> + <Kbd>Z</Kbd> to undo. Call `table.undo()` and `table.redo()` from your own buttons, and check `table.getCanUndo()` and `table.getCanRedo()`.
+- **Row APIs.** `table.addRows(rows, { afterRowId })` and `table.deleteRows(rowIds)` change rows from your code. Adding, deleting or editing rows while sorted updates only the affected rows.
+- **Number formats.** Number cells take a `format` option with `Intl.NumberFormat` options, such as currency.
+- **Column icons.** `meta.icon` replaces the header's variant icon.
+- **Filters.** Switching a select filter between single and multi-value operators keeps its values.
+
+### Migrating
+
+This release has breaking changes. Reinstall all Data Grid files together, because the components, hook, and `lib` files depend on each other. It adds `data-grid-data-cell.tsx` and `lib/data-grid-row-models.ts`, and removes `data-grid-cell-wrapper.tsx` and `hooks/use-data-grid-undo-redo.ts`.
+
+- **`useDataGridUndoRedo` is gone.** Undo/redo is built in and on unless the grid is read-only. Remove the hook and its tracking calls, and set `enableUndoRedo: false` to turn it off.
+- **`onRowAdd` is now `createRow`.** It returns the new row instead of adding it yourself. The grid inserts it and focuses it: below the current row and in the same column for <Kbd>Shift</Kbd> + <Kbd>Enter</Kbd>, or at the end in the first data column for the add row button. Return `null` to skip adding a row.
+- **`onRowsAdd` is gone.** A paste that needs more rows calls `createRow` with `reason: "paste"` for each one.
+- **`onRowsDelete` is now `enableRowDeletion`.** Set it to `true`, and read deleted rows from `onDataChange`, where `reason` is `"delete-rows"` and `removedRows` holds them.
+- **`onPaste` is gone.** Read pasted values from `onDataChange`, where `reason` is `"paste"` and `changes` lists each cell.
+- **`onFilesUpload` and `onFilesDelete` are now `uploadFiles` and `deleteFiles`.** Their arguments are unchanged.
+- **`DataGridCellWrapper` is now `DataGridCell`.** Custom cell variants wrap their content in `DataGridCell`, and CSS that targeted `[data-slot="data-grid-cell-wrapper"]` should target `[data-slot="data-grid-cell"]`. The component that picks a cell variant is now `DataGridDataCell`.
+- **`DataGridKeyboardShortcuts` props are renamed.** `enableRowAdd` is now `enableRowCreation`, and `enableRowsDelete` is now `enableRowDeletion`.
+
+```tsx
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  getRowId: (row) => row.id,
+  onDataChange: (nextData, { reason, changes, addedRows, removedRows }) => {
+    setData(nextData);
+    void saveChanges({ reason, changes, addedRows, removedRows });
+  },
+  createRow: () => ({ id: crypto.randomUUID() }),
+  enableRowDeletion: true,
+  uploadFiles,
+  deleteFiles,
+});
+
+return (
+  <>
+    <DataGridKeyboardShortcuts
+      enableUndoRedo
+      enableRowCreation
+      enableRowDeletion
+    />
+    <DataGrid {...dataGridProps} table={table} />
+  </>
+);
+```
+
+[Read the docs](/docs/components/data-grid)
