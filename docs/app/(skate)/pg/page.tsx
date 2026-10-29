@@ -1,15 +1,17 @@
 import { Demo, DemoItemGroup } from "@/components/demo";
 import { Shell } from "@/components/shell";
-import CommandStackBaseDemo from "@/registry/bases/base/examples/command-stack-demo";
-import CommandStackRadixDemo from "@/registry/bases/radix/examples/command-stack-demo";
+import QueryBuilderBaseDemo from "@/registry/bases/base/examples/query-builder-demo";
+import QueryBuilderRadixDemo from "@/registry/bases/radix/examples/query-builder-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
         <DemoItemGroup>
-          <CommandStackBaseDemo />
-          <CommandStackRadixDemo />
+          <QueryBuilderBaseDemo />
+        </DemoItemGroup>
+        <DemoItemGroup>
+          <QueryBuilderRadixDemo />
         </DemoItemGroup>
       </Demo>
     </Shell>

@@ -87,10 +87,10 @@ export function ComponentTabs({
         <div
           ref={previewRef}
           className={cn(
-            "flex h-115 w-full justify-center p-10",
+            "flex h-120 w-full justify-center overflow-auto p-10",
             {
               "items-start": align === "start",
-              "items-center": align === "center",
+              "items-center-safe": align === "center",
               "items-end": align === "end",
               "sm:p-10": scalePreview,
             },
@@ -110,7 +110,7 @@ export function ComponentTabs({
       </MdxTabsContent>
       <MdxTabsContent
         value="Code"
-        className="py-0 **:[figure]:my-0 **:[figure]:rounded-none **:[pre]:h-105.5 **:[pre]:px-4"
+        className="py-0 **:[figure]:my-0 **:[figure]:rounded-none **:[pre]:h-110.5 **:[pre]:px-4"
       >
         {code}
       </MdxTabsContent>
