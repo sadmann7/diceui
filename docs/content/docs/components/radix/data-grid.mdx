@@ -69,12 +69,6 @@ links:
     ```package-install
     npx shadcn@latest add "@diceui/data-grid-skeleton"
     ```
-
-    [`useDataGridUndoRedo`](#usedatagridundoredo):
-
-    ```package-install
-    npx shadcn@latest add "@diceui/use-data-grid-undo-redo"
-    ```
   </Step>
 </Steps>
 
@@ -159,44 +153,64 @@ export default function DataGridToolbarDemo() {
 
 ### With Row Management
 
-Add and delete rows with callbacks. `onRowAdd` receives an `eventDetails` object whose `reason` says where the row came from: the footer's add row button (`"add-row-press"`), <Kbd>Shift</Kbd> + <Kbd>Enter</Kbd> on a cell (`"insert-below"`, with the `afterRowId` to insert after), or a paste that needs more rows (`"paste"`).
+Pass `createRow` to let users add rows, and `enableRowDeletion` to let them delete them. `createRow` only returns the new row. The grid inserts it in the right place, focuses it, and reports it through `onDataChange`.
+
+Its `details.reason` says where the row came from: the footer's add row button (`"add-row-press"`), <Kbd>Shift</Kbd> + <Kbd>Enter</Kbd> on a cell (`"insert-below"`, with the `afterRowId` it goes after), or a paste that needs more rows (`"paste"`). Return `null` to skip adding a row. It can also return a promise, for example to create the row on your server first.
 
 ```tsx
-const onRowAdd = React.useCallback((eventDetails) => {
-  const afterRowId =
-    eventDetails.reason === "insert-below" ? eventDetails.afterRowId : undefined;
-  const newRow = { id: generateId() };
-
-  setData((prev) => {
-    const index = afterRowId
-      ? prev.findIndex((row) => row.id === afterRowId)
-      : -1;
-    return index === -1
-      ? [...prev, newRow]
-      : [...prev.slice(0, index + 1), newRow, ...prev.slice(index + 1)];
-  });
-
-  return {
-    rowId: newRow.id,
-    columnId: "name", // Focus this column after creating the new row
-  };
-}, []);
-
-const onRowsDelete = React.useCallback((rows, rowIds) => {
-  // rows: array of row data objects
-  // rowIds: array of row ids
-  setData((prev) => prev.filter((row) => !rows.includes(row)));
-}, []);
+const createRow = React.useCallback(() => ({ id: generateId() }), []);
 
 const { table, ...dataGridProps } = useDataGrid({
   data,
   columns,
   onDataChange: setData,
-  onRowAdd,
-  onRowsDelete,
+  createRow,
+  enableRowDeletion: true,
   getRowId: (row) => row.id,
 });
+
+return (
+  <>
+    <DataGridKeyboardShortcuts enableRowCreation enableRowDeletion />
+    <DataGrid table={table} {...dataGridProps} />
+  </>
+);
 ```
+
+You can also add and delete rows from your own code with `table.addRows` and `table.deleteRows`. `addRows` returns the new row ids and takes `afterRowId` or `beforeRowId` to place the rows:
+
+```tsx
+function duplicateRows(rows: Row<DataGridFeatures, Person>[]) {
+  for (const row of rows) {
+    table.addRows([{ ...row.original, id: generateId() }], {
+      afterRowId: row.id,
+    });
+  }
+}
+
+table.deleteRows(["row-1", "row-2"]);
+```
+
+### Handling Data Changes
+
+Every change to the data, whether from an edit, a paste, `table.updateCells`, adding or deleting rows, or undo/redo, comes out of `onDataChange`. It receives the next data and a `details` object that tells you what changed, so you can save just that:
+
+```tsx
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  getRowId: (row) => row.id,
+  onDataChange: (nextData, { reason, changes, addedRows, removedRows }) => {
+    setData(nextData);
+
+    // reason: "edit" | "paste" | "update-cells" | "add-rows" | "delete-rows" | "undo" | "redo"
+    // changes: [{ rowId, columnId, previousValue, newValue }]
+    void saveChanges({ changes, addedRows, removedRows });
+  },
+});
+```
+
+Passing the data back is optional. The grid keeps its own copy of the data and shows every change, so you can leave out `setData` if you only need to save the changes. A new `data` prop replaces the grid's copy.
 
 ### With Search
 
@@ -220,7 +234,7 @@ return (
 
 ### With Paste Support
 
-Use the `enablePaste` prop to enable pasting from clipboard:
+Use the `enablePaste` prop to enable pasting from clipboard. When a paste runs past the last row, the grid calls `createRow` with `reason: "paste"` for each extra row it needs:
 
 ```tsx
 const { table, ...dataGridProps } = useDataGrid({
@@ -228,99 +242,77 @@ const { table, ...dataGridProps } = useDataGrid({
   columns,
   onDataChange: setData,
   enablePaste: true, // Enable paste (Ctrl/Cmd+V)
-  onRowsAdd: async (count) => {
-    // Called when paste needs to add new rows
-    // This is more performant than adding rows one by one with the `onRowAdd` prop
-    const newRows = Array.from({ length: count }, () => ({ id: generateId() }));
-    setData((prev) => [...prev, ...newRows]);
-  },
+  createRow: () => ({ id: generateId() }),
 });
 ```
 
 ### With Undo/Redo
 
-Use the `useDataGridUndoRedo` hook to add undo/redo support with keyboard shortcuts (Ctrl/Cmd+Z to undo, Ctrl/Cmd+Shift+Z or Ctrl/Cmd+Y to redo):
+Undo/redo is built in. Edits, pastes, `table.updateCells` calls, and added or deleted rows go into the history. Users undo with <Kbd>Ctrl</Kbd> / <Kbd>Cmd</Kbd> + <Kbd>Z</Kbd> and redo with <Kbd>Ctrl</Kbd> / <Kbd>Cmd</Kbd> + <Kbd>Shift</Kbd> + <Kbd>Z</Kbd> or <Kbd>Ctrl</Kbd> / <Kbd>Cmd</Kbd> + <Kbd>Y</Kbd>. It's on unless the grid is read-only. Set `enableUndoRedo: false` to turn it off, and `maxHistory` to keep more or fewer steps than the default 100.
+
+Call `table.undo()` and `table.redo()` from your own buttons, and read `table.getCanUndo()` and `table.getCanRedo()` to disable them:
 
 ```tsx
-import { useDataGrid } from "@/hooks/use-data-grid";
-import {
-  useDataGridUndoRedo,
-  type UndoRedoCellUpdate,
-} from "@/hooks/use-data-grid-undo-redo";
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  onDataChange: setData,
+  getRowId: (row) => row.id,
+});
 
-export default function MyDataGrid() {
-  const [data, setData] = React.useState(initialData);
+return (
+  <>
+    <div role="toolbar" aria-orientation="horizontal" className="flex gap-2">
+      <Button disabled={!table.getCanUndo()} onClick={() => table.undo()}>
+        Undo
+      </Button>
+      <Button disabled={!table.getCanRedo()} onClick={() => table.redo()}>
+        Redo
+      </Button>
+    </div>
+    <DataGridKeyboardShortcuts enableUndoRedo />
+    <DataGrid table={table} {...dataGridProps} />
+  </>
+);
+```
 
-  const { trackCellsUpdate, trackRowsAdd, trackRowsDelete } =
-    useDataGridUndoRedo({
-      data,
-      onDataChange: setData,
-      getRowId: (row) => row.id,
-    });
+`table.clearHistory()` empties the history, for example after saving.
 
-  const onDataChange = React.useCallback(
-    (newData: Person[]) => {
-      // Track cell updates for undo/redo
-      const cellUpdates: Array<UndoRedoCellUpdate> = [];
+### Updating Cells
 
-      for (let rowIndex = 0; rowIndex < data.length; rowIndex++) {
-        const oldRow = data[rowIndex];
-        const newRow = newData[rowIndex];
-        if (!oldRow || !newRow) continue;
+Use `table.updateCells` to change values from your own code, such as server pushes or a live feed. It re-renders only the cells that changed. Pass one update or an array, and update a single cell with `columnId` and `value`, or several cells in a row with `values`:
 
-        for (const key of Object.keys(oldRow)) {
-          const oldValue = oldRow[key];
-          const newValue = newRow[key];
-          if (!Object.is(oldValue, newValue)) {
-            cellUpdates.push({
-              rowId: oldRow.id,
-              columnId: key,
-              previousValue: oldValue,
-              newValue,
-            });
-          }
-        }
-      }
+```tsx
+table.updateCells([
+  { rowId: "AAPL", columnId: "price", value: 231.4 },
+  { rowId: "MSFT", values: { price: 418.2, change: -0.6 } },
+]);
+```
 
-      if (cellUpdates.length > 0) {
-        trackCellsUpdate(cellUpdates);
-      }
+For data that changes many times a second, pass `{ batch: true }`. Visible cells update once a frame, and `onDataChange` runs at most once every `batchUpdateDelay` milliseconds (500 by default). Batched updates stay out of undo history unless you also pass `history: true`.
 
-      setData(newData);
-    },
-    [data, trackCellsUpdate],
-  );
-
-  const onRowAdd = React.useCallback(() => {
-    const newRow = { id: generateId() };
-    setData((prev) => [...prev, newRow]);
-    trackRowsAdd([newRow]);
-    return { rowId: newRow.id, columnId: "name" };
-  }, [trackRowsAdd]);
-
-  const onRowsDelete = React.useCallback(
-    (rows) => {
-      trackRowsDelete(rows);
-      setData((prev) => prev.filter((row) => !rows.includes(row)));
-    },
-    [trackRowsDelete],
-  );
-
-  const { table, ...dataGridProps } = useDataGrid({
-    data,
-    columns,
-    onDataChange,
-    onRowAdd,
-    onRowsDelete,
-    getRowId: (row) => row.id,
+```tsx
+React.useEffect(() => {
+  return subscribeToPrices((updates) => {
+    table.updateCells(updates, { batch: true });
   });
+}, [table]);
+```
 
-  return (
-    <>
-      <DataGridKeyboardShortcuts enableUndoRedo />
-      <DataGrid table={table} {...dataGridProps} />
-    </>
-  );
+`updateCells` works on read-only grids too, so you can show live data that users can't edit.
+
+For the fastest updates, give a column `meta.writeCell`. The grid then skips rendering that column's cells and calls `writeCell(element, value)` to write each new value straight into the cell element:
+
+```tsx
+{
+  id: "price",
+  accessorKey: "price",
+  header: "Price",
+  meta: {
+    writeCell: (element, value) => {
+      element.textContent = currencyFormatter.format(value as number);
+    },
+  },
 }
 ```
 
@@ -469,10 +461,13 @@ Numeric input with optional constraints:
       min: 0,
       max: 1000,
       step: 0.01,
+      format: { style: "currency", currency: "USD" },
     },
   },
 }
 ```
+
+`format` takes [`Intl.NumberFormat` options](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#options) for how the value displays. Editing still uses the plain number.
 
 ### URL Cell
 
@@ -590,10 +585,10 @@ File upload with support for multiple files and file management:
 }
 ```
 
-To use file cells, provide upload and delete handlers:
+To use file cells, provide `uploadFiles` and `deleteFiles`:
 
 ```tsx
-const onFilesUpload = React.useCallback(async ({ files, rowId, columnId }) => {
+const uploadFiles = React.useCallback(async ({ files, rowId, columnId }) => {
   // Upload files to your server/storage
   const formData = new FormData();
   files.forEach(file => formData.append('files', file));
@@ -615,7 +610,7 @@ const onFilesUpload = React.useCallback(async ({ files, rowId, columnId }) => {
   }));
 }, []);
 
-const onFilesDelete = React.useCallback(async ({ fileIds, rowId, columnId }) => {
+const deleteFiles = React.useCallback(async ({ fileIds, rowId, columnId }) => {
   // Delete files from your server/storage
   await fetch('/api/files', {
     method: 'DELETE',
@@ -626,8 +621,8 @@ const onFilesDelete = React.useCallback(async ({ fileIds, rowId, columnId }) => 
 const { table, ...dataGridProps } = useDataGrid({
   data,
   columns,
-  onFilesUpload,
-  onFilesDelete,
+  uploadFiles,
+  deleteFiles,
 });
 ```
 
@@ -669,13 +664,13 @@ const columns = React.useMemo(() => [
   getDataGridSelectColumn(),
   // ... other columns
   getDataGridActionsColumn({
-    actions: ({ row }) => (
-      <DropdownMenuItem onClick={() => onRowDelete(row.original)}>
+    actions: ({ row, table }) => (
+      <DropdownMenuItem onClick={() => table.deleteRows([row.id])}>
         Delete
       </DropdownMenuItem>
     ),
   }),
-], [onRowDelete]);
+], []);
 
 const { table, ...dataGridProps } = useDataGrid({
   data,
@@ -698,22 +693,22 @@ return (
 
 The Data Grid uses a three-layer cell composition pattern:
 
-1. **DataGridCell**: Routes to the appropriate cell variant based on the column's `meta.cell.variant` property
+1. **DataGridDataCell**: Routes to the appropriate cell variant based on the column's `meta.cell.variant` property
 2. **Cell Variants**: Implement specific editing UIs for different data variants (text, number, select, etc.)
-3. **DataGridCellWrapper**: Provides common functionality for all cells (focus, selection, keyboard interactions)
+3. **DataGridCell**: The cell element itself, which provides common functionality for all cells (focus, selection, keyboard interactions)
 
 ```tsx
 // Cell composition flow
-<DataGridCell {...cellProps} />
+<DataGridDataCell {...cellProps} />
   ↓
 <ShortTextCell {...props} />  // Based on variant
   ↓
-<DataGridCellWrapper {...props}>
+<DataGridCell {...props}>
   {/* Cell-specific content */}
-</DataGridCellWrapper>
+</DataGridCell>
 ```
 
-Each cell variant receives the same props and wraps its content in `DataGridCellWrapper`, which provides:
+Each cell variant receives the same props and wraps its content in `DataGridCell`, which renders the `data-slot="data-grid-cell"` element and provides:
 - Focus management and visual focus ring
 - Selection state and highlighting
 - Search match highlighting
@@ -722,10 +717,10 @@ Each cell variant receives the same props and wraps its content in `DataGridCell
 
 ### Creating Custom Cell Variants
 
-You can create custom cell variants by implementing the `DataGridCellProps` interface and wrapping your content in `DataGridCellWrapper`:
+You can create custom cell variants by implementing the `DataGridCellProps` interface and wrapping your content in `DataGridCell`:
 
 ```tsx
-import { DataGridCellWrapper } from "@/components/data-grid/data-grid-cell-wrapper";
+import { DataGridCell } from "@/components/data-grid/data-grid-cell";
 import type { DataGridCellProps } from "@/lib/data-grid-types";
 
 export function CustomCell<TData>(props: DataGridCellProps<TData>) {
@@ -738,9 +733,9 @@ export function CustomCell<TData>(props: DataGridCellProps<TData>) {
   }
 
   return (
-    <DataGridCellWrapper {...props}>
+    <DataGridCell {...props}>
       {/* Your custom cell content */}
-    </DataGridCellWrapper>
+    </DataGridCell>
   );
 }
 ```
@@ -748,6 +743,22 @@ export function CustomCell<TData>(props: DataGridCellProps<TData>) {
 Cells read and write data through the cell, with `cell.getValue()` and `cell.setValue()`, and control edit mode with `cell.startEditing()` and `cell.table.stopEditing()`.
 
 ## Column Configuration
+
+### Column Icons
+
+Each header shows an icon for its cell variant. Set `meta.icon` to use your own:
+
+```tsx
+{
+  id: "price",
+  accessorKey: "price",
+  header: "Price",
+  meta: {
+    icon: DollarSignIcon,
+    cell: { variant: "number" },
+  },
+}
+```
 
 ### Enabling Filtering and Sorting
 
@@ -826,7 +837,7 @@ Right-click on cells to access context menu options:
 - **Copy** (Ctrl/Cmd+C): Copy selected cells to clipboard
 - **Cut** (Ctrl/Cmd+X): Cut selected cells (shows visual indicator)
 - **Clear** (Delete/Backspace): Clear content from selected cells
-- **Delete rows** (Ctrl/Cmd+Backspace): Remove selected rows (only available when `onRowsDelete` is provided)
+- **Delete rows** (Ctrl/Cmd+Backspace): Remove selected rows (only available when `enableRowDeletion` is set)
 
 ## API Reference
 
@@ -837,22 +848,6 @@ Hook for initializing the data grid with state management and editing capabiliti
 <AutoTypeTable
   path="./types/radix/data-grid.ts"
   name="UseDataGridProps"
-/>
-
-### useDataGridUndoRedo
-
-Hook for adding undo/redo support to the data grid with keyboard shortcuts and history management.
-
-<AutoTypeTable
-  path="./types/radix/data-grid.ts"
-  name="UseDataGridUndoRedoProps"
-/>
-
-Returns:
-
-<AutoTypeTable
-  path="./types/radix/data-grid.ts"
-  name="UseDataGridUndoRedoReturn"
 />
 
 ### DataGrid
@@ -893,25 +888,16 @@ Column header with sorting controls and visual indicators for sort direction.
 
 ### DataGridCell
 
-Routes to the appropriate cell variant based on the column's `meta.cell.variant` property.
+The cell element that all cell variants render into. It handles focus management, selection state, search highlighting, and keyboard interactions, and renders with `data-slot="data-grid-cell"`.
 
 <AutoTypeTable
   path="./types/radix/data-grid.ts"
-  name="DataGridCellProps"
-/>
-
-### DataGridCellWrapper
-
-Base wrapper providing common functionality for all cell variants including focus management, selection state, search highlighting, and keyboard interactions.
-
-<AutoTypeTable
-  path="./types/radix/data-grid.ts"
-  name="DataGridCellWrapperProps"
+  name="DataGridCellElementProps"
 />
 
 ### DataGridCellVariants
 
-Individual cell variants for different data variants. Each variant implements the `DataGridCellProps` interface and wraps its content in `DataGridCellWrapper`.
+Individual cell variants for different data variants. Each variant implements the `DataGridCellProps` interface and wraps its content in `DataGridCell`.
 
 <AutoTypeTable
   path="./types/radix/data-grid.ts"
@@ -1287,12 +1273,13 @@ The Data Grid component provides a comprehensive spreadsheet-like experience wit
 - **Cell Selection**: Single and multi-cell selection with keyboard and mouse
 - **Keyboard Navigation**: Full keyboard support with Excel-like shortcuts
 - **Copy/Cut/Paste**: Full clipboard support including paste from Excel/Google Sheets
-- **Undo/Redo**: Full history support for cell updates, row additions, and deletions (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z)
+- **Undo/Redo**: Built-in history for edits, pastes, cell updates, row additions, and deletions (Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z)
+- **Live Updates**: `table.updateCells` re-renders only the changed cells, with batching for high-frequency data
 - **Context Menu**: Right-click actions for cells and rows
 - **Search**: Find and navigate to matching cells (Ctrl/Cmd+F)
 - **Filtering**: Advanced filtering with multiple operators and drag-and-drop reordering
 - **Sorting**: Multi-column sorting with drag-and-drop reordering
-- **Row Management**: Add and delete rows with callbacks
+- **Row Management**: Add and delete rows from the grid or with `table.addRows` and `table.deleteRows`
 - **Column Features**: Resizing, pinning (left/right), hiding, and reordering
 
 ### Cell Variants

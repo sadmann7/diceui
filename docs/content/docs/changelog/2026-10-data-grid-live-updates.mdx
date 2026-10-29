@@ -1,0 +1,42 @@
+---
+title: October 2026 - Data Grid Live Updates
+description: Data Grid gets live cell updates, built-in undo/redo, and one onDataChange for every change.
+date: 2026-10-29T12:00:00Z
+---
+
+[Data Grid](/docs/components/data-grid) now sends every change through `onDataChange`, and each update re-renders only the cells it touches.
+
+- **Change details.** `onDataChange(data, details)` gets the `reason` and the `changes`, `addedRows` and `removedRows`. Passing the data back is optional.
+- **Live cell updates.** `table.updateCells` patches cells from your code. Add `{ batch: true }` for high-frequency data.
+- **Direct cell writes.** `meta.writeCell(element, value)` writes values straight into the DOM.
+- **Built-in undo/redo.** <Kbd>Ctrl</Kbd> / <Kbd>Cmd</Kbd> + <Kbd>Z</Kbd> works out of the box, and `table.undo()` / `table.redo()` work from your own buttons.
+- **Row APIs.** `table.addRows` and `table.deleteRows` change rows from your code.
+- **Smaller additions.** A `format` option for number cells, `meta.icon` for headers, and select filters that keep their values when you switch operators.
+
+### Migrating
+
+Reinstall all Data Grid files together. This adds `data-grid-data-cell.tsx` and `lib/data-grid-row-models.ts`, and removes `data-grid-cell-wrapper.tsx` and `hooks/use-data-grid-undo-redo.ts`.
+
+- **`useDataGridUndoRedo` is removed.** Undo/redo is built in. Set `enableUndoRedo: false` to turn it off.
+- **`onRowAdd` → `createRow`.** Return the new row. The grid inserts and focuses it.
+- **`onRowsAdd` is removed.** Pastes call `createRow` for each extra row.
+- **`onRowsDelete` → `enableRowDeletion`.** Read deleted rows from `onDataChange`.
+- **`onPaste` is removed.** Read pasted cells from `onDataChange`.
+- **`onFilesUpload` / `onFilesDelete` → `uploadFiles` / `deleteFiles`.**
+- **`DataGridCellWrapper` → `DataGridCell`.** In CSS, target `data-slot="data-grid-cell"`.
+- **`DataGridKeyboardShortcuts`:** `enableRowAdd` → `enableRowCreation`, `enableRowsDelete` → `enableRowDeletion`.
+
+```tsx
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  onDataChange: (nextData, { changes, addedRows, removedRows }) => {
+    setData(nextData);
+    void saveChanges({ changes, addedRows, removedRows });
+  },
+  createRow: () => ({ id: crypto.randomUUID() }),
+  enableRowDeletion: true,
+});
+```
+
+[Read the docs](/docs/components/data-grid)

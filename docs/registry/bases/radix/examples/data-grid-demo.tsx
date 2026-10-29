@@ -323,21 +323,16 @@ export default function DataGridDemo() {
     [],
   );
 
-  const onRowAdd = React.useCallback(() => {
-    const id = faker.string.nanoid();
-    setData((prev) => [...prev, { id }]);
-
-    return {
-      rowId: id,
-      columnId: "trickName",
-    };
-  }, []);
+  const createRow = React.useCallback(
+    (): SkateTrick => ({ id: faker.string.nanoid() }),
+    [],
+  );
 
   const { table, ...dataGridProps } = useDataGrid({
     columns,
     data,
     onDataChange: setData,
-    onRowAdd,
+    createRow,
     getRowId: (row) => row.id,
     initialState: {
       columnPinning: {
@@ -350,7 +345,7 @@ export default function DataGridDemo() {
 
   return (
     <>
-      <DataGridKeyboardShortcuts enablePaste enableRowAdd />
+      <DataGridKeyboardShortcuts enablePaste enableRowCreation />
       <DataGrid {...dataGridProps} table={table} height={340} />
     </>
   );
