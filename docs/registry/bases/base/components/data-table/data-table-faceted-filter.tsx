@@ -5,7 +5,7 @@ import type * as React from "react";
 import { type Column, type RowData, Subscribe } from "@tanstack/react-table";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
-import type { FilterOption } from "@/lib/data-table-types";
+import type { ColumnSelectOption } from "@/lib/data-table-types";
 
 import { Button } from "@/registry/bases/base/ui/button";
 import { useDirection } from "@/registry/bases/base/ui/direction";
@@ -30,7 +30,7 @@ import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 interface DataTableFacetedFilterProps<TData extends RowData, TValue> {
   column?: Column<DataTableFeatures, TData, TValue>;
   title?: string;
-  options: FilterOption[];
+  options: ColumnSelectOption[];
   multiple?: boolean;
 }
 
@@ -85,8 +85,8 @@ function DataTableFacetedFilterContent<TData extends RowData, TValue>({
     column?.setFilterValue(values.length > 0 ? values : undefined);
   }
 
-  function onReset(event?: React.MouseEvent) {
-    event?.stopPropagation();
+  function onReset(event: React.MouseEvent) {
+    event.stopPropagation();
     column?.setFilterValue(undefined);
   }
 
@@ -97,9 +97,7 @@ function DataTableFacetedFilterContent<TData extends RowData, TValue>({
       items={options}
       multiple={multiple}
     >
-      <FacetedTrigger
-        render={<Button variant="outline" className="border-dashed" />}
-      >
+      <FacetedTrigger render={<Button variant="outline" />}>
         {hasSelection ? (
           <span
             aria-hidden="true"

@@ -10,7 +10,7 @@ import { getHasCustomCell } from "@/lib/data-grid-utils";
 import { DataGridCell } from "@/registry/bases/radix/components/data-grid/data-grid-cell";
 import { DataGridCellPreview } from "@/registry/bases/radix/components/data-grid/data-grid-cell-preview";
 import {
-  CheckboxCell,
+  BooleanCell,
   DateCell,
   FileCell,
   LongTextCell,
@@ -42,7 +42,7 @@ export const DataGridDataCell = React.memo(
     if (prev.presence?.name !== next.presence?.name) return false;
     if (prev.readOnly !== next.readOnly) return false;
     if (prev.rowHeight !== next.rowHeight) return false;
-    if (prev.width !== next.width) return false;
+    if (prev.width !== next.width && getReadsWidth(next.cell)) return false;
     if (prev.pinned !== next.pinned) return false;
     if (prev.pinnedOffset !== next.pinnedOffset) return false;
     if (prev.grow !== next.grow) return false;
@@ -51,6 +51,9 @@ export const DataGridDataCell = React.memo(
     if (prev.cell.row.id !== next.cell.row.id) return false;
     if (prev.cell.column.id !== next.cell.column.id) return false;
     if (prev.cell.column.columnDef.cell !== next.cell.column.columnDef.cell) {
+      return false;
+    }
+    if (prev.cell.column.columnDef.meta !== next.cell.column.columnDef.meta) {
       return false;
     }
     // Written cells take their values straight from `updateCells`
@@ -62,15 +65,20 @@ export const DataGridDataCell = React.memo(
   },
 ) as typeof DataGridDataCellImpl;
 
+function getReadsWidth<TData extends RowData>(
+  cell: Cell<DataGridFeatures, TData>,
+) {
+  const variant = cell.column.columnDef.meta?.variant;
+  return variant === "multi-select" || variant === "file";
+}
+
 function DataGridDataCellImpl<TData extends RowData>({
   isScrolling,
-  cell: propsCell,
-  ...rest
+  ...props
 }: DataGridDataCellProps<TData>) {
-  const writeCell = propsCell.column.columnDef.meta?.writeCell;
-  const hasCustomCell = getHasCustomCell(propsCell.column);
-  const cell = useUpdatedCell(propsCell, !hasCustomCell && !writeCell);
-  const props = { ...rest, cell };
+  const { cell } = props;
+  const writeCell = cell.column.columnDef.meta?.writeCell;
+  const hasCustomCell = getHasCustomCell(cell.column);
 
   const rowId = cell.row.id;
   const [isPreview, setIsPreview] = React.useState(isScrolling);
@@ -88,7 +96,7 @@ function DataGridDataCellImpl<TData extends RowData>({
   if (isPreview && !props.isFocused && !props.isEditing && !hasCustomCell) {
     return (
       <DataGridCellPreview
-        cell={props.cell}
+        cell={cell}
         columnIndex={props.columnIndex}
         width={props.width}
         rowHeight={props.rowHeight}
@@ -108,18 +116,17 @@ function DataGridDataCellImpl<TData extends RowData>({
   if (hasCustomCell) {
     return (
       <DataGridCell key={rowId} {...props}>
-        <DataGridCustomCellContent cell={props.cell} />
+        <DataGridCustomCellContent cell={cell} />
       </DataGridCell>
     );
   }
 
-  const cellOpts = props.cell.column.columnDef.meta?.cell;
-  const variant = cellOpts?.variant ?? "text";
+  const variant = cell.column.columnDef.meta?.variant ?? "text";
 
   let Comp: React.ComponentType<DataGridCellProps<TData>>;
 
   switch (variant) {
-    case "short-text":
+    case "text":
       Comp = ShortTextCell;
       break;
     case "long-text":
@@ -131,8 +138,8 @@ function DataGridDataCellImpl<TData extends RowData>({
     case "url":
       Comp = UrlCell;
       break;
-    case "checkbox":
-      Comp = CheckboxCell;
+    case "boolean":
+      Comp = BooleanCell;
       break;
     case "select":
       Comp = SelectCell;
@@ -153,31 +160,6 @@ function DataGridDataCellImpl<TData extends RowData>({
   }
 
   return <Comp key={rowId} {...props} />;
-}
-
-function useUpdatedCell<TData extends RowData>(
-  cell: Cell<DataGridFeatures, TData>,
-  isEnabled = true,
-) {
-  const { table } = cell;
-  const rowId = cell.row.id;
-  const columnId = cell.column.id;
-  const [updateCount, onCellUpdate] = React.useReducer(
-    (count: number) => count + 1,
-    0,
-  );
-
-  React.useEffect(() => {
-    if (!isEnabled) return;
-    return table.subscribeCell(rowId, columnId, onCellUpdate);
-  }, [isEnabled, table, rowId, columnId]);
-
-  if (updateCount === 0) return cell;
-
-  return (
-    table.getRowModel().rowsById[rowId]?.getAllCellsByColumnId()[columnId] ??
-    cell
-  );
 }
 
 interface DataGridWrittenCellProps<
@@ -209,18 +191,46 @@ function DataGridWrittenCell<TData extends RowData>({
   return <DataGridCell {...props} ref={ref} />;
 }
 
-const DataGridCustomCellContent = React.memo(
-  DataGridCustomCellContentImpl,
-) as typeof DataGridCustomCellContentImpl;
-
 interface DataGridCustomCellContentProps<TData extends RowData> {
   cell: Cell<DataGridFeatures, TData>;
 }
 
+const DataGridCustomCellContent = React.memo(
+  DataGridCustomCellContentImpl,
+) as typeof DataGridCustomCellContentImpl;
+
 function DataGridCustomCellContentImpl<TData extends RowData>({
-  cell: propsCell,
+  cell: cellProp,
 }: DataGridCustomCellContentProps<TData>) {
-  const cell = useUpdatedCell(propsCell);
+  "use no memo";
+  const cell = useUpdatedCell(cellProp);
 
   return flexRender(cell.column.columnDef.cell, cell.getContext());
+}
+
+// Live updates patch rows in place, so the `cell` prop never changes; this
+// re-renders on each update and skips the compiler, which would cache on it
+function useUpdatedCell<TData extends RowData>(
+  cell: Cell<DataGridFeatures, TData>,
+) {
+  "use no memo";
+  const { table } = cell;
+  const rowId = cell.row.id;
+  const columnId = cell.column.id;
+  const [updateCount, onCellUpdate] = React.useReducer(
+    (count: number) => count + 1,
+    0,
+  );
+
+  React.useEffect(
+    () => table.subscribeCell(rowId, columnId, onCellUpdate),
+    [table, rowId, columnId],
+  );
+
+  if (updateCount === 0) return cell;
+
+  return (
+    table.getRowModel().rowsById[rowId]?.getAllCellsByColumnId()[columnId] ??
+    cell
+  );
 }

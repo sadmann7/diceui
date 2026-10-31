@@ -26,6 +26,7 @@
     "pnpm-lock.yaml"
   ],
   "rules": {
+    "no-shadow": "off",
     "no-unused-vars": "warn",
     "typescript/no-unused-vars": "warn",
     "typescript/no-explicit-any": "warn",
@@ -82,8 +83,7 @@
         "vitest": true
       },
       "rules": {
-        "unicorn/consistent-function-scoping": "off",
-        "no-shadow": "off"
+        "unicorn/consistent-function-scoping": "off"
       }
     },
     {

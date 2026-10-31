@@ -46,6 +46,11 @@ jobs:
 
       - run: pnpm lint
 
+      - name: Check the tablecn copies
+        run: pnpm --filter=docs tablecn:check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   test:
     runs-on: ubuntu-latest
     steps:

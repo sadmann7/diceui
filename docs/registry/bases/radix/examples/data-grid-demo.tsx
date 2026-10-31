@@ -206,9 +206,7 @@ export default function DataGridDemo() {
         accessorKey: "trickName",
         header: "Trick name",
         meta: {
-          cell: {
-            variant: "short-text",
-          },
+          variant: "text",
         },
         minSize: 180,
       },
@@ -217,9 +215,7 @@ export default function DataGridDemo() {
         accessorKey: "skaterName",
         header: "Skater",
         meta: {
-          cell: {
-            variant: "short-text",
-          },
+          variant: "text",
         },
         minSize: 150,
       },
@@ -228,15 +224,13 @@ export default function DataGridDemo() {
         accessorKey: "difficulty",
         header: "Difficulty",
         meta: {
-          cell: {
-            variant: "select",
-            options: [
-              { label: "Beginner", value: "beginner" },
-              { label: "Intermediate", value: "intermediate" },
-              { label: "Advanced", value: "advanced" },
-              { label: "Expert", value: "expert" },
-            ],
-          },
+          variant: "select",
+          options: [
+            { label: "Beginner", value: "beginner" },
+            { label: "Intermediate", value: "intermediate" },
+            { label: "Advanced", value: "advanced" },
+            { label: "Expert", value: "expert" },
+          ],
         },
         minSize: 120,
       },
@@ -245,17 +239,15 @@ export default function DataGridDemo() {
         accessorKey: "variant",
         header: "Category",
         meta: {
-          cell: {
-            variant: "select",
-            options: [
-              { label: "Flip", value: "flip" },
-              { label: "Grind", value: "grind" },
-              { label: "Grab", value: "grab" },
-              { label: "Transition", value: "transition" },
-              { label: "Manual", value: "manual" },
-              { label: "Slide", value: "slide" },
-            ],
-          },
+          variant: "select",
+          options: [
+            { label: "Flip", value: "flip" },
+            { label: "Grind", value: "grind" },
+            { label: "Grab", value: "grab" },
+            { label: "Transition", value: "transition" },
+            { label: "Manual", value: "manual" },
+            { label: "Slide", value: "slide" },
+          ],
         },
         minSize: 120,
       },
@@ -264,9 +256,7 @@ export default function DataGridDemo() {
         accessorKey: "landed",
         header: "Landed",
         meta: {
-          cell: {
-            variant: "checkbox",
-          },
+          variant: "boolean",
         },
         minSize: 100,
       },
@@ -275,11 +265,9 @@ export default function DataGridDemo() {
         accessorKey: "attempts",
         header: "Attempts",
         meta: {
-          cell: {
-            variant: "number",
-            min: 1,
-            max: 100,
-          },
+          variant: "number",
+          min: 1,
+          max: 100,
         },
         minSize: 100,
       },
@@ -288,11 +276,9 @@ export default function DataGridDemo() {
         accessorKey: "bestScore",
         header: "Score",
         meta: {
-          cell: {
-            variant: "number",
-            min: 1,
-            max: 10,
-          },
+          variant: "number",
+          min: 1,
+          max: 10,
         },
         minSize: 110,
       },
@@ -301,10 +287,8 @@ export default function DataGridDemo() {
         accessorKey: "location",
         header: "Location",
         meta: {
-          cell: {
-            variant: "select",
-            options: skateSpots.map((spot) => ({ label: spot, value: spot })),
-          },
+          variant: "select",
+          options: skateSpots.map((spot) => ({ label: spot, value: spot })),
         },
         minSize: 180,
       },
@@ -313,9 +297,7 @@ export default function DataGridDemo() {
         accessorKey: "dateAttempted",
         header: "Attempted at",
         meta: {
-          cell: {
-            variant: "date",
-          },
+          variant: "date",
         },
         minSize: 130,
       },

@@ -1,6 +1,7 @@
 "use client";
 
-import { mergeProps } from "@base-ui/react/merge-props";
+import type { BaseUIEvent } from "@base-ui/react/types";
+
 import {
   type Column,
   type ColumnSort,
@@ -8,7 +9,6 @@ import {
   type ReactTable,
   type RowData,
   type SortDirection,
-  type SortingState,
   Subscribe,
   type Table,
 } from "@tanstack/react-table";
@@ -21,7 +21,7 @@ import { getBadgeListWidth } from "@/hooks/use-badge-overflow";
 import {
   getColumnFitSize,
   getColumnLabel,
-  getColumnVariant,
+  getColumnVariantLabel,
   getIsEventOnScrollbar,
   getIsFileCellData,
 } from "@/lib/data-grid-utils";
@@ -29,6 +29,7 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -45,8 +46,8 @@ interface DataGridColumnHeaderProps<
   TData extends RowData,
   TValue,
 > extends React.ComponentProps<typeof DropdownMenuTrigger> {
-  header: Header<DataGridFeatures, TData, TValue>;
   table: ReactTable<DataGridFeatures, TData, unknown>;
+  header: Header<DataGridFeatures, TData, TValue>;
 }
 
 export function DataGridColumnHeader<TData extends RowData, TValue>(
@@ -58,7 +59,7 @@ export function DataGridColumnHeader<TData extends RowData, TValue>(
       selector={(columnResizing) => !!columnResizing.isResizingColumn}
     >
       {(isAnyColumnResizing) => (
-        <DataGridColumnHeaderImpl
+        <DataGridColumnHeaderContent
           {...props}
           isAnyColumnResizing={isAnyColumnResizing}
         />
@@ -67,7 +68,7 @@ export function DataGridColumnHeader<TData extends RowData, TValue>(
   );
 }
 
-function DataGridColumnHeaderImpl<TData extends RowData, TValue>({
+function DataGridColumnHeaderContent<TData extends RowData, TValue>({
   table,
   header,
   isAnyColumnResizing,
@@ -82,71 +83,29 @@ function DataGridColumnHeaderImpl<TData extends RowData, TValue>({
   const label = getColumnLabel(column);
 
   const meta = column.columnDef.meta;
-  const columnVariant = getColumnVariant(meta?.cell?.variant);
+  const columnVariant = getColumnVariantLabel(meta);
   const ColumnIcon = meta?.icon ?? columnVariant?.icon;
 
-  const pinnedPosition = column.getIsPinned();
-  const isPinnedLeft = pinnedPosition === "start";
-  const isPinnedRight = pinnedPosition === "end";
+  const onTriggerPointerDown = React.useCallback(
+    (event: BaseUIEvent<React.PointerEvent<HTMLButtonElement>>) => {
+      onPointerDown?.(event);
+      if (event.defaultPrevented) return;
 
-  const onSortingChange = React.useCallback(
-    (direction: SortDirection) => {
-      table.setSorting((prev: SortingState) => {
-        const existingSortIndex = prev.findIndex(
-          (sort) => sort.id === column.id,
-        );
-        const newSort: ColumnSort = {
-          id: column.id,
-          desc: direction === "desc",
-        };
-
-        if (existingSortIndex >= 0) {
-          const updated = [...prev];
-          updated[existingSortIndex] = newSort;
-          return updated;
-        } else {
-          return [...prev, newSort];
-        }
-      });
+      if (getIsEventOnScrollbar(event)) return;
+      if (event.button !== 0) return;
+      table.selectColumnCells(column.id);
     },
-    [column.id, table],
+    [table, column.id, onPointerDown],
   );
 
-  const onSortRemove = React.useCallback(() => {
-    table.setSorting((prev: SortingState) =>
-      prev.filter((sort) => sort.id !== column.id),
-    );
-  }, [column.id, table]);
+  const onTriggerMouseDown = React.useCallback(
+    (event: BaseUIEvent<React.MouseEvent<HTMLButtonElement>>) => {
+      onMouseDown?.(event);
+      if (event.defaultPrevented) return;
 
-  const onLeftPin = React.useCallback(() => {
-    column.pin("start");
-  }, [column]);
-
-  const onRightPin = React.useCallback(() => {
-    column.pin("end");
-  }, [column]);
-
-  const onUnpin = React.useCallback(() => {
-    column.pin(false);
-  }, [column]);
-
-  const triggerHandlers = React.useMemo(
-    () =>
-      mergeProps<"button">(
-        {
-          onPointerDown: (event) => {
-            if (getIsEventOnScrollbar(event)) return;
-            if (event.button !== 0) return;
-            table.selectColumnCells(column.id);
-          },
-          // Base UI opens the menu on mousedown, so a scrollbar press has to skip its handler there
-          onMouseDown: (event) => {
-            if (getIsEventOnScrollbar(event)) event.preventBaseUIHandler();
-          },
-        },
-        { onPointerDown, onMouseDown },
-      ),
-    [table, column.id, onPointerDown, onMouseDown],
+      if (getIsEventOnScrollbar(event)) event.preventBaseUIHandler();
+    },
+    [onMouseDown],
   );
 
   return (
@@ -159,7 +118,8 @@ function DataGridColumnHeaderImpl<TData extends RowData, TValue>({
             isAnyColumnResizing && "pointer-events-none",
             className,
           )}
-          {...triggerHandlers}
+          onPointerDown={onTriggerPointerDown}
+          onMouseDown={onTriggerMouseDown}
           {...props}
         >
           <div className="flex min-w-0 flex-1 items-center gap-1.5">
@@ -191,133 +151,8 @@ function DataGridColumnHeaderImpl<TData extends RowData, TValue>({
             className="shrink-0 text-muted-foreground"
           />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" sideOffset={0} className="w-60">
-          {column.getCanSort() && (
-            <>
-              <DropdownMenuCheckboxItem
-                className="relative ltr:pr-8 ltr:pl-2 rtl:pr-2 rtl:pl-8 [&_svg]:text-muted-foreground [&>span:first-child]:ltr:right-2 [&>span:first-child]:ltr:left-auto [&>span:first-child]:rtl:right-auto [&>span:first-child]:rtl:left-2"
-                checked={column.getIsSorted() === "asc"}
-                onClick={() => onSortingChange("asc")}
-              >
-                <IconPlaceholder
-                  lucide="ChevronUpIcon"
-                  tabler="IconChevronUp"
-                  hugeicons="ArrowUp01Icon"
-                  phosphor="CaretUpIcon"
-                  remixicon="RiArrowUpSLine"
-                />
-                Sort asc
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                className="relative ltr:pr-8 ltr:pl-2 rtl:pr-2 rtl:pl-8 [&_svg]:text-muted-foreground [&>span:first-child]:ltr:right-2 [&>span:first-child]:ltr:left-auto [&>span:first-child]:rtl:right-auto [&>span:first-child]:rtl:left-2"
-                checked={column.getIsSorted() === "desc"}
-                onClick={() => onSortingChange("desc")}
-              >
-                <IconPlaceholder
-                  lucide="ChevronDownIcon"
-                  tabler="IconChevronDown"
-                  hugeicons="ArrowDown01Icon"
-                  phosphor="CaretDownIcon"
-                  remixicon="RiArrowDownSLine"
-                />
-                Sort desc
-              </DropdownMenuCheckboxItem>
-              {column.getIsSorted() && (
-                <DropdownMenuItem onClick={onSortRemove}>
-                  <IconPlaceholder
-                    lucide="XIcon"
-                    tabler="IconX"
-                    hugeicons="Cancel01Icon"
-                    phosphor="XIcon"
-                    remixicon="RiCloseLine"
-                  />
-                  Remove sort
-                </DropdownMenuItem>
-              )}
-            </>
-          )}
-          {column.getCanPin() && (
-            <>
-              {column.getCanSort() && <DropdownMenuSeparator />}
-
-              {isPinnedLeft ? (
-                <DropdownMenuItem
-                  className="[&_svg]:text-muted-foreground"
-                  onClick={onUnpin}
-                >
-                  <IconPlaceholder
-                    lucide="PinOffIcon"
-                    tabler="IconPinnedOff"
-                    hugeicons="BookmarkIcon"
-                    phosphor="PushPinSlashIcon"
-                    remixicon="RiUnpinLine"
-                  />
-                  Unpin from left
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem
-                  className="[&_svg]:text-muted-foreground"
-                  onClick={onLeftPin}
-                >
-                  <IconPlaceholder
-                    lucide="PinIcon"
-                    tabler="IconPin"
-                    hugeicons="BookmarkIcon"
-                    phosphor="PushPinIcon"
-                    remixicon="RiPushpinLine"
-                  />
-                  Pin to left
-                </DropdownMenuItem>
-              )}
-              {isPinnedRight ? (
-                <DropdownMenuItem
-                  className="[&_svg]:text-muted-foreground"
-                  onClick={onUnpin}
-                >
-                  <IconPlaceholder
-                    lucide="PinOffIcon"
-                    tabler="IconPinnedOff"
-                    hugeicons="BookmarkIcon"
-                    phosphor="PushPinSlashIcon"
-                    remixicon="RiUnpinLine"
-                  />
-                  Unpin from right
-                </DropdownMenuItem>
-              ) : (
-                <DropdownMenuItem
-                  className="[&_svg]:text-muted-foreground"
-                  onClick={onRightPin}
-                >
-                  <IconPlaceholder
-                    lucide="PinIcon"
-                    tabler="IconPin"
-                    hugeicons="BookmarkIcon"
-                    phosphor="PushPinIcon"
-                    remixicon="RiPushpinLine"
-                  />
-                  Pin to right
-                </DropdownMenuItem>
-              )}
-            </>
-          )}
-          {column.getCanHide() && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="[&_svg]:text-muted-foreground"
-                onClick={() => column.toggleVisibility(false)}
-              >
-                <IconPlaceholder
-                  lucide="EyeOffIcon"
-                  tabler="IconEyeClosed"
-                  hugeicons="ViewOffIcon"
-                  phosphor="EyeSlashIcon"
-                  remixicon="RiEyeOffLine"
-                />
-                Hide column
-              </DropdownMenuItem>
-            </>
-          )}
+        <DropdownMenuContent align="start" sideOffset={1} className="w-60">
+          <DataGridColumnMenuItems column={column} />
         </DropdownMenuContent>
       </DropdownMenu>
       {header.column.getCanResize() && (
@@ -327,24 +162,187 @@ function DataGridColumnHeaderImpl<TData extends RowData, TValue>({
   );
 }
 
-const DataGridColumnResizer = React.memo(
-  DataGridColumnResizerImpl,
-  (prev, next) => {
-    const prevColumn = prev.header.column;
-    const nextColumn = next.header.column;
+interface DataGridColumnMenuItemsProps<TData extends RowData, TValue> {
+  column: Column<DataGridFeatures, TData, TValue>;
+}
 
-    if (
-      prevColumn.getIsResizing() !== nextColumn.getIsResizing() ||
-      prevColumn.getSize() !== nextColumn.getSize()
-    ) {
-      return false;
-    }
+function DataGridColumnMenuItems<TData extends RowData, TValue>({
+  column,
+}: DataGridColumnMenuItemsProps<TData, TValue>) {
+  const { table } = column;
+  const canSort = column.getCanSort();
+  const canPin = column.getCanPin();
+  const canOrder = column.getCanOrder();
+  const sortDirection = column.getIsSorted();
+  const pinnedPosition = column.getIsPinned();
 
-    if (prev.label !== next.label) return false;
+  const isRtl = table.options.dir === "rtl";
+  const leftStep = isRtl ? 1 : -1;
+  const leftPosition = isRtl ? "end" : "start";
+  const rightPosition = isRtl ? "start" : "end";
 
-    return true;
-  },
-) as typeof DataGridColumnResizerImpl;
+  function onSortingChange(direction: SortDirection) {
+    table.setSorting((prev) => {
+      const existingSortIndex = prev.findIndex((sort) => sort.id === column.id);
+      const newSort: ColumnSort = {
+        id: column.id,
+        desc: direction === "desc",
+      };
+
+      if (existingSortIndex === -1) return [...prev, newSort];
+      const updated = [...prev];
+      updated[existingSortIndex] = newSort;
+      return updated;
+    });
+  }
+
+  return (
+    <>
+      {canSort && (
+        <DropdownMenuGroup>
+          <DropdownMenuCheckboxItem
+            className="relative ltr:pr-8 ltr:pl-2 rtl:pr-2 rtl:pl-8 [&_svg]:text-muted-foreground [&>span:first-child]:ltr:right-2 [&>span:first-child]:ltr:left-auto [&>span:first-child]:rtl:right-auto [&>span:first-child]:rtl:left-2"
+            checked={sortDirection === "asc"}
+            onClick={() => onSortingChange("asc")}
+          >
+            <IconPlaceholder
+              lucide="ChevronUpIcon"
+              tabler="IconChevronUp"
+              hugeicons="ArrowUp01Icon"
+              phosphor="CaretUpIcon"
+              remixicon="RiArrowUpSLine"
+            />
+            Sort ascending
+          </DropdownMenuCheckboxItem>
+          <DropdownMenuCheckboxItem
+            className="relative ltr:pr-8 ltr:pl-2 rtl:pr-2 rtl:pl-8 [&_svg]:text-muted-foreground [&>span:first-child]:ltr:right-2 [&>span:first-child]:ltr:left-auto [&>span:first-child]:rtl:right-auto [&>span:first-child]:rtl:left-2"
+            checked={sortDirection === "desc"}
+            onClick={() => onSortingChange("desc")}
+          >
+            <IconPlaceholder
+              lucide="ChevronDownIcon"
+              tabler="IconChevronDown"
+              hugeicons="ArrowDown01Icon"
+              phosphor="CaretDownIcon"
+              remixicon="RiArrowDownSLine"
+            />
+            Sort descending
+          </DropdownMenuCheckboxItem>
+          {sortDirection && (
+            <DropdownMenuItem
+              className="[&_svg]:text-muted-foreground"
+              onClick={() => column.clearSorting()}
+            >
+              <IconPlaceholder
+                lucide="XIcon"
+                tabler="IconX"
+                hugeicons="Cancel01Icon"
+                phosphor="XIcon"
+                remixicon="RiCloseLine"
+              />
+              Remove sort
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuGroup>
+      )}
+      {canPin && (
+        <>
+          {canSort && <DropdownMenuSeparator />}
+          <DropdownMenuGroup>
+            {(
+              [
+                ["left", leftPosition],
+                ["right", rightPosition],
+              ] as const
+            ).map(([side, position]) => {
+              const isPinned = pinnedPosition === position;
+
+              return (
+                <DropdownMenuItem
+                  key={side}
+                  className="[&_svg]:text-muted-foreground"
+                  onClick={() => column.pin(isPinned ? false : position)}
+                >
+                  {isPinned ? (
+                    <IconPlaceholder
+                      lucide="PinOffIcon"
+                      tabler="IconPinnedOff"
+                      hugeicons="BookmarkIcon"
+                      phosphor="PushPinSlashIcon"
+                      remixicon="RiUnpinLine"
+                    />
+                  ) : (
+                    <IconPlaceholder
+                      lucide="PinIcon"
+                      tabler="IconPin"
+                      hugeicons="BookmarkIcon"
+                      phosphor="PushPinIcon"
+                      remixicon="RiPushpinLine"
+                    />
+                  )}
+                  {isPinned ? `Unpin from ${side}` : `Pin to ${side}`}
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuGroup>
+        </>
+      )}
+      {canOrder && (
+        <>
+          {(canSort || canPin) && <DropdownMenuSeparator />}
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              className="[&_svg]:text-muted-foreground"
+              disabled={!column.getCanMove(leftStep)}
+              onClick={() => column.move(leftStep)}
+            >
+              <IconPlaceholder
+                lucide="ArrowLeftIcon"
+                tabler="IconArrowLeft"
+                hugeicons="ArrowLeft02Icon"
+                phosphor="ArrowLeftIcon"
+                remixicon="RiArrowLeftLine"
+              />
+              Move left
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="[&_svg]:text-muted-foreground"
+              disabled={!column.getCanMove(-leftStep)}
+              onClick={() => column.move(-leftStep)}
+            >
+              <IconPlaceholder
+                lucide="ArrowRightIcon"
+                tabler="IconArrowRight"
+                hugeicons="ArrowRight02Icon"
+                phosphor="ArrowRightIcon"
+                remixicon="RiArrowRightLine"
+              />
+              Move right
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </>
+      )}
+      {column.getCanHide() && (
+        <>
+          {(canSort || canPin || canOrder) && <DropdownMenuSeparator />}
+          <DropdownMenuItem
+            className="[&_svg]:text-muted-foreground"
+            onClick={() => column.toggleVisibility(false)}
+          >
+            <IconPlaceholder
+              lucide="EyeOffIcon"
+              tabler="IconEyeClosed"
+              hugeicons="ViewOffIcon"
+              phosphor="EyeSlashIcon"
+              remixicon="RiEyeOffLine"
+            />
+            Hide column
+          </DropdownMenuItem>
+        </>
+      )}
+    </>
+  );
+}
 
 interface DataGridColumnResizerProps<
   TData extends RowData,
@@ -352,6 +350,19 @@ interface DataGridColumnResizerProps<
 > extends DataGridColumnHeaderProps<TData, TValue> {
   label: string;
 }
+
+const DataGridColumnResizer = React.memo(
+  DataGridColumnResizerImpl,
+  (prev, next) => {
+    const prevColumn = prev.header.column;
+    const nextColumn = next.header.column;
+    return (
+      prevColumn.getIsResizing() === nextColumn.getIsResizing() &&
+      prevColumn.getSize() === nextColumn.getSize() &&
+      prev.label === next.label
+    );
+  },
+) as typeof DataGridColumnResizerImpl;
 
 function DataGridColumnResizerImpl<TData extends RowData, TValue>({
   table,
@@ -365,6 +376,24 @@ function DataGridColumnResizerImpl<TData extends RowData, TValue>({
     header.column.columnDef.maxSize ??
     defaultColumnDef.maxSize ??
     Number.POSITIVE_INFINITY;
+
+  const onResizeStart = React.useCallback(
+    (
+      event:
+        | React.MouseEvent<HTMLDivElement>
+        | React.TouchEvent<HTMLDivElement>,
+    ) => {
+      if (event.type === "mousedown") event.preventDefault();
+      if (table.getEditingCell()) {
+        if (document.activeElement instanceof HTMLElement) {
+          document.activeElement.blur();
+        }
+        table.stopEditing();
+      }
+      header.getResizeHandler()(event);
+    },
+    [header, table],
+  );
 
   const onDoubleClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -406,9 +435,9 @@ function DataGridColumnResizerImpl<TData extends RowData, TValue>({
           ? "bg-primary"
           : "opacity-0 hover:opacity-100",
       )}
+      onMouseDown={onResizeStart}
+      onTouchStart={onResizeStart}
       onDoubleClick={onDoubleClick}
-      onMouseDown={header.getResizeHandler()}
-      onTouchStart={header.getResizeHandler()}
     />
   );
 }
@@ -417,14 +446,14 @@ function getBadgeColumnContentSize<TData extends RowData, TValue>(
   column: Column<DataGridFeatures, TData, TValue>,
   table: Table<DataGridFeatures, TData>,
 ): number {
-  const cellOpts = column.columnDef.meta?.cell;
-  if (cellOpts?.variant !== "multi-select" && cellOpts?.variant !== "file") {
+  const meta = column.columnDef.meta;
+  if (meta?.variant !== "multi-select" && meta?.variant !== "file") {
     return 0;
   }
 
   const labelByValue = new Map(
-    cellOpts.variant === "multi-select"
-      ? cellOpts.options.map((option) => [option.value, option.label])
+    meta.variant === "multi-select"
+      ? meta.options.map((option) => [option.value, option.label])
       : [],
   );
 
@@ -434,7 +463,7 @@ function getBadgeColumnContentSize<TData extends RowData, TValue>(
     if (!Array.isArray(value)) continue;
 
     const rowContentSize =
-      cellOpts.variant === "multi-select"
+      meta.variant === "multi-select"
         ? getBadgeListWidth({
             items: value
               .filter((item): item is string => typeof item === "string")

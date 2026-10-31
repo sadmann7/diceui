@@ -25,6 +25,7 @@ import { useValueAsRef } from "@/hooks/use-value-as-ref";
 import {
   getColumnBorderVisibility,
   getColumnPinningStyle,
+  getHeaderSizeVar,
   getWindowedColumns,
 } from "@/lib/data-grid-utils";
 import { DataGridColumnHeader } from "@/registry/bases/radix/components/data-grid/data-grid-column-header";
@@ -104,27 +105,17 @@ export function DataGrid<TData extends RowData>({
   );
 }
 
-interface DataGridActionBarProps<TData extends RowData> extends Pick<
-  DataGridProps<TData>,
-  "table"
-> {
-  actionBar: React.ReactNode;
+interface ViewportInsets {
+  start: number;
+  end: number;
+  headerHeight: number;
 }
 
-function DataGridActionBar<TData extends RowData>({
-  table,
-  actionBar,
-}: DataGridActionBarProps<TData>) {
-  return (
-    <table.Subscribe
-      selector={() =>
-        table.getHasRowSelection() || table.getHasCellRangeSelection()
-      }
-    >
-      {(hasSelection) => (hasSelection ? actionBar : null)}
-    </table.Subscribe>
-  );
-}
+const EMPTY_VIEWPORT_INSETS: ViewportInsets = {
+  start: 0,
+  end: 0,
+  headerHeight: 0,
+};
 
 type DataGridViewportProps<TData extends RowData> = Pick<
   DataGridProps<TData>,
@@ -189,8 +180,7 @@ function DataGridViewport<TData extends RowData>({
     const header = headerRef.current;
     const footer = footerRef.current;
 
-    function measure() {
-      if (!dataGrid) return;
+    const measure = () => {
       const gridRect = dataGrid.getBoundingClientRect();
       const next: ViewportInsets = {
         start:
@@ -208,7 +198,7 @@ function DataGridViewport<TData extends RowData>({
           ? prev
           : next,
       );
-    }
+    };
 
     measure();
     const observer = new ResizeObserver(measure);
@@ -237,7 +227,7 @@ function DataGridViewport<TData extends RowData>({
           : endIndex - startIndex + 1;
       const total = Math.min(count, visibleCount + overscan * 2);
       const start = Math.max(0, Math.min(startIndex - before, count - total));
-      const indexes: Array<number> = [];
+      const indexes: number[] = [];
       for (let index = start; index < start + total; index++) {
         indexes.push(index);
       }
@@ -246,11 +236,17 @@ function DataGridViewport<TData extends RowData>({
     [rowVirtualizerRef, rowSize],
   );
 
+  const getRowKey = React.useCallback(
+    (index: number) => `${index}:${rowSize}`,
+    [rowSize],
+  );
+
   const rowVirtualizer = useVirtualizer({
     ...rowVirtualizerOptions,
     rangeExtractor: rowRangeExtractor,
     count: rows.length,
     getScrollElement: () => dataGridRef.current,
+    getItemKey: getRowKey,
     estimateSize: () => rowSize,
     scrollPaddingStart: VIEWPORT_OFFSET,
     scrollPaddingEnd: insets.start + insets.end + VIEWPORT_OFFSET,
@@ -353,10 +349,6 @@ function DataGridViewport<TData extends RowData>({
   }, [rowVirtualizerRef, rowVirtualizer]);
 
   useLayoutEffect(() => {
-    rowVirtualizer.measure();
-  }, [rowVirtualizer, table.state.rowHeight]);
-
-  useLayoutEffect(() => {
     const rafId = requestAnimationFrame(() => {
       rowVirtualizer.measure();
       columnVirtualizer.measure();
@@ -380,6 +372,7 @@ function DataGridViewport<TData extends RowData>({
           .filter((column) => !column.getCanEdit())
           .map((column) => column.id),
       ),
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- `getCanEdit` reads these table options, so they invalidate the set
     [leafColumns, readOnly, enableCellEditing],
   );
 
@@ -425,7 +418,7 @@ function DataGridViewport<TData extends RowData>({
     <div
       role="grid"
       aria-label="Data grid"
-      aria-rowcount={rows.length + 1 + (!readOnly && onRowAddProp ? 1 : 0)}
+      aria-rowcount={rows.length + 1 + (hasFooter ? 1 : 0)}
       aria-colcount={visibleColumnCount}
       aria-multiselectable="true"
       data-slot="data-grid"
@@ -487,7 +480,7 @@ function DataGridViewport<TData extends RowData>({
           </DataGridRowContext>
         </div>
       </div>
-      {!readOnly && onRowAddProp && (
+      {hasFooter && (
         <div
           role="rowgroup"
           data-slot="data-grid-footer"
@@ -531,23 +524,78 @@ function DataGridViewport<TData extends RowData>({
   );
 }
 
-interface ViewportInsets {
-  start: number;
-  end: number;
-  headerHeight: number;
+function getColumnsWidth<TData extends RowData>(
+  columns: Column<DataGridFeatures, TData>[],
+) {
+  let width = 0;
+  for (const column of columns) width += column.getSize();
+  return width;
 }
 
-const EMPTY_VIEWPORT_INSETS: ViewportInsets = {
-  start: 0,
-  end: 0,
-  headerHeight: 0,
-};
+function getColumnWindowKey(params: {
+  virtualizer: Virtualizer<HTMLDivElement, Element>;
+  startCount: number;
+  centerCount: number;
+  centerStart: number;
+  centerEnd: number;
+}) {
+  const { virtualizer, startCount, centerCount, centerStart, centerEnd } =
+    params;
+  const items = virtualizer.getVirtualItems();
+  if (centerCount > 0 && items.length === 0) return "";
+  let key = `${startCount}|${centerCount}|${centerStart}|${centerEnd}|`;
+  for (const item of items) {
+    key += `${item.index}:${item.start}:${item.end},`;
+  }
+  return key;
+}
+
+function parseColumnWindowKey(key: string): ColumnWindow | null {
+  if (!key) return null;
+  const [startCount, centerCount, centerStart, centerEnd, items = ""] =
+    key.split("|");
+  return {
+    startCount: Number(startCount),
+    centerCount: Number(centerCount),
+    centerStart: Number(centerStart),
+    centerEnd: Number(centerEnd),
+    items: items
+      .split(",")
+      .filter(Boolean)
+      .map((item) => {
+        const [index, start, end] = item.split(":").map(Number);
+        return { index: index ?? 0, start: start ?? 0, end: end ?? 0 };
+      }),
+  };
+}
+
+interface DataGridActionBarProps<TData extends RowData> extends Pick<
+  DataGridProps<TData>,
+  "table"
+> {
+  actionBar: React.ReactNode;
+}
+
+function DataGridActionBar<TData extends RowData>({
+  table,
+  actionBar,
+}: DataGridActionBarProps<TData>) {
+  return (
+    <table.Subscribe
+      selector={() =>
+        table.getHasRowSelection() || table.getHasCellRangeSelection()
+      }
+    >
+      {(hasSelection) => (hasSelection ? actionBar : null)}
+    </table.Subscribe>
+  );
+}
 
 interface DataGridHeaderProps<TData extends RowData>
   extends
     Pick<DataGridProps<TData>, "table" | "headerRef">,
     Required<Pick<DataGridProps<TData>, "stretchColumns">> {
-  headerGroups: Array<HeaderGroup<DataGridFeatures, TData>>;
+  headerGroups: HeaderGroup<DataGridFeatures, TData>[];
   columnWindow: ColumnWindow | null;
 }
 
@@ -646,7 +694,7 @@ function DataGridHeaderImpl<TData extends RowData>({
                       })}
                       style={{
                         ...getColumnPinningStyle(header.column),
-                        width: `calc(var(--header-${header.id}-size) * 1px)`,
+                        width: getHeaderSizeVar(header.id),
                       }}
                     >
                       {header.isPlaceholder ? null : header.column.columnDef
@@ -697,49 +745,4 @@ function onHeaderCellMouseDown(event: React.MouseEvent<HTMLDivElement>) {
   if (!event.currentTarget.querySelector("button, input, a[href]")) {
     event.preventDefault();
   }
-}
-
-function getColumnsWidth<TData extends RowData>(
-  columns: Array<Column<DataGridFeatures, TData>>,
-) {
-  let width = 0;
-  for (const column of columns) width += column.getSize();
-  return width;
-}
-
-function getColumnWindowKey(params: {
-  virtualizer: Virtualizer<HTMLDivElement, Element>;
-  startCount: number;
-  centerCount: number;
-  centerStart: number;
-  centerEnd: number;
-}) {
-  const { virtualizer, startCount, centerCount, centerStart, centerEnd } =
-    params;
-  const items = virtualizer.getVirtualItems();
-  if (centerCount > 0 && items.length === 0) return "";
-  let key = `${startCount}|${centerCount}|${centerStart}|${centerEnd}|`;
-  for (const item of items) {
-    key += `${item.index}:${item.start}:${item.end},`;
-  }
-  return key;
-}
-
-function parseColumnWindowKey(key: string): ColumnWindow | null {
-  if (!key) return null;
-  const [startCount, centerCount, centerStart, centerEnd, items = ""] =
-    key.split("|");
-  return {
-    startCount: Number(startCount),
-    centerCount: Number(centerCount),
-    centerStart: Number(centerStart),
-    centerEnd: Number(centerEnd),
-    items: items
-      .split(",")
-      .filter(Boolean)
-      .map((item) => {
-        const [index, start, end] = item.split(":").map(Number);
-        return { index: index ?? 0, start: start ?? 0, end: end ?? 0 };
-      }),
-  };
 }

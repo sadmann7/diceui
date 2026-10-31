@@ -14,6 +14,8 @@
     "styles:dev": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/style-maps.mts --watch",
     "shadcn:sync": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-shadcn.mts",
     "styles:sync": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-styles.mts",
+    "tablecn:sync": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-tablecn.mts",
+    "tablecn:check": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-tablecn.mts --check",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/build-icons.mts && vitest run --config ../vitest.config.ts",

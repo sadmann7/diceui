@@ -1,14 +1,22 @@
 "use client";
 
 import { type Column, type RowData, Subscribe } from "@tanstack/react-table";
-import { cn } from "cn";
 import * as React from "react";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
 
+import {
+  getRangeFilterBounds,
+  getValidRangeFilterBounds,
+} from "@/lib/data-table-utils";
 import { Button } from "@/registry/bases/base/ui/button";
 import { useDirection } from "@/registry/bases/base/ui/direction";
-import { Input } from "@/registry/bases/base/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/registry/bases/base/ui/input-group";
 import { Label } from "@/registry/bases/base/ui/label";
 import {
   Popover,
@@ -19,41 +27,9 @@ import { Separator } from "@/registry/bases/base/ui/separator";
 import { Slider } from "@/registry/bases/base/ui/slider";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
-interface Range {
-  min: number;
-  max: number;
-}
+const INVALID_RING_DELAY_MS = 500;
 
 type RangeValue = [number, number];
-
-function getIsValidRange(value: unknown): value is RangeValue {
-  return (
-    Array.isArray(value) &&
-    value.length === 2 &&
-    typeof value[0] === "number" &&
-    typeof value[1] === "number"
-  );
-}
-
-function parseRangeBounds(
-  value: unknown,
-): [number | undefined, number | undefined] | undefined {
-  if (!Array.isArray(value) || value.length !== 2) return undefined;
-
-  const [start, end] = value.map(parseRangeBound);
-  if (start === null || end === null) return undefined;
-  if (start === undefined && end === undefined) return undefined;
-
-  return [start, end];
-}
-
-function parseRangeBound(value: unknown) {
-  if (value === undefined || value === "") return undefined;
-  if (typeof value !== "number" && typeof value !== "string") return null;
-
-  const number = Number(value);
-  return Number.isNaN(number) ? null : number;
-}
 
 interface DataTableSliderFilterProps<TData extends RowData> {
   column: Column<DataTableFeatures, TData>;
@@ -90,93 +66,132 @@ function DataTableSliderFilterContent<TData extends RowData>({
   const dir = useDirection();
   const id = React.useId();
 
-  const defaultRange = column.columnDef.meta?.range;
-  const unit = column.columnDef.meta?.unit;
+  const meta = column.columnDef.meta;
+  const numberMeta = meta?.variant === "number" ? meta : undefined;
+  const declaredMin = numberMeta?.min;
+  const declaredMax = numberMeta?.max;
+  const unit = numberMeta?.unit;
 
-  const { min, max, step } = React.useMemo<Range & { step: number }>(() => {
-    let minValue = 0;
-    let maxValue = 100;
+  const [facetedRange, setFacetedRange] = React.useState(() =>
+    getFacetedRange(column),
+  );
+  const min = declaredMin ?? facetedRange[0];
+  const max = declaredMax ?? facetedRange[1];
+  const step = getRangeStep(min, max);
 
-    if (defaultRange && getIsValidRange(defaultRange)) {
-      [minValue, maxValue] = defaultRange;
-    } else {
-      const values = column.getFacetedMinMaxValues();
-      if (values && Array.isArray(values) && values.length === 2) {
-        const [facetMinValue, facetMaxValue] = values;
-        if (
-          typeof facetMinValue === "number" &&
-          typeof facetMaxValue === "number"
-        ) {
-          minValue = facetMinValue;
-          maxValue = facetMaxValue;
-        }
-      }
-    }
+  function onOpenChange(open: boolean) {
+    if (open) setFacetedRange(getFacetedRange(column));
+  }
 
-    const rangeSize = maxValue - minValue;
-    const step =
-      rangeSize <= 20
-        ? 1
-        : rangeSize <= 100
-          ? Math.ceil(rangeSize / 20)
-          : Math.ceil(rangeSize / 50);
+  React.useEffect(() => {
+    if (process.env.NODE_ENV === "production") return;
+    if (!column.table.options.manualFiltering) return;
+    if (declaredMin !== undefined && declaredMax !== undefined) return;
+    console.warn(
+      `DataTableSliderFilter: column "${column.id}" is missing \`meta.min\` or \`meta.max\`, so in server mode its bounds only cover the rows on the current page. Set both to the full range of the data.`,
+    );
+  }, [column, declaredMin, declaredMax]);
 
-    return { min: minValue, max: maxValue, step };
-  }, [column, defaultRange]);
-
-  // An open-ended bound, like `estimatedHours=,8`, shows as the column limit.
   const bounds = parseRangeBounds(columnFilterValueProp);
   const columnFilterValue: RangeValue | undefined = bounds
     ? [bounds[0] ?? min, bounds[1] ?? max]
     : undefined;
   const range: RangeValue = columnFilterValue ?? [min, max];
+  const [drafts, setDrafts] = React.useState<[string | null, string | null]>([
+    null,
+    null,
+  ]);
+  const [showInvalid, setShowInvalid] = React.useState(false);
+  const invalidTimeoutRef = React.useRef<number | undefined>(undefined);
+
+  React.useEffect(
+    () => () => window.clearTimeout(invalidTimeoutRef.current),
+    [],
+  );
+
+  function onInvalidChange(isInvalid: boolean) {
+    window.clearTimeout(invalidTimeoutRef.current);
+    if (!isInvalid) {
+      setShowInvalid(false);
+      return;
+    }
+    if (showInvalid) return;
+    invalidTimeoutRef.current = window.setTimeout(
+      () => setShowInvalid(true),
+      INVALID_RING_DELAY_MS,
+    );
+  }
 
   const formatValue = React.useCallback((value: number) => {
     return value.toLocaleString(undefined, { maximumFractionDigits: 2 });
   }, []);
 
-  const onFromInputChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const numValue = Number(event.target.value);
-      if (!Number.isNaN(numValue) && numValue >= min && numValue <= range[1]) {
-        column.setFilterValue([numValue, range[1]]);
-      }
+  const setRangeFilter = React.useCallback(
+    ([start = min, end = max]: [number | undefined, number | undefined]) => {
+      column.setFilterValue(
+        start <= min && end >= max ? undefined : [start, end],
+      );
     },
-    [column, min, range],
+    [column, min, max],
   );
 
-  const onToInputChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      const numValue = Number(event.target.value);
-      if (!Number.isNaN(numValue) && numValue <= max && numValue >= range[0]) {
-        column.setFilterValue([range[0], numValue]);
-      }
-    },
-    [column, max, range],
-  );
+  function getInputValues(
+    nextDrafts: [string | null, string | null],
+  ): [string, string] {
+    return [
+      nextDrafts[0] ?? range[0].toString(),
+      nextDrafts[1] ?? range[1].toString(),
+    ];
+  }
 
-  const onSliderValueChange = React.useCallback(
-    (value: number | readonly number[]) => {
-      if (Array.isArray(value) && value.length === 2) {
-        column.setFilterValue(value);
-      }
-    },
-    [column],
-  );
+  function onDraftChange(index: 0 | 1, value: string) {
+    const nextDrafts: [string | null, string | null] =
+      index === 0 ? [value, drafts[1]] : [drafts[0], value];
+    setDrafts(nextDrafts);
 
-  const onReset = React.useCallback(
-    (event: React.MouseEvent) => {
-      event.stopPropagation();
-      column.setFilterValue(undefined);
-    },
-    [column],
-  );
+    const nextBounds = getValidRangeFilterBounds(getInputValues(nextDrafts), [
+      min,
+      max,
+    ]);
+    if (nextBounds) setRangeFilter(nextBounds);
+    onInvalidChange(!nextBounds);
+  }
+
+  function onDraftCommit() {
+    if (drafts[0] === null && drafts[1] === null) return;
+
+    setRangeFilter(getRangeFilterBounds(getInputValues(drafts), [min, max]));
+    setDrafts([null, null]);
+    onInvalidChange(false);
+  }
+
+  function onInputsBlur(event: React.FocusEvent<HTMLDivElement>) {
+    if (event.currentTarget.contains(event.relatedTarget)) return;
+    onDraftCommit();
+  }
+
+  function onInputKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter") onDraftCommit();
+  }
+
+  function onSliderValueChange(value: number | readonly number[]) {
+    if (Array.isArray(value) && value.length === 2) {
+      setDrafts([null, null]);
+      onInvalidChange(false);
+      setRangeFilter([value[0], value[1]]);
+    }
+  }
+
+  function onReset(event: React.MouseEvent) {
+    event.stopPropagation();
+    setDrafts([null, null]);
+    onInvalidChange(false);
+    column.setFilterValue(undefined);
+  }
 
   return (
-    <Popover>
-      <PopoverTrigger
-        render={<Button variant="outline" className="border-dashed" />}
-      >
+    <Popover onOpenChange={onOpenChange}>
+      <PopoverTrigger render={<Button variant="outline" />}>
         {columnFilterValue ? (
           <span
             aria-hidden="true"
@@ -223,55 +238,57 @@ function DataTableSliderFilterContent<TData extends RowData>({
           <p className="leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             {title}
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4" onBlur={onInputsBlur}>
             <Label htmlFor={`${id}-from`} className="sr-only">
               From
             </Label>
-            <div className="relative">
-              <Input
+            <InputGroup className="w-24">
+              <InputGroupInput
                 id={`${id}-from`}
                 type="number"
                 aria-valuemin={min}
                 aria-valuemax={max}
+                aria-invalid={(showInvalid && drafts[0] !== null) || undefined}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 placeholder={min.toString()}
                 min={min}
                 max={max}
-                value={range[0]?.toString()}
-                onChange={onFromInputChange}
-                className={cn("w-24", unit && "pe-8")}
+                value={drafts[0] ?? range[0].toString()}
+                onChange={(event) => onDraftChange(0, event.target.value)}
+                onKeyDown={onInputKeyDown}
               />
               {unit && (
-                <span className="absolute inset-e-0 top-0 bottom-0 flex items-center rounded-e-md bg-accent px-2 text-sm text-muted-foreground">
-                  {unit}
-                </span>
+                <InputGroupAddon align="inline-end">
+                  <InputGroupText>{unit}</InputGroupText>
+                </InputGroupAddon>
               )}
-            </div>
+            </InputGroup>
             <Label htmlFor={`${id}-to`} className="sr-only">
               to
             </Label>
-            <div className="relative">
-              <Input
+            <InputGroup className="w-24">
+              <InputGroupInput
                 id={`${id}-to`}
                 type="number"
                 aria-valuemin={min}
                 aria-valuemax={max}
+                aria-invalid={(showInvalid && drafts[1] !== null) || undefined}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 placeholder={max.toString()}
                 min={min}
                 max={max}
-                value={range[1]?.toString()}
-                onChange={onToInputChange}
-                className={cn("w-24", unit && "pe-8")}
+                value={drafts[1] ?? range[1].toString()}
+                onChange={(event) => onDraftChange(1, event.target.value)}
+                onKeyDown={onInputKeyDown}
               />
               {unit && (
-                <span className="absolute inset-e-0 top-0 bottom-0 flex items-center rounded-e-md bg-accent px-2 text-sm text-muted-foreground">
-                  {unit}
-                </span>
+                <InputGroupAddon align="inline-end">
+                  <InputGroupText>{unit}</InputGroupText>
+                </InputGroupAddon>
               )}
-            </div>
+            </InputGroup>
           </div>
           <Label htmlFor={`${id}-slider`} className="sr-only">
             {title} slider
@@ -295,4 +312,42 @@ function DataTableSliderFilterContent<TData extends RowData>({
       </PopoverContent>
     </Popover>
   );
+}
+
+function getFacetedRange<TData extends RowData>(
+  column: Column<DataTableFeatures, TData>,
+): RangeValue {
+  const values = column.getFacetedMinMaxValues();
+  if (Array.isArray(values) && values.length === 2) {
+    const [min, max] = values;
+    if (typeof min === "number" && typeof max === "number") return [min, max];
+  }
+  return [0, 100];
+}
+
+function getRangeStep(min: number, max: number) {
+  const rangeSize = max - min;
+  if (rangeSize <= 20) return 1;
+  if (rangeSize <= 100) return Math.ceil(rangeSize / 20);
+  return Math.ceil(rangeSize / 50);
+}
+
+function parseRangeBounds(
+  value: unknown,
+): [number | undefined, number | undefined] | undefined {
+  if (!Array.isArray(value) || value.length !== 2) return undefined;
+
+  const [start, end] = value.map(parseRangeBound);
+  if (start === null || end === null) return undefined;
+  if (start === undefined && end === undefined) return undefined;
+
+  return [start, end];
+}
+
+function parseRangeBound(value: unknown) {
+  if (value === undefined || value === "") return undefined;
+  if (typeof value !== "number" && typeof value !== "string") return null;
+
+  const number = Number(value);
+  return Number.isNaN(number) ? null : number;
 }

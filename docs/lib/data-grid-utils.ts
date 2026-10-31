@@ -26,14 +26,17 @@ import {
   ListIcon,
   Presentation,
   TextInitialIcon,
+  ToggleRightIcon,
 } from "lucide-react";
 
 import type { DataGridFeatures } from "@/lib/data-grid-features";
 import type {
-  CellOpts,
   CellPosition,
   ColumnValueReader,
+  ColumnVariant,
+  ColumnVariantOptions,
   ColumnWindow,
+  DataGridColumnMeta,
   FileCellData,
   RowHeightValue,
 } from "@/lib/data-grid-types";
@@ -157,99 +160,36 @@ export function getFilesCellValue(value: unknown): FileCellData[] {
   return Array.isArray(value) ? value.filter(getIsFileCellData) : [];
 }
 
-export function getEmptyCellValue(
-  variant: CellOpts["variant"] | undefined,
-): unknown {
+export function getEmptyCellValue(variant: ColumnVariant | undefined): unknown {
   if (variant === "multi-select" || variant === "file") return [];
-  if (variant === "number" || variant === "date" || variant === "select")
+  if (variant === "number" || variant === "date" || variant === "select") {
     return null;
-  if (variant === "checkbox") return false;
+  }
+  if (variant === "boolean") return false;
   return "";
 }
 
 export function serializeCellValue(
   value: unknown,
-  variant: CellOpts["variant"] | undefined,
+  variant: ColumnVariant | undefined,
 ): string {
   if (variant === "file" || variant === "multi-select") {
     return value ? JSON.stringify(value) : "";
   }
-  if (value instanceof Date) return value.toISOString();
   return stringifyUnknown(value);
-}
-
-function matchSelectOption(
-  value: string,
-  options: { value: string; label: string }[],
-): string | undefined {
-  return options.find(
-    (o) =>
-      o.value === value ||
-      o.value.toLowerCase() === value.toLowerCase() ||
-      o.label.toLowerCase() === value.toLowerCase(),
-  )?.value;
-}
-
-function parseTextValue(text: string): unknown {
-  if (ISO_DATE_REGEX.test(text)) {
-    const date = new Date(text);
-    if (!Number.isNaN(date.getTime())) return date.toLocaleDateString();
-  }
-
-  const firstChar = text[0];
-  if (
-    firstChar !== "[" &&
-    firstChar !== "{" &&
-    firstChar !== "t" &&
-    firstChar !== "f"
-  ) {
-    return text;
-  }
-
-  try {
-    const parsed: unknown = JSON.parse(text);
-    if (Array.isArray(parsed)) {
-      if (parsed.length > 0 && parsed.every(getIsFileCellData)) {
-        return parsed.map((file) => file.name).join(", ");
-      }
-      if (parsed.every((item) => typeof item === "string")) {
-        return parsed.join(", ");
-      }
-    } else if (typeof parsed === "boolean") {
-      return parsed ? "Checked" : "Unchecked";
-    }
-  } catch {
-    const lower = text.toLowerCase();
-    if (lower === "true" || lower === "false") {
-      return lower === "true" ? "Checked" : "Unchecked";
-    }
-  }
-  return text;
-}
-
-function parseMultiSelectValues(text: string): string[] {
-  try {
-    const parsed: unknown = JSON.parse(text);
-    if (Array.isArray(parsed)) {
-      return parsed.filter((item): item is string => typeof item === "string");
-    }
-  } catch {
-    // Falls back to comma-separated values
-  }
-  return text ? text.split(",").map((item) => item.trim()) : [];
 }
 
 export function parsePastedCellValue(
   text: string,
-  cellOpts: CellOpts | undefined,
+  meta: DataGridColumnMeta | undefined,
 ): { value: unknown } | null {
-  switch (cellOpts?.variant) {
+  switch (meta?.variant) {
     case "number": {
       if (!text) return { value: null };
       const num = Number.parseFloat(text);
       return Number.isNaN(num) ? null : { value: num };
     }
-    case "checkbox": {
+    case "boolean": {
       if (!text) return { value: false };
       const lower = text.toLowerCase();
       return VALID_BOOLEANS.has(lower)
@@ -263,13 +203,13 @@ export function parsePastedCellValue(
     }
     case "select": {
       if (!text) return { value: null };
-      const matched = matchSelectOption(text, cellOpts.options);
+      const matched = matchSelectOption(text, meta.options);
       return matched ? { value: matched } : null;
     }
     case "multi-select": {
       const values = parseMultiSelectValues(text);
       const validated = values.flatMap((item) => {
-        const matched = matchSelectOption(item, cellOpts.options);
+        const matched = matchSelectOption(item, meta.options);
         return matched ? [matched] : [];
       });
       return values.length > 0 && validated.length === 0
@@ -304,12 +244,6 @@ export function parsePastedCellValue(
   }
 }
 
-function countTabs(s: string): number {
-  let n = 0;
-  for (let i = 0; i < s.length; i++) if (s[i] === "\t") n++;
-  return n;
-}
-
 export function parseTsv(
   text: string,
   fallbackColumnCount: number,
@@ -320,6 +254,14 @@ export function parseTsv(
     let currentField = "";
     let inQuotes = false;
     let i = 0;
+    const pushRow = () => {
+      currentRow.push(currentField);
+      if (currentRow.length > 1 || currentRow.some((f) => f.length > 0)) {
+        rows.push(currentRow);
+      }
+      currentRow = [];
+      currentField = "";
+    };
 
     while (i < text.length) {
       const char = text[i];
@@ -345,20 +287,10 @@ export function parseTsv(
           currentField = "";
           i++;
         } else if (char === "\n") {
-          currentRow.push(currentField);
-          if (currentRow.length > 1 || currentRow.some((f) => f.length > 0)) {
-            rows.push(currentRow);
-          }
-          currentRow = [];
-          currentField = "";
+          pushRow();
           i++;
         } else if (char === "\r" && nextChar === "\n") {
-          currentRow.push(currentField);
-          if (currentRow.length > 1 || currentRow.some((f) => f.length > 0)) {
-            rows.push(currentRow);
-          }
-          currentRow = [];
-          currentField = "";
+          pushRow();
           i += 2;
         } else {
           currentField += char;
@@ -367,11 +299,7 @@ export function parseTsv(
       }
     }
 
-    currentRow.push(currentField);
-    if (currentRow.length > 1 || currentRow.some((f) => f.length > 0)) {
-      rows.push(currentRow);
-    }
-
+    pushRow();
     return rows;
   }
 
@@ -429,7 +357,7 @@ export function parseCellKey(cellKey: string): CellPosition {
 }
 
 export function getRowCellSelectionKey(
-  bounds: Array<CellSelectionBounds>,
+  bounds: CellSelectionBounds[],
   rowIndex: number,
 ) {
   let key = "";
@@ -438,10 +366,6 @@ export function getRowCellSelectionKey(
     key += `${bound.minColumnIndex}:${bound.maxColumnIndex},`;
   }
   return key;
-}
-
-function getActiveCellRange(ranges: CellSelectionState) {
-  return ranges[ranges.length - 1] ?? null;
 }
 
 export function getFocusedCellPosition(
@@ -482,9 +406,7 @@ export function getHasCustomCell<TData extends RowData>(
 ) {
   const { cell, meta } = column.columnDef;
 
-  return (
-    !meta?.cell?.variant && cell !== undefined && cell !== renderDefaultCell
-  );
+  return !meta?.variant && cell !== undefined && cell !== renderDefaultCell;
 }
 
 export function getIsDataColumn<TData extends RowData>(
@@ -512,12 +434,25 @@ export function getColumnLabel<TData extends RowData, TValue = unknown>(
   return typeof header === "string" ? header : column.id;
 }
 
-export function getColumnVariant(variant?: CellOpts["variant"]): {
+export function getColumnVariantOptions<
+  TData extends RowData,
+  TVariant extends keyof ColumnVariantOptions,
+>(
+  column: Column<DataGridFeatures, TData>,
+  variant: TVariant,
+): ColumnVariantOptions[TVariant] | null {
+  const meta = column.columnDef.meta;
+  return meta?.variant === variant
+    ? (meta as ColumnVariantOptions[TVariant])
+    : null;
+}
+
+export function getColumnVariantLabel(meta?: DataGridColumnMeta): {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
   label: string;
 } | null {
-  switch (variant) {
-    case "short-text":
+  switch (meta?.variant) {
+    case "text":
       return { label: "Short text", icon: BaselineIcon };
     case "long-text":
       return { label: "Long text", icon: TextInitialIcon };
@@ -525,8 +460,10 @@ export function getColumnVariant(variant?: CellOpts["variant"]): {
       return { label: "Number", icon: HashIcon };
     case "url":
       return { label: "URL", icon: LinkIcon };
-    case "checkbox":
-      return { label: "Checkbox", icon: CheckSquareIcon };
+    case "boolean":
+      return meta.control === "switch"
+        ? { label: "Switch", icon: ToggleRightIcon }
+        : { label: "Checkbox", icon: CheckSquareIcon };
     case "select":
       return { label: "Select", icon: ListIcon };
     case "multi-select":
@@ -540,7 +477,7 @@ export function getColumnVariant(variant?: CellOpts["variant"]): {
   }
 }
 
-export function swapItems<T>(items: Array<T>, first: T, second: T) {
+export function swapItems<T>(items: T[], first: T, second: T) {
   return items.map((item) => {
     if (item === first) return second;
     if (item === second) return first;
@@ -581,13 +518,13 @@ type WindowedColumnEntry<T> =
 export function getWindowedColumns<T>(
   items: T[],
   columnWindow: ColumnWindow | null,
-): Array<WindowedColumnEntry<T>> {
+): WindowedColumnEntry<T>[] {
   if (!columnWindow) {
     return items.map((item, colIndex) => ({ type: "column", item, colIndex }));
   }
 
   const { startCount, centerCount, centerStart, centerEnd } = columnWindow;
-  const entries: Array<WindowedColumnEntry<T>> = [];
+  const entries: WindowedColumnEntry<T>[] = [];
 
   for (let colIndex = 0; colIndex < startCount; colIndex++) {
     const item = items[colIndex];
@@ -661,11 +598,11 @@ export const CELL_TINTS = {
 } as const;
 
 export function getCellLayoutStyle({
-  width,
+  columnId,
   pinned,
   pinnedOffset,
 }: {
-  width: number;
+  columnId: string;
   pinned: ColumnPinningPosition;
   pinnedOffset: number;
 }): React.CSSProperties {
@@ -674,9 +611,17 @@ export function getCellLayoutStyle({
     insetInlineEnd: pinned === "end" ? `${pinnedOffset}px` : undefined,
     opacity: pinned ? 0.97 : undefined,
     position: pinned ? "sticky" : "relative",
-    width,
+    width: getColumnSizeVar(columnId),
     zIndex: pinned ? 20 : undefined,
   };
+}
+
+export function getColumnSizeVar(columnId: string) {
+  return getSizeVar("col", columnId);
+}
+
+export function getHeaderSizeVar(headerId: string) {
+  return getSizeVar("header", headerId);
 }
 
 export function getColumnFitSize({
@@ -795,6 +740,77 @@ export function getTabTargetCell({
   }
 }
 
+function matchSelectOption(
+  value: string,
+  options: { value: string; label: string }[],
+): string | undefined {
+  return options.find(
+    (o) =>
+      o.value === value ||
+      o.value.toLowerCase() === value.toLowerCase() ||
+      o.label.toLowerCase() === value.toLowerCase(),
+  )?.value;
+}
+
+function parseMultiSelectValues(text: string): string[] {
+  try {
+    const parsed: unknown = JSON.parse(text);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((item): item is string => typeof item === "string");
+    }
+  } catch {
+    // Falls back to comma-separated values
+  }
+  return text ? text.split(",").map((item) => item.trim()) : [];
+}
+
+function parseTextValue(text: string): unknown {
+  if (ISO_DATE_REGEX.test(text)) {
+    const date = new Date(text);
+    if (!Number.isNaN(date.getTime())) return date.toLocaleDateString();
+  }
+
+  const firstChar = text[0];
+  if (
+    firstChar !== "[" &&
+    firstChar !== "{" &&
+    firstChar !== "t" &&
+    firstChar !== "f"
+  ) {
+    return text;
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(text);
+    if (Array.isArray(parsed)) {
+      if (parsed.length > 0 && parsed.every(getIsFileCellData)) {
+        return parsed.map((file) => file.name).join(", ");
+      }
+      if (parsed.every((item) => typeof item === "string")) {
+        return parsed.join(", ");
+      }
+    } else if (typeof parsed === "boolean") {
+      return parsed ? "Checked" : "Unchecked";
+    }
+  } catch {
+    const lower = text.toLowerCase();
+    if (lower === "true" || lower === "false") {
+      return lower === "true" ? "Checked" : "Unchecked";
+    }
+  }
+  return text;
+}
+
+function countTabs(s: string): number {
+  let n = 0;
+  for (let i = 0; i < s.length; i++) if (s[i] === "\t") n++;
+  return n;
+}
+
+function getActiveCellRange(ranges: CellSelectionState) {
+  return ranges[ranges.length - 1] ?? null;
+}
+
 let rootFontScale: number | null = null;
 
 export function getRootFontScale(): number {
@@ -804,6 +820,13 @@ export function getRootFontScale(): number {
     getComputedStyle(document.documentElement).fontSize,
   );
   rootFontScale = fontSize > 0 ? fontSize / 16 : 1;
+  window.addEventListener(
+    "resize",
+    () => {
+      rootFontScale = null;
+    },
+    { once: true },
+  );
   return rootFontScale;
 }
 
@@ -869,7 +892,7 @@ export function scrollCellIntoView<TData extends RowData>(params: {
     if (isClippedRight) {
       scrollDelta = cellRect.right - viewportRight;
     } else if (isClippedLeft) {
-      scrollDelta = -(viewportLeft - cellRect.left);
+      scrollDelta = cellRect.left - viewportLeft;
     }
   } else {
     const shouldScrollRight = isActuallyRtl
@@ -879,15 +902,11 @@ export function scrollCellIntoView<TData extends RowData>(params: {
     if (shouldScrollRight) {
       scrollDelta = cellRect.right - viewportRight;
     } else {
-      scrollDelta = -(viewportLeft - cellRect.left);
+      scrollDelta = cellRect.left - viewportLeft;
     }
   }
 
   container.scrollLeft += scrollDelta;
-}
-
-function escapeAttributeValue(value: string) {
-  return value.replace(/["\\]/g, "\\$&");
 }
 
 export function getCellElement(
@@ -966,23 +985,6 @@ export function getIsEventOnScrollbar(
   );
 }
 
-function execInsertText(text: string) {
-  return (
-    typeof document.execCommand === "function" &&
-    document.execCommand("insertText", false, text)
-  );
-}
-
-function dispatchInsertTextInput(element: HTMLElement, text: string) {
-  element.dispatchEvent(
-    new InputEvent("input", {
-      bubbles: true,
-      data: text,
-      inputType: "insertText",
-    }),
-  );
-}
-
 export function insertTextAtSelection(
   element: HTMLTextAreaElement | HTMLInputElement,
   text: string,
@@ -1032,13 +1034,8 @@ export function moveCaretToEnd(element: HTMLElement) {
 }
 
 export function getUrlHref(urlString: string): string {
-  if (!urlString || urlString.trim() === "") return "";
-
   const trimmed = urlString.trim();
-
-  if (UNSAFE_PROTOCOL_REGEX.test(trimmed)) {
-    return "";
-  }
+  if (!trimmed || UNSAFE_PROTOCOL_REGEX.test(trimmed)) return "";
 
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
     return trimmed;
@@ -1074,7 +1071,6 @@ export function formatDateToString(date: Date): string {
 }
 
 export function formatDateForDisplay(dateStr: unknown): string {
-  if (!dateStr) return "";
   const date = parseLocalDate(dateStr);
   if (!date) return typeof dateStr === "string" ? dateStr : "";
   return date.toLocaleDateString();
@@ -1103,15 +1099,87 @@ export function getFileIcon(
     type.includes("word") ||
     type.includes("document") ||
     type.includes("doc")
-  )
+  ) {
     return FileText;
-  if (type.includes("sheet") || type.includes("excel") || type.includes("xls"))
+  }
+  if (
+    type.includes("sheet") ||
+    type.includes("excel") ||
+    type.includes("xls")
+  ) {
     return FileSpreadsheet;
+  }
   if (
     type.includes("presentation") ||
     type.includes("powerpoint") ||
     type.includes("ppt")
-  )
+  ) {
     return Presentation;
+  }
   return File;
+}
+
+export function execInsertText(text: string) {
+  return (
+    typeof document.execCommand === "function" &&
+    document.execCommand("insertText", false, text)
+  );
+}
+
+function escapeAttributeValue(value: string) {
+  return value.replace(/["\\]/g, "\\$&");
+}
+
+function dispatchInsertTextInput(element: HTMLElement, text: string) {
+  element.dispatchEvent(
+    new InputEvent("input", {
+      bubbles: true,
+      data: text,
+      inputType: "insertText",
+    }),
+  );
+}
+
+const objectUrlsByStore = new WeakMap<object, Set<string>>();
+
+export function createFileObjectUrl<TData extends RowData>(
+  table: Table<DataGridFeatures, TData>,
+  file: File,
+) {
+  const url = URL.createObjectURL(file);
+  let urls = objectUrlsByStore.get(table.store);
+  if (!urls) {
+    urls = new Set();
+    objectUrlsByStore.set(table.store, urls);
+  }
+  urls.add(url);
+  return url;
+}
+
+export function revokeFileObjectUrls(
+  store: object,
+  data: readonly RowData[] = [],
+) {
+  const urls = objectUrlsByStore.get(store);
+  if (!urls) return;
+  objectUrlsByStore.delete(store);
+
+  const keptUrls = new Set<string>();
+  for (const row of data) {
+    if (typeof row !== "object" || row === null) continue;
+    for (const value of Object.values(row)) {
+      if (!Array.isArray(value)) continue;
+      for (const file of value) {
+        const url = (file as { url?: unknown } | null)?.url;
+        if (typeof url === "string" && urls.has(url)) keptUrls.add(url);
+      }
+    }
+  }
+  for (const url of urls) {
+    if (!keptUrls.has(url)) URL.revokeObjectURL(url);
+  }
+}
+
+function getSizeVar(prefix: string, id: string) {
+  return `calc(var(--${prefix}-${id.replace(/[^\w-]/g, "\\$&")}-size) * 1px)`;
 }
