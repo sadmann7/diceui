@@ -10,7 +10,7 @@
     "validate:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/validate-registry.mts",
     "clean:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/clean-registry.mts",
     "test:registry": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/test-registry.mts",
-    "dev": "pnpm styles:dev & next dev --turbopack",
+    "dev": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/dev.mts",
     "styles:dev": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/style-maps.mts --watch",
     "shadcn:sync": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-shadcn.mts",
     "styles:sync": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-styles.mts",

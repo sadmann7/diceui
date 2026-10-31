@@ -1,6 +1,7 @@
 import { watch } from "node:fs";
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { createStyleMap, transformDirection } from "shadcn/utils";
 
 import { DEFAULT_STYLE } from "../lib/constants";
@@ -107,28 +108,33 @@ export async function writeStyleMapsModule() {
   ]);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+export function watchStyleMaps() {
+  let stylesTimer: ReturnType<typeof setTimeout> | undefined;
+  watch(STYLES_SRC_PATH, (_event, filename) => {
+    if (!filename?.endsWith(".css")) return;
+    clearTimeout(stylesTimer);
+    stylesTimer = setTimeout(() => {
+      writeStyleMapsModule().catch((error: unknown) => console.error(error));
+    }, 50);
+  });
+
+  let iconsTimer: ReturnType<typeof setTimeout> | undefined;
+  watch(REGISTRY_PATH, { recursive: true }, (_event, filename) => {
+    if (!filename?.endsWith(".tsx") || filename.includes("__generated__")) {
+      return;
+    }
+    clearTimeout(iconsTimer);
+    iconsTimer = setTimeout(() => {
+      writeIconsModule().catch((error: unknown) => console.error(error));
+    }, 50);
+  });
+}
+
+if (
+  process.argv[1] &&
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
+) {
   await Promise.all([writeStyleMapsModule(), writeIconsModule()]);
 
-  if (process.argv.includes("--watch")) {
-    let stylesTimer: ReturnType<typeof setTimeout> | undefined;
-    watch(STYLES_SRC_PATH, (_event, filename) => {
-      if (!filename?.endsWith(".css")) return;
-      clearTimeout(stylesTimer);
-      stylesTimer = setTimeout(() => {
-        writeStyleMapsModule().catch((error: unknown) => console.error(error));
-      }, 50);
-    });
-
-    let iconsTimer: ReturnType<typeof setTimeout> | undefined;
-    watch(REGISTRY_PATH, { recursive: true }, (_event, filename) => {
-      if (!filename?.endsWith(".tsx") || filename.includes("__generated__")) {
-        return;
-      }
-      clearTimeout(iconsTimer);
-      iconsTimer = setTimeout(() => {
-        writeIconsModule().catch((error: unknown) => console.error(error));
-      }, 50);
-    });
-  }
+  if (process.argv.includes("--watch")) watchStyleMaps();
 }
