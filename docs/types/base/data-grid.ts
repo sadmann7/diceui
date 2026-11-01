@@ -1,5 +1,6 @@
 import type {
   Cell,
+  Column,
   ColumnDef,
   ColumnPinningPosition,
   Header,
@@ -19,11 +20,13 @@ import type { DataGridFeatures } from "@/lib/data-grid-features";
 import type {
   CellPosition,
   CellPresence,
+  ColumnWindow,
   CreateRowDetails,
   DataChangeDetails,
   Direction,
   FileCellData,
   RowHeightValue,
+  StopEditingOptions,
 } from "@/lib/data-grid-types";
 import type { PopoverContent } from "@/registry/bases/base/ui/popover";
 import type { EmptyProps } from "@/types";
@@ -252,11 +255,19 @@ export interface DataGridProps<
   > | null>;
 
   /**
+   * Reference to the column virtualizer, set once the grid renders its columns.
+   */
+  columnVirtualizerRef: React.RefObject<Virtualizer<
+    HTMLDivElement,
+    Element
+  > | null>;
+
+  /**
    * Options passed to the row virtualizer.
    */
   rowVirtualizerOptions: Pick<
     VirtualizerOptions<HTMLDivElement, Element>,
-    "overscan" | "measureElement"
+    "overscan"
   >;
 
   /**
@@ -312,8 +323,9 @@ export interface DataGridProps<
   actionBar?: React.ReactNode;
 }
 
-export type GetDataGridSelectColumnProps<TData extends RowData> = Partial<
-  ColumnDef<DataGridFeatures, TData>
+export type GetDataGridSelectColumnProps<TData extends RowData> = Omit<
+  Partial<ColumnDef<DataGridFeatures, TData>>,
+  "id" | "header" | "cell"
 > & {
   /**
    * The width of the select column in pixels.
@@ -356,6 +368,12 @@ export type GetDataGridSelectColumnProps<TData extends RowData> = Partial<
    * @default "default"
    */
   hitboxSize?: "default" | "sm" | "lg";
+
+  /**
+   * Outlines each checkbox's clickable area, to help tune `hitboxSize`.
+   * @default false
+   */
+  debug?: boolean;
 };
 
 export type GetDataGridActionsColumnProps<TData extends RowData> = Omit<
@@ -520,7 +538,26 @@ export interface DataGridCellProps<TData extends RowData> {
 }
 
 export interface DataGridCellElementProps<TData extends RowData>
-  extends DataGridCellProps<TData>, EmptyProps<"div"> {}
+  extends DataGridCellProps<TData>, EmptyProps<"div"> {
+  /**
+   * Called instead of stopping the edit when Tab, Ctrl+Enter, or Enter with
+   * `commitOnEnter` commits it. Use it to save a draft value first.
+   */
+  onCommit?: (options?: StopEditingOptions) => void;
+
+  /**
+   * Called instead of stopping the edit when Escape cancels it. Use it to
+   * restore the value from before editing.
+   */
+  onCancel?: () => void;
+
+  /**
+   * Whether Enter commits the edit and moves to the next row. When false,
+   * only Ctrl+Enter (or Cmd+Enter on Mac) commits, so Enter can add a new line.
+   * @default false
+   */
+  commitOnEnter?: boolean;
+}
 
 export interface DataGridRowProps<
   TData extends RowData,
@@ -532,10 +569,26 @@ export interface DataGridRowProps<
   row: Row<DataGridFeatures, TData>;
 
   /**
+   * All leaf columns of the table, used to keep the row's cells in column order.
+   */
+  leafColumns: Column<DataGridFeatures, TData>[];
+
+  /**
    * The virtual item representing this row.
    * Contains positioning and measurement data for virtualization.
    */
   virtualItem: VirtualItem;
+
+  /**
+   * The range of center columns to render when columns are virtualized, or
+   * `null` to render them all.
+   */
+  columnWindow: ColumnWindow | null;
+
+  /**
+   * Whether the grid is scrolling, so cells can render lightweight previews.
+   */
+  isScrolling: boolean;
 }
 
 export interface DataGridSearchProps<TData extends RowData> {

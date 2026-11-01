@@ -43,6 +43,7 @@ import {
   dataTableFilterFn,
 } from "@/lib/data-table-filters";
 import {
+  getFilterVariant,
   getIsPlainFilter,
   getPlainFilterValue,
   normalizeColumnFilter,
@@ -95,14 +96,6 @@ declare module "@tanstack/react-table" {
 
 type DataTableInstance = Table<DataTableFeatures, RowData>;
 
-/**
- * Feature hooks get a `Table` generic over any features. This feature is only
- * registered in `dataTableFeatures`, so its hooks can use that table's types.
- */
-function asDataTable(table: object) {
-  return table as DataTableInstance;
-}
-
 const dataTableFilteringFeature: TableFeature = {
   getInitialState: (initialState) => ({
     joinOperator: "and",
@@ -142,7 +135,7 @@ const dataTableFilteringFeature: TableFeature = {
     const resolve = (filter: ColumnFilter) =>
       normalizeColumnFilter(
         filter,
-        instance.getColumn(filter.id)?.columnDef.meta?.variant ?? "text",
+        getFilterVariant(instance.getColumn(filter.id)?.columnDef.meta),
       );
 
     const setJoinOperator = (updater: Updater<JoinOperator>) =>
@@ -203,13 +196,22 @@ const dataTableFilteringFeature: TableFeature = {
   },
 };
 
+/**
+ * Feature hooks get a `Table` generic over any features. This feature is only
+ * registered in `dataTableFeatures`, so its hooks can use that table's types.
+ */
+function asDataTable(table: object) {
+  return table as DataTableInstance;
+}
+
 function getPlainFilter(
   instance: DataTableInstance,
   columnId: string,
   filters: ColumnFilter[],
 ) {
-  const variant =
-    instance.getColumn(columnId)?.columnDef.meta?.variant ?? "text";
+  const variant = getFilterVariant(
+    instance.getColumn(columnId)?.columnDef.meta,
+  );
   const index = filters.findIndex(
     (filter) =>
       filter.id === columnId &&

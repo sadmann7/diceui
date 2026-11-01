@@ -14,6 +14,7 @@ import type {
 
 import {
   coerceFilterValue,
+  getColumnSelectOptions,
   getDateFilterLabel,
   getDefaultFilter,
   getFilterDates,
@@ -67,10 +68,6 @@ import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const FILTER_SHORTCUT_KEY = "f";
 const REMOVE_FILTER_SHORTCUTS = ["backspace", "delete"];
-
-function getIsRemoveKey(event: React.KeyboardEvent) {
-  return REMOVE_FILTER_SHORTCUTS.includes(event.key.toLowerCase());
-}
 
 type FilterUpdate = Partial<Omit<ColumnFilterItem, "filterId">>;
 type FilterSelector = "field" | "operator" | "value";
@@ -290,6 +287,10 @@ function DataTableFilterMenuContent<TData extends RowData>({
       </SortableOverlay>
     </Sortable>
   );
+}
+
+function getIsRemoveKey(event: React.KeyboardEvent) {
+  return REMOVE_FILTER_SHORTCUTS.includes(event.key.toLowerCase());
 }
 
 interface DataTableFilterItemProps<TData extends RowData> {
@@ -516,7 +517,9 @@ function FilterFieldSelector<TData extends RowData>({
           <FacetedGroup>
             {columns.map((column) => (
               <FacetedItem key={column.id} value={column.id}>
-                <span className="truncate">{column.columnDef.meta?.label}</span>
+                <span className="truncate">
+                  {column.columnDef.meta?.label ?? column.id}
+                </span>
                 <FacetedItemIndicator />
               </FacetedItem>
             ))}
@@ -596,7 +599,7 @@ function FilterValueInput<TData extends RowData>(
       <div
         id={inputId}
         role="status"
-        aria-label={`${columnMeta?.label} filter is ${
+        aria-label={`${columnMeta?.label ?? column.id} filter is ${
           filter.operator === "isEmpty" ? "empty" : "not empty"
         }`}
         aria-live="polite"
@@ -624,7 +627,7 @@ function FilterValueInput<TData extends RowData>(
         <Input
           id={inputId}
           type={filter.variant === "text" ? "text" : "number"}
-          aria-label={`${columnMeta?.label} filter value`}
+          aria-label={`${columnMeta?.label ?? column.id} filter value`}
           inputMode={filter.variant === "text" ? undefined : "numeric"}
           placeholder={columnMeta?.placeholder ?? "Enter a value..."}
           defaultValue={
@@ -640,11 +643,11 @@ function FilterValueInput<TData extends RowData>(
       return <BooleanFilterValue {...props} />;
 
     case "select":
-    case "multiSelect":
+    case "multi-select":
       return <SelectFilterValue {...props} />;
 
     case "date":
-    case "dateRange":
+    case "date-range":
       return <DateFilterValue {...props} />;
 
     default:
@@ -672,7 +675,7 @@ function BooleanFilterValue<TData extends RowData>({
       <SelectTrigger
         id={inputId}
         aria-controls={listboxId}
-        aria-label={`${column.columnDef.meta?.label} boolean filter`}
+        aria-label={`${column.columnDef.meta?.label ?? column.id} boolean filter`}
         className="w-full"
       >
         <SelectValue placeholder="Select value" />
@@ -698,7 +701,7 @@ function SelectFilterValue<TData extends RowData>({
   const dir = useDirection();
   const listboxId = `${inputId}-listbox`;
   const columnMeta = column.columnDef.meta;
-  const multiple = filter.variant === "multiSelect";
+  const multiple = filter.variant === "multi-select";
 
   return (
     <Faceted
@@ -708,14 +711,14 @@ function SelectFilterValue<TData extends RowData>({
       onValueChange={(value) =>
         onFilterUpdate(filter.filterId, { value: value ?? "" })
       }
-      items={columnMeta?.options}
+      items={getColumnSelectOptions(columnMeta)}
       multiple={multiple}
     >
       <FacetedTrigger asChild>
         <Button
           id={inputId}
           aria-controls={listboxId}
-          aria-label={`${columnMeta?.label} filter value${multiple ? "s" : ""}`}
+          aria-label={`${columnMeta?.label ?? column.id} filter value${multiple ? "s" : ""}`}
           variant="outline"
           className="w-full hover:bg-muted/50 aria-expanded:bg-background dark:aria-expanded:bg-input/30"
         >
@@ -729,13 +732,13 @@ function SelectFilterValue<TData extends RowData>({
       </FacetedTrigger>
       <FacetedContent dir={dir} id={listboxId} className="w-50">
         <FacetedInput
-          aria-label={`Search ${columnMeta?.label} options`}
+          aria-label={`Search ${columnMeta?.label ?? column.id} options`}
           placeholder={columnMeta?.placeholder ?? "Search options..."}
         />
         <FacetedList>
           <FacetedEmpty>No options found.</FacetedEmpty>
           <FacetedGroup>
-            {columnMeta?.options?.map((option) => (
+            {getColumnSelectOptions(columnMeta).map((option) => (
               <FacetedItem key={option.value} value={option.value}>
                 {option.icon && <option.icon />}
                 <span className="flex-1 truncate">{option.label}</span>
@@ -759,7 +762,7 @@ function DateFilterValue<TData extends RowData>({
 }: FilterValueInputProps<TData>) {
   const dir = useDirection();
   const listboxId = `${inputId}-listbox`;
-  const label = column.columnDef.meta?.label;
+  const label = column.columnDef.meta?.label ?? column.id;
   const [startDate, endDate] = getFilterDates(filter.value);
 
   return (

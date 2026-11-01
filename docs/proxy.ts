@@ -1,5 +1,5 @@
 import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 
 import { DOCS_CONTENT_ROUTE, DOCS_ROUTE } from "@/lib/constants";
 

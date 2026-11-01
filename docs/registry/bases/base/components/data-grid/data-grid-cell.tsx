@@ -1,12 +1,16 @@
 "use client";
 
-import type { RowData } from "@tanstack/react-table";
+import type { Cell, RowData } from "@tanstack/react-table";
 
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
-import type { DataGridCellProps } from "@/lib/data-grid-types";
+import type { DataGridFeatures } from "@/lib/data-grid-features";
+import type {
+  DataGridCellProps,
+  StopEditingOptions,
+} from "@/lib/data-grid-types";
 
 import {
   CELL_TINTS,
@@ -15,7 +19,11 @@ import {
 } from "@/lib/data-grid-utils";
 
 interface DataGridCellElementProps<TData extends RowData>
-  extends DataGridCellProps<TData>, React.ComponentProps<"div"> {}
+  extends DataGridCellProps<TData>, React.ComponentProps<"div"> {
+  onCommit?: (options?: StopEditingOptions) => void;
+  onCancel?: () => void;
+  commitOnEnter?: boolean;
+}
 
 export function DataGridCell<TData extends RowData>({
   cell,
@@ -28,13 +36,16 @@ export function DataGridCell<TData extends RowData>({
   presence,
   readOnly,
   rowHeight,
-  width,
+  width: _width,
   pinned,
   pinnedOffset,
   grow,
   showStartBorder,
   showEndBorder,
+  onCommit,
+  onCancel,
   onKeyDown: onKeyDownProp,
+  commitOnEnter = false,
   className,
   style,
   ref,
@@ -50,19 +61,54 @@ export function DataGridCell<TData extends RowData>({
     const element = cellRef.current;
     const grid = element?.closest('[role="grid"]');
     const active = document.activeElement;
-    if (!element || !grid || !active || element.contains(active)) return;
+    if (!element || !grid || element.contains(active)) return;
+    const isPageFocused = !active || active === document.body;
     const activeGrid = active
-      .closest('[data-slot="data-grid-cell"]')
+      ?.closest('[data-slot="data-grid-cell"]')
       ?.closest('[role="grid"]');
-    if (active !== grid && activeGrid !== grid) return;
+    if (!isPageFocused && active !== grid && activeGrid !== grid) return;
     getCellFocusTarget(element).focus({ preventScroll: true });
   }, [isFocused, isEditing]);
+
   const isSelectionTinted = isSelected && !isEditing;
   const isTinted = isSelectionTinted || isSearchMatch || isActiveSearchMatch;
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
+      const wasPrevented = event.defaultPrevented;
       onKeyDownProp?.(event);
+      if (!wasPrevented && event.defaultPrevented) return;
+
+      if (isEditing) {
+        const commit = (options?: StopEditingOptions) => {
+          event.preventDefault();
+          event.stopPropagation();
+          if (onCommit) {
+            onCommit(options);
+          } else {
+            cell.table.stopEditing(options);
+          }
+        };
+
+        if (event.key === "Escape") {
+          event.preventDefault();
+          event.stopPropagation();
+          if (onCancel) {
+            onCancel();
+          } else {
+            cell.table.stopEditing();
+          }
+        } else if (event.key === "Tab") {
+          commit({ direction: event.shiftKey ? "shift+tab" : "tab" });
+        } else if (event.key === "Enter") {
+          if (commitOnEnter) {
+            commit({ moveToNextRow: true });
+          } else if (event.ctrlKey || event.metaKey) {
+            commit();
+          }
+        }
+        return;
+      }
 
       if (event.defaultPrevented) return;
 
@@ -80,29 +126,27 @@ export function DataGridCell<TData extends RowData>({
         return;
       }
 
-      if (isFocused && !isEditing && !readOnly) {
-        if (event.key === "F2" || event.key === "Enter") {
-          event.preventDefault();
-          event.stopPropagation();
-          cell.startEditing();
-          return;
-        }
+      if (!isFocused || readOnly) return;
 
-        if (event.key === " ") {
-          event.preventDefault();
-          event.stopPropagation();
-          cell.startEditing();
-          return;
-        }
+      const isPrintable =
+        event.key.length === 1 && !event.ctrlKey && !event.metaKey;
 
-        if (event.key.length === 1 && !event.ctrlKey && !event.metaKey) {
-          event.preventDefault();
-          event.stopPropagation();
-          cell.startEditing();
-        }
+      if (event.key === "F2" || event.key === "Enter" || isPrintable) {
+        event.preventDefault();
+        event.stopPropagation();
+        cell.startEditing(isPrintable ? { pendingChar: event.key } : undefined);
       }
     },
-    [cell, onKeyDownProp, isFocused, isEditing, readOnly],
+    [
+      cell,
+      onKeyDownProp,
+      isFocused,
+      isEditing,
+      readOnly,
+      onCommit,
+      onCancel,
+      commitOnEnter,
+    ],
   );
 
   return (
@@ -121,7 +165,7 @@ export function DataGridCell<TData extends RowData>({
       data-selected={isSelected ? "" : undefined}
       tabIndex={isFocused && !isEditing ? 0 : -1}
       className={cn(
-        "h-full px-2 py-1.5 text-start text-sm outline-none has-data-[slot=checkbox]:pt-2.5",
+        "h-full px-2 pt-1.75 pb-2 text-start text-sm outline-none has-data-[slot=checkbox]:pt-2.5 has-data-[slot=switch]:pt-2.5 **:data-[slot=data-grid-cell-content]:not-[[contenteditable=true]]:w-fit **:data-[slot=data-grid-cell-content]:not-[[contenteditable=true]]:max-w-full **:data-[slot=data-grid-cell-content]:not-[[contenteditable=true]]:wrap-anywhere",
         {
           grow,
           "border-s": showStartBorder,
@@ -138,21 +182,23 @@ export function DataGridCell<TData extends RowData>({
           [CELL_TINTS.darkActiveSearchMatch]: isActiveSearchMatch,
           [CELL_TINTS.darkSearchMatch]: isSearchMatch && !isActiveSearchMatch,
           "cursor-default": !isEditing,
-          "**:data-[slot=data-grid-cell-content]:w-fit **:data-[slot=data-grid-cell-content]:max-w-full **:data-[slot=data-grid-cell-content]:wrap-anywhere":
-            !isEditing,
-          "**:data-[slot=data-grid-cell-content]:line-clamp-1":
-            !isEditing && rowHeight === "short",
-          "**:data-[slot=data-grid-cell-content]:line-clamp-2":
-            !isEditing && rowHeight === "medium",
-          "**:data-[slot=data-grid-cell-content]:line-clamp-3":
-            !isEditing && rowHeight === "tall",
-          "**:data-[slot=data-grid-cell-content]:line-clamp-4":
-            !isEditing && rowHeight === "extra-tall",
+          "**:data-[slot=data-grid-cell-content]:not-[[contenteditable=true]]:block **:data-[slot=data-grid-cell-content]:not-[[contenteditable=true]]:truncate":
+            rowHeight === "short",
+          "**:data-[slot=data-grid-cell-content]:not-[[contenteditable=true]]:line-clamp-2":
+            rowHeight === "medium",
+          "**:data-[slot=data-grid-cell-content]:not-[[contenteditable=true]]:line-clamp-3":
+            rowHeight === "tall",
+          "**:data-[slot=data-grid-cell-content]:not-[[contenteditable=true]]:line-clamp-4":
+            rowHeight === "extra-tall",
         },
         className,
       )}
       style={{
-        ...getCellLayoutStyle({ width, pinned, pinnedOffset }),
+        ...getCellLayoutStyle({
+          columnId: cell.column.id,
+          pinned,
+          pinnedOffset,
+        }),
         ...(presence && !isFocused
           ? ({ "--tw-ring-color": presence.color } as React.CSSProperties)
           : null),
@@ -161,4 +207,20 @@ export function DataGridCell<TData extends RowData>({
       onKeyDown={onKeyDown}
     />
   );
+}
+
+export function useCellValue<TData extends RowData>(
+  cell: Cell<DataGridFeatures, TData>,
+) {
+  const { table } = cell;
+  const rowId = cell.row.id;
+  const columnId = cell.column.id;
+
+  const subscribe = React.useCallback(
+    (onChange: () => void) => table.subscribeCell(rowId, columnId, onChange),
+    [table, rowId, columnId],
+  );
+  const getValue = () => cell.getValue();
+
+  return React.useSyncExternalStore(subscribe, getValue, getValue);
 }

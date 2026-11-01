@@ -1,0 +1,60 @@
+---
+title: November 2026 - Column Meta
+description: One column meta API for Data Table and Data Grid, typed by variant. Includes breaking changes.
+date: 2026-11-01T12:00:00Z
+---
+
+[Data Table](/docs/components/data-table) and [Data Grid](/docs/components/data-grid) now share one column `meta` API, and each variant only accepts its own options. This release has breaking changes for column definitions in both components.
+
+## Breaking changes
+
+- **Flat `meta` in Data Grid.** `meta.cell` is removed. Its fields move onto `meta`.
+
+  ```tsx
+  columnHelper.accessor("skills", {
+    meta: {
+      label: "Skills",
+      cell: { variant: "multi-select", options }, // [!code --]
+      variant: "multi-select", // [!code ++]
+      options, // [!code ++]
+    },
+  });
+  ```
+
+- **Shared variant names.** Both components use the same vocabulary.
+
+  | Before | After |
+  | --- | --- |
+  | Data Grid `"short-text"` | `"text"` |
+  | Data Grid `"checkbox"` | `"boolean"` |
+  | Data Table `"multiSelect"` | `"multi-select"` |
+  | Data Table `"range"` | `"number"` with `filter: "range"` |
+  | Data Table `"dateRange"` | `"date"` with `filter: "range"` |
+  | Data Table `range: [min, max]` | `min` and `max` |
+
+- **Options are typed by variant.** `unit`, `min`, and `max` only apply to `number`, `filter: "range"` only to `number` and `date`, and `options` only to `select` and `multi-select`. TypeScript flags options on the wrong variant.
+
+- **Column configs use the same shape.** `getDataTableSearchParams` takes `{ variant: "date", filter: "range" }` instead of `{ variant: "dateRange" }`.
+
+- **Renamed types.** `FilterOption` and `CellSelectOption` become `ColumnSelectOption`. `ColumnVariantFilter` is removed; read options with `getColumnSelectOptions(meta)`.
+
+## Data Table
+
+- **Range filters.** Valid values apply as you type and settle on blur or <Kbd>Enter</Kbd>. The slider clamps to its bounds, the between inputs swap crossed values, and bad bounds in the URL are normalized.
+- **Fewer URL writes.** In client mode, a filter change resets the page in the same write, and page changes leave `perPage` alone.
+
+## Data Grid
+
+- **Switch control.** Boolean columns take `control: "checkbox" | "switch"`.
+- **Undo.** Long-text edits undo in one step per editing session.
+- **Performance.** Search reuses matches for rows an edit didn't touch (about 27 ms to 7 ms per edit at 100k rows), row height changes commit once, and column resizes no longer re-render cells.
+- **Column resizing.** Resize handles stay visible next to pinned columns, and the resize cursor stays on for the whole drag.
+- **Cell layout.** Short rows truncate text at the cell edge, so hyphenated values no longer cut off early, and the long text, multi-select, and file editors open aligned with the cell.
+- **Fixes.** Stale search after batched updates, cells ignoring column meta changes, pending updates lost on unmount, and file previews breaking after a remount.
+
+## Migrating
+
+1. Reinstall the Data Table and Data Grid components you use.
+2. In Data Grid columns, move the fields from `meta.cell` onto `meta`.
+3. Rename variants using the table above, and replace `range: [min, max]` with `min` and `max`.
+4. Rename `FilterOption` and `CellSelectOption` to `ColumnSelectOption`.

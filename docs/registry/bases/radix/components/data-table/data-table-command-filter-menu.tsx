@@ -12,17 +12,19 @@ import * as React from "react";
 import type { DataTableFeatures } from "@/lib/data-table-features";
 import type {
   ColumnFilterItem,
+  ColumnSelectOption,
   FilterOperator,
-  FilterOption,
 } from "@/lib/data-table-types";
 
 import {
   coerceFilterValue,
+  getColumnSelectOptions,
   getDateFilterLabel,
   getDefaultFilter,
   getFilterDates,
   getFilterDateValue,
   getFilterOperators,
+  getFilterVariant,
   getIsEditableTarget,
   getIsValuelessOperator,
   getSelectFilterValue,
@@ -69,10 +71,6 @@ import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const FILTER_SHORTCUT_KEY = "f";
 const REMOVE_FILTER_SHORTCUTS = ["backspace", "delete"];
-
-function getIsRemoveKey(event: React.KeyboardEvent) {
-  return REMOVE_FILTER_SHORTCUTS.includes(event.key.toLowerCase());
-}
 
 type FilterUpdate = Partial<Omit<ColumnFilterItem, "filterId">>;
 type FilterSelector = "field" | "operator" | "value";
@@ -180,7 +178,7 @@ function DataTableCommandFilterMenuContent<TData extends RowData>({
 
     table.addColumnFilter({
       ...defaults,
-      value: defaults.variant === "multiSelect" ? [value] : value,
+      value: defaults.variant === "multi-select" ? [value] : value,
       filterId: generateId({ length: 8 }),
     });
     setOpen(false);
@@ -214,34 +212,34 @@ function DataTableCommandFilterMenuContent<TData extends RowData>({
       className="flex flex-wrap items-center gap-2"
     >
       {hasFilters && (
-        <div role="list" className="flex flex-wrap items-center gap-2">
-          {filters.map((filter) => (
-            <DataTableFilterItem
-              key={filter.filterId}
-              filter={filter}
-              filterItemId={`${id}-filter-${filter.filterId}`}
-              columns={columns}
-              onFilterUpdate={onFilterUpdate}
-              onFilterRemove={onFilterRemove}
+        <>
+          <div role="list" className="flex flex-wrap items-center gap-2">
+            {filters.map((filter) => (
+              <DataTableFilterItem
+                key={filter.filterId}
+                filter={filter}
+                filterItemId={`${id}-filter-${filter.filterId}`}
+                columns={columns}
+                onFilterUpdate={onFilterUpdate}
+                onFilterRemove={onFilterRemove}
+              />
+            ))}
+          </div>
+          <Button
+            aria-label="Reset all filters"
+            variant="outline"
+            size="icon"
+            onClick={onFiltersReset}
+          >
+            <IconPlaceholder
+              lucide="X"
+              tabler="IconX"
+              hugeicons="Cancel01Icon"
+              phosphor="XIcon"
+              remixicon="RiCloseLine"
             />
-          ))}
-        </div>
-      )}
-      {hasFilters && (
-        <Button
-          aria-label="Reset all filters"
-          variant="outline"
-          size="icon"
-          onClick={onFiltersReset}
-        >
-          <IconPlaceholder
-            lucide="X"
-            tabler="IconX"
-            hugeicons="Cancel01Icon"
-            phosphor="XIcon"
-            remixicon="RiCloseLine"
-          />
-        </Button>
+          </Button>
+        </>
       )}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -309,6 +307,10 @@ function DataTableCommandFilterMenuContent<TData extends RowData>({
       </Popover>
     </div>
   );
+}
+
+function getIsRemoveKey(event: React.KeyboardEvent) {
+  return REMOVE_FILTER_SHORTCUTS.includes(event.key.toLowerCase());
 }
 
 interface DataTableFilterItemProps<TData extends RowData> {
@@ -395,165 +397,6 @@ function DataTableFilterItem<TData extends RowData>({
         />
       </Button>
     </div>
-  );
-}
-
-interface FilterFieldOptionsProps<TData extends RowData> {
-  columns: Column<DataTableFeatures, TData>[];
-  onSelect: (column: Column<DataTableFeatures, TData>) => void;
-}
-
-function FilterFieldOptions<TData extends RowData>({
-  columns,
-  onSelect,
-}: FilterFieldOptionsProps<TData>) {
-  return (
-    <>
-      <CommandEmpty>No fields found.</CommandEmpty>
-      <CommandGroup>
-        {columns.map((column) => (
-          <CommandItem
-            key={column.id}
-            value={column.id}
-            onSelect={() => onSelect(column)}
-          >
-            <ColumnLabel column={column} />
-          </CommandItem>
-        ))}
-      </CommandGroup>
-    </>
-  );
-}
-
-interface ColumnLabelProps<TData extends RowData> {
-  column: Column<DataTableFeatures, TData>;
-}
-
-function ColumnLabel<TData extends RowData>({
-  column,
-}: ColumnLabelProps<TData>) {
-  const columnMeta = column.columnDef.meta;
-
-  return (
-    <>
-      {columnMeta?.icon && <columnMeta.icon />}
-      <span className="truncate">{columnMeta?.label ?? column.id}</span>
-    </>
-  );
-}
-
-interface FilterValueOptionsProps<TData extends RowData> {
-  column: Column<DataTableFeatures, TData>;
-  search: string;
-  onSelect: (value: string) => void;
-}
-
-function FilterValueOptions<TData extends RowData>({
-  column,
-  search,
-  onSelect,
-}: FilterValueOptionsProps<TData>) {
-  const columnMeta = column.columnDef.meta;
-
-  switch (columnMeta?.variant ?? "text") {
-    case "boolean":
-      return (
-        <CommandGroup>
-          <CommandItem value="true" onSelect={() => onSelect("true")}>
-            True
-          </CommandItem>
-          <CommandItem value="false" onSelect={() => onSelect("false")}>
-            False
-          </CommandItem>
-        </CommandGroup>
-      );
-
-    case "select":
-    case "multiSelect":
-      return (
-        <>
-          <CommandEmpty>No options found.</CommandEmpty>
-          <CommandGroup>
-            {columnMeta?.options?.map((option) => (
-              <CommandItem
-                key={option.value}
-                value={option.value}
-                keywords={[option.label]}
-                className="[&>svg:last-child]:hidden"
-                onSelect={() => onSelect(option.value)}
-              >
-                {option.icon && <option.icon />}
-                <span className="truncate">{option.label}</span>
-                {option.count !== undefined && (
-                  <span className="ms-auto font-mono text-xs">
-                    {option.count}
-                  </span>
-                )}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        </>
-      );
-
-    case "date":
-    case "dateRange":
-      return (
-        <Calendar
-          autoFocus
-          captionLayout="dropdown"
-          mode="single"
-          onSelect={(date) => onSelect(getFilterDateValue(date))}
-        />
-      );
-
-    default:
-      return <TextFilterValueOption search={search} onSelect={onSelect} />;
-  }
-}
-
-interface TextFilterValueOptionProps {
-  search: string;
-  onSelect: (value: string) => void;
-}
-
-function TextFilterValueOption({
-  search,
-  onSelect,
-}: TextFilterValueOptionProps) {
-  const isEmpty = !search.trim();
-
-  return (
-    <CommandGroup>
-      <CommandItem
-        value={search}
-        disabled={isEmpty}
-        onSelect={() => onSelect(search)}
-      >
-        {isEmpty ? (
-          <>
-            <IconPlaceholder
-              lucide="Text"
-              tabler="IconTextCaption"
-              hugeicons="TextCheckIcon"
-              phosphor="TextTIcon"
-              remixicon="RiTextWrap"
-            />
-            <span>Type to add filter...</span>
-          </>
-        ) : (
-          <>
-            <IconPlaceholder
-              lucide="BadgeCheck"
-              tabler="IconRosetteDiscountCheck"
-              hugeicons="CheckmarkBadgeIcon"
-              phosphor="CheckCircleIcon"
-              remixicon="RiCheckboxCircleLine"
-            />
-            <span className="truncate">Filter by &quot;{search}&quot;</span>
-          </>
-        )}
-      </CommandItem>
-    </CommandGroup>
   );
 }
 
@@ -690,7 +533,7 @@ function FilterValueInput<TData extends RowData>(
       <div
         id={inputId}
         role="status"
-        aria-label={`${columnMeta?.label} filter is ${
+        aria-label={`${columnMeta?.label ?? column.id} filter is ${
           filter.operator === "isEmpty" ? "empty" : "not empty"
         }`}
         aria-live="polite"
@@ -710,7 +553,7 @@ function FilterValueInput<TData extends RowData>(
             column={column}
             inputId={inputId}
             onFilterUpdate={onFilterUpdate}
-            className="size-full max-w-28 gap-0 **:data-[slot='data-table-range-filter-min']:border-e-0 [&_input]:rounded-none [&_input]:px-1.5"
+            className="size-full max-w-28 gap-0 **:data-[slot='data-table-range-filter-min']:border-e-0 **:data-[slot='data-table-range-filter-separator']:sr-only [&_input]:rounded-none [&_input]:px-1.5"
           />
         );
       }
@@ -719,7 +562,7 @@ function FilterValueInput<TData extends RowData>(
         <Input
           id={inputId}
           type={filter.variant === "text" ? "text" : "number"}
-          aria-label={`${columnMeta?.label} filter value`}
+          aria-label={`${columnMeta?.label ?? column.id} filter value`}
           inputMode={filter.variant === "text" ? undefined : "numeric"}
           placeholder={columnMeta?.placeholder ?? "Enter value..."}
           className="h-full w-24 rounded-none px-1.5"
@@ -734,11 +577,11 @@ function FilterValueInput<TData extends RowData>(
       return <BooleanFilterValue {...props} />;
 
     case "select":
-    case "multiSelect":
+    case "multi-select":
       return <SelectFilterValue {...props} />;
 
     case "date":
-    case "dateRange":
+    case "date-range":
       return <DateFilterValue {...props} />;
 
     default:
@@ -766,7 +609,7 @@ function BooleanFilterValue<TData extends RowData>({
       <SelectTrigger
         id={inputId}
         aria-controls={listboxId}
-        aria-label={`${column.columnDef.meta?.label} boolean filter`}
+        aria-label={`${column.columnDef.meta?.label ?? column.id} boolean filter`}
         className="rounded-none bg-transparent px-1.5 py-0.5 [&_svg]:hidden"
       >
         <SelectValue />
@@ -792,9 +635,9 @@ function SelectFilterValue<TData extends RowData>({
   const dir = useDirection();
   const listboxId = `${inputId}-listbox`;
   const columnMeta = column.columnDef.meta;
-  const options = columnMeta?.options ?? [];
+  const options = getColumnSelectOptions(columnMeta);
   const value = getSelectFilterValue(filter);
-  const multiple = filter.variant === "multiSelect";
+  const multiple = filter.variant === "multi-select";
 
   return (
     <Faceted
@@ -811,7 +654,7 @@ function SelectFilterValue<TData extends RowData>({
         <Button
           id={inputId}
           aria-controls={listboxId}
-          aria-label={`${columnMeta?.label} filter value${multiple ? "s" : ""}`}
+          aria-label={`${columnMeta?.label ?? column.id} filter value${multiple ? "s" : ""}`}
           variant="ghost"
           className="h-full min-w-16 rounded-none border border-input px-1.5 dark:bg-input/30"
         >
@@ -824,7 +667,7 @@ function SelectFilterValue<TData extends RowData>({
       </FacetedTrigger>
       <FacetedContent dir={dir} id={listboxId} className="w-48">
         <FacetedInput
-          aria-label={`Search ${columnMeta?.label} options`}
+          aria-label={`Search ${columnMeta?.label ?? column.id} options`}
           placeholder="Search options..."
         />
         <FacetedList>
@@ -845,7 +688,7 @@ function SelectFilterValue<TData extends RowData>({
 }
 
 interface SelectedOptionsProps {
-  options: FilterOption[];
+  options: ColumnSelectOption[];
   value: string | string[] | undefined;
   placeholder: string;
 }
@@ -896,7 +739,7 @@ function DateFilterValue<TData extends RowData>({
 }: FilterValueInputProps<TData>) {
   const dir = useDirection();
   const listboxId = `${inputId}-listbox`;
-  const label = column.columnDef.meta?.label;
+  const label = column.columnDef.meta?.label ?? column.id;
   const [startDate, endDate] = getFilterDates(filter.value);
 
   return (
@@ -966,5 +809,164 @@ function DateFilterValue<TData extends RowData>({
         )}
       </PopoverContent>
     </Popover>
+  );
+}
+
+interface FilterValueOptionsProps<TData extends RowData> {
+  column: Column<DataTableFeatures, TData>;
+  search: string;
+  onSelect: (value: string) => void;
+}
+
+function FilterValueOptions<TData extends RowData>({
+  column,
+  search,
+  onSelect,
+}: FilterValueOptionsProps<TData>) {
+  const columnMeta = column.columnDef.meta;
+
+  switch (getFilterVariant(columnMeta)) {
+    case "boolean":
+      return (
+        <CommandGroup>
+          <CommandItem value="true" onSelect={() => onSelect("true")}>
+            True
+          </CommandItem>
+          <CommandItem value="false" onSelect={() => onSelect("false")}>
+            False
+          </CommandItem>
+        </CommandGroup>
+      );
+
+    case "select":
+    case "multi-select":
+      return (
+        <>
+          <CommandEmpty>No options found.</CommandEmpty>
+          <CommandGroup>
+            {getColumnSelectOptions(columnMeta).map((option) => (
+              <CommandItem
+                key={option.value}
+                value={option.value}
+                keywords={[option.label]}
+                className="[&>svg:last-child]:hidden"
+                onSelect={() => onSelect(option.value)}
+              >
+                {option.icon && <option.icon />}
+                <span className="truncate">{option.label}</span>
+                {option.count !== undefined && (
+                  <span className="ms-auto font-mono text-xs">
+                    {option.count}
+                  </span>
+                )}
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </>
+      );
+
+    case "date":
+    case "date-range":
+      return (
+        <Calendar
+          autoFocus
+          captionLayout="dropdown"
+          mode="single"
+          onSelect={(date) => onSelect(getFilterDateValue(date))}
+        />
+      );
+
+    default:
+      return <TextFilterValueOption search={search} onSelect={onSelect} />;
+  }
+}
+
+interface TextFilterValueOptionProps {
+  search: string;
+  onSelect: (value: string) => void;
+}
+
+function TextFilterValueOption({
+  search,
+  onSelect,
+}: TextFilterValueOptionProps) {
+  const isEmpty = !search.trim();
+
+  return (
+    <CommandGroup>
+      <CommandItem
+        value={search}
+        disabled={isEmpty}
+        onSelect={() => onSelect(search)}
+      >
+        {isEmpty ? (
+          <>
+            <IconPlaceholder
+              lucide="Text"
+              tabler="IconTextCaption"
+              hugeicons="TextCheckIcon"
+              phosphor="TextTIcon"
+              remixicon="RiTextWrap"
+            />
+            <span>Type to add filter...</span>
+          </>
+        ) : (
+          <>
+            <IconPlaceholder
+              lucide="BadgeCheck"
+              tabler="IconRosetteDiscountCheck"
+              hugeicons="CheckmarkBadgeIcon"
+              phosphor="CheckCircleIcon"
+              remixicon="RiCheckboxCircleLine"
+            />
+            <span className="truncate">Filter by &quot;{search}&quot;</span>
+          </>
+        )}
+      </CommandItem>
+    </CommandGroup>
+  );
+}
+
+interface FilterFieldOptionsProps<TData extends RowData> {
+  columns: Column<DataTableFeatures, TData>[];
+  onSelect: (column: Column<DataTableFeatures, TData>) => void;
+}
+
+function FilterFieldOptions<TData extends RowData>({
+  columns,
+  onSelect,
+}: FilterFieldOptionsProps<TData>) {
+  return (
+    <>
+      <CommandEmpty>No fields found.</CommandEmpty>
+      <CommandGroup>
+        {columns.map((column) => (
+          <CommandItem
+            key={column.id}
+            value={column.id}
+            onSelect={() => onSelect(column)}
+          >
+            <ColumnLabel column={column} />
+          </CommandItem>
+        ))}
+      </CommandGroup>
+    </>
+  );
+}
+
+interface ColumnLabelProps<TData extends RowData> {
+  column: Column<DataTableFeatures, TData>;
+}
+
+function ColumnLabel<TData extends RowData>({
+  column,
+}: ColumnLabelProps<TData>) {
+  const columnMeta = column.columnDef.meta;
+
+  return (
+    <>
+      {columnMeta?.icon && <columnMeta.icon />}
+      <span className="truncate">{columnMeta?.label ?? column.id}</span>
+    </>
   );
 }

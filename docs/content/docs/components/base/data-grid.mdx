@@ -90,9 +90,7 @@ export default function MyDataGrid() {
       accessorKey: "name",
       header: "Name",
       meta: {
-        cell: {
-          variant: "short-text",
-        },
+        variant: "text",
       },
     },
     // ... other columns
@@ -422,9 +420,7 @@ Single-line text input with inline editing:
   accessorKey: "name",
   header: "Name",
   meta: {
-    cell: {
-      variant: "short-text",
-    },
+    variant: "text",
   },
 }
 ```
@@ -439,9 +435,7 @@ Multi-line text displayed in a popover with auto-save:
   accessorKey: "notes",
   header: "Notes",
   meta: {
-    cell: {
-      variant: "long-text",
-    },
+    variant: "long-text",
   },
 }
 ```
@@ -456,13 +450,11 @@ Numeric input with optional constraints:
   accessorKey: "price",
   header: "Price",
   meta: {
-    cell: {
-      variant: "number",
-      min: 0,
-      max: 1000,
-      step: 0.01,
-      format: { style: "currency", currency: "USD" },
-    },
+    variant: "number",
+    min: 0,
+    max: 1000,
+    step: 0.01,
+    format: { style: "currency", currency: "USD" },
   },
 }
 ```
@@ -479,16 +471,14 @@ URL input with validation and clickable links:
   accessorKey: "website",
   header: "Website",
   meta: {
-    cell: {
-      variant: "url",
-    },
+    variant: "url",
   },
 }
 ```
 
-### Checkbox Cell
+### Boolean Cell
 
-Boolean checkbox for true/false values:
+Checkbox for true/false values. Set `control: "switch"` to render a switch instead:
 
 ```tsx
 {
@@ -496,9 +486,7 @@ Boolean checkbox for true/false values:
   accessorKey: "isActive",
   header: "Active",
   meta: {
-    cell: {
-      variant: "checkbox",
-    },
+    variant: "boolean",
   },
 }
 ```
@@ -513,14 +501,12 @@ Single-select input with predefined options:
   accessorKey: "category",
   header: "Category",
   meta: {
-    cell: {
-      variant: "select",
-      options: [
-        { label: "Electronics", value: "electronics" },
-        { label: "Clothing", value: "clothing" },
-        { label: "Books", value: "books" },
-      ],
-    },
+    variant: "select",
+    options: [
+      { label: "Electronics", value: "electronics" },
+      { label: "Clothing", value: "clothing" },
+      { label: "Books", value: "books" },
+    ],
   },
 }
 ```
@@ -535,14 +521,12 @@ Multi-select input with predefined options and badge display:
   accessorKey: "skills",
   header: "Skills",
   meta: {
-    cell: {
-      variant: "multi-select",
-      options: [
-        { label: "JavaScript", value: "javascript" },
-        { label: "TypeScript", value: "typescript" },
-        { label: "React", value: "react" },
-      ],
-    },
+    variant: "multi-select",
+    options: [
+      { label: "JavaScript", value: "javascript" },
+      { label: "TypeScript", value: "typescript" },
+      { label: "React", value: "react" },
+    ],
   },
 }
 ```
@@ -557,9 +541,7 @@ Date picker with calendar popover:
   accessorKey: "startDate",
   header: "Start Date",
   meta: {
-    cell: {
-      variant: "date",
-    },
+    variant: "date",
   },
 }
 ```
@@ -574,13 +556,11 @@ File upload with support for multiple files and file management:
   accessorKey: "attachments",
   header: "Attachments",
   meta: {
-    cell: {
-      variant: "file",
-      maxFileSize: 10 * 1024 * 1024, // 10MB
-      maxFiles: 5,
-      accept: "image/*,video/*,audio/*,.pdf,.doc,.docx",
-      multiple: true,
-    },
+    variant: "file",
+    maxFileSize: 10 * 1024 * 1024, // 10MB
+    maxFiles: 5,
+    accept: "image/*,video/*,audio/*,.pdf,.doc,.docx",
+    multiple: true,
   },
 }
 ```
@@ -693,7 +673,7 @@ return (
 
 The Data Grid uses a three-layer cell composition pattern:
 
-1. **DataGridDataCell**: Routes to the appropriate cell variant based on the column's `meta.cell.variant` property
+1. **DataGridDataCell**: Routes to the appropriate cell variant based on the column's `meta.variant` property
 2. **Cell Variants**: Implement specific editing UIs for different data variants (text, number, select, etc.)
 3. **DataGridCell**: The cell element itself, which provides common functionality for all cells (focus, selection, keyboard interactions)
 
@@ -755,7 +735,7 @@ Each header shows an icon for its cell variant. Set `meta.icon` to use your own:
   header: "Price",
   meta: {
     icon: DollarSignIcon,
-    cell: { variant: "number" },
+    variant: "number",
   },
 }
 ```
@@ -779,9 +759,7 @@ const columns = React.useMemo(() => {
       // Sorting is enabled by default
       meta: {
         label: "Name", // Label shown in filter/sort menus
-        cell: {
-          variant: "short-text",
-        },
+        variant: "text",
       },
     },
     // ... other columns
@@ -823,9 +801,7 @@ Set minimum column size using `minSize`:
   header: "Name",
   minSize: 180, // Minimum width in pixels
   meta: {
-    cell: {
-      variant: "short-text",
-    },
+    variant: "text",
   },
 }
 ```
@@ -911,7 +887,7 @@ Available cell variants:
 - **UrlCell**: URL input with validation and clickable links
 - **SelectCell**: Single-select dropdown with predefined options
 - **MultiSelectCell**: Multi-select input with badge display and command palette
-- **CheckboxCell**: Boolean checkbox for true/false values
+- **BooleanCell**: Checkbox or switch for true/false values
 - **DateCell**: Date picker with calendar popover
 - **FileCell**: File upload with support for multiple files and file management
 

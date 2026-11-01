@@ -386,9 +386,9 @@ Use server mode for large datasets. Describe the filterable and sortable columns
       // Sortable, not filterable
       code: { isSortable: false },
       title: { variant: "text" },
-      status: { variant: "multiSelect" },
-      estimatedHours: { variant: "range" },
-      createdAt: { variant: "dateRange" },
+      status: { variant: "multi-select" },
+      estimatedHours: { variant: "number", filter: "range" },
+      createdAt: { variant: "date", filter: "range" },
     } as const satisfies Record<string, DataTableColumnConfig>;
 
     export const searchParamsCache = createSearchParamsCache(
@@ -598,7 +598,7 @@ Column meta options for filtering, sorting, and view options.
 
 #### Filter Variants
 
-Available filter variants for [column meta](#column-meta).
+Available variants for [column meta](#column-meta). Set `filter: "range"` on a `number` or `date` column to filter between two values instead of one.
 
 <PropsTable
   variant="title"
@@ -609,19 +609,13 @@ Available filter variants for [column meta](#column-meta).
     },
     {
       title: "number",
-      description: "Numeric filters with equals, greater than, less than, etc.",
-    },
-    {
-      title: "range",
-      description: "Range filters with minimum and maximum values",
+      description:
+        "Numeric filters with equals, greater than, less than, etc. With `filter: \"range\"`, a slider between `min` and `max`.",
     },
     {
       title: "date",
-      description: "Date filters with equals, before, after, etc.",
-    },
-    {
-      title: "dateRange",
-      description: "Date range filters with start and end dates",
+      description:
+        "Date filters with equals, before, after, etc. With `filter: \"range\"`, a start and end date.",
     },
     {
       title: "boolean",
@@ -632,7 +626,7 @@ Available filter variants for [column meta](#column-meta).
       description: "Single-select filters with predefined options",
     },
     {
-      title: "multiSelect",
+      title: "multi-select",
       description: "Multi-select filters with predefined options",
     },
   ]}

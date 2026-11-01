@@ -9,6 +9,8 @@ import type {
 import type { DataTableFeatures } from "@/lib/data-table-features";
 import type {
   ColumnFilterItem,
+  ColumnSelectOption,
+  ColumnVariantMeta,
   FilterOperator,
   FilterOperatorOption,
   FilterVariant,
@@ -21,10 +23,10 @@ export const FILTER_VARIANTS = [
   "number",
   "range",
   "date",
-  "dateRange",
+  "date-range",
   "boolean",
   "select",
-  "multiSelect",
+  "multi-select",
 ] as const;
 
 export const FILTER_OPERATORS = {
@@ -106,9 +108,9 @@ const BOOLEAN_OPERATORS = [
 
 const MULTI_VALUE_FILTER_VARIANTS: FilterVariant[] = [
   "select",
-  "multiSelect",
+  "multi-select",
   "range",
-  "dateRange",
+  "date-range",
 ];
 
 const FILTER_OPERATORS_BY_VARIANT: Record<
@@ -119,19 +121,11 @@ const FILTER_OPERATORS_BY_VARIANT: Record<
   number: NUMERIC_OPERATORS,
   range: NUMERIC_OPERATORS,
   date: DATE_OPERATORS,
-  dateRange: DATE_OPERATORS,
+  "date-range": DATE_OPERATORS,
   boolean: BOOLEAN_OPERATORS,
   select: SELECT_OPERATORS,
-  multiSelect: MULTI_SELECT_OPERATORS,
+  "multi-select": MULTI_SELECT_OPERATORS,
 };
-
-function getColumnVar(columnId: string, property: "size" | "offset") {
-  const name = columnId.replace(
-    /[^a-zA-Z0-9-]/g,
-    (char) => `_${char.codePointAt(0)?.toString(16)}_`,
-  );
-  return `--column-${name}-${property}`;
-}
 
 export function getAriaSort(
   sorting: SortingState,
@@ -150,9 +144,8 @@ export function getVisibleSelectedRows<TData extends RowData>(
 
 export function getColumnPinningStyle<TData extends RowData>(
   column: Column<DataTableFeatures, TData>,
+  isPinned = column.getIsPinned(),
 ): React.CSSProperties {
-  const isPinned = column.getIsPinned();
-
   return {
     insetInlineStart:
       isPinned === "start"
@@ -237,10 +230,35 @@ export function coerceFilterValue(
   return value;
 }
 
+export function getFilterVariant(
+  meta: ColumnVariantMeta | undefined,
+): FilterVariant {
+  switch (meta?.variant) {
+    case "number":
+      return meta.filter === "range" ? "range" : "number";
+    case "date":
+      return meta.filter === "range" ? "date-range" : "date";
+    case "boolean":
+    case "select":
+    case "multi-select":
+      return meta.variant;
+    default:
+      return "text";
+  }
+}
+
+export function getColumnSelectOptions(
+  meta: ColumnVariantMeta | undefined,
+): ColumnSelectOption[] {
+  return meta?.variant === "select" || meta?.variant === "multi-select"
+    ? (meta.options ?? [])
+    : [];
+}
+
 export function getDefaultFilter<TData extends RowData>(
   column: Column<DataTableFeatures, TData>,
 ) {
-  const variant = column.columnDef.meta?.variant ?? "text";
+  const variant = getFilterVariant(column.columnDef.meta);
 
   return {
     id: column.id,
@@ -251,11 +269,19 @@ export function getDefaultFilter<TData extends RowData>(
 }
 
 export function getSelectFilterValue(filter: ColumnFilterItem) {
-  if (filter.variant === "multiSelect") {
+  if (filter.variant === "multi-select") {
     return Array.isArray(filter.value) ? filter.value : [];
   }
 
   return typeof filter.value === "string" ? filter.value : undefined;
+}
+
+function getColumnVar(columnId: string, property: "size" | "offset") {
+  const name = columnId.replace(
+    /[^a-zA-Z0-9-]/g,
+    (char) => `_${char.codePointAt(0)?.toString(16)}_`,
+  );
+  return `--column-${name}-${property}`;
 }
 
 const CALENDAR_DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
@@ -290,26 +316,8 @@ export function formatFilterDate(date: Date) {
   return `${date.getFullYear()}-${month}-${day}`;
 }
 
-function getValidDate(date: Date) {
-  return Number.isNaN(date.getTime()) ? undefined : date;
-}
-
-function stringifyFilterDate(value: unknown) {
-  const date = parseFilterDate(value);
-  return date ? formatFilterDate(date) : "";
-}
-
 export function getIsDateVariant(variant: FilterVariant) {
-  return variant === "date" || variant === "dateRange";
-}
-
-function getFilterValueStringifier(
-  variant: FilterVariant,
-  operator: FilterOperator,
-) {
-  return getIsDateVariant(variant) && operator !== "isRelativeToToday"
-    ? stringifyFilterDate
-    : stringifyFilterValue;
+  return variant === "date" || variant === "date-range";
 }
 
 export function getFilterDates(value: ColumnFilterItem["value"]) {
@@ -343,7 +351,43 @@ export function stringifyFilterValue(value: unknown): string {
   if (value == null) return "";
   if (value instanceof Date) return value.toISOString();
   if (typeof value === "object") return JSON.stringify(value);
+  // oxlint-disable-next-line typescript/no-unnecessary-type-assertion -- narrows `unknown` for no-base-to-string
   return String(value as string | number | boolean | bigint);
+}
+
+const UNBOUNDED_RANGE: [number, number] = [-Infinity, Infinity];
+
+export function getRangeFilterBounds(
+  values: [string, string],
+  [min, max]: [number, number] = UNBOUNDED_RANGE,
+): [number | undefined, number | undefined] {
+  const [start, end] = values.map((value) => {
+    const number = Number(value);
+    return value.trim() === "" || Number.isNaN(number)
+      ? undefined
+      : Math.min(Math.max(number, min), max);
+  });
+
+  return start !== undefined && end !== undefined && start > end
+    ? [end, start]
+    : [start, end];
+}
+
+export function getValidRangeFilterBounds(
+  values: [string, string],
+  [min, max]: [number, number] = UNBOUNDED_RANGE,
+): [number | undefined, number | undefined] | null {
+  const [start, end] = values.map((value) =>
+    value.trim() === "" ? undefined : Number(value),
+  );
+
+  for (const bound of [start, end]) {
+    if (bound === undefined) continue;
+    if (Number.isNaN(bound) || bound < min || bound > max) return null;
+  }
+  if (start !== undefined && end !== undefined && start > end) return null;
+
+  return [start, end];
 }
 
 export function getIsMultiValueVariant(variant: FilterVariant) {
@@ -351,8 +395,8 @@ export function getIsMultiValueVariant(variant: FilterVariant) {
 }
 
 export function getPlainFilterOperator(variant: FilterVariant): FilterOperator {
-  if (variant === "select" || variant === "multiSelect") return "inArray";
-  if (variant === "range" || variant === "dateRange") return "isBetween";
+  if (variant === "select" || variant === "multi-select") return "inArray";
+  if (variant === "range" || variant === "date-range") return "isBetween";
   return getDefaultFilterOperator(variant);
 }
 
@@ -379,7 +423,11 @@ export function createPlainFilter<TColumnId extends string>(
   const stringify = getFilterValueStringifier(variant, operator);
 
   if (getIsMultiValueVariant(variant)) {
-    const values = (Array.isArray(value) ? value : [value]).map(stringify);
+    const values = normalizeFilterValues(
+      variant,
+      operator,
+      (Array.isArray(value) ? value : [value]).map(stringify),
+    );
     if (values.every((item) => item === "")) return null;
     return { id, variant, operator, value: values, filterId };
   }
@@ -404,7 +452,11 @@ export function normalizeColumnFilter(
       variant: filterVariant,
       operator: filter.operator,
       value: Array.isArray(filter.value)
-        ? filter.value.map(stringify)
+        ? normalizeFilterValues(
+            filterVariant,
+            filter.operator,
+            filter.value.map(stringify),
+          )
         : stringify(filter.value),
       filterId,
     };
@@ -425,7 +477,7 @@ export function normalizeColumnFilter(
 export function getPlainFilterValue(filter: ColumnFilterItem): unknown {
   const { variant, value } = filter;
 
-  if (variant === "select" || variant === "multiSelect") {
+  if (variant === "select" || variant === "multi-select") {
     return Array.isArray(value) ? value : [value];
   }
 
@@ -449,9 +501,7 @@ export function getIsActiveFilter(filter: ColumnFilterItem) {
     getIsValuelessOperator(filter.operator) ||
     (Array.isArray(filter.value)
       ? filter.value.some((value) => value !== "")
-      : filter.value !== "" &&
-        filter.value !== null &&
-        filter.value !== undefined)
+      : filter.value !== "")
   );
 }
 
@@ -459,4 +509,52 @@ export function getActiveFilters<TFilterItem extends ColumnFilterItem>(
   filters: TFilterItem[],
 ): TFilterItem[] {
   return filters.filter(getIsActiveFilter);
+}
+
+function getValidDate(date: Date) {
+  return Number.isNaN(date.getTime()) ? undefined : date;
+}
+
+function normalizeFilterValues(
+  variant: FilterVariant,
+  operator: FilterOperator,
+  values: string[],
+) {
+  if (operator !== "isBetween") return values;
+
+  if (getIsDateVariant(variant)) {
+    const [start = "", end = ""] = values;
+    const startTime = parseFilterDate(start)?.getTime();
+    const endTime = parseFilterDate(end)?.getTime();
+    return startTime !== undefined &&
+      endTime !== undefined &&
+      startTime > endTime
+      ? [end, start]
+      : [start, end];
+  }
+
+  if (variant !== "number" && variant !== "range") return values;
+
+  const [start = "", end = ""] = values.map((value) => {
+    const trimmed = value.trim();
+    return trimmed === "" || Number.isNaN(Number(trimmed)) ? "" : trimmed;
+  });
+
+  return start !== "" && end !== "" && Number(start) > Number(end)
+    ? [end, start]
+    : [start, end];
+}
+
+function getFilterValueStringifier(
+  variant: FilterVariant,
+  operator: FilterOperator,
+) {
+  return getIsDateVariant(variant) && operator !== "isRelativeToToday"
+    ? stringifyFilterDate
+    : stringifyFilterValue;
+}
+
+function stringifyFilterDate(value: unknown) {
+  const date = parseFilterDate(value);
+  return date ? formatFilterDate(date) : "";
 }

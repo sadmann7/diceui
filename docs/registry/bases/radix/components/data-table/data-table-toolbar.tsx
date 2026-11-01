@@ -11,12 +11,22 @@ import * as React from "react";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
 
+import {
+  getColumnSelectOptions,
+  getFilterVariant,
+} from "@/lib/data-table-utils";
 import { DataTableDateFilter } from "@/registry/bases/radix/components/data-table/data-table-date-filter";
 import { DataTableFacetedFilter } from "@/registry/bases/radix/components/data-table/data-table-faceted-filter";
 import { DataTableSliderFilter } from "@/registry/bases/radix/components/data-table/data-table-slider-filter";
 import { DataTableViewOptions } from "@/registry/bases/radix/components/data-table/data-table-view-options";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { Input } from "@/registry/bases/radix/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@/registry/bases/radix/ui/input-group";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 interface DataTableToolbarProps<
@@ -85,6 +95,7 @@ export function DataTableToolbar<TData extends RowData>({
     </div>
   );
 }
+
 interface DataTableToolbarFilterProps<TData extends RowData> {
   column: Column<DataTableFeatures, TData>;
 }
@@ -97,8 +108,9 @@ function DataTableToolbarFilter<TData extends RowData>({
 
   const title = columnMeta.label ?? column.id;
   const placeholder = columnMeta.placeholder ?? columnMeta.label;
+  const filterVariant = getFilterVariant(columnMeta);
 
-  switch (columnMeta.variant) {
+  switch (filterVariant) {
     case "text":
       return (
         <DataTableFilterInput
@@ -110,49 +122,86 @@ function DataTableToolbarFilter<TData extends RowData>({
 
     case "number":
       return (
-        <div className="relative">
-          <DataTableFilterInput
-            column={column}
-            type="number"
-            inputMode="numeric"
-            placeholder={placeholder}
-            className={cn("w-30", columnMeta.unit && "pe-8")}
-          />
-          {columnMeta.unit && (
-            <span className="absolute inset-e-0 top-0 bottom-0 flex items-center rounded-e-md bg-accent px-2 text-sm text-muted-foreground">
-              {columnMeta.unit}
-            </span>
-          )}
-        </div>
+        <DataTableFilterInput
+          column={column}
+          type="number"
+          inputMode="numeric"
+          placeholder={placeholder}
+          unit={columnMeta.variant === "number" ? columnMeta.unit : undefined}
+          className="w-30"
+        />
       );
 
     case "range":
       return <DataTableSliderFilter column={column} title={title} />;
 
     case "date":
-    case "dateRange":
+    case "date-range":
       return (
         <DataTableDateFilter
           column={column}
           title={title}
-          multiple={columnMeta.variant === "dateRange"}
+          multiple={filterVariant === "date-range"}
         />
       );
 
     case "select":
-    case "multiSelect":
+    case "multi-select":
       return (
         <DataTableFacetedFilter
           column={column}
           title={title}
-          options={columnMeta.options ?? []}
-          multiple={columnMeta.variant === "multiSelect"}
+          options={getColumnSelectOptions(columnMeta)}
+          multiple={filterVariant === "multi-select"}
         />
       );
 
     default:
       return null;
   }
+}
+
+interface DataTableFilterInputProps<
+  TData extends RowData,
+> extends React.ComponentProps<"input"> {
+  column: Column<DataTableFeatures, TData>;
+  unit?: string;
+}
+
+function DataTableFilterInput<TData extends RowData>({
+  column,
+  type = "text",
+  unit,
+  className,
+  ...props
+}: DataTableFilterInputProps<TData>) {
+  return (
+    <Subscribe
+      source={column.table.atoms.columnFilters}
+      selector={() => column.getFilterValue()}
+    >
+      {(filterValue) => {
+        const inputProps = {
+          type,
+          ...props,
+          value: readFilterInputValue(filterValue),
+          onChange: (event: React.ChangeEvent<HTMLInputElement>) =>
+            column.setFilterValue(event.target.value || undefined),
+        };
+
+        if (!unit) return <Input {...inputProps} className={className} />;
+
+        return (
+          <InputGroup className={className}>
+            <InputGroupInput {...inputProps} />
+            <InputGroupAddon align="inline-end">
+              <InputGroupText>{unit}</InputGroupText>
+            </InputGroupAddon>
+          </InputGroup>
+        );
+      }}
+    </Subscribe>
+  );
 }
 
 function readFilterInputValue(value: unknown) {
@@ -165,34 +214,4 @@ function readFilterInputValue(value: unknown) {
   }
 
   return "";
-}
-
-interface DataTableFilterInputProps<
-  TData extends RowData,
-> extends React.ComponentProps<"input"> {
-  column: Column<DataTableFeatures, TData>;
-}
-
-function DataTableFilterInput<TData extends RowData>({
-  column,
-  type = "text",
-  ...props
-}: DataTableFilterInputProps<TData>) {
-  return (
-    <Subscribe
-      source={column.table.atoms.columnFilters}
-      selector={() => column.getFilterValue()}
-    >
-      {(filterValue) => (
-        <Input
-          type={type}
-          {...props}
-          value={readFilterInputValue(filterValue)}
-          onChange={(event) =>
-            column.setFilterValue(event.target.value || undefined)
-          }
-        />
-      )}
-    </Subscribe>
-  );
 }

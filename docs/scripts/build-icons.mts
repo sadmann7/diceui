@@ -1,5 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { writeFileIfChanged } from "./write-files.mts";
 
@@ -41,6 +42,9 @@ export async function writeIconsModule() {
   await writeFileIfChanged(path.join(OUTPUT_PATH, "lucide.ts"), content);
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (
+  process.argv[1] &&
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
+) {
   await writeIconsModule();
 }

@@ -1,5 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { twMerge } from "tailwind-merge";
 
 import { STYLES } from "../registry/styles";
@@ -411,6 +412,9 @@ export async function syncStyles() {
   );
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (
+  process.argv[1] &&
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
+) {
   await syncStyles();
 }

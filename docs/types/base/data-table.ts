@@ -13,7 +13,7 @@ import type { DataTableFeatures } from "@/lib/data-table-features";
 import type {
   ColumnFilterItem,
   DataTableQueryKeys,
-  FilterOption,
+  ColumnSelectOption,
 } from "@/lib/data-table-types";
 import type { DropdownMenuTrigger } from "@/registry/bases/base/ui/dropdown-menu";
 import type { EmptyProps } from "@/types";
@@ -161,7 +161,7 @@ export interface DataTableFacetedFilterProps<TData extends RowData, TValue> {
   title?: string;
 
   /** The options of the filter. */
-  options: FilterOption[];
+  options: ColumnSelectOption[];
 
   /** Whether to enable multiple selection. */
   multiple?: boolean;

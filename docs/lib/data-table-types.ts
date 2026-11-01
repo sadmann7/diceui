@@ -12,32 +12,56 @@ import type {
   JOIN_OPERATORS,
 } from "@/lib/data-table-utils";
 
-export interface DataTableColumnMeta {
-  label?: string;
-  placeholder?: string;
-  variant?: FilterVariant;
-  options?: FilterOption[];
-  range?: [number, number];
-  unit?: string;
-  icon?: React.ComponentType<React.ComponentProps<"svg">>;
-}
-
-export interface DataTableQueryKeys {
-  page: string;
-  perPage: string;
-  sort: string;
-  joinOperator: string;
-}
-
-export interface FilterOption {
+export interface ColumnSelectOption {
   label: string;
   value: string;
   count?: number;
   icon?: React.ComponentType<React.ComponentProps<"svg">>;
 }
 
-export type FilterOperator = keyof typeof FILTER_OPERATORS;
+export type PlainColumnVariant =
+  | "text"
+  | "long-text"
+  | "url"
+  | "boolean"
+  | "file";
+
+export interface ColumnVariantOptions {
+  number: {
+    filter?: "range";
+    min?: number;
+    max?: number;
+    unit?: string;
+  };
+  date: {
+    filter?: "range";
+  };
+  select: {
+    options?: ColumnSelectOption[];
+  };
+  "multi-select": {
+    options?: ColumnSelectOption[];
+  };
+}
+
+export type ColumnVariant = PlainColumnVariant | keyof ColumnVariantOptions;
+
+export type ColumnVariantMeta =
+  | { variant?: PlainColumnVariant }
+  | {
+      [TVariant in keyof ColumnVariantOptions]: {
+        variant: TVariant;
+      } & ColumnVariantOptions[TVariant];
+    }[keyof ColumnVariantOptions];
+
+export type DataTableColumnMeta = {
+  label?: string;
+  icon?: React.ComponentType<React.ComponentProps<"svg">>;
+  placeholder?: string;
+} & ColumnVariantMeta;
+
 export type FilterVariant = (typeof FILTER_VARIANTS)[number];
+export type FilterOperator = keyof typeof FILTER_OPERATORS;
 export type JoinOperator = (typeof JOIN_OPERATORS)[number];
 
 export interface FilterOperatorOption {
@@ -67,17 +91,16 @@ declare module "@tanstack/react-table" {
   > {}
 }
 
-export interface DataTableColumnConfig {
-  variant?: FilterVariant;
+export type DataTableColumnConfig = {
   isSortable?: boolean;
-}
+} & ColumnVariantMeta;
 
 export type DataTableColumnConfigs = Record<string, DataTableColumnConfig>;
 
 export type FilterableColumnId<TColumnConfigs extends DataTableColumnConfigs> =
   {
     [K in keyof TColumnConfigs]: TColumnConfigs[K] extends {
-      variant: FilterVariant;
+      variant: ColumnVariant;
     }
       ? K
       : never;
@@ -90,6 +113,13 @@ export type SortableColumnId<TColumnConfigs extends DataTableColumnConfigs> = {
     : K;
 }[keyof TColumnConfigs] &
   string;
+
+export interface DataTableQueryKeys {
+  page: string;
+  perPage: string;
+  sort: string;
+  joinOperator: string;
+}
 
 export interface DataTableQuery<
   TFilterColumnId extends string = string,

@@ -97,7 +97,7 @@ const columns: ColumnDef<DataTableFeatures, Project>[] = [
     },
     meta: {
       label: "Status",
-      variant: "multiSelect",
+      variant: "multi-select",
       options: [
         { label: "Active", value: "active", icon: CheckCircle },
         { label: "Inactive", value: "inactive", icon: XCircle },
