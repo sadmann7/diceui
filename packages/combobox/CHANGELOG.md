@@ -1,5 +1,11 @@
 # @diceui/combobox
 
+## 2.0.1
+
+### Patch Changes
+
+- cac659e: Read context fields directly in event handler dependency lists, so the components pass `react-hooks/exhaustive-deps` without changing behavior.
+
 ## 2.0.0
 
 ### Major Changes
