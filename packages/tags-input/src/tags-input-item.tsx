@@ -41,6 +41,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const pointerTypeRef =
       React.useRef<React.PointerEvent["pointerType"]>("touch");
     const context = useTagsInput(ITEM_NAME);
+    const { inputRef, setHighlightedIndex } = context;
     const id = useId();
     const textId = `${id}text`;
     const index = context.value.indexOf(value);
@@ -50,10 +51,9 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const displayValue = context.displayValue(value);
 
     const onItemSelect = React.useCallback(() => {
-      context.setHighlightedIndex(index);
-      context.inputRef.current?.focus();
-      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
-    }, [context.setHighlightedIndex, context.inputRef, index]);
+      setHighlightedIndex(index);
+      inputRef.current?.focus();
+    }, [setHighlightedIndex, inputRef, index]);
 
     return (
       <TagsInputItemProvider

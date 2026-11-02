@@ -13,6 +13,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
   (props, ref) => {
     const { autoFocus, ...inputProps } = props;
     const context = useTagsInput(INPUT_NAME);
+    const { onItemAdd, setHighlightedIndex } = context;
 
     const onCustomKeydown = React.useCallback(
       (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -21,16 +22,15 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
         const value = event.currentTarget.value;
         if (!value) return;
 
-        const isAdded = context.onItemAdd(value);
+        const isAdded = onItemAdd(value);
         if (isAdded) {
           event.currentTarget.value = "";
-          context.setHighlightedIndex(null);
+          setHighlightedIndex(null);
         }
 
         event.preventDefault();
       },
-      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
-      [context.onItemAdd, context.setHighlightedIndex],
+      [onItemAdd, setHighlightedIndex],
     );
 
     const onTab = React.useCallback(
