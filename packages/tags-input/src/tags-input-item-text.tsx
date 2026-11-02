@@ -33,13 +33,20 @@ const ItemText = TagsInputItemText;
 
 function TagsInputEditableItemText() {
   const context = useTagsInput(ITEM_TEXT_NAME);
+  const {
+    inputRef,
+    onItemUpdate,
+    setEditingIndex,
+    setHighlightedIndex,
+    value,
+  } = context;
   const itemContext = useTagsInputItem(ITEM_TEXT_NAME);
   const [editValue, setEditValue] = React.useState(itemContext.displayValue);
 
   const onBlur = React.useCallback(() => {
     setEditValue(itemContext.displayValue);
-    context.setEditingIndex(null);
-  }, [context.setEditingIndex, itemContext.displayValue]);
+    setEditingIndex(null);
+  }, [setEditingIndex, itemContext.displayValue]);
 
   const onChange = React.useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,25 +70,25 @@ function TagsInputEditableItemText() {
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") {
-        const index = context.value.indexOf(itemContext.value);
-        context.onItemUpdate(index, editValue);
+        const index = value.indexOf(itemContext.value);
+        onItemUpdate(index, editValue);
       } else if (event.key === "Escape") {
         setEditValue(itemContext.displayValue);
-        context.setEditingIndex(null);
-        context.setHighlightedIndex(itemContext.index);
-        context.inputRef.current?.focus();
+        setEditingIndex(null);
+        setHighlightedIndex(itemContext.index);
+        inputRef.current?.focus();
       }
       event.stopPropagation();
     },
     [
-      context.value,
-      context.onItemUpdate,
-      context.setEditingIndex,
+      value,
+      onItemUpdate,
+      setEditingIndex,
       itemContext.displayValue,
-      context.inputRef.current?.focus,
+      inputRef,
       editValue,
       itemContext.value,
-      context.setHighlightedIndex,
+      setHighlightedIndex,
       itemContext.index,
     ],
   );

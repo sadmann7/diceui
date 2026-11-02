@@ -717,7 +717,14 @@ interface AngleSliderThumbProps
 }
 
 function AngleSliderThumb(props: AngleSliderThumbProps) {
-  const { index: indexProp, className, render, ref, ...thumbProps } = props;
+  const {
+    index: indexProp,
+    onFocus: onFocusProp,
+    className,
+    render,
+    ref,
+    ...thumbProps
+  } = props;
 
   const context = useSliderContext(THUMB_NAME);
   const store = useStoreContext(THUMB_NAME);
@@ -773,12 +780,12 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<ThumbElement>) => {
-      props.onFocus?.(event);
+      onFocusProp?.(event);
       if (event.defaultPrevented) return;
 
       store.setState("valueIndexToChange", index);
     },
-    [props.onFocus, store, index],
+    [onFocusProp, store, index],
   );
 
   const element = useRender({

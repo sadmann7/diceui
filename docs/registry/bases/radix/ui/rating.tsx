@@ -205,6 +205,7 @@ function Rating(props: RatingProps) {
     onValueChange,
     onHover,
     onFocus: onFocusProp,
+    onBlur: onBlurProp,
     onMouseDown: onMouseDownProp,
     dir: dirProp,
     orientation = "horizontal",
@@ -238,6 +239,7 @@ function Rating(props: RatingProps) {
     onValueChange,
     onHover,
     onFocus: onFocusProp,
+    onBlur: onBlurProp,
     onMouseDown: onMouseDownProp,
     step,
   });
@@ -276,7 +278,7 @@ function Rating(props: RatingProps) {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
 
   const value = useStore((state) => state.value, store);
 
@@ -350,12 +352,12 @@ function Rating(props: RatingProps) {
 
   const onBlur = React.useCallback(
     (event: React.FocusEvent<HTMLDivElement>) => {
-      rootProps.onBlur?.(event);
+      propsRef.current.onBlur?.(event);
       if (event.defaultPrevented) return;
 
       setIsTabbingBackOut(false);
     },
-    [rootProps.onBlur],
+    [propsRef],
   );
 
   const onFocus = React.useCallback(

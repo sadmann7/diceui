@@ -22,6 +22,29 @@ interface MentionInputProps extends React.ComponentPropsWithoutRef<
 const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
   (props, forwardedRef) => {
     const context = useMentionContext(INPUT_NAME);
+    const {
+      disabled,
+      filterStore,
+      getEnabledItems,
+      highlightedItem,
+      inputValue,
+      mentions,
+      modal,
+      onHighlightMove,
+      onHighlightedItemChange,
+      onInputValueChange,
+      onIsPastingChange,
+      onItemsFilter,
+      onMentionAdd,
+      onMentionsChange,
+      onMentionsRemove,
+      onOpenChange,
+      onValueChange,
+      open,
+      readonly,
+      trigger,
+      value: contextValue,
+    } = context;
     const composedRef = useComposedRefs(forwardedRef, context.inputRef);
 
     const getTextWidth = React.useCallback(
@@ -137,37 +160,34 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
     const onMentionUpdate = React.useCallback(
       (element: InputElement, selectionStart: number | null = null) => {
-        if (context.disabled || context.readonly) return false;
+        if (disabled || readonly) return false;
 
         const currentPosition = selectionStart ?? element.selectionStart;
         if (currentPosition === null) return false;
 
         const value = element.value;
-        const lastTriggerIndex = value.lastIndexOf(
-          context.trigger,
-          currentPosition,
-        );
+        const lastTriggerIndex = value.lastIndexOf(trigger, currentPosition);
 
         if (lastTriggerIndex === -1) {
-          if (context.open) {
-            context.onOpenChange(false);
-            context.onHighlightedItemChange(null);
-            context.filterStore.search = "";
+          if (open) {
+            onOpenChange(false);
+            onHighlightedItemChange(null);
+            filterStore.search = "";
           }
           return false;
         }
 
         // Check if the trigger is part of an existing mention
-        const isPartOfExistingMention = context.mentions.some(
+        const isPartOfExistingMention = mentions.some(
           (mention) =>
             mention.start <= lastTriggerIndex && mention.end > lastTriggerIndex,
         );
 
         if (isPartOfExistingMention) {
-          if (context.open) {
-            context.onOpenChange(false);
-            context.onHighlightedItemChange(null);
-            context.filterStore.search = "";
+          if (open) {
+            onOpenChange(false);
+            onHighlightedItemChange(null);
+            filterStore.search = "";
           }
           return false;
         }
@@ -189,10 +209,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         }
 
         if (getIsTriggerPartOfText()) {
-          if (context.open) {
-            context.onOpenChange(false);
-            context.onHighlightedItemChange(null);
-            context.filterStore.search = "";
+          if (open) {
+            onOpenChange(false);
+            onHighlightedItemChange(null);
+            filterStore.search = "";
           }
           return false;
         }
@@ -212,8 +232,8 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           !firstCharAfterCursor ||
           firstCharAfterCursor === " " ||
           firstCharAfterCursor === "\n" ||
-          firstCharAfterCursor === context.trigger;
-        const isTextAfterCursorPartOfMention = context.mentions.some(
+          firstCharAfterCursor === trigger;
+        const isTextAfterCursorPartOfMention = mentions.some(
           (mention) =>
             currentPosition >= mention.start && currentPosition < mention.end,
         );
@@ -223,10 +243,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           !isTextAfterCursorPartOfMention;
 
         if (hasInterferingText) {
-          if (context.open) {
-            context.onOpenChange(false);
-            context.onHighlightedItemChange(null);
-            context.filterStore.search = "";
+          if (open) {
+            onOpenChange(false);
+            onHighlightedItemChange(null);
+            filterStore.search = "";
           }
           return false;
         }
@@ -236,47 +256,47 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           (isCursorAfterTrigger || isImmediatelyAfterTrigger)
         ) {
           createVirtualElement(element, lastTriggerIndex);
-          context.onOpenChange(true);
-          context.filterStore.search = isImmediatelyAfterTrigger
+          onOpenChange(true);
+          filterStore.search = isImmediatelyAfterTrigger
             ? ""
             : textAfterTrigger;
-          context.onItemsFilter();
+          onItemsFilter();
           return true;
         }
 
-        if (context.open) {
-          context.onOpenChange(false);
-          context.onHighlightedItemChange(null);
-          context.filterStore.search = "";
+        if (open) {
+          onOpenChange(false);
+          onHighlightedItemChange(null);
+          filterStore.search = "";
         }
         return false;
       },
       [
-        context.open,
-        context.onOpenChange,
-        context.trigger,
+        open,
+        onOpenChange,
+        trigger,
         createVirtualElement,
-        context.filterStore,
-        context.onItemsFilter,
-        context.onHighlightedItemChange,
-        context.disabled,
-        context.readonly,
-        context.mentions,
+        filterStore,
+        onItemsFilter,
+        onHighlightedItemChange,
+        disabled,
+        readonly,
+        mentions,
       ],
     );
 
     const onChange = React.useCallback(
       (event: React.ChangeEvent<InputElement>) => {
-        if (context.disabled || context.readonly) return;
+        if (disabled || readonly) return;
         const input = event.target;
         const newValue = input.value;
         const cursorPosition = input.selectionStart ?? 0;
-        const prevValue = context.inputValue;
+        const prevValue = inputValue;
         const insertedLength = newValue.length - prevValue.length;
 
         // Update mentions positions based on text changes
         if (insertedLength !== 0) {
-          context.onMentionsChange((prev) =>
+          onMentionsChange((prev) =>
             prev.map((mention) => {
               // Only update positions for mentions that come after the cursor
               if (
@@ -294,16 +314,16 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           );
         }
 
-        context.onInputValueChange?.(newValue);
+        onInputValueChange?.(newValue);
         onMentionUpdate(input);
       },
       [
-        context.onInputValueChange,
-        context.inputValue,
-        context.onMentionsChange,
+        onInputValueChange,
+        inputValue,
+        onMentionsChange,
         onMentionUpdate,
-        context.disabled,
-        context.readonly,
+        disabled,
+        readonly,
       ],
     );
 
@@ -316,7 +336,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
     const onCut = React.useCallback(
       (event: React.ClipboardEvent<InputElement>) => {
-        if (context.disabled || context.readonly) return;
+        if (disabled || readonly) return;
 
         const input = event.currentTarget;
         const cursorPosition = input.selectionStart ?? 0;
@@ -326,7 +346,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         if (!hasSelection) return;
 
         // Find mentions that are fully or partially within the selection
-        const affectedMentions = context.mentions.filter(
+        const affectedMentions = mentions.filter(
           (m) =>
             (m.start >= cursorPosition && m.start < selectionEnd) ||
             (m.end > cursorPosition && m.end <= selectionEnd),
@@ -337,21 +357,21 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           // After the cut operation, update our state
           requestAnimationFrame(() => {
             // Remove affected mentions from context value
-            const remainingValues = context.value.filter(
+            const remainingValues = contextValue.filter(
               (v) => !affectedMentions.some((m) => m.value === v),
             );
-            context.onValueChange?.(remainingValues);
-            context.onMentionsRemove(affectedMentions);
+            onValueChange?.(remainingValues);
+            onMentionsRemove(affectedMentions);
           });
         }
       },
       [
-        context.disabled,
-        context.readonly,
-        context.mentions,
-        context.value,
-        context.onValueChange,
-        context.onMentionsRemove,
+        disabled,
+        readonly,
+        mentions,
+        contextValue,
+        onValueChange,
+        onMentionsRemove,
       ],
     );
 
@@ -379,7 +399,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           const isLeftArrow = event.key === "ArrowLeft";
 
           // Find mention that's immediately before or after cursor, considering spaces
-          const adjacentMention = context.mentions.find((m) => {
+          const adjacentMention = mentions.find((m) => {
             if (isLeftArrow) {
               // For left arrow, check if cursor is at or before the end of mention (including spaces)
               const textBetween = input.value.slice(m.end, cursorPosition);
@@ -457,7 +477,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             input.value.slice(selectionEnd);
 
           // Find mentions that are fully or partially within the selection
-          const affectedMentions = context.mentions.filter(
+          const affectedMentions = mentions.filter(
             (m) =>
               (m.start >= cursorPosition && m.start < selectionEnd) ||
               (m.end > cursorPosition && m.end <= selectionEnd),
@@ -468,14 +488,14 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
             // Update input value directly and through context
             input.value = newValue;
-            context.onInputValueChange?.(newValue);
+            onInputValueChange?.(newValue);
 
             // Remove affected mentions from context value
-            const remainingValues = context.value.filter(
+            const remainingValues = contextValue.filter(
               (v) => !affectedMentions.some((m) => m.value === v),
             );
-            context.onValueChange?.(remainingValues);
-            context.onMentionsRemove(affectedMentions);
+            onValueChange?.(remainingValues);
+            onMentionsRemove(affectedMentions);
 
             // Update cursor position
             input.setSelectionRange(cursorPosition, cursorPosition);
@@ -484,11 +504,11 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         }
 
         // Handle backspace for mention deletion
-        if (event.key === "Backspace" && !context.open && !hasSelection) {
+        if (event.key === "Backspace" && !open && !hasSelection) {
           const isCtrlOrCmd = event.metaKey || event.ctrlKey;
 
           // Find the mention that's immediately before the cursor
-          const mentionBeforeCursor = context.mentions.find((m) => {
+          const mentionBeforeCursor = mentions.find((m) => {
             // For regular backspace, check if cursor is right after mention (accounting for space)
             if (!isCtrlOrCmd) {
               return (
@@ -525,13 +545,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
                 );
 
               input.value = newValue;
-              context.onInputValueChange?.(newValue);
+              onInputValueChange?.(newValue);
 
-              const remainingValues = context.value.filter(
+              const remainingValues = contextValue.filter(
                 (v) => v !== mentionBeforeCursor.value,
               );
-              context.onValueChange?.(remainingValues);
-              context.onMentionsRemove([mentionBeforeCursor]);
+              onValueChange?.(remainingValues);
+              onMentionsRemove([mentionBeforeCursor]);
 
               const newPosition = mentionBeforeCursor.start;
               input.setSelectionRange(newPosition, newPosition);
@@ -550,7 +570,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
                 input.value.slice(mentionBeforeCursor.end + 1);
 
               input.value = newValue;
-              context.onInputValueChange?.(newValue);
+              onInputValueChange?.(newValue);
               input.setSelectionRange(
                 mentionBeforeCursor.end,
                 mentionBeforeCursor.end,
@@ -567,13 +587,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               );
 
             input.value = newValue;
-            context.onInputValueChange?.(newValue);
+            onInputValueChange?.(newValue);
 
-            const remainingValues = context.value.filter(
+            const remainingValues = contextValue.filter(
               (v) => v !== mentionBeforeCursor.value,
             );
-            context.onValueChange?.(remainingValues);
-            context.onMentionsRemove([mentionBeforeCursor]);
+            onValueChange?.(remainingValues);
+            onMentionsRemove([mentionBeforeCursor]);
 
             const newPosition = mentionBeforeCursor.start;
             input.setSelectionRange(newPosition, newPosition);
@@ -581,7 +601,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           }
         }
 
-        if (!context.open) return;
+        if (!open) return;
 
         const isNavigationKey = [
           "ArrowDown",
@@ -598,30 +618,29 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         }
 
         function onMenuClose() {
-          context.onOpenChange(false);
-          context.onHighlightedItemChange(null);
-          context.filterStore.search = "";
+          onOpenChange(false);
+          onHighlightedItemChange(null);
+          filterStore.search = "";
         }
 
         function onItemSelect() {
-          if (context.disabled || context.readonly || !context.highlightedItem)
-            return;
-          const value = context.highlightedItem.value;
+          if (disabled || readonly || !highlightedItem) return;
+          const value = highlightedItem.value;
           if (!value) return;
 
           const lastTriggerIndex = input.value.lastIndexOf(
-            context.trigger,
+            trigger,
             cursorPosition,
           );
 
           if (lastTriggerIndex !== -1) {
-            context.onMentionAdd(value, lastTriggerIndex);
+            onMentionAdd(value, lastTriggerIndex);
           }
         }
 
         switch (event.key) {
           case "Enter": {
-            if (!context.highlightedItem) {
+            if (!highlightedItem) {
               onMenuClose();
               return;
             }
@@ -630,7 +649,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             break;
           }
           case "Tab": {
-            if (context.modal) {
+            if (modal) {
               event.preventDefault();
               onItemSelect();
               return;
@@ -639,27 +658,27 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             break;
           }
           case "ArrowDown": {
-            if (context.readonly) return;
-            context.onHighlightMove(context.highlightedItem ? "next" : "first");
+            if (readonly) return;
+            onHighlightMove(highlightedItem ? "next" : "first");
             break;
           }
           case "ArrowUp": {
-            if (context.readonly) return;
-            context.onHighlightMove(context.highlightedItem ? "prev" : "last");
+            if (readonly) return;
+            onHighlightMove(highlightedItem ? "prev" : "last");
             break;
           }
           case "Home": {
             if (event.metaKey || event.ctrlKey) return; // Let default behavior happen for Ctrl/Cmd + Home
-            if (context.readonly) return;
+            if (readonly) return;
             event.preventDefault();
-            context.onHighlightMove("first");
+            onHighlightMove("first");
             break;
           }
           case "End": {
             if (event.metaKey || event.ctrlKey) return; // Let default behavior happen for Ctrl/Cmd + End
-            if (context.readonly) return;
+            if (readonly) return;
             event.preventDefault();
-            context.onHighlightMove("last");
+            onHighlightMove("last");
             break;
           }
           case "Escape": {
@@ -669,35 +688,35 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         }
       },
       [
-        context.open,
-        context.onOpenChange,
-        context.value,
-        context.onValueChange,
-        context.onInputValueChange,
-        context.trigger,
-        context.highlightedItem,
-        context.onHighlightedItemChange,
-        context.onHighlightMove,
-        context.filterStore,
-        context.mentions,
-        context.onMentionAdd,
-        context.onMentionsRemove,
-        context.disabled,
-        context.readonly,
-        context.modal,
+        open,
+        onOpenChange,
+        contextValue,
+        onValueChange,
+        onInputValueChange,
+        trigger,
+        highlightedItem,
+        onHighlightedItemChange,
+        onHighlightMove,
+        filterStore,
+        mentions,
+        onMentionAdd,
+        onMentionsRemove,
+        disabled,
+        readonly,
+        modal,
       ],
     );
 
     // Add beforeinput event handler for better mobile support
     const onBeforeInput = React.useCallback(
       (event: React.FormEvent<InputElement> & { inputType?: string }) => {
-        if (context.disabled || context.readonly) return;
+        if (disabled || readonly) return;
         const input = event.currentTarget;
         const cursorPosition = input.selectionStart ?? 0;
 
         // Handle deleteContentBackward on mobile
         if (event.inputType === "deleteContentBackward") {
-          const mentionAtCursor = context.mentions.find(
+          const mentionAtCursor = mentions.find(
             (m) => cursorPosition > m.start && cursorPosition <= m.end,
           );
 
@@ -712,13 +731,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               );
 
             input.value = newValue;
-            context.onInputValueChange?.(newValue);
+            onInputValueChange?.(newValue);
 
-            const remainingValues = context.value.filter(
+            const remainingValues = contextValue.filter(
               (v) => v !== mentionAtCursor.value,
             );
-            context.onValueChange?.(remainingValues);
-            context.onMentionsRemove([mentionAtCursor]);
+            onValueChange?.(remainingValues);
+            onMentionsRemove([mentionAtCursor]);
 
             const newPosition = mentionAtCursor.start;
             input.setSelectionRange(newPosition, newPosition);
@@ -726,13 +745,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         }
       },
       [
-        context.disabled,
-        context.readonly,
-        context.mentions,
-        context.value,
-        context.onValueChange,
-        context.onInputValueChange,
-        context.onMentionsRemove,
+        disabled,
+        readonly,
+        mentions,
+        contextValue,
+        onValueChange,
+        onInputValueChange,
+        onMentionsRemove,
       ],
     );
 
@@ -782,7 +801,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
     const onPaste = React.useCallback(
       (event: React.ClipboardEvent<InputElement>) => {
-        if (context.disabled || context.readonly) return;
+        if (disabled || readonly) return;
 
         const inputElement = event.currentTarget;
         const pastedText = event.clipboardData.getData("text");
@@ -790,13 +809,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const selectionEnd = inputElement.selectionEnd ?? cursorPosition;
 
         // Check if pasted text contains trigger
-        const triggerIndex = pastedText.indexOf(context.trigger);
+        const triggerIndex = pastedText.indexOf(trigger);
         if (triggerIndex === -1) return; // No trigger found, allow default paste
 
         event.preventDefault();
 
         // Split text by trigger and process each mention
-        const parts = pastedText.split(context.trigger);
+        const parts = pastedText.split(trigger);
 
         let newText = "";
 
@@ -832,16 +851,16 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
         requestAnimationFrame(async () => {
           // Register items
-          context.onIsPastingChange(true);
-          context.onOpenChange(true);
+          onIsPastingChange(true);
+          onOpenChange(true);
 
           // Wait for the next frame to ensure the DOM is updated, otherwise the items will be empty
           await new Promise((resolve) => requestAnimationFrame(resolve));
 
           // Process remaining parts that come after triggers
-          const items = context.getEnabledItems();
+          const items = getEnabledItems();
           const newMentions: Mention[] = [];
-          const newValues = [...context.value];
+          const newValues = [...contextValue];
 
           // Keep track of trailing spaces after the last part
           const trailingSpaces = pastedText.match(/\s+$/)?.[0] ?? "";
@@ -912,7 +931,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
               if (mentionItem) {
                 // Add mention with its label
-                const mentionLabel = `${context.trigger}${mentionItem.label}`;
+                const mentionLabel = `${trigger}${mentionItem.label}`;
                 // Add trailing spaces only if this is the last part and there's no remaining text
                 const shouldAddTrailingSpaces =
                   i === parts.length - 1 && !remainingText;
@@ -937,7 +956,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               remainingText = words.slice(2).join("");
               // Add trailing spaces only if this is the last part
               const shouldAddTrailingSpaces = i === parts.length - 1;
-              newText += `${context.trigger}${firstWord}${spaces}${remainingText}${shouldAddTrailingSpaces ? trailingSpaces : ""}`;
+              newText += `${trigger}${firstWord}${spaces}${remainingText}${shouldAddTrailingSpaces ? trailingSpaces : ""}`;
             }
           }
 
@@ -948,12 +967,12 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             inputElement.value.slice(selectionEnd);
 
           inputElement.value = finalValue;
-          context.onInputValueChange(finalValue);
+          onInputValueChange(finalValue);
 
           // Update mentions and values
           if (newMentions.length > 0) {
-            context.onValueChange(newValues);
-            context.onMentionsChange((prev) => [...prev, ...newMentions]);
+            onValueChange(newValues);
+            onMentionsChange((prev) => [...prev, ...newMentions]);
           }
 
           // Set cursor position after all mentions
@@ -961,21 +980,21 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           inputElement.setSelectionRange(newCursorPosition, newCursorPosition);
 
           // Cleanup after all operations are complete
-          context.onIsPastingChange(false);
-          context.onOpenChange(false);
+          onIsPastingChange(false);
+          onOpenChange(false);
         });
       },
       [
-        context.trigger,
-        context.onOpenChange,
-        context.onInputValueChange,
-        context.value,
-        context.onValueChange,
-        context.getEnabledItems,
-        context.onMentionsChange,
-        context.onIsPastingChange,
-        context.disabled,
-        context.readonly,
+        trigger,
+        onOpenChange,
+        onInputValueChange,
+        contextValue,
+        onValueChange,
+        getEnabledItems,
+        onMentionsChange,
+        onIsPastingChange,
+        disabled,
+        readonly,
       ],
     );
 

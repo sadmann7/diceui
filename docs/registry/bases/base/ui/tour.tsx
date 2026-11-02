@@ -137,6 +137,44 @@ function useFocusTrap(
   const onCloseAutoFocusRef = useValueAsRef(onCloseAutoFocus);
   const tourOpenRef = useValueAsRef(tourOpen);
 
+  const onDeactivate = React.useCallback(
+    (container: HTMLElement, previouslyFocusedElement: HTMLElement | null) => {
+      if (tourOpenRef.current) return;
+
+      setTimeout(() => {
+        const onCloseAutoFocus = onCloseAutoFocusRef.current;
+        const closeAutoFocusEvent = new CustomEvent(
+          CLOSE_AUTO_FOCUS,
+          EVENT_OPTIONS,
+        );
+        if (onCloseAutoFocus) {
+          container.addEventListener(
+            CLOSE_AUTO_FOCUS,
+            onCloseAutoFocus as EventListener,
+            { once: true },
+          );
+        }
+        container.dispatchEvent(closeAutoFocusEvent);
+
+        if (
+          !closeAutoFocusEvent.defaultPrevented &&
+          previouslyFocusedElement &&
+          document.body.contains(previouslyFocusedElement)
+        ) {
+          previouslyFocusedElement.focus({ preventScroll: true });
+        }
+
+        if (onCloseAutoFocus) {
+          container.removeEventListener(
+            CLOSE_AUTO_FOCUS,
+            onCloseAutoFocus as EventListener,
+          );
+        }
+      }, 0);
+    },
+    [tourOpenRef, onCloseAutoFocusRef],
+  );
+
   React.useEffect(() => {
     if (!enabled) return;
 
@@ -238,47 +276,9 @@ function useFocusTrap(
     return () => {
       document.removeEventListener("focusin", onFocusIn);
       container.removeEventListener("keydown", onKeyDown);
-
-      if (!tourOpenRef.current) {
-        setTimeout(() => {
-          const closeAutoFocusEvent = new CustomEvent(
-            CLOSE_AUTO_FOCUS,
-            EVENT_OPTIONS,
-          );
-          if (onCloseAutoFocusRef.current) {
-            container.addEventListener(
-              CLOSE_AUTO_FOCUS,
-              onCloseAutoFocusRef.current as EventListener,
-              { once: true },
-            );
-          }
-          container.dispatchEvent(closeAutoFocusEvent);
-
-          if (!closeAutoFocusEvent.defaultPrevented) {
-            if (
-              previouslyFocusedElement &&
-              document.body.contains(previouslyFocusedElement)
-            ) {
-              previouslyFocusedElement.focus({ preventScroll: true });
-            }
-          }
-
-          if (onCloseAutoFocusRef.current) {
-            container.removeEventListener(
-              CLOSE_AUTO_FOCUS,
-              onCloseAutoFocusRef.current as EventListener,
-            );
-          }
-        }, 0);
-      }
+      onDeactivate(container, previouslyFocusedElement);
     };
-  }, [
-    containerRef,
-    enabled,
-    onOpenAutoFocusRef,
-    onCloseAutoFocusRef,
-    tourOpenRef,
-  ]);
+  }, [containerRef, enabled, onOpenAutoFocusRef, onDeactivate]);
 }
 
 function getDataState(open: boolean) {
@@ -321,6 +321,7 @@ interface Store {
   notify: () => void;
   addStep: (stepData: StepData) => { id: string; index: number };
   removeStep: (id: string) => void;
+  updateStep: (id: string, stepData: StepData) => void;
 }
 
 function useStore<T>(
@@ -341,6 +342,22 @@ function useStore<T>(
   );
 
   return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+}
+
+function getIsStepDataEqual(a: StepData, b: StepData) {
+  const keys = Object.keys({ ...a, ...b }) as (keyof StepData)[];
+
+  return keys.every((key) => {
+    const aValue = a[key];
+    const bValue = b[key];
+    if (Array.isArray(aValue) && Array.isArray(bValue)) {
+      return (
+        aValue.length === bValue.length &&
+        aValue.every((value, index) => value === bValue[index])
+      );
+    }
+    return Object.is(aValue, bValue);
+  });
 }
 
 function getTargetElement(
@@ -712,6 +729,18 @@ function Tour(props: TourProps) {
 
         store.notify();
       },
+      updateStep: (id, stepData) => {
+        const index = stepIdsMapRef.current.get(id);
+        if (index === undefined) return;
+
+        const prevStepData = stateRef.current.steps[index];
+        if (prevStepData && getIsStepDataEqual(prevStepData, stepData)) return;
+
+        stateRef.current.steps = stateRef.current.steps.map((step, i) =>
+          i === index ? stepData : step,
+        );
+        store.notify();
+      },
     }),
     [stateRef, listenersRef, stepIdsMapRef, stepIdCounterRef, propsRef],
   );
@@ -905,45 +934,37 @@ function TourStep(props: TourStepProps) {
   const resolvedSideOffset = sideOffset ?? context.sideOffset;
   const resolvedAlignOffset = alignOffset ?? context.alignOffset;
 
-  useIsoLayoutEffect(() => {
-    const { id, index } = store.addStep({
-      target,
-      align,
-      alignOffset: resolvedAlignOffset,
-      side,
-      sideOffset: resolvedSideOffset,
-      collisionBoundary,
-      collisionPadding,
-      arrowPadding,
-      sticky,
-      hideWhenDetached,
-      avoidCollisions,
-      onStepEnter,
-      onStepLeave,
-      required,
-    });
-    stepIdRef.current = id;
-    stepOrderRef.current = index;
-
-    return () => {
-      store.removeStep(stepIdRef.current);
-    };
-  }, [
+  const stepOptions: StepData = {
     target,
-    side,
-    resolvedSideOffset,
     align,
-    resolvedAlignOffset,
+    alignOffset: resolvedAlignOffset,
+    side,
+    sideOffset: resolvedSideOffset,
+    collisionBoundary,
     collisionPadding,
     arrowPadding,
     sticky,
     hideWhenDetached,
     avoidCollisions,
-    required,
     onStepEnter,
     onStepLeave,
-    store,
-  ]);
+    required,
+  };
+  const stepOptionsRef = useValueAsRef(stepOptions);
+
+  useIsoLayoutEffect(() => {
+    const { id, index } = store.addStep(stepOptionsRef.current);
+    stepIdRef.current = id;
+    stepOrderRef.current = index;
+
+    return () => {
+      store.removeStep(id);
+    };
+  }, [store, stepOptionsRef]);
+
+  useIsoLayoutEffect(() => {
+    store.updateStep(stepIdRef.current, stepOptions);
+  });
 
   const stepData = steps[value];
   const targetElement = stepData ? getTargetElement(stepData.target) : null;

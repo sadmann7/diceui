@@ -655,13 +655,13 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
       store.setColor(color);
       store.setHsv(hsv);
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
 
   useLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setOpen(openProp);
     }
-  }, [openProp]);
+  }, [openProp, store]);
 
   const contextValue = React.useMemo<ColorPickerContextValue>(
     () => ({

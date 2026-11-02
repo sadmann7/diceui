@@ -331,7 +331,7 @@ function Stepper(props: StepperProps) {
     if (value !== undefined) {
       store.setState("value", value);
     }
-  }, [value]);
+  }, [value, store]);
 
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;
@@ -644,11 +644,11 @@ function StepperItem(props: StepperItemProps) {
     return () => {
       store.removeStep(itemValue);
     };
-  }, [itemValue, completed, disabled]);
+  }, [itemValue, completed, disabled, store]);
 
   useIsoLayoutEffect(() => {
     store.setStep(itemValue, completed, disabled);
-  }, [itemValue, completed, disabled]);
+  }, [itemValue, completed, disabled, store]);
 
   const stepState = useStore((state) => state.steps.get(itemValue));
   const steps = useStore((state) => state.steps);

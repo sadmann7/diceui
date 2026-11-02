@@ -248,7 +248,7 @@ function KeyValue(props: KeyValueProps) {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
 
   const contextValue = React.useMemo<KeyValueContextValue>(
     () => ({

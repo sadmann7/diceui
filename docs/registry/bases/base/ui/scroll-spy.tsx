@@ -230,7 +230,8 @@ function ScrollSpy(props: ScrollSpyProps) {
     }
 
     onScrollToSection(currentValue);
-  }, [value, onScrollToSection]);
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- defaultValue only seeds the initial value
+  }, [value, onScrollToSection, store]);
 
   useIsoLayoutEffect(() => {
     const sectionMap = sectionMapRef.current;
@@ -283,7 +284,7 @@ function ScrollSpy(props: ScrollSpyProps) {
         clearTimeout(scrollTimeoutRef.current);
       }
     };
-  }, [offset, rootMargin, threshold, scrollContainer]);
+  }, [offset, rootMargin, threshold, scrollContainer, store]);
 
   const contextValue = React.useMemo<ScrollSpyContextValue>(
     () => ({

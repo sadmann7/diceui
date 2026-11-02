@@ -31,6 +31,8 @@
       { "fixStyle": "inline-type-imports", "disallowTypeAnnotations": false }
     ],
     "no-shadow": "off",
+    "no-new": "off",
+    "no-underscore-dangle": "off",
     "no-unused-vars": "warn",
     "typescript/no-unused-vars": "warn",
     "typescript/no-explicit-any": "warn",
@@ -48,7 +50,7 @@
     "typescript/no-misused-spread": "warn",
     "typescript/no-base-to-string": "warn",
     "typescript/no-duplicate-type-constituents": "warn",
-    "react/exhaustive-deps": "off",
+    "react/exhaustive-deps": "warn",
     "react/memo-dependencies": "off",
     "react/rules-of-hooks": "warn",
     "react/react-in-jsx-scope": "off",
@@ -56,16 +58,16 @@
     "react/no-danger": "off",
     "react/refs": "off",
     "react/set-state-in-effect": "off",
-    "react/set-state-in-render": "off",
+    "react/set-state-in-render": "warn",
     "react/immutability": "off",
     "react/incompatible-library": "off",
     "react/purity": "off",
     "react/preserve-manual-memoization": "off",
     "react/use-memo": "off",
     "react/static-components": "off",
-    "nextjs/no-img-element": "off",
-    "nextjs/no-html-link-for-pages": "off",
-    "nextjs/no-assign-module-variable": "off",
+    "nextjs/no-img-element": "warn",
+    "nextjs/no-html-link-for-pages": "warn",
+    "nextjs/no-assign-module-variable": "warn",
     "import/no-unassigned-import": [
       "warn",
       {
@@ -88,6 +90,13 @@
       },
       "rules": {
         "unicorn/consistent-function-scoping": "off"
+      }
+    },
+    {
+      "files": ["docs/registry/**"],
+      "rules": {
+        "nextjs/no-img-element": "off",
+        "nextjs/no-html-link-for-pages": "off"
       }
     },
     {

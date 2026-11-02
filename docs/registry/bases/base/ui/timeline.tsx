@@ -344,7 +344,7 @@ function TimelineItem(props: TimelineItemProps) {
     return () => {
       store.onItemUnregister(itemId);
     };
-  }, [id, store]);
+  }, [itemId, store]);
 
   const isAlternateRight = variant === "alternate" && itemIndex % 2 === 1;
 

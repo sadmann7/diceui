@@ -229,13 +229,13 @@ function Editable(props: EditableProps) {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
 
   useLayoutEffect(() => {
     if (editingProp !== undefined) {
       store.setState("editing", editingProp);
     }
-  }, [editingProp]);
+  }, [editingProp, store]);
 
   const onCancel = React.useCallback(() => {
     const prevValue = previousValueRef.current;
@@ -413,7 +413,7 @@ function EditablePreview(props: EditablePreviewProps) {
   const onTrigger = React.useCallback(() => {
     if (context.disabled || context.readOnly) return;
     context.onEdit();
-  }, [context.onEdit, context.disabled, context.readOnly]);
+  }, [context]);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<PreviewElement>) => {
@@ -459,7 +459,7 @@ function EditablePreview(props: EditablePreviewProps) {
         onTrigger();
       }
     },
-    [propsRef, onTrigger, context.onEnterKeyDown],
+    [propsRef, onTrigger, context],
   );
 
   const PreviewPrimitive = asChild ? SlotPrimitive.Slot : "div";
@@ -558,7 +558,7 @@ function EditableInput(props: EditableInputProps) {
         context.onSubmit(value);
       }
     },
-    [value, context.onSubmit, propsRef, isDisabled, isReadOnly],
+    [value, context, propsRef, isDisabled, isReadOnly],
   );
 
   const onChange = React.useCallback(
@@ -592,15 +592,7 @@ function EditableInput(props: EditableInputProps) {
         context.onSubmit(value);
       }
     },
-    [
-      value,
-      context.onSubmit,
-      context.onCancel,
-      context.onEscapeKeyDown,
-      propsRef,
-      isDisabled,
-      isReadOnly,
-    ],
+    [value, context, propsRef, isDisabled, isReadOnly],
   );
 
   useLayoutEffect(() => {
@@ -664,7 +656,7 @@ function EditableTrigger(props: EditableTriggerProps) {
   const onTrigger = React.useCallback(() => {
     if (context.disabled || context.readOnly) return;
     context.onEdit();
-  }, [context.disabled, context.readOnly, context.onEdit]);
+  }, [context]);
 
   const TriggerPrimitive = asChild ? SlotPrimitive.Slot : "button";
 
@@ -743,7 +735,7 @@ function EditableCancel(props: EditableCancelProps) {
 
       context.onCancel();
     },
-    [propsRef, context.onCancel, context.disabled, context.readOnly],
+    [propsRef, context],
   );
 
   const CancelPrimitive = asChild ? SlotPrimitive.Slot : "button";
@@ -785,7 +777,7 @@ function EditableSubmit(props: EditableSubmitProps) {
 
       context.onSubmit(value);
     },
-    [propsRef, context.onSubmit, value, context.disabled, context.readOnly],
+    [propsRef, context, value],
   );
 
   const SubmitPrimitive = asChild ? SlotPrimitive.Slot : "button";

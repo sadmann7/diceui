@@ -975,6 +975,8 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
   (props, forwardedRef) => {
     const { asChild, value, disabled = false, onSelect, ...itemProps } = props;
     const context = useListboxContext(ITEM_NAME);
+    const { onItemBlur, onItemFocus, onItemHighlight, onItemSelect, multiple } =
+      context;
     const groupContext = React.useContext(ListboxGroupContext);
     const itemRef = React.useRef<HTMLDivElement>(null);
     const composedRef = useComposedRefs(itemRef, forwardedRef);
@@ -1004,50 +1006,49 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
     }, [value, isDisabled, context.onItemRegister, groupContext?.id, onSelect]);
 
     const onBlur = React.useCallback(() => {
-      context.onItemBlur();
-    }, [context.onItemBlur]);
+      onItemBlur();
+    }, [onItemBlur]);
 
     const onClick = React.useCallback(
       (event: React.MouseEvent) => {
         if (!isDisabled) {
           const isMultipleSelectionKey =
-            context.multiple &&
-            (context.multiple === true || event.ctrlKey || event.metaKey);
+            multiple && (multiple === true || event.ctrlKey || event.metaKey);
 
-          context.onItemSelect(value, isMultipleSelectionKey);
+          onItemSelect(value, isMultipleSelectionKey);
         }
       },
-      [context.onItemSelect, value, isDisabled, context.multiple],
+      [onItemSelect, value, isDisabled, multiple],
     );
 
     const onFocus = React.useCallback(() => {
       if (!isDisabled) {
-        context.onItemFocus(value);
-        context.onItemHighlight(value);
+        onItemFocus(value);
+        onItemHighlight(value);
       }
-    }, [context.onItemFocus, context.onItemHighlight, isDisabled, value]);
+    }, [onItemFocus, onItemHighlight, isDisabled, value]);
 
     const onKeyDown = React.useCallback(
       (event: React.KeyboardEvent) => {
         if (event.key === "Tab") {
           if (!event.shiftKey) {
-            context.onItemBlur();
+            onItemBlur();
           }
           return;
         }
       },
-      [context.onItemBlur],
+      [onItemBlur],
     );
 
     const onPointerLeave = React.useCallback(() => {
-      context.onItemHighlight(null);
-    }, [context.onItemHighlight]);
+      onItemHighlight(null);
+    }, [onItemHighlight]);
 
     const onPointerMove = React.useCallback(() => {
       if (!isDisabled) {
-        context.onItemHighlight(value);
+        onItemHighlight(value);
       }
-    }, [context.onItemHighlight, isDisabled, value]);
+    }, [onItemHighlight, isDisabled, value]);
 
     const ItemPrimitive = asChild ? Slot : "div";
 

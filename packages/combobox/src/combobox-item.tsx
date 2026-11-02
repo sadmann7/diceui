@@ -61,6 +61,16 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
   (props, forwardedRef) => {
     const { value, label: labelProp, disabled, onSelect, ...itemProps } = props;
     const context = useComboboxContext(ITEM_NAME);
+    const {
+      filterStore,
+      inputRef,
+      multiple,
+      onHighlightedItemChange,
+      onInputValueChange,
+      onOpenChange,
+      onSelectedTextChange,
+      onValueChange,
+    } = context;
     const groupContext = useComboboxGroupContext(ITEM_NAME, true);
     const { label, onLabelChange } = useLabel<ItemTextElement>({
       defaultValue: labelProp,
@@ -96,31 +106,31 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
         dispatchDiscreteCustomEvent(itemElement, itemSelectEvent);
       }
 
-      if (context.multiple) {
-        context.onInputValueChange("");
+      if (multiple) {
+        onInputValueChange("");
       } else {
         const selectedLabel = label ?? itemElement.textContent ?? "";
-        context.onInputValueChange(selectedLabel);
-        context.onSelectedTextChange(selectedLabel);
-        context.onHighlightedItemChange(null);
-        context.onOpenChange(false);
+        onInputValueChange(selectedLabel);
+        onSelectedTextChange(selectedLabel);
+        onHighlightedItemChange(null);
+        onOpenChange(false);
       }
 
-      context.filterStore.search = "";
-      context.onValueChange(value);
-      context.inputRef.current?.focus();
+      filterStore.search = "";
+      onValueChange(value);
+      inputRef.current?.focus();
     }, [
       label,
       value,
       onSelect,
-      context.multiple,
-      context.onInputValueChange,
-      context.onHighlightedItemChange,
-      context.onOpenChange,
-      context.onSelectedTextChange,
-      context.onValueChange,
-      context.inputRef,
-      context.filterStore,
+      multiple,
+      onInputValueChange,
+      onHighlightedItemChange,
+      onOpenChange,
+      onSelectedTextChange,
+      onValueChange,
+      inputRef,
+      filterStore,
     ]);
 
     useIsomorphicLayoutEffect(() => {

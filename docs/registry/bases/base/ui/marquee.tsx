@@ -489,17 +489,14 @@ function MarqueeContent(props: MarqueeContentProps) {
   );
 
   React.useEffect(() => {
-    if (context.rootRef.current && context.contentRef.current) {
-      resizeObserverStore.observe(
-        context.rootRef.current,
-        context.contentRef.current,
-      );
+    const rootElement = context.rootRef.current;
+    const contentElement = context.contentRef.current;
+
+    if (rootElement && contentElement) {
+      resizeObserverStore.observe(rootElement, contentElement);
 
       return () => {
-        resizeObserverStore.unobserve(
-          context.rootRef.current,
-          context.contentRef.current,
-        );
+        resizeObserverStore.unobserve(rootElement, contentElement);
       };
     }
   }, [context.rootRef, context.contentRef]);
