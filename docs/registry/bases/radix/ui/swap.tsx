@@ -126,7 +126,7 @@ function Swap(props: SwapProps) {
     if (swappedProp !== undefined) {
       store.setState("swapped", swappedProp);
     }
-  }, [swappedProp]);
+  }, [swappedProp, store]);
 
   const onToggle = React.useCallback(() => {
     if (propsRef.current.disabled) return;

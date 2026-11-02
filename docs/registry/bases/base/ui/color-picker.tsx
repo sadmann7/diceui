@@ -662,7 +662,7 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
       store.setColor(color);
       store.setHsv(hsv);
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
 
   useIsoLayoutEffect(() => {
     if (openProp !== undefined) {

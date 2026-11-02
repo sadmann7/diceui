@@ -39,6 +39,7 @@ function TagsInputEditableItemText() {
   const onBlur = React.useCallback(() => {
     setEditValue(itemContext.displayValue);
     context.setEditingIndex(null);
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
   }, [context.setEditingIndex, itemContext.displayValue]);
 
   const onChange = React.useCallback(
@@ -73,12 +74,13 @@ function TagsInputEditableItemText() {
       }
       event.stopPropagation();
     },
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
     [
       context.value,
       context.onItemUpdate,
       context.setEditingIndex,
       itemContext.displayValue,
-      context.inputRef.current?.focus,
+      context.inputRef,
       editValue,
       itemContext.value,
       context.setHighlightedIndex,

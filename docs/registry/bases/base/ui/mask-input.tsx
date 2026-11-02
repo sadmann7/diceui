@@ -990,7 +990,7 @@ function MaskInput(props: MaskInputProps) {
         onValidate(isValid, unmaskedValue);
       }
     },
-    [onValidate, maskPattern?.validate, validationOpts],
+    [onValidate, maskPattern, validationOpts],
   );
 
   const onValueChange = React.useCallback(

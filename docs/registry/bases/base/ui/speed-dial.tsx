@@ -243,7 +243,7 @@ function SpeedDial(props: SpeedDialProps) {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
-  }, [openProp]);
+  }, [openProp, store]);
 
   const open = useStore((state) => state.open, store);
 
@@ -370,7 +370,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
     return () => {
       onNodeUnregister(triggerId);
     };
-  }, [onNodeRegister, onNodeUnregister, triggerId, isDisabled]);
+  }, [onNodeRegister, onNodeUnregister, triggerId, triggerRef, isDisabled]);
 
   React.useEffect(() => {
     return () => {

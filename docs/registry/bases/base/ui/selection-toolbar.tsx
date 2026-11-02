@@ -210,7 +210,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
-  }, [openProp]);
+  }, [openProp, store]);
 
   const open = useStore((state) => state.open, store);
   const selectionRect = useStore((state) => state.selectionRect, store);

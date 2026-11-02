@@ -161,7 +161,7 @@ function CompareSlider(props: CompareSliderProps) {
     if (valueProp !== undefined) {
       store.setState("value", clamp(valueProp, 0, 100));
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
 
   const onPointerMove = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {

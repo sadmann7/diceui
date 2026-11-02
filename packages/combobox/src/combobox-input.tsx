@@ -44,6 +44,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
           context.onItemsFilter();
         });
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [
         context.open,
         context.onOpenChange,
@@ -61,6 +62,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
       if (context.openOnFocus && !context.open && !context.readOnly) {
         context.onOpenChange(true);
       }
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
     }, [
       context.openOnFocus,
       context.open,
@@ -82,6 +84,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
       if (context.multiple) {
         context.onHighlightedBadgeIndexChange(-1);
       }
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
     }, [
       context.multiple,
       context.value,
@@ -341,6 +344,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
             break;
         }
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [
         context.open,
         context.onOpenChange,

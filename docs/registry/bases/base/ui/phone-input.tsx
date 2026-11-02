@@ -553,13 +553,13 @@ function PhoneInput(props: PhoneInputProps) {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
 
   useIsoLayoutEffect(() => {
     if (countryProp !== undefined) {
       store.setState("country", countryProp);
     }
-  }, [countryProp]);
+  }, [countryProp, store]);
 
   const startsWithPlus = useStore((state) => state.startsWithPlus, store);
 

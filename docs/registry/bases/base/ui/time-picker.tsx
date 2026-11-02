@@ -396,13 +396,13 @@ function TimePicker(props: TimePickerProps) {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
 
   useIsoLayoutEffect(() => {
     if (open !== undefined) {
       store.setState("open", open);
     }
-  }, [open]);
+  }, [open, store]);
 
   const storeOpen = useStore((state) => state.open, store);
 
@@ -1748,6 +1748,8 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
     format = "numeric",
     className,
     ref,
+    onClick: onClickProp,
+    onKeyDown: onKeyDownProp,
     ...itemProps
   } = props;
 
@@ -1769,17 +1771,17 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<ColumnItemElement>) => {
-      itemProps.onClick?.(event);
+      onClickProp?.(event);
       if (event.defaultPrevented) return;
 
       itemRef.current?.focus();
     },
-    [itemProps.onClick],
+    [onClickProp],
   );
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<ColumnItemElement>) => {
-      itemProps.onKeyDown?.(event);
+      onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
       if (event.key === "ArrowUp" || event.key === "ArrowDown") {
@@ -1847,7 +1849,7 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
         });
       }
     },
-    [itemProps.onKeyDown, columnContext, groupContext, value],
+    [onKeyDownProp, columnContext, groupContext, value],
   );
 
   const formattedValue =
@@ -2247,6 +2249,7 @@ function TimePickerClear(props: ButtonProps) {
     className,
     children,
     disabled: disabledProp,
+    onClick: onClickProp,
     ...clearProps
   } = props;
 
@@ -2257,14 +2260,14 @@ function TimePickerClear(props: ButtonProps) {
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
-      clearProps.onClick?.(event);
+      onClickProp?.(event);
       if (event.defaultPrevented) return;
 
       event.preventDefault();
       if (disabled || readOnly) return;
       store.setState("value", "");
     },
-    [clearProps.onClick, disabled, readOnly, store],
+    [onClickProp, disabled, readOnly, store],
   );
 
   return useRender({

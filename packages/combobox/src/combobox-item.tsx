@@ -109,6 +109,7 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
       context.filterStore.search = "";
       context.onValueChange(value);
       context.inputRef.current?.focus();
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
     }, [
       label,
       value,

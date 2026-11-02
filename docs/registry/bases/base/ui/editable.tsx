@@ -226,13 +226,13 @@ function Editable(props: EditableProps) {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
 
   useIsoLayoutEffect(() => {
     if (editingProp !== undefined) {
       store.setState("editing", editingProp);
     }
-  }, [editingProp]);
+  }, [editingProp, store]);
 
   const onCancel = React.useCallback(() => {
     const prevValue = previousValueRef.current;
@@ -422,7 +422,7 @@ function EditablePreview(props: EditablePreviewProps) {
   const onTrigger = React.useCallback(() => {
     if (context.disabled || context.readOnly) return;
     context.onEdit();
-  }, [context.onEdit, context.disabled, context.readOnly]);
+  }, [context]);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -468,7 +468,7 @@ function EditablePreview(props: EditablePreviewProps) {
         onTrigger();
       }
     },
-    [propsRef, onTrigger, context.onEnterKeyDown],
+    [propsRef, onTrigger, context],
   );
 
   const element = useRender({
@@ -571,7 +571,7 @@ function EditableInput(props: EditableInputProps) {
         context.onSubmit(value);
       }
     },
-    [value, context.onSubmit, propsRef, isDisabled, isReadOnly],
+    [value, context, propsRef, isDisabled, isReadOnly],
   );
 
   const onChange = React.useCallback(
@@ -605,15 +605,7 @@ function EditableInput(props: EditableInputProps) {
         context.onSubmit(value);
       }
     },
-    [
-      value,
-      context.onSubmit,
-      context.onCancel,
-      context.onEscapeKeyDown,
-      propsRef,
-      isDisabled,
-      isReadOnly,
-    ],
+    [value, context, propsRef, isDisabled, isReadOnly],
   );
 
   useIsoLayoutEffect(() => {
@@ -683,7 +675,7 @@ function EditableTrigger(props: EditableTriggerProps) {
   const onTrigger = React.useCallback(() => {
     if (context.disabled || context.readOnly) return;
     context.onEdit();
-  }, [context.disabled, context.readOnly, context.onEdit]);
+  }, [context]);
 
   const element = useRender({
     defaultTagName: "button",
@@ -772,7 +764,7 @@ function EditableCancel(props: EditableCancelProps) {
 
       context.onCancel();
     },
-    [propsRef, context.onCancel, context.disabled, context.readOnly],
+    [propsRef, context],
   );
 
   const element = useRender({
@@ -819,7 +811,7 @@ function EditableSubmit(props: EditableSubmitProps) {
 
       context.onSubmit(value);
     },
-    [propsRef, context.onSubmit, value, context.disabled, context.readOnly],
+    [propsRef, context, value],
   );
 
   const element = useRender({

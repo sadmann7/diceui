@@ -251,6 +251,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         }
         return false;
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [
         context.open,
         context.onOpenChange,
@@ -297,6 +298,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         context.onInputValueChange?.(newValue);
         onMentionUpdate(input);
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [
         context.onInputValueChange,
         context.inputValue,
@@ -345,6 +347,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           });
         }
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [
         context.disabled,
         context.readonly,
@@ -668,6 +671,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           }
         }
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [
         context.open,
         context.onOpenChange,
@@ -725,6 +729,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           }
         }
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [
         context.disabled,
         context.readonly,
@@ -965,6 +970,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           context.onOpenChange(false);
         });
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [
         context.trigger,
         context.onOpenChange,

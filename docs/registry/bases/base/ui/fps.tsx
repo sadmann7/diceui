@@ -76,6 +76,8 @@ function Fps(props: FpsProps) {
   React.useEffect(() => {
     if (!enabled || typeof window === "undefined") return;
 
+    const updateTimeout = updateTimeoutRef.current;
+
     function measureFps() {
       const now = performance.now();
       const delta = now - lastTimeRef.current;
@@ -97,8 +99,8 @@ function Fps(props: FpsProps) {
       if (animationFrameRef.current !== null) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      if (updateTimeoutRef.current !== null) {
-        clearTimeout(updateTimeoutRef.current);
+      if (updateTimeout !== null) {
+        clearTimeout(updateTimeout);
       }
     };
   }, [enabled, updateInterval]);

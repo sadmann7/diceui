@@ -1005,6 +1005,7 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
 
     const onBlur = React.useCallback(() => {
       context.onItemBlur();
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
     }, [context.onItemBlur]);
 
     const onClick = React.useCallback(
@@ -1017,6 +1018,7 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
           context.onItemSelect(value, isMultipleSelectionKey);
         }
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [context.onItemSelect, value, isDisabled, context.multiple],
     );
 
@@ -1025,6 +1027,7 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
         context.onItemFocus(value);
         context.onItemHighlight(value);
       }
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
     }, [context.onItemFocus, context.onItemHighlight, isDisabled, value]);
 
     const onKeyDown = React.useCallback(
@@ -1036,17 +1039,20 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
           return;
         }
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [context.onItemBlur],
     );
 
     const onPointerLeave = React.useCallback(() => {
       context.onItemHighlight(null);
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
     }, [context.onItemHighlight]);
 
     const onPointerMove = React.useCallback(() => {
       if (!isDisabled) {
         context.onItemHighlight(value);
       }
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
     }, [context.onItemHighlight, isDisabled, value]);
 
     const ItemPrimitive = asChild ? Slot : "div";

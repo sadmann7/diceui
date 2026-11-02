@@ -34,35 +34,36 @@ export default function ComboboxDebouncedDemo() {
   const [filteredItems, setFilteredItems] = React.useState(tricks);
 
   // Debounce search with loading simulation
-  const debouncedSearch = React.useCallback(
-    debounce(async (searchTerm: string) => {
-      setIsLoading(true);
-      setProgress(0);
+  const debouncedSearch = React.useMemo(
+    () =>
+      debounce(async (searchTerm: string) => {
+        setIsLoading(true);
+        setProgress(0);
 
-      // Simulate a more realistic progress pattern
-      const progressSteps = [15, 35, 65, 85, 95] as const;
-      let currentStepIndex = 0;
+        // Simulate a more realistic progress pattern
+        const progressSteps = [15, 35, 65, 85, 95] as const;
+        let currentStepIndex = 0;
 
-      const interval = setInterval(() => {
-        if (currentStepIndex < progressSteps.length) {
-          setProgress(progressSteps[currentStepIndex] ?? 0);
-          currentStepIndex++;
-        }
-      }, 150);
+        const interval = setInterval(() => {
+          if (currentStepIndex < progressSteps.length) {
+            setProgress(progressSteps[currentStepIndex] ?? 0);
+            currentStepIndex++;
+          }
+        }, 150);
 
-      // Simulate API delay with variable timing
-      const delay = Math.random() * 300 + 400; // Random delay between 400-700ms
-      await new Promise((resolve) => setTimeout(resolve, delay));
+        // Simulate API delay with variable timing
+        const delay = Math.random() * 300 + 400; // Random delay between 400-700ms
+        await new Promise((resolve) => setTimeout(resolve, delay));
 
-      const results = tricks.filter((trick) =>
-        trick.label.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
+        const results = tricks.filter((trick) =>
+          trick.label.toLowerCase().includes(searchTerm.toLowerCase()),
+        );
 
-      setFilteredItems(results);
-      setProgress(100);
-      setIsLoading(false);
-      clearInterval(interval);
-    }, 300),
+        setFilteredItems(results);
+        setProgress(100);
+        setIsLoading(false);
+        clearInterval(interval);
+      }, 300),
     [],
   );
 

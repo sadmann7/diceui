@@ -52,6 +52,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
     const onItemSelect = React.useCallback(() => {
       context.setHighlightedIndex(index);
       context.inputRef.current?.focus();
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
     }, [context.setHighlightedIndex, context.inputRef, index]);
 
     return (

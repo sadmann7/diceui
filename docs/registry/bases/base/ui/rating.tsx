@@ -280,7 +280,7 @@ function Rating(props: RatingProps) {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
-  }, [valueProp]);
+  }, [valueProp, store]);
 
   const value = useStore((state) => state.value, store);
 

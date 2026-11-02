@@ -129,7 +129,7 @@ function ResponsiveDialog({
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
-  }, [openProp]);
+  }, [openProp, store]);
 
   const onOpenChange = React.useCallback(
     (value: boolean) => {

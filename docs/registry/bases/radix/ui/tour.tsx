@@ -238,15 +238,18 @@ function useFocusTrap(
       document.removeEventListener("focusin", onFocusIn);
       container.removeEventListener("keydown", onKeyDown);
 
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- latest-value ref, read at cleanup time on purpose
       if (!tourOpenRef.current) {
         setTimeout(() => {
           const closeAutoFocusEvent = new CustomEvent(
             CLOSE_AUTO_FOCUS,
             EVENT_OPTIONS,
           );
+          // oxlint-disable-next-line react-hooks/exhaustive-deps -- latest-value ref, read at cleanup time on purpose
           if (onCloseAutoFocusRef.current) {
             container.addEventListener(
               CLOSE_AUTO_FOCUS,
+              // oxlint-disable-next-line react-hooks/exhaustive-deps -- latest-value ref, read at cleanup time on purpose
               onCloseAutoFocusRef.current as EventListener,
               { once: true },
             );
@@ -262,9 +265,11 @@ function useFocusTrap(
             }
           }
 
+          // oxlint-disable-next-line react-hooks/exhaustive-deps -- latest-value ref, read at cleanup time on purpose
           if (onCloseAutoFocusRef.current) {
             container.removeEventListener(
               CLOSE_AUTO_FOCUS,
+              // oxlint-disable-next-line react-hooks/exhaustive-deps -- latest-value ref, read at cleanup time on purpose
               onCloseAutoFocusRef.current as EventListener,
             );
           }
@@ -919,6 +924,7 @@ function TourStep(props: TourStepProps) {
     return () => {
       store.removeStep(stepIdRef.current);
     };
+    // oxlint-disable-next-line react-hooks/exhaustive-deps -- collisionBoundary can be a new array every render, re-adding the step
   }, [
     target,
     side,

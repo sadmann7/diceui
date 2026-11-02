@@ -29,6 +29,7 @@ const TagsInputInput = React.forwardRef<HTMLInputElement, TagsInputInputProps>(
 
         event.preventDefault();
       },
+      // oxlint-disable-next-line react-hooks/exhaustive-deps -- context fields are listed individually
       [context.onItemAdd, context.setHighlightedIndex],
     );
 
