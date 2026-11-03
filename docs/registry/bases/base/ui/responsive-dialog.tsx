@@ -6,7 +6,6 @@ import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
-import { useIsMobile } from "@/registry/bases/base/hooks/use-mobile";
 import {
   Dialog,
   DialogClose,
@@ -52,10 +51,34 @@ function useIsMobileContext() {
   const isMobile = React.useContext(IsMobileContext);
 
   if (isMobile === null) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(
+      `\`useIsMobileContext\` must be used within \`${ROOT_NAME}\``,
+    );
   }
 
   return isMobile;
+}
+
+function useIsBelowBreakpoint(breakpoint: number) {
+  const subscribe = React.useCallback(
+    (onStoreChange: () => void) => {
+      const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+      mql.addEventListener("change", onStoreChange);
+      return () => mql.removeEventListener("change", onStoreChange);
+    },
+    [breakpoint],
+  );
+
+  const getSnapshot = React.useCallback(
+    () => window.innerWidth < breakpoint,
+    [breakpoint],
+  );
+
+  return React.useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+}
+
+function getServerSnapshot() {
+  return false;
 }
 
 function useStore<T>(
@@ -92,7 +115,7 @@ function ResponsiveDialog({
   handle,
   ...props
 }: ResponsiveDialogProps) {
-  const isMobile = useIsMobile(breakpoint);
+  const isMobile = useIsBelowBreakpoint(breakpoint);
 
   const listenersRef = useRefWithInit(() => new Set<() => void>());
   const stateRef = useRefWithInit<StoreState>(() => ({

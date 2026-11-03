@@ -432,7 +432,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["button", "@diceui/use-mobile"],
+    registryDependencies: ["button", "use-mobile"],
     dependencies: ["@diceui/pptx"],
   },
   {
@@ -484,7 +484,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    registryDependencies: ["dialog", "drawer", "@diceui/use-mobile"],
+    registryDependencies: ["dialog", "drawer"],
     dependencies: ["@base-ui/utils"],
   },
   {

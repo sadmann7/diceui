@@ -148,27 +148,33 @@ async function fetchText(url: string) {
   return response.text();
 }
 
-async function getShadcnComponents(base: string) {
+async function getShadcnFiles(base: string, dir: string) {
   const registry = await fs.readFile(
-    path.join(BASES_PATH, base, "ui", "_registry.ts"),
+    path.join(BASES_PATH, base, dir, "_registry.ts"),
     "utf8",
   );
   const ours = new Set(
-    [...registry.matchAll(/ui\/([a-z0-9-]+)\.tsx/g)].map((m) => m[1]),
+    [...registry.matchAll(new RegExp(`${dir}/([a-z0-9-]+\\.tsx?)"`, "g"))].map(
+      (m) => m[1],
+    ),
   );
-  const files = await fs.readdir(path.join(BASES_PATH, base, "ui"));
-  return files
-    .filter((file) => file.endsWith(".tsx"))
-    .map((file) => file.slice(0, -4))
-    .filter((name) => !ours.has(name));
+  const files = await fs.readdir(path.join(BASES_PATH, base, dir));
+  return files.filter(
+    (file) => /\.tsx?$/.test(file) && !file.startsWith("_") && !ours.has(file),
+  );
 }
 
 async function syncComponents() {
   const written: string[] = [];
 
   for (const base of BASES) {
-    for (const name of await getShadcnComponents(base)) {
-      const file = `${base}/ui/${name}.tsx`;
+    const files = [
+      ...(await getShadcnFiles(base, "ui")).map((file) => `ui/${file}`),
+      ...(await getShadcnFiles(base, "hooks")).map((file) => `hooks/${file}`),
+    ];
+
+    for (const name of files) {
+      const file = `${base}/${name}`;
       let source = await fetchText(`${SHADCN_RAW}/bases/${file}`);
       if (source === null) continue;
 

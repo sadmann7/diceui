@@ -109,6 +109,16 @@
       }
     },
     {
+      "files": [
+        "docs/registry/bases/*/hooks/use-mobile.ts",
+        "docs/registry/bases/*/ui/calendar.tsx"
+      ],
+      "rules": {
+        "sort-imports": "off",
+        "react/set-state-in-effect": "off"
+      }
+    },
+    {
       "files": ["docs/types/**"],
       "rules": {
         "typescript/no-generated-empty-object-type": "off"

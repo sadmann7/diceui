@@ -466,7 +466,7 @@ export const ui: Registry["items"] = [
     name: "presentation",
     type: "registry:ui",
     dependencies: ["@diceui/pptx"],
-    registryDependencies: ["button", "@diceui/use-mobile"],
+    registryDependencies: ["button", "use-mobile"],
     files: [
       {
         path: "ui/presentation.tsx",
@@ -495,7 +495,6 @@ export const ui: Registry["items"] = [
       "drawer",
       "@diceui/use-value-as-ref",
       "@diceui/use-ref-with-init",
-      "@diceui/use-mobile",
     ],
     files: [
       {
