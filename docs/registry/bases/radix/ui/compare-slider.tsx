@@ -117,6 +117,12 @@ function CompareSlider(props: CompareSliderProps) {
   const onValueChangeRef = useValueAsRef(onValueChange);
 
   const store = React.useMemo<Store>(() => {
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
+
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -131,13 +137,9 @@ function CompareSlider(props: CompareSliderProps) {
           onValueChangeRef.current?.(value as number);
         }
 
-        store.notify();
+        notify();
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
     };
   }, [listenersRef, stateRef, onValueChangeRef]);
 

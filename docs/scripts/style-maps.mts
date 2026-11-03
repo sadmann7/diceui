@@ -15,10 +15,14 @@ const REGISTRY_PATH = path.join(process.cwd(), "registry");
 const STYLES_SRC_PATH = path.join(REGISTRY_PATH, "styles");
 const GENERATED_PATH = path.join(STYLES_SRC_PATH, "__generated__");
 
+function readStyleFile(file: string) {
+  return fs
+    .readFile(path.join(STYLES_SRC_PATH, file), "utf8")
+    .catch(() => null);
+}
+
 export async function getStyleMaps() {
-  const read = (file: string) =>
-    fs.readFile(path.join(STYLES_SRC_PATH, file), "utf8").catch(() => null);
-  const defaultCss = await read(`style-${DEFAULT_STYLE}.css`);
+  const defaultCss = await readStyleFile(`style-${DEFAULT_STYLE}.css`);
   if (!defaultCss) throw new Error(`Missing style-${DEFAULT_STYLE}.css`);
 
   const mapsByCss = new Map<string, StyleMap>();
@@ -26,8 +30,8 @@ export async function getStyleMaps() {
     await Promise.all(
       STYLES.map(async (style) => {
         const css = [
-          (await read(`style-${style.name}.css`)) ?? defaultCss,
-          await read(`shadcn/style-${style.name}.css`),
+          (await readStyleFile(`style-${style.name}.css`)) ?? defaultCss,
+          await readStyleFile(`shadcn/style-${style.name}.css`),
         ].join("\n");
         if (!mapsByCss.has(css)) mapsByCss.set(css, createStyleMap(css));
         return [style.name, mapsByCss.get(css)!] as const;

@@ -260,7 +260,7 @@ function Stepper(props: StepperProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -325,6 +325,8 @@ function Stepper(props: StepperProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   useIsoLayoutEffect(() => {
@@ -563,27 +565,29 @@ function StepperList(props: DivProps) {
 
   const element = useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        role: "tablist",
-        "aria-orientation": orientation,
-        dir: context.dir,
-        tabIndex: isTabbingBackOut || focusableItemCount === 0 ? -1 : 0,
-        ref: composedRef,
-        className: cn(
-          "cn-stepper-list",
-          orientation === "horizontal"
-            ? "flex-row items-center"
-            : "flex-col items-start",
-          className,
-        ),
-        onBlur,
-        onFocus,
-        onMouseDown,
-        children,
-      },
-      listProps,
-    ),
+    ref: composedRef,
+    props: {
+      ...mergeProps<"div">(
+        {
+          role: "tablist",
+          "aria-orientation": orientation,
+          dir: context.dir,
+          tabIndex: isTabbingBackOut || focusableItemCount === 0 ? -1 : 0,
+          className: cn(
+            "cn-stepper-list",
+            orientation === "horizontal"
+              ? "flex-row items-center"
+              : "flex-col items-start",
+            className,
+          ),
+          children,
+        },
+        listProps,
+      ),
+      onBlur,
+      onFocus,
+      onMouseDown,
+    },
     render,
     state: {
       slot: "stepper-list",
@@ -664,10 +668,10 @@ function StepperItem(props: StepperItemProps) {
 
   const element = useRender({
     defaultTagName: "div",
+    ref,
     props: mergeProps<"div">(
       {
         dir: context.dir,
-        ref,
         className: cn(
           "cn-stepper-item",
           orientation === "horizontal" ? "flex-row" : "flex-col",
@@ -770,7 +774,7 @@ function StepperTrigger(props: ButtonProps) {
       ref: triggerRef,
       value: itemValue,
       active: isTabStop,
-      disabled: !!isDisabled,
+      disabled: isDisabled,
     });
 
     if (!isDisabled) {
@@ -969,28 +973,30 @@ function StepperTrigger(props: ButtonProps) {
 
   return useRender({
     defaultTagName: "button",
-    props: mergeProps<"button">(
-      {
-        id: triggerId,
-        role: "tab",
-        type: "button",
-        "aria-controls": contentId,
-        "aria-current": isActive ? "step" : undefined,
-        "aria-describedby": `${titleId} ${descriptionId}`,
-        "aria-posinset": stepPosition,
-        "aria-selected": isActive,
-        "aria-setsize": stepCount,
-        disabled: isDisabled,
-        tabIndex: isTabStop ? 0 : -1,
-        ref: composedRef,
-        className: cn("cn-stepper-trigger", className),
-        onClick,
-        onFocus,
-        onKeyDown,
-        onMouseDown,
-      },
-      triggerProps,
-    ),
+    ref: composedRef,
+    props: {
+      ...mergeProps<"button">(
+        {
+          id: triggerId,
+          role: "tab",
+          type: "button",
+          "aria-controls": contentId,
+          "aria-current": isActive ? "step" : undefined,
+          "aria-describedby": `${titleId} ${descriptionId}`,
+          "aria-posinset": stepPosition,
+          "aria-selected": isActive,
+          "aria-setsize": stepCount,
+          disabled: isDisabled,
+          tabIndex: isTabStop ? 0 : -1,
+          className: cn("cn-stepper-trigger", className),
+        },
+        triggerProps,
+      ),
+      onClick,
+      onFocus,
+      onKeyDown,
+      onMouseDown,
+    },
     render,
     state: {
       slot: "stepper-trigger",
@@ -1024,10 +1030,10 @@ function StepperIndicator(props: StepperIndicatorProps) {
 
   return useRender({
     defaultTagName: "div",
+    ref,
     props: mergeProps<"div">(
       {
         dir: context.dir,
-        ref,
         className: cn("cn-stepper-indicator", className),
         children:
           typeof children === "function" ? (
@@ -1091,13 +1097,13 @@ function StepperSeparator(props: StepperSeparatorProps) {
 
   const element = useRender({
     defaultTagName: "div",
+    ref,
     props: mergeProps<"div">(
       {
         role: "separator",
         "aria-hidden": "true",
         "aria-orientation": orientation,
         dir: context.dir,
-        ref,
         className: cn(
           "cn-stepper-separator",
           orientation === "horizontal" ? "h-px flex-1" : "h-10 w-px",
@@ -1132,11 +1138,11 @@ function StepperTitle(props: StepperTitleProps) {
 
   return useRender({
     defaultTagName: "span",
+    ref,
     props: mergeProps<"span">(
       {
         id: titleId,
         dir: context.dir,
-        ref,
         className: cn("cn-stepper-title cn-font-heading", className),
       },
       titleProps,
@@ -1161,11 +1167,11 @@ function StepperDescription(props: StepperDescriptionProps) {
 
   return useRender({
     defaultTagName: "span",
+    ref,
     props: mergeProps<"span">(
       {
         id: descriptionId,
         dir: context.dir,
-        ref,
         className: cn("cn-stepper-description", className),
       },
       descriptionProps,
@@ -1200,13 +1206,13 @@ function StepperContent(props: StepperContentProps) {
 
   const element = useRender({
     defaultTagName: "div",
+    ref,
     props: mergeProps<"div">(
       {
         id: contentId,
         role: "tabpanel",
         "aria-labelledby": triggerId,
         dir: context.dir,
-        ref,
         className: cn("cn-stepper-content", className),
       },
       contentProps,
@@ -1254,14 +1260,16 @@ function StepperPrev(props: ButtonProps) {
 
   return useRender({
     defaultTagName: "button",
-    props: mergeProps<"button">(
-      {
-        type: "button",
-        disabled: isDisabled,
-        onClick,
-      },
-      prevProps,
-    ),
+    props: {
+      ...mergeProps<"button">(
+        {
+          type: "button",
+          disabled: isDisabled,
+        },
+        prevProps,
+      ),
+      onClick,
+    },
     render,
     state: {
       slot: "stepper-prev",
@@ -1301,14 +1309,16 @@ function StepperNext(props: ButtonProps) {
 
   return useRender({
     defaultTagName: "button",
-    props: mergeProps<"button">(
-      {
-        type: "button",
-        disabled: isDisabled,
-        onClick,
-      },
-      nextProps,
-    ),
+    props: {
+      ...mergeProps<"button">(
+        {
+          type: "button",
+          disabled: isDisabled,
+        },
+        nextProps,
+      ),
+      onClick,
+    },
     render,
     state: {
       slot: "stepper-next",

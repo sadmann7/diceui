@@ -4,7 +4,6 @@ import { describe, expect, it } from "vitest";
 import { useStateMachine } from "../src/hooks/use-state-machine";
 
 type TestState = "idle" | "loading" | "success" | "error";
-type TestEvent = "START" | "SUCCESS" | "ERROR" | "RETRY" | "RESET";
 
 describe("useStateMachine", () => {
   const config = {
@@ -58,7 +57,7 @@ describe("useStateMachine", () => {
     const [, send] = result.current;
 
     act(() => {
-      send("SUCCESS" as TestEvent); // Invalid from initial state
+      send("SUCCESS"); // Invalid from initial state
     });
 
     const [state] = result.current;
@@ -106,7 +105,7 @@ describe("useStateMachine", () => {
     expect(result.current[0]).toBe("loading");
 
     act(() => {
-      send("RESET" as TestEvent); // RESET is not valid in loading state
+      send("RESET"); // RESET is not valid in loading state
     });
     expect(result.current[0]).toBe("loading");
   });

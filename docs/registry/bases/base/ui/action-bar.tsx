@@ -30,6 +30,18 @@ interface DivProps
 type RootElement = React.ComponentRef<typeof ActionBar>;
 type ItemElement = React.ComponentRef<typeof ActionBarItem>;
 
+function subscribe() {
+  return () => {};
+}
+
+function getSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 function focusFirst(
   candidates: React.RefObject<HTMLElement | null>[],
   preventScroll = false,
@@ -141,7 +153,11 @@ function ActionBar(props: ActionBarProps) {
     ...rootProps
   } = props;
 
-  const [mounted, setMounted] = React.useState(false);
+  const mounted = React.useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
   const rootRef = React.useRef<RootElement>(null);
   const composedRef = useMergedRefs(ref, rootRef);
@@ -153,10 +169,6 @@ function ActionBar(props: ActionBarProps) {
 
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;
-
-  React.useLayoutEffect(() => {
-    setMounted(true);
-  }, []);
 
   React.useEffect(() => {
     if (!open) return;
@@ -394,25 +406,27 @@ function ActionBarGroup(props: DivProps) {
 
   const element = useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        role: "group" as const,
-        dir,
-        tabIndex: isTabbingBackOut || focusableItemCount === 0 ? -1 : 0,
-        ref: composedRef,
-        className: cn(
-          "cn-action-bar-group",
-          orientation === "horizontal"
-            ? "items-center"
-            : "w-full flex-col items-start",
-          className,
-        ),
-        onBlur,
-        onFocus,
-        onMouseDown,
-      },
-      groupProps,
-    ),
+    props: {
+      ...mergeProps<"div">(
+        {
+          role: "group" as const,
+          dir,
+          tabIndex: isTabbingBackOut || focusableItemCount === 0 ? -1 : 0,
+          ref: composedRef,
+          className: cn(
+            "cn-action-bar-group",
+            orientation === "horizontal"
+              ? "items-center"
+              : "w-full flex-col items-start",
+            className,
+          ),
+        },
+        groupProps,
+      ),
+      onBlur,
+      onFocus,
+      onMouseDown,
+    },
     render,
     state: {
       slot: "action-bar-group",

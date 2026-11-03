@@ -1,9 +1,9 @@
 import {
-  composeEventHandlers,
   createContext,
   DATA_ITEM_ATTR,
   dispatchDiscreteCustomEvent,
   Primitive,
+  setFilterSearch,
   useComposedRefs,
   useId,
   useIsomorphicLayoutEffect,
@@ -59,7 +59,17 @@ interface ComboboxItemProps extends Omit<
 
 const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
   (props, forwardedRef) => {
-    const { value, label: labelProp, disabled, onSelect, ...itemProps } = props;
+    const {
+      value,
+      label: labelProp,
+      disabled,
+      onSelect,
+      onClick: onClickProp,
+      onPointerDown: onPointerDownProp,
+      onPointerUp: onPointerUpProp,
+      onPointerMove: onPointerMoveProp,
+      ...itemProps
+    } = props;
     const context = useComboboxContext(ITEM_NAME);
     const {
       filterStore,
@@ -116,7 +126,7 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
         onOpenChange(false);
       }
 
-      filterStore.search = "";
+      setFilterSearch(filterStore, "");
       onValueChange(value);
       inputRef.current?.focus();
     }, [
@@ -157,6 +167,71 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
       context.onItemRegister,
     ]);
 
+    const onClick = React.useCallback(
+      (event: React.MouseEvent<ItemElement>) => {
+        onClickProp?.(event);
+        if (event.defaultPrevented) return;
+
+        if (isDisabled || context.readOnly) return;
+        event?.currentTarget.focus();
+        onItemSelect();
+      },
+      [onClickProp, isDisabled, context.readOnly, onItemSelect],
+    );
+
+    const onPointerDown = React.useCallback(
+      (event: React.PointerEvent<ItemElement>) => {
+        onPointerDownProp?.(event);
+        if (event.defaultPrevented) return;
+
+        if (isDisabled) return;
+        isPointerDownRef.current = true;
+
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+        if (target.hasPointerCapture(event.pointerId)) {
+          target.releasePointerCapture(event.pointerId);
+        }
+
+        if (
+          event.button === 0 &&
+          !event.ctrlKey &&
+          event.pointerType === "mouse"
+        ) {
+          event.preventDefault();
+        }
+      },
+      [onPointerDownProp, isDisabled],
+    );
+
+    const onPointerUp = React.useCallback(
+      (event: React.PointerEvent<ItemElement>) => {
+        onPointerUpProp?.(event);
+        if (event.defaultPrevented) return;
+
+        if (!isPointerDownRef.current) event.currentTarget?.click();
+        isPointerDownRef.current = false;
+      },
+      [onPointerUpProp],
+    );
+
+    const onPointerMove = React.useCallback(
+      (event: React.PointerEvent<ItemElement>) => {
+        onPointerMoveProp?.(event);
+        if (event.defaultPrevented) return;
+
+        if (isDisabled) return;
+
+        context.onHighlightedItemChange({
+          ref: itemRef,
+          label,
+          value,
+          disabled: isDisabled,
+        });
+      },
+      [onPointerMoveProp, isDisabled, context, label, value],
+    );
+
     const isVisible = context.getIsItemVisible(value);
 
     if (!isVisible) return null;
@@ -178,52 +253,16 @@ const ComboboxItem = React.forwardRef<ItemElement, ComboboxItemProps>(
           {...{ [DATA_ITEM_ATTR]: "" }}
           data-state={isSelected ? "checked" : "unchecked"}
           data-highlighted={
-            context.highlightedItem?.ref.current?.id === id ? "" : undefined
+            context.highlightedItem?.ref === itemRef ? "" : undefined
           }
           data-disabled={isDisabled ? "" : undefined}
           tabIndex={disabled ? undefined : -1}
           {...itemProps}
           ref={composedRef}
-          onClick={composeEventHandlers(itemProps.onClick, (event) => {
-            if (isDisabled || context.readOnly) return;
-            event?.currentTarget.focus();
-            onItemSelect();
-          })}
-          onPointerDown={composeEventHandlers(
-            itemProps.onPointerDown,
-            (event) => {
-              if (isDisabled) return;
-              isPointerDownRef.current = true;
-
-              const target = event.target;
-              if (!(target instanceof HTMLElement)) return;
-              if (target.hasPointerCapture(event.pointerId)) {
-                target.releasePointerCapture(event.pointerId);
-              }
-
-              if (
-                event.button === 0 &&
-                event.ctrlKey === false &&
-                event.pointerType === "mouse"
-              ) {
-                event.preventDefault();
-              }
-            },
-          )}
-          onPointerUp={composeEventHandlers(itemProps.onPointerUp, (event) => {
-            if (!isPointerDownRef.current) event.currentTarget?.click();
-            isPointerDownRef.current = false;
-          })}
-          onPointerMove={composeEventHandlers(itemProps.onPointerMove, () => {
-            if (isDisabled) return;
-
-            context.onHighlightedItemChange({
-              ref: itemRef,
-              label,
-              value,
-              disabled: isDisabled,
-            });
-          })}
+          onClick={onClick}
+          onPointerDown={onPointerDown}
+          onPointerUp={onPointerUp}
+          onPointerMove={onPointerMove}
         />
       </ComboboxItemProvider>
     );

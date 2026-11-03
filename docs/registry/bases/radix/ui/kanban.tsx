@@ -726,11 +726,12 @@ function KanbanColumn(props: KanbanColumnProps) {
     className,
     style,
     ref,
+    id: idProp,
     ...columnProps
   } = props;
 
   const instanceId = React.useId();
-  const id = columnProps.id ?? instanceId;
+  const id = idProp ?? instanceId;
   const context = useKanbanContext(COLUMN_NAME);
   const inBoard = React.useContext(KanbanBoardContext);
   const inOverlay = React.useContext(KanbanOverlayContext);
@@ -921,11 +922,12 @@ function KanbanItem(props: KanbanItemProps) {
     disabled,
     className,
     ref,
+    id: idProp,
     ...itemProps
   } = props;
 
   const instanceId = React.useId();
-  const id = itemProps.id ?? instanceId;
+  const id = idProp ?? instanceId;
   const context = useKanbanContext(ITEM_NAME);
   const inBoard = React.useContext(KanbanBoardContext);
   const inOverlay = React.useContext(KanbanOverlayContext);
@@ -1072,6 +1074,10 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
+function subscribe() {
+  return () => {};
+}
+
 interface KanbanOverlayProps extends Omit<
   React.ComponentProps<typeof DragOverlay>,
   "children"
@@ -1090,9 +1096,11 @@ function KanbanOverlay(props: KanbanOverlayProps) {
 
   const context = useKanbanContext(OVERLAY_NAME);
 
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useLayoutEffect(() => setMounted(true), []);
+  const mounted = React.useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);

@@ -2,7 +2,6 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import {
   type Announcements,
@@ -649,7 +648,7 @@ interface KanbanBoardProps
 }
 
 function KanbanBoard(props: KanbanBoardProps) {
-  const { className, render, ref, ...boardProps } = props;
+  const { className, render, ...boardProps } = props;
 
   const context = useKanbanContext(BOARD_NAME);
 
@@ -662,7 +661,6 @@ function KanbanBoard(props: KanbanBoardProps) {
     props: mergeProps<"div">(
       {
         "aria-orientation": context.orientation,
-        ref,
         className: cn(
           "cn-kanban-board",
           context.orientation === "horizontal" ? "flex-row" : "flex-col",
@@ -736,11 +734,12 @@ function KanbanColumn(props: KanbanColumnProps) {
     style,
     render,
     ref,
+    id: idProp,
     ...columnProps
   } = props;
 
   const instanceId = React.useId();
-  const id = columnProps.id ?? instanceId;
+  const id = idProp ?? instanceId;
   const context = useKanbanContext(COLUMN_NAME);
   const inBoard = React.useContext(KanbanBoardContext);
   const inOverlay = React.useContext(KanbanOverlayContext);
@@ -947,11 +946,12 @@ function KanbanItem(props: KanbanItemProps) {
     className,
     render,
     ref,
+    id: idProp,
     ...itemProps
   } = props;
 
   const instanceId = React.useId();
-  const id = itemProps.id ?? instanceId;
+  const id = idProp ?? instanceId;
   const context = useKanbanContext(ITEM_NAME);
   const inBoard = React.useContext(KanbanBoardContext);
   const inOverlay = React.useContext(KanbanOverlayContext);
@@ -1114,6 +1114,10 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
+function subscribe() {
+  return () => {};
+}
+
 interface KanbanOverlayProps extends Omit<
   React.ComponentProps<typeof DragOverlay>,
   "children"
@@ -1132,9 +1136,11 @@ function KanbanOverlay(props: KanbanOverlayProps) {
 
   const context = useKanbanContext(OVERLAY_NAME);
 
-  const [mounted, setMounted] = React.useState(false);
-
-  useIsoLayoutEffect(() => setMounted(true), []);
+  const mounted = React.useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);

@@ -214,6 +214,12 @@ function KeyValue(props: KeyValueProps) {
   const propsRef = useValueAsRef({ onValueChange });
 
   const store = React.useMemo<Store>(() => {
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
+
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -224,19 +230,15 @@ function KeyValue(props: KeyValueProps) {
         if (Object.is(stateRef.current[key], val)) return;
 
         if (key === "value" && Array.isArray(val)) {
-          stateRef.current.value = val as ItemData[];
-          propsRef.current.onValueChange?.(val as ItemData[]);
+          stateRef.current.value = val;
+          propsRef.current.onValueChange?.(val);
         } else {
           stateRef.current[key] = val;
         }
 
-        store.notify();
+        notify();
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
     };
   }, [listenersRef, stateRef, propsRef]);
 
@@ -568,10 +570,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
           store.setState("value", newValue);
 
           if (context.onPaste) {
-            context.onPaste(
-              event.nativeEvent as unknown as ClipboardEvent,
-              parsed,
-            );
+            context.onPaste(event.nativeEvent, parsed);
           }
         }
       }

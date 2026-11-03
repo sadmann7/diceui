@@ -31,7 +31,7 @@ const HOOKS: RegistryItem[] = [];
 const COMPONENTS: RegistryItem[] = [];
 
 for (const base of BASES) {
-  const baseName = base.name as RegistryBase;
+  const baseName = base.name;
   const registry = registries[baseName];
 
   // Extract hooks

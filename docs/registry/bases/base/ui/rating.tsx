@@ -247,7 +247,7 @@ function Rating(props: RatingProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -260,8 +260,8 @@ function Rating(props: RatingProps) {
           stateRef.current.value = value;
           propsRef.current.onValueChange?.(value);
         } else if (key === "hoveredValue") {
-          stateRef.current.hoveredValue = value as number | null;
-          propsRef.current.onHover?.(value as number | null);
+          stateRef.current.hoveredValue = value;
+          propsRef.current.onHover?.(value);
         } else {
           stateRef.current[key] = value;
         }
@@ -274,6 +274,8 @@ function Rating(props: RatingProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   useIsoLayoutEffect(() => {
@@ -465,27 +467,29 @@ function Rating(props: RatingProps) {
 
   const element = useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        id: rootId,
-        role: "radiogroup" as React.AriaRole,
-        "aria-orientation": orientation,
-        dir,
-        tabIndex: isTabbingBackOut || focusableItemCount === 0 ? -1 : 0,
-        ref: composedRef,
-        className: cn(
-          "cn-rating",
-          orientation === "horizontal"
-            ? "flex-row items-center"
-            : "flex-col items-start",
-          className,
-        ),
-        onBlur,
-        onFocus,
-        onMouseDown,
-      },
-      rootProps,
-    ),
+    ref: composedRef,
+    props: {
+      ...mergeProps<"div">(
+        {
+          id: rootId,
+          role: "radiogroup" as React.AriaRole,
+          "aria-orientation": orientation,
+          dir,
+          tabIndex: isTabbingBackOut || focusableItemCount === 0 ? -1 : 0,
+          className: cn(
+            "cn-rating",
+            orientation === "horizontal"
+              ? "flex-row items-center"
+              : "flex-col items-start",
+            className,
+          ),
+        },
+        rootProps,
+      ),
+      onBlur,
+      onFocus,
+      onMouseDown,
+    },
     render,
     state: {
       slot: "rating",
@@ -909,43 +913,45 @@ function RatingItem(props: RatingItemProps) {
 
   const element = useRender({
     defaultTagName: "button",
-    props: mergeProps<"button">(
-      {
-        role: "radio" as React.AriaRole,
-        type: "button" as const,
-        id: itemId,
-        "aria-checked": isFilled,
-        "aria-posinset": itemValue,
-        "aria-setsize": context.max,
-        disabled: isDisabled,
-        tabIndex: isTabStop ? 0 : -1,
-        style: {
-          ...styleProp,
-          ...(isPartiallyFilled && {
-            "--partial-fill": `url(#${getPartialFillGradientId(context.rootId, step)})`,
-          }),
-        } as React.CSSProperties,
-        ref: composedRef,
-        className: cn(
-          "cn-rating-item",
-          context.size === "sm"
-            ? "size-4"
-            : context.size === "lg"
-              ? "size-6"
-              : "size-5",
-          className,
-        ),
-        onClick,
-        onFocus,
-        onKeyDown,
-        onMouseDown,
-        onMouseEnter,
-        onMouseMove,
-        onMouseLeave,
-        children: resolvedChildren,
-      },
-      itemProps,
-    ),
+    ref: composedRef,
+    props: {
+      ...mergeProps<"button">(
+        {
+          role: "radio" as React.AriaRole,
+          type: "button" as const,
+          id: itemId,
+          "aria-checked": isFilled,
+          "aria-posinset": itemValue,
+          "aria-setsize": context.max,
+          disabled: isDisabled,
+          tabIndex: isTabStop ? 0 : -1,
+          style: {
+            ...styleProp,
+            ...(isPartiallyFilled && {
+              "--partial-fill": `url(#${getPartialFillGradientId(context.rootId, step)})`,
+            }),
+          },
+          className: cn(
+            "cn-rating-item",
+            context.size === "sm"
+              ? "size-4"
+              : context.size === "lg"
+                ? "size-6"
+                : "size-5",
+            className,
+          ),
+          children: resolvedChildren,
+        },
+        itemProps,
+      ),
+      onClick,
+      onFocus,
+      onKeyDown,
+      onMouseDown,
+      onMouseEnter,
+      onMouseMove,
+      onMouseLeave,
+    },
     render,
     state: {
       slot: "rating-item",

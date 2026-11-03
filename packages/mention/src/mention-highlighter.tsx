@@ -29,21 +29,22 @@ const MentionHighlighter = React.memo(
     (props, forwardedRef) => {
       const { style, ...highlighterProps } = props;
       const context = useMentionContext(HIGHLIGHTER_NAME);
+      const { inputRef } = context;
       const highlighterRef = React.useRef<HighlighterElement>(null);
       const composedRef = useComposedRefs(forwardedRef, highlighterRef);
       const [inputStyle, setInputStyle] = React.useState<CSSStyleDeclaration>();
       const onInputStyleChangeCallback = useCallbackRef(setInputStyle);
 
       const onInputStyleChange = React.useCallback(() => {
-        const inputElement = context.inputRef.current;
+        const inputElement = inputRef.current;
         if (!inputElement) return;
 
         const computedStyle = window.getComputedStyle(inputElement);
         onInputStyleChangeCallback(computedStyle);
-      }, [context.inputRef, onInputStyleChangeCallback]);
+      }, [inputRef, onInputStyleChangeCallback]);
 
       const onSyncScrollAndResize = React.useCallback(() => {
-        const inputElement = context.inputRef.current;
+        const inputElement = inputRef.current;
         const highlighterElement = highlighterRef.current;
 
         if (!inputElement || !highlighterElement) return;
@@ -53,10 +54,10 @@ const MentionHighlighter = React.memo(
           highlighterElement.scrollLeft = inputElement.scrollLeft;
           highlighterElement.style.height = `${inputElement.offsetHeight}px`;
         });
-      }, [context.inputRef]);
+      }, [inputRef]);
 
       React.useEffect(() => {
-        const inputElement = context.inputRef.current;
+        const inputElement = inputRef.current;
         if (!inputElement) return;
 
         onInputStyleChange();
@@ -98,7 +99,7 @@ const MentionHighlighter = React.memo(
           resizeObserver.disconnect();
           mutationObserver.disconnect();
         };
-      }, [context.inputRef, onInputStyleChange, onSyncScrollAndResize]);
+      }, [inputRef, onInputStyleChange, onSyncScrollAndResize]);
 
       const highlighterStyle = React.useMemo<React.CSSProperties>(() => {
         if (!inputStyle) return defaultHighlighterStyle;
@@ -112,8 +113,7 @@ const MentionHighlighter = React.memo(
           lineHeight: inputStyle.lineHeight,
           fontFamily: inputStyle.fontFamily,
           letterSpacing: inputStyle.letterSpacing,
-          textTransform:
-            inputStyle.textTransform as React.CSSProperties["textTransform"],
+          textTransform: inputStyle.textTransform,
           textIndent: inputStyle.textIndent,
           padding: inputStyle.padding,
           borderWidth: inputStyle.borderWidth,
@@ -130,10 +130,7 @@ const MentionHighlighter = React.memo(
       }, [inputStyle, style, context.dir]);
 
       const onSegmentsRender = React.useCallback(() => {
-        const inputElement = context.inputRef.current;
-        if (!inputElement) return null;
-
-        const { value } = inputElement;
+        const value = context.inputValue;
         const segments: React.ReactNode[] = [];
         let lastIndex = 0;
 
@@ -170,7 +167,7 @@ const MentionHighlighter = React.memo(
         segments.push(<span key="space">&nbsp;</span>);
 
         return segments;
-      }, [context.inputRef, context.mentions]);
+      }, [context.inputValue, context.mentions]);
 
       if (!inputStyle) return null;
 

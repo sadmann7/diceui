@@ -159,8 +159,14 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     return containerProp;
   }, [containerProp]);
 
+  const isBatchingRef = React.useRef(false);
+
   const store = React.useMemo<Store>(() => {
-    let isBatching = false;
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
 
     return {
       subscribe: (callback) => {
@@ -181,26 +187,22 @@ function SelectionToolbar(props: SelectionToolbarProps) {
           stateRef.current[key] = value;
         }
 
-        if (!isBatching) {
-          store.notify();
+        if (!isBatchingRef.current) {
+          notify();
         }
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
       batch: (fn: () => void) => {
-        if (isBatching) {
+        if (isBatchingRef.current) {
           fn();
           return;
         }
-        isBatching = true;
+        isBatchingRef.current = true;
         try {
           fn();
         } finally {
-          isBatching = false;
-          store.notify();
+          isBatchingRef.current = false;
+          notify();
         }
       },
     };
@@ -333,7 +335,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     [detectOverflowOptions],
   );
 
-  const middleware = React.useMemo<Array<Middleware | false | undefined>>(
+  const middleware = React.useMemo<(Middleware | false | undefined)[]>(
     () => [
       offset({ mainAxis: sideOffset, alignmentAxis: alignOffset }),
       avoidCollisions &&
@@ -361,7 +363,13 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     ],
   );
 
-  const { refs, floatingStyles, isPositioned, middlewareData } = useFloating({
+  const {
+    refs: { setFloating },
+    elements,
+    floatingStyles,
+    isPositioned,
+    middlewareData,
+  } = useFloating({
     open: open && !!virtualElement,
     placement: desiredPlacement,
     strategy: "fixed",
@@ -500,7 +508,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
 
     function onMouseDown(event: MouseEvent) {
       const target = event.target as Node;
-      if (refs.floating.current && !refs.floating.current.contains(target)) {
+      if (elements.floating && !elements.floating.contains(target)) {
         clearSelection();
       }
     }
@@ -518,7 +526,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
       document.removeEventListener("mousedown", onMouseDown);
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open, refs.floating, clearSelection]);
+  }, [open, elements.floating, clearSelection]);
 
   const element = useRender({
     defaultTagName: "div",
@@ -558,7 +566,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     <StoreContext.Provider value={store}>
       {ReactDOM.createPortal(
         <div
-          ref={refs.setFloating}
+          ref={setFloating}
           style={{
             ...floatingStyles,
             transform: isPositioned

@@ -104,6 +104,7 @@ function CompareSlider(props: CompareSliderProps) {
     onPointerMove: onPointerMoveProp,
     onPointerUp: onPointerUpProp,
     onPointerDown: onPointerDownProp,
+    onPointerCancel: onPointerCancelProp,
     onKeyDown: onKeyDownProp,
     ...rootProps
   } = props;
@@ -116,6 +117,12 @@ function CompareSlider(props: CompareSliderProps) {
   const onValueChangeRef = useValueAsRef(onValueChange);
 
   const store = React.useMemo<Store>(() => {
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
+
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -130,13 +137,9 @@ function CompareSlider(props: CompareSliderProps) {
           onValueChangeRef.current?.(value as number);
         }
 
-        store.notify();
+        notify();
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
     };
   }, [listenersRef, stateRef, onValueChangeRef]);
 
@@ -148,6 +151,7 @@ function CompareSlider(props: CompareSliderProps) {
     onPointerMove: onPointerMoveProp,
     onPointerUp: onPointerUpProp,
     onPointerDown: onPointerDownProp,
+    onPointerCancel: onPointerCancelProp,
     onKeyDown: onKeyDownProp,
     interaction,
     orientation,
@@ -213,6 +217,14 @@ function CompareSlider(props: CompareSliderProps) {
     [store, propsRef],
   );
 
+  const onPointerCancel = React.useCallback(
+    (event: React.PointerEvent<RootElement>) => {
+      propsRef.current.onPointerCancel?.(event);
+      onPointerUp(event);
+    },
+    [propsRef, onPointerUp],
+  );
+
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<RootElement>) => {
       propsRef.current.onKeyDown?.(event);
@@ -262,29 +274,31 @@ function CompareSlider(props: CompareSliderProps) {
 
   const element = useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        role: "slider",
-        "aria-orientation": orientation,
-        "aria-valuemax": 100,
-        "aria-valuemin": 0,
-        "aria-valuenow": value,
-        tabIndex: 0,
-        className: cn(
-          "cn-compare-slider",
-          orientation === "horizontal" ? "w-full" : "h-full",
-          className,
-        ),
-        onPointerDown,
-        onPointerMove,
-        onPointerUp,
-        onPointerCancel: onPointerUp,
-        onKeyDown,
-        ref: composedRef,
-        children,
-      },
-      rootProps,
-    ),
+    props: {
+      ...mergeProps<"div">(
+        {
+          role: "slider",
+          "aria-orientation": orientation,
+          "aria-valuemax": 100,
+          "aria-valuemin": 0,
+          "aria-valuenow": value,
+          tabIndex: 0,
+          className: cn(
+            "cn-compare-slider",
+            orientation === "horizontal" ? "w-full" : "h-full",
+            className,
+          ),
+          ref: composedRef,
+          children,
+        },
+        rootProps,
+      ),
+      onPointerDown,
+      onPointerMove,
+      onPointerUp,
+      onPointerCancel,
+      onKeyDown,
+    },
     render,
     state: {
       slot: "compare-slider",
@@ -307,8 +321,7 @@ interface CompareSliderBeforeProps
 }
 
 function CompareSliderBefore(props: CompareSliderBeforeProps) {
-  const { className, children, style, label, render, ref, ...beforeProps } =
-    props;
+  const { className, children, style, label, render, ...beforeProps } = props;
 
   const value = useStore((state) => state.value);
   const { orientation } = useCompareSliderContext(BEFORE_NAME);
@@ -332,7 +345,6 @@ function CompareSliderBefore(props: CompareSliderBeforeProps) {
           clipPath,
           ...style,
         },
-        ref,
         children: (
           <>
             {children}
@@ -360,8 +372,7 @@ interface CompareSliderAfterProps
 }
 
 function CompareSliderAfter(props: CompareSliderAfterProps) {
-  const { className, children, style, label, render, ref, ...afterProps } =
-    props;
+  const { className, children, style, label, render, ...afterProps } = props;
 
   const value = useStore((state) => state.value);
   const { orientation } = useCompareSliderContext(AFTER_NAME);
@@ -385,7 +396,6 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
           clipPath,
           ...style,
         },
-        ref,
         children: (
           <>
             {children}
@@ -411,7 +421,7 @@ interface CompareSliderHandleProps
   extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function CompareSliderHandle(props: CompareSliderHandleProps) {
-  const { className, children, style, render, ref, ...handleProps } = props;
+  const { className, children, style, render, ...handleProps } = props;
 
   const value = useStore((state) => state.value);
   const { interaction, orientation } = useCompareSliderContext(HANDLE_NAME);
@@ -436,7 +446,6 @@ function CompareSliderHandle(props: CompareSliderHandleProps) {
           [isVertical ? "top" : "left"]: `${value}%`,
           ...style,
         },
-        ref,
         children:
           children ??
           (() => (
@@ -507,7 +516,7 @@ interface CompareSliderLabelProps
 }
 
 function CompareSliderLabel(props: CompareSliderLabelProps) {
-  const { className, children, side, render, ref, ...labelProps } = props;
+  const { className, children, side, render, ...labelProps } = props;
 
   const { orientation } = useCompareSliderContext(LABEL_NAME);
   const isVertical = orientation === "vertical";
@@ -527,7 +536,6 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
               : "top-2 right-2",
           className,
         ),
-        ref,
         children,
       },
       labelProps,

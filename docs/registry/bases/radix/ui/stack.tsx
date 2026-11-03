@@ -77,8 +77,9 @@ function Stack(props: StackProps) {
   const [isInteracting, setIsInteracting] = React.useState(false);
   const [dimensions, setDimensions] = React.useState<ItemDimension[]>([]);
 
-  const childrenArray = React.Children.toArray(children).filter(
-    React.isValidElement,
+  const childrenArray = React.useMemo(
+    () => React.Children.toArray(children).filter(React.isValidElement),
+    [children],
   );
   const childrenCount = childrenArray.length;
 

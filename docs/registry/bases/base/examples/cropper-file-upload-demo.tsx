@@ -44,7 +44,7 @@ async function createCroppedImage(
   image.crossOrigin = "anonymous";
 
   return new Promise((resolve, reject) => {
-    image.onload = () => {
+    image.addEventListener("load", () => {
       const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
 
@@ -79,9 +79,11 @@ async function createCroppedImage(
         });
         resolve(croppedFile);
       }, "image/png");
-    };
+    });
 
-    image.onerror = () => reject(new Error("Failed to load image"));
+    image.addEventListener("error", () =>
+      reject(new Error("Failed to load image")),
+    );
     image.src = imageSrc;
   });
 }

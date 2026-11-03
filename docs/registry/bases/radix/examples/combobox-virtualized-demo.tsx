@@ -74,6 +74,7 @@ export default function ComboboxVirtualizedDemo() {
     );
   }, [deferredInputValue]);
 
+  // oxlint-disable-next-line react/incompatible-library -- @tanstack/react-virtual has no compiler-safe API; the compiler skips memoizing this demo either way
   const virtualizer = useVirtualizer({
     count: filteredTricks.length,
     getScrollElement: () => content,

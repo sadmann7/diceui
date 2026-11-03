@@ -94,11 +94,12 @@ function hexToRgb(hex: string, alpha?: number): ColorValue {
     : { r: 0, g: 0, b: 0, a: alpha ?? 1 };
 }
 
+function toHex(n: number) {
+  const hex = Math.round(n).toString(16);
+  return hex.length === 1 ? `0${hex}` : hex;
+}
+
 function rgbToHex(color: ColorValue): string {
-  const toHex = (n: number) => {
-    const hex = Math.round(n).toString(16);
-    return hex.length === 1 ? `0${hex}` : hex;
-  };
   return `#${toHex(color.r)}${toHex(color.g)}${toHex(color.b)}`;
 }
 
@@ -530,6 +531,12 @@ function ColorPicker(props: ColorPickerProps) {
   });
 
   const store = React.useMemo<Store>(() => {
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
+
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -547,7 +554,7 @@ function ColorPicker(props: ColorPickerProps) {
           propsRef.current.onValueChange(colorString);
         }
 
-        store.notify();
+        notify();
       },
       setHsv: (value: HSVColorValue) => {
         if (Object.is(stateRef.current.hsv, value)) return;
@@ -561,7 +568,7 @@ function ColorPicker(props: ColorPickerProps) {
           propsRef.current.onValueChange(colorString);
         }
 
-        store.notify();
+        notify();
       },
       setOpen: (value: boolean) => {
         if (Object.is(stateRef.current.open, value)) return;
@@ -572,7 +579,7 @@ function ColorPicker(props: ColorPickerProps) {
           propsRef.current.onOpenChange(value);
         }
 
-        store.notify();
+        notify();
       },
       setFormat: (value: ColorFormat) => {
         if (Object.is(stateRef.current.format, value)) return;
@@ -583,13 +590,9 @@ function ColorPicker(props: ColorPickerProps) {
           propsRef.current.onFormatChange(value);
         }
 
-        store.notify();
+        notify();
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
     };
   }, [listenersRef, stateRef, propsRef]);
 

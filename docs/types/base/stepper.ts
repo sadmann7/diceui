@@ -3,7 +3,6 @@ import type * as React from "react";
 import type {
   BaseButtonProps as ButtonProps,
   Direction,
-  EmptyProps,
   Orientation,
   RenderProps,
 } from "@/types";

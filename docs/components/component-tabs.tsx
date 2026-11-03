@@ -16,20 +16,30 @@ import { useNearViewport } from "@/hooks/use-near-viewport";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/styles/radix-nova/ui/skeleton";
 
-function getExampleComponent(base: string, name: string) {
-  if (base === "base") {
-    return React.lazy(() =>
-      import(`@/registry/bases/base/examples/${name}`).then((mod) => ({
-        default: mod.default,
-      })),
-    );
+const exampleModuleCache = new Map<
+  string,
+  Promise<{ default: React.ComponentType }>
+>();
+
+function getExampleModule(base: string, name: string) {
+  const key = `${base}/${name}`;
+  let examplePromise = exampleModuleCache.get(key);
+
+  if (!examplePromise) {
+    examplePromise =
+      base === "base"
+        ? import(`@/registry/bases/base/examples/${name}`)
+        : import(`@/registry/bases/radix/examples/${name}`);
+    exampleModuleCache.set(key, examplePromise);
   }
 
-  return React.lazy(() =>
-    import(`@/registry/bases/radix/examples/${name}`).then((mod) => ({
-      default: mod.default,
-    })),
-  );
+  return examplePromise;
+}
+
+function ExamplePreview({ base, name }: { base: string; name: string }) {
+  const { default: Example } = React.use(getExampleModule(base, name));
+
+  return <Example />;
 }
 
 interface ComponentTabsProps extends React.ComponentProps<typeof MdxTabs> {
@@ -55,11 +65,6 @@ export function ComponentTabs({
   const previewRef = React.useRef<HTMLDivElement>(null);
   const isNearViewport = useNearViewport(previewRef, { enabled: lazy });
   const code = React.Children.toArray(children)[0] as React.ReactElement;
-
-  const Component = React.useMemo(
-    () => getExampleComponent(base, name),
-    [base, name],
-  );
 
   return (
     <MdxTabs
@@ -100,7 +105,7 @@ export function ComponentTabs({
           {isNearViewport ? (
             <StyleScope>
               <React.Suspense fallback={<Skeleton className="size-full" />}>
-                <Component />
+                <ExamplePreview base={base} name={name} />
               </React.Suspense>
             </StyleScope>
           ) : (

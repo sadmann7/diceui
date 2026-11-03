@@ -8,7 +8,7 @@ import {
 } from "@/styles/radix-nova/ui/table";
 
 interface PropsTableProps {
-  variant: "default" | "title" | "css-variable";
+  variant?: "default" | "title" | "css-variable";
   data: {
     title: string;
     description: string;

@@ -307,10 +307,12 @@ function FileUpload(props: FileUploadProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    let state: StoreState = {
-      files,
-      dragOver: false,
-      invalid: invalid,
+    const storeState: { current: StoreState } = {
+      current: {
+        files,
+        dragOver: false,
+        invalid: invalid,
+      },
     };
 
     function reducer(state: StoreState, action: StoreAction): StoreState {
@@ -438,9 +440,9 @@ function FileUpload(props: FileUploadProps) {
     }
 
     return {
-      getState: () => state,
+      getState: () => storeState.current,
       dispatch: (action) => {
-        state = reducer(state, action);
+        storeState.current = reducer(storeState.current, action);
         for (const listener of listeners) {
           listener();
         }
@@ -647,7 +649,7 @@ function FileUpload(props: FileUploadProps) {
 
         if (propsRef.current.onUpload) {
           requestAnimationFrame(() => {
-            onFilesUpload(acceptedFiles);
+            void onFilesUpload(acceptedFiles);
           });
         }
       }
@@ -733,6 +735,16 @@ function FileUpload(props: FileUploadProps) {
       </FileUploadContext.Provider>
     </StoreContext.Provider>
   );
+}
+
+function setInputFiles(input: HTMLInputElement, files: File[]) {
+  const dataTransfer = new DataTransfer();
+  for (const file of files) {
+    dataTransfer.items.add(file);
+  }
+
+  input.files = dataTransfer.files;
+  input.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 interface FileUploadDropzoneProps
@@ -844,13 +856,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       const inputElement = context.inputRef.current;
       if (!inputElement) return;
 
-      const dataTransfer = new DataTransfer();
-      for (const file of files) {
-        dataTransfer.items.add(file);
-      }
-
-      inputElement.files = dataTransfer.files;
-      inputElement.dispatchEvent(new Event("change", { bubbles: true }));
+      setInputFiles(inputElement, files);
     },
     [store, context.inputRef, propsRef],
   );
@@ -883,13 +889,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       const inputElement = context.inputRef.current;
       if (!inputElement) return;
 
-      const dataTransfer = new DataTransfer();
-      for (const file of files) {
-        dataTransfer.items.add(file);
-      }
-
-      inputElement.files = dataTransfer.files;
-      inputElement.dispatchEvent(new Event("change", { bubbles: true }));
+      setInputFiles(inputElement, files);
     },
     [store, context.inputRef, propsRef],
   );
@@ -911,26 +911,24 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
 
   return useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        role: "region",
-        id: context.dropzoneId,
-        "aria-controls": `${context.inputId} ${context.listId}`,
-        "aria-disabled": context.disabled,
-        "aria-invalid": invalid,
-        dir: context.dir,
-        tabIndex: context.disabled ? undefined : 0,
-        className: cn("cn-file-upload-dropzone", className),
-        onClick,
-        onDragEnter,
-        onDragLeave,
-        onDragOver,
-        onDrop,
-        onKeyDown,
-        onPaste,
-      },
-      dropzoneProps,
-    ),
+    props: {
+      role: "region",
+      id: context.dropzoneId,
+      "aria-controls": `${context.inputId} ${context.listId}`,
+      "aria-disabled": context.disabled,
+      "aria-invalid": invalid,
+      dir: context.dir,
+      tabIndex: context.disabled ? undefined : 0,
+      className: cn("cn-file-upload-dropzone", className),
+      onClick,
+      onDragEnter,
+      onDragLeave,
+      onDragOver,
+      onDrop,
+      onKeyDown,
+      onPaste,
+      ...dropzoneProps,
+    },
     render,
     state: {
       slot: "file-upload-dropzone",
@@ -966,15 +964,13 @@ function FileUploadTrigger(props: FileUploadTriggerProps) {
 
   return useRender({
     defaultTagName: "button",
-    props: mergeProps<"button">(
-      {
-        type: "button",
-        "aria-controls": context.inputId,
-        disabled: context.disabled,
-        onClick,
-      },
-      triggerProps,
-    ),
+    props: {
+      type: "button",
+      "aria-controls": context.inputId,
+      disabled: context.disabled,
+      onClick,
+      ...triggerProps,
+    },
     render,
     state: {
       slot: "file-upload-trigger",

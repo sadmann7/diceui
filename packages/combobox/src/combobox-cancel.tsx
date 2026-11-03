@@ -1,4 +1,8 @@
-import { composeEventHandlers, Primitive } from "@diceui/shared";
+import {
+  composeEventHandlers,
+  Primitive,
+  setFilterSearch,
+} from "@diceui/shared";
 import * as React from "react";
 
 import { useComboboxContext } from "./combobox-root";
@@ -37,7 +41,7 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
         ref={forwardedRef}
         onClick={composeEventHandlers(cancelProps.onClick, () => {
           context.onInputValueChange("");
-          context.filterStore.search = "";
+          setFilterSearch(context.filterStore, "");
           requestAnimationFrame(() => {
             context.inputRef.current?.focus();
           });
@@ -56,7 +60,7 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
 
             if (
               event.button === 0 &&
-              event.ctrlKey === false &&
+              !event.ctrlKey &&
               event.pointerType === "mouse"
             ) {
               // prevent cancel from stealing focus from the input

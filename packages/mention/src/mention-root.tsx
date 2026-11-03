@@ -7,6 +7,7 @@ import {
   type Direction,
   type HighlightingDirection,
   Primitive,
+  setFilterSearch,
   useCollection,
   useControllableState,
   useDirection,
@@ -203,7 +204,11 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
       ItemElement,
       ItemData
     >();
-    const { isFormControl, onTriggerChange } = useFormControl<RootElement>();
+    const {
+      isFormControl,
+      trigger: formTrigger,
+      onTriggerChange,
+    } = useFormControl<RootElement>();
     const composedRef = composeRefs(forwardedRef, collectionRef, (node) =>
       onTriggerChange(node),
     );
@@ -330,7 +335,7 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
 
         setOpen(false);
         setHighlightedItem(null);
-        filterStore.search = "";
+        setFilterSearch(filterStore, "");
       },
       [trigger, setInputValue, setValue, setOpen, getEnabledItems, filterStore],
     );
@@ -411,7 +416,7 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
           {isFormControl && name && (
             <VisuallyHiddenInput
               type="hidden"
-              control={collectionRef.current}
+              control={formTrigger}
               name={name}
               value={value}
               disabled={disabled}

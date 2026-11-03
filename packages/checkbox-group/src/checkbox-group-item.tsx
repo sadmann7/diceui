@@ -40,7 +40,14 @@ const CheckboxGroupItem = React.forwardRef<
   HTMLButtonElement,
   CheckboxGroupItemProps
 >((props, ref) => {
-  const { value, disabled, required = false, name, ...itemProps } = props;
+  const {
+    value,
+    disabled,
+    required = false,
+    name,
+    onClick: onClickProp,
+    ...itemProps
+  } = props;
   const context = useCheckboxGroup(ITEM_NAME);
   const id = useId();
   const isDisabled = disabled || context.disabled || false;
@@ -52,7 +59,35 @@ const CheckboxGroupItem = React.forwardRef<
     useFormControl<HTMLButtonElement>();
   const composedRef = useComposedRefs(ref, (node) => onTriggerChange(node));
   const lastClickTimeRef = React.useRef(0);
-  const hasConsumerStoppedPropagationRef = React.useRef(false);
+  const [hasConsumerStoppedPropagation, setHasConsumerStoppedPropagation] =
+    React.useState(false);
+
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      onClickProp?.(event);
+      if (event.defaultPrevented) return;
+
+      const now = Date.now();
+      // Ignore rapid subsequent clicks (debounce)
+      // This prevents event bubbling from clicking on the indicator
+      if (now - lastClickTimeRef.current < 50) {
+        event.stopPropagation();
+        return;
+      }
+      lastClickTimeRef.current = now;
+
+      context.onItemCheckedChange(value, !isChecked);
+
+      if (isFormControl) {
+        const isPropagationStopped = event.isPropagationStopped();
+        setHasConsumerStoppedPropagation(isPropagationStopped);
+        // Stop button click propagation in forms to ensure only the input's event is triggered,
+        // allowing native validation and reflecting checkbox updates.
+        if (!isPropagationStopped) event.stopPropagation();
+      }
+    },
+    [onClickProp, context, value, isChecked, isFormControl],
+  );
 
   return (
     <CheckboxGroupItemProvider
@@ -74,27 +109,7 @@ const CheckboxGroupItem = React.forwardRef<
         id={id}
         {...itemProps}
         ref={composedRef}
-        onClick={composeEventHandlers(props.onClick, (event) => {
-          const now = Date.now();
-          // Ignore rapid subsequent clicks (debounce)
-          // This prevents event bubbling from clicking on the indicator
-          if (now - lastClickTimeRef.current < 50) {
-            event.stopPropagation();
-            return;
-          }
-          lastClickTimeRef.current = now;
-
-          context.onItemCheckedChange(value, !isChecked);
-
-          if (isFormControl) {
-            hasConsumerStoppedPropagationRef.current =
-              event.isPropagationStopped();
-            // Stop button click propagation in forms to ensure only the input's event is triggered,
-            // allowing native validation and reflecting checkbox updates.
-            if (!hasConsumerStoppedPropagationRef.current)
-              event.stopPropagation();
-          }
-        })}
+        onClick={onClick}
         onKeyDown={composeEventHandlers(props.onKeyDown, (event) => {
           // Checkbox group items should not trigger on enter key press
           if (event.key === "Enter") event.preventDefault();
@@ -104,7 +119,7 @@ const CheckboxGroupItem = React.forwardRef<
         <VisuallyHiddenInput
           type="checkbox"
           control={trigger}
-          bubbles={!hasConsumerStoppedPropagationRef.current}
+          bubbles={!hasConsumerStoppedPropagation}
           name={name}
           value={value}
           checked={isChecked}

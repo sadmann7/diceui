@@ -143,18 +143,20 @@ function Banners(props: BannersProps) {
     Map<string, ReturnType<typeof setTimeout>>
   >(() => new Map());
 
-  const store: Store = React.useMemo(
-    () => ({
+  const store: Store = React.useMemo(() => {
+    function notify() {
+      for (const listener of listenersRef.current) {
+        listener();
+      }
+    }
+
+    const bannerStore: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
       },
       getState: () => stateRef.current,
-      notify: () => {
-        for (const listener of listenersRef.current) {
-          listener();
-        }
-      },
+      notify,
       onBannerAdd: (banner) => {
         const id = crypto.randomUUID();
         const newBanner: BannerData = { ...banner, id };
@@ -172,11 +174,11 @@ function Banners(props: BannersProps) {
         }
 
         stateRef.current.banners = banners;
-        store.notify();
+        notify();
 
         if (banner.duration && banner.duration > 0) {
           const timeoutId = setTimeout(() => {
-            store.onRemovingChange(id, true);
+            bannerStore.onRemovingChange(id, true);
             timeoutsRef.current.delete(id);
           }, banner.duration);
           timeoutsRef.current.set(id, timeoutId);
@@ -202,7 +204,7 @@ function Banners(props: BannersProps) {
         stateRef.current.banners = stateRef.current.banners.filter(
           (b) => b.id !== id,
         );
-        store.notify();
+        notify();
       },
       onBannersClear: () => {
         for (const timeoutId of timeoutsRef.current.values()) {
@@ -212,7 +214,7 @@ function Banners(props: BannersProps) {
         stateRef.current.removing = new Set();
         stateRef.current.heights = new Map();
         stateRef.current.banners = [];
-        store.notify();
+        notify();
       },
       onRemovingChange: (id, value) => {
         const newSet = new Set(stateRef.current.removing);
@@ -222,25 +224,26 @@ function Banners(props: BannersProps) {
           newSet.delete(id);
         }
         stateRef.current.removing = newSet;
-        store.notify();
+        notify();
       },
       onHeightChange: (id, height) => {
         if (stateRef.current.heights.get(id) === height) return;
         const newHeights = new Map(stateRef.current.heights);
         newHeights.set(id, height);
         stateRef.current.heights = newHeights;
-        store.notify();
+        notify();
       },
       onHeightRemove: (id) => {
         if (!stateRef.current.heights.has(id)) return;
         const newHeights = new Map(stateRef.current.heights);
         newHeights.delete(id);
         stateRef.current.heights = newHeights;
-        store.notify();
+        notify();
       },
-    }),
-    [stateRef, listenersRef, timeoutsRef],
-  );
+    };
+
+    return bannerStore;
+  }, [stateRef, listenersRef, timeoutsRef]);
 
   const banners = useStore(store, (state) => state.banners);
   const heights = useStore(store, (state) => state.heights);
@@ -349,7 +352,6 @@ function BannerImpl(props: BannerImplProps) {
 
   const [mounted, setMounted] = React.useState(false);
   const bannerRef = React.useRef<HTMLDivElement>(null);
-  const offsetBeforeRemoveRef = React.useRef(0);
 
   const offset = React.useMemo(() => {
     let total = 0;
@@ -360,8 +362,10 @@ function BannerImpl(props: BannerImplProps) {
     return total;
   }, [banners, heights, banner.id]);
 
-  if (!removing) {
-    offsetBeforeRemoveRef.current = offset;
+  const [offsetBeforeRemove, setOffsetBeforeRemove] = React.useState(offset);
+
+  if (!removing && offsetBeforeRemove !== offset) {
+    setOffsetBeforeRemove(offset);
   }
 
   React.useEffect(() => {
@@ -413,7 +417,7 @@ function BannerImpl(props: BannerImplProps) {
     [banner.id, banner.variant, dismissible, onClose, onRemove],
   );
 
-  const currentOffset = removing ? offsetBeforeRemoveRef.current : offset;
+  const currentOffset = removing ? offsetBeforeRemove : offset;
   const isTop = side === "top";
 
   function getTransform() {
@@ -498,10 +502,6 @@ function Banner(props: BannerProps) {
   const onDismissRef = useValueAsRef(onDismiss);
   const onOpenChangeRef = useValueAsRef(onOpenChange);
 
-  if (isControlled) {
-    openRef.current = openProp;
-  }
-
   const subscribe = React.useCallback(
     (cb: () => void) => {
       listenersRef.current.add(cb);
@@ -512,7 +512,18 @@ function Banner(props: BannerProps) {
 
   const getSnapshot = React.useCallback(() => openRef.current, [openRef]);
 
-  const open = React.useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const uncontrolledOpen = React.useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getSnapshot,
+  );
+  const open = isControlled ? openProp : uncontrolledOpen;
+
+  React.useLayoutEffect(() => {
+    if (isControlled) {
+      openRef.current = openProp;
+    }
+  }, [isControlled, openProp, openRef]);
 
   React.useEffect(() => {
     if (!isInsideStore || !store || !open) return;

@@ -82,9 +82,7 @@ export default function ActionBarDemo() {
           >
             <Checkbox
               checked={selectedTaskIds.has(task.id)}
-              onCheckedChange={(checked) =>
-                onItemSelect(task.id, checked === true)
-              }
+              onCheckedChange={(checked) => onItemSelect(task.id, checked)}
             />
             <span className="truncate text-sm font-medium">{task.name}</span>
           </Label>

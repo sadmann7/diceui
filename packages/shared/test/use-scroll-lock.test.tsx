@@ -219,7 +219,7 @@ describe("useScrollLock", () => {
       overflowY: "scroll",
       overflowX: "hidden",
       scrollbarGutter: "auto",
-    } as unknown as CSSStyleDeclaration);
+    });
 
     render(
       <ScrollLockComponent enabled={true} referenceElement={customElement} />,
@@ -307,7 +307,7 @@ describe("useScrollLock", () => {
       overflowY: "scroll",
       overflowX: "hidden",
       scrollbarGutter: "auto",
-    } as unknown as CSSStyleDeclaration);
+    });
 
     render(<ScrollLockComponent enabled={true} />);
 
@@ -392,7 +392,7 @@ describe("useScrollLock", () => {
       overflowY: "scroll",
       overflowX: "hidden",
       scrollbarGutter: "stable",
-    } as unknown as CSSStyleDeclaration);
+    });
 
     // Mock dimensions to simulate no scrollbar width
     Object.defineProperty(window, "innerWidth", {
@@ -449,7 +449,7 @@ describe("useScrollLock", () => {
       overflowY: "scroll",
       overflowX: "scroll",
       scrollbarGutter: "auto",
-    } as unknown as CSSStyleDeclaration);
+    });
 
     render(<ScrollLockComponent enabled={true} />);
 
@@ -598,7 +598,7 @@ describe("useScrollLock", () => {
       overflowY: "scroll",
       overflowX: "hidden",
       scrollbarGutter: "stable",
-    } as unknown as CSSStyleDeclaration);
+    });
 
     // Mock dimensions to simulate no scrollbar width
     Object.defineProperty(window, "innerWidth", {
@@ -622,7 +622,7 @@ describe("useScrollLock", () => {
       overflowY: "scroll",
       overflowX: "scroll",
       scrollbarGutter: "auto",
-    } as unknown as CSSStyleDeclaration);
+    });
 
     render(<ScrollLockComponent enabled={true} />);
 

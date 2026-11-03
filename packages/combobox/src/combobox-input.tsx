@@ -3,6 +3,7 @@ import {
   dispatchDiscreteCustomEvent,
   type HighlightingDirection,
   Primitive,
+  setFilterSearch,
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
@@ -66,7 +67,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
             onHighlightedItemChange(null);
           }
 
-          filterStore.search = trimmedValue;
+          setFilterSearch(filterStore, trimmedValue);
           onItemsFilter();
         });
       },
@@ -160,7 +161,7 @@ const ComboboxInput = React.forwardRef<InputElement, ComboboxInputProps>(
             onOpenChange(false);
           }
 
-          filterStore.search = "";
+          setFilterSearch(filterStore, "");
           onValueChange(value);
         }
 

@@ -5,18 +5,16 @@
 import * as React from "react";
 
 function usePrevious<T>(value: T) {
-  const ref = React.useRef({ value, previous: value });
+  const [state, setState] = React.useState({ value, previous: value });
 
-  // We compare values before making an update to ensure that
-  // a change has been made. This ensures the previous value is
-  // persisted correctly between renders.
-  return React.useMemo(() => {
-    if (ref.current.value !== value) {
-      ref.current.previous = ref.current.value;
-      ref.current.value = value;
-    }
-    return ref.current.previous;
-  }, [value]);
+  // Store the previous value during render once the value changes, so the
+  // previous value is persisted correctly between renders.
+  if (!Object.is(state.value, value)) {
+    setState({ value, previous: state.value });
+    return state.value;
+  }
+
+  return state.previous;
 }
 
 export { usePrevious };

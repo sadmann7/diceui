@@ -194,7 +194,7 @@ function Editable(props: EditableProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -221,6 +221,8 @@ function Editable(props: EditableProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   const value = useStore((state) => state.value, store);

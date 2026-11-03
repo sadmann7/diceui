@@ -446,8 +446,8 @@ function onDeepMemo<T extends unknown[], U>(
     let cache: Cache;
     if (typeof obj === "function") {
       try {
-        cache = new (obj as new () => Cache)();
-      } catch (_err) {
+        cache = new obj();
+      } catch {
         cache = new Map<CacheKey, unknown>();
       }
     } else {
@@ -458,7 +458,7 @@ function onDeepMemo<T extends unknown[], U>(
         cache.set(k, v);
         return v;
       },
-      get(k: CacheKey): unknown | undefined {
+      get(k: CacheKey): unknown {
         return cache.get(k);
       },
     };
@@ -620,11 +620,15 @@ function usePositioner(
     );
 
     const intervalTree = createIntervalTree();
-    const columnHeights: number[] = new Array(computedColumnCount).fill(0);
+    const columnHeights: number[] = Array.from(
+      { length: computedColumnCount },
+      () => 0,
+    );
     const items: (PositionerItem | undefined)[] = [];
-    const columnItems: number[][] = new Array(computedColumnCount)
-      .fill(0)
-      .map(() => []);
+    const columnItems: number[][] = Array.from(
+      { length: computedColumnCount },
+      () => [],
+    );
 
     for (let i = 0; i < computedColumnCount; i++) {
       columnHeights[i] = 0;
@@ -634,7 +638,7 @@ function usePositioner(
     return {
       columnCount: computedColumnCount,
       columnWidth: computedColumnWidth,
-      set: (index: number, height = 0) => {
+      set: (index: number, height: number) => {
         let columnIndex = 0;
 
         if (linear) {
@@ -697,7 +701,9 @@ function usePositioner(
       },
       get: (index: number) => items[index],
       update: (updates: number[]) => {
-        const columns: (number | undefined)[] = new Array(computedColumnCount);
+        const columns: (number | undefined)[] = Array.from({
+          length: computedColumnCount,
+        });
         let i = 0;
         let j = 0;
 
@@ -799,10 +805,6 @@ function usePositioner(
     linear,
   ]);
 
-  const positionerRef = React.useRef<Positioner | null>(null);
-  if (positionerRef.current === null) positionerRef.current = initPositioner();
-
-  const prevDepsRef = React.useRef(deps);
   const opts = [
     width,
     columnWidth,
@@ -812,17 +814,16 @@ function usePositioner(
     maxColumnCount,
     linear,
   ];
-  const prevOptsRef = React.useRef(opts);
-  const optsChanged = !opts.every((item, i) => prevOptsRef.current[i] === item);
+  const [state, setState] = React.useState(() => ({
+    positioner: initPositioner(),
+    deps,
+    opts,
+  }));
+  const optsChanged = !opts.every((item, i) => state.opts[i] === item);
 
-  if (
-    optsChanged ||
-    !deps.every((item, i) => prevDepsRef.current[i] === item)
-  ) {
-    const prevPositioner = positionerRef.current;
+  if (optsChanged || !deps.every((item, i) => state.deps[i] === item)) {
+    const prevPositioner = state.positioner;
     const positioner = initPositioner();
-    prevDepsRef.current = deps;
-    prevOptsRef.current = opts;
 
     if (optsChanged) {
       const cacheSize = prevPositioner.size();
@@ -832,10 +833,11 @@ function usePositioner(
       }
     }
 
-    positionerRef.current = positioner;
+    setState({ positioner, deps, opts });
+    return positioner;
   }
 
-  return positionerRef.current;
+  return state.positioner;
 }
 
 interface DebouncedWindowSizeOptions {
@@ -936,10 +938,70 @@ function onRafSchedule<T extends unknown[]>(
   return onCallback;
 }
 
+function createItemResizeObserver(
+  positioner: Positioner,
+  onUpdate: () => void,
+) {
+  const updates: number[] = [];
+  const itemMap = new WeakMap<Element, number>();
+
+  const update = onRafSchedule(() => {
+    if (updates.length > 0) {
+      positioner.update(updates);
+      onUpdate();
+    }
+    updates.length = 0;
+  });
+
+  function onItemResize(target: ItemElement) {
+    const height = target.offsetHeight;
+    if (height > 0) {
+      const index = itemMap.get(target);
+      if (index !== void 0) {
+        const position = positioner.get(index);
+        if (position !== void 0 && height !== position.height) {
+          updates.push(index, height);
+        }
+      }
+    }
+    update();
+  }
+
+  const scheduledItemMap = new Map<
+    number,
+    OnRafScheduleReturn<[ItemElement]>
+  >();
+  function onResizeObserver(entries: ResizeObserverEntry[]) {
+    for (const entry of entries) {
+      if (!entry) continue;
+      const index = itemMap.get(entry.target);
+
+      if (index === void 0) continue;
+      let handler = scheduledItemMap.get(index);
+      if (!handler) {
+        handler = onRafSchedule(onItemResize);
+        scheduledItemMap.set(index, handler);
+      }
+      handler(entry.target as ItemElement);
+    }
+  }
+
+  const observer = new ResizeObserver(onResizeObserver);
+  const disconnect = observer.disconnect.bind(observer);
+  observer.disconnect = () => {
+    disconnect();
+    for (const [, scheduleItem] of scheduledItemMap) {
+      scheduleItem.cancel();
+    }
+  };
+
+  return observer;
+}
+
 function useResizeObserver(positioner: Positioner) {
   const [, setLayoutVersion] = React.useState(0);
 
-  const createResizeObserver = React.useMemo(() => {
+  const [createResizeObserver] = React.useState(() => {
     if (typeof window === "undefined") {
       return () => ({
         disconnect: () => {},
@@ -948,66 +1010,8 @@ function useResizeObserver(positioner: Positioner) {
       });
     }
 
-    return onDeepMemo(
-      [WeakMap],
-      (positioner: Positioner, onUpdate: () => void) => {
-        const updates: number[] = [];
-        const itemMap = new WeakMap<Element, number>();
-
-        const update = onRafSchedule(() => {
-          if (updates.length > 0) {
-            positioner.update(updates);
-            onUpdate();
-          }
-          updates.length = 0;
-        });
-
-        function onItemResize(target: ItemElement) {
-          const height = target.offsetHeight;
-          if (height > 0) {
-            const index = itemMap.get(target);
-            if (index !== void 0) {
-              const position = positioner.get(index);
-              if (position !== void 0 && height !== position.height) {
-                updates.push(index, height);
-              }
-            }
-          }
-          update();
-        }
-
-        const scheduledItemMap = new Map<
-          number,
-          OnRafScheduleReturn<[ItemElement]>
-        >();
-        function onResizeObserver(entries: ResizeObserverEntry[]) {
-          for (const entry of entries) {
-            if (!entry) continue;
-            const index = itemMap.get(entry.target);
-
-            if (index === void 0) continue;
-            let handler = scheduledItemMap.get(index);
-            if (!handler) {
-              handler = onRafSchedule(onItemResize);
-              scheduledItemMap.set(index, handler);
-            }
-            handler(entry.target as ItemElement);
-          }
-        }
-
-        const observer = new ResizeObserver(onResizeObserver);
-        const disconnect = observer.disconnect.bind(observer);
-        observer.disconnect = () => {
-          disconnect();
-          for (const [, scheduleItem] of scheduledItemMap) {
-            scheduleItem.cancel();
-          }
-        };
-
-        return observer;
-      },
-    );
-  }, []);
+    return onDeepMemo([WeakMap], createItemResizeObserver);
+  });
 
   const resizeObserver = createResizeObserver(positioner, () =>
     setLayoutVersion((prev) => prev + 1),
@@ -1092,8 +1096,6 @@ function useThrottle<State>(
 ): [State, React.Dispatch<React.SetStateAction<State>>] {
   const { fps = 30, leading = false } = options;
   const [state, setState] = React.useState(initialState);
-  const latestSetState = React.useRef(setState);
-  latestSetState.current = setState;
 
   const ms = 1000 / fps;
   const prevCountRef = React.useRef(0);
@@ -1122,7 +1124,7 @@ function useThrottle<State>(
       const call = () => {
         prevCountRef.current = rightNow;
         clearTrailing();
-        latestSetState.current(action);
+        setState(action);
       };
       const current = prevCountRef.current;
 
@@ -1533,7 +1535,8 @@ function MasonryItem(props: MasonryItemProps) {
 
   return useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">({ ref }, itemProps),
+    ref,
+    props: itemProps,
     render,
     state: {
       slot: "masonry-item",

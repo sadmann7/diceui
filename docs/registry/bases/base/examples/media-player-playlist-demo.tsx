@@ -91,7 +91,7 @@ export default function MediaPlayerPlaylistDemo() {
 
   const onPlayTrack = React.useCallback(
     (index: number) => {
-      onLoadAndPlayTrack(index, true);
+      void onLoadAndPlayTrack(index, true);
     },
     [onLoadAndPlayTrack],
   );
@@ -130,7 +130,7 @@ export default function MediaPlayerPlaylistDemo() {
         if (isPlaying) {
           audioRef.current?.pause();
         } else {
-          onAudioPlay();
+          void onAudioPlay();
         }
       } else {
         onPlayTrack(index);
@@ -151,7 +151,7 @@ export default function MediaPlayerPlaylistDemo() {
     const onCanPlay = () => {
       setIsLoading(false);
       if (shouldPlayAfterLoad.current) {
-        onAudioPlay();
+        void onAudioPlay();
         shouldPlayAfterLoad.current = false;
       }
     };
@@ -183,7 +183,7 @@ export default function MediaPlayerPlaylistDemo() {
       currentTrack &&
       audioRef.current.src !== currentTrack.src
     ) {
-      onLoadAndPlayTrack(currentTrackIndex, false);
+      void onLoadAndPlayTrack(currentTrackIndex, false);
     }
   }, [currentTrack, currentTrackIndex, onLoadAndPlayTrack]);
 

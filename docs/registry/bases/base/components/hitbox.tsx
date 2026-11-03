@@ -1,5 +1,3 @@
-import type * as React from "react";
-
 import { useRender } from "@base-ui/react/use-render";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
@@ -89,7 +87,7 @@ function Hitbox(props: HitboxProps) {
       style: {
         ...(isDynamicSize && { "--size": size }),
         ...style,
-      } as React.CSSProperties,
+      },
     },
     render,
     state: {

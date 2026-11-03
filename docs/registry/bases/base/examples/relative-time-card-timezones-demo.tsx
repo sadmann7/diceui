@@ -1,7 +1,11 @@
+"use client";
+
+import * as React from "react";
+
 import { RelativeTimeCard } from "@/registry/bases/base/ui/relative-time-card";
 
 export default function RelativeTimeCardTimezonesDemo() {
-  const now = new Date();
+  const [now] = React.useState(() => new Date());
 
   return (
     <div className="flex flex-col gap-4">

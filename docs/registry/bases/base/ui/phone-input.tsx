@@ -517,6 +517,12 @@ function PhoneInput(props: PhoneInputProps) {
   });
 
   const store = React.useMemo<Store>(() => {
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
+
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -536,13 +542,9 @@ function PhoneInput(props: PhoneInputProps) {
           stateRef.current[key] = value;
         }
 
-        store.notify();
+        notify();
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
     };
   }, [listenersRef, stateRef, propsRef]);
 
@@ -653,7 +655,7 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const {
     disabled: disabledProp,
     className,
-    children,
+    children: _children,
     onOpenChange: onOpenChangeProp,
     ...popoverProps
   } = props;

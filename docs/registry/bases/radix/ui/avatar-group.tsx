@@ -139,7 +139,7 @@ function AvatarGroupItem(props: AvatarGroupItemProps) {
     size,
     orientation,
     dir = "ltr",
-    reverse = false,
+    reverse,
     itemCount,
     className,
     style,

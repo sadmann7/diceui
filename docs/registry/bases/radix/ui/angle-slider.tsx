@@ -234,7 +234,7 @@ function AngleSlider(props: AngleSliderProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -338,6 +338,8 @@ function AngleSlider(props: AngleSliderProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   useLayoutEffect(() => {

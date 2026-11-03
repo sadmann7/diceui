@@ -233,7 +233,7 @@ function AngleSlider(props: AngleSliderProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -337,6 +337,8 @@ function AngleSlider(props: AngleSliderProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   useIsoLayoutEffect(() => {
@@ -554,22 +556,24 @@ function AngleSlider(props: AngleSliderProps) {
 
   const element = useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        dir,
-        className: cn("cn-angle-slider", disabled && "opacity-50", className),
-        style: {
-          width: `${size * 2 + 40}px`,
-          height: `${size * 2 + 40}px`,
+    props: {
+      ...mergeProps<"div">(
+        {
+          dir,
+          className: cn("cn-angle-slider", disabled && "opacity-50", className),
+          style: {
+            width: `${size * 2 + 40}px`,
+            height: `${size * 2 + 40}px`,
+          },
+          ref: composedRef,
         },
-        onKeyDown,
-        onPointerDown,
-        onPointerMove,
-        onPointerUp,
-        ref: composedRef,
-      },
-      rootProps,
-    ),
+        rootProps,
+      ),
+      onKeyDown,
+      onPointerDown,
+      onPointerMove,
+      onPointerUp,
+    },
     render,
     state: {
       slot: "angle-slider",

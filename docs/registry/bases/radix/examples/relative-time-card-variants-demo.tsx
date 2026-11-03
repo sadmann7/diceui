@@ -1,10 +1,13 @@
+"use client";
+
 import { Clock } from "lucide-react";
+import * as React from "react";
 
 import { Button } from "@/registry/bases/radix/ui/button";
 import { RelativeTimeCard } from "@/registry/bases/radix/ui/relative-time-card";
 
 export default function RelativeTimeCardVariantsDemo() {
-  const now = new Date();
+  const [now] = React.useState(() => new Date());
 
   return (
     <div className="flex flex-col gap-6">

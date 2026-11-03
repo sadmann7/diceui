@@ -130,46 +130,45 @@ const skateTricks = {
   ],
 } as const;
 
+function getDifficulty(trick: string): SkateTrick["difficulty"] {
+  const expertTricks = [
+    "Tre Flip",
+    "900",
+    "McTwist",
+    "Laser Flip",
+    "Impossible",
+  ];
+  const advancedTricks = [
+    "Hardflip",
+    "720",
+    "540",
+    "Crooked Grind",
+    "Switch Frontside Boardslide",
+  ];
+  const intermediateTricks = [
+    "Kickflip",
+    "Heelflip",
+    "Frontside 180",
+    "50-50 Grind",
+    "Boardslide",
+  ];
+
+  if (expertTricks.some((name) => trick.includes(name))) return "expert";
+  if (advancedTricks.some((name) => trick.includes(name))) return "advanced";
+  if (intermediateTricks.some((name) => trick.includes(name)))
+    return "intermediate";
+  return "beginner";
+}
+
 function generateTrickData(): SkateTrick[] {
   return Array.from({ length: 30 }, () => {
     const variant = faker.helpers.arrayElement(
-      Object.keys(skateTricks) as Array<keyof typeof skateTricks>,
+      Object.keys(skateTricks) as (keyof typeof skateTricks)[],
     );
     const trickName = faker.helpers.arrayElement(skateTricks[variant]);
     const skaterName = faker.person.fullName();
     const attempts = faker.number.int({ min: 1, max: 50 });
     const landed = faker.datatype.boolean(0.6);
-
-    const getDifficulty = (trick: string): SkateTrick["difficulty"] => {
-      const expertTricks = [
-        "Tre Flip",
-        "900",
-        "McTwist",
-        "Laser Flip",
-        "Impossible",
-      ];
-      const advancedTricks = [
-        "Hardflip",
-        "720",
-        "540",
-        "Crooked Grind",
-        "Switch Frontside Boardslide",
-      ];
-      const intermediateTricks = [
-        "Kickflip",
-        "Heelflip",
-        "Frontside 180",
-        "50-50 Grind",
-        "Boardslide",
-      ];
-
-      if (expertTricks.some((t) => trick.includes(t))) return "expert";
-      if (advancedTricks.some((t) => trick.includes(t))) return "advanced";
-      if (intermediateTricks.some((t) => trick.includes(t)))
-        return "intermediate";
-      return "beginner";
-    };
-
     const difficulty = getDifficulty(trickName);
 
     return {

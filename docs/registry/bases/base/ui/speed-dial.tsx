@@ -187,7 +187,7 @@ function SpeedDial(props: SpeedDialProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -211,6 +211,8 @@ function SpeedDial(props: SpeedDialProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   const getNodes = React.useCallback(() => {
@@ -292,14 +294,16 @@ function SpeedDial(props: SpeedDialProps) {
 
   const element = useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        ref: composedRefs,
-        className: cn("cn-speed-dial", className),
-        onPointerDownCapture,
-      },
-      rootProps,
-    ),
+    ref: composedRefs,
+    props: {
+      ...mergeProps<"div">(
+        {
+          className: cn("cn-speed-dial", className),
+        },
+        rootProps,
+      ),
+      onPointerDownCapture,
+    },
     render,
     state: {
       slot: "speed-dial",
@@ -575,9 +579,6 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
   const transformOrigin = React.useMemo(() => getTransformOrigin(side), [side]);
 
-  const ownerDocument =
-    contentRef.current?.ownerDocument ?? globalThis?.document;
-
   const mounted = React.useSyncExternalStore(
     () => () => {},
     () => true,
@@ -585,9 +586,16 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   );
 
   const [renderState, setRenderState] = React.useState({
-    shouldRender: false,
+    shouldRender: open,
     animating: false,
   });
+  const [prevOpen, setPrevOpen] = React.useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    setRenderState((prev) =>
+      open ? { ...prev, shouldRender: true } : { ...prev, animating: false },
+    );
+  }
   const [position, setPosition] = React.useState<React.CSSProperties>({});
 
   const openRafRef = React.useRef<number | null>(null);
@@ -599,8 +607,6 @@ function SpeedDialContent(props: SpeedDialContentProps) {
         clearTimeout(unmountTimerRef.current);
         unmountTimerRef.current = null;
       }
-
-      setRenderState((prev) => ({ ...prev, shouldRender: true }));
 
       if (openRafRef.current) cancelAnimationFrame(openRafRef.current);
       openRafRef.current = requestAnimationFrame(() => {
@@ -615,8 +621,6 @@ function SpeedDialContent(props: SpeedDialContentProps) {
         }
       };
     } else {
-      setRenderState((prev) => ({ ...prev, animating: false }));
-
       if (!forceMount) {
         const childCount = React.Children.count(children);
         const animationDuration = DEFAULT_ANIMATION_DURATION;
@@ -678,6 +682,9 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   React.useEffect(() => {
     if (!open) return;
 
+    const ownerDocument =
+      contentRef.current?.ownerDocument ?? globalThis?.document;
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         propsRef.current?.onEscapeKeyDown?.(event);
@@ -711,12 +718,15 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
     ownerDocument.addEventListener("keydown", onKeyDown);
     return () => ownerDocument.removeEventListener("keydown", onKeyDown);
-  }, [open, propsRef, ownerDocument, store, getNodes]);
+  }, [open, propsRef, store, getNodes]);
 
   const onClickRef = React.useRef<() => void>(() => {});
 
   React.useEffect(() => {
     if (!open) return;
+
+    const ownerDocument =
+      contentRef.current?.ownerDocument ?? globalThis?.document;
 
     isPointerInsideReactTreeRef.current = false;
 
@@ -763,14 +773,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       ownerDocument.removeEventListener("pointerdown", onPointerDown);
       ownerDocument.removeEventListener("click", onClickRef.current);
     };
-  }, [
-    open,
-    rootRef,
-    isPointerInsideReactTreeRef,
-    propsRef,
-    ownerDocument,
-    store,
-  ]);
+  }, [open, rootRef, isPointerInsideReactTreeRef, propsRef, store]);
 
   const onMouseEnter = React.useCallback(
     (event: React.MouseEvent<ContentElement>) => {
@@ -831,20 +834,22 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
   const element = useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        id: contentId,
-        role: "menu",
-        "aria-orientation": orientation,
-        ref: composedRef,
-        className: cn(speedDialContentVariants({ side, className })),
-        style: contentStyle,
-        onMouseEnter,
-        onMouseLeave,
-        children: processedChildren,
-      },
-      contentProps,
-    ),
+    ref: composedRef,
+    props: {
+      ...mergeProps<"div">(
+        {
+          id: contentId,
+          role: "menu",
+          "aria-orientation": orientation,
+          className: cn(speedDialContentVariants({ side, className })),
+          style: contentStyle,
+          children: processedChildren,
+        },
+        contentProps,
+      ),
+      onMouseEnter,
+      onMouseLeave,
+    },
     render,
     state: {
       slot: "speed-dial-content",

@@ -120,13 +120,14 @@ export function getNewYorkClasses(markerSource: string, newYorkSource: string) {
     const markers = tokens.filter(
       (token) => token.startsWith("cn-") && !ALLOWED_MARKERS.has(token),
     );
+    const [marker] = markers;
     const compiled = newYorkClasses.get(key);
-    if (!markers.length || compiled === undefined) continue;
+    if (!marker || compiled === undefined) continue;
 
     const structural = new Set(
       tokens.filter((token) => !token.startsWith("cn-")),
     );
-    result[markers[0]!] = compiled
+    result[marker] = compiled
       .split(/\s+/)
       .filter((token) => token && !structural.has(token))
       .join(" ");

@@ -97,11 +97,12 @@ function hexToRgb(hex: string, alpha?: number): ColorValue {
     : { r: 0, g: 0, b: 0, a: alpha ?? 1 };
 }
 
+function toHex(n: number) {
+  const hex = Math.round(n).toString(16);
+  return hex.length === 1 ? `0${hex}` : hex;
+}
+
 function rgbToHex(color: ColorValue): string {
-  const toHex = (n: number) => {
-    const hex = Math.round(n).toString(16);
-    return hex.length === 1 ? `0${hex}` : hex;
-  };
   return `#${toHex(color.r)}${toHex(color.g)}${toHex(color.b)}`;
 }
 
@@ -536,6 +537,12 @@ function ColorPicker(props: ColorPickerProps) {
   });
 
   const store = React.useMemo<Store>(() => {
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
+
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -553,7 +560,7 @@ function ColorPicker(props: ColorPickerProps) {
           propsRef.current.onValueChange(colorString);
         }
 
-        store.notify();
+        notify();
       },
       setHsv: (value: HSVColorValue) => {
         if (Object.is(stateRef.current.hsv, value)) return;
@@ -567,7 +574,7 @@ function ColorPicker(props: ColorPickerProps) {
           propsRef.current.onValueChange(colorString);
         }
 
-        store.notify();
+        notify();
       },
       setOpen: (value: boolean, eventDetails?: PopoverChangeEventDetails) => {
         if (Object.is(stateRef.current.open, value)) return;
@@ -578,7 +585,7 @@ function ColorPicker(props: ColorPickerProps) {
           propsRef.current.onOpenChange(value, eventDetails);
         }
 
-        store.notify();
+        notify();
       },
       setFormat: (value: ColorFormat) => {
         if (Object.is(stateRef.current.format, value)) return;
@@ -589,13 +596,9 @@ function ColorPicker(props: ColorPickerProps) {
           propsRef.current.onFormatChange(value);
         }
 
-        store.notify();
+        notify();
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
     };
   }, [listenersRef, stateRef, propsRef]);
 
@@ -884,51 +887,53 @@ function ColorPickerArea(props: DivProps) {
 
   return useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        ref: composedRef,
-        className: cn(
-          "cn-color-picker-area",
-          context.disabled && "pointer-events-none opacity-50",
-          className,
-        ),
-        onPointerDown,
-        onPointerMove,
-        onPointerUp,
-        children: (
-          <>
-            <div className="cn-color-picker-area-2">
+    props: {
+      ...mergeProps<"div">(
+        {
+          ref: composedRef,
+          className: cn(
+            "cn-color-picker-area",
+            context.disabled && "pointer-events-none opacity-50",
+            className,
+          ),
+          children: (
+            <>
+              <div className="cn-color-picker-area-2">
+                <div
+                  className="cn-color-picker-area-3"
+                  style={{
+                    backgroundColor: `rgb(${backgroundHue.r}, ${backgroundHue.g}, ${backgroundHue.b})`,
+                  }}
+                />
+                <div
+                  className="cn-color-picker-area-4"
+                  style={{
+                    background: "linear-gradient(to right, #fff, transparent)",
+                  }}
+                />
+                <div
+                  className="cn-color-picker-area-5"
+                  style={{
+                    background: "linear-gradient(to bottom, transparent, #000)",
+                  }}
+                />
+              </div>
               <div
-                className="cn-color-picker-area-3"
+                className="cn-color-picker-area-6"
                 style={{
-                  backgroundColor: `rgb(${backgroundHue.r}, ${backgroundHue.g}, ${backgroundHue.b})`,
+                  left: `${hsv?.s ?? 0}%`,
+                  top: `${100 - (hsv?.v ?? 0)}%`,
                 }}
               />
-              <div
-                className="cn-color-picker-area-4"
-                style={{
-                  background: "linear-gradient(to right, #fff, transparent)",
-                }}
-              />
-              <div
-                className="cn-color-picker-area-5"
-                style={{
-                  background: "linear-gradient(to bottom, transparent, #000)",
-                }}
-              />
-            </div>
-            <div
-              className="cn-color-picker-area-6"
-              style={{
-                left: `${hsv?.s ?? 0}%`,
-                top: `${100 - (hsv?.v ?? 0)}%`,
-              }}
-            />
-          </>
-        ),
-      },
-      areaProps,
-    ),
+            </>
+          ),
+        },
+        areaProps,
+      ),
+      onPointerDown,
+      onPointerMove,
+      onPointerUp,
+    },
     render,
     state: {
       slot: "color-picker-area",

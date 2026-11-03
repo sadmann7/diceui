@@ -318,9 +318,10 @@ interface Store {
     opts?: unknown,
   ) => void;
   notify: () => void;
-  addStep: (stepData: StepData) => { id: string; index: number };
+  addStep: (id: string, stepData: StepData) => void;
   removeStep: (id: string) => void;
   updateStep: (id: string, stepData: StepData) => void;
+  getStepIndex: (id: string) => number;
 }
 
 function useStore<T>(
@@ -421,7 +422,7 @@ function getSideAndAlignFromPlacement(placement: Placement): [Side, Align] {
 
 function getPlacement(side: Side, align: Align): Placement {
   if (align === "center") {
-    return side as Placement;
+    return side;
   }
   return `${side}-${align}` as Placement;
 }
@@ -613,7 +614,6 @@ function Tour(props: TourProps) {
   }));
   const listenersRef = useRefWithInit<Set<() => void>>(() => new Set());
   const stepIdsMapRef = useRefWithInit<Map<string, number>>(() => new Map());
-  const stepIdCounterRef = useRefWithInit(() => ({ current: 0 }));
   const propsRef = useValueAsRef({
     valueProp,
     onOpenChange,
@@ -627,8 +627,8 @@ function Tour(props: TourProps) {
     scrollOffset,
   });
 
-  const store: Store = React.useMemo(
-    () => ({
+  const store = React.useMemo<Store>(() => {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -701,13 +701,10 @@ function Tour(props: TourProps) {
           l();
         });
       },
-      addStep: (stepData) => {
-        const id = `step-${stepIdCounterRef.current.current++}`;
-        const index = stateRef.current.steps.length;
-        stepIdsMapRef.current.set(id, index);
+      addStep: (id, stepData) => {
+        stepIdsMapRef.current.set(id, stateRef.current.steps.length);
         stateRef.current.steps = [...stateRef.current.steps, stepData];
         store.notify();
-        return { id, index };
       },
       removeStep: (id) => {
         const index = stepIdsMapRef.current.get(id);
@@ -739,9 +736,11 @@ function Tour(props: TourProps) {
         );
         store.notify();
       },
-    }),
-    [stateRef, listenersRef, stepIdsMapRef, stepIdCounterRef, propsRef],
-  );
+      getStepIndex: (id) => stepIdsMapRef.current.get(id) ?? -1,
+    };
+
+    return store;
+  }, [stateRef, listenersRef, stepIdsMapRef, propsRef]);
 
   const open = useStore((state) => state.open, store);
 
@@ -911,9 +910,8 @@ function TourStep(props: TourStepProps) {
   const [arrow, setArrow] = React.useState<HTMLSpanElement | null>(null);
   const [footer, setFooter] = React.useState<FooterElement | null>(null);
 
+  const stepId = React.useId();
   const stepRef = React.useRef<StepElement | null>(null);
-  const stepIdRef = React.useRef<string>("");
-  const stepOrderRef = React.useRef<number>(-1);
   const isPointerInsideReactTreeRef = React.useRef(false);
   const isFocusInsideReactTreeRef = React.useRef(false);
 
@@ -944,23 +942,22 @@ function TourStep(props: TourStepProps) {
   const stepOptionsRef = useValueAsRef(stepOptions);
 
   useLayoutEffect(() => {
-    const { id, index } = store.addStep(stepOptionsRef.current);
-    stepIdRef.current = id;
-    stepOrderRef.current = index;
+    store.addStep(stepId, stepOptionsRef.current);
 
     return () => {
-      store.removeStep(id);
+      store.removeStep(stepId);
     };
-  }, [store, stepOptionsRef]);
+  }, [store, stepId, stepOptionsRef]);
 
   useLayoutEffect(() => {
-    store.updateStep(stepIdRef.current, stepOptions);
+    store.updateStep(stepId, stepOptions);
   });
 
   const stepData = steps[value];
   const targetElement = stepData ? getTargetElement(stepData.target) : null;
 
-  const isCurrentStep = stepOrderRef.current === value;
+  const stepIndex = useStore(() => store.getStepIndex(stepId));
+  const isCurrentStep = stepIndex === value;
 
   const middleware = React.useMemo(() => {
     if (!stepData) return [];
@@ -1392,32 +1389,32 @@ function TourArrow(props: TourArrowProps) {
     ...arrowProps
   } = props;
 
-  const stepContext = useStepContext(ARROW_NAME);
-  const baseSide = OPPOSITE_SIDE[stepContext.placedSide];
+  const { placedSide, arrowX, arrowY, shouldHideArrow, onArrowChange } =
+    useStepContext(ARROW_NAME);
+  const baseSide = OPPOSITE_SIDE[placedSide];
 
   return (
     <span
-      ref={stepContext.onArrowChange}
+      ref={onArrowChange}
       data-slot="tour-arrow"
       style={{
         position: "absolute",
-        left:
-          stepContext.arrowX != null ? `${stepContext.arrowX}px` : undefined,
-        top: stepContext.arrowY != null ? `${stepContext.arrowY}px` : undefined,
+        left: arrowX != null ? `${arrowX}px` : undefined,
+        top: arrowY != null ? `${arrowY}px` : undefined,
         [baseSide]: 0,
         transformOrigin: {
           top: "",
           right: "0 0",
           bottom: "center 0",
           left: "100% 0",
-        }[stepContext.placedSide],
+        }[placedSide],
         transform: {
           top: "translateY(100%)",
           right: "translateY(50%) rotate(90deg) translateX(-50%)",
           bottom: "rotate(180deg)",
           left: "translateY(50%) rotate(-90deg) translateX(50%)",
-        }[stepContext.placedSide],
-        visibility: stepContext.shouldHideArrow ? "hidden" : undefined,
+        }[placedSide],
+        visibility: shouldHideArrow ? "hidden" : undefined,
       }}
     >
       <svg

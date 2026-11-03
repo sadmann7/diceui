@@ -20,7 +20,7 @@ import { transformDirection } from "shadcn/utils";
 
 import { DEFAULT_BASE, DEFAULT_STYLE } from "../lib/constants";
 import { BASES } from "../registry/bases";
-import { type RegistryBase, registries } from "../registry/registry";
+import { registries, type RegistryBase } from "../registry/registry";
 import { STYLES } from "../registry/styles";
 import { writeIconsModule } from "./build-icons.mts";
 import {
@@ -61,7 +61,7 @@ const itemDependencyCache = new Map<string, string[] | undefined>();
 // package. Projects initialized before cn existed rely on this to install it.
 function getItemDependencies(
   item: Pick<RegistryItem, "dependencies">,
-  fileContents: Array<string | null | undefined>,
+  fileContents: (string | null | undefined)[],
 ) {
   const dependencies = item.dependencies ?? [];
   if (dependencies.includes("cn")) {
@@ -109,7 +109,7 @@ async function resolveItemDependencies(
 // ----------------------------------------------------------------------------
 async function buildRegistryJson() {
   for (const { name: styleName, base } of STYLE_COMBINATIONS) {
-    const baseName = base.name as RegistryBase;
+    const baseName = base.name;
     const registry = registries[baseName];
     const outputDir = path.join(STYLES_PATH, styleName);
     await fs.mkdir(outputDir, { recursive: true });
@@ -307,7 +307,7 @@ async function buildPublicItems() {
   const styleMaps = await getStyleMaps();
 
   for (const base of BASES) {
-    const baseName = base.name as RegistryBase;
+    const baseName = base.name;
     const registry = registries[baseName];
     const baseSrcRoot = path.join(process.cwd(), "registry", "bases", baseName);
 
@@ -406,7 +406,7 @@ async function buildDocsUi() {
   const styleMap = (await getStyleMaps()).get(DEFAULT_STYLE)!;
 
   for (const base of BASES) {
-    const baseName = base.name as RegistryBase;
+    const baseName = base.name;
     const uiDir = path.join(process.cwd(), "registry", "bases", baseName, "ui");
     const outDir = path.join(
       process.cwd(),
@@ -437,7 +437,7 @@ async function buildDocsUi() {
 
 async function buildRtlUi() {
   for (const base of BASES) {
-    const baseName = base.name as RegistryBase;
+    const baseName = base.name;
     const baseDir = path.join(process.cwd(), "registry", "bases", baseName);
     const rtlDir = path.join(baseDir, "ui-rtl");
     const uiImport = new RegExp(
@@ -502,7 +502,7 @@ try {
 
   // Validate all registries before touching any output
   for (const base of BASES) {
-    const baseName = base.name as RegistryBase;
+    const baseName = base.name;
     const result = registrySchema.safeParse(registries[baseName]);
     if (!result.success) {
       console.error(`Error in ${baseName} registry:`, result.error);

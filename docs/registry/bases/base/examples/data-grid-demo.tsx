@@ -163,7 +163,7 @@ function getDifficulty(trick: string): SkateTrick["difficulty"] {
 function generateTrickData(): SkateTrick[] {
   return Array.from({ length: 30 }, () => {
     const variant = faker.helpers.arrayElement(
-      Object.keys(skateTricks) as Array<keyof typeof skateTricks>,
+      Object.keys(skateTricks) as (keyof typeof skateTricks)[],
     );
     const trickName = faker.helpers.arrayElement(skateTricks[variant]);
     const skaterName = faker.person.fullName();

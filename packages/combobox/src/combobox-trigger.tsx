@@ -72,7 +72,7 @@ const ComboboxTrigger = React.forwardRef<
           // This allows text selection in the input while still preventing focus stealing elsewhere
           if (
             event.button === 0 &&
-            event.ctrlKey === false &&
+            !event.ctrlKey &&
             event.pointerType === "mouse" &&
             !(event.target instanceof HTMLInputElement)
           ) {

@@ -462,13 +462,21 @@ function Cropper(props: CropperProps) {
   const rootRef = React.useRef<RootElement | null>(null);
 
   const store = React.useMemo<Store>(() => {
-    let isBatching = false;
-    let raf: number | null = null;
+    const scheduler: { isBatching: boolean; raf: number | null } = {
+      isBatching: false,
+      raf: null,
+    };
+
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
 
     function notifyCropAreaChange() {
-      if (raf != null) return;
-      raf = requestAnimationFrame(() => {
-        raf = null;
+      if (scheduler.raf != null) return;
+      scheduler.raf = requestAnimationFrame(() => {
+        scheduler.raf = null;
         const s = stateRef.current;
         if (s?.mediaSize && s.cropSize && propsRef.current.onCropAreaChange) {
           const { croppedAreaPercentages, croppedAreaPixels } = getCroppedArea(
@@ -562,26 +570,22 @@ function Cropper(props: CropperProps) {
           notifyCropAreaChange();
         }
 
-        if (!isBatching) {
-          store.notify();
+        if (!scheduler.isBatching) {
+          notify();
         }
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
       batch: (fn: () => void) => {
-        if (isBatching) {
+        if (scheduler.isBatching) {
           fn();
           return;
         }
-        isBatching = true;
+        scheduler.isBatching = true;
         try {
           fn();
         } finally {
-          isBatching = false;
-          store.notify();
+          scheduler.isBatching = false;
+          notify();
         }
       },
     };
@@ -766,16 +770,16 @@ function CropperImpl(props: CropperImplProps) {
 
   const getMousePoint = React.useCallback(
     (event: MouseEvent | React.MouseEvent) => ({
-      x: Number(event.clientX),
-      y: Number(event.clientY),
+      x: event.clientX,
+      y: event.clientY,
     }),
     [],
   );
 
   const getTouchPoint = React.useCallback(
     (touch: Touch | React.Touch) => ({
-      x: Number(touch.clientX),
-      y: Number(touch.clientY),
+      x: touch.clientX,
+      y: touch.clientY,
     }),
     [],
   );
@@ -987,7 +991,7 @@ function CropperImpl(props: CropperImplProps) {
         return;
       }
 
-      const point = { x: Number(event.clientX), y: Number(event.clientY) };
+      const point = { x: event.clientX, y: event.clientY };
       const newZoom = gestureZoomStartRef.current - 1 + event.scale;
       onZoomChange(newZoom, point, true);
 
@@ -997,13 +1001,16 @@ function CropperImpl(props: CropperImplProps) {
     [onZoomChange, store],
   );
 
-  const onGestureEnd = React.useCallback(() => {
-    document.removeEventListener(
-      "gesturechange",
-      onGestureChange as EventListener,
-    );
-    document.removeEventListener("gestureend", onGestureEnd as EventListener);
-  }, [onGestureChange]);
+  const onGestureEnd = React.useCallback(
+    function onGestureEndListener() {
+      document.removeEventListener(
+        "gesturechange",
+        onGestureChange as EventListener,
+      );
+      document.removeEventListener("gestureend", onGestureEndListener);
+    },
+    [onGestureChange],
+  );
 
   const onGestureStart = React.useCallback(
     (event: GestureEvent) => {
@@ -1012,7 +1019,7 @@ function CropperImpl(props: CropperImplProps) {
         "gesturechange",
         onGestureChange as EventListener,
       );
-      document.addEventListener("gestureend", onGestureEnd as EventListener);
+      document.addEventListener("gestureend", onGestureEnd);
       gestureZoomStartRef.current = zoom;
       gestureRotationStartRef.current = rotation;
     },
@@ -1031,17 +1038,20 @@ function CropperImpl(props: CropperImplProps) {
       "gesturechange",
       onGestureChange as EventListener,
     );
-    document.removeEventListener("gestureend", onGestureEnd as EventListener);
+    document.removeEventListener("gestureend", onGestureEnd);
   }, [onMouseMove, onTouchMove, onGestureChange, onGestureEnd]);
 
-  const onDragStopped = React.useCallback(() => {
-    isTouchingRef.current = false;
-    store.setState("isDragging", false);
-    onRefsCleanup();
-    document.removeEventListener("mouseup", onDragStopped);
-    document.removeEventListener("touchend", onDragStopped);
-    onEventsCleanup();
-  }, [store, onEventsCleanup, onRefsCleanup]);
+  const onDragStopped = React.useCallback(
+    function onDragStoppedListener() {
+      isTouchingRef.current = false;
+      store.setState("isDragging", false);
+      onRefsCleanup();
+      document.removeEventListener("mouseup", onDragStoppedListener);
+      document.removeEventListener("touchend", onDragStoppedListener);
+      onEventsCleanup();
+    },
+    [store, onEventsCleanup, onRefsCleanup],
+  );
 
   const getWheelDelta = React.useCallback((event: WheelEvent) => {
     let deltaX = event.deltaX;
@@ -1323,7 +1333,7 @@ function useMediaComputation<T extends HTMLImageElement | HTMLVideoElement>({
 }: UseMediaComputationProps<T>) {
   const computeSizes = React.useCallback(() => {
     const media = mediaRef.current;
-    const content = context.rootRef?.current;
+    const content = context.rootRef.current;
     if (!media || !content) return;
 
     const contentRect = content.getBoundingClientRect();
@@ -1507,6 +1517,13 @@ function CropperImage(props: CropperImageProps) {
     const content = context.rootRef?.current;
     if (!content) return;
 
+    function onResize() {
+      const image = imageRef.current;
+      if (image?.complete && image.naturalWidth > 0) {
+        computeSizes();
+      }
+    }
+
     if (typeof ResizeObserver !== "undefined") {
       let isFirstResize = true;
       const resizeObserver = new ResizeObserver(() => {
@@ -1515,17 +1532,10 @@ function CropperImage(props: CropperImageProps) {
           return;
         }
 
-        const callback = () => {
-          const image = imageRef.current;
-          if (image?.complete && image.naturalWidth > 0) {
-            computeSizes();
-          }
-        };
-
         if ("requestIdleCallback" in window) {
-          requestIdleCallback(callback);
+          requestIdleCallback(onResize);
         } else {
-          setTimeout(callback, 16);
+          setTimeout(onResize, 16);
         }
       });
 
@@ -1535,16 +1545,9 @@ function CropperImage(props: CropperImageProps) {
         resizeObserver.disconnect();
       };
     } else {
-      const onWindowResize = () => {
-        const image = imageRef.current;
-        if (image?.complete && image.naturalWidth > 0) {
-          computeSizes();
-        }
-      };
-
-      window.addEventListener("resize", onWindowResize);
+      window.addEventListener("resize", onResize);
       return () => {
-        window.removeEventListener("resize", onWindowResize);
+        window.removeEventListener("resize", onResize);
       };
     }
   }, [context.rootRef, computeSizes]);
@@ -1635,6 +1638,13 @@ function CropperVideo(props: CropperVideoProps) {
     const content = context.rootRef?.current;
     if (!content) return;
 
+    function onResize() {
+      const video = videoRef.current;
+      if (video && video.videoWidth > 0 && video.videoHeight > 0) {
+        computeSizes();
+      }
+    }
+
     if (typeof ResizeObserver !== "undefined") {
       let isFirstResize = true;
       const resizeObserver = new ResizeObserver(() => {
@@ -1643,17 +1653,10 @@ function CropperVideo(props: CropperVideoProps) {
           return;
         }
 
-        const callback = () => {
-          const video = videoRef.current;
-          if (video && video.videoWidth > 0 && video.videoHeight > 0) {
-            computeSizes();
-          }
-        };
-
         if ("requestIdleCallback" in window) {
-          requestIdleCallback(callback);
+          requestIdleCallback(onResize);
         } else {
-          setTimeout(callback, 16);
+          setTimeout(onResize, 16);
         }
       });
 
@@ -1663,16 +1666,9 @@ function CropperVideo(props: CropperVideoProps) {
         resizeObserver.disconnect();
       };
     } else {
-      const onWindowResize = () => {
-        const video = videoRef.current;
-        if (video && video.videoWidth > 0 && video.videoHeight > 0) {
-          computeSizes();
-        }
-      };
-
-      window.addEventListener("resize", onWindowResize);
+      window.addEventListener("resize", onResize);
       return () => {
-        window.removeEventListener("resize", onWindowResize);
+        window.removeEventListener("resize", onResize);
       };
     }
   }, [context.rootRef, computeSizes]);

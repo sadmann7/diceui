@@ -68,12 +68,10 @@ function SkeletonCard() {
   );
 }
 
+const skeletonIds = Array.from({ length: 6 }, (_, i) => `skeleton-${i}`);
+
 export default function MasonrySSRDemo() {
   const tricks = getTricks();
-  const skeletonIds = Array.from(
-    { length: 6 },
-    () => `skeleton-${Math.random().toString(36).substring(2, 9)}`,
-  );
 
   return (
     <Masonry
