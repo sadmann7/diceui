@@ -151,7 +151,7 @@ function QueryBuilder({
   disabled = false,
   className,
   render,
-  ...rootProps
+  ...props
 }: QueryBuilderProps) {
   const [uncontrolledValue, setUncontrolledValue] = React.useState(
     () => defaultValue ?? createQueryGroup(),
@@ -180,7 +180,7 @@ function QueryBuilder({
             role: "group",
             className: cn("cn-query-builder flex flex-col", className),
           },
-          rootProps,
+          props,
         ),
         render,
         state: {
@@ -197,14 +197,14 @@ interface QueryBuilderGroupProps extends DivProps {}
 function QueryBuilderGroup({
   className,
   render,
-  ...groupProps
+  ...props
 }: QueryBuilderGroupProps) {
   const { value } = useQueryBuilderContext(GROUP_NAME);
   const parent = React.useContext(GroupContext);
   const nestedGroup = React.useContext(NestedGroupContext);
 
   const group = nestedGroup ?? value;
-  const template = { className, render, ...groupProps };
+  const template = { className, render, ...props };
   const depth = parent ? parent.depth + 1 : 0;
 
   const groupContext = React.useMemo<GroupContextValue>(
@@ -219,7 +219,7 @@ function QueryBuilderGroup({
         role: "group",
         className: cn("cn-query-builder-group flex", className),
       },
-      groupProps,
+      props,
     ),
     render,
     state: {
@@ -240,11 +240,7 @@ function QueryBuilderGroup({
   );
 }
 
-function QueryBuilderGroupHeader({
-  className,
-  render,
-  ...headerProps
-}: DivProps) {
+function QueryBuilderGroupHeader({ className, render, ...props }: DivProps) {
   const { depth } = useGroupContext("QueryBuilderGroupHeader");
 
   return useRender({
@@ -256,7 +252,7 @@ function QueryBuilderGroupHeader({
           className,
         ),
       },
-      headerProps,
+      props,
     ),
     render,
     state: { slot: "query-builder-group-header", depth: String(depth) },
@@ -272,7 +268,7 @@ function QueryBuilderGroupTitle({
   className,
   children,
   render,
-  ...titleProps
+  ...props
 }: DivProps) {
   const { group } = useGroupContext("QueryBuilderGroupTitle");
 
@@ -283,18 +279,14 @@ function QueryBuilderGroupTitle({
         className: cn("cn-query-builder-group-title", className),
         children: children ?? GROUP_TITLES[group.combinator],
       },
-      titleProps,
+      props,
     ),
     render,
     state: { slot: "query-builder-group-title" },
   });
 }
 
-function QueryBuilderGroupFooter({
-  className,
-  render,
-  ...footerProps
-}: DivProps) {
+function QueryBuilderGroupFooter({ className, render, ...props }: DivProps) {
   const { depth } = useGroupContext("QueryBuilderGroupFooter");
 
   return useRender({
@@ -306,18 +298,14 @@ function QueryBuilderGroupFooter({
           className,
         ),
       },
-      footerProps,
+      props,
     ),
     render,
     state: { slot: "query-builder-group-footer", depth: String(depth) },
   });
 }
 
-function QueryBuilderGroupContent({
-  className,
-  render,
-  ...contentProps
-}: DivProps) {
+function QueryBuilderGroupContent({ className, render, ...props }: DivProps) {
   const { depth } = useGroupContext("QueryBuilderGroupContent");
 
   return useRender({
@@ -329,7 +317,7 @@ function QueryBuilderGroupContent({
           className,
         ),
       },
-      contentProps,
+      props,
     ),
     render,
     state: { slot: "query-builder-group-content", depth: String(depth) },
@@ -340,7 +328,7 @@ function QueryBuilderRules({
   className,
   children,
   render,
-  ...rulesProps
+  ...props
 }: DivProps) {
   const { group } = useGroupContext("QueryBuilderRules");
   const template = React.useContext(GroupTemplateContext);
@@ -369,14 +357,14 @@ function QueryBuilderRules({
           </>
         ),
       },
-      rulesProps,
+      props,
     ),
     render,
     state: { slot: "query-builder-rules" },
   });
 }
 
-function QueryBuilderRule({ className, render, ...ruleProps }: DivProps) {
+function QueryBuilderRule({ className, render, ...props }: DivProps) {
   const rule = useRuleContext(RULE_NAME);
 
   return useRender({
@@ -389,7 +377,7 @@ function QueryBuilderRule({ className, render, ...ruleProps }: DivProps) {
           className,
         ),
       },
-      ruleProps,
+      props,
     ),
     render,
     state: { slot: "query-builder-rule", operator: rule.operator },
@@ -412,7 +400,7 @@ interface QueryBuilderCombinatorProps extends React.ComponentProps<
 
 function QueryBuilderCombinator({
   className,
-  ...triggerProps
+  ...props
 }: QueryBuilderCombinatorProps) {
   const { disabled } = useQueryBuilderContext("QueryBuilderCombinator");
   const { group } = useGroupContext("QueryBuilderCombinator");
@@ -435,7 +423,7 @@ function QueryBuilderCombinator({
         size="sm"
         aria-label="Combinator"
         data-slot="query-builder-combinator"
-        {...triggerProps}
+        {...props}
         className={cn("cn-query-builder-combinator", className)}
       >
         <SelectValue />
@@ -465,7 +453,7 @@ interface QueryBuilderConnectorProps extends React.ComponentProps<"div"> {}
 
 function QueryBuilderConnector({
   className,
-  ...connectorProps
+  ...props
 }: QueryBuilderConnectorProps) {
   const { disabled } = useQueryBuilderContext("QueryBuilderConnector");
   const node = React.useContext(NodeContext);
@@ -480,7 +468,7 @@ function QueryBuilderConnector({
     <div
       data-slot="query-builder-connector"
       data-type={target && getIsQueryGroup(target) ? "group" : "rule"}
-      {...connectorProps}
+      {...props}
       className={cn("cn-query-builder-connector flex items-center", className)}
     >
       {index === 1 ? (
@@ -522,10 +510,7 @@ function QueryBuilderConnector({
 
 interface QueryBuilderFieldProps extends React.ComponentProps<typeof Button> {}
 
-function QueryBuilderField({
-  className,
-  ...triggerProps
-}: QueryBuilderFieldProps) {
+function QueryBuilderField({ className, ...props }: QueryBuilderFieldProps) {
   const { fields, disabled } = useQueryBuilderContext("QueryBuilderField");
   const rule = useRuleContext("QueryBuilderField");
   const { update } = useQueryActions("QueryBuilderField");
@@ -549,7 +534,7 @@ function QueryBuilderField({
             aria-label={current ? `Field: ${current.label}` : "Field"}
             data-slot="query-builder-field"
             disabled={disabled}
-            {...triggerProps}
+            {...props}
             className={cn(
               "cn-query-builder-field cn-query-builder-select",
               className,
@@ -603,7 +588,7 @@ interface QueryBuilderOperatorProps extends React.ComponentProps<
 
 function QueryBuilderOperator({
   className,
-  ...triggerProps
+  ...props
 }: QueryBuilderOperatorProps) {
   const { fields, disabled } = useQueryBuilderContext("QueryBuilderOperator");
   const rule = useRuleContext("QueryBuilderOperator");
@@ -636,7 +621,7 @@ function QueryBuilderOperator({
             aria-label={`Operator: ${getQueryOperatorLabel(rule.operator, field.type)}`}
             data-slot="query-builder-operator"
             disabled={disabled}
-            {...triggerProps}
+            {...props}
             className={cn(
               "cn-query-builder-operator cn-query-builder-select",
               className,
@@ -937,7 +922,7 @@ function QueryBuilderAddRule({
   onClick,
   children,
   className,
-  ...buttonProps
+  ...props
 }: QueryBuilderAddRuleProps) {
   const { fields, disabled } = useQueryBuilderContext("QueryBuilderAddRule");
   const { group } = useGroupContext("QueryBuilderAddRule");
@@ -951,7 +936,7 @@ function QueryBuilderAddRule({
       size="sm"
       data-slot="query-builder-add-rule"
       disabled={disabled || !field}
-      {...buttonProps}
+      {...props}
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented || !field) return;
@@ -983,7 +968,7 @@ function QueryBuilderAddGroup({
   onClick,
   children,
   className,
-  ...buttonProps
+  ...props
 }: QueryBuilderAddGroupProps) {
   const { fields, disabled, maxDepth } = useQueryBuilderContext(
     "QueryBuilderAddGroup",
@@ -1001,7 +986,7 @@ function QueryBuilderAddGroup({
       size="sm"
       data-slot="query-builder-add-group"
       disabled={disabled || !field}
-      {...buttonProps}
+      {...props}
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented || !field) return;
@@ -1036,7 +1021,7 @@ function QueryBuilderRemove({
   onClick,
   children,
   className,
-  ...buttonProps
+  ...props
 }: QueryBuilderRemoveProps) {
   const { disabled } = useQueryBuilderContext("QueryBuilderRemove");
   const rule = React.useContext(RuleContext);
@@ -1054,7 +1039,7 @@ function QueryBuilderRemove({
       aria-label={rule ? "Remove rule" : "Remove group"}
       data-slot="query-builder-remove"
       disabled={disabled}
-      {...buttonProps}
+      {...props}
       onClick={(event) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
