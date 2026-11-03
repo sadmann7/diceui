@@ -177,7 +177,7 @@ function Sortable<T>(props: SortableProps<T>) {
       if (event.activatorEvent.defaultPrevented) return;
 
       const { active, over } = event;
-      if (over && active.id !== over?.id) {
+      if (over && active.id !== over.id) {
         const activeIndex = value.findIndex(
           (item) => getItemValue(item) === active.id,
         );
