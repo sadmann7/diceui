@@ -9,10 +9,10 @@ import {
   addQueryNode,
   createQueryGroup,
   createQueryRule,
-  getQueryOperatorLabel,
-  getQueryOperators,
   getIsQueryGroup,
   getIsQueryRuleMultiple,
+  getQueryOperatorLabel,
+  getQueryOperators,
   type QueryCombinator,
   type QueryField,
   type QueryFieldOption,
@@ -426,7 +426,7 @@ function QueryBuilderCombinator({
         if (!combinator) return;
         update(group.id, (node) => ({
           ...node,
-          combinator: combinator as QueryCombinator,
+          combinator: combinator,
         }));
       }}
       disabled={disabled}
@@ -491,7 +491,7 @@ function QueryBuilderConnector({
             if (!combinator) return;
             update(group.id, (item) => ({
               ...item,
-              combinator: combinator as QueryCombinator,
+              combinator: combinator,
             }));
           }}
           disabled={disabled}

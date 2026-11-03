@@ -13,8 +13,8 @@ import {
   type QueryRule,
   removeQueryNode,
   setQueryRuleOperator,
-  setQuerySelection,
   setQueryRuleValues,
+  setQuerySelection,
   updateQueryNode,
 } from "@/registry/bases/radix/lib/query-builder";
 

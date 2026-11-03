@@ -122,7 +122,7 @@ export default function QueryBuilderSqlDemo() {
             value={dialect}
             items={dialects}
             onValueChange={(value) => {
-              if (value) setDialect(value as SqlDialect);
+              if (value) setDialect(value);
             }}
           >
             <SelectTrigger size="sm" aria-label="SQL dialect" className="w-28">
