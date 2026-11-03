@@ -1,5 +1,11 @@
 # @diceui/listbox
 
+## 1.0.2
+
+### Patch Changes
+
+- bea95b8: Stop reading and writing refs during render, so the components pass the React Compiler lint rules without changing behavior.
+
 ## 1.0.1
 
 ### Patch Changes
