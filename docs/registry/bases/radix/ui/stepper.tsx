@@ -262,7 +262,7 @@ function Stepper(props: StepperProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -327,6 +327,8 @@ function Stepper(props: StepperProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   useLayoutEffect(() => {
@@ -749,7 +751,7 @@ function StepperTrigger(props: ButtonProps) {
       ref: triggerRef,
       value: itemValue,
       active: isTabStop,
-      disabled: !!isDisabled,
+      disabled: isDisabled,
     });
 
     if (!isDisabled) {

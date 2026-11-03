@@ -8,7 +8,6 @@ import {
   CropperImage,
   type CropperObjectFit,
   type CropperPoint,
-  type CropperProps,
   type CropperShape,
 } from "@/registry/bases/radix/ui/cropper";
 import { Label } from "@/registry/bases/radix/ui/label";

@@ -56,7 +56,7 @@ const ComboboxBadgeItemDelete = React.forwardRef<
 
         if (
           event.button === 0 &&
-          event.ctrlKey === false &&
+          !event.ctrlKey &&
           event.pointerType === "mouse"
         ) {
           // prevent item from stealing focus from the input

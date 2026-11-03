@@ -1,5 +1,4 @@
 import {
-  composeEventHandlers,
   createContext,
   DATA_ITEM_ATTR,
   type Direction,
@@ -187,6 +186,9 @@ const TagsInputRoot = React.forwardRef<CollectionElement, TagsInputRootProps>(
       children,
       dir: dirProp,
       id: idProp,
+      onClick: onClickProp,
+      onMouseDown: onMouseDownProp,
+      onBlur: onBlurProp,
       ...rootProps
     } = props;
 
@@ -211,7 +213,7 @@ const TagsInputRoot = React.forwardRef<CollectionElement, TagsInputRootProps>(
     const { getEnabledItems } = useItemCollection<CollectionElement>({
       ref: collectionRef,
     });
-    const { isFormControl, onTriggerChange } =
+    const { isFormControl, trigger, onTriggerChange } =
       useFormControl<CollectionElement>();
     const composedRef = useComposedRefs(ref, collectionRef, (node) =>
       onTriggerChange(node),
@@ -515,6 +517,56 @@ const TagsInputRoot = React.forwardRef<CollectionElement, TagsInputRootProps>(
       );
     }, []);
 
+    const onClick = React.useCallback(
+      (event: React.MouseEvent<CollectionElement>) => {
+        onClickProp?.(event);
+        if (event.defaultPrevented) return;
+
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+
+        if (
+          getIsClickedInEmptyRoot(target) &&
+          document.activeElement !== inputRef.current
+        ) {
+          event.currentTarget.focus();
+          inputRef.current?.focus();
+        }
+      },
+      [onClickProp, getIsClickedInEmptyRoot],
+    );
+
+    const onMouseDown = React.useCallback(
+      (event: React.MouseEvent<CollectionElement>) => {
+        onMouseDownProp?.(event);
+        if (event.defaultPrevented) return;
+
+        const target = event.target;
+        if (!(target instanceof HTMLElement)) return;
+
+        if (getIsClickedInEmptyRoot(target)) {
+          // prevent root from stealing focus from the input
+          event.preventDefault();
+        }
+      },
+      [onMouseDownProp, getIsClickedInEmptyRoot],
+    );
+
+    const onBlur = React.useCallback(
+      (event: React.FocusEvent<CollectionElement>) => {
+        onBlurProp?.(event);
+        if (event.defaultPrevented) return;
+
+        if (
+          event.relatedTarget !== inputRef.current &&
+          !collectionRef.current?.contains(event.relatedTarget)
+        ) {
+          requestAnimationFrame(() => setHighlightedIndex(null));
+        }
+      },
+      [onBlurProp],
+    );
+
     return (
       <TagsInputProvider
         value={value}
@@ -553,41 +605,15 @@ const TagsInputRoot = React.forwardRef<CollectionElement, TagsInputRootProps>(
           dir={dir}
           {...rootProps}
           ref={composedRef}
-          onClick={composeEventHandlers(rootProps.onClick, (event) => {
-            const target = event.target;
-            if (!(target instanceof HTMLElement)) return;
-
-            if (
-              getIsClickedInEmptyRoot(target) &&
-              document.activeElement !== inputRef.current
-            ) {
-              event.currentTarget.focus();
-              inputRef.current?.focus();
-            }
-          })}
-          onMouseDown={composeEventHandlers(rootProps.onMouseDown, (event) => {
-            const target = event.target;
-            if (!(target instanceof HTMLElement)) return;
-
-            if (getIsClickedInEmptyRoot(target)) {
-              // prevent root from stealing focus from the input
-              event.preventDefault();
-            }
-          })}
-          onBlur={composeEventHandlers(rootProps.onBlur, (event) => {
-            if (
-              event.relatedTarget !== inputRef.current &&
-              !collectionRef.current?.contains(event.relatedTarget)
-            ) {
-              requestAnimationFrame(() => setHighlightedIndex(null));
-            }
-          })}
+          onClick={onClick}
+          onMouseDown={onMouseDown}
+          onBlur={onBlur}
         >
           {typeof children === "function" ? children({ value }) : children}
           {isFormControl && name && (
             <VisuallyHiddenInput
               type="hidden"
-              control={collectionRef.current}
+              control={trigger}
               name={name}
               value={value}
               disabled={disabled}

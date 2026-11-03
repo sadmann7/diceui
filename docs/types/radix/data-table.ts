@@ -12,8 +12,8 @@ import type * as React from "react";
 import type { DataTableFeatures } from "@/lib/data-table-features";
 import type {
   ColumnFilterItem,
-  DataTableQueryKeys,
   ColumnSelectOption,
+  DataTableQueryKeys,
 } from "@/lib/data-table-types";
 import type { DropdownMenuTrigger } from "@/registry/bases/radix/ui/dropdown-menu";
 import type { EmptyProps } from "@/types";

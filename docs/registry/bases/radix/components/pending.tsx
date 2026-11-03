@@ -22,6 +22,10 @@ interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
   isPending: boolean;
 }
 
+function onEventPrevent(event: React.SyntheticEvent) {
+  event.preventDefault();
+}
+
 function usePending<T extends HTMLElement = HTMLElement>(
   options: UsePendingOptions = {},
 ): UsePendingReturn<T> {
@@ -44,10 +48,6 @@ function usePending<T extends HTMLElement = HTMLElement>(
       props["aria-busy"] = "true";
       props["aria-disabled"] = "true";
       props["data-pending"] = true;
-
-      function onEventPrevent(event: React.SyntheticEvent) {
-        event.preventDefault();
-      }
 
       function onKeyEventPrevent(event: React.KeyboardEvent<T>) {
         if (event.key === "Enter" || event.key === " ") {

@@ -37,7 +37,15 @@ interface TagsInputItemProps extends React.ComponentPropsWithoutRef<
 
 const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
   (props, ref) => {
-    const { value, disabled, ...itemProps } = props;
+    const {
+      value,
+      disabled,
+      onClick: onClickProp,
+      onPointerUp: onPointerUpProp,
+      onPointerDown: onPointerDownProp,
+      onPointerMove: onPointerMoveProp,
+      ...itemProps
+    } = props;
     const pointerTypeRef =
       React.useRef<React.PointerEvent["pointerType"]>("touch");
     const context = useTagsInput(ITEM_NAME);
@@ -54,6 +62,59 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
       setHighlightedIndex(index);
       inputRef.current?.focus();
     }, [setHighlightedIndex, inputRef, index]);
+
+    const onClick = React.useCallback(
+      (event: React.MouseEvent<HTMLDivElement>) => {
+        onClickProp?.(event);
+        if (event.defaultPrevented) return;
+
+        event.stopPropagation();
+        if (!isEditing && pointerTypeRef.current !== "mouse") {
+          onItemSelect();
+        }
+      },
+      [onClickProp, isEditing, onItemSelect],
+    );
+
+    const onPointerUp = React.useCallback(
+      (event: React.PointerEvent<HTMLDivElement>) => {
+        onPointerUpProp?.(event);
+        if (event.defaultPrevented) return;
+
+        // Using a mouse you should be able to do pointer down, move through
+        // the list, and release the pointer over the item to select it.
+        if (pointerTypeRef.current === "mouse") onItemSelect();
+      },
+      [onPointerUpProp, onItemSelect],
+    );
+
+    const onPointerDown = React.useCallback(
+      (event: React.PointerEvent<HTMLDivElement>) => {
+        onPointerDownProp?.(event);
+        if (event.defaultPrevented) return;
+
+        pointerTypeRef.current = event.pointerType;
+      },
+      [onPointerDownProp],
+    );
+
+    const onPointerMove = React.useCallback(
+      (event: React.PointerEvent<HTMLDivElement>) => {
+        onPointerMoveProp?.(event);
+        if (event.defaultPrevented) return;
+
+        // Remember pointer type when sliding over to this item from another one
+        pointerTypeRef.current = event.pointerType;
+        if (disabled) {
+          context.onItemLeave();
+        } else if (pointerTypeRef.current === "mouse") {
+          // even though safari doesn't support this option, it's acceptable
+          // as it only means it might scroll a few pixels when using the pointer.
+          event.currentTarget.focus({ preventScroll: true });
+        }
+      },
+      [onPointerMoveProp, disabled, context],
+    );
 
     return (
       <TagsInputItemProvider
@@ -79,40 +140,15 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
           data-disabled={itemDisabled ? "" : undefined}
           {...itemProps}
           ref={ref}
-          onClick={composeEventHandlers(itemProps.onClick, (event) => {
-            event.stopPropagation();
-            if (!isEditing && pointerTypeRef.current !== "mouse") {
-              onItemSelect();
-            }
-          })}
+          onClick={onClick}
           onDoubleClick={composeEventHandlers(itemProps.onDoubleClick, () => {
             if (context.editable && !itemDisabled) {
               requestAnimationFrame(() => context.setEditingIndex(index));
             }
           })}
-          onPointerUp={composeEventHandlers(itemProps.onPointerUp, () => {
-            // Using a mouse you should be able to do pointer down, move through
-            // the list, and release the pointer over the item to select it.
-            if (pointerTypeRef.current === "mouse") onItemSelect();
-          })}
-          onPointerDown={composeEventHandlers(
-            itemProps.onPointerDown,
-            (event) => (pointerTypeRef.current = event.pointerType),
-          )}
-          onPointerMove={composeEventHandlers(
-            itemProps.onPointerMove,
-            (event) => {
-              // Remember pointer type when sliding over to this item from another one
-              pointerTypeRef.current = event.pointerType;
-              if (disabled) {
-                context.onItemLeave();
-              } else if (pointerTypeRef.current === "mouse") {
-                // even though safari doesn't support this option, it's acceptable
-                // as it only means it might scroll a few pixels when using the pointer.
-                event.currentTarget.focus({ preventScroll: true });
-              }
-            },
-          )}
+          onPointerUp={onPointerUp}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
           onPointerLeave={composeEventHandlers(
             itemProps.onPointerLeave,
             (event) => {

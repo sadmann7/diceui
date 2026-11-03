@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -36,6 +36,7 @@ export default function PhoneInputFormDemo() {
       country: "US",
     },
   });
+  const country = useWatch({ control: form.control, name: "country" });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     const country = data.country;
@@ -65,7 +66,7 @@ export default function PhoneInputFormDemo() {
                 <PhoneInput
                   value={field.value}
                   onValueChange={field.onChange}
-                  country={form.watch("country")}
+                  country={country}
                   onCountryChange={(country) =>
                     form.setValue("country", country)
                   }

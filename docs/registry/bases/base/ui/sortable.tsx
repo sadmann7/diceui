@@ -2,7 +2,6 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import {
   type Announcements,
@@ -326,7 +325,6 @@ function SortableContent(props: SortableContentProps) {
     children,
     className,
     render,
-    ref,
     ...contentProps
   } = props;
 
@@ -336,7 +334,6 @@ function SortableContent(props: SortableContentProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        ref,
         className,
         children,
       },
@@ -397,6 +394,7 @@ function SortableItem(props: SortableItemProps) {
     className,
     render,
     ref,
+    id: idProp,
     ...itemProps
   } = props;
 
@@ -415,7 +413,7 @@ function SortableItem(props: SortableItemProps) {
 
   const context = useSortableContext(ITEM_NAME);
   const instanceId = React.useId();
-  const id = itemProps.id ?? instanceId;
+  const id = idProp ?? instanceId;
   const {
     attributes,
     listeners,
@@ -565,6 +563,10 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
+function subscribe() {
+  return () => {};
+}
+
 interface SortableOverlayProps extends Omit<
   React.ComponentProps<typeof DragOverlay>,
   "children"
@@ -580,9 +582,11 @@ function SortableOverlay(props: SortableOverlayProps) {
 
   const context = useSortableContext(OVERLAY_NAME);
 
-  const [mounted, setMounted] = React.useState(false);
-
-  useIsoLayoutEffect(() => setMounted(true), []);
+  const mounted = React.useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);

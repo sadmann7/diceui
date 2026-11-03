@@ -33,38 +33,29 @@ function VisuallyHiddenInput<T = InputValue>(
   );
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  const prevValueRef = React.useRef<{
-    value: T | boolean | undefined;
-    previous: T | boolean | undefined;
-  }>({
-    value: isCheckInput ? checked : value,
-    previous: isCheckInput ? checked : value,
-  });
+  const prevValueRef = React.useRef<T | boolean | undefined>(
+    isCheckInput ? checked : value,
+  );
 
-  const prevValue = React.useMemo(() => {
-    const currentValue = isCheckInput ? checked : value;
-    if (prevValueRef.current.value !== currentValue) {
-      prevValueRef.current.previous = prevValueRef.current.value;
-      prevValueRef.current.value = currentValue;
-    }
-    return prevValueRef.current.previous;
-  }, [isCheckInput, value, checked]);
+  const [measuredSize, setMeasuredSize] = React.useState<{
+    control: HTMLElement;
+    width: number;
+    height: number;
+  } | null>(null);
 
-  const [controlSize, setControlSize] = React.useState<{
+  const controlSize = React.useMemo<{
     width?: number;
     height?: number;
-  }>({});
+  }>(
+    () =>
+      control && measuredSize?.control === control
+        ? { width: measuredSize.width, height: measuredSize.height }
+        : {},
+    [control, measuredSize],
+  );
 
   React.useLayoutEffect(() => {
-    if (!control) {
-      setControlSize({});
-      return;
-    }
-
-    setControlSize({
-      width: control.offsetWidth,
-      height: control.offsetHeight,
-    });
+    if (!control) return;
 
     if (typeof window === "undefined") return;
 
@@ -89,7 +80,7 @@ function VisuallyHiddenInput<T = InputValue>(
         height = control.offsetHeight;
       }
 
-      setControlSize({ width, height });
+      setMeasuredSize({ control, width, height });
     });
 
     resizeObserver.observe(control, { box: "border-box" });
@@ -99,13 +90,16 @@ function VisuallyHiddenInput<T = InputValue>(
   }, [control]);
 
   React.useEffect(() => {
+    const currentValue = isCheckInput ? checked : value;
+    const prevValue = prevValueRef.current;
+    prevValueRef.current = currentValue;
+
     const input = inputRef.current;
     if (!input) return;
 
     const inputProto = window.HTMLInputElement.prototype;
     const propertyKey = isCheckInput ? "checked" : "value";
     const eventType = isCheckInput ? "click" : "input";
-    const currentValue = isCheckInput ? checked : value;
 
     const serializedCurrentValue = isCheckInput
       ? checked
@@ -122,7 +116,7 @@ function VisuallyHiddenInput<T = InputValue>(
       setter.call(input, serializedCurrentValue);
       input.dispatchEvent(event);
     }
-  }, [prevValue, value, checked, bubbles, isCheckInput]);
+  }, [value, checked, bubbles, isCheckInput]);
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {

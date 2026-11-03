@@ -1,6 +1,7 @@
 import {
   composeEventHandlers,
   Primitive,
+  setFilterSearch,
   useComposedRefs,
 } from "@diceui/shared";
 import * as React from "react";
@@ -172,7 +173,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           if (open) {
             onOpenChange(false);
             onHighlightedItemChange(null);
-            filterStore.search = "";
+            setFilterSearch(filterStore, "");
           }
           return false;
         }
@@ -187,7 +188,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           if (open) {
             onOpenChange(false);
             onHighlightedItemChange(null);
-            filterStore.search = "";
+            setFilterSearch(filterStore, "");
           }
           return false;
         }
@@ -212,7 +213,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           if (open) {
             onOpenChange(false);
             onHighlightedItemChange(null);
-            filterStore.search = "";
+            setFilterSearch(filterStore, "");
           }
           return false;
         }
@@ -246,7 +247,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           if (open) {
             onOpenChange(false);
             onHighlightedItemChange(null);
-            filterStore.search = "";
+            setFilterSearch(filterStore, "");
           }
           return false;
         }
@@ -257,9 +258,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         ) {
           createVirtualElement(element, lastTriggerIndex);
           onOpenChange(true);
-          filterStore.search = isImmediatelyAfterTrigger
-            ? ""
-            : textAfterTrigger;
+          setFilterSearch(
+            filterStore,
+            isImmediatelyAfterTrigger ? "" : textAfterTrigger,
+          );
           onItemsFilter();
           return true;
         }
@@ -267,7 +269,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         if (open) {
           onOpenChange(false);
           onHighlightedItemChange(null);
-          filterStore.search = "";
+          setFilterSearch(filterStore, "");
         }
         return false;
       },
@@ -620,7 +622,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         function onMenuClose() {
           onOpenChange(false);
           onHighlightedItemChange(null);
-          filterStore.search = "";
+          setFilterSearch(filterStore, "");
         }
 
         function onItemSelect() {

@@ -245,7 +245,7 @@ function Rating(props: RatingProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -258,8 +258,8 @@ function Rating(props: RatingProps) {
           stateRef.current.value = value;
           propsRef.current.onValueChange?.(value);
         } else if (key === "hoveredValue") {
-          stateRef.current.hoveredValue = value as number | null;
-          propsRef.current.onHover?.(value as number | null);
+          stateRef.current.hoveredValue = value;
+          propsRef.current.onHover?.(value);
         } else {
           stateRef.current[key] = value;
         }
@@ -272,6 +272,8 @@ function Rating(props: RatingProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   useLayoutEffect(() => {

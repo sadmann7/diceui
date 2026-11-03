@@ -191,7 +191,7 @@ function Editable(props: EditableProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -218,6 +218,8 @@ function Editable(props: EditableProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   const value = useStore((state) => state.value, store);
@@ -302,10 +304,10 @@ function Editable(props: EditableProps) {
 
   const element = useRender({
     defaultTagName: "div",
+    ref: composedRef,
     props: mergeProps<"div">(
       {
         id,
-        ref: composedRef,
         className: cn("cn-editable", className),
       },
       rootProps,
@@ -345,9 +347,9 @@ function EditableLabel(props: EditableLabelProps) {
 
   return useRender({
     defaultTagName: "label",
+    ref,
     props: mergeProps<"label">(
       {
-        ref,
         id: context.labelId,
         htmlFor: context.inputId,
         className: cn("cn-editable-label", className),
@@ -375,11 +377,11 @@ function EditableArea(props: EditableAreaProps) {
 
   return useRender({
     defaultTagName: "div",
+    ref,
     props: mergeProps<"div">(
       {
         role: "group",
         dir: context.dir,
-        ref,
         className: cn("cn-editable-area", className),
       },
       areaProps,
@@ -473,20 +475,22 @@ function EditablePreview(props: EditablePreviewProps) {
 
   const element = useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        role: "button",
-        tabIndex: context.disabled || context.readOnly ? undefined : 0,
-        ref,
-        onClick,
-        onDoubleClick,
-        onFocus,
-        onKeyDown,
-        className: cn("cn-editable-preview", className),
-        children: value || context.placeholder,
-      },
-      previewProps,
-    ),
+    ref,
+    props: {
+      ...mergeProps<"div">(
+        {
+          role: "button",
+          tabIndex: context.disabled || context.readOnly ? undefined : 0,
+          className: cn("cn-editable-preview", className),
+          children: value || context.placeholder,
+        },
+        previewProps,
+      ),
+      onClick,
+      onDoubleClick,
+      onFocus,
+      onKeyDown,
+    },
     render,
     state: {
       slot: "editable-preview",
@@ -626,31 +630,33 @@ function EditableInput(props: EditableInputProps) {
 
   const element = useRender({
     defaultTagName: "input",
-    props: mergeProps<"input">(
-      {
-        id: context.inputId,
-        "aria-labelledby": context.labelId,
-        "aria-required": isRequired,
-        "aria-invalid": context.invalid,
-        dir: context.dir,
-        disabled: isDisabled,
-        readOnly: isReadOnly,
-        required: isRequired,
-        ref: composedRef,
-        maxLength: maxLength,
-        placeholder: context.placeholder,
-        value: value,
-        onBlur,
-        onChange,
-        onKeyDown,
-        className: cn(
-          "cn-editable-input",
-          context.autosize ? "w-auto" : "w-full",
-          className,
-        ),
-      },
-      inputProps,
-    ),
+    ref: composedRef,
+    props: {
+      ...mergeProps<"input">(
+        {
+          id: context.inputId,
+          "aria-labelledby": context.labelId,
+          "aria-required": isRequired,
+          "aria-invalid": context.invalid,
+          dir: context.dir,
+          disabled: isDisabled,
+          readOnly: isReadOnly,
+          required: isRequired,
+          maxLength: maxLength,
+          placeholder: context.placeholder,
+          value: value,
+          className: cn(
+            "cn-editable-input",
+            context.autosize ? "w-auto" : "w-full",
+            className,
+          ),
+        },
+        inputProps,
+      ),
+      onBlur,
+      onChange,
+      onKeyDown,
+    },
     render,
     state: {
       slot: "editable-input",
@@ -679,12 +685,12 @@ function EditableTrigger(props: EditableTriggerProps) {
 
   const element = useRender({
     defaultTagName: "button",
+    ref,
     props: mergeProps<"button">(
       {
         type: "button",
         "aria-controls": context.rootId,
         "aria-disabled": context.disabled || context.readOnly,
-        ref,
         onClick: context.triggerMode === "click" ? onTrigger : undefined,
         onDoubleClick:
           context.triggerMode === "dblclick" ? onTrigger : undefined,
@@ -721,13 +727,13 @@ function EditableToolbar(props: EditableToolbarProps) {
 
   return useRender({
     defaultTagName: "div",
+    ref,
     props: mergeProps<"div">(
       {
         role: "toolbar",
         "aria-controls": context.rootId,
         "aria-orientation": orientation,
         dir: context.dir,
-        ref,
         className: cn(
           "cn-editable-toolbar",
           orientation === "vertical" && "flex-col",
@@ -769,15 +775,17 @@ function EditableCancel(props: EditableCancelProps) {
 
   const element = useRender({
     defaultTagName: "button",
-    props: mergeProps<"button">(
-      {
-        type: "button",
-        "aria-controls": context.rootId,
-        ref,
-        onClick,
-      },
-      cancelProps,
-    ),
+    ref,
+    props: {
+      ...mergeProps<"button">(
+        {
+          type: "button",
+          "aria-controls": context.rootId,
+        },
+        cancelProps,
+      ),
+      onClick,
+    },
     render,
     state: {
       slot: "editable-cancel",
@@ -816,15 +824,17 @@ function EditableSubmit(props: EditableSubmitProps) {
 
   const element = useRender({
     defaultTagName: "button",
-    props: mergeProps<"button">(
-      {
-        type: "button",
-        "aria-controls": context.rootId,
-        ref,
-        onClick,
-      },
-      submitProps,
-    ),
+    ref,
+    props: {
+      ...mergeProps<"button">(
+        {
+          type: "button",
+          "aria-controls": context.rootId,
+        },
+        submitProps,
+      ),
+      onClick,
+    },
     render,
     state: {
       slot: "editable-submit",

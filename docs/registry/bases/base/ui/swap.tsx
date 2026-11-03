@@ -91,6 +91,12 @@ function Swap(props: SwapProps) {
   const isClickMode = activationMode === "click";
 
   const store = React.useMemo<Store>(() => {
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
+
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -107,13 +113,9 @@ function Swap(props: SwapProps) {
           stateRef.current[key] = value;
         }
 
-        store.notify();
+        notify();
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
     };
   }, [listenersRef, stateRef, propsRef]);
 
@@ -192,20 +194,22 @@ function Swap(props: SwapProps) {
 
   const element = useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        role: isClickMode ? "button" : undefined,
-        "aria-pressed": isClickMode ? swapped : undefined,
-        "aria-disabled": disabled,
-        tabIndex: isClickMode && !disabled ? 0 : undefined,
-        className: cn("cn-swap", className),
-        onClick,
-        onMouseEnter,
-        onMouseLeave,
-        onKeyDown,
-      },
-      rootProps,
-    ),
+    props: {
+      ...mergeProps<"div">(
+        {
+          role: isClickMode ? "button" : undefined,
+          "aria-pressed": isClickMode ? swapped : undefined,
+          "aria-disabled": disabled,
+          tabIndex: isClickMode && !disabled ? 0 : undefined,
+          className: cn("cn-swap", className),
+        },
+        rootProps,
+      ),
+      onClick,
+      onMouseEnter,
+      onMouseLeave,
+      onKeyDown,
+    },
     render,
     state: {
       slot: "swap",

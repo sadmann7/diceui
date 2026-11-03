@@ -364,7 +364,7 @@ function TimePicker(props: TimePickerProps) {
   const propsRef = useValueAsRef({ onValueChange, onOpenChange });
 
   const store: Store = React.useMemo(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -394,6 +394,8 @@ function TimePicker(props: TimePickerProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   const value = useStore((state) => state.value, store);
@@ -787,8 +789,8 @@ function TimePickerInput(props: TimePickerInputProps) {
 
   useLayoutEffect(() => {
     if (segment) {
-      inputGroupContext.onInputRegister(segment as Segment, inputRef);
-      return () => inputGroupContext.onInputUnregister(segment as Segment);
+      inputGroupContext.onInputRegister(segment, inputRef);
+      return () => inputGroupContext.onInputUnregister(segment);
     }
   }, [inputGroupContext, segment]);
 
@@ -821,16 +823,15 @@ function TimePickerInput(props: TimePickerInputProps) {
     }
   }, [timeValue, segment, is12Hour, segmentPlaceholder]);
 
-  const [editValue, setEditValue] = React.useState(getSegmentValue());
+  const segmentValue = getSegmentValue();
+  const [editValue, setEditValue] = React.useState(segmentValue);
   const [isEditing, setIsEditing] = React.useState(false);
   const [pendingDigit, setPendingDigit] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    if (!isEditing) {
-      setEditValue(getSegmentValue());
-      setPendingDigit(null);
-    }
-  }, [getSegmentValue, isEditing]);
+  if (!isEditing && (editValue !== segmentValue || pendingDigit !== null)) {
+    setEditValue(segmentValue);
+    setPendingDigit(null);
+  }
 
   const updateTimeValue = React.useCallback(
     (newSegmentValue: string | undefined, shouldCreateIfEmpty = false) => {
@@ -1909,7 +1910,7 @@ function TimePickerHour(props: TimePickerHourProps) {
     [timeValue, showSeconds, is12Hour, store],
   );
 
-  const now = new Date();
+  const [now] = React.useState(() => new Date());
   const referenceHour = timeValue?.hour ?? now.getHours();
   const displayHour = is12Hour ? to12Hour(referenceHour).hour : referenceHour;
 
@@ -1974,7 +1975,7 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
 
   const MinutePrimitive = asChild ? SlotPrimitive.Slot : TimePickerColumn;
 
-  const now = new Date();
+  const [now] = React.useState(() => new Date());
   const referenceMinute = timeValue?.minute ?? now.getMinutes();
 
   return (
@@ -2036,7 +2037,7 @@ function TimePickerSecond(props: TimePickerSecondProps) {
 
   const SecondPrimitive = asChild ? SlotPrimitive.Slot : TimePickerColumn;
 
-  const now = new Date();
+  const [now] = React.useState(() => new Date());
   const referenceSecond = timeValue?.second ?? now.getSeconds();
 
   return (
@@ -2093,9 +2094,10 @@ function TimePickerPeriod(props: DivProps) {
     [timeValue, showSeconds, store],
   );
 
+  const [now] = React.useState(() => new Date());
+
   if (!is12Hour) return null;
 
-  const now = new Date();
   const referenceHour = timeValue?.hour ?? now.getHours();
   const currentPeriod = to12Hour(referenceHour).period;
 

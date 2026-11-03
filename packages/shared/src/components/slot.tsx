@@ -74,10 +74,7 @@ const SlotClone = React.forwardRef<HTMLElement, SlotCloneProps>(
     }
 
     const childrenRef = getElementRef(children);
-    const mergedProps = mergeProps(
-      slotProps as PrimitiveProps,
-      children.props as PrimitiveProps,
-    );
+    const mergedProps = mergeProps(slotProps, children.props as PrimitiveProps);
 
     // Handle intrinsic elements (like 'div', 'span', etc.)
     if (typeof children.type === "string") {

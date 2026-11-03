@@ -17,7 +17,9 @@ export function DynamicLink({
   className,
   ...props
 }: DynamicLinkProps) {
-  const isExternal = getIsExternalLink(href.toString());
+  const isExternal = getIsExternalLink(
+    typeof href === "string" ? href : (href.href ?? ""),
+  );
 
   return (
     <Button

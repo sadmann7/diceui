@@ -1,5 +1,3 @@
-import type * as React from "react";
-
 import { renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -22,7 +20,7 @@ describe("useListHighlighting", () => {
       const div = document.createElement("div");
       div.scrollIntoView = vi.fn();
       return {
-        ref: { current: div } as React.RefObject<HTMLDivElement>,
+        ref: { current: div },
         value: `item-${i + 1}`,
         selected: options.selectedIndexes?.includes(i) ?? false,
       };

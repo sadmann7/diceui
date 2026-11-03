@@ -389,6 +389,7 @@ function SortableItem(props: SortableItemProps) {
     disabled,
     className,
     ref,
+    id: idProp,
     ...itemProps
   } = props;
 
@@ -407,7 +408,7 @@ function SortableItem(props: SortableItemProps) {
 
   const context = useSortableContext(ITEM_NAME);
   const instanceId = React.useId();
-  const id = itemProps.id ?? instanceId;
+  const id = idProp ?? instanceId;
   const {
     attributes,
     listeners,
@@ -541,6 +542,10 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
+function subscribe() {
+  return () => {};
+}
+
 interface SortableOverlayProps extends Omit<
   React.ComponentProps<typeof DragOverlay>,
   "children"
@@ -556,9 +561,11 @@ function SortableOverlay(props: SortableOverlayProps) {
 
   const context = useSortableContext(OVERLAY_NAME);
 
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useLayoutEffect(() => setMounted(true), []);
+  const mounted = React.useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);

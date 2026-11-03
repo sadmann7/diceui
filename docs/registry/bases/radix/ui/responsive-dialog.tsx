@@ -36,7 +36,6 @@ const ROOT_NAME = "ResponsiveDialog";
 
 interface StoreState {
   open: boolean;
-  isMobile: boolean;
 }
 
 interface Store {
@@ -47,6 +46,17 @@ interface Store {
 }
 
 const StoreContext = React.createContext<Store | null>(null);
+const IsMobileContext = React.createContext<boolean | null>(null);
+
+function useIsMobileContext() {
+  const isMobile = React.useContext(IsMobileContext);
+
+  if (isMobile === null) {
+    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+  }
+
+  return isMobile;
+}
 
 function useStore<T>(
   selector: (state: StoreState) => T,
@@ -83,12 +93,17 @@ function ResponsiveDialog({
   const listenersRef = useRefWithInit(() => new Set<() => void>());
   const stateRef = useRefWithInit<StoreState>(() => ({
     open: openProp ?? defaultOpen,
-    isMobile,
   }));
 
   const onOpenChangeRef = useValueAsRef(onOpenChangeProp);
 
   const store = React.useMemo<Store>(() => {
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
+
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -105,19 +120,11 @@ function ResponsiveDialog({
           stateRef.current[key] = value;
         }
 
-        store.notify();
+        notify();
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
     };
   }, [listenersRef, stateRef, onOpenChangeRef]);
-
-  if (stateRef.current.isMobile !== isMobile) {
-    stateRef.current.isMobile = isMobile;
-  }
 
   const open = useStore((state) => state.open, store);
 
@@ -137,14 +144,18 @@ function ResponsiveDialog({
   if (isMobile) {
     return (
       <StoreContext.Provider value={store}>
-        <Drawer open={open} onOpenChange={onOpenChange} {...props} />
+        <IsMobileContext.Provider value={isMobile}>
+          <Drawer open={open} onOpenChange={onOpenChange} {...props} />
+        </IsMobileContext.Provider>
       </StoreContext.Provider>
     );
   }
 
   return (
     <StoreContext.Provider value={store}>
-      <Dialog open={open} onOpenChange={onOpenChange} {...props} />
+      <IsMobileContext.Provider value={isMobile}>
+        <Dialog open={open} onOpenChange={onOpenChange} {...props} />
+      </IsMobileContext.Provider>
     </StoreContext.Provider>
   );
 }
@@ -152,7 +163,7 @@ function ResponsiveDialog({
 function ResponsiveDialogTrigger({
   ...props
 }: React.ComponentProps<typeof DialogTrigger>) {
-  const isMobile = useStore((state) => state.isMobile);
+  const isMobile = useIsMobileContext();
 
   if (isMobile) {
     return <DrawerTrigger data-variant="drawer" {...props} />;
@@ -164,7 +175,7 @@ function ResponsiveDialogTrigger({
 function ResponsiveDialogClose({
   ...props
 }: React.ComponentProps<typeof DialogClose>) {
-  const isMobile = useStore((state) => state.isMobile);
+  const isMobile = useIsMobileContext();
 
   if (isMobile) {
     return <DrawerClose data-variant="drawer" {...props} />;
@@ -176,7 +187,7 @@ function ResponsiveDialogClose({
 function ResponsiveDialogPortal({
   ...props
 }: React.ComponentProps<typeof DialogPortal>) {
-  const isMobile = useStore((state) => state.isMobile);
+  const isMobile = useIsMobileContext();
 
   if (isMobile) {
     return <DrawerPortal data-variant="drawer" {...props} />;
@@ -188,7 +199,7 @@ function ResponsiveDialogPortal({
 function ResponsiveDialogOverlay({
   ...props
 }: React.ComponentProps<typeof DialogOverlay>) {
-  const isMobile = useStore((state) => state.isMobile);
+  const isMobile = useIsMobileContext();
 
   if (isMobile) {
     return <DrawerOverlay data-variant="drawer" {...props} />;
@@ -201,7 +212,7 @@ function ResponsiveDialogContent({
   className,
   ...props
 }: React.ComponentProps<typeof DialogContent>) {
-  const isMobile = useStore((state) => state.isMobile);
+  const isMobile = useIsMobileContext();
 
   if (isMobile) {
     return (
@@ -221,7 +232,7 @@ function ResponsiveDialogContent({
 function ResponsiveDialogHeader({
   ...props
 }: React.ComponentProps<typeof DialogHeader>) {
-  const isMobile = useStore((state) => state.isMobile);
+  const isMobile = useIsMobileContext();
 
   if (isMobile) {
     return <DrawerHeader data-variant="drawer" {...props} />;
@@ -234,7 +245,7 @@ function ResponsiveDialogFooter({
   showCloseButton,
   ...props
 }: React.ComponentProps<typeof DialogFooter>) {
-  const isMobile = useStore((state) => state.isMobile);
+  const isMobile = useIsMobileContext();
 
   if (isMobile) {
     return <DrawerFooter data-variant="drawer" {...props} />;
@@ -252,7 +263,7 @@ function ResponsiveDialogFooter({
 function ResponsiveDialogTitle({
   ...props
 }: React.ComponentProps<typeof DialogTitle>) {
-  const isMobile = useStore((state) => state.isMobile);
+  const isMobile = useIsMobileContext();
 
   if (isMobile) {
     return <DrawerTitle data-variant="drawer" {...props} />;
@@ -264,7 +275,7 @@ function ResponsiveDialogTitle({
 function ResponsiveDialogDescription({
   ...props
 }: React.ComponentProps<typeof DialogDescription>) {
-  const isMobile = useStore((state) => state.isMobile);
+  const isMobile = useIsMobileContext();
 
   if (isMobile) {
     return <DrawerDescription data-variant="drawer" {...props} />;

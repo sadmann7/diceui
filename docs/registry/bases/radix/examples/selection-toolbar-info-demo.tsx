@@ -9,43 +9,43 @@ import {
   SelectionToolbarSeparator,
 } from "@/registry/bases/radix/ui/selection-toolbar";
 
+function wrapSelection(tagName: string) {
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return;
+
+  const range = selection.getRangeAt(0);
+  const selectedText = range.toString();
+  if (!selectedText) return;
+
+  const wrapper = document.createElement(tagName);
+  try {
+    range.surroundContents(wrapper);
+  } catch {
+    wrapper.textContent = selectedText;
+    range.deleteContents();
+    range.insertNode(wrapper);
+  }
+
+  selection.removeAllRanges();
+}
+
+function onBold() {
+  wrapSelection("strong");
+}
+
+function onItalic() {
+  wrapSelection("em");
+}
+
+function onCopy(text: string) {
+  void navigator.clipboard.writeText(text);
+}
+
 export default function SelectionToolbarInfoDemo() {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [selectedText, setSelectedText] = React.useState("");
   const [wordCount, setWordCount] = React.useState(0);
   const [charCount, setCharCount] = React.useState(0);
-
-  const wrapSelection = (tagName: string) => {
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return;
-
-    const range = selection.getRangeAt(0);
-    const selectedText = range.toString();
-    if (!selectedText) return;
-
-    const wrapper = document.createElement(tagName);
-    try {
-      range.surroundContents(wrapper);
-    } catch {
-      wrapper.textContent = selectedText;
-      range.deleteContents();
-      range.insertNode(wrapper);
-    }
-
-    selection.removeAllRanges();
-  };
-
-  const onBold = () => {
-    wrapSelection("strong");
-  };
-
-  const onItalic = () => {
-    wrapSelection("em");
-  };
-
-  const onCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-  };
 
   const onSelectionChange = (text: string) => {
     setSelectedText(text);

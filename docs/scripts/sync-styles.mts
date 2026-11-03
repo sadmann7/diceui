@@ -54,6 +54,10 @@ function getFamily(token: string) {
 }
 
 // `strict` requires the same property, so `p-4` isn't a counterpart of `py-4`.
+function getFamilyKey(token: string) {
+  return `${getUtility(token).variants}${getFamily(token)}`;
+}
+
 function findCounterpart(token: string, classes: string[], strict = false) {
   return (
     classes.find((other) => unimportant(other) === token) ??
@@ -264,8 +268,6 @@ export function createStyleGenerator(roles: Roles) {
     const newYork = role ? split(roles[role]?.[SOURCE_STYLE] ?? "") : [];
     const rewritten = new Set<string>();
     const result: string[] = [];
-    const familyKey = (token: string) =>
-      `${getUtility(token).variants}${getFamily(token)}`;
 
     // The matched part's radius wins over a slightly different one of ours.
     const mapRadius = (token: string) => {
@@ -296,7 +298,7 @@ export function createStyleGenerator(roles: Roles) {
           (!usesVariable(counterpart) || usesVariable(token))
         ) {
           result.push(counterpart);
-          rewritten.add(familyKey(token));
+          rewritten.add(getFamilyKey(token));
           continue;
         }
         // A style that moves a background out of `dark:`, like Luma's
@@ -320,7 +322,7 @@ export function createStyleGenerator(roles: Roles) {
         const dropsShadow =
           !counterpart &&
           getFamily(token) === "shadow" &&
-          !target.some((other) => familyKey(other) === familyKey(token));
+          !target.some((other) => getFamilyKey(other) === getFamilyKey(token));
         if (!dropsShadow) result.push(token);
         continue;
       }
@@ -345,7 +347,7 @@ export function createStyleGenerator(roles: Roles) {
     }
 
     for (const other of target) {
-      if (rewritten.has(familyKey(other)) && isAddedBorder(other, newYork)) {
+      if (rewritten.has(getFamilyKey(other)) && isAddedBorder(other, newYork)) {
         result.push(other);
       }
     }

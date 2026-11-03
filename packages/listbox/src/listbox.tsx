@@ -177,8 +177,8 @@ type CollectionGroupMap = Map<string, Set<React.RefObject<ItemElement | null>>>;
 
 function useCollection() {
   const collectionRef = React.useRef<RootElement | null>(null);
-  const itemMap = useLazyRef<CollectionItemMap>(() => new Map()).current;
-  const groupMap = useLazyRef<CollectionGroupMap>(() => new Map()).current;
+  const [itemMap] = React.useState<CollectionItemMap>(() => new Map());
+  const [groupMap] = React.useState<CollectionGroupMap>(() => new Map());
 
   const getItems = React.useCallback(() => {
     const collectionNode = collectionRef.current;
@@ -338,10 +338,7 @@ function calculateGridLayout(
   return { columnCount, rowCount };
 }
 
-function dispatchDiscreteCustomEvent<E extends CustomEvent>(
-  target: EventTarget,
-  event: E,
-) {
+function dispatchDiscreteCustomEvent(target: EventTarget, event: CustomEvent) {
   if (target && "dispatchEvent" in target && target.dispatchEvent) {
     target.dispatchEvent(event);
   }
@@ -349,16 +346,6 @@ function dispatchDiscreteCustomEvent<E extends CustomEvent>(
 
 const useIsomorphicLayoutEffect =
   typeof window !== "undefined" ? React.useLayoutEffect : React.useEffect;
-
-function useLazyRef<T>(init: () => T): React.RefObject<T> {
-  const ref = React.useRef<T | null>(null);
-
-  if (ref.current === null) {
-    ref.current = init();
-  }
-
-  return ref as React.RefObject<T>;
-}
 
 interface ListboxContextValue<Multiple extends boolean = false> {
   store: ListboxStore;
@@ -417,10 +404,13 @@ function ListboxRootImpl<Multiple extends boolean = false>(
     name,
     virtual = false,
     asChild,
+    onKeyDown: onKeyDownProp,
+    onFocus: onFocusProp,
+    onBlur: onBlurProp,
     ...rootProps
   } = props;
 
-  const storeRef = useLazyRef<ListboxStore>(() => {
+  const [store] = React.useState<ListboxStore>(() => {
     const store = createSelectableStore(
       typeof defaultValue === "string" ? defaultValue : null,
     );
@@ -433,8 +423,6 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
     return store;
   });
-
-  const store = storeRef.current;
 
   useIsomorphicLayoutEffect(() => {
     if (value !== undefined) {
@@ -454,12 +442,17 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const { collectionRef, getItems, onItemRegister } = useCollection();
 
-  const isShiftTabRef = useLazyRef(() => false);
-  const composedRef = useComposedRefs(collectionRef, forwardedRef);
+  const isShiftTabRef = React.useRef(false);
+  const [rootElement, setRootElement] = React.useState<RootElement | null>(
+    null,
+  );
+  const composedRef = useComposedRefs(
+    collectionRef,
+    forwardedRef,
+    setRootElement,
+  );
 
-  const isFormControl = collectionRef.current
-    ? !!collectionRef.current.closest("form")
-    : true;
+  const isFormControl = rootElement ? !!rootElement.closest("form") : true;
 
   const onItemSelect = React.useCallback(
     (itemValue: string, isMultipleEvent = false) => {
@@ -556,6 +549,9 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<RootElement>) => {
+      onKeyDownProp?.(event);
+      if (event.defaultPrevented) return;
+
       if (disabled) return;
 
       if (event.key === "Tab" && event.shiftKey) {
@@ -719,7 +715,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         case " ":
           if (currentFocusedValue) {
             const isMultipleSelectionKey =
-              multiple && (multiple === true || event.ctrlKey || event.metaKey);
+              multiple && (multiple || event.ctrlKey || event.metaKey);
             onItemSelect(currentFocusedValue, isMultipleSelectionKey);
             setFocusedValue(currentFocusedValue);
 
@@ -757,6 +753,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
       }
     },
     [
+      onKeyDownProp,
       dir,
       orientation,
       store,
@@ -772,6 +769,9 @@ function ListboxRootImpl<Multiple extends boolean = false>(
 
   const onFocus = React.useCallback(
     (event: React.FocusEvent<RootElement>) => {
+      onFocusProp?.(event);
+      if (event.defaultPrevented) return;
+
       if (isShiftTabRef.current) return;
 
       if (event.target === event.currentTarget) {
@@ -798,11 +798,22 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         }
       }
     },
-    [focusItemByValue, getItems, virtual, store, focusedValue, isShiftTabRef],
+    [
+      onFocusProp,
+      focusItemByValue,
+      getItems,
+      virtual,
+      store,
+      focusedValue,
+      isShiftTabRef,
+    ],
   );
 
   const onBlur = React.useCallback(
     (event: React.FocusEvent<RootElement>) => {
+      onBlurProp?.(event);
+      if (event.defaultPrevented) return;
+
       if (
         collectionRef.current &&
         !collectionRef.current.contains(event.relatedTarget)
@@ -810,7 +821,7 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         store.onStateChange("focusedValue", null);
       }
     },
-    [store, collectionRef],
+    [onBlurProp, store, collectionRef],
   );
 
   const contextValue = React.useMemo<ListboxContextValue<typeof multiple>>(
@@ -850,14 +861,14 @@ function ListboxRootImpl<Multiple extends boolean = false>(
         tabIndex={disabled ? undefined : 0}
         {...rootProps}
         ref={composedRef}
-        onKeyDown={composeEventHandlers(rootProps.onKeyDown, onKeyDown)}
-        onFocus={composeEventHandlers(rootProps.onFocus, onFocus)}
-        onBlur={composeEventHandlers(rootProps.onBlur, onBlur)}
+        onKeyDown={onKeyDown}
+        onFocus={onFocus}
+        onBlur={onBlur}
       />
       {isFormControl && (
         <VisuallyHiddenInput
           type="hidden"
-          control={collectionRef.current}
+          control={rootElement}
           name={name}
           value={value}
           disabled={disabled}
@@ -1013,7 +1024,7 @@ const ListboxItem = React.forwardRef<HTMLDivElement, ListboxItemProps>(
       (event: React.MouseEvent) => {
         if (!isDisabled) {
           const isMultipleSelectionKey =
-            multiple && (multiple === true || event.ctrlKey || event.metaKey);
+            multiple && (multiple || event.ctrlKey || event.metaKey);
 
           onItemSelect(value, isMultipleSelectionKey);
         }

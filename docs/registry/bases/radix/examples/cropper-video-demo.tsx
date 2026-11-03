@@ -22,7 +22,7 @@ export default function CropperVideoDemo() {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play();
+        void videoRef.current.play();
       }
       setIsPlaying(!isPlaying);
     }
@@ -30,7 +30,7 @@ export default function CropperVideoDemo() {
 
   const onMetadataLoaded = React.useCallback(() => {
     if (videoRef.current && isPlaying) {
-      videoRef.current.play();
+      void videoRef.current.play();
     }
   }, [isPlaying]);
 

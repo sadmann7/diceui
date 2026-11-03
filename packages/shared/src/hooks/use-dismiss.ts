@@ -164,7 +164,7 @@ function useDismiss(params: UseDismissProps) {
 
       const outsideEvent: PointerDownOutsideEvent = {
         currentTarget: event.currentTarget as Node,
-        target: target as Node,
+        target,
         preventDefault: () => event.preventDefault(),
         defaultPrevented: event.defaultPrevented,
         detail: event.detail,
@@ -191,7 +191,7 @@ function useDismiss(params: UseDismissProps) {
 
       const outsideEvent: FocusOutsideEvent = {
         currentTarget: event.currentTarget as Node,
-        target: target as Node,
+        target,
         preventDefault: () => event.preventDefault(),
         defaultPrevented: event.defaultPrevented,
       };

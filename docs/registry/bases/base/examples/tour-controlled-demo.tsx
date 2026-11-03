@@ -12,7 +12,6 @@ import {
   TourHeader,
   TourNext,
   TourPrev,
-  TourSkip,
   TourSpotlight,
   TourSpotlightRing,
   TourStep,
@@ -44,7 +43,7 @@ export default function TourControlledDemo() {
   }, []);
 
   return (
-    <div className="flex min-h-[400px] flex-col items-center justify-center gap-8 p-8">
+    <div className="flex min-h-100 flex-col items-center justify-center gap-8 p-8">
       <div className="flex flex-col items-center gap-4">
         <h1 id="controlled-title" className="text-2xl font-bold">
           Controlled Tour

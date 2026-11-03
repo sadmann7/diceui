@@ -308,10 +308,12 @@ function FileUpload(props: FileUploadProps) {
   });
 
   const store = React.useMemo<Store>(() => {
-    let state: StoreState = {
-      files,
-      dragOver: false,
-      invalid: invalid,
+    const storeState: { current: StoreState } = {
+      current: {
+        files,
+        dragOver: false,
+        invalid: invalid,
+      },
     };
 
     function reducer(state: StoreState, action: StoreAction): StoreState {
@@ -439,9 +441,9 @@ function FileUpload(props: FileUploadProps) {
     }
 
     return {
-      getState: () => state,
+      getState: () => storeState.current,
       dispatch: (action) => {
-        state = reducer(state, action);
+        storeState.current = reducer(storeState.current, action);
         for (const listener of listeners) {
           listener();
         }
@@ -648,7 +650,7 @@ function FileUpload(props: FileUploadProps) {
 
         if (propsRef.current.onUpload) {
           requestAnimationFrame(() => {
-            onFilesUpload(acceptedFiles);
+            void onFilesUpload(acceptedFiles);
           });
         }
       }
@@ -723,6 +725,16 @@ function FileUpload(props: FileUploadProps) {
       </FileUploadContext.Provider>
     </StoreContext.Provider>
   );
+}
+
+function setInputFiles(input: HTMLInputElement, files: File[]) {
+  const dataTransfer = new DataTransfer();
+  for (const file of files) {
+    dataTransfer.items.add(file);
+  }
+
+  input.files = dataTransfer.files;
+  input.dispatchEvent(new Event("change", { bubbles: true }));
 }
 
 interface FileUploadDropzoneProps extends React.ComponentProps<"div"> {
@@ -835,13 +847,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       const inputElement = context.inputRef.current;
       if (!inputElement) return;
 
-      const dataTransfer = new DataTransfer();
-      for (const file of files) {
-        dataTransfer.items.add(file);
-      }
-
-      inputElement.files = dataTransfer.files;
-      inputElement.dispatchEvent(new Event("change", { bubbles: true }));
+      setInputFiles(inputElement, files);
     },
     [store, context.inputRef, propsRef],
   );
@@ -874,13 +880,7 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
       const inputElement = context.inputRef.current;
       if (!inputElement) return;
 
-      const dataTransfer = new DataTransfer();
-      for (const file of files) {
-        dataTransfer.items.add(file);
-      }
-
-      inputElement.files = dataTransfer.files;
-      inputElement.dispatchEvent(new Event("change", { bubbles: true }));
+      setInputFiles(inputElement, files);
     },
     [store, context.inputRef, propsRef],
   );

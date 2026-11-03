@@ -421,7 +421,6 @@ export const ui: Registry["items"] = [
       "slider",
       "tooltip",
       "dropdown-menu",
-      "@diceui/use-ref-with-init",
     ],
     files: [
       {

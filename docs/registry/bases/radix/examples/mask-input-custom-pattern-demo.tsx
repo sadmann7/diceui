@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { z } from "zod";
 
 import { Label } from "@/registry/bases/radix/ui/label";
 import {

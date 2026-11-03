@@ -358,7 +358,7 @@ function TimePicker(props: TimePickerProps) {
   const propsRef = useValueAsRef({ onValueChange, onOpenChange });
 
   const store: Store = React.useMemo(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -388,6 +388,8 @@ function TimePicker(props: TimePickerProps) {
         }
       },
     };
+
+    return store;
   }, [listenersRef, stateRef, propsRef]);
 
   const value = useStore((state) => state.value, store);
@@ -731,30 +733,32 @@ function TimePickerInputGroup(props: DivProps) {
 
   const element = useRender({
     defaultTagName: "div",
-    props: mergeProps<"div">(
-      {
-        role: "group",
-        id: inputGroupId,
-        "aria-labelledby": labelId,
-        ref: composedRef,
-        className: cn(
-          "cn-time-picker-input-group",
-          invalid && "border-destructive ring-destructive/20",
-          disabled && "cursor-not-allowed opacity-50",
-          className,
-        ),
-        style: {
-          "--time-picker-hour-input-width": `${segmentPlaceholder.hour.length}ch`,
-          "--time-picker-minute-input-width": `${segmentPlaceholder.minute.length}ch`,
-          "--time-picker-second-input-width": `${segmentPlaceholder.second.length}ch`,
-          "--time-picker-period-input-width": `${Math.max(segmentPlaceholder.period.length, 2) + 0.5}ch`,
-          ...style,
-        } as React.CSSProperties,
-        onPointerDown,
-        onClick,
-      },
-      inputGroupProps,
-    ),
+    ref: composedRef,
+    props: {
+      ...mergeProps<"div">(
+        {
+          role: "group",
+          id: inputGroupId,
+          "aria-labelledby": labelId,
+          className: cn(
+            "cn-time-picker-input-group",
+            invalid && "border-destructive ring-destructive/20",
+            disabled && "cursor-not-allowed opacity-50",
+            className,
+          ),
+          style: {
+            "--time-picker-hour-input-width": `${segmentPlaceholder.hour.length}ch`,
+            "--time-picker-minute-input-width": `${segmentPlaceholder.minute.length}ch`,
+            "--time-picker-second-input-width": `${segmentPlaceholder.second.length}ch`,
+            "--time-picker-period-input-width": `${Math.max(segmentPlaceholder.period.length, 2) + 0.5}ch`,
+            ...style,
+          } as React.CSSProperties,
+        },
+        inputGroupProps,
+      ),
+      onPointerDown,
+      onClick,
+    },
     render,
     state: {
       slot: "time-picker-input-group",
@@ -815,8 +819,8 @@ function TimePickerInput(props: TimePickerInputProps) {
 
   useIsoLayoutEffect(() => {
     if (segment) {
-      inputGroupContext.onInputRegister(segment as Segment, inputRef);
-      return () => inputGroupContext.onInputUnregister(segment as Segment);
+      inputGroupContext.onInputRegister(segment, inputRef);
+      return () => inputGroupContext.onInputUnregister(segment);
     }
   }, [inputGroupContext, segment]);
 
@@ -849,16 +853,15 @@ function TimePickerInput(props: TimePickerInputProps) {
     }
   }, [timeValue, segment, is12Hour, segmentPlaceholder]);
 
-  const [editValue, setEditValue] = React.useState(getSegmentValue());
+  const segmentValue = getSegmentValue();
+  const [editValue, setEditValue] = React.useState(segmentValue);
   const [isEditing, setIsEditing] = React.useState(false);
   const [pendingDigit, setPendingDigit] = React.useState<string | null>(null);
 
-  React.useEffect(() => {
-    if (!isEditing) {
-      setEditValue(getSegmentValue());
-      setPendingDigit(null);
-    }
-  }, [getSegmentValue, isEditing]);
+  if (!isEditing && (editValue !== segmentValue || pendingDigit !== null)) {
+    setEditValue(segmentValue);
+    setPendingDigit(null);
+  }
 
   const updateTimeValue = React.useCallback(
     (newSegmentValue: string | undefined, shouldCreateIfEmpty = false) => {
@@ -1935,7 +1938,7 @@ function TimePickerHour(props: TimePickerHourProps) {
     [timeValue, showSeconds, is12Hour, store],
   );
 
-  const now = new Date();
+  const [now] = React.useState(() => new Date());
   const referenceHour = timeValue?.hour ?? now.getHours();
   const displayHour = is12Hour ? to12Hour(referenceHour).hour : referenceHour;
 
@@ -2017,7 +2020,7 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
     [timeValue, showSeconds, store],
   );
 
-  const now = new Date();
+  const [now] = React.useState(() => new Date());
   const referenceMinute = timeValue?.minute ?? now.getMinutes();
 
   const minutesContent = minutes.map((minute) => (
@@ -2098,7 +2101,7 @@ function TimePickerSecond(props: TimePickerSecondProps) {
     [timeValue, store],
   );
 
-  const now = new Date();
+  const [now] = React.useState(() => new Date());
   const referenceSecond = timeValue?.second ?? now.getSeconds();
 
   const secondsContent = seconds.map((second) => (
@@ -2176,7 +2179,7 @@ function TimePickerPeriod(props: DivProps) {
     [timeValue, showSeconds, store],
   );
 
-  const now = new Date();
+  const [now] = React.useState(() => new Date());
   const referenceHour = timeValue?.hour ?? now.getHours();
   const currentPeriod = to12Hour(referenceHour).period;
 

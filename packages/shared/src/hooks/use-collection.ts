@@ -28,11 +28,13 @@ function useCollection<TElement extends HTMLElement, TData = {}>({
   grouped = false,
 }: CollectionOptions = {}) {
   const collectionRef = React.useRef<TElement | null>(null);
-  const itemMap = React.useRef<CollectionItemMap<TElement, TData>>(
-    new Map(),
-  ).current;
-  const groupMapRef = React.useRef<CollectionGroupMap<TElement>>(new Map());
-  const groupMap = grouped ? groupMapRef.current : null;
+  const [itemMap] = React.useState<CollectionItemMap<TElement, TData>>(
+    () => new Map(),
+  );
+  const [groupMapState] = React.useState<CollectionGroupMap<TElement>>(
+    () => new Map(),
+  );
+  const groupMap = grouped ? groupMapState : null;
 
   const getItems = React.useCallback(() => {
     const collectionNode = collectionRef.current;

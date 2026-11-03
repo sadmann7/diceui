@@ -6,10 +6,10 @@ import { z } from "zod";
 
 import { DEFAULT_BASE, DEFAULT_STYLE } from "@/lib/constants";
 import { BASE_COLORS, type BaseColor } from "@/registry/base-colors";
-import { BASES, type Base } from "@/registry/bases";
+import { type Base, BASES } from "@/registry/bases";
 import { fonts } from "@/registry/fonts";
-import { STYLES, type Style } from "@/registry/styles";
-import { THEMES, type Theme } from "@/registry/themes";
+import { type Style, STYLES } from "@/registry/styles";
+import { type Theme, THEMES } from "@/registry/themes";
 
 export {
   BASE_COLORS,

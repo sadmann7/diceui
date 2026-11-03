@@ -197,7 +197,7 @@ function Gauge(props: GaugeProps) {
 
   if ((maxProp || maxProp === 0) && !getIsValidMaxNumber(maxProp)) {
     if (process.env.NODE_ENV !== "production") {
-      console.error(getInvalidMaxError(`${maxProp}`, GAUGE_NAME));
+      console.error(getInvalidMaxError(String(maxProp), GAUGE_NAME));
     }
   }
 
@@ -213,7 +213,7 @@ function Gauge(props: GaugeProps) {
 
   if (valueProp !== null && !getIsValidValueNumber(valueProp, min, max)) {
     if (process.env.NODE_ENV !== "production") {
-      console.error(getInvalidValueError(`${valueProp}`, GAUGE_NAME));
+      console.error(getInvalidValueError(String(valueProp), GAUGE_NAME));
     }
   }
 

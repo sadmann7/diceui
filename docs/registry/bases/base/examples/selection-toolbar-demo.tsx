@@ -85,7 +85,7 @@ export default function SelectionToolbarDemo() {
   }, []);
 
   const onCopy = React.useCallback((text: string) => {
-    navigator.clipboard.writeText(text);
+    void navigator.clipboard.writeText(text);
     console.log({ action: "copy", text });
 
     // Clear selection to close the toolbar
@@ -97,7 +97,7 @@ export default function SelectionToolbarDemo() {
 
   const onShare = React.useCallback((text: string) => {
     if (navigator.share) {
-      navigator.share({ text });
+      void navigator.share({ text });
     }
     console.log({ action: "share", text });
 

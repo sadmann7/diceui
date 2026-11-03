@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { isFirefox, isIOS, isSafari } from "../lib/browser";
+import { getOwnerDocument } from "../lib/dock";
 import { useIsomorphicLayoutEffect } from "./use-isomorphic-layout-effect";
 
 // HTML input types that do not cause the software keyboard to appear
@@ -121,7 +122,7 @@ function useScrollLock({
   useIsomorphicLayoutEffect(() => {
     if (!enabled) return;
 
-    const doc = referenceElement?.ownerDocument ?? globalThis.document;
+    const doc = getOwnerDocument(referenceElement);
     const win = doc.defaultView ?? globalThis.window;
     const html = doc.documentElement;
     const body = doc.body;

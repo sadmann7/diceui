@@ -26,6 +26,11 @@ const tricks = [
   { label: "The 900", value: "the-900" },
 ];
 
+// Random delay between 400-700ms
+function getRandomDelay() {
+  return Math.random() * 300 + 400;
+}
+
 export default function ComboboxDebouncedDemo() {
   const [value, setValue] = React.useState("");
   const [search, setSearch] = React.useState("");
@@ -52,7 +57,7 @@ export default function ComboboxDebouncedDemo() {
         }, 150);
 
         // Simulate API delay with variable timing
-        const delay = Math.random() * 300 + 400; // Random delay between 400-700ms
+        const delay = getRandomDelay();
         await new Promise((resolve) => setTimeout(resolve, delay));
 
         const results = tricks.filter((trick) =>

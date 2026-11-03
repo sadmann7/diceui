@@ -6,6 +6,7 @@ import {
   forwardRef,
   type HighlightingDirection,
   Primitive,
+  setFilterSearch,
   useAnchor,
   useCollection,
   useComposedRefs,
@@ -273,7 +274,8 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     });
   const { anchorRef, hasAnchor, onHasAnchorChange } =
     useAnchor<AnchorElement>();
-  const { isFormControl, onTriggerChange } = useFormControl<RootElement>();
+  const { isFormControl, trigger, onTriggerChange } =
+    useFormControl<RootElement>();
   const composedRef = useComposedRefs(forwardedRef, collectionRef, (node) =>
     onTriggerChange(node),
   );
@@ -291,7 +293,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
     defaultProp: defaultOpen,
     onChange: (newOpen) => {
       if (!newOpen) {
-        filterStore.search = "";
+        setFilterSearch(filterStore, "");
       }
       onOpenChange?.(newOpen);
       if (multiple) {
@@ -424,7 +426,7 @@ function ComboboxRootImpl<Multiple extends boolean = false>(
         {isFormControl && name && (
           <VisuallyHiddenInput
             type="hidden"
-            control={collectionRef.current}
+            control={trigger}
             name={name}
             value={value}
             disabled={disabled}

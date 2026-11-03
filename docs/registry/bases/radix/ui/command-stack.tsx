@@ -58,6 +58,7 @@ interface CommandStackStore {
   subscribe: (callback: () => void) => () => void;
   getState: () => CommandStackStoreState;
   notify: () => void;
+  setController: (controller: CommandStackController) => void;
   sync: (changes: Partial<CommandStackStoreState>) => void;
   setPages: (pages: string[]) => void;
   pushPage: (page: string) => void;
@@ -112,6 +113,9 @@ function createCommandStackStore(
       for (const callback of listeners) {
         callback();
       }
+    },
+    setController: (controller) => {
+      store.controller = controller;
     },
     sync: (changes) => {
       let hasChanged = false;
@@ -288,7 +292,7 @@ function CommandStack({
   );
 
   useLayoutEffect(() => {
-    store.controller = {
+    store.setController({
       isPagesControlled: pages !== undefined,
       isValueControlled: valueProp !== undefined,
       onPagesChange,
@@ -298,7 +302,7 @@ function CommandStack({
         onSearchChange?.(nextSearch);
         if (searchProp === undefined) setInternalSearch(nextSearch);
       },
-    };
+    });
   });
 
   useLayoutEffect(() => {
@@ -313,17 +317,13 @@ function CommandStack({
       : null,
   );
 
-  const [isResettingHighlight, setIsResettingHighlight] = React.useState(false);
+  const [highlightedValue, setHighlightedValue] = React.useState("");
   const [prevActivePage, setPrevActivePage] = React.useState(activePage);
 
   if (prevActivePage !== activePage) {
     setPrevActivePage(activePage);
-    setIsResettingHighlight(true);
+    setHighlightedValue("");
   }
-
-  React.useEffect(() => {
-    if (isResettingHighlight) setIsResettingHighlight(false);
-  }, [isResettingHighlight]);
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -348,7 +348,8 @@ function CommandStack({
         <Command
           data-slot="command-stack"
           className={cn("cn-command-stack", className)}
-          value={isResettingHighlight ? "" : undefined}
+          value={highlightedValue}
+          onValueChange={setHighlightedValue}
           onKeyDown={onKeyDown}
           {...props}
         >

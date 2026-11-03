@@ -172,7 +172,7 @@ function Timeline(props: TimelineProps) {
   }));
 
   const store = React.useMemo<Store>(() => {
-    return {
+    const store: Store = {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
         return () => listenersRef.current.delete(cb);
@@ -212,6 +212,8 @@ function Timeline(props: TimelineProps) {
         return sortedEntries.findIndex(([key]) => key === id);
       },
     };
+
+    return store;
   }, [listenersRef, stateRef]);
 
   const contextValue = React.useMemo<TimelineContextValue>(

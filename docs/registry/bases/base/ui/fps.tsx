@@ -30,6 +30,10 @@ const fpsVariants = cva("cn-fps", {
   },
 });
 
+function subscribe() {
+  return () => {};
+}
+
 interface FpsProps
   extends
     React.ComponentProps<"div">,
@@ -56,16 +60,12 @@ function Fps(props: FpsProps) {
     ...fpsProps
   } = props;
 
-  const [mounted, setMounted] = React.useState(false);
-  const [fps, setFps] = React.useState(0);
-  const frameCountRef = React.useRef(0);
-  const lastTimeRef = React.useRef(performance.now());
-  const animationFrameRef = React.useRef<number | null>(null);
-  const updateTimeoutRef = React.useRef<ReturnType<typeof setTimeout> | null>(
-    null,
+  const mounted = React.useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
   );
-
-  React.useLayoutEffect(() => setMounted(true), []);
+  const [fps, setFps] = React.useState(0);
 
   const status = React.useMemo(() => {
     if (fps < errorThreshold) return "error";
@@ -74,35 +74,29 @@ function Fps(props: FpsProps) {
   }, [fps, errorThreshold, warningThreshold]);
 
   React.useEffect(() => {
-    if (!enabled || typeof window === "undefined") return;
+    if (!enabled) return;
 
-    const updateTimeout = updateTimeoutRef.current;
+    let frame = 0;
+    let frameCount = 0;
+    let lastTime = performance.now();
 
     function measureFps() {
       const now = performance.now();
-      const delta = now - lastTimeRef.current;
-      frameCountRef.current += 1;
+      const delta = now - lastTime;
+      frameCount += 1;
 
       if (delta >= updateInterval) {
-        const currentFps = Math.round((frameCountRef.current * 1000) / delta);
-        setFps(currentFps);
-        frameCountRef.current = 0;
-        lastTimeRef.current = now;
+        setFps(Math.round((frameCount * 1000) / delta));
+        frameCount = 0;
+        lastTime = now;
       }
 
-      animationFrameRef.current = requestAnimationFrame(measureFps);
+      frame = requestAnimationFrame(measureFps);
     }
 
-    animationFrameRef.current = requestAnimationFrame(measureFps);
+    frame = requestAnimationFrame(measureFps);
 
-    return () => {
-      if (animationFrameRef.current !== null) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      if (updateTimeout !== null) {
-        clearTimeout(updateTimeout);
-      }
-    };
+    return () => cancelAnimationFrame(frame);
   }, [enabled, updateInterval]);
 
   if (!enabled) return null;

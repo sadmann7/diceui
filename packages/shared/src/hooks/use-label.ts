@@ -4,6 +4,7 @@ interface UseLabelProps {
   defaultValue?: string;
 }
 
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- public generic, kept so explicit type arguments still compile
 function useLabel<T extends HTMLElement>({ defaultValue }: UseLabelProps) {
   const [label, setLabel] = React.useState(defaultValue ?? "");
 

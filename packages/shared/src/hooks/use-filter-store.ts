@@ -23,6 +23,14 @@ interface UseFilterStoreOptions<TElement extends HTMLElement, TData = {}> {
   onCallback?: (itemCount: number) => void;
 }
 
+function setFilterSearch(filterStore: FilterStore, search: string) {
+  filterStore.search = search;
+}
+
+function setFilterItemCount(filterStore: FilterStore, itemCount: number) {
+  filterStore.itemCount = itemCount;
+}
+
 function useFilterStore<
   TElement extends HTMLElement,
   TData extends { value: string },
@@ -34,12 +42,12 @@ function useFilterStore<
   manualFiltering,
   onCallback,
 }: UseFilterStoreOptions<TElement, TData>) {
-  const filterStore = React.useRef<FilterStore>({
+  const [filterStore] = React.useState<FilterStore>(() => ({
     search: "",
     itemCount: 0,
     items: new Map<string, number>(),
     groups: groupMap ? new Map<string, Set<string>>() : undefined,
-  }).current;
+  }));
 
   const filter = useFilter({ sensitivity: "base", gapMatch: true });
   const currentFilter = React.useMemo(
@@ -65,7 +73,7 @@ function useFilterStore<
 
   const onItemsFilter = React.useCallback(() => {
     if (!filterStore.search || manualFiltering) {
-      filterStore.itemCount = itemMap.size;
+      setFilterItemCount(filterStore, itemMap.size);
       return;
     }
 
@@ -118,7 +126,7 @@ function useFilterStore<
       processBatch();
     }
 
-    filterStore.itemCount = itemCount;
+    setFilterItemCount(filterStore, itemCount);
 
     // Update groups if needed
     if (groupMap && filterStore.groups && groupMap.size && itemCount > 0) {
@@ -126,7 +134,7 @@ function useFilterStore<
 
       for (const [groupId, group] of groupMap) {
         const hasMatchingItem = Array.from(group).some((ref) => {
-          const item = itemMap.get(ref as React.RefObject<TElement | null>);
+          const item = itemMap.get(ref);
           const value = item?.value ?? "";
           return matchingItems.has(value);
         });
@@ -175,4 +183,4 @@ function useFilterStore<
 }
 
 export type { FilterStore };
-export { useFilterStore };
+export { setFilterSearch, useFilterStore };

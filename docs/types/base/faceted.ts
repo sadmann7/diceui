@@ -1,4 +1,4 @@
-import type { RenderProps, EmptyProps } from "@/types";
+import type { EmptyProps, RenderProps } from "@/types";
 
 export interface FacetedOption {
   /**

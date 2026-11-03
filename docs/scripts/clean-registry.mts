@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { rimraf } from "rimraf";
 
 import { BASES } from "../registry/bases";
-import { type RegistryBase, registries } from "../registry/registry";
+import { registries } from "../registry/registry";
 import { STYLES } from "../registry/styles";
 
 const STYLES_PATH = path.resolve(import.meta.dirname, "../public/r/styles");
@@ -59,7 +59,7 @@ async function cleanRegistry() {
     let totalValid = 0;
 
     for (const base of BASES) {
-      const baseName = base.name as RegistryBase;
+      const baseName = base.name;
       const registry = registries[baseName];
 
       // Build expected item names for this base

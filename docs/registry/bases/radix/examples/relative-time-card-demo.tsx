@@ -1,10 +1,13 @@
+"use client";
+
 import { Clock } from "lucide-react";
+import * as React from "react";
 
 import { Button } from "@/registry/bases/radix/ui/button";
 import { RelativeTimeCard } from "@/registry/bases/radix/ui/relative-time-card";
 
 export default function RelativeTimeCardDemo() {
-  const now = new Date();
+  const [now] = React.useState(() => new Date());
   const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
   const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
   const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);

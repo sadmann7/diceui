@@ -8,7 +8,6 @@ import {
   CropperImage,
   type CropperObjectFit,
   type CropperPoint,
-  type CropperProps,
   type CropperShape,
 } from "@/registry/bases/base/ui/cropper";
 import { Label } from "@/registry/bases/base/ui/label";

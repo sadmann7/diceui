@@ -124,6 +124,12 @@ function QRCode(props: QRCodeProps) {
   }));
 
   const store = React.useMemo<Store>(() => {
+    function notify() {
+      for (const cb of listenersRef.current) {
+        cb();
+      }
+    }
+
     return {
       subscribe: (cb) => {
         listenersRef.current.add(cb);
@@ -133,12 +139,12 @@ function QRCode(props: QRCodeProps) {
       setState: (key, value) => {
         if (Object.is(stateRef.current[key], value)) return;
         stateRef.current[key] = value;
-        store.notify();
+        notify();
       },
       setStates: (updates) => {
         let hasChanged = false;
 
-        for (const key of Object.keys(updates) as Array<keyof StoreState>) {
+        for (const key of Object.keys(updates) as (keyof StoreState)[]) {
           const value = updates[key];
           if (value !== undefined && !Object.is(stateRef.current[key], value)) {
             Object.assign(stateRef.current, { [key]: value });
@@ -147,14 +153,10 @@ function QRCode(props: QRCodeProps) {
         }
 
         if (hasChanged) {
-          store.notify();
+          notify();
         }
       },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
+      notify,
     };
   }, [listenersRef, stateRef]);
 
@@ -265,7 +267,7 @@ function QRCode(props: QRCodeProps) {
   React.useLayoutEffect(() => {
     if (generationKey) {
       const rafId = requestAnimationFrame(() => {
-        onQRCodeGenerate(generationKey);
+        void onQRCodeGenerate(generationKey);
       });
 
       return () => cancelAnimationFrame(rafId);

@@ -113,7 +113,7 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
                 target.releasePointerCapture(event.pointerId);
               }
 
-              if (event.button === 0 && event.ctrlKey === false) {
+              if (event.button === 0 && !event.ctrlKey) {
                 // prevent item from stealing focus from the input for both mouse and touch
                 event.preventDefault();
               }

@@ -2,7 +2,6 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import * as React from "react";
 
@@ -871,7 +870,6 @@ function MaskInput(props: MaskInputProps) {
     withoutMask = false,
     className,
     render,
-    ref,
     ...inputProps
   } = props;
 
@@ -879,8 +877,6 @@ function MaskInput(props: MaskInputProps) {
   const [focused, setFocused] = React.useState(false);
   const [composing, setComposing] = React.useState(false);
   const [touched, setTouched] = React.useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const composedRef = useMergedRefs(ref, inputRef);
 
   const isControlled = valueProp !== undefined;
   const value = isControlled ? valueProp : internalValue;
@@ -1024,8 +1020,8 @@ function MaskInput(props: MaskInputProps) {
           mask,
         });
 
-        if (inputRef.current && newValue !== inputValue) {
-          const inputElement = inputRef.current;
+        if (newValue !== inputValue) {
+          const inputElement = event.currentTarget;
           if (!(inputElement instanceof HTMLInputElement)) return;
 
           const oldCursorPosition = inputElement.selectionStart ?? 0;
@@ -1173,8 +1169,7 @@ function MaskInput(props: MaskInputProps) {
 
       setComposing(false);
 
-      const inputElement = inputRef.current;
-      if (!inputElement) return;
+      const inputElement = event.currentTarget;
       if (!(inputElement instanceof HTMLInputElement)) return;
       const inputValue = inputElement.value;
 
@@ -1470,7 +1465,6 @@ function MaskInput(props: MaskInputProps) {
         "aria-invalid": invalid,
         className: cn("cn-mask-input", className),
         placeholder: placeholderValue,
-        ref: composedRef,
         value: displayValue,
         disabled,
         maxLength: calculatedMaxLength,

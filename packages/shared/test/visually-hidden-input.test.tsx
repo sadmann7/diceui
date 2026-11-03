@@ -60,7 +60,7 @@ global.ResizeObserver = vi.fn(
     unobserve = vi.fn();
     disconnect = vi.fn();
   },
-) as typeof ResizeObserver;
+);
 
 describe("VisuallyHiddenInput", () => {
   const mockControl = document.createElement("div");

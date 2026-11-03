@@ -114,7 +114,9 @@ function CircularProgress(props: CircularProgressProps) {
 
   if ((maxProp || maxProp === 0) && !getIsValidMaxNumber(maxProp)) {
     if (process.env.NODE_ENV !== "production") {
-      console.error(getInvalidMaxError(`${maxProp}`, CIRCULAR_PROGRESS_NAME));
+      console.error(
+        getInvalidMaxError(String(maxProp), CIRCULAR_PROGRESS_NAME),
+      );
     }
   }
 
@@ -131,7 +133,7 @@ function CircularProgress(props: CircularProgressProps) {
   if (valueProp !== null && !getIsValidValueNumber(valueProp, min, max)) {
     if (process.env.NODE_ENV !== "production") {
       console.error(
-        getInvalidValueError(`${valueProp}`, CIRCULAR_PROGRESS_NAME),
+        getInvalidValueError(String(valueProp), CIRCULAR_PROGRESS_NAME),
       );
     }
   }

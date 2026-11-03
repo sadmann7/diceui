@@ -32,13 +32,12 @@ export function VisuallyHiddenInput<T = InputValue>(
 
   const isCheckInput =
     type === "checkbox" || type === "radio" || type === "switch";
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [input, setInput] = React.useState<HTMLInputElement | null>(null);
   const prevValue = usePrevious(type === "hidden" ? value : checked);
   const controlSize = useSize(control);
 
   // Bubble value/checked change to parents
   React.useEffect(() => {
-    const input = inputRef.current;
     if (!input) return;
     const inputProto = window.HTMLInputElement.prototype;
 
@@ -57,11 +56,11 @@ export function VisuallyHiddenInput<T = InputValue>(
       setter.call(input, currentValue);
       input.dispatchEvent(event);
     }
-  }, [prevValue, value, checked, bubbles, isCheckInput]);
+  }, [input, prevValue, value, checked, bubbles, isCheckInput]);
 
   // Trigger on onReset callback when form is reset
   useFormReset({
-    form: inputRef.current?.form ?? null,
+    form: input?.form ?? null,
     defaultValue: isCheckInput ? (checked as T) : value,
     onReset: (resetValue: T) => {
       onReset?.(resetValue);
@@ -82,7 +81,7 @@ export function VisuallyHiddenInput<T = InputValue>(
     <input
       type={type}
       {...inputProps}
-      ref={inputRef}
+      ref={setInput}
       aria-hidden={isCheckInput}
       tabIndex={-1}
       defaultChecked={isCheckInput ? checked : undefined}

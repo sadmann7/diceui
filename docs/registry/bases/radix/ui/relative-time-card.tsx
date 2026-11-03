@@ -11,13 +11,24 @@ import {
   HoverCardTrigger,
 } from "@/registry/bases/radix/ui/hover-card";
 
+function subscribe() {
+  return () => {};
+}
+
+function getSnapshot() {
+  return true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 function pluralize(n: number, word: string) {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
 
-function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diff = now.getTime() - date.getTime();
+function formatRelativeTime(date: Date, now: number): string {
+  const diff = now - date.getTime();
   const isInFuture = diff < 0;
   const absDiff = Math.abs(diff);
 
@@ -53,7 +64,7 @@ function TimezoneCard(props: TimezoneCardProps) {
   const { date, timezone, ...cardProps } = props;
 
   const locale = React.useMemo(
-    () => Intl.DateTimeFormat().resolvedOptions().locale,
+    () => new Intl.DateTimeFormat().resolvedOptions().locale,
     [],
   );
 
@@ -172,22 +183,28 @@ function RelativeTimeCard(props: RelativeTimeCardProps) {
   );
 
   const locale = React.useMemo(
-    () => Intl.DateTimeFormat().resolvedOptions().locale,
+    () => new Intl.DateTimeFormat().resolvedOptions().locale,
     [],
   );
 
-  const [formattedTime, setFormattedTime] = React.useState<string>(() =>
-    date.toLocaleDateString(),
+  const mounted = React.useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
   );
+  const [now, setNow] = React.useState(() => Date.now());
 
   React.useEffect(() => {
-    setFormattedTime(formatRelativeTime(date));
     const timer = setInterval(() => {
-      setFormattedTime(formatRelativeTime(date));
+      setNow(Date.now());
     }, updateInterval);
 
     return () => clearInterval(timer);
-  }, [date, updateInterval]);
+  }, [updateInterval]);
+
+  const formattedTime = mounted
+    ? formatRelativeTime(date, now)
+    : date.toLocaleDateString();
 
   const TriggerPrimitive = asChild ? SlotPrimitive.Slot : "button";
 

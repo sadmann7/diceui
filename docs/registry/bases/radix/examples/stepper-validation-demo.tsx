@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
 
@@ -82,6 +82,7 @@ export default function StepperValidationDemo() {
       bio: "",
     },
   });
+  const values = useWatch({ control: form.control });
 
   const stepIndex = React.useMemo(
     () => steps.findIndex((s) => s.value === step),
@@ -219,29 +220,23 @@ export default function StepperValidationDemo() {
           >
             <div className="flex flex-col gap-1 rounded-md border p-2">
               <span className="text-sm font-medium">Username</span>
-              <p className="text-sm">
-                {form.watch("username") ?? "Not provided"}
-              </p>
+              <p className="text-sm">{values.username ?? "Not provided"}</p>
             </div>
             <div className="flex flex-col gap-1 rounded-md border p-2">
               <span className="text-sm font-medium">Email</span>
-              <p className="text-sm">{form.watch("email") ?? "Not provided"}</p>
+              <p className="text-sm">{values.email ?? "Not provided"}</p>
             </div>
             <div className="flex flex-col gap-1 rounded-md border p-2">
               <span className="text-sm font-medium">First Name</span>
-              <p className="text-sm">
-                {form.watch("firstName") ?? "Not provided"}
-              </p>
+              <p className="text-sm">{values.firstName ?? "Not provided"}</p>
             </div>
             <div className="flex flex-col gap-1 rounded-md border p-2">
               <span className="text-sm font-medium">Last Name</span>
-              <p className="text-sm">
-                {form.watch("lastName") ?? "Not provided"}
-              </p>
+              <p className="text-sm">{values.lastName ?? "Not provided"}</p>
             </div>
             <div className="flex flex-col gap-1 rounded-md border p-2">
               <span className="text-sm font-medium">Bio</span>
-              <p className="text-sm">{form.watch("bio") ?? "Not provided"}</p>
+              <p className="text-sm">{values.bio ?? "Not provided"}</p>
             </div>
           </StepperContent>
           <div className="flex justify-between">
