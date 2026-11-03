@@ -122,13 +122,7 @@ const getKind = (marker: string) =>
 function toSpacingScale(token: string) {
   return token.replace(
     /^(.*?)(-?(?:p[xytrblse]?|m[xytrblse]?|gap(?:-[xy])?|size|[hw]|min-[hw]|max-[hw]|inset(?:-[xy])?|top|right|bottom|left|start|end)-)\[(\d+)px\](!?)$/,
-    (
-      match,
-      variants: string,
-      utility: string,
-      px: string,
-      important: string,
-    ) =>
+    (match, variants: string, utility: string, px: string, important: string) =>
       Number(px) % 2 === 0
         ? `${variants}${utility}${Number(px) / 4}${important}`
         : match,

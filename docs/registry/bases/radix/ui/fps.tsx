@@ -67,11 +67,12 @@ function Fps(props: FpsProps) {
   );
   const [fps, setFps] = React.useState(0);
 
-  const status = React.useMemo(() => {
-    if (fps < errorThreshold) return "error";
-    if (fps < warningThreshold) return "warning";
-    return "good";
-  }, [fps, errorThreshold, warningThreshold]);
+  const status =
+    fps < errorThreshold
+      ? "error"
+      : fps < warningThreshold
+        ? "warning"
+        : "good";
 
   React.useEffect(() => {
     if (!enabled) return;
