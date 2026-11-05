@@ -107,12 +107,7 @@ function PresentationSelectionBox({
   return (
     <PresentationPrimitive.SelectionBox
       data-slot="presentation-selection-box"
-      className={(state) =>
-        cn(
-          "cn-presentation-selection-box",
-          typeof className === "function" ? className(state) : className,
-        )
-      }
+      className={withClassName("cn-presentation-selection-box", className)}
       {...props}
     />
   );
@@ -125,12 +120,7 @@ function PresentationResizeHandle({
   return (
     <PresentationPrimitive.ResizeHandle
       data-slot="presentation-resize-handle"
-      className={(state) =>
-        cn(
-          "cn-presentation-resize-handle",
-          typeof className === "function" ? className(state) : className,
-        )
-      }
+      className={withClassName("cn-presentation-resize-handle", className)}
       {...props}
     />
   );
@@ -143,12 +133,7 @@ function PresentationRotateHandle({
   return (
     <PresentationPrimitive.RotateHandle
       data-slot="presentation-rotate-handle"
-      className={(state) =>
-        cn(
-          "cn-presentation-rotate-handle",
-          typeof className === "function" ? className(state) : className,
-        )
-      }
+      className={withClassName("cn-presentation-rotate-handle", className)}
       {...props}
     />
   );
@@ -161,12 +146,7 @@ function PresentationSnapGuide({
   return (
     <PresentationPrimitive.SnapGuide
       data-slot="presentation-snap-guide"
-      className={(state) =>
-        cn(
-          "cn-presentation-snap-guide",
-          typeof className === "function" ? className(state) : className,
-        )
-      }
+      className={withClassName("cn-presentation-snap-guide", className)}
       {...props}
     />
   );
@@ -179,12 +159,7 @@ function PresentationMarquee({
   return (
     <PresentationPrimitive.Marquee
       data-slot="presentation-marquee"
-      className={(state) =>
-        cn(
-          "cn-presentation-marquee",
-          typeof className === "function" ? className(state) : className,
-        )
-      }
+      className={withClassName("cn-presentation-marquee", className)}
       {...props}
     />
   );
@@ -379,6 +354,14 @@ function PresentationThumbnailList({
       </PresentationPrimitive.ThumbnailList>
     </>
   );
+}
+
+function withClassName<State>(
+  base: string,
+  className: string | ((state: State) => string | undefined) | undefined,
+) {
+  return (state: State) =>
+    cn(base, typeof className === "function" ? className(state) : className);
 }
 
 export {
