@@ -106,11 +106,7 @@ Without children, `PresentationSelection` renders its overlay parts with a defau
 
 ### Editing
 
-Load with `readOnly={false}` and place `PresentationSelection` inside `PresentationSlide` to move, resize, rotate, and edit text. Undo and redo shortcuts are opt-in via `undoRedoShortcuts`. Drag thumbnails to reorder slides.
-
-The toolbar uses `useSelection` to insert text boxes and shapes, format text, and arrange or delete shapes. It is marked with `data-pptx-keep-selection` so pressing it keeps the selection and text editing.
-
-This example also uses `PresentationZoomSelect`, a companion control built with `useZoom` and `select`. Install it with `@diceui/presentation-zoom-select`.
+Load with `readOnly={false}` to move, resize, rotate, and edit shapes. The toolbar is built with `useSelection`, and the zoom control is `@diceui/presentation-zoom-select`.
 
 <ComponentTabs name="presentation-editing-demo" className="h-100 p-0" />
 

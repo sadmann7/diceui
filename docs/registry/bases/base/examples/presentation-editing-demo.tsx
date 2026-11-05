@@ -172,42 +172,38 @@ function PresentationToolbar({ store }: { store: PresentationStore }) {
   }
 
   return (
-    <div data-pptx-keep-selection="" className="flex flex-col border-b">
-      <div className="flex items-center gap-2 p-1.5">
-        <label htmlFor={`${id}-file`} className="sr-only">
-          Open .pptx
-        </label>
-        <Input
-          id={`${id}-file`}
-          type="file"
-          accept=".pptx"
-          className="h-8 max-w-56 text-xs"
-          onChange={onFileChange}
-        />
-        <span className="min-w-0 truncate text-sm text-muted-foreground">
-          {status === "ready"
-            ? "Click a shape to select it, or drag a thumbnail to reorder the deck"
-            : "Loading sample deck…"}
-        </span>
-        <div className="ml-auto flex items-center gap-0.5">
-          <ToolbarButton
-            label="Undo"
-            disabled={!canUndo}
-            onClick={() => run(undo)}
-          >
-            <Undo2Icon />
-          </ToolbarButton>
-          <ToolbarButton
-            label="Redo"
-            disabled={!canRedo}
-            onClick={() => run(redo)}
-          >
-            <Redo2Icon />
-          </ToolbarButton>
-        </div>
-        <PresentationZoomSelect />
+    <div
+      data-pptx-keep-selection=""
+      className="flex items-center gap-1 border-b p-1.5"
+    >
+      <label htmlFor={`${id}-file`} className="sr-only">
+        Open .pptx
+      </label>
+      <Input
+        id={`${id}-file`}
+        type="file"
+        accept=".pptx"
+        className="h-8 w-44 shrink-0 text-xs"
+        onChange={onFileChange}
+      />
+      <div className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto">
+        <ToolbarButton
+          label="Undo"
+          disabled={!canUndo}
+          onClick={() => run(undo)}
+        >
+          <Undo2Icon />
+        </ToolbarButton>
+        <ToolbarButton
+          label="Redo"
+          disabled={!canRedo}
+          onClick={() => run(redo)}
+        >
+          <Redo2Icon />
+        </ToolbarButton>
+        <FormattingToolbar disabled={status !== "ready"} />
       </div>
-      <FormattingToolbar disabled={status !== "ready"} />
+      <PresentationZoomSelect className="shrink-0" />
     </div>
   );
 }
@@ -239,7 +235,11 @@ function FormattingToolbar({ disabled }: FormattingToolbarProps) {
   const hasShapes = nodes.length > 0 && mode !== "text";
 
   return (
-    <div className="flex items-center gap-0.5 overflow-x-auto px-1.5 pb-1.5">
+    <>
+      <Separator
+        orientation="vertical"
+        className="mx-1 data-vertical:h-4 data-vertical:self-center"
+      />
       <ToolbarButton
         label="Text box"
         pressed={drawTool?.type === "textBox"}
@@ -357,7 +357,7 @@ function FormattingToolbar({ disabled }: FormattingToolbarProps) {
       >
         <Trash2Icon />
       </ToolbarButton>
-    </div>
+    </>
   );
 }
 
