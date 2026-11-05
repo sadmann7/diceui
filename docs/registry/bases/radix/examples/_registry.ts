@@ -1351,7 +1351,9 @@ export const examples: Registry["items"] = [
       "presentation",
       "presentation-zoom-select",
       "button",
+      "dropdown-menu",
       "input",
+      "separator",
       "tooltip",
     ],
     files: [

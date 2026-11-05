@@ -11,6 +11,7 @@ import {
   useCreatePresentationStore,
   useHistory,
   usePresentation,
+  useSelection,
 } from "@diceui/pptx";
 import {
   closestCenter,
@@ -32,12 +33,33 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Redo2Icon, Undo2Icon } from "lucide-react";
+import {
+  AlignCenterIcon,
+  AlignLeftIcon,
+  AlignRightIcon,
+  BaselineIcon,
+  BoldIcon,
+  BringToFrontIcon,
+  ItalicIcon,
+  Redo2Icon,
+  SendToBackIcon,
+  SquareIcon,
+  Trash2Icon,
+  TypeIcon,
+  UnderlineIcon,
+  Undo2Icon,
+} from "lucide-react";
 import * as React from "react";
 import { toast } from "sonner";
 
 import { PresentationZoomSelect } from "@/registry/bases/base/components/presentation-zoom-select";
 import { Button } from "@/registry/bases/base/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/registry/bases/base/ui/dropdown-menu";
 import { Input } from "@/registry/bases/base/ui/input";
 import {
   Presentation,
@@ -53,6 +75,7 @@ import {
   PresentationThumbnailList,
   PresentationViewport,
 } from "@/registry/bases/base/ui/presentation";
+import { Separator } from "@/registry/bases/base/ui/separator";
 import {
   Tooltip,
   TooltipContent,
@@ -71,6 +94,27 @@ const DROP_ANIMATION: DropAnimation = {
   ...defaultDropAnimation,
   sideEffects: defaultDropAnimationSideEffects({ styles: { active: {} } }),
 };
+
+const TEXT_COLORS = [
+  { name: "Black", value: "#000000" },
+  { name: "Red", value: "#dc2626" },
+  { name: "Orange", value: "#ea580c" },
+  { name: "Green", value: "#16a34a" },
+  { name: "Blue", value: "#2563eb" },
+  { name: "Purple", value: "#9333ea" },
+];
+
+const TEXT_TOGGLES = [
+  { key: "bold", label: "Bold", icon: BoldIcon },
+  { key: "italic", label: "Italic", icon: ItalicIcon },
+  { key: "underline", label: "Underline", icon: UnderlineIcon },
+] as const;
+
+const ALIGNMENTS = [
+  { align: "left", label: "Align left", icon: AlignLeftIcon },
+  { align: "center", label: "Align center", icon: AlignCenterIcon },
+  { align: "right", label: "Align right", icon: AlignRightIcon },
+] as const;
 
 export default function PresentationEditingDemo() {
   const store = useCreatePresentationStore();
@@ -128,62 +172,230 @@ function PresentationToolbar({ store }: { store: PresentationStore }) {
   }
 
   return (
-    <div className="flex items-center gap-2 border-b p-1.5">
-      <label htmlFor={`${id}-file`} className="sr-only">
-        Open .pptx
-      </label>
-      <Input
-        id={`${id}-file`}
-        type="file"
-        accept=".pptx"
-        className="h-8 max-w-56 text-xs"
-        onChange={onFileChange}
-      />
-      <span className="min-w-0 truncate text-sm text-muted-foreground">
-        {status === "ready"
-          ? "Drag a shape to move it, or drag a thumbnail to reorder the deck"
-          : "Loading sample deck…"}
-      </span>
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              aria-label="Undo"
-              variant="ghost"
-              size="icon-sm"
-              className="ml-auto active:not-aria-[haspopup]:translate-y-0 not-data-disabled:active:not-aria-[haspopup]:translate-y-px data-disabled:opacity-50"
-              disabled={!canUndo}
-              focusableWhenDisabled
-              onClick={() => undo()}
-            >
-              <Undo2Icon />
-            </Button>
-          }
+    <div data-pptx-keep-selection="" className="flex flex-col border-b">
+      <div className="flex items-center gap-2 p-1.5">
+        <label htmlFor={`${id}-file`} className="sr-only">
+          Open .pptx
+        </label>
+        <Input
+          id={`${id}-file`}
+          type="file"
+          accept=".pptx"
+          className="h-8 max-w-56 text-xs"
+          onChange={onFileChange}
         />
-        <TooltipContent>Undo</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger
-          render={
-            <Button
-              aria-label="Redo"
-              variant="ghost"
-              size="icon-sm"
-              className="active:not-aria-[haspopup]:translate-y-0 not-data-disabled:active:not-aria-[haspopup]:translate-y-px data-disabled:opacity-50"
-              disabled={!canRedo}
-              focusableWhenDisabled
-              onClick={() =>
-                void redo().catch(() => toast.error("Redo failed"))
-              }
-            >
-              <Redo2Icon />
-            </Button>
-          }
-        />
-        <TooltipContent>Redo</TooltipContent>
-      </Tooltip>
-      <PresentationZoomSelect />
+        <span className="min-w-0 truncate text-sm text-muted-foreground">
+          {status === "ready"
+            ? "Click a shape to select it, or drag a thumbnail to reorder the deck"
+            : "Loading sample deck…"}
+        </span>
+        <div className="ml-auto flex items-center gap-0.5">
+          <ToolbarButton
+            label="Undo"
+            disabled={!canUndo}
+            onClick={() => run(undo)}
+          >
+            <Undo2Icon />
+          </ToolbarButton>
+          <ToolbarButton
+            label="Redo"
+            disabled={!canRedo}
+            onClick={() => run(redo)}
+          >
+            <Redo2Icon />
+          </ToolbarButton>
+        </div>
+        <PresentationZoomSelect />
+      </div>
+      <FormattingToolbar disabled={status !== "ready"} />
     </div>
+  );
+}
+
+function run(action: () => Promise<unknown>) {
+  action().catch((error: unknown) =>
+    toast.error(error instanceof Error ? error.message : "Edit failed"),
+  );
+}
+
+interface FormattingToolbarProps {
+  disabled: boolean;
+}
+
+function FormattingToolbar({ disabled }: FormattingToolbarProps) {
+  const {
+    mode,
+    nodes,
+    textStyle,
+    drawTool,
+    startDrawing,
+    setTextStyle,
+    setParagraphStyle,
+    reorder,
+    remove,
+    clear,
+  } = useSelection();
+
+  const hasShapes = nodes.length > 0 && mode !== "text";
+
+  return (
+    <div className="flex items-center gap-0.5 overflow-x-auto px-1.5 pb-1.5">
+      <ToolbarButton
+        label="Text box"
+        pressed={drawTool?.type === "textBox"}
+        disabled={disabled}
+        onClick={() =>
+          startDrawing(
+            drawTool?.type === "textBox" ? null : { type: "textBox" },
+          )
+        }
+      >
+        <TypeIcon />
+      </ToolbarButton>
+      <ToolbarButton
+        label="Rectangle"
+        pressed={drawTool?.type === "shape"}
+        disabled={disabled}
+        onClick={() =>
+          startDrawing(
+            drawTool?.type === "shape"
+              ? null
+              : { type: "shape", geometry: "rect" },
+          )
+        }
+      >
+        <SquareIcon />
+      </ToolbarButton>
+      <Separator
+        orientation="vertical"
+        className="mx-1 data-vertical:h-4 data-vertical:self-center"
+      />
+      {TEXT_TOGGLES.map(({ key, label, icon: Icon }) => (
+        <ToolbarButton
+          key={key}
+          label={label}
+          pressed={textStyle?.[key] ?? false}
+          disabled={!textStyle}
+          onClick={() => run(() => setTextStyle({ [key]: !textStyle?.[key] }))}
+        >
+          <Icon />
+        </ToolbarButton>
+      ))}
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger
+          render={
+            <Button
+              aria-label="Text color"
+              variant="ghost"
+              size="icon-sm"
+              className="relative"
+              disabled={!textStyle}
+            />
+          }
+        >
+          <BaselineIcon />
+          <span
+            aria-hidden="true"
+            className="absolute inset-x-1.5 bottom-1 h-0.5 rounded-full"
+            style={{ backgroundColor: textStyle?.color ?? "transparent" }}
+          />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          data-pptx-keep-selection=""
+          aria-label="Text color"
+          className="grid w-auto grid-cols-3 gap-1 p-1"
+        >
+          {TEXT_COLORS.map((color) => (
+            <DropdownMenuItem
+              key={color.value}
+              aria-label={color.name}
+              className="size-6 rounded-full border p-0"
+              style={{ backgroundColor: color.value }}
+              onClick={() => run(() => setTextStyle({ color: color.value }))}
+            />
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      {ALIGNMENTS.map(({ align, label, icon: Icon }) => (
+        <ToolbarButton
+          key={align}
+          label={label}
+          pressed={textStyle?.align === align}
+          disabled={!textStyle}
+          onClick={() => run(() => setParagraphStyle({ align }))}
+        >
+          <Icon />
+        </ToolbarButton>
+      ))}
+      <Separator
+        orientation="vertical"
+        className="mx-1 data-vertical:h-4 data-vertical:self-center"
+      />
+      <ToolbarButton
+        label="Bring forward"
+        disabled={!hasShapes}
+        onClick={() => run(() => reorder("forward"))}
+      >
+        <BringToFrontIcon />
+      </ToolbarButton>
+      <ToolbarButton
+        label="Send backward"
+        disabled={!hasShapes}
+        onClick={() => run(() => reorder("backward"))}
+      >
+        <SendToBackIcon />
+      </ToolbarButton>
+      <ToolbarButton
+        label="Delete"
+        disabled={!hasShapes}
+        onClick={() =>
+          run(async () => {
+            await remove();
+            clear();
+          })
+        }
+      >
+        <Trash2Icon />
+      </ToolbarButton>
+    </div>
+  );
+}
+
+interface ToolbarButtonProps {
+  label: string;
+  pressed?: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}
+
+function ToolbarButton({
+  label,
+  pressed,
+  disabled,
+  onClick,
+  children,
+}: ToolbarButtonProps) {
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <Button
+            aria-label={label}
+            aria-pressed={pressed}
+            variant={pressed ? "secondary" : "ghost"}
+            size="icon-sm"
+            className="active:not-aria-[haspopup]:translate-y-0 not-data-disabled:active:not-aria-[haspopup]:translate-y-px data-disabled:opacity-50"
+            disabled={disabled}
+            focusableWhenDisabled
+            onClick={onClick}
+          >
+            {children}
+          </Button>
+        }
+      />
+      <TooltipContent>{label}</TooltipContent>
+    </Tooltip>
   );
 }
 

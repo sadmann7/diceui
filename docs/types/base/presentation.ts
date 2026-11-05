@@ -1,4 +1,8 @@
-import type { PresentationStore } from "@diceui/pptx";
+import type {
+  EditOperation,
+  EditResult,
+  PresentationStore,
+} from "@diceui/pptx";
 
 import type { EmptyProps, RenderProps } from "@/types";
 
@@ -46,11 +50,85 @@ interface HistoryChangeEvent {
 }
 
 interface EditEvent {
+  operation: EditOperation;
+  result: EditResult;
   source: EditSource;
 }
 
+type SelectionMode =
+  | "idle"
+  | "selected"
+  | "move"
+  | "resize"
+  | "rotate"
+  | "text"
+  | "marquee"
+  | "draw";
+
+type ResizeDirection = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w";
+
+type ParagraphAlign = "left" | "center" | "right" | "justify";
+
+type NodeOrder = "front" | "back" | "forward" | "backward";
+
+type DrawTool = { type: "textBox" } | { type: "shape"; geometry: string };
+
 interface SelectionChangeEvent {
   nodeIds: string[];
+  nodes: unknown[];
+}
+
+interface SelectionBoxState {
+  node: unknown;
+  mode: SelectionMode;
+  dragging: boolean;
+  rotating: boolean;
+  rotation: number;
+}
+
+interface ResizeHandleState {
+  direction: ResizeDirection;
+}
+
+interface RotateHandleState {
+  rotation: number;
+  rotating: boolean;
+}
+
+interface SnapGuideState {
+  axis: "x" | "y";
+  position: number;
+}
+
+interface TextStyle {
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strikethrough?: boolean;
+  color?: string | null;
+  fontFamily?: string | null;
+  fontSize?: number | null;
+}
+
+interface ActiveTextStyle {
+  bold: boolean;
+  italic: boolean;
+  underline: boolean;
+  strikethrough: boolean;
+  color: string | null;
+  fontFamily: string | null;
+  fontSize: number | null;
+  align: ParagraphAlign | null;
+}
+
+interface SelectionAnchor {
+  getBoundingClientRect: () => DOMRect;
+  contextElement?: Element;
+}
+
+interface InsertOptions {
+  size?: { w: number; h: number };
+  position?: { x: number; y: number };
 }
 
 interface ThumbnailSelectEvent {
@@ -85,8 +163,8 @@ export interface PresentationProviderProps {
   store: PresentationStore;
 
   /**
-   * Content that can call `usePresentation`, `useSlide`, `useZoom`, and
-   * `useHistory`.
+   * Content that can call `usePresentation`, `useSlide`, `useZoom`,
+   * `useHistory`, and `useSelection`.
    */
   children?: React.ReactNode;
 }
@@ -234,15 +312,38 @@ export interface PresentationSlideProps extends EmptyProps<"div">, RenderProps {
 export interface PresentationSelectionProps
   extends EmptyProps<"div">, RenderProps {
   /**
+   * The overlay parts. Defaults to `PresentationSelectionBox` (with
+   * `PresentationResizeHandle` and `PresentationRotateHandle`),
+   * `PresentationSnapGuide`, and `PresentationMarquee`.
+   */
+  children?: React.ReactNode;
+
+  /**
    * When `true`, binds undo and redo to the deck: `Ctrl/Cmd+Z` and
    * `Ctrl/Cmd+Shift+Z` (or `Ctrl/Cmd+Y`).
    *
-   * Shortcuts only apply within `Presentation` and are ignored in text
-   * fields. Off by default to avoid conflicts with the surrounding app.
+   * Shortcuts only apply within `Presentation`. Text fields keep their own
+   * undo. Off by default to avoid conflicts with the surrounding app.
    *
    * @default false
    */
   undoRedoShortcuts?: boolean;
+
+  /**
+   * Whether moving and resizing snap to the slide's edges and center and to
+   * other shapes, with guides. Hold Alt (Option) while dragging to place
+   * freely.
+   *
+   * @default true
+   */
+  snapping?: boolean;
+
+  /**
+   * How close, in screen pixels, an edge or center has to come to snap.
+   *
+   * @default 6
+   */
+  snapThreshold?: number;
 
   /**
    * Event handler called after an undo triggers.
@@ -277,12 +378,88 @@ export interface PresentationSelectionProps
   onSelectionChange?: (event: SelectionChangeEvent) => void;
 
   /**
-   * Event handler called when the interaction mode changes.
+   * Event handler called when the interaction mode changes. `"move"` starts
+   * only once a press drags.
    */
-  onModeChange?: (
-    mode: "idle" | "selected" | "move" | "resize" | "text" | "marquee",
-    previousMode: "idle" | "selected" | "move" | "resize" | "text" | "marquee",
-  ) => void;
+  onModeChange?: (mode: SelectionMode, previousMode: SelectionMode) => void;
+}
+
+export interface PresentationSelectionBoxProps
+  extends EmptyProps<"div">, RenderProps {
+  /**
+   * Class name for each outline, or a function of its state.
+   */
+  className?: string | ((state: SelectionBoxState) => string | undefined);
+
+  /**
+   * Style for each outline, or a function of its state.
+   */
+  style?:
+    | React.CSSProperties
+    | ((state: SelectionBoxState) => React.CSSProperties | undefined);
+
+  /**
+   * `PresentationResizeHandle` and `PresentationRotateHandle`.
+   */
+  children?: React.ReactNode;
+}
+
+export interface PresentationResizeHandleProps
+  extends EmptyProps<"div">, RenderProps {
+  /**
+   * Class name for each handle, or a function of its `direction`.
+   */
+  className?: string | ((state: ResizeHandleState) => string | undefined);
+
+  /**
+   * Style for each handle, or a function of its `direction`.
+   */
+  style?:
+    | React.CSSProperties
+    | ((state: ResizeHandleState) => React.CSSProperties | undefined);
+}
+
+export interface PresentationRotateHandleProps
+  extends EmptyProps<"div">, RenderProps {
+  /**
+   * Class name for the handle, or a function of its state.
+   */
+  className?: string | ((state: RotateHandleState) => string | undefined);
+
+  /**
+   * Style for the handle, or a function of its state.
+   */
+  style?:
+    | React.CSSProperties
+    | ((state: RotateHandleState) => React.CSSProperties | undefined);
+}
+
+export interface PresentationSnapGuideProps
+  extends EmptyProps<"div">, RenderProps {
+  /**
+   * Class name for each guide, or a function of its `axis` and `position`.
+   */
+  className?: string | ((state: SnapGuideState) => string | undefined);
+
+  /**
+   * Style for each guide, or a function of its `axis` and `position`.
+   */
+  style?:
+    | React.CSSProperties
+    | ((state: SnapGuideState) => React.CSSProperties | undefined);
+}
+
+export interface PresentationMarqueeProps
+  extends EmptyProps<"div">, RenderProps {
+  /**
+   * Class name for the marquee.
+   */
+  className?: string;
+
+  /**
+   * Style for the marquee.
+   */
+  style?: React.CSSProperties;
 }
 
 export interface PresentationLoadingProps
@@ -325,6 +502,18 @@ export interface PresentationThumbnailListProps
    * @default false
    */
   loop?: boolean;
+
+  /**
+   * What takes focus once a presentation finishes loading. `true` focuses the
+   * active thumbnail, a ref focuses that element, and a function decides per
+   * load.
+   *
+   * @default false
+   */
+  initialFocus?:
+    | boolean
+    | React.RefObject<HTMLElement | null>
+    | (() => boolean | void | HTMLElement | null);
 }
 
 export interface PresentationThumbnailItemProps
@@ -432,8 +621,15 @@ export interface UseZoomResult {
   /** Decreases zoom by `step`. Turns auto-fit off. @default step 0.25 */
   zoomOut: (step?: number) => void;
 
-  /** Turns auto-fit on or off. */
+  /** Turns auto-fit on or off. Turning it on refits the slide immediately. */
   setAutoFit: (isAutoFit: boolean) => void;
+
+  /** Fits the slide inside the given width and height, with optional padding. */
+  fitTo: (
+    containerWidth: number,
+    containerHeight: number,
+    padding?: AutoFitPadding,
+  ) => void;
 }
 
 export interface UseHistoryResult {
@@ -446,9 +642,88 @@ export interface UseHistoryResult {
   /** Whether the deck has unsaved changes. */
   isDirty: boolean;
 
-  /** Revert the most recent edit. Returns `false` when the undo stack is empty. */
-  undo: () => boolean;
+  /** Revert the most recent edit. Resolves `false` when the undo stack is empty. */
+  undo: () => Promise<boolean>;
 
-  /** Re-apply the most recently undone edit. */
+  /** Re-apply the most recently undone edit. Resolves `false` when the redo stack is empty. */
   redo: () => Promise<boolean>;
+}
+
+export interface UseSelectionResult {
+  /** Interaction mode of the selection overlay. */
+  mode: SelectionMode;
+
+  /** Ids of the selected nodes, in selection order. In text mode, the edited node. */
+  nodeIds: string[];
+
+  /** The selected nodes, matching `nodeIds`. */
+  nodes: unknown[];
+
+  /**
+   * Formatting of the text being edited, or of all text in the selected
+   * shapes. `null` when the selection has no text.
+   */
+  textStyle: ActiveTextStyle | null;
+
+  /**
+   * The selection's on-screen bounds, for anchoring a floating toolbar.
+   * `null` when nothing is selected.
+   */
+  anchor: SelectionAnchor | null;
+
+  /** Selects the given nodes on the active slide. Ends text editing. */
+  select: (nodeIds: string[]) => void;
+
+  /** Clears the selection. Ends text editing. */
+  clear: () => void;
+
+  /** Starts editing a shape's text, with the caret at the end. */
+  editText: (nodeId: string) => void;
+
+  /** The armed draw tool, or `null`. */
+  drawTool: DrawTool | null;
+
+  /**
+   * Arms a draw tool. A click on the slide places a text box or shape at its
+   * default size, and a drag draws it. Pass `null`, or press Escape, to disarm.
+   */
+  startDrawing: (tool: DrawTool | null) => void;
+
+  /** Duplicates the selected shapes and selects the copies. */
+  duplicate: () => Promise<void>;
+
+  /** Deletes the selected shapes. */
+  remove: () => Promise<void>;
+
+  /** Moves the selected shapes in the stacking order. */
+  reorder: (order: NodeOrder) => Promise<void>;
+
+  /**
+   * Adds a text box to the active slide and starts editing it. Resolves with
+   * the new node's id.
+   */
+  insertTextBox: (
+    options?: InsertOptions & { text?: string },
+  ) => Promise<string | undefined>;
+
+  /**
+   * Adds a preset shape (e.g. `"rect"`, `"ellipse"`) to the active slide and
+   * selects it. Resolves with the new node's id.
+   */
+  insertShape: (
+    geometry: string,
+    options?: InsertOptions,
+  ) => Promise<string | undefined>;
+
+  /**
+   * Formats the selected text (or the word at the caret) in text mode, and
+   * all text in the selected shapes otherwise. One undo step.
+   */
+  setTextStyle: (style: TextStyle) => Promise<void>;
+
+  /**
+   * Formats the paragraphs the text selection touches in text mode, and every
+   * paragraph in the selected shapes otherwise.
+   */
+  setParagraphStyle: (style: { align?: ParagraphAlign }) => Promise<void>;
 }

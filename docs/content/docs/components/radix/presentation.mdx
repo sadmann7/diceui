@@ -89,11 +89,26 @@ return (
 
 Pass a `File`, `Blob`, `ArrayBuffer`, or `Uint8Array` to `file` on `Presentation`. There is no toolbar in this item — toolbars are assembled around the primitives.
 
+Without children, `PresentationSelection` renders its overlay parts with a default look. Compose them to restyle the overlay or leave parts out.
+
+```tsx
+<PresentationSelection>
+  <PresentationSelectionBox>
+    <PresentationResizeHandle />
+    <PresentationRotateHandle />
+  </PresentationSelectionBox>
+  <PresentationSnapGuide />
+  <PresentationMarquee />
+</PresentationSelection>
+```
+
 ## Examples
 
 ### Editing
 
-Load with `readOnly={false}` and place `PresentationSelection` inside `PresentationSlide` to move, resize, and edit text. Undo and redo shortcuts are opt-in via `undoRedoShortcuts`. Drag thumbnails to reorder slides.
+Load with `readOnly={false}` and place `PresentationSelection` inside `PresentationSlide` to move, resize, rotate, and edit text. Undo and redo shortcuts are opt-in via `undoRedoShortcuts`. Drag thumbnails to reorder slides.
+
+The toolbar uses `useSelection` to insert text boxes and shapes, format text, and arrange or delete shapes. It is marked with `data-pptx-keep-selection` so pressing it keeps the selection and text editing.
 
 This example also uses `PresentationZoomSelect`, a companion control built with `useZoom` and `select`. Install it with `@diceui/presentation-zoom-select`.
 
@@ -157,21 +172,172 @@ Renders the active slide as a scaled DOM tree. Mounts an empty wrapper immediate
 
 ### PresentationSelection
 
-PowerPoint-style editing overlay. Enables drag-to-move, resize, inline text editing, multi-select, and keyboard shortcuts. Renders nothing unless the presentation was loaded with `readOnly={false}`.
+PowerPoint-style editing overlay. Enables drag-to-move, resize, rotation, snapping, inline text editing, multi-select, copy and paste, and keyboard shortcuts. Renders nothing unless the presentation was loaded with `readOnly={false}`.
 
 Must be placed inside `PresentationSlide`.
+
+| Action | Behavior |
+| --- | --- |
+| Click shape | Select |
+| Click selected shape, double-click, or type | Edit text |
+| Drag shape | Move (Shift locks one axis, Alt skips snapping) |
+| Drag resize handle | Resize (Shift on a corner keeps the aspect ratio) |
+| Drag rotate handle | Rotate (Shift steps by 15°) |
+| Shift/Ctrl/Cmd + click | Toggle a shape in the selection |
+| Drag empty canvas | Marquee select |
+
+Moving and resizing snap to the slide's edges and center and to other shapes. Set `snapping={false}` to turn it off, or `snapThreshold` to change the distance. A text box left empty is removed once editing moves elsewhere.
 
 <AutoTypeTable
   path="./types/radix/presentation.ts"
   name="PresentationSelectionProps"
 />
 
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-mode]",
+      value: ["idle", "selected", "move", "resize", "rotate", "text", "marquee", "draw"],
+    },
+  ]}
+/>
+
 <CSSVariablesTable
   data={[
     {
       title: "--presentation-selection",
-      description: "Accent color for the selection overlay, resize handles, and marquee.",
-      defaultValue: "var(--ring)",
+      description: "Color of the selection outline, handles, and marquee.",
+      defaultValue: "#1a73e8",
+    },
+    {
+      title: "--presentation-snap-guide",
+      description: "Color of the snap guides.",
+      defaultValue: "#f43f5e",
+    },
+    {
+      title: "--presentation-snap-guide-width",
+      description: "Thickness of the snap guides.",
+      defaultValue: "1px",
+    },
+    {
+      title: "--presentation-rotate-handle-offset",
+      description: "Distance of the rotate handle above the outline.",
+      defaultValue: "20px",
+    },
+    {
+      title: "--presentation-rotate-cursor",
+      description: "Cursor over the rotate handle and while rotating.",
+      defaultValue: "crosshair",
+    },
+  ]}
+/>
+
+### PresentationSelectionBox
+
+The outline around each selected shape. Rendered once per selected shape.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationSelectionBoxProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-selection-box]",
+      value: "Present on every outline.",
+    },
+    {
+      title: "[data-mode]",
+      value: ["selected", "move", "resize", "rotate", "text"],
+    },
+    {
+      title: "[data-dragging]",
+      value: "Present while the selection is being moved.",
+    },
+    {
+      title: "[data-rotating]",
+      value: "Present while the selection is being rotated.",
+    },
+  ]}
+/>
+
+### PresentationResizeHandle
+
+The handles on each edge and corner. Goes inside `PresentationSelectionBox`. On a shape too small to grab between them, they sit outside it, and a flat line shows only its two ends.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationResizeHandleProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-resize-handle]",
+      value: ["nw", "n", "ne", "e", "se", "s", "sw", "w"],
+    },
+  ]}
+/>
+
+### PresentationRotateHandle
+
+The handle above the shape for rotating. Goes inside `PresentationSelectionBox`. Hidden while moving or resizing, and on tables and charts.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationRotateHandleProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-rotate-handle]",
+      value: "Present on the handle.",
+    },
+    {
+      title: "[data-rotating]",
+      value: "Present while the shape is being rotated.",
+    },
+  ]}
+/>
+
+### PresentationSnapGuide
+
+The line shown when a shape snaps into place. Rendered once per snapped line while moving or resizing.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationSnapGuideProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-snap-guide]",
+      value: ["x", "y"],
+    },
+  ]}
+/>
+
+### PresentationMarquee
+
+The box drawn while dragging across empty canvas, or while drawing with a draw tool.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationMarqueeProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-marquee]",
+      value: "Present on the marquee.",
+    },
+    {
+      title: "[data-draw]",
+      value: "Present while drawing a text box or shape.",
     },
   ]}
 />
@@ -232,7 +398,7 @@ Clickable item for a single slide in a `PresentationThumbnailList`.
 
 ### PresentationThumbnailItemPreview
 
-Renders the slide miniature for the enclosing `PresentationThumbnailItem`. Previews are rendered lazily as they approach the viewport.
+Renders the slide miniature for the enclosing `PresentationThumbnailItem`. Previews are rendered lazily as they approach the viewport, and at most 50 are kept in memory.
 
 <AutoTypeTable
   path="./types/radix/presentation.ts"
@@ -295,11 +461,43 @@ Subscribes to zoom state. Setting an explicit level turns auto-fit off; `setAuto
 
 ### useHistory
 
-Undo, redo, and whether the deck has unsaved edits.
+Undo, redo, and whether the deck has unsaved edits. Both `undo` and `redo` return a promise.
 
 <AutoTypeTable
   path="./types/radix/presentation.ts"
   name="UseHistoryResult"
+/>
+
+### useSelection
+
+Reads the editing overlay's selection and its text formatting, and runs commands on it. Works anywhere under `PresentationProvider` or `Presentation`, so a toolbar can sit outside the slide.
+
+Pressing a toolbar would normally clear the selection and end text editing. Mark the toolbar, and the content of its popovers and menus, with `data-pptx-keep-selection` (exported as `KEEP_SELECTION_ATTRIBUTE`).
+
+```tsx
+import { useSelection } from "@diceui/pptx";
+
+function BoldButton() {
+  const { textStyle, setTextStyle } = useSelection();
+
+  return (
+    <button
+      data-pptx-keep-selection=""
+      aria-pressed={textStyle?.bold ?? false}
+      disabled={!textStyle}
+      onClick={() => void setTextStyle({ bold: !textStyle?.bold })}
+    >
+      Bold
+    </button>
+  );
+}
+```
+
+Use `anchor` to position a floating toolbar over the selection, and show it while `mode` is `"selected"` or `"text"`.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="UseSelectionResult"
 />
 
 Create a store with `useCreatePresentationStore` for programmatic `load`, `edit`, `save`, and `reset`. See the [store API](https://pptx.diceui.com/docs/store) for the full imperative surface.
@@ -333,10 +531,18 @@ Create a store with `useCreatePresentationStore` for programmatic `load`, `edit`
 
 #### Selection overlay
 
-Available when the presentation is loaded with `readOnly={false}`.
+Available when the presentation is loaded with `readOnly={false}`. Screen readers announce what is selected.
 
 <KeyboardShortcutsTable
   data={[
+    {
+      keys: ["Enter", "F2"],
+      description: "Starts editing the selected shape's text. Typing also starts editing.",
+    },
+    {
+      keys: ["Tab", "Shift + Tab"],
+      description: "Selects the next or previous shape.",
+    },
     {
       keys: ["Arrow Keys"],
       description: "Nudges the selection by 1px. Hold Shift for 10px.",
@@ -347,11 +553,23 @@ Available when the presentation is loaded with `readOnly={false}`.
     },
     {
       keys: ["Escape"],
-      description: "Exits text editing, then deselects.",
+      description: "Disarms the draw tool, then exits text editing, then deselects.",
     },
     {
       keys: ["Ctrl/Cmd + A"],
       description: "Selects every shape on the slide.",
+    },
+    {
+      keys: ["Ctrl/Cmd + D"],
+      description: "Duplicates the selected shapes.",
+    },
+    {
+      keys: ["Ctrl/Cmd + C", "Ctrl/Cmd + X", "Ctrl/Cmd + V"],
+      description: "Copies, cuts, or pastes shapes. Pasting an image inserts it.",
+    },
+    {
+      keys: ["Ctrl/Cmd + ]", "Ctrl/Cmd + ["],
+      description: "Brings the selection forward or sends it backward. Hold Shift to move it to the front or back.",
     },
     {
       keys: ["Ctrl/Cmd + Z"],

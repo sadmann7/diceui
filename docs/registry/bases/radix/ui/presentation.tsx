@@ -77,12 +77,114 @@ function PresentationSlide({
 
 function PresentationSelection({
   className,
+  children,
   ...props
 }: PresentationPrimitive.Selection.Props) {
   return (
     <PresentationPrimitive.Selection
       data-slot="presentation-selection"
       className={cn("cn-presentation-selection", className)}
+      {...props}
+    >
+      {children ?? (
+        <>
+          <PresentationSelectionBox>
+            <PresentationResizeHandle />
+            <PresentationRotateHandle />
+          </PresentationSelectionBox>
+          <PresentationSnapGuide />
+          <PresentationMarquee />
+        </>
+      )}
+    </PresentationPrimitive.Selection>
+  );
+}
+
+function PresentationSelectionBox({
+  className,
+  ...props
+}: PresentationPrimitive.SelectionBox.Props) {
+  return (
+    <PresentationPrimitive.SelectionBox
+      data-slot="presentation-selection-box"
+      className={(state) =>
+        cn(
+          "cn-presentation-selection-box",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
+      {...props}
+    />
+  );
+}
+
+function PresentationResizeHandle({
+  className,
+  ...props
+}: PresentationPrimitive.ResizeHandle.Props) {
+  return (
+    <PresentationPrimitive.ResizeHandle
+      data-slot="presentation-resize-handle"
+      className={(state) =>
+        cn(
+          "cn-presentation-resize-handle",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
+      {...props}
+    />
+  );
+}
+
+function PresentationRotateHandle({
+  className,
+  ...props
+}: PresentationPrimitive.RotateHandle.Props) {
+  return (
+    <PresentationPrimitive.RotateHandle
+      data-slot="presentation-rotate-handle"
+      className={(state) =>
+        cn(
+          "cn-presentation-rotate-handle",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
+      {...props}
+    />
+  );
+}
+
+function PresentationSnapGuide({
+  className,
+  ...props
+}: PresentationPrimitive.SnapGuide.Props) {
+  return (
+    <PresentationPrimitive.SnapGuide
+      data-slot="presentation-snap-guide"
+      className={(state) =>
+        cn(
+          "cn-presentation-snap-guide",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
+      {...props}
+    />
+  );
+}
+
+function PresentationMarquee({
+  className,
+  ...props
+}: PresentationPrimitive.Marquee.Props) {
+  return (
+    <PresentationPrimitive.Marquee
+      data-slot="presentation-marquee"
+      className={(state) =>
+        cn(
+          "cn-presentation-marquee",
+          typeof className === "function" ? className(state) : className,
+        )
+      }
       {...props}
     />
   );
@@ -284,9 +386,14 @@ export {
   PresentationContent,
   PresentationError,
   PresentationLoading,
+  PresentationMarquee,
   PresentationProvider,
+  PresentationResizeHandle,
+  PresentationRotateHandle,
   PresentationSelection,
+  PresentationSelectionBox,
   PresentationSlide,
+  PresentationSnapGuide,
   PresentationThumbnailItem,
   PresentationThumbnailItemNumber,
   PresentationThumbnailItemPreview,
