@@ -13,10 +13,19 @@ export type EmptyProps<
   K extends PropertyKey = keyof React.ComponentProps<T>,
 > = Omit<React.ComponentProps<T>, K>;
 
+type RedefinedKeys<TComp, TBase extends React.ElementType> = {
+  [K in keyof TComp & keyof React.ComponentProps<TBase>]-?: [TComp[K]] extends [
+    React.ComponentProps<TBase>[K],
+  ]
+    ? never
+    : K;
+}[keyof TComp & keyof React.ComponentProps<TBase>];
+
 export type EmptyCompProps<TComp, TBase extends React.ElementType> = Omit<
   TComp,
   keyof React.ComponentProps<TBase>
->;
+> &
+  Pick<TComp, Exclude<RedefinedKeys<TComp, TBase>, "ref">>;
 
 export interface CompositionProps {
   /**

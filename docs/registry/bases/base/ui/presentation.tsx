@@ -77,12 +77,89 @@ function PresentationSlide({
 
 function PresentationSelection({
   className,
+  children,
   ...props
 }: PresentationPrimitive.Selection.Props) {
   return (
     <PresentationPrimitive.Selection
       data-slot="presentation-selection"
       className={cn("cn-presentation-selection", className)}
+      {...props}
+    >
+      {children ?? (
+        <>
+          <PresentationSelectionBox>
+            <PresentationResizeHandle />
+            <PresentationRotateHandle />
+          </PresentationSelectionBox>
+          <PresentationSnapGuide />
+          <PresentationMarquee />
+        </>
+      )}
+    </PresentationPrimitive.Selection>
+  );
+}
+
+function PresentationSelectionBox({
+  className,
+  ...props
+}: PresentationPrimitive.SelectionBox.Props) {
+  return (
+    <PresentationPrimitive.SelectionBox
+      data-slot="presentation-selection-box"
+      className={withClassName("cn-presentation-selection-box", className)}
+      {...props}
+    />
+  );
+}
+
+function PresentationResizeHandle({
+  className,
+  ...props
+}: PresentationPrimitive.ResizeHandle.Props) {
+  return (
+    <PresentationPrimitive.ResizeHandle
+      data-slot="presentation-resize-handle"
+      className={withClassName("cn-presentation-resize-handle", className)}
+      {...props}
+    />
+  );
+}
+
+function PresentationRotateHandle({
+  className,
+  ...props
+}: PresentationPrimitive.RotateHandle.Props) {
+  return (
+    <PresentationPrimitive.RotateHandle
+      data-slot="presentation-rotate-handle"
+      className={withClassName("cn-presentation-rotate-handle", className)}
+      {...props}
+    />
+  );
+}
+
+function PresentationSnapGuide({
+  className,
+  ...props
+}: PresentationPrimitive.SnapGuide.Props) {
+  return (
+    <PresentationPrimitive.SnapGuide
+      data-slot="presentation-snap-guide"
+      className={withClassName("cn-presentation-snap-guide", className)}
+      {...props}
+    />
+  );
+}
+
+function PresentationMarquee({
+  className,
+  ...props
+}: PresentationPrimitive.Marquee.Props) {
+  return (
+    <PresentationPrimitive.Marquee
+      data-slot="presentation-marquee"
+      className={withClassName("cn-presentation-marquee", className)}
       {...props}
     />
   );
@@ -279,14 +356,27 @@ function PresentationThumbnailList({
   );
 }
 
+function withClassName<State>(
+  base: string,
+  className: string | ((state: State) => string | undefined) | undefined,
+) {
+  return (state: State) =>
+    cn(base, typeof className === "function" ? className(state) : className);
+}
+
 export {
   Presentation,
   PresentationContent,
   PresentationError,
   PresentationLoading,
+  PresentationMarquee,
   PresentationProvider,
+  PresentationResizeHandle,
+  PresentationRotateHandle,
   PresentationSelection,
+  PresentationSelectionBox,
   PresentationSlide,
+  PresentationSnapGuide,
   PresentationThumbnailItem,
   PresentationThumbnailItemNumber,
   PresentationThumbnailItemPreview,

@@ -1,0 +1,56 @@
+---
+title: November 2026 - Presentation Editing
+description: Presentation gains a formatting toolbar API, snapping, rotation, and composable overlay parts. Includes breaking changes.
+date: 2026-11-05T12:00:00Z
+---
+
+[Presentation](/docs/components/presentation) now covers more of a slide editor, built on [`@diceui/pptx`](https://pptx.diceui.com/docs) 0.3.
+
+```package-install
+npx shadcn@latest add @diceui/presentation
+```
+
+## Editing
+
+- **Selection.** A click selects a shape. Click it again, double-click, or type to edit its text. An empty text box is removed once editing moves elsewhere.
+- **Snapping.** Moving and resizing snap to the slide and to other shapes, with guides. Hold <Kbd>Alt</Kbd> to place freely, or set `snapping` and `snapThreshold`.
+- **Rotation.** Drag the handle above a shape to rotate it. Rotated shapes resize along their own axes.
+- **Shortcuts.** <Kbd>Tab</Kbd> moves between shapes, <Kbd>Ctrl</Kbd> / <Kbd>Cmd</Kbd> + <Kbd>D</Kbd> duplicates, copy, cut, and paste work within and between decks, and <Kbd>Ctrl</Kbd> / <Kbd>Cmd</Kbd> + <Kbd>]</Kbd> and <Kbd>Ctrl</Kbd> / <Kbd>Cmd</Kbd> + <Kbd>[</Kbd> arrange.
+- **Thumbnails.** The list keeps at most 50 rendered previews, and pending previews no longer pulse.
+
+## Formatting toolbar
+
+`useSelection` reads the selection and its text formatting, and formats, duplicates, deletes, reorders, and inserts text boxes and shapes. `startDrawing` arms a draw tool that places a text box or shape where the slide is clicked or dragged. Mark toolbars and their menus with `data-pptx-keep-selection` so pressing them keeps the selection.
+
+The editing example now has a small toolbar built with it.
+
+## Overlay parts
+
+The selection overlay is composable from `PresentationSelectionBox`, `PresentationResizeHandle`, `PresentationRotateHandle`, `PresentationSnapGuide`, and `PresentationMarquee`. `PresentationSelection` renders all of them by default.
+
+```tsx
+<PresentationSelection>
+  <PresentationSelectionBox>
+    <PresentationResizeHandle />
+    <PresentationRotateHandle />
+  </PresentationSelectionBox>
+  <PresentationSnapGuide />
+  <PresentationMarquee />
+</PresentationSelection>
+```
+
+## Breaking changes
+
+- **`undo()` returns a promise.** `useHistory().undo` and `store.undo()` resolve to a boolean, like `redo()`.
+- **`move` starts on drag.** `mode` and `data-mode` stay `"selected"` on a press and only become `"move"` once it drags.
+- **Click selects text boxes.** A single click no longer starts editing a text box or placeholder.
+- **New selection color.** The default `--presentation-selection` is `#1a73e8` instead of `var(--ring)`.
+- **Resize handle attribute.** Resize handles carry `data-resize-handle` instead of `data-resize-grip`.
+- **New modes.** `onModeChange` and `mode` can report `"rotate"` and `"draw"`.
+
+## Migrating
+
+1. Update `@diceui/pptx` to 0.3 and reinstall the Presentation component.
+2. Await or `void` calls to `undo()`.
+3. Rename `[data-resize-grip]` selectors to `[data-resize-handle]`.
+4. Set `--presentation-selection: var(--ring)` to keep the old selection color.
