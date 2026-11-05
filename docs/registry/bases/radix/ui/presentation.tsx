@@ -107,7 +107,7 @@ function PresentationSelectionBox({
   return (
     <PresentationPrimitive.SelectionBox
       data-slot="presentation-selection-box"
-      className={withClassName("cn-presentation-selection-box", className)}
+      className={withClassName(cn("cn-presentation-selection-box"), className)}
       {...props}
     />
   );
@@ -120,7 +120,7 @@ function PresentationResizeHandle({
   return (
     <PresentationPrimitive.ResizeHandle
       data-slot="presentation-resize-handle"
-      className={withClassName("cn-presentation-resize-handle", className)}
+      className={withClassName(cn("cn-presentation-resize-handle"), className)}
       {...props}
     />
   );
@@ -133,7 +133,7 @@ function PresentationRotateHandle({
   return (
     <PresentationPrimitive.RotateHandle
       data-slot="presentation-rotate-handle"
-      className={withClassName("cn-presentation-rotate-handle", className)}
+      className={withClassName(cn("cn-presentation-rotate-handle"), className)}
       {...props}
     />
   );
@@ -146,7 +146,7 @@ function PresentationSnapGuide({
   return (
     <PresentationPrimitive.SnapGuide
       data-slot="presentation-snap-guide"
-      className={withClassName("cn-presentation-snap-guide", className)}
+      className={withClassName(cn("cn-presentation-snap-guide"), className)}
       {...props}
     />
   );
@@ -159,7 +159,7 @@ function PresentationMarquee({
   return (
     <PresentationPrimitive.Marquee
       data-slot="presentation-marquee"
-      className={withClassName("cn-presentation-marquee", className)}
+      className={withClassName(cn("cn-presentation-marquee"), className)}
       {...props}
     />
   );
@@ -266,7 +266,7 @@ function PresentationThumbnailList({
   React.useEffect(() => {
     if (!isMobile || !open) return;
 
-    let pendingPointerId: number | null = null;
+    const pendingPointerIds = new Set<number>();
 
     function isInside(target: Node) {
       return (
@@ -276,19 +276,21 @@ function PresentationThumbnailList({
     }
 
     function onPointerDown(event: PointerEvent) {
-      pendingPointerId = isInside(event.target as Node)
-        ? null
-        : event.pointerId;
+      if (!isInside(event.target as Node))
+        pendingPointerIds.add(event.pointerId);
     }
 
     function onPointerUp(event: PointerEvent) {
-      const isPendingPointer = pendingPointerId === event.pointerId;
-      pendingPointerId = null;
-      if (isPendingPointer && !isInside(event.target as Node)) setOpen(false);
+      if (
+        pendingPointerIds.delete(event.pointerId) &&
+        !isInside(event.target as Node)
+      ) {
+        setOpen(false);
+      }
     }
 
-    function onPointerCancel() {
-      pendingPointerId = null;
+    function onPointerCancel(event: PointerEvent) {
+      pendingPointerIds.delete(event.pointerId);
     }
 
     function onKeyDown(event: KeyboardEvent) {
