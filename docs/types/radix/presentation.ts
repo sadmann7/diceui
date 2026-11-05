@@ -1,97 +1,84 @@
 import type { Presentation as PresentationPrimitive } from "@diceui/pptx";
-import type * as React from "react";
 
-import type { EmptyProps } from "@/types";
-
-type OverriddenHtmlKeys<T, Html> = {
-  [K in keyof T & keyof Html]-?: [T[K]] extends [Html[K]] ? never : K;
-}[keyof T & keyof Html];
-
-/** A part's own props: the host element's are dropped, except names it redefines. */
-type IndieProps<T, Html> = Omit<T, keyof Html> &
-  Pick<T, OverriddenHtmlKeys<T, Html>>;
-
-type DivProps = React.ComponentProps<"div">;
-type ButtonProps = React.ComponentProps<"button">;
-type SpanProps = React.ComponentProps<"span">;
+import type { EmptyCompProps, EmptyProps } from "@/types";
 
 export type PresentationProviderProps = PresentationPrimitive.Provider.Props;
 
-export type PresentationProps = IndieProps<
+export type PresentationProps = EmptyCompProps<
   PresentationPrimitive.Root.Props,
-  DivProps
+  "div"
 >;
 
 export interface PresentationContentProps extends EmptyProps<"div"> {}
 
-export type PresentationViewportProps = IndieProps<
+export type PresentationViewportProps = EmptyCompProps<
   PresentationPrimitive.Viewport.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationSlideProps = IndieProps<
+export type PresentationSlideProps = EmptyCompProps<
   PresentationPrimitive.Slide.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationSelectionProps = IndieProps<
+export type PresentationSelectionProps = EmptyCompProps<
   PresentationPrimitive.Selection.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationSelectionBoxProps = IndieProps<
+export type PresentationSelectionBoxProps = EmptyCompProps<
   PresentationPrimitive.SelectionBox.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationResizeHandleProps = IndieProps<
+export type PresentationResizeHandleProps = EmptyCompProps<
   PresentationPrimitive.ResizeHandle.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationRotateHandleProps = IndieProps<
+export type PresentationRotateHandleProps = EmptyCompProps<
   PresentationPrimitive.RotateHandle.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationSnapGuideProps = IndieProps<
+export type PresentationSnapGuideProps = EmptyCompProps<
   PresentationPrimitive.SnapGuide.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationMarqueeProps = IndieProps<
+export type PresentationMarqueeProps = EmptyCompProps<
   PresentationPrimitive.Marquee.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationLoadingProps = IndieProps<
+export type PresentationLoadingProps = EmptyCompProps<
   PresentationPrimitive.Loading.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationErrorProps = IndieProps<
+export type PresentationErrorProps = EmptyCompProps<
   PresentationPrimitive.Error.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationThumbnailListProps = IndieProps<
+export type PresentationThumbnailListProps = EmptyCompProps<
   PresentationPrimitive.ThumbnailList.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationThumbnailItemProps = IndieProps<
+export type PresentationThumbnailItemProps = EmptyCompProps<
   PresentationPrimitive.ThumbnailItem.Props,
-  ButtonProps
+  "button"
 >;
 
-export type PresentationThumbnailItemPreviewProps = IndieProps<
+export type PresentationThumbnailItemPreviewProps = EmptyCompProps<
   PresentationPrimitive.ThumbnailItemPreview.Props,
-  DivProps
+  "div"
 >;
 
-export type PresentationThumbnailItemNumberProps = IndieProps<
+export type PresentationThumbnailItemNumberProps = EmptyCompProps<
   PresentationPrimitive.ThumbnailItemNumber.Props,
-  SpanProps
+  "span"
 >;
 
 export interface PresentationZoomSelectProps {
