@@ -12,48 +12,24 @@ links:
 
 ## Installation
 
-<CodeTabs>
+<Steps>
+  <Step>
+    Install the main component and dependencies:
 
-<TabsList>
-  <TabsTrigger value="cli">Command</TabsTrigger>
-  <TabsTrigger value="manual">Manual</TabsTrigger>
-</TabsList>
+    ```package-install
+    npx shadcn@latest add "@diceui/presentation"
+    ```
+  </Step>
+  <Step>
+    Install the following optional components:
 
-<TabsContent value="cli">
+    [`PresentationZoomSelect`](#presentationzoomselect):
 
-```package-install
-npx shadcn@latest add @diceui/presentation
-```
-
-</TabsContent>
-
-<TabsContent value="manual">
-
-<Steps className="pt-2">
-
-<Step>Install the following dependencies:</Step>
-
-```package-install
-@diceui/pptx
-```
-
-<Step>Copy and paste the following hook into your `hooks` directory.</Step>
-
-<ComponentSource name="use-mobile" />
-
-<Step>Copy and paste the following code into your project.</Step>
-
-<ComponentSource name="presentation" />
-
-<Step>Update the import paths to match your project setup.</Step>
-
+    ```package-install
+    npx shadcn@latest add "@diceui/presentation-zoom-select"
+    ```
+  </Step>
 </Steps>
-
-</TabsContent>
-
-</CodeTabs>
-
-`@diceui/pptx` pulls in `@diceui/pptx-core` automatically. The thumbnail rail collapses below 768px behind a toggle, which is why this item also depends on `button` and `use-mobile`.
 
 ## Layout
 
@@ -106,7 +82,7 @@ Without children, `PresentationSelection` renders its overlay parts with a defau
 
 ### Editing
 
-Load with `readOnly={false}` to move, resize, rotate, and edit shapes. The toolbar is built with `useSelection`, and the zoom control is `@diceui/presentation-zoom-select`.
+Load with `readOnly={false}` to move, resize, rotate, and edit shapes and tables. The toolbar is built with `useSelection`, and the zoom control is `@diceui/presentation-zoom-select`.
 
 <ComponentTabs name="presentation-editing-demo" className="h-100 p-0" />
 
@@ -491,6 +467,8 @@ function BoldButton() {
 
 Use `anchor` to position a floating toolbar over the selection, and show it while `mode` is `"selected"` or `"text"`.
 
+Tables use `insertTable`, `changeTable`, and `setTableCellStyle`, with `cell` and `cellRange` for the edited and selected cells.
+
 <AutoTypeTable
   path="./types/base/presentation.ts"
   name="UseSelectionResult"
@@ -574,6 +552,35 @@ Available when the presentation is loaded with `readOnly={false}`. Screen reader
     {
       keys: ["Ctrl/Cmd + Y", "Ctrl/Cmd + Shift + Z"],
       description: "Redo. Bound only when undoRedoShortcuts is true.",
+    },
+  ]}
+/>
+
+#### Table cells
+
+Pressing a cell edits it, and dragging across cells or Shift-clicking selects them.
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Tab", "Shift + Tab"],
+      description: "Moves to the next or previous cell. Tab on the last cell adds a row.",
+    },
+    {
+      keys: ["Arrow Keys"],
+      description: "At the edge of a cell's text, moves to the next cell.",
+    },
+    {
+      keys: ["Ctrl/Cmd + A"],
+      description: "With cells selected, selects the whole table.",
+    },
+    {
+      keys: ["Delete", "Backspace"],
+      description: "Clears the selected cells.",
+    },
+    {
+      keys: ["Ctrl/Cmd + C", "Ctrl/Cmd + X", "Ctrl/Cmd + V"],
+      description: "Copies, cuts, or pastes cells, including from spreadsheets.",
     },
   ]}
 />
