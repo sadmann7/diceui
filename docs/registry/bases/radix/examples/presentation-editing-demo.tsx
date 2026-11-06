@@ -271,7 +271,7 @@ function FormattingToolbar({ disabled }: FormattingToolbarProps) {
       <ToolbarButton
         label="Table"
         disabled={disabled}
-        onClick={() => run(() => insertTable(3, 3))}
+        onClick={() => run(() => insertTable(2, 2))}
       >
         <TableIcon />
       </ToolbarButton>
