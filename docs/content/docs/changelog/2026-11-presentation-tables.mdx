@@ -1,0 +1,27 @@
+---
+title: November 2026 - Presentation Tables
+description: Presentation can insert and edit tables, built on @diceui/pptx 0.4.
+date: 2026-11-06T12:00:00Z
+---
+
+[Presentation](/docs/components/presentation) now edits tables, built on [`@diceui/pptx`](https://pptx.diceui.com/docs) 0.4.
+
+```package-install
+npx shadcn@latest add @diceui/presentation
+```
+
+## Tables
+
+- **Cells.** Press a cell to edit it. <Kbd>Tab</Kbd> and the arrow keys move between cells, and <Kbd>Tab</Kbd> on the last cell adds a row.
+- **Rows and columns.** Insert and delete rows and columns, and drag any border to resize one.
+- **Selecting cells.** Drag across cells or <Kbd>Shift</Kbd>-click to select them, then format, merge, clear, copy, or paste. <Kbd>Ctrl</Kbd> / <Kbd>Cmd</Kbd> + <Kbd>A</Kbd> selects the whole table.
+- **Styling.** Set cell fill, borders, and vertical alignment, and toggle the header row and banded rows.
+- **Spreadsheets.** Pasting cells from Google Sheets or Excel fills the table, and copied cells paste back into them.
+
+## useSelection
+
+`useSelection` adds `insertTable`, `cell`, `cellRange`, `changeTable`, and `setTableCellStyle`, and `editText` takes a cell. The editing example has a button to insert a table.
+
+## Migrating
+
+Update `@diceui/pptx` to 0.4. There are no breaking changes.

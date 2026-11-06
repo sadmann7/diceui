@@ -44,6 +44,7 @@ import {
   Redo2Icon,
   SendToBackIcon,
   SquareIcon,
+  TableIcon,
   Trash2Icon,
   TypeIcon,
   UnderlineIcon,
@@ -225,6 +226,7 @@ function FormattingToolbar({ disabled }: FormattingToolbarProps) {
     textStyle,
     drawTool,
     startDrawing,
+    insertTable,
     setTextStyle,
     setParagraphStyle,
     reorder,
@@ -265,6 +267,13 @@ function FormattingToolbar({ disabled }: FormattingToolbarProps) {
         }
       >
         <SquareIcon />
+      </ToolbarButton>
+      <ToolbarButton
+        label="Table"
+        disabled={disabled}
+        onClick={() => run(() => insertTable(3, 3))}
+      >
+        <TableIcon />
       </ToolbarButton>
       <Separator
         orientation="vertical"
