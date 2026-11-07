@@ -635,6 +635,9 @@ function getSelectedValues(value: QueryValue | undefined) {
 
 function QueryBuilderValueList({ options }: { options: QueryFieldOption[] }) {
   const listRef = React.useRef<HTMLSpanElement>(null);
+  const itemRefs = React.useRef<(HTMLSpanElement | null)[]>([]);
+  const labelRefs = React.useRef<(HTMLSpanElement | null)[]>([]);
+  const countRef = React.useRef<HTMLSpanElement>(null);
   const [visibleCount, setVisibleCount] = React.useState(options.length);
 
   React.useLayoutEffect(() => {
@@ -643,20 +646,17 @@ function QueryBuilderValueList({ options }: { options: QueryFieldOption[] }) {
 
     function measure() {
       if (!list) return;
-      const widths = Array.from(
-        list.querySelectorAll<HTMLElement>(
-          "[data-slot=query-builder-value-item]",
-        ),
-        (item) => {
-          const label = item.lastElementChild;
-          if (!label) return item.getBoundingClientRect().width;
-          return (
-            item.getBoundingClientRect().width -
-            label.getBoundingClientRect().width +
-            label.scrollWidth
-          );
-        },
-      );
+      const widths = options.map((_, index) => {
+        const item = itemRefs.current[index];
+        const label = labelRefs.current[index];
+        if (!item) return 0;
+        if (!label) return item.getBoundingClientRect().width;
+        return (
+          item.getBoundingClientRect().width -
+          label.getBoundingClientRect().width +
+          label.scrollWidth
+        );
+      });
       const gap = Number.parseFloat(getComputedStyle(list).columnGap) || 0;
       const available = list.getBoundingClientRect().width;
       const total = widths.reduce((sum, width) => sum + width + gap, -gap);
@@ -664,8 +664,7 @@ function QueryBuilderValueList({ options }: { options: QueryFieldOption[] }) {
         setVisibleCount(widths.length);
         return;
       }
-      const badge = list.querySelector("[data-slot=faceted-badge]");
-      let used = badge?.getBoundingClientRect().width ?? 24;
+      let used = countRef.current?.getBoundingClientRect().width ?? 24;
       let count = 0;
       for (const width of widths) {
         if (used + gap + width > available) break;
@@ -692,16 +691,27 @@ function QueryBuilderValueList({ options }: { options: QueryFieldOption[] }) {
       {options.map(({ label, value }, index) => (
         <span
           key={value}
+          ref={(node) => {
+            itemRefs.current[index] = node;
+          }}
           data-slot="query-builder-value-item"
           data-hidden={index >= visibleCount ? "" : undefined}
-          data-separator={index < visibleCount - 1 ? "" : undefined}
           className="cn-query-builder-value-item"
         >
-          <span className="cn-query-builder-value-label">{label}</span>
+          <FacetedBadge>
+            <span
+              ref={(node) => {
+                labelRefs.current[index] = node;
+              }}
+              className="cn-query-builder-value-label"
+            >
+              {label}
+            </span>
+          </FacetedBadge>
         </span>
       ))}
       {hiddenCount > 0 && (
-        <FacetedBadge className="cn-query-builder-value-count">
+        <FacetedBadge ref={countRef} className="cn-query-builder-value-count">
           +{hiddenCount}
         </FacetedBadge>
       )}
@@ -710,10 +720,14 @@ function QueryBuilderValueList({ options }: { options: QueryFieldOption[] }) {
 }
 
 interface QueryBuilderValueProps {
+  display?: "list" | "summary";
   className?: string;
 }
 
-function QueryBuilderValue({ className }: QueryBuilderValueProps) {
+function QueryBuilderValue({
+  display = "list",
+  className,
+}: QueryBuilderValueProps) {
   const { fields, disabled } = useQueryBuilderContext("QueryBuilderValue");
   const rule = useRuleContext("QueryBuilderValue");
   const { update } = useQueryActions("QueryBuilderValue");
@@ -821,6 +835,15 @@ function QueryBuilderValue({ className }: QueryBuilderValueProps) {
           >
             <FacetedValue>
               {() => {
+                if (selected.length > 0 && display === "summary") {
+                  return (
+                    <span className="cn-query-builder-select-value">
+                      {selected.length > 1
+                        ? `${selected.length} selected`
+                        : selected[0]?.label}
+                    </span>
+                  );
+                }
                 if (selected.length > 0) {
                   return <QueryBuilderValueList options={selected} />;
                 }

@@ -86,6 +86,18 @@ export interface QueryBuilderRulesProps
 export interface QueryBuilderRuleProps
   extends EmptyProps<"div">, CompositionProps {}
 
+export interface QueryBuilderValueProps {
+  /**
+   * The display of the selected values in select fields.
+   *
+   * - `list`: A badge for each value that fits, then `+N`.
+   * - `summary`: The value's label, or a count like "2 selected".
+   *
+   * @default "list"
+   */
+  display?: "list" | "summary";
+}
+
 export interface QueryBuilderAddRuleProps extends Omit<
   ButtonProps,
   keyof React.ComponentProps<"button">

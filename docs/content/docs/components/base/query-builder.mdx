@@ -364,7 +364,12 @@ A select for the group's combinator. It accepts the props of `SelectTrigger`.
 
 The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/base/faceted) picker for select and boolean fields, based on the field type and operator, and an empty, disabled input for `isEmpty` and `isNotEmpty`, which keeps the rule the same width and is hidden from screen readers. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
 
-Select fields take several values whenever their `operators` include both forms, like Linear's filters: picking a second value switches `eq` to `inArray` ("is" to "is any of") and `ne` to `notInArray`, and going back to one value switches back. Use `setQueryRuleValues` to do the same outside the picker. The trigger shows as many selected labels as fit, then `+N`, and the menu has a Clear action while anything is selected.
+Select fields take several values whenever their `operators` include both forms, like Linear's filters: picking a second value switches `eq` to `inArray` ("is" to "is any of") and `ne` to `notInArray`, and going back to one value switches back. Use `setQueryRuleValues` to do the same outside the picker. The trigger shows a badge for each selected value that fits, then `+N`, and the menu has a Clear action while anything is selected. Set `display="summary"` to show the label instead, or a count like "2 selected".
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderValueProps"
+/>
 
 ### QueryBuilderAddRule
 

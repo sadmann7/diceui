@@ -116,6 +116,43 @@ describe.each([
     },
   );
 
+  test.each([
+    [["todo"], "todo"],
+    [["todo", "done"], "2 selected"],
+  ])(
+    "shows a label or a count in the summary display (value: %j)",
+    (value, text) => {
+      render(
+        <QueryBuilder.QueryBuilder
+          fields={[getStatusField(true)]}
+          value={{
+            id: "root",
+            combinator: "and",
+            rules: [{ id: "1", field: "status", operator: "inArray", value }],
+          }}
+        >
+          <QueryBuilder.QueryBuilderGroup>
+            <QueryBuilder.QueryBuilderGroupContent>
+              <QueryBuilder.QueryBuilderRules>
+                <QueryBuilder.QueryBuilderRule>
+                  <QueryBuilder.QueryBuilderValue display="summary" />
+                </QueryBuilder.QueryBuilderRule>
+              </QueryBuilder.QueryBuilderRules>
+            </QueryBuilder.QueryBuilderGroupContent>
+          </QueryBuilder.QueryBuilderGroup>
+        </QueryBuilder.QueryBuilder>,
+      );
+
+      const trigger = screen.getByRole("button", {
+        name: `Status: ${value.join(", ")}`,
+      });
+      expect(trigger.textContent).toBe(text);
+      expect(
+        trigger.querySelector("[data-slot=faceted-badge]"),
+      ).not.toBeInTheDocument();
+    },
+  );
+
   test("names the field and operator triggers with their current choice", () => {
     render(
       <QueryBuilder.QueryBuilder

@@ -1583,7 +1583,7 @@
   }
 
   .cn-query-builder-select {
-    @apply justify-between gap-1 font-normal;
+    @apply justify-between gap-1 font-normal transition-[color,background-color,border-color,box-shadow] has-data-[slot=query-builder-value-list]:pl-1;
   }
 
   .cn-query-builder-select-value {
@@ -1591,11 +1591,11 @@
   }
 
   .cn-query-builder-value-list {
-    @apply relative flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden;
+    @apply relative flex min-w-0 flex-1 items-center gap-1 overflow-hidden;
   }
 
   .cn-query-builder-value-item {
-    @apply relative flex min-w-0 shrink-0 items-center first:shrink data-hidden:invisible data-hidden:absolute data-separator:after:absolute data-separator:after:start-full data-separator:after:content-[','];
+    @apply flex min-w-0 shrink-0 items-center first:shrink data-hidden:invisible data-hidden:absolute;
   }
 
   .cn-query-builder-value-label {
