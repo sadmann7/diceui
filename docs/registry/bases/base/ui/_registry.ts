@@ -448,6 +448,22 @@ export const ui: Registry["items"] = [
     devDependencies: ["@types/qrcode"],
   },
   {
+    name: "query-builder",
+    type: "registry:ui",
+    dependencies: ["@base-ui/react"],
+    registryDependencies: ["button", "input", "select", "@diceui/faceted"],
+    files: [
+      {
+        path: "ui/query-builder.tsx",
+        type: "registry:ui",
+      },
+      {
+        path: "lib/query-builder.ts",
+        type: "registry:lib",
+      },
+    ],
+  },
+  {
     name: "rating",
     type: "registry:ui",
     files: [
