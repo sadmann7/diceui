@@ -3,9 +3,12 @@ import type {
   QueryGroup,
 } from "@/registry/bases/base/lib/query-builder";
 import type { Button } from "@/registry/bases/base/ui/button";
+import type { QueryBuilderLabels } from "@/registry/bases/base/ui/query-builder";
+import type { SelectTrigger } from "@/registry/bases/base/ui/select";
 import type { EmptyProps, RenderProps } from "@/types";
 
 type ButtonProps = React.ComponentProps<typeof Button>;
+type SelectTriggerProps = React.ComponentProps<typeof SelectTrigger>;
 
 export interface QueryBuilderProps extends EmptyProps<"div">, RenderProps {
   /**
@@ -61,6 +64,20 @@ export interface QueryBuilderProps extends EmptyProps<"div">, RenderProps {
    * @default false
    */
   disabled?: boolean;
+
+  /**
+   * The built-in text, for translating or rewording it. Labels you leave out
+   * keep their English default.
+   *
+   * ```ts
+   * labels={{
+   *   where: "Où",
+   *   addRule: "Ajouter une règle",
+   *   selected: (count) => `${count} sélectionnés`,
+   * }}
+   * ```
+   */
+  labels?: Partial<QueryBuilderLabels>;
 }
 
 export interface QueryBuilderGroupProps
@@ -69,7 +86,28 @@ export interface QueryBuilderGroupProps
 export interface QueryBuilderGroupContentProps
   extends EmptyProps<"div">, RenderProps {}
 
-export interface QueryBuilderConnectorProps extends EmptyProps<"div"> {}
+export interface QueryBuilderConnectorProps
+  extends EmptyProps<"div">, RenderProps {}
+
+export interface QueryBuilderCombinatorProps extends Omit<
+  SelectTriggerProps,
+  keyof React.ComponentProps<"button">
+> {}
+
+export interface QueryBuilderNotProps extends Omit<
+  ButtonProps,
+  keyof React.ComponentProps<"button">
+> {}
+
+export interface QueryBuilderFieldProps extends Omit<
+  ButtonProps,
+  keyof React.ComponentProps<"button">
+> {}
+
+export interface QueryBuilderOperatorProps extends Omit<
+  ButtonProps,
+  keyof React.ComponentProps<"button">
+> {}
 
 export interface QueryBuilderGroupHeaderProps
   extends EmptyProps<"div">, RenderProps {}
@@ -100,12 +138,30 @@ export interface QueryBuilderValueProps {
 export interface QueryBuilderAddRuleProps extends Omit<
   ButtonProps,
   keyof React.ComponentProps<"button">
-> {}
+> {
+  /**
+   * The name of the field the new rule uses. Defaults to the first field.
+   *
+   * ```ts
+   * field="status"
+   * ```
+   */
+  field?: string;
+}
 
 export interface QueryBuilderAddGroupProps extends Omit<
   ButtonProps,
   keyof React.ComponentProps<"button">
-> {}
+> {
+  /**
+   * The name of the field the new rule uses. Defaults to the first field.
+   *
+   * ```ts
+   * field="status"
+   * ```
+   */
+  field?: string;
+}
 
 export interface QueryBuilderRemoveProps extends Omit<
   ButtonProps,

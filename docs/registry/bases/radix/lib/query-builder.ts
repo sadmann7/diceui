@@ -201,6 +201,30 @@ export function setQueryRuleOperator(
   };
 }
 
+export function setQueryRuleField(
+  rule: QueryRule,
+  from: QueryField | undefined,
+  to: QueryField,
+): QueryRule {
+  if (
+    !from ||
+    from.type !== to.type ||
+    !getQueryOperators(to).includes(rule.operator)
+  ) {
+    return { ...createQueryRule(to), id: rule.id };
+  }
+  if (to.type !== "select" && to.type !== "multiSelect") {
+    return { ...rule, field: to.name };
+  }
+  const options = new Set(to.options?.map((option) => option.value));
+  const value = Array.isArray(rule.value)
+    ? rule.value.filter((item) => options.has(item))
+    : rule.value && options.has(rule.value)
+      ? rule.value
+      : getDefaultQueryValue(to, rule.operator);
+  return { ...rule, field: to.name, value };
+}
+
 const OPERATOR_COUNTERPARTS: Partial<Record<QueryOperator, QueryOperator>> = {
   eq: "inArray",
   ne: "notInArray",

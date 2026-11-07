@@ -121,6 +121,25 @@ The header, content and footer carry `data-depth`, so you can show the header on
 <QueryBuilderGroupFooter className="not-data-[depth=0]:hidden" />
 ```
 
+## Labels
+
+Pass `labels` to translate or reword the built-in text, like "Where", "Add rule" and the placeholders. Labels you leave out keep their English default, and the ones that include a value, like `selected` and `searchValues`, are functions.
+
+```tsx
+<QueryBuilder
+  fields={fields}
+  labels={{
+    where: "Où",
+    and: "Et",
+    or: "Ou",
+    addRule: "Ajouter une règle",
+    selected: (count) => `${count} sélectionnés`,
+  }}
+/>
+```
+
+Operator labels come from `getQueryOperatorLabel` in `lib/query-builder.ts`, so change them there.
+
 ## Examples
 
 ### SQL
@@ -241,6 +260,10 @@ A group of rules. Renders the root group, and repeats for every nested group.
       title: "[data-combinator]",
       value: ['"and"', '"or"'],
     },
+    {
+      title: "[data-not]",
+      value: "Present when the group is negated.",
+    },
   ]}
 />
 
@@ -282,7 +305,7 @@ Holds the group's title and actions.
 
 ### QueryBuilderGroupTitle
 
-Describes the group, like "Any of the following are true…", based on its combinator. Pass children to change the text.
+Describes the group, like "Any of the following are true…", based on its combinator and whether it's negated ("None of the following are true…"). Pass children to change the text.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -336,7 +359,7 @@ A single rule.
 
 ### QueryBuilderConnector
 
-Joins a rule or nested group to the ones before it: "Where" for the first, a select for the group's combinator on the second, and "And" or "Or" after that. Renders nothing outside `QueryBuilderRules`, like on the root group.
+Joins a rule or nested group to the ones before it: "Where" for the first, a select for the group's combinator on the second, and "And" or "Or" after that. Renders nothing outside `QueryBuilderRules`, like on the root group. The select's accessible name comes from the `combinator` label.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -352,17 +375,54 @@ Joins a rule or nested group to the ones before it: "Where" for the first, a sel
   ]}
 />
 
-### QueryBuilderField and QueryBuilderOperator
+### QueryBuilderField
 
-Searchable [Faceted](/docs/components/base/faceted) pickers for the rule's field and operator. Changing the field resets the rule, and changing the operator keeps the value, turning a single value into a list (or a list into its first value) when switching between "is" and "is any of". They accept the props of `Button`. The chevron in the field, operator and value pickers has `data-slot="query-builder-select-icon"`, so a class like `**:data-[slot=query-builder-select-icon]:hidden` on a wrapper hides it.
+A searchable [Faceted](/docs/components/base/faceted) picker for the rule's field. Switching to a field of the same type keeps the operator and value, dropping select values the new field doesn't have. Switching to another type resets the rule. It accepts the props of `Button`. The chevron in the field, operator and value pickers has `data-slot="query-builder-select-icon"`, so a class like `**:data-[slot=query-builder-select-icon]:hidden` on a wrapper hides it.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderFieldProps"
+/>
+
+### QueryBuilderOperator
+
+A searchable picker for the rule's operator. Changing the operator keeps the value, turning a single value into a list (or a list into its first value) when switching between "is" and "is any of". It accepts the props of `Button`.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderOperatorProps"
+/>
 
 ### QueryBuilderCombinator
 
-A select for the group's combinator. It accepts the props of `SelectTrigger`.
+A select for the group's combinator, labeled "All" and "Any", for a header like "Match [All] of the following". Use `QueryBuilderConnector` to show the combinator between rules instead. It accepts the props of `SelectTrigger`.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderCombinatorProps"
+/>
+
+### QueryBuilderNot
+
+A toggle that negates the group, so it matches when its rules don't. It has `aria-pressed` while the group is negated, and accepts the props of `Button`.
+
+<AutoTypeTable
+  path="./types/base/query-builder.ts"
+  name="QueryBuilderNotProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: ['"on"', '"off"'],
+    },
+  ]}
+/>
 
 ### QueryBuilderValue
 
-The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/base/faceted) picker for select and boolean fields, based on the field type and operator, and an empty, disabled input for `isEmpty` and `isNotEmpty`, which keeps the rule the same width and is hidden from screen readers. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
+The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/base/faceted) picker for select and boolean fields, based on the field type and operator, and an empty, disabled input for `isEmpty` and `isNotEmpty`, which keeps the rule the same width and is hidden from screen readers. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`, and passes HTML attributes like `id` and `aria-describedby` to it. For a range, `id` goes on the first input.
 
 Select fields take several values whenever their `operators` include both forms, like Linear's filters: picking a second value switches `eq` to `inArray` ("is" to "is any of") and `ne` to `notInArray`, and going back to one value switches back. Use `setQueryRuleValues` to do the same outside the picker. The trigger shows a badge for each selected value that fits, then `+N`, and the menu has a Clear action while anything is selected. Set `display="summary"` to show the label instead, or a count like "2 selected".
 
@@ -373,7 +433,7 @@ Select fields take several values whenever their `operators` include both forms,
 
 ### QueryBuilderAddRule
 
-Adds a rule to the group, using the first field.
+Adds a rule to the group. Set `field` to the name of the field the rule starts with, or leave it out to use the first field.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -382,7 +442,7 @@ Adds a rule to the group, using the first field.
 
 ### QueryBuilderAddGroup
 
-Adds a nested group with one rule. The new group uses the opposite of its parent's combinator, since a group that matches its parent changes nothing. Hidden once the group is at `maxDepth`.
+Adds a nested group with one rule, using `field` like `QueryBuilderAddRule`. The new group uses the opposite of its parent's combinator, since a group that matches its parent changes nothing. Hidden once the group is at `maxDepth`.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"

@@ -236,4 +236,125 @@ describe.each([
     expect(groups[0]).toHaveAttribute("role", "group");
     expect(groups[1]).toHaveAttribute("role", "listitem");
   });
+
+  test("adds a rule for the field passed to AddRule", () => {
+    const onValueChange = vi.fn();
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField, getStatusField(false)]}
+        onValueChange={onValueChange}
+      >
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderAddRule field="status" />
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Add rule" }));
+
+    expect(getAddedGroup(onValueChange)).toMatchObject({ field: "status" });
+  });
+
+  test("toggles the group's not and describes it in the title", () => {
+    function Controlled() {
+      const [value, setValue] = React.useState<QueryGroup>({
+        id: "root",
+        combinator: "or",
+        rules: [],
+      });
+      return (
+        <QueryBuilder.QueryBuilder
+          fields={[titleField]}
+          value={value}
+          onValueChange={setValue}
+        >
+          <QueryBuilder.QueryBuilderGroup>
+            <QueryBuilder.QueryBuilderGroupTitle />
+            <QueryBuilder.QueryBuilderNot />
+          </QueryBuilder.QueryBuilderGroup>
+        </QueryBuilder.QueryBuilder>
+      );
+    }
+    render(<Controlled />);
+
+    const toggle = screen.getByRole("button", { name: "Not" });
+    expect(toggle).toHaveAttribute("aria-pressed", "false");
+    expect(
+      screen.getByText("Any of the following are true…"),
+    ).toBeInTheDocument();
+
+    fireEvent.click(toggle);
+
+    expect(toggle).toHaveAttribute("aria-pressed", "true");
+    expect(
+      screen.getByText("None of the following are true…"),
+    ).toBeInTheDocument();
+    expect(
+      document.querySelector("[data-slot=query-builder-group]"),
+    ).toHaveAttribute("data-not");
+  });
+
+  test("uses the labels passed to the root", () => {
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField]}
+        labels={{ where: "Où", addRule: "Ajouter", removeRule: "Supprimer" }}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [{ id: "1", field: "title", operator: "iLike", value: "" }],
+        }}
+      >
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderRules>
+              <QueryBuilder.QueryBuilderRule>
+                <QueryBuilder.QueryBuilderConnector />
+                <QueryBuilder.QueryBuilderRemove />
+              </QueryBuilder.QueryBuilderRule>
+            </QueryBuilder.QueryBuilderRules>
+            <QueryBuilder.QueryBuilderAddRule />
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    expect(screen.getByText("Où")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ajouter" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Supprimer" }),
+    ).toBeInTheDocument();
+  });
+
+  test("passes HTML attributes to the value control", () => {
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField]}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [{ id: "1", field: "title", operator: "iLike", value: "" }],
+        }}
+      >
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderRules>
+              <QueryBuilder.QueryBuilderRule>
+                <QueryBuilder.QueryBuilderValue
+                  id="title-value"
+                  aria-describedby="hint"
+                />
+              </QueryBuilder.QueryBuilderRule>
+            </QueryBuilder.QueryBuilderRules>
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    const input = screen.getByRole("textbox", { name: "Title" });
+    expect(input).toHaveAttribute("id", "title-value");
+    expect(input).toHaveAttribute("aria-describedby", "hint");
+  });
 });

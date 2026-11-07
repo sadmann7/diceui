@@ -1618,6 +1618,10 @@
     @apply text-muted-foreground;
   }
 
+  .cn-query-builder-not {
+    @apply text-muted-foreground aria-pressed:bg-muted aria-pressed:text-foreground;
+  }
+
   .cn-query-builder-remove {
     @apply text-muted-foreground;
   }

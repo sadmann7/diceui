@@ -12,6 +12,7 @@ import {
   type QueryGroup,
   type QueryRule,
   removeQueryNode,
+  setQueryRuleField,
   setQueryRuleOperator,
   setQueryRuleValues,
   setQuerySelection,
@@ -357,6 +358,76 @@ describe("setQueryRuleOperator", () => {
         "isEmpty",
       ),
     ).toMatchObject({ operator: "isEmpty", value: undefined });
+  });
+});
+
+describe("setQueryRuleField", () => {
+  const nameField: QueryField = { name: "name", label: "Name", type: "text" };
+  const priorityField: QueryField = {
+    name: "priority",
+    label: "Priority",
+    type: "select",
+    options: [
+      { label: "Todo", value: "todo" },
+      { label: "High", value: "high" },
+    ],
+  };
+
+  test("keeps the operator and value for a field of the same type", () => {
+    expect(
+      setQueryRuleField(
+        rule("title", "notILike", "bug"),
+        titleField,
+        nameField,
+      ),
+    ).toEqual({
+      id: "title-notILike",
+      field: "name",
+      operator: "notILike",
+      value: "bug",
+    });
+  });
+
+  test("drops select values the new field doesn't have", () => {
+    expect(
+      setQueryRuleField(
+        rule("status", "inArray", ["todo", "done"]),
+        statusField,
+        priorityField,
+      ),
+    ).toMatchObject({
+      field: "priority",
+      operator: "inArray",
+      value: ["todo"],
+    });
+    expect(
+      setQueryRuleField(
+        rule("status", "eq", "done"),
+        statusField,
+        priorityField,
+      ),
+    ).toMatchObject({ field: "priority", operator: "eq", value: "" });
+  });
+
+  test("resets the rule for another type or an unsupported operator", () => {
+    expect(
+      setQueryRuleField(
+        rule("title", "iLike", "bug"),
+        titleField,
+        estimateField,
+      ),
+    ).toMatchObject({
+      id: "title-iLike",
+      field: "estimate",
+      operator: "eq",
+      value: "",
+    });
+    expect(
+      setQueryRuleField(rule("title", "iLike", "bug"), titleField, {
+        ...nameField,
+        operators: ["eq"],
+      }),
+    ).toMatchObject({ field: "name", operator: "eq", value: "" });
   });
 });
 
