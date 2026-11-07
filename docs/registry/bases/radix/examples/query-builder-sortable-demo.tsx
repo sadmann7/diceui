@@ -30,7 +30,6 @@ import {
   SortableContent,
   SortableItem,
   SortableItemHandle,
-  SortableOverlay,
 } from "@/registry/bases/radix/ui/sortable";
 
 const fields: QueryField[] = [
@@ -81,23 +80,23 @@ export default function QueryBuilderSortableDemo() {
               <QueryBuilderRules>
                 {(rule) => (
                   <SortableItem value={rule.id} asChild>
-                    <QueryBuilderRule>
-                      <SortableItemHandle asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          aria-label="Move rule"
-                          className="-me-1 text-muted-foreground"
-                        >
-                          <GripVerticalIcon />
-                        </Button>
-                      </SortableItemHandle>
+                    <QueryBuilderRule className="data-dragging:z-10 data-dragging:bg-background">
                       <QueryBuilderConnector />
                       <ButtonGroup>
                         <QueryBuilderField />
                         <QueryBuilderOperator />
                         <QueryBuilderValue />
                         <QueryBuilderRemove variant="outline" />
+                        <SortableItemHandle asChild>
+                          <Button
+                            variant="outline"
+                            size="icon-sm"
+                            aria-label="Move rule"
+                            className="text-muted-foreground"
+                          >
+                            <GripVerticalIcon />
+                          </Button>
+                        </SortableItemHandle>
                       </ButtonGroup>
                     </QueryBuilderRule>
                   </SortableItem>
@@ -110,9 +109,6 @@ export default function QueryBuilderSortableDemo() {
           </QueryBuilderGroupContent>
         </QueryBuilderGroup>
       </QueryBuilder>
-      <SortableOverlay>
-        <div className="size-full rounded-md bg-primary/10" />
-      </SortableOverlay>
     </Sortable>
   );
 }

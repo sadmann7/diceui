@@ -30,7 +30,6 @@ import {
   SortableContent,
   SortableItem,
   SortableItemHandle,
-  SortableOverlay,
 } from "@/registry/bases/base/ui/sortable";
 
 const fields: QueryField[] = [
@@ -80,25 +79,30 @@ export default function QueryBuilderSortableDemo() {
             <SortableContent withoutSlot>
               <QueryBuilderRules>
                 {(rule) => (
-                  <SortableItem value={rule.id} render={<QueryBuilderRule />}>
-                    <SortableItemHandle
-                      render={
-                        <Button
-                          variant="ghost"
-                          size="icon-sm"
-                          aria-label="Move rule"
-                          className="-me-1 text-muted-foreground"
-                        />
-                      }
-                    >
-                      <GripVerticalIcon />
-                    </SortableItemHandle>
+                  <SortableItem
+                    value={rule.id}
+                    render={
+                      <QueryBuilderRule className="data-dragging:z-10 data-dragging:bg-background" />
+                    }
+                  >
                     <QueryBuilderConnector />
                     <ButtonGroup>
                       <QueryBuilderField />
                       <QueryBuilderOperator />
                       <QueryBuilderValue />
                       <QueryBuilderRemove variant="outline" />
+                      <SortableItemHandle
+                        render={
+                          <Button
+                            variant="outline"
+                            size="icon-sm"
+                            aria-label="Move rule"
+                            className="text-muted-foreground"
+                          />
+                        }
+                      >
+                        <GripVerticalIcon />
+                      </SortableItemHandle>
                     </ButtonGroup>
                   </SortableItem>
                 )}
@@ -110,9 +114,6 @@ export default function QueryBuilderSortableDemo() {
           </QueryBuilderGroupContent>
         </QueryBuilderGroup>
       </QueryBuilder>
-      <SortableOverlay>
-        <div className="size-full rounded-md bg-primary/10" />
-      </SortableOverlay>
     </Sortable>
   );
 }
