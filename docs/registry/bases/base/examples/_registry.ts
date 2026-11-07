@@ -1247,6 +1247,56 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "query-builder-command-filter-demo",
+    type: "registry:example",
+    registryDependencies: [
+      "query-builder",
+      "button",
+      "button-group",
+      "command-stack",
+      "popover",
+    ],
+    files: [
+      {
+        path: "examples/query-builder-command-filter-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "query-builder-demo",
+    type: "registry:example",
+    registryDependencies: ["query-builder", "button-group"],
+    files: [
+      {
+        path: "examples/query-builder-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "query-builder-sql-demo",
+    type: "registry:example",
+    registryDependencies: ["query-builder", "button-group"],
+    files: [
+      {
+        path: "examples/query-builder-sql-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "query-builder-filter-demo",
+    type: "registry:example",
+    registryDependencies: ["query-builder", "button-group", "table"],
+    files: [
+      {
+        path: "examples/query-builder-filter-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "rating-demo",
     type: "registry:example",
     registryDependencies: ["rating"],
