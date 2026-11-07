@@ -156,7 +156,7 @@ Filter rows in the browser with `matchesQuery`, which follows the same rules as 
 
 ### Sortable
 
-Reorder rules and nested groups by dragging with [Sortable](/docs/components/radix/sortable). Pass a function as the children of `QueryBuilderGroup` to get each group's `rules` for its own sortable list, and as the children of `QueryBuilderRules` to wrap each rule and nested group in a sortable item. Items move within their group.
+Reorder rules and nested groups by dragging with [Sortable](/docs/components/radix/sortable). Pass a function as the children of `QueryBuilderGroup` to get each group's `rules` for its own sortable list, and as the children of `QueryBuilderRules` to wrap each rule and nested group in a sortable item. Use `moveQueryNode` to move a dragged rule or group into another group, so items can move between groups.
 
 <ComponentTabs name="query-builder-sortable-demo" />
 

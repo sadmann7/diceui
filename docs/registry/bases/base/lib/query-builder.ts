@@ -362,6 +362,39 @@ export function addQueryNode(
   );
 }
 
+export function findQueryNode(
+  root: QueryGroup,
+  id: string,
+): QueryNode | undefined {
+  if (root.id === id) return root;
+  for (const node of root.rules) {
+    if (node.id === id) return node;
+    if (getIsQueryGroup(node)) {
+      const found = findQueryNode(node, id);
+      if (found) return found;
+    }
+  }
+  return undefined;
+}
+
+export function moveQueryNode(
+  root: QueryGroup,
+  id: string,
+  groupId: string,
+  index: number,
+): QueryGroup {
+  const node = findQueryNode(root, id);
+  if (!node || node === root) return root;
+  if (getIsQueryGroup(node) && findQueryNode(node, groupId)) return root;
+  if (!findQueryNode(root, groupId)) return root;
+  return updateQueryNode(removeQueryNode(root, id), groupId, (group) => {
+    if (!getIsQueryGroup(group)) return group;
+    const rules = [...group.rules];
+    rules.splice(index, 0, node);
+    return { ...group, rules };
+  });
+}
+
 function getField(fields: QueryField[], name: string) {
   return fields.find((field) => field.name === name);
 }

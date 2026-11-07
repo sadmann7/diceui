@@ -1449,6 +1449,7 @@ export const examples: Registry["items"] = [
   {
     name: "query-builder-sortable-demo",
     type: "registry:example",
+    dependencies: ["@dnd-kit/core", "@dnd-kit/sortable"],
     registryDependencies: ["query-builder", "button-group", "sortable"],
     files: [
       {

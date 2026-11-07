@@ -4,10 +4,12 @@ import {
   addQueryNode,
   createQueryGroup,
   createQueryRule,
+  findQueryNode,
   formatQuery,
   getIsQueryRuleMultiple,
   getQuerySelection,
   matchesQuery,
+  moveQueryNode,
   type QueryField,
   type QueryGroup,
   type QueryRule,
@@ -293,6 +295,52 @@ describe("query tree helpers", () => {
       operator: "eq",
       value: "true",
     });
+  });
+});
+
+describe("moveQueryNode", () => {
+  const tree: QueryGroup = {
+    id: "root",
+    combinator: "and",
+    rules: [
+      rule("title", "iLike", "a"),
+      {
+        id: "nested",
+        combinator: "or",
+        rules: [rule("estimate", "gt", "5"), rule("status", "eq", "todo")],
+      },
+      rule("archived", "eq", "true"),
+    ],
+  };
+
+  test("moves a node into another group at an index", () => {
+    const next = moveQueryNode(tree, "archived-eq", "nested", 1);
+    expect(next.rules.map((node) => node.id)).toEqual([
+      "title-iLike",
+      "nested",
+    ]);
+    expect(
+      (findQueryNode(next, "nested") as QueryGroup).rules.map(
+        (node) => node.id,
+      ),
+    ).toEqual(["estimate-gt", "archived-eq", "status-eq"]);
+    expect(tree.rules).toHaveLength(3);
+  });
+
+  test("moves a node out of a group", () => {
+    const next = moveQueryNode(tree, "status-eq", "root", 0);
+    expect(next.rules.map((node) => node.id)).toEqual([
+      "status-eq",
+      "title-iLike",
+      "nested",
+      "archived-eq",
+    ]);
+  });
+
+  test("won't move a group into itself or the root", () => {
+    expect(moveQueryNode(tree, "nested", "nested", 0)).toBe(tree);
+    expect(moveQueryNode(tree, "root", "nested", 0)).toBe(tree);
+    expect(moveQueryNode(tree, "title-iLike", "missing", 0)).toBe(tree);
   });
 });
 
