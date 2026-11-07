@@ -98,7 +98,6 @@ function useGroupContext(consumerName: string) {
 
 const NestedGroupContext = React.createContext<QueryGroup | null>(null);
 
-// Nested groups render with the same props as the group that holds them.
 const GroupTemplateContext = React.createContext<QueryBuilderGroupProps | null>(
   null,
 );
