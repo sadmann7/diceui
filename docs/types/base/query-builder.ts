@@ -1,6 +1,7 @@
 import type {
   QueryField,
   QueryGroup,
+  QueryRule,
 } from "@/registry/bases/base/lib/query-builder";
 import type { Button } from "@/registry/bases/base/ui/button";
 import type { QueryBuilderLabels } from "@/registry/bases/base/ui/query-builder";
@@ -118,8 +119,19 @@ export interface QueryBuilderGroupTitleProps
 export interface QueryBuilderGroupFooterProps
   extends EmptyProps<"div">, RenderProps {}
 
-export interface QueryBuilderRulesProps
-  extends EmptyProps<"div">, RenderProps {}
+export interface QueryBuilderRulesProps extends EmptyProps<"div">, RenderProps {
+  /**
+   * The layout for each rule. Pass a function to read the rule, like its `id`
+   * for a sortable item.
+   *
+   * ```tsx
+   * {(rule) => (
+   *   <SortableItem value={rule.id} render={<QueryBuilderRule />} />
+   * )}
+   * ```
+   */
+  children?: React.ReactNode | ((rule: QueryRule) => React.ReactNode);
+}
 
 export interface QueryBuilderRuleProps extends EmptyProps<"div">, RenderProps {}
 

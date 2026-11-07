@@ -357,4 +357,32 @@ describe.each([
     expect(input).toHaveAttribute("id", "title-value");
     expect(input).toHaveAttribute("aria-describedby", "hint");
   });
+
+  test("passes each rule to function children", () => {
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField]}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [
+            { id: "a", field: "title", operator: "iLike", value: "" },
+            { id: "b", field: "title", operator: "eq", value: "" },
+          ],
+        }}
+      >
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderRules>
+            {(rule) => <QueryBuilder.QueryBuilderRule data-id={rule.id} />}
+          </QueryBuilder.QueryBuilderRules>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    const rules = document.querySelectorAll("[data-slot=query-builder-rule]");
+    expect([...rules].map((rule) => rule.getAttribute("data-id"))).toEqual([
+      "a",
+      "b",
+    ]);
+  });
 });

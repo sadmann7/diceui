@@ -55,7 +55,21 @@ import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "QueryBuilder";
 const GROUP_NAME = "QueryBuilderGroup";
+const GROUP_HEADER_NAME = "QueryBuilderGroupHeader";
+const GROUP_TITLE_NAME = "QueryBuilderGroupTitle";
+const GROUP_FOOTER_NAME = "QueryBuilderGroupFooter";
+const GROUP_CONTENT_NAME = "QueryBuilderGroupContent";
+const RULES_NAME = "QueryBuilderRules";
 const RULE_NAME = "QueryBuilderRule";
+const COMBINATOR_NAME = "QueryBuilderCombinator";
+const CONNECTOR_NAME = "QueryBuilderConnector";
+const NOT_NAME = "QueryBuilderNot";
+const FIELD_NAME = "QueryBuilderField";
+const OPERATOR_NAME = "QueryBuilderOperator";
+const VALUE_NAME = "QueryBuilderValue";
+const ADD_RULE_NAME = "QueryBuilderAddRule";
+const ADD_GROUP_NAME = "QueryBuilderAddGroup";
+const REMOVE_NAME = "QueryBuilderRemove";
 
 interface DivProps
   extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
@@ -335,7 +349,7 @@ function QueryBuilderGroup({
 }
 
 function QueryBuilderGroupHeader({ className, render, ...props }: DivProps) {
-  const { depth } = useGroupContext("QueryBuilderGroupHeader");
+  const { depth } = useGroupContext(GROUP_HEADER_NAME);
 
   return useRender({
     defaultTagName: "div",
@@ -359,8 +373,8 @@ function QueryBuilderGroupTitle({
   render,
   ...props
 }: DivProps) {
-  const { labels } = useQueryBuilderContext("QueryBuilderGroupTitle");
-  const { group } = useGroupContext("QueryBuilderGroupTitle");
+  const { labels } = useQueryBuilderContext(GROUP_TITLE_NAME);
+  const { group } = useGroupContext(GROUP_TITLE_NAME);
   const title =
     group.combinator === "and"
       ? group.not
@@ -385,7 +399,7 @@ function QueryBuilderGroupTitle({
 }
 
 function QueryBuilderGroupFooter({ className, render, ...props }: DivProps) {
-  const { depth } = useGroupContext("QueryBuilderGroupFooter");
+  const { depth } = useGroupContext(GROUP_FOOTER_NAME);
 
   return useRender({
     defaultTagName: "div",
@@ -404,7 +418,7 @@ function QueryBuilderGroupFooter({ className, render, ...props }: DivProps) {
 }
 
 function QueryBuilderGroupContent({ className, render, ...props }: DivProps) {
-  const { depth } = useGroupContext("QueryBuilderGroupContent");
+  const { depth } = useGroupContext(GROUP_CONTENT_NAME);
 
   return useRender({
     defaultTagName: "div",
@@ -422,13 +436,17 @@ function QueryBuilderGroupContent({ className, render, ...props }: DivProps) {
   });
 }
 
+interface QueryBuilderRulesProps extends Omit<DivProps, "children"> {
+  children?: React.ReactNode | ((rule: QueryRule) => React.ReactNode);
+}
+
 function QueryBuilderRules({
   className,
   children,
   render,
   ...props
-}: DivProps) {
-  const { group } = useGroupContext("QueryBuilderRules");
+}: QueryBuilderRulesProps) {
+  const { group } = useGroupContext(RULES_NAME);
   const template = React.useContext(GroupTemplateContext);
 
   return useRender({
@@ -447,7 +465,7 @@ function QueryBuilderRules({
                   </NestedGroupContext.Provider>
                 ) : (
                   <RuleContext.Provider value={node}>
-                    {children}
+                    {typeof children === "function" ? children(node) : children}
                   </RuleContext.Provider>
                 )}
               </NodeContext.Provider>
@@ -490,8 +508,8 @@ interface CombinatorSelectProps extends React.ComponentProps<
 }
 
 function CombinatorSelect({ group, items, ...props }: CombinatorSelectProps) {
-  const { disabled, labels } = useQueryBuilderContext("QueryBuilderCombinator");
-  const { update } = useQueryActions("QueryBuilderCombinator");
+  const { disabled, labels } = useQueryBuilderContext(COMBINATOR_NAME);
+  const { update } = useQueryActions(COMBINATOR_NAME);
 
   return (
     <Select
@@ -520,16 +538,12 @@ function CombinatorSelect({ group, items, ...props }: CombinatorSelectProps) {
   );
 }
 
-interface QueryBuilderCombinatorProps extends React.ComponentProps<
-  typeof SelectTrigger
-> {}
-
 function QueryBuilderCombinator({
   className,
   ...props
-}: QueryBuilderCombinatorProps) {
-  const { labels } = useQueryBuilderContext("QueryBuilderCombinator");
-  const { group } = useGroupContext("QueryBuilderCombinator");
+}: React.ComponentProps<typeof SelectTrigger>) {
+  const { labels } = useQueryBuilderContext(COMBINATOR_NAME);
+  const { group } = useGroupContext(COMBINATOR_NAME);
 
   return (
     <CombinatorSelect
@@ -542,14 +556,8 @@ function QueryBuilderCombinator({
   );
 }
 
-interface QueryBuilderConnectorProps extends DivProps {}
-
-function QueryBuilderConnector({
-  className,
-  render,
-  ...props
-}: QueryBuilderConnectorProps) {
-  const { labels } = useQueryBuilderContext("QueryBuilderConnector");
+function QueryBuilderConnector({ className, render, ...props }: DivProps) {
+  const { labels } = useQueryBuilderContext(CONNECTOR_NAME);
   const node = React.useContext(NodeContext);
 
   const index = node?.index ?? 0;
@@ -591,17 +599,15 @@ function QueryBuilderConnector({
   return element;
 }
 
-interface QueryBuilderNotProps extends React.ComponentProps<typeof Button> {}
-
 function QueryBuilderNot({
   onClick,
   children,
   className,
   ...props
-}: QueryBuilderNotProps) {
-  const { disabled, labels } = useQueryBuilderContext("QueryBuilderNot");
-  const { group } = useGroupContext("QueryBuilderNot");
-  const { update } = useQueryActions("QueryBuilderNot");
+}: React.ComponentProps<typeof Button>) {
+  const { disabled, labels } = useQueryBuilderContext(NOT_NAME);
+  const { group } = useGroupContext(NOT_NAME);
+  const { update } = useQueryActions(NOT_NAME);
 
   return (
     <Button
@@ -627,13 +633,13 @@ function QueryBuilderNot({
   );
 }
 
-interface QueryBuilderFieldProps extends React.ComponentProps<typeof Button> {}
-
-function QueryBuilderField({ className, ...props }: QueryBuilderFieldProps) {
-  const { fields, labels, disabled } =
-    useQueryBuilderContext("QueryBuilderField");
-  const rule = useRuleContext("QueryBuilderField");
-  const { update } = useQueryActions("QueryBuilderField");
+function QueryBuilderField({
+  className,
+  ...props
+}: React.ComponentProps<typeof Button>) {
+  const { fields, labels, disabled } = useQueryBuilderContext(FIELD_NAME);
+  const rule = useRuleContext(FIELD_NAME);
+  const { update } = useQueryActions(FIELD_NAME);
   const current = fields.find((field) => field.name === rule.field);
 
   return (
@@ -706,19 +712,13 @@ function QueryBuilderField({ className, ...props }: QueryBuilderFieldProps) {
   );
 }
 
-interface QueryBuilderOperatorProps extends React.ComponentProps<
-  typeof Button
-> {}
-
 function QueryBuilderOperator({
   className,
   ...props
-}: QueryBuilderOperatorProps) {
-  const { fields, labels, disabled } = useQueryBuilderContext(
-    "QueryBuilderOperator",
-  );
-  const rule = useRuleContext("QueryBuilderOperator");
-  const { update } = useQueryActions("QueryBuilderOperator");
+}: React.ComponentProps<typeof Button>) {
+  const { fields, labels, disabled } = useQueryBuilderContext(OPERATOR_NAME);
+  const rule = useRuleContext(OPERATOR_NAME);
+  const { update } = useQueryActions(OPERATOR_NAME);
   const field = fields.find((item) => item.name === rule.field);
 
   if (!field) return null;
@@ -892,10 +892,9 @@ function QueryBuilderValue({
   className,
   ...props
 }: QueryBuilderValueProps) {
-  const { fields, labels, disabled } =
-    useQueryBuilderContext("QueryBuilderValue");
-  const rule = useRuleContext("QueryBuilderValue");
-  const { update } = useQueryActions("QueryBuilderValue");
+  const { fields, labels, disabled } = useQueryBuilderContext(VALUE_NAME);
+  const rule = useRuleContext(VALUE_NAME);
+  const { update } = useQueryActions(VALUE_NAME);
   const field = fields.find((item) => item.name === rule.field);
 
   if (!field) return null;
@@ -1096,11 +1095,9 @@ function QueryBuilderAddRule({
   className,
   ...props
 }: QueryBuilderAddRuleProps) {
-  const { fields, labels, disabled } = useQueryBuilderContext(
-    "QueryBuilderAddRule",
-  );
-  const { group } = useGroupContext("QueryBuilderAddRule");
-  const { add } = useQueryActions("QueryBuilderAddRule");
+  const { fields, labels, disabled } = useQueryBuilderContext(ADD_RULE_NAME);
+  const { group } = useGroupContext(ADD_RULE_NAME);
+  const { add } = useQueryActions(ADD_RULE_NAME);
   const field = getField(fields, fieldProp);
 
   return (
@@ -1147,11 +1144,10 @@ function QueryBuilderAddGroup({
   className,
   ...props
 }: QueryBuilderAddGroupProps) {
-  const { fields, labels, disabled, maxDepth } = useQueryBuilderContext(
-    "QueryBuilderAddGroup",
-  );
-  const { group, depth } = useGroupContext("QueryBuilderAddGroup");
-  const { add } = useQueryActions("QueryBuilderAddGroup");
+  const { fields, labels, disabled, maxDepth } =
+    useQueryBuilderContext(ADD_GROUP_NAME);
+  const { group, depth } = useGroupContext(ADD_GROUP_NAME);
+  const { add } = useQueryActions(ADD_GROUP_NAME);
   const field = getField(fields, fieldProp);
 
   if (depth >= maxDepth) return null;
@@ -1192,18 +1188,16 @@ function QueryBuilderAddGroup({
   );
 }
 
-interface QueryBuilderRemoveProps extends React.ComponentProps<typeof Button> {}
-
 function QueryBuilderRemove({
   onClick,
   children,
   className,
   ...props
-}: QueryBuilderRemoveProps) {
-  const { disabled, labels } = useQueryBuilderContext("QueryBuilderRemove");
+}: React.ComponentProps<typeof Button>) {
+  const { disabled, labels } = useQueryBuilderContext(REMOVE_NAME);
   const rule = React.useContext(RuleContext);
-  const group = useGroupContext("QueryBuilderRemove");
-  const { remove } = useQueryActions("QueryBuilderRemove");
+  const group = useGroupContext(REMOVE_NAME);
+  const { remove } = useQueryActions(REMOVE_NAME);
 
   const id = rule?.id ?? (group.isRoot ? undefined : group.group.id);
   if (!id) return null;

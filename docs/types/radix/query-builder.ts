@@ -1,6 +1,7 @@
 import type {
   QueryField,
   QueryGroup,
+  QueryRule,
 } from "@/registry/bases/radix/lib/query-builder";
 import type { Button } from "@/registry/bases/radix/ui/button";
 import type { QueryBuilderLabels } from "@/registry/bases/radix/ui/query-builder";
@@ -119,7 +120,21 @@ export interface QueryBuilderGroupFooterProps
   extends EmptyProps<"div">, CompositionProps {}
 
 export interface QueryBuilderRulesProps
-  extends EmptyProps<"div">, CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {
+  /**
+   * The layout for each rule. Pass a function to read the rule, like its `id`
+   * for a sortable item.
+   *
+   * ```tsx
+   * {(rule) => (
+   *   <SortableItem value={rule.id} asChild>
+   *     <QueryBuilderRule />
+   *   </SortableItem>
+   * )}
+   * ```
+   */
+  children?: React.ReactNode | ((rule: QueryRule) => React.ReactNode);
+}
 
 export interface QueryBuilderRuleProps
   extends EmptyProps<"div">, CompositionProps {}

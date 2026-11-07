@@ -21,6 +21,7 @@ import {
   QueryBuilderGroupFooter,
   QueryBuilderGroupHeader,
   QueryBuilderGroupTitle,
+  QueryBuilderNot,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
@@ -67,6 +68,15 @@ const defaultQuery: QueryGroup = {
       operator: "isBetween",
       value: ["3", "8"],
     },
+    {
+      id: "excluded",
+      combinator: "or",
+      not: true,
+      rules: [
+        { id: "dueDate", field: "dueDate", operator: "isEmpty" },
+        { id: "title", field: "title", operator: "iLike", value: "wip" },
+      ],
+    },
   ],
 };
 
@@ -89,6 +99,7 @@ export default function QueryBuilderSqlDemo() {
           <QueryBuilderGroupContent>
             <QueryBuilderGroupHeader className="data-[depth=0]:hidden">
               <QueryBuilderGroupTitle />
+              <QueryBuilderNot />
               <QueryBuilderAddRule size="icon-sm" aria-label="Add rule">
                 <PlusIcon />
               </QueryBuilderAddRule>
