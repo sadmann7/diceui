@@ -1,7 +1,7 @@
 import type {
   QueryField,
   QueryGroup,
-  QueryRule,
+  QueryNode,
 } from "@/registry/bases/base/lib/query-builder";
 import type { Button } from "@/registry/bases/base/ui/button";
 import type { QueryBuilderLabels } from "@/registry/bases/base/ui/query-builder";
@@ -81,8 +81,21 @@ export interface QueryBuilderProps extends EmptyProps<"div">, RenderProps {
   labels?: Partial<QueryBuilderLabels>;
 }
 
-export interface QueryBuilderGroupProps
-  extends EmptyProps<"div">, RenderProps {}
+export interface QueryBuilderGroupProps extends EmptyProps<"div">, RenderProps {
+  /**
+   * The group's layout, which nested groups reuse. Pass a function to read
+   * the group, like its `rules` for a sortable list.
+   *
+   * ```tsx
+   * {(group) => (
+   *   <Sortable value={group.rules} getItemValue={(node) => node.id}>
+   *     …
+   *   </Sortable>
+   * )}
+   * ```
+   */
+  children?: React.ReactNode | ((group: QueryGroup) => React.ReactNode);
+}
 
 export interface QueryBuilderGroupContentProps
   extends EmptyProps<"div">, RenderProps {}
@@ -121,16 +134,21 @@ export interface QueryBuilderGroupFooterProps
 
 export interface QueryBuilderRulesProps extends EmptyProps<"div">, RenderProps {
   /**
-   * The layout for each rule. Pass a function to read the rule, like its `id`
-   * for a sortable item.
+   * The layout for each rule. Pass a function to read each rule and nested
+   * group, like its `id` for a sortable item. A function renders nested groups
+   * too, and `<QueryBuilderGroup />` inside it reuses the root group's layout.
    *
    * ```tsx
-   * {(rule) => (
-   *   <SortableItem value={rule.id} render={<QueryBuilderRule />} />
-   * )}
+   * {(node) =>
+   *   getIsQueryGroup(node) ? (
+   *     <SortableItem value={node.id} render={<QueryBuilderGroup />} />
+   *   ) : (
+   *     <SortableItem value={node.id} render={<QueryBuilderRule />} />
+   *   )
+   * }
    * ```
    */
-  children?: React.ReactNode | ((rule: QueryRule) => React.ReactNode);
+  children?: React.ReactNode | ((node: QueryNode) => React.ReactNode);
 }
 
 export interface QueryBuilderRuleProps extends EmptyProps<"div">, RenderProps {}

@@ -385,4 +385,47 @@ describe.each([
       "b",
     ]);
   });
+
+  test("passes nested groups to function children, keeping the root layout", () => {
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField]}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [
+            { id: "a", field: "title", operator: "iLike", value: "" },
+            {
+              id: "nested",
+              combinator: "or",
+              rules: [{ id: "b", field: "title", operator: "eq", value: "" }],
+            },
+          ],
+        }}
+      >
+        <QueryBuilder.QueryBuilderGroup className="root-layout">
+          {(group) => (
+            <QueryBuilder.QueryBuilderRules data-group={group.id}>
+              {(node) =>
+                "rules" in node ? (
+                  <div data-wrapper={node.id}>
+                    <QueryBuilder.QueryBuilderGroup className="extra" />
+                  </div>
+                ) : (
+                  <QueryBuilder.QueryBuilderRule data-id={node.id} />
+                )
+              }
+            </QueryBuilder.QueryBuilderRules>
+          )}
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    const nested = document.querySelector("[data-wrapper=nested] > *");
+    expect(nested).toHaveAttribute("data-depth", "1");
+    expect(nested).toHaveClass("root-layout", "extra");
+    expect(
+      nested?.querySelector("[data-group=nested] [data-id=b]"),
+    ).toBeInTheDocument();
+  });
 });

@@ -226,17 +226,17 @@ interface QueryBuilderProps extends Omit<DivProps, "defaultValue"> {
   value?: QueryGroup;
   defaultValue?: QueryGroup;
   onValueChange?: (value: QueryGroup) => void;
+  labels?: Partial<QueryBuilderLabels>;
   maxDepth?: number;
   disabled?: boolean;
-  labels?: Partial<QueryBuilderLabels>;
 }
 
 function QueryBuilder({
   fields,
-  labels: labelsProp,
   value: valueProp,
   defaultValue,
   onValueChange: onValueChangeProp,
+  labels: labelsProp,
   maxDepth = 2,
   disabled = false,
   className,
@@ -296,18 +296,24 @@ function QueryBuilder({
   );
 }
 
-interface QueryBuilderGroupProps extends DivProps {}
+interface QueryBuilderGroupProps extends Omit<DivProps, "children"> {
+  children?: React.ReactNode | ((group: QueryGroup) => React.ReactNode);
+}
 
-function QueryBuilderGroup({
-  className,
-  render,
-  ref,
-  id,
-  ...props
-}: QueryBuilderGroupProps) {
+function QueryBuilderGroup(groupProps: QueryBuilderGroupProps) {
   const { value } = useQueryBuilderContext(GROUP_NAME);
   const parent = React.useContext(GroupContext);
   const nestedGroup = React.useContext(NestedGroupContext);
+  const template = React.useContext(GroupTemplateContext);
+
+  const { className, render, ref, id, children, ...props } =
+    parent && template
+      ? {
+          ...template,
+          ...groupProps,
+          className: cn(template.className, groupProps.className),
+        }
+      : groupProps;
 
   const group = nestedGroup ?? value;
   const depth = parent ? parent.depth + 1 : 0;
@@ -324,6 +330,7 @@ function QueryBuilderGroup({
         id,
         role: parent ? "listitem" : "group",
         className: cn("cn-query-builder-group flex", className),
+        children: typeof children === "function" ? children(group) : children,
       },
       props,
     ),
@@ -337,13 +344,21 @@ function QueryBuilderGroup({
     },
   });
 
+  const content = (
+    <GroupContext.Provider value={groupContext}>
+      <NestedGroupContext.Provider value={null}>
+        {element}
+      </NestedGroupContext.Provider>
+    </GroupContext.Provider>
+  );
+
+  if (parent) return content;
+
   return (
-    <GroupTemplateContext.Provider value={{ className, render, ...props }}>
-      <GroupContext.Provider value={groupContext}>
-        <NestedGroupContext.Provider value={null}>
-          {element}
-        </NestedGroupContext.Provider>
-      </GroupContext.Provider>
+    <GroupTemplateContext.Provider
+      value={{ className, render, children, ...props }}
+    >
+      {content}
     </GroupTemplateContext.Provider>
   );
 }
@@ -437,7 +452,7 @@ function QueryBuilderGroupContent({ className, render, ...props }: DivProps) {
 }
 
 interface QueryBuilderRulesProps extends Omit<DivProps, "children"> {
-  children?: React.ReactNode | ((rule: QueryRule) => React.ReactNode);
+  children?: React.ReactNode | ((node: QueryNode) => React.ReactNode);
 }
 
 function QueryBuilderRules({
@@ -447,7 +462,6 @@ function QueryBuilderRules({
   ...props
 }: QueryBuilderRulesProps) {
   const { group } = useGroupContext(RULES_NAME);
-  const template = React.useContext(GroupTemplateContext);
 
   return useRender({
     defaultTagName: "div",
@@ -461,7 +475,11 @@ function QueryBuilderRules({
               <NodeContext.Provider key={node.id} value={{ index, group }}>
                 {getIsQueryGroup(node) ? (
                   <NestedGroupContext.Provider value={node}>
-                    <QueryBuilderGroup {...template} />
+                    {typeof children === "function" ? (
+                      children(node)
+                    ) : (
+                      <QueryBuilderGroup />
+                    )}
                   </NestedGroupContext.Provider>
                 ) : (
                   <RuleContext.Provider value={node}>

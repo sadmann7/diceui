@@ -1,24 +1,28 @@
 "use client";
 
-import { GripVerticalIcon } from "lucide-react";
+import { GripVerticalIcon, PlusIcon } from "lucide-react";
 import * as React from "react";
 
-import type {
-  QueryField,
-  QueryGroup,
-  QueryNode,
+import {
+  getIsQueryGroup,
+  type QueryField,
+  type QueryGroup,
+  type QueryNode,
+  updateQueryNode,
 } from "@/registry/bases/base/lib/query-builder";
-
 import { Button } from "@/registry/bases/base/ui/button";
 import { ButtonGroup } from "@/registry/bases/base/ui/button-group";
 import {
   QueryBuilder,
+  QueryBuilderAddGroup,
   QueryBuilderAddRule,
   QueryBuilderConnector,
   QueryBuilderField,
   QueryBuilderGroup,
   QueryBuilderGroupContent,
   QueryBuilderGroupFooter,
+  QueryBuilderGroupHeader,
+  QueryBuilderGroupTitle,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
@@ -53,67 +57,120 @@ const defaultQuery: QueryGroup = {
   combinator: "and",
   rules: [
     { id: "status", field: "status", operator: "eq", value: "todo" },
-    { id: "estimate", field: "estimate", operator: "gte", value: "5" },
+    {
+      id: "group",
+      combinator: "or",
+      rules: [
+        { id: "estimate", field: "estimate", operator: "gte", value: "5" },
+        { id: "dueDate", field: "dueDate", operator: "isEmpty" },
+      ],
+    },
     { id: "title", field: "title", operator: "iLike", value: "kickflip" },
   ],
 };
 
+function QueryBuilderSortableHandle({
+  label,
+  variant = "outline",
+}: {
+  label: string;
+  variant?: "outline" | "ghost";
+}) {
+  return (
+    <SortableItemHandle
+      render={
+        <Button
+          variant={variant}
+          size="icon-sm"
+          aria-label={label}
+          className="text-muted-foreground"
+        />
+      }
+    >
+      <GripVerticalIcon />
+    </SortableItemHandle>
+  );
+}
+
 export default function QueryBuilderSortableDemo() {
   const [query, setQuery] = React.useState(defaultQuery);
 
+  const onRulesChange = (groupId: string, rules: QueryNode[]) =>
+    setQuery((current) =>
+      updateQueryNode(current, groupId, (node) =>
+        getIsQueryGroup(node) ? { ...node, rules } : node,
+      ),
+    );
+
   return (
-    <Sortable
-      value={query.rules}
-      onValueChange={(rules) => setQuery({ ...query, rules })}
-      getItemValue={(rule: QueryNode) => rule.id}
+    <QueryBuilder
+      fields={fields}
+      value={query}
+      onValueChange={setQuery}
+      className="w-full max-w-lg"
     >
-      <QueryBuilder
-        fields={fields}
-        value={query}
-        onValueChange={setQuery}
-        maxDepth={0}
-        className="w-full max-w-lg"
-      >
-        <QueryBuilderGroup>
-          <QueryBuilderGroupContent>
-            <SortableContent withoutSlot>
-              <QueryBuilderRules>
-                {(rule) => (
-                  <SortableItem
-                    value={rule.id}
-                    render={
-                      <QueryBuilderRule className="data-dragging:z-10 data-dragging:bg-background" />
-                    }
-                  >
-                    <QueryBuilderConnector />
-                    <ButtonGroup>
-                      <QueryBuilderField />
-                      <QueryBuilderOperator />
-                      <QueryBuilderValue />
-                      <QueryBuilderRemove variant="outline" />
-                      <SortableItemHandle
-                        render={
-                          <Button
-                            variant="outline"
-                            size="icon-sm"
-                            aria-label="Move rule"
-                            className="text-muted-foreground"
-                          />
-                        }
-                      >
-                        <GripVerticalIcon />
-                      </SortableItemHandle>
-                    </ButtonGroup>
-                  </SortableItem>
+      <QueryBuilderGroup>
+        {(group) => (
+          <>
+            <QueryBuilderConnector />
+            <QueryBuilderGroupContent>
+              <QueryBuilderGroupHeader className="data-[depth=0]:hidden">
+                <QueryBuilderGroupTitle />
+                <QueryBuilderAddRule size="icon-sm" aria-label="Add rule">
+                  <PlusIcon />
+                </QueryBuilderAddRule>
+                <QueryBuilderRemove />
+                {group.id !== query.id && (
+                  <QueryBuilderSortableHandle
+                    label="Move group"
+                    variant="ghost"
+                  />
                 )}
-              </QueryBuilderRules>
-            </SortableContent>
-            <QueryBuilderGroupFooter>
-              <QueryBuilderAddRule />
-            </QueryBuilderGroupFooter>
-          </QueryBuilderGroupContent>
-        </QueryBuilderGroup>
-      </QueryBuilder>
-    </Sortable>
+              </QueryBuilderGroupHeader>
+              <Sortable
+                value={group.rules}
+                onValueChange={(rules) => onRulesChange(group.id, rules)}
+                getItemValue={(node: QueryNode) => node.id}
+              >
+                <SortableContent withoutSlot>
+                  <QueryBuilderRules>
+                    {(node) =>
+                      getIsQueryGroup(node) ? (
+                        <SortableItem
+                          value={node.id}
+                          render={
+                            <QueryBuilderGroup className="data-dragging:z-10 data-dragging:bg-background" />
+                          }
+                        />
+                      ) : (
+                        <SortableItem
+                          value={node.id}
+                          render={
+                            <QueryBuilderRule className="data-dragging:z-10 data-dragging:bg-background" />
+                          }
+                        >
+                          <QueryBuilderConnector />
+                          <ButtonGroup>
+                            <QueryBuilderField />
+                            <QueryBuilderOperator />
+                            <QueryBuilderValue />
+                            <QueryBuilderRemove variant="outline" />
+                            <QueryBuilderSortableHandle label="Move rule" />
+                          </ButtonGroup>
+                        </SortableItem>
+                      )
+                    }
+                  </QueryBuilderRules>
+                </SortableContent>
+              </Sortable>
+              <QueryBuilderGroupFooter className="not-data-[depth=0]:hidden">
+                <QueryBuilderAddRule />
+                <QueryBuilderAddGroup />
+              </QueryBuilderGroupFooter>
+            </QueryBuilderGroupContent>
+          </>
+        )}
+      </QueryBuilderGroup>
+    </QueryBuilder>
   );
 }

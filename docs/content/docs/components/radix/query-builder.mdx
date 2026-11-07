@@ -156,7 +156,7 @@ Filter rows in the browser with `matchesQuery`, which follows the same rules as 
 
 ### Sortable
 
-Reorder rules by dragging with [Sortable](/docs/components/radix/sortable). Pass a function as the children of `QueryBuilderRules` to get each rule's `id` for its sortable item.
+Reorder rules and nested groups by dragging with [Sortable](/docs/components/radix/sortable). Pass a function as the children of `QueryBuilderGroup` to get each group's `rules` for its own sortable list, and as the children of `QueryBuilderRules` to wrap each rule and nested group in a sortable item. Items move within their group.
 
 <ComponentTabs name="query-builder-sortable-demo" />
 
@@ -249,7 +249,7 @@ The root component. Holds the query and the fields it can use.
 
 ### QueryBuilderGroup
 
-A group of rules. Renders the root group, and repeats for every nested group.
+A group of rules. Renders the root group, and repeats for every nested group. Its children can be a function that takes the group.
 
 <AutoTypeTable
   path="./types/radix/query-builder.ts"
@@ -338,7 +338,7 @@ Holds actions below the group's rules.
 
 ### QueryBuilderRules
 
-Renders the group's rules and nested groups. Its children are the layout for each rule, or a function that takes the rule and returns it.
+Renders the group's rules and nested groups. Its children are the layout for each rule, or a function that takes each rule and nested group and returns it. Inside the function, render `<QueryBuilderGroup />` for a nested group to reuse the root group's layout.
 
 <AutoTypeTable
   path="./types/radix/query-builder.ts"

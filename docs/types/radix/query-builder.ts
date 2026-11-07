@@ -1,7 +1,7 @@
 import type {
   QueryField,
   QueryGroup,
-  QueryRule,
+  QueryNode,
 } from "@/registry/bases/radix/lib/query-builder";
 import type { Button } from "@/registry/bases/radix/ui/button";
 import type { QueryBuilderLabels } from "@/registry/bases/radix/ui/query-builder";
@@ -82,7 +82,21 @@ export interface QueryBuilderProps extends EmptyProps<"div">, CompositionProps {
 }
 
 export interface QueryBuilderGroupProps
-  extends EmptyProps<"div">, CompositionProps {}
+  extends EmptyProps<"div">, CompositionProps {
+  /**
+   * The group's layout, which nested groups reuse. Pass a function to read
+   * the group, like its `rules` for a sortable list.
+   *
+   * ```tsx
+   * {(group) => (
+   *   <Sortable value={group.rules} getItemValue={(node) => node.id}>
+   *     …
+   *   </Sortable>
+   * )}
+   * ```
+   */
+  children?: React.ReactNode | ((group: QueryGroup) => React.ReactNode);
+}
 
 export interface QueryBuilderGroupContentProps
   extends EmptyProps<"div">, CompositionProps {}
@@ -122,18 +136,25 @@ export interface QueryBuilderGroupFooterProps
 export interface QueryBuilderRulesProps
   extends EmptyProps<"div">, CompositionProps {
   /**
-   * The layout for each rule. Pass a function to read the rule, like its `id`
-   * for a sortable item.
+   * The layout for each rule. Pass a function to read each rule and nested
+   * group, like its `id` for a sortable item. A function renders nested groups
+   * too, and `<QueryBuilderGroup />` inside it reuses the root group's layout.
    *
    * ```tsx
-   * {(rule) => (
-   *   <SortableItem value={rule.id} asChild>
-   *     <QueryBuilderRule />
-   *   </SortableItem>
-   * )}
+   * {(node) =>
+   *   getIsQueryGroup(node) ? (
+   *     <SortableItem value={node.id} asChild>
+   *       <QueryBuilderGroup />
+   *     </SortableItem>
+   *   ) : (
+   *     <SortableItem value={node.id} asChild>
+   *       <QueryBuilderRule />
+   *     </SortableItem>
+   *   )
+   * }
    * ```
    */
-  children?: React.ReactNode | ((rule: QueryRule) => React.ReactNode);
+  children?: React.ReactNode | ((node: QueryNode) => React.ReactNode);
 }
 
 export interface QueryBuilderRuleProps
