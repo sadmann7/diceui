@@ -362,7 +362,7 @@ A select for the group's combinator. It accepts the props of `SelectTrigger`.
 
 ### QueryBuilderValue
 
-The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/radix/faceted) picker for select and boolean fields, based on the field type and operator, and nothing for `isEmpty` and `isNotEmpty`. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
+The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/radix/faceted) picker for select and boolean fields, based on the field type and operator, and an empty, disabled input for `isEmpty` and `isNotEmpty`, which keeps the rule the same width and is hidden from screen readers. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`.
 
 Select fields take several values whenever their `operators` include both forms, like Linear's filters: picking a second value switches `eq` to `inArray` ("is" to "is any of") and `ne` to `notInArray`, and going back to one value switches back. Use `setQueryRuleValues` to do the same outside the picker. The trigger shows as many selected labels as fit, then `+N`, and the menu has a Clear action while anything is selected.
 
@@ -395,7 +395,7 @@ Removes the rule it's in, or the group when used outside a rule. Hidden in the r
 
 ## Accessibility
 
-Groups render with `role="group"`, and rules as a list. The combinator follows the [Select](https://www.radix-ui.com/primitives/docs/components/select) keyboard pattern, and the field, operator and value pickers follow [Faceted](/docs/components/radix/faceted).
+The root group renders with `role="group"`, and its rules and nested groups as a list, so a nested group reads as a list item holding its own list. The combinator follows the [Select](https://www.radix-ui.com/primitives/docs/components/select) keyboard pattern, and the field, operator and value pickers follow [Faceted](/docs/components/radix/faceted).
 
 The field, operator and value pickers include their current choice in their accessible name, like "Field: Status" or "Status: Todo, In progress", so the whole selection is announced even when some values are behind `+N`. Option icons are decorative, and when several values are selected the value picker lists them in its `title`. Give options icons that differ by shape, not only by color.
 

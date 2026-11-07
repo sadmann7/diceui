@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import * as React from "react";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 import type {
@@ -144,5 +145,58 @@ describe.each([
     expect(
       screen.getByRole("button", { name: "Operator: contains" }),
     ).toBeInTheDocument();
+  });
+
+  test("keeps both changes when two happen in the same event", () => {
+    const onValueChange = vi.fn();
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField]}
+        onValueChange={onValueChange}
+      >
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderAddRule
+              onClick={() =>
+                screen.getByRole("button", { name: "Add group" }).click()
+              }
+            />
+            <QueryBuilder.QueryBuilderAddGroup />
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Add rule" }));
+
+    const query = onValueChange.mock.lastCall?.[0] as QueryGroup;
+    expect(query.rules).toHaveLength(2);
+  });
+
+  test("keeps the root group's ref and id off nested groups", () => {
+    const ref = React.createRef<HTMLDivElement>();
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField]}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [{ id: "nested", combinator: "or", rules: [] }],
+        }}
+      >
+        <QueryBuilder.QueryBuilderGroup ref={ref} id="root-group">
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderRules />
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    const groups = document.querySelectorAll("[data-slot=query-builder-group]");
+    expect(groups).toHaveLength(2);
+    expect(ref.current).toBe(groups[0]);
+    expect(document.querySelectorAll("#root-group")).toHaveLength(1);
+    expect(groups[0]).toHaveAttribute("role", "group");
+    expect(groups[1]).toHaveAttribute("role", "listitem");
   });
 });

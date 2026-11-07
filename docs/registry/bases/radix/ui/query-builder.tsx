@@ -2,6 +2,7 @@
 
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
+import { useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import {
@@ -61,7 +62,7 @@ interface DivProps extends React.ComponentProps<"div"> {
 interface QueryBuilderContextValue {
   fields: QueryField[];
   value: QueryGroup;
-  onValueChange: (value: QueryGroup) => void;
+  setValue: (updater: (value: QueryGroup) => QueryGroup) => void;
   maxDepth: number;
   disabled: boolean;
 }
@@ -120,16 +121,16 @@ function useRuleContext(consumerName: string) {
 }
 
 function useQueryActions(consumerName: string) {
-  const { value, onValueChange } = useQueryBuilderContext(consumerName);
+  const { setValue } = useQueryBuilderContext(consumerName);
   return React.useMemo(
     () => ({
       update: (id: string, updater: (node: QueryNode) => QueryNode) =>
-        onValueChange(updateQueryNode(value, id, updater)),
+        setValue((value) => updateQueryNode(value, id, updater)),
       add: (groupId: string, node: QueryNode) =>
-        onValueChange(addQueryNode(value, groupId, node)),
-      remove: (id: string) => onValueChange(removeQueryNode(value, id)),
+        setValue((value) => addQueryNode(value, groupId, node)),
+      remove: (id: string) => setValue((value) => removeQueryNode(value, id)),
     }),
-    [value, onValueChange],
+    [setValue],
   );
 }
 
@@ -156,19 +157,28 @@ function QueryBuilder({
   const [uncontrolledValue, setUncontrolledValue] = React.useState(
     () => defaultValue ?? createQueryGroup(),
   );
+  const isControlled = valueProp !== undefined;
   const value = valueProp ?? uncontrolledValue;
 
-  const onValueChange = React.useCallback(
-    (next: QueryGroup) => {
-      if (valueProp === undefined) setUncontrolledValue(next);
+  const valueRef = React.useRef(value);
+  useLayoutEffect(() => {
+    valueRef.current = value;
+  });
+
+  const setValue = React.useCallback(
+    (updater: (value: QueryGroup) => QueryGroup) => {
+      const next = updater(valueRef.current);
+      if (next === valueRef.current) return;
+      valueRef.current = next;
+      if (!isControlled) setUncontrolledValue(next);
       onValueChangeProp?.(next);
     },
-    [valueProp, onValueChangeProp],
+    [isControlled, onValueChangeProp],
   );
 
   const contextValue = React.useMemo<QueryBuilderContextValue>(
-    () => ({ fields, value, onValueChange, maxDepth, disabled }),
-    [fields, value, onValueChange, maxDepth, disabled],
+    () => ({ fields, value, setValue, maxDepth, disabled }),
+    [fields, value, setValue, maxDepth, disabled],
   );
 
   const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
@@ -191,6 +201,8 @@ interface QueryBuilderGroupProps extends DivProps {}
 function QueryBuilderGroup({
   asChild,
   className,
+  ref,
+  id,
   ...props
 }: QueryBuilderGroupProps) {
   const { value } = useQueryBuilderContext(GROUP_NAME);
@@ -198,7 +210,6 @@ function QueryBuilderGroup({
   const nestedGroup = React.useContext(NestedGroupContext);
 
   const group = nestedGroup ?? value;
-  const template = { asChild, className, ...props };
   const depth = parent ? parent.depth + 1 : 0;
 
   const groupContext = React.useMemo<GroupContextValue>(
@@ -209,11 +220,13 @@ function QueryBuilderGroup({
   const GroupPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
-    <GroupTemplateContext.Provider value={template}>
+    <GroupTemplateContext.Provider value={{ asChild, className, ...props }}>
       <GroupContext.Provider value={groupContext}>
         <NestedGroupContext.Provider value={null}>
           <GroupPrimitive
-            role="group"
+            ref={ref}
+            id={id}
+            role={parent ? "listitem" : "group"}
             data-slot="query-builder-group"
             data-depth={depth}
             data-combinator={group.combinator}
