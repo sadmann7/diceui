@@ -378,12 +378,27 @@ function Kanban<T>(props: KanbanProps<T>) {
         const activeItem = activeItems[activeIndex];
         if (!activeItem) return;
 
+        const overIndex = overItems.findIndex(
+          (item) => getItemValue(item) === over.id,
+        );
+        const activeRect = active.rect.current.translated;
+        const isBelowOverItem =
+          !!activeRect && activeRect.top > over.rect.top + over.rect.height;
+        const insertIndex =
+          overIndex === -1
+            ? overItems.length
+            : overIndex + (isBelowOverItem ? 1 : 0);
+
         const updatedItems = {
           ...value,
           [activeColumn]: activeItems.filter(
             (item) => getItemValue(item) !== active.id,
           ),
-          [overColumn]: [...overItems, activeItem],
+          [overColumn]: [
+            ...overItems.slice(0, insertIndex),
+            activeItem,
+            ...overItems.slice(insertIndex),
+          ],
         };
 
         onValueChange?.(updatedItems);
