@@ -40,6 +40,34 @@ describe.each([
       itemB?.id,
     );
   });
+
+  test("only marks disabled items and handles as disabled", () => {
+    render(
+      <Sortable.Sortable value={["a", "b"]} getItemValue={(item) => item}>
+        <Sortable.SortableContent>
+          <Sortable.SortableItem value="a">
+            <Sortable.SortableItemHandle aria-label="Move a" />
+          </Sortable.SortableItem>
+          <Sortable.SortableItem value="b" disabled>
+            <Sortable.SortableItemHandle aria-label="Move b" />
+          </Sortable.SortableItem>
+        </Sortable.SortableContent>
+      </Sortable.Sortable>,
+    );
+
+    const [itemA, itemB] = document.querySelectorAll(
+      "[data-slot=sortable-item]",
+    );
+    expect(itemA).not.toHaveAttribute("data-disabled");
+    expect(screen.getByLabelText("Move a")).not.toHaveAttribute(
+      "data-disabled",
+    );
+    expect(itemB).toHaveAttribute("data-disabled", "");
+    expect(screen.getByLabelText("Move b")).toHaveAttribute(
+      "data-disabled",
+      "",
+    );
+  });
 });
 
 describe.each([
@@ -76,5 +104,39 @@ describe.each([
       "data-slot",
       "kanban-item",
     );
+  });
+
+  test("only marks disabled columns and items as disabled", () => {
+    render(
+      <Kanban.Kanban
+        value={{ todo: ["a", "b"], done: [] }}
+        getItemValue={(item) => item}
+      >
+        <Kanban.KanbanBoard>
+          <Kanban.KanbanColumn value="todo">
+            <Kanban.KanbanColumnHandle aria-label="Move todo" />
+            <Kanban.KanbanItem value="a">
+              <Kanban.KanbanItemHandle aria-label="Move a" />
+            </Kanban.KanbanItem>
+            <Kanban.KanbanItem value="b" disabled>
+              <Kanban.KanbanItemHandle aria-label="Move b" />
+            </Kanban.KanbanItem>
+          </Kanban.KanbanColumn>
+          <Kanban.KanbanColumn value="done" disabled>
+            <Kanban.KanbanColumnHandle aria-label="Move done" />
+          </Kanban.KanbanColumn>
+        </Kanban.KanbanBoard>
+      </Kanban.Kanban>,
+    );
+
+    for (const label of ["Move todo", "Move a"]) {
+      expect(screen.getByLabelText(label)).not.toHaveAttribute("data-disabled");
+    }
+    for (const label of ["Move done", "Move b"]) {
+      expect(screen.getByLabelText(label)).toHaveAttribute("data-disabled", "");
+    }
+    const [todo, done] = document.querySelectorAll("[data-slot=kanban-column]");
+    expect(todo).not.toHaveAttribute("data-disabled");
+    expect(done).toHaveAttribute("data-disabled", "");
   });
 });

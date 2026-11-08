@@ -130,8 +130,12 @@ function Sortable<T>(props: SortableProps<T>) {
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
 
   const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
+    useSensor(MouseSensor, {
+      activationConstraint: { distance: 4 },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: { delay: 250, tolerance: 5 },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -173,25 +177,26 @@ function Sortable<T>(props: SortableProps<T>) {
   const onDragEnd = React.useCallback(
     (event: DragEndEvent) => {
       onDragEndProp?.(event);
+      setActiveId(null);
 
       if (event.activatorEvent.defaultPrevented) return;
 
       const { active, over } = event;
-      if (over && active.id !== over.id) {
-        const activeIndex = value.findIndex(
-          (item) => getItemValue(item) === active.id,
-        );
-        const overIndex = value.findIndex(
-          (item) => getItemValue(item) === over.id,
-        );
+      if (!over || active.id === over.id) return;
 
-        if (onMove) {
-          onMove({ ...event, activeIndex, overIndex });
-        } else {
-          onValueChange?.(arrayMove(value, activeIndex, overIndex));
-        }
+      const activeIndex = value.findIndex(
+        (item) => getItemValue(item) === active.id,
+      );
+      const overIndex = value.findIndex(
+        (item) => getItemValue(item) === over.id,
+      );
+      if (activeIndex === -1 || overIndex === -1) return;
+
+      if (onMove) {
+        onMove({ ...event, activeIndex, overIndex });
+      } else {
+        onValueChange?.(arrayMove(value, activeIndex, overIndex));
       }
-      setActiveId(null);
     },
     [value, onValueChange, onMove, getItemValue, onDragEndProp],
   );
@@ -199,9 +204,6 @@ function Sortable<T>(props: SortableProps<T>) {
   const onDragCancel = React.useCallback(
     (event: DragEndEvent) => {
       onDragCancelProp?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
-
       setActiveId(null);
     },
     [onDragCancelProp],
@@ -421,9 +423,8 @@ function SortableItem(props: SortableItemProps) {
 
   const onNodeRefChange = React.useCallback(
     (node: HTMLElement | null) => {
-      if (disabled) return;
       setNodeRef(node);
-      if (asHandle) setActivatorNodeRef(node);
+      if (asHandle && !disabled) setActivatorNodeRef(node);
     },
     [disabled, asHandle, setNodeRef, setActivatorNodeRef],
   );
@@ -456,7 +457,7 @@ function SortableItem(props: SortableItemProps) {
     <SortableItemContext.Provider value={itemContext}>
       <ItemPrimitive
         id={id}
-        data-disabled={disabled}
+        data-disabled={disabled ? "" : undefined}
         data-dragging={isDragging ? "" : undefined}
         data-slot="sortable-item"
         {...itemProps}
@@ -511,7 +512,7 @@ function SortableItemHandle(props: SortableItemHandleProps) {
     <HandlePrimitive
       type="button"
       aria-controls={itemContext.id}
-      data-disabled={isDisabled}
+      data-disabled={isDisabled ? "" : undefined}
       data-dragging={itemContext.isDragging ? "" : undefined}
       data-slot="sortable-item-handle"
       {...itemHandleProps}
