@@ -1546,7 +1546,7 @@
   }
 
   .cn-query-builder-rule {
-    @apply gap-2 @max-[28rem]:flex-nowrap @max-[28rem]:*:data-[slot=button-group]:min-w-0 @max-[28rem]:*:data-[slot=button-group]:flex-1 has-data-[operator=isBetween]:flex-nowrap has-data-[operator=isBetween]:*:data-[slot=button-group]:min-w-0 has-data-[operator=isBetween]:*:data-[slot=button-group]:flex-1 [&>[data-slot=button-group]>*:not(:first-child)]:-ml-px [&>[data-slot=button-group]>*:not(:first-child)]:border-l!;
+    @apply gap-2 @max-[28rem]:flex-nowrap @max-[28rem]:*:data-[slot=button-group]:min-w-0 @max-[28rem]:*:data-[slot=button-group]:flex-1 has-data-[operator=isBetween]:flex-nowrap has-data-[operator=isBetween]:*:data-[slot=button-group]:min-w-0 has-data-[operator=isBetween]:*:data-[slot=button-group]:flex-1 [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-1 [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-solid [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-ring [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:-outline-offset-1;
   }
 
   .cn-query-builder-combinator {
@@ -1578,8 +1578,9 @@
     @apply h-9 w-32 @max-[28rem]:w-auto @max-[28rem]:min-w-0 @max-[28rem]:flex-1 data-[operator=isBetween]:w-auto data-[operator=isBetween]:min-w-0 data-[operator=isBetween]:flex-1;
   }
 
+  /* @role cn-input */
   .cn-query-builder-value-separator {
-    @apply flex h-9 items-center border-y border-e border-input bg-muted px-3 text-sm text-muted-foreground;
+    @apply flex h-9 items-center border-y border-e border-transparent bg-transparent dark:bg-input/30 px-3 text-sm text-muted-foreground border-b-input;
   }
 
   .cn-query-builder-select {
