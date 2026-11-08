@@ -227,6 +227,9 @@ function Kanban<T>(props: KanbanProps<T>) {
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null);
   const hasMovedRef = React.useRef(false);
+  const valueBeforeDragRef = React.useRef<Record<UniqueIdentifier, T[]> | null>(
+    null,
+  );
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
@@ -249,19 +252,22 @@ function Kanban<T>(props: KanbanProps<T>) {
     [getItemValueProp],
   );
 
+  const itemColumns = React.useMemo(() => {
+    const columns = new Map<UniqueIdentifier, UniqueIdentifier>();
+    for (const [columnId, columnItems] of Object.entries(value)) {
+      for (const item of columnItems) {
+        columns.set(getItemValue(item), columnId);
+      }
+    }
+    return columns;
+  }, [value, getItemValue]);
+
   const getColumn = React.useCallback(
     (targetId: UniqueIdentifier) => {
       if (targetId in value) return targetId;
-
-      for (const [columnId, columnItems] of Object.entries(value)) {
-        if (columnItems.some((item) => getItemValue(item) === targetId)) {
-          return columnId;
-        }
-      }
-
-      return null;
+      return itemColumns.get(targetId) ?? null;
     },
-    [value, getItemValue],
+    [value, itemColumns],
   );
 
   const collisionDetection: CollisionDetection = React.useCallback(
@@ -297,9 +303,7 @@ function Kanban<T>(props: KanbanProps<T>) {
             droppableContainers: args.droppableContainers.filter(
               (container) =>
                 container.id !== overId &&
-                containerItems.some(
-                  (item) => getItemValue(item) === container.id,
-                ),
+                String(itemColumns.get(container.id)) === String(overId),
             ),
           });
 
@@ -312,24 +316,21 @@ function Kanban<T>(props: KanbanProps<T>) {
       lastOverIdRef.current = overId;
       return [{ id: overId }];
     },
-    [activeId, value, getItemValue],
+    [activeId, value, itemColumns],
   );
 
   const onDragStart = React.useCallback(
     (event: DragStartEvent) => {
       onDragStartProp?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
+      valueBeforeDragRef.current = value;
       setActiveId(event.active.id);
     },
-    [onDragStartProp],
+    [value, onDragStartProp],
   );
 
   const onDragOver = React.useCallback(
     (event: DragOverEvent) => {
       onDragOverProp?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
 
       const { active, over } = event;
       if (!over) return;
@@ -350,7 +351,11 @@ function Kanban<T>(props: KanbanProps<T>) {
           (item) => getItemValue(item) === over.id,
         );
 
-        if (activeIndex !== overIndex) {
+        if (
+          activeIndex !== -1 &&
+          overIndex !== -1 &&
+          activeIndex !== overIndex
+        ) {
           const newColumns = { ...value };
           newColumns[activeColumn] = arrayMove(items, activeIndex, overIndex);
           onValueChange?.(newColumns);
@@ -388,15 +393,12 @@ function Kanban<T>(props: KanbanProps<T>) {
   const onDragEnd = React.useCallback(
     (event: DragEndEvent) => {
       onDragEndProp?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
+      setActiveId(null);
+      hasMovedRef.current = false;
+      valueBeforeDragRef.current = null;
 
       const { active, over } = event;
-
-      if (!over) {
-        setActiveId(null);
-        return;
-      }
+      if (!over) return;
 
       if (active.id in value && over.id in value) {
         const activeIndex = Object.keys(value).indexOf(active.id as string);
@@ -424,17 +426,11 @@ function Kanban<T>(props: KanbanProps<T>) {
         const activeColumn = getColumn(active.id);
         const overColumn = getColumn(over.id);
 
-        if (!activeColumn || !overColumn) {
-          setActiveId(null);
-          return;
-        }
+        if (!activeColumn || !overColumn) return;
 
         if (activeColumn === overColumn) {
           const items = value[activeColumn];
-          if (!items) {
-            setActiveId(null);
-            return;
-          }
+          if (!items) return;
 
           const activeIndex = items.findIndex(
             (item) => getItemValue(item) === active.id,
@@ -443,7 +439,11 @@ function Kanban<T>(props: KanbanProps<T>) {
             (item) => getItemValue(item) === over.id,
           );
 
-          if (activeIndex !== overIndex) {
+          if (
+            activeIndex !== -1 &&
+            overIndex !== -1 &&
+            activeIndex !== overIndex
+          ) {
             const newColumns = { ...value };
             newColumns[activeColumn] = arrayMove(items, activeIndex, overIndex);
             if (onMove) {
@@ -458,9 +458,6 @@ function Kanban<T>(props: KanbanProps<T>) {
           }
         }
       }
-
-      setActiveId(null);
-      hasMovedRef.current = false;
     },
     [value, getColumn, getItemValue, onValueChange, onMove, onDragEndProp],
   );
@@ -468,13 +465,16 @@ function Kanban<T>(props: KanbanProps<T>) {
   const onDragCancel = React.useCallback(
     (event: DragCancelEvent) => {
       onDragCancelProp?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
-
       setActiveId(null);
       hasMovedRef.current = false;
+
+      const valueBeforeDrag = valueBeforeDragRef.current;
+      valueBeforeDragRef.current = null;
+      if (valueBeforeDrag && valueBeforeDrag !== value) {
+        onValueChange?.(valueBeforeDrag);
+      }
     },
-    [onDragCancelProp],
+    [value, onValueChange, onDragCancelProp],
   );
 
   const announcements: Announcements = React.useMemo(
@@ -770,10 +770,9 @@ function KanbanColumn(props: KanbanColumnProps) {
 
   const onNodeRefChange = React.useCallback(
     (node: HTMLElement | null) => {
-      if (disabled) return;
       setNodeRef(node);
     },
-    [disabled, setNodeRef],
+    [setNodeRef],
   );
 
   const composedRef = useMergedRefs(ref, onNodeRefChange);
@@ -833,8 +832,8 @@ function KanbanColumn(props: KanbanColumnProps) {
     render,
     state: {
       slot: "kanban-column",
-      ...(disabled && { disabled: "" }),
-      ...(isDragging && { dragging: "" }),
+      disabled: !!disabled,
+      dragging: isDragging,
     },
   });
 
@@ -903,8 +902,8 @@ function KanbanColumnHandle(props: KanbanColumnHandleProps) {
     render,
     state: {
       slot: "kanban-column-handle",
-      ...(isDisabled && { disabled: "" }),
-      ...(columnContext.isDragging && { dragging: "" }),
+      disabled: !!isDisabled,
+      dragging: !!columnContext.isDragging,
     },
   });
 }
@@ -978,10 +977,9 @@ function KanbanItem(props: KanbanItemProps) {
   // every render, which retriggers droppable measuring during a drag.
   const onNodeRef = React.useCallback(
     (node: HTMLElement | null) => {
-      if (disabled) return;
       setNodeRef(node);
     },
-    [disabled, setNodeRef],
+    [setNodeRef],
   );
 
   const composedRef = useMergedRefs(ref, onNodeRef);
@@ -1035,8 +1033,8 @@ function KanbanItem(props: KanbanItemProps) {
     render,
     state: {
       slot: "kanban-item",
-      ...(disabled && { disabled: "" }),
-      ...(isDragging && { dragging: "" }),
+      disabled: !!disabled,
+      dragging: isDragging,
     },
   });
 
@@ -1096,8 +1094,8 @@ function KanbanItemHandle(props: KanbanItemHandleProps) {
     render,
     state: {
       slot: "kanban-item-handle",
-      ...(isDisabled && { disabled: "" }),
-      ...(itemContext.isDragging && { dragging: "" }),
+      disabled: !!isDisabled,
+      dragging: !!itemContext.isDragging,
     },
   });
 }

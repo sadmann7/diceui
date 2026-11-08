@@ -164,8 +164,6 @@ function Sortable<T>(props: SortableProps<T>) {
     (event: DragStartEvent) => {
       onDragStartProp?.(event);
 
-      if (event.activatorEvent.defaultPrevented) return;
-
       setActiveId(event.active.id);
     },
     [onDragStartProp],
@@ -174,25 +172,24 @@ function Sortable<T>(props: SortableProps<T>) {
   const onDragEnd = React.useCallback(
     (event: DragEndEvent) => {
       onDragEndProp?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
+      setActiveId(null);
 
       const { active, over } = event;
-      if (over && active.id !== over.id) {
-        const activeIndex = value.findIndex(
-          (item) => getItemValue(item) === active.id,
-        );
-        const overIndex = value.findIndex(
-          (item) => getItemValue(item) === over.id,
-        );
+      if (!over || active.id === over.id) return;
 
-        if (onMove) {
-          onMove({ ...event, activeIndex, overIndex });
-        } else {
-          onValueChange?.(arrayMove(value, activeIndex, overIndex));
-        }
+      const activeIndex = value.findIndex(
+        (item) => getItemValue(item) === active.id,
+      );
+      const overIndex = value.findIndex(
+        (item) => getItemValue(item) === over.id,
+      );
+      if (activeIndex === -1 || overIndex === -1) return;
+
+      if (onMove) {
+        onMove({ ...event, activeIndex, overIndex });
+      } else {
+        onValueChange?.(arrayMove(value, activeIndex, overIndex));
       }
-      setActiveId(null);
     },
     [value, onValueChange, onMove, getItemValue, onDragEndProp],
   );
@@ -200,9 +197,6 @@ function Sortable<T>(props: SortableProps<T>) {
   const onDragCancel = React.useCallback(
     (event: DragEndEvent) => {
       onDragCancelProp?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
-
       setActiveId(null);
     },
     [onDragCancelProp],
@@ -426,9 +420,8 @@ function SortableItem(props: SortableItemProps) {
 
   const onNodeRefChange = React.useCallback(
     (node: HTMLElement | null) => {
-      if (disabled) return;
       setNodeRef(node);
-      if (asHandle) setActivatorNodeRef(node);
+      if (asHandle && !disabled) setActivatorNodeRef(node);
     },
     [disabled, asHandle, setNodeRef, setActivatorNodeRef],
   );
@@ -484,8 +477,8 @@ function SortableItem(props: SortableItemProps) {
     render,
     state: {
       slot: "sortable-item",
-      ...(disabled && { disabled: "" }),
-      ...(isDragging && { dragging: "" }),
+      disabled: !!disabled,
+      dragging: isDragging,
     },
   });
 
@@ -545,8 +538,8 @@ function SortableItemHandle(props: SortableItemHandleProps) {
     render,
     state: {
       slot: "sortable-item-handle",
-      ...(isDisabled && { disabled: "" }),
-      ...(itemContext.isDragging && { dragging: "" }),
+      disabled: !!isDisabled,
+      dragging: !!itemContext.isDragging,
     },
   });
 }
