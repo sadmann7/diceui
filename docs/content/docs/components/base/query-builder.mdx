@@ -60,7 +60,7 @@ npx shadcn@latest add @diceui/faceted
 
 ## Layout
 
-Import the parts, and compose them together. `QueryBuilderRules` renders its children once per rule, and nested groups reuse the layout of the group that holds them. Wrap a rule's controls in a `ButtonGroup` to join them into one control.
+Compose the parts like this. `QueryBuilderRules` renders its children once per rule, and nested groups reuse the root group's layout. Wrap a rule's controls in a `ButtonGroup` to join them.
 
 ```tsx
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -114,7 +114,7 @@ return (
 );
 ```
 
-The header, content and footer carry `data-depth`, so you can show the header only on nested groups and the footer only on the root:
+The header, content and footer have `data-depth`, so you can show the header only on nested groups and the footer only on the root:
 
 ```tsx
 <QueryBuilderGroupHeader className="data-[depth=0]:hidden" />
@@ -123,7 +123,7 @@ The header, content and footer carry `data-depth`, so you can show the header on
 
 ## Labels
 
-Pass `labels` to translate or reword the built-in text, like "Where", "Add rule" and the placeholders. Labels you leave out keep their English default, and the ones that include a value, like `selected` and `searchValues`, are functions.
+Pass `labels` to reword or translate the built-in text. Labels you leave out keep their default. Labels that include a value, like `selected`, are functions.
 
 ```tsx
 <QueryBuilder
@@ -138,25 +138,29 @@ Pass `labels` to translate or reword the built-in text, like "Where", "Add rule"
 />
 ```
 
-Operator labels come from `getQueryOperatorLabel` in `lib/query-builder.ts`, so change them there.
+Operator labels come from `getQueryOperatorLabel` in `lib/query-builder.ts`.
 
 ## Examples
 
 ### SQL
 
-Turn the query into a parameterized `WHERE` clause with `formatQuery`. Values only ever go into `params`, and columns come from your `fields`, so the output is safe to pass to your database driver.
+`formatQuery` turns the query into a parameterized `WHERE` clause. Values go into `params` and columns come from `fields`, so the output is safe to pass to your database driver.
 
 <ComponentTabs name="query-builder-sql-demo" />
 
 ### Filtering data
 
-Filter rows in the browser with `matchesQuery`, which follows the same rules as the SQL output.
+Filter rows in the browser with `matchesQuery`.
 
 <ComponentTabs name="query-builder-filter-demo" />
 
 ### Sortable
 
-Reorder rules and nested groups by dragging with [Sortable](/docs/components/base/sortable). Pass a function as the children of `QueryBuilderGroup` to get each group's `rules` for its own sortable list, and as the children of `QueryBuilderRules` to wrap each rule and nested group in a sortable item. Use `moveQueryNode` to move a dragged rule or group into another group, so items can move between groups.
+Drag rules and nested groups with [Sortable](/docs/components/base/sortable).
+
+- Pass a function to `QueryBuilderGroup` to get the group's rules.
+- Pass a function to `QueryBuilderRules` to wrap each rule and nested group in a sortable item.
+- Use `moveQueryNode` to move an item into another group.
 
 <ComponentTabs name="query-builder-sortable-demo" />
 
@@ -188,7 +192,7 @@ const query: QueryGroup = {
 };
 ```
 
-Values are strings, or string arrays for `isBetween`, `inArray` and `notInArray`, so a query serializes cleanly to JSON or the URL. Dates use `YYYY-MM-DD` and match the whole day. Rules that aren't filled in yet are skipped.
+Values are strings, or string arrays for `isBetween`, `inArray` and `notInArray`, so a query serializes to JSON or the URL. Dates use `YYYY-MM-DD` and match the whole day. Rules that aren't filled in are skipped.
 
 ### Fields and operators
 
@@ -201,7 +205,7 @@ Values are strings, or string arrays for `isBetween`, `inArray` and `notInArray`
 | `select`      | `eq`, `ne`, `inArray`, `notInArray`, `isEmpty`, `isNotEmpty`              |
 | `multiSelect` | `inArray`, `notInArray`, `isEmpty`, `isNotEmpty`                          |
 
-Pass `operators` on a field to narrow or reorder its list. Options can take an `icon`, which shows next to the label in the picker.
+Pass `operators` on a field to narrow or reorder its operators. Options can take an `icon`, shown next to the label.
 
 ### On the server
 
@@ -215,11 +219,11 @@ const result = await db.query(
 );
 ```
 
-`dialect` is `postgres` (the default, with `$1` placeholders), `mysql` or `sqlite` (with `?` placeholders). Set `column` on a field to map it to a different column, like `created_at` or `tasks.title`.
+`dialect` is `postgres` (the default, with `$1` placeholders), `mysql` or `sqlite` (with `?` placeholders). Set `column` on a field to map it to another column, like `created_at`.
 
 ### On the client
 
-`matchesQuery` checks a row against the same query in the browser, with the same rules as the SQL output.
+`matchesQuery` checks a row against the same query, with the same rules as the SQL output.
 
 ```ts
 import { matchesQuery } from "@/lib/query-builder";
@@ -249,7 +253,7 @@ The root component. Holds the query and the fields it can use.
 
 ### QueryBuilderGroup
 
-A group of rules. Renders the root group, and repeats for every nested group. Its children can be a function that takes the group.
+A group of rules. Used for the root group and repeated for every nested group. Its children can be a function that takes the group.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -311,7 +315,7 @@ Holds the group's title and actions.
 
 ### QueryBuilderGroupTitle
 
-Describes the group, like "Any of the following are true…", based on its combinator and whether it's negated ("None of the following are true…"). Pass children to change the text.
+Describes the group based on its combinator, like "Any of the following are true…", or "None of the following are true…" when negated. Pass children to change the text.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -338,7 +342,7 @@ Holds actions below the group's rules.
 
 ### QueryBuilderRules
 
-Renders the group's rules and nested groups. Its children are the layout for each rule, or a function that takes each rule and nested group and returns it. Inside the function, render `<QueryBuilderGroup />` for a nested group to reuse the root group's layout.
+Renders the group's rules and nested groups. Pass the layout for each rule as children, or a function that takes each rule or nested group. In the function, render `<QueryBuilderGroup />` for a nested group to reuse the root group's layout.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -365,7 +369,13 @@ A single rule.
 
 ### QueryBuilderConnector
 
-Joins a rule or nested group to the ones before it: "Where" for the first, a select for the group's combinator on the second, and "And" or "Or" after that. Renders nothing outside `QueryBuilderRules`, like on the root group. The select's accessible name comes from the `combinator` label.
+Shows how a rule or nested group joins the ones before it:
+
+- "Where" before the first.
+- A combinator select before the second.
+- "And" or "Or" after that.
+
+Renders nothing outside `QueryBuilderRules`. The select's accessible name is the `combinator` label.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -383,7 +393,12 @@ Joins a rule or nested group to the ones before it: "Where" for the first, a sel
 
 ### QueryBuilderField
 
-A searchable [Faceted](/docs/components/base/faceted) picker for the rule's field. Switching to a field of the same type keeps the operator and value, dropping select values the new field doesn't have. Switching to another type resets the rule. It accepts the props of `Button`. The chevron in the field, operator and value pickers has `data-slot="query-builder-select-icon"`, so a class like `**:data-[slot=query-builder-select-icon]:hidden` on a wrapper hides it.
+A searchable [Faceted](/docs/components/base/faceted) picker for the rule's field. Accepts the props of `Button`.
+
+- Switching to a field of the same type keeps the operator and value, minus select values the new field doesn't have.
+- Switching to another type resets the rule.
+
+To hide the chevron in the field, operator and value pickers, target `data-slot="query-builder-select-icon"`, like `**:data-[slot=query-builder-select-icon]:hidden` on a wrapper.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -392,7 +407,7 @@ A searchable [Faceted](/docs/components/base/faceted) picker for the rule's fiel
 
 ### QueryBuilderOperator
 
-A searchable picker for the rule's operator. Changing the operator keeps the value, turning a single value into a list (or a list into its first value) when switching between "is" and "is any of". It accepts the props of `Button`.
+A searchable picker for the rule's operator. Accepts the props of `Button`. Changing the operator keeps the value. Switching between "is" and "is any of" turns a single value into a list, or a list into its first value.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -401,7 +416,7 @@ A searchable picker for the rule's operator. Changing the operator keeps the val
 
 ### QueryBuilderCombinator
 
-A select for the group's combinator, labeled "All" and "Any", for a header like "Match [All] of the following". Use `QueryBuilderConnector` to show the combinator between rules instead. It accepts the props of `SelectTrigger`.
+A select for the group's combinator, labeled "All" and "Any", for headers like "Match [All] of the following". Accepts the props of `SelectTrigger`. To show the combinator between rules, use `QueryBuilderConnector`.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -410,7 +425,7 @@ A select for the group's combinator, labeled "All" and "Any", for a header like 
 
 ### QueryBuilderNot
 
-A toggle that negates the group, so it matches when its rules don't. The [SQL](#sql) example has one on the nested group, which turns into `NOT (...)`. It has `aria-pressed` while the group is negated, and accepts the props of `Button`.
+A toggle that negates the group, so it matches when its rules don't. Accepts the props of `Button` and sets `aria-pressed` while on. The [SQL](#sql) example negates its nested group, which outputs `NOT (...)`.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -428,9 +443,18 @@ A toggle that negates the group, so it matches when its rules don't. The [SQL](#
 
 ### QueryBuilderValue
 
-The rule's value. Renders an input, a range, or a searchable [Faceted](/docs/components/base/faceted) picker for select and boolean fields, based on the field type and operator, and an empty, disabled input for `isEmpty` and `isNotEmpty`, which keeps the rule the same width and is hidden from screen readers. It renders the control itself, without a wrapper, so it joins a `ButtonGroup`, and passes HTML attributes like `id` and `aria-describedby` to it. For a range, `id` goes on the first input.
+The rule's value, based on the field type and operator:
 
-Select fields take several values whenever their `operators` include both forms, like Linear's filters: picking a second value switches `eq` to `inArray` ("is" to "is any of") and `ne` to `notInArray`, and going back to one value switches back. Use `setQueryRuleValues` to do the same outside the picker. The trigger shows a badge for each selected value that fits, then `+N`, and the menu has a Clear action while anything is selected. Set `display="summary"` to show the label instead, or a count like "2 selected".
+- An input for text, number and date fields.
+- Two inputs for `isBetween`.
+- A searchable [Faceted](/docs/components/base/faceted) picker for select and boolean fields.
+- An empty, read-only input for `isEmpty` and `isNotEmpty`. It keeps the rule's width and is hidden from screen readers.
+
+It renders the control without a wrapper, so it fits in a `ButtonGroup`, and passes HTML attributes like `id` to it. For a range, `id` goes on the first input.
+
+A select field takes several values when its `operators` include both forms, like Linear's filters. Picking a second value switches `eq` to `inArray` and `ne` to `notInArray`, and removing it switches back. `setQueryRuleValues` does the same outside the picker.
+
+The trigger shows a badge per value, then `+N` for the ones that don't fit, and the menu has a Clear action. Set `display="summary"` to show the value's label, or a count like "2 selected", instead.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -448,7 +472,7 @@ Adds a rule to the group. Set `field` to the name of the field the rule starts w
 
 ### QueryBuilderAddGroup
 
-Adds a nested group with one rule, using `field` like `QueryBuilderAddRule`. The new group uses the opposite of its parent's combinator, since a group that matches its parent changes nothing. Hidden once the group is at `maxDepth`.
+Adds a nested group with one rule, using `field` like `QueryBuilderAddRule`. The new group uses the opposite of its parent's combinator. Hidden once the group is at `maxDepth`.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"
@@ -468,7 +492,7 @@ Removes the rule it's in, or the group when used outside a rule. Hidden in the r
 
 The root group renders with `role="group"`, and its rules and nested groups as a list, so a nested group reads as a list item holding its own list. The combinator follows the [Select](https://base-ui.com/react/components/select) keyboard pattern, and the field, operator and value pickers follow [Faceted](/docs/components/base/faceted).
 
-The field, operator and value pickers include their current choice in their accessible name, like "Field: Status" or "Status: Todo, In progress", so the whole selection is announced even when some values are behind `+N`. Option icons are decorative, and when several values are selected the value picker lists them in its `title`. Give options icons that differ by shape, not only by color.
+The field, operator and value pickers include their selection in their accessible name, like "Status: Todo, In progress", so values hidden behind `+N` are still announced, and the value picker lists them in its `title`. Option icons are decorative, so give options icons that differ by shape, not only by color.
 
 ### Keyboard Interactions
 
