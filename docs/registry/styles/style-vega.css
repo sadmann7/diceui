@@ -1522,11 +1522,11 @@
   }
 
   .cn-query-builder-group {
-    @apply items-start gap-2;
+    @apply items-start gap-2 @max-[28rem]/query-builder:gap-1.5;
   }
 
   .cn-query-builder-group-content {
-    @apply min-w-0 flex-1 gap-2 data-[depth=0]:min-w-72 not-data-[depth=0]:rounded-lg not-data-[depth=0]:border not-data-[depth=0]:bg-muted/30 not-data-[depth=0]:p-2;
+    @apply min-w-0 flex-1 gap-2 not-data-[depth=0]:rounded-lg not-data-[depth=0]:border not-data-[depth=0]:bg-muted/20 not-data-[depth=0]:p-2;
   }
 
   .cn-query-builder-group-header {
@@ -1546,7 +1546,7 @@
   }
 
   .cn-query-builder-rule {
-    @apply gap-2 @max-[28rem]:flex-nowrap @max-[28rem]:*:data-[slot=button-group]:min-w-0 @max-[28rem]:*:data-[slot=button-group]:flex-1 has-data-[operator=isBetween]:flex-nowrap has-data-[operator=isBetween]:*:data-[slot=button-group]:min-w-0 has-data-[operator=isBetween]:*:data-[slot=button-group]:flex-1 [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-1 [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-solid [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-ring [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:-outline-offset-1;
+    @apply gap-2 *:data-[slot=button-group]:min-w-0 @max-[28rem]/query-builder:gap-1.5 @max-[28rem]/query-builder:*:data-[slot=button-group]:flex-1 @max-[28rem]/query-builder:**:data-[slot=query-builder-select-icon]:hidden has-data-[operator=isBetween]:*:data-[slot=button-group]:flex-1 [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-1 [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-solid [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-ring [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:-outline-offset-1;
   }
 
   .cn-query-builder-combinator {
@@ -1554,28 +1554,28 @@
   }
 
   .cn-query-builder-connector {
-    @apply h-8 w-18 shrink-0 data-[type=group]:mt-2;
+    @apply h-8 w-18 shrink-0 data-[type=group]:mt-2 @max-[28rem]/query-builder:w-15;
   }
 
   /* @role cn-button */
   .cn-query-builder-connector-select {
-    @apply w-full rounded-md data-[size=sm]:rounded-md;
+    @apply w-full rounded-md data-[size=sm]:rounded-md @max-[28rem]/query-builder:gap-1 @max-[28rem]/query-builder:px-1.5;
   }
 
   .cn-query-builder-connector-label {
-    @apply ps-2 text-sm text-muted-foreground;
+    @apply ps-2 text-sm text-muted-foreground @max-[28rem]/query-builder:ps-1;
   }
 
   .cn-query-builder-field {
-    @apply w-24 @max-[28rem]:w-auto @max-[28rem]:min-w-0 @max-[28rem]:flex-1;
+    @apply w-24 min-w-0 @max-[28rem]/query-builder:w-auto @max-[28rem]/query-builder:flex-1;
   }
 
   .cn-query-builder-operator {
-    @apply w-28 @max-[28rem]:w-auto @max-[28rem]:min-w-0 @max-[28rem]:flex-1;
+    @apply w-28 min-w-0 @max-[28rem]/query-builder:w-auto @max-[28rem]/query-builder:flex-1;
   }
 
   .cn-query-builder-value {
-    @apply h-8 w-32 @max-[28rem]:w-auto @max-[28rem]:min-w-0 @max-[28rem]:flex-1 data-[operator=isBetween]:w-auto data-[operator=isBetween]:min-w-0 data-[operator=isBetween]:flex-1;
+    @apply h-8 w-32 min-w-0 @max-[28rem]/query-builder:w-auto @max-[28rem]/query-builder:flex-1 data-[operator=isBetween]:w-auto data-[operator=isBetween]:flex-1;
   }
 
   /* @role cn-input */

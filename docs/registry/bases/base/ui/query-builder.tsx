@@ -256,7 +256,10 @@ function QueryBuilder({
         props: mergeProps<"div">(
           {
             role: "group",
-            className: cn("cn-query-builder flex flex-col", className),
+            className: cn(
+              "cn-query-builder @container/query-builder flex flex-col",
+              className,
+            ),
           },
           props,
         ),
@@ -414,7 +417,7 @@ function QueryBuilderGroupContent({ className, render, ...props }: DivProps) {
     props: mergeProps<"div">(
       {
         className: cn(
-          "cn-query-builder-group-content @container flex flex-col",
+          "cn-query-builder-group-content flex flex-col",
           className,
         ),
       },
@@ -480,10 +483,7 @@ function QueryBuilderRule({ className, render, ...props }: DivProps) {
     props: mergeProps<"div">(
       {
         role: "listitem",
-        className: cn(
-          "cn-query-builder-rule flex flex-wrap items-center",
-          className,
-        ),
+        className: cn("cn-query-builder-rule flex items-center", className),
       },
       props,
     ),

@@ -258,7 +258,10 @@ function QueryBuilder({
         data-slot="query-builder"
         data-disabled={disabled ? "" : undefined}
         {...props}
-        className={cn("cn-query-builder flex flex-col", className)}
+        className={cn(
+          "cn-query-builder @container/query-builder flex flex-col",
+          className,
+        )}
       />
     </QueryBuilderContext.Provider>
   );
@@ -403,10 +406,7 @@ function QueryBuilderGroupContent({ asChild, className, ...props }: DivProps) {
       data-slot="query-builder-group-content"
       data-depth={depth}
       {...props}
-      className={cn(
-        "cn-query-builder-group-content @container flex flex-col",
-        className,
-      )}
+      className={cn("cn-query-builder-group-content flex flex-col", className)}
     />
   );
 }
@@ -464,10 +464,7 @@ function QueryBuilderRule({ asChild, className, ...props }: DivProps) {
       data-slot="query-builder-rule"
       data-operator={rule.operator}
       {...props}
-      className={cn(
-        "cn-query-builder-rule flex flex-wrap items-center",
-        className,
-      )}
+      className={cn("cn-query-builder-rule flex items-center", className)}
     />
   );
 }
