@@ -1286,6 +1286,18 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "query-builder-sortable-demo",
+    type: "registry:example",
+    dependencies: ["@dnd-kit/core", "@dnd-kit/sortable"],
+    registryDependencies: ["query-builder", "button-group", "sortable"],
+    files: [
+      {
+        path: "examples/query-builder-sortable-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "query-builder-filter-demo",
     type: "registry:example",
     registryDependencies: ["query-builder", "button-group", "table"],

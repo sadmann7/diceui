@@ -46,7 +46,7 @@ import {
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
-  QueryBuilderRules,
+  QueryBuilderRuleList,
   QueryBuilderValue,
 } from "@/registry/bases/radix/ui/query-builder";
 
@@ -58,9 +58,9 @@ const statuses = [
 ];
 
 const fields: QueryField[] = [
-  { name: "status", label: "Status", type: "select", options: statuses },
+  { value: "status", label: "Status", type: "select", options: statuses },
   {
-    name: "priority",
+    value: "priority",
     label: "Priority",
     type: "select",
     options: [
@@ -70,7 +70,7 @@ const fields: QueryField[] = [
     ],
   },
   {
-    name: "assignee",
+    value: "assignee",
     label: "Assignee",
     type: "select",
     options: [
@@ -162,7 +162,7 @@ export default function QueryBuilderCommandFilterDemo() {
       <QueryBuilder fields={fields} value={query} onValueChange={setQuery}>
         <QueryBuilderGroup>
           <QueryBuilderGroupContent className="flex-row flex-wrap items-center data-[depth=0]:min-w-0">
-            <QueryBuilderRules className="contents">
+            <QueryBuilderRuleList className="contents">
               <QueryBuilderRule>
                 <ButtonGroup className="**:data-[slot=query-builder-select-icon]:hidden">
                   <QueryBuilderField className="w-auto" />
@@ -173,7 +173,7 @@ export default function QueryBuilderCommandFilterDemo() {
                   </QueryBuilderRemove>
                 </ButtonGroup>
               </QueryBuilderRule>
-            </QueryBuilderRules>
+            </QueryBuilderRuleList>
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="sm">
@@ -193,9 +193,12 @@ export default function QueryBuilderCommandFilterDemo() {
                     <CommandStackEmpty>No results found.</CommandStackEmpty>
                     <CommandStackPage value="root">
                       {fields.map((field) => {
-                        const Icon = fieldIcons[field.name] ?? UserIcon;
+                        const Icon = fieldIcons[field.value] ?? UserIcon;
                         return (
-                          <CommandStackItem key={field.name} page={field.name}>
+                          <CommandStackItem
+                            key={field.value}
+                            page={field.value}
+                          >
                             <Icon />
                             {field.label}
                           </CommandStackItem>
@@ -204,8 +207,8 @@ export default function QueryBuilderCommandFilterDemo() {
                     </CommandStackPage>
                     {fields.map((field) => (
                       <CommandStackPage
-                        key={field.name}
-                        value={field.name}
+                        key={field.value}
+                        value={field.value}
                         label={field.label}
                         placeholder={`Filter by ${field.label.toLowerCase()}...`}
                         selectionMode="multiple"
@@ -229,7 +232,7 @@ export default function QueryBuilderCommandFilterDemo() {
                                 {option.label}
                               </span>
                               <span className="text-xs text-muted-foreground tabular-nums">
-                                {getCount(field.name, option.value)}
+                                {getCount(field.value, option.value)}
                               </span>
                             </CommandStackItem>
                           ))}

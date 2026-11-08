@@ -1,0 +1,29 @@
+---
+title: November 2026 - Query Builder
+description: A composable query builder for nested filter rules and groups, with parameterized SQL output.
+date: 2026-11-08T12:00:00Z
+---
+
+[Query Builder](/docs/components/query-builder) builds nested filter rules and groups, and turns them into parameterized SQL.
+
+```package-install
+npx shadcn@latest add @diceui/query-builder
+```
+
+## Features
+
+- **Composable parts.** Build the layout from parts like `QueryBuilderGroup`, `QueryBuilderRuleList` and `QueryBuilderRule`. Nested groups reuse the root group's layout.
+- **Fields.** Each field has a `value`, a `label` and a `type`: text, number, date, boolean, select or multi-select, each with its own operators.
+- **Multiple values.** Select fields switch from "is" to "is any of" when a second value is picked, like Linear's filters.
+- **Negated groups.** `QueryBuilderNegate` turns a group into `NOT (...)`.
+- **Labels.** Pass `labels` to reword or translate the built-in text.
+
+## Utilities
+
+- `formatQuery` turns a query into a parameterized `WHERE` clause for Postgres, MySQL or SQLite.
+- `matchesQuery` filters rows in the browser with the same rules.
+- `moveQueryNode` and `findQueryNode` move and find rules and groups, for drag and drop.
+
+## Examples
+
+The docs include SQL output, client-side filtering, a Linear-style command filter, and drag and drop with [Sortable](/docs/components/sortable).

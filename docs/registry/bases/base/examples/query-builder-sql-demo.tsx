@@ -21,10 +21,11 @@ import {
   QueryBuilderGroupFooter,
   QueryBuilderGroupHeader,
   QueryBuilderGroupTitle,
+  QueryBuilderNegate,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
-  QueryBuilderRules,
+  QueryBuilderRuleList,
   QueryBuilderValue,
 } from "@/registry/bases/base/ui/query-builder";
 import {
@@ -36,9 +37,9 @@ import {
 } from "@/registry/bases/base/ui/select";
 
 const fields: QueryField[] = [
-  { name: "title", label: "Title", type: "text" },
+  { value: "title", label: "Title", type: "text" },
   {
-    name: "status",
+    value: "status",
     label: "Status",
     type: "select",
     options: [
@@ -47,8 +48,8 @@ const fields: QueryField[] = [
       { label: "Done", value: "done" },
     ],
   },
-  { name: "estimate", label: "Estimate", type: "number" },
-  { name: "dueDate", label: "Due date", type: "date", column: "due_date" },
+  { value: "estimate", label: "Estimate", type: "number" },
+  { value: "dueDate", label: "Due date", type: "date", column: "due_date" },
 ];
 
 const defaultQuery: QueryGroup = {
@@ -66,6 +67,15 @@ const defaultQuery: QueryGroup = {
       field: "estimate",
       operator: "isBetween",
       value: ["3", "8"],
+    },
+    {
+      id: "excluded",
+      combinator: "or",
+      not: true,
+      rules: [
+        { id: "dueDate", field: "dueDate", operator: "isEmpty" },
+        { id: "title", field: "title", operator: "iLike", value: "wip" },
+      ],
     },
   ],
 };
@@ -89,6 +99,7 @@ export default function QueryBuilderSqlDemo() {
           <QueryBuilderGroupContent>
             <QueryBuilderGroupHeader className="data-[depth=0]:hidden">
               <QueryBuilderGroupTitle />
+              <QueryBuilderNegate />
               <QueryBuilderAddRule size="icon-sm" aria-label="Add rule">
                 <PlusIcon />
               </QueryBuilderAddRule>
@@ -97,7 +108,7 @@ export default function QueryBuilderSqlDemo() {
               </QueryBuilderAddGroup>
               <QueryBuilderRemove />
             </QueryBuilderGroupHeader>
-            <QueryBuilderRules>
+            <QueryBuilderRuleList>
               <QueryBuilderRule>
                 <QueryBuilderConnector />
                 <ButtonGroup>
@@ -107,7 +118,7 @@ export default function QueryBuilderSqlDemo() {
                   <QueryBuilderRemove variant="outline" />
                 </ButtonGroup>
               </QueryBuilderRule>
-            </QueryBuilderRules>
+            </QueryBuilderRuleList>
             <QueryBuilderGroupFooter className="not-data-[depth=0]:hidden">
               <QueryBuilderAddRule />
               <QueryBuilderAddGroup />

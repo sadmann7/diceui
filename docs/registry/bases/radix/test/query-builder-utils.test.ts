@@ -4,39 +4,42 @@ import {
   addQueryNode,
   createQueryGroup,
   createQueryRule,
+  findQueryNode,
   formatQuery,
   getIsQueryRuleMultiple,
   getQuerySelection,
   matchesQuery,
+  moveQueryNode,
   type QueryField,
   type QueryGroup,
   type QueryRule,
   removeQueryNode,
+  setQueryRuleField,
   setQueryRuleOperator,
   setQueryRuleValues,
   setQuerySelection,
   updateQueryNode,
 } from "@/registry/bases/radix/lib/query-builder";
 
-const titleField: QueryField = { name: "title", label: "Title", type: "text" };
+const titleField: QueryField = { value: "title", label: "Title", type: "text" };
 const estimateField: QueryField = {
-  name: "estimate",
+  value: "estimate",
   label: "Estimate",
   type: "number",
 };
 const createdAtField: QueryField = {
-  name: "createdAt",
+  value: "createdAt",
   label: "Created",
   type: "date",
   column: "tasks.created_at",
 };
 const archivedField: QueryField = {
-  name: "archived",
+  value: "archived",
   label: "Archived",
   type: "boolean",
 };
 const statusField: QueryField = {
-  name: "status",
+  value: "status",
   label: "Status",
   type: "select",
   options: [
@@ -295,6 +298,54 @@ describe("query tree helpers", () => {
   });
 });
 
+describe("moveQueryNode", () => {
+  const tree: QueryGroup = {
+    id: "root",
+    combinator: "and",
+    rules: [
+      rule("title", "iLike", "a"),
+      {
+        id: "nested",
+        combinator: "or",
+        rules: [rule("estimate", "gt", "5"), rule("status", "eq", "todo")],
+      },
+      rule("archived", "eq", "true"),
+    ],
+  };
+
+  test("moves a node into another group at an index", () => {
+    const next = moveQueryNode(tree, "archived-eq", "nested", 1);
+    expect(next.rules.map((node) => node.id)).toEqual([
+      "title-iLike",
+      "nested",
+    ]);
+    expect(
+      (findQueryNode(next, "nested") as QueryGroup).rules.map(
+        (node) => node.id,
+      ),
+    ).toEqual(["estimate-gt", "archived-eq", "status-eq"]);
+    expect(tree.rules).toHaveLength(3);
+  });
+
+  test("moves a node out of a group", () => {
+    const next = moveQueryNode(tree, "status-eq", "root", 0);
+    expect(next.rules.map((node) => node.id)).toEqual([
+      "status-eq",
+      "title-iLike",
+      "nested",
+      "archived-eq",
+    ]);
+  });
+
+  test("won't move a group into itself or the root", () => {
+    expect(moveQueryNode(tree, "nested", "nested", 0)).toBe(tree);
+    expect(moveQueryNode(tree, "status-eq", "archived-eq", 0)).toBe(tree);
+    expect(moveQueryNode(tree, "status-eq", "status-eq", 0)).toBe(tree);
+    expect(moveQueryNode(tree, "root", "nested", 0)).toBe(tree);
+    expect(moveQueryNode(tree, "title-iLike", "missing", 0)).toBe(tree);
+  });
+});
+
 describe("setQueryRuleOperator", () => {
   test("keeps a value between operators of the same shape", () => {
     expect(
@@ -357,6 +408,76 @@ describe("setQueryRuleOperator", () => {
         "isEmpty",
       ),
     ).toMatchObject({ operator: "isEmpty", value: undefined });
+  });
+});
+
+describe("setQueryRuleField", () => {
+  const nameField: QueryField = { value: "name", label: "Name", type: "text" };
+  const priorityField: QueryField = {
+    value: "priority",
+    label: "Priority",
+    type: "select",
+    options: [
+      { label: "Todo", value: "todo" },
+      { label: "High", value: "high" },
+    ],
+  };
+
+  test("keeps the operator and value for a field of the same type", () => {
+    expect(
+      setQueryRuleField(
+        rule("title", "notILike", "bug"),
+        titleField,
+        nameField,
+      ),
+    ).toEqual({
+      id: "title-notILike",
+      field: "name",
+      operator: "notILike",
+      value: "bug",
+    });
+  });
+
+  test("drops select values the new field doesn't have", () => {
+    expect(
+      setQueryRuleField(
+        rule("status", "inArray", ["todo", "done"]),
+        statusField,
+        priorityField,
+      ),
+    ).toMatchObject({
+      field: "priority",
+      operator: "eq",
+      value: "todo",
+    });
+    expect(
+      setQueryRuleField(
+        rule("status", "eq", "done"),
+        statusField,
+        priorityField,
+      ),
+    ).toMatchObject({ field: "priority", operator: "eq", value: "" });
+  });
+
+  test("resets the rule for another type or an unsupported operator", () => {
+    expect(
+      setQueryRuleField(
+        rule("title", "iLike", "bug"),
+        titleField,
+        estimateField,
+      ),
+    ).toMatchObject({
+      id: "title-iLike",
+      field: "estimate",
+      operator: "eq",
+      value: "",
+    });
+    expect(
+      setQueryRuleField(rule("title", "iLike", "bug"), titleField, {
+        ...nameField,
+        operators: ["eq"],
+      }),
+    ).toMatchObject({ field: "name", operator: "eq", value: "" });
   });
 });
 
@@ -428,7 +549,7 @@ describe("setQueryRuleValues", () => {
 
 describe("query selection", () => {
   const priorityField: QueryField = {
-    name: "priority",
+    value: "priority",
     label: "Priority",
     type: "select",
     options: [

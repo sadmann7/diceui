@@ -26,17 +26,18 @@ import {
   QueryBuilderGroupFooter,
   QueryBuilderGroupHeader,
   QueryBuilderGroupTitle,
+  QueryBuilderNegate,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
-  QueryBuilderRules,
+  QueryBuilderRuleList,
   QueryBuilderValue,
 } from "@/registry/bases/radix/ui/query-builder";
 
 const fields: QueryField[] = [
-  { name: "title", label: "Title", type: "text" },
+  { value: "title", label: "Title", type: "text" },
   {
-    name: "status",
+    value: "status",
     label: "Status",
     type: "select",
     options: [
@@ -45,9 +46,9 @@ const fields: QueryField[] = [
       { label: "Done", value: "done", icon: CircleCheckIcon },
     ],
   },
-  { name: "estimate", label: "Estimate", type: "number" },
-  { name: "dueDate", label: "Due date", type: "date" },
-  { name: "archived", label: "Archived", type: "boolean" },
+  { value: "estimate", label: "Estimate", type: "number" },
+  { value: "dueDate", label: "Due date", type: "date" },
+  { value: "archived", label: "Archived", type: "boolean" },
 ];
 
 const defaultQuery: QueryGroup = {
@@ -75,6 +76,7 @@ export default function QueryBuilderDemo() {
         <QueryBuilderGroupContent>
           <QueryBuilderGroupHeader className="data-[depth=0]:hidden">
             <QueryBuilderGroupTitle />
+            <QueryBuilderNegate />
             <QueryBuilderAddRule size="icon-sm" aria-label="Add rule">
               <PlusIcon />
             </QueryBuilderAddRule>
@@ -83,7 +85,7 @@ export default function QueryBuilderDemo() {
             </QueryBuilderAddGroup>
             <QueryBuilderRemove />
           </QueryBuilderGroupHeader>
-          <QueryBuilderRules>
+          <QueryBuilderRuleList>
             <QueryBuilderRule>
               <QueryBuilderConnector />
               <ButtonGroup>
@@ -93,7 +95,7 @@ export default function QueryBuilderDemo() {
                 <QueryBuilderRemove variant="outline" />
               </ButtonGroup>
             </QueryBuilderRule>
-          </QueryBuilderRules>
+          </QueryBuilderRuleList>
           <QueryBuilderGroupFooter className="not-data-[depth=0]:hidden">
             <QueryBuilderAddRule />
             <QueryBuilderAddGroup />
