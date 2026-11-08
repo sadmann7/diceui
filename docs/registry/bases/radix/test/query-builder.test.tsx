@@ -23,7 +23,7 @@ beforeAll(() => {
 
 const titleField: QueryField = { value: "title", label: "Title", type: "text" };
 
-function StatusIcon(props: React.SVGProps<SVGSVGElement>) {
+function StatusIcon(props: React.ComponentProps<"svg">) {
   return <svg {...props} />;
 }
 

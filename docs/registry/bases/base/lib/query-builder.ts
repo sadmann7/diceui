@@ -30,7 +30,7 @@ export type QueryValue = string | string[];
 export interface QueryFieldOption {
   label: string;
   value: string;
-  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  icon?: React.ComponentType<React.ComponentProps<"svg">>;
 }
 
 export interface QueryField {
