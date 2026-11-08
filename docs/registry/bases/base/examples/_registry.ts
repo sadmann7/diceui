@@ -719,7 +719,7 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "kanban-dynamic-overlay-demo",
+    name: "kanban-placeholder-overlay-demo",
     type: "registry:example",
     dependencies: [
       "@dnd-kit/core",
@@ -730,7 +730,7 @@ export const examples: Registry["items"] = [
     registryDependencies: ["badge", "button", "kanban"],
     files: [
       {
-        path: "examples/kanban-dynamic-overlay-demo.tsx",
+        path: "examples/kanban-placeholder-overlay-demo.tsx",
         type: "registry:example",
       },
     ],
@@ -930,7 +930,7 @@ export const examples: Registry["items"] = [
     ],
   },
   {
-    name: "sortable-dynamic-overlay-demo",
+    name: "sortable-placeholder-overlay-demo",
     type: "registry:example",
     dependencies: [
       "@dnd-kit/core",
@@ -941,7 +941,7 @@ export const examples: Registry["items"] = [
     registryDependencies: ["sortable"],
     files: [
       {
-        path: "examples/sortable-dynamic-overlay-demo.tsx",
+        path: "examples/sortable-placeholder-overlay-demo.tsx",
         type: "registry:example",
       },
     ],
