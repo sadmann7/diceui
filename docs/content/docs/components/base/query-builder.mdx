@@ -123,7 +123,7 @@ The header, content and footer have `data-depth`, so you can show the header onl
 
 ## Labels
 
-Pass `labels` to reword or translate the built-in text. Labels you leave out keep their default. Labels that include a value, like `selected`, are functions.
+Pass `labels` to reword or translate the built-in text, including text inside the pickers that `children` can't reach. Labels you leave out, or set to `undefined`, keep their default. Labels that include a value, like `selected`, are functions.
 
 ```tsx
 <QueryBuilder
@@ -138,43 +138,44 @@ Pass `labels` to reword or translate the built-in text. Labels you leave out kee
 />
 ```
 
-| Label             | Default                                          |
-| ----------------- | ------------------------------------------------ |
-| `where`           | `"Where"`                                        |
-| `and`             | `"And"`                                          |
-| `or`              | `"Or"`                                           |
-| `all`             | `"All"`                                          |
-| `any`             | `"Any"`                                          |
-| `not`             | `"Not"`                                          |
-| `combinator`      | `"Combinator"`                                   |
-| `matchAll`        | `"All of the following are true…"`               |
-| `matchAny`        | `"Any of the following are true…"`               |
-| `matchNotAll`     | `"Not all of the following are true…"`           |
-| `matchNone`       | `"None of the following are true…"`              |
-| `field`           | `"Field"`                                        |
-| `searchFields`    | `"Search fields"`                                |
-| `noFields`        | `"No fields found."`                             |
-| `operator`        | `"Operator"`                                     |
-| `searchOperators` | `"Search operators"`                             |
-| `noOperators`     | `"No operators found."`                          |
-| `enterValue`      | `"Enter a value"`                                |
-| `selectValue`     | `"Select a value"`                               |
-| `selectValues`    | `"Select values"`                                |
-| `searchValues`    | `` (field) => `Search ${field.toLowerCase()}` `` |
-| `selected`        | `` (count) => `${count} selected` ``             |
-| `noValue`         | `"no value"`                                     |
-| `noValues`        | `"No results."`                                  |
-| `between`         | `"and"`                                          |
-| `from`            | `"from"`                                         |
-| `to`              | `"to"`                                           |
-| `true`            | `"True"`                                         |
-| `false`           | `"False"`                                        |
-| `addRule`         | `"Add rule"`                                     |
-| `addGroup`        | `"Add group"`                                    |
-| `removeRule`      | `"Remove rule"`                                  |
-| `removeGroup`     | `"Remove group"`                                 |
+| Label             | Default                                          | Used for                                        |
+| ----------------- | ------------------------------------------------ | ----------------------------------------------- |
+| `where`           | `"Where"`                                        | Connector before the first rule                 |
+| `and`             | `"And"`                                          | Connector and combinator option                 |
+| `or`              | `"Or"`                                           | Connector and combinator option                 |
+| `all`             | `"All"`                                          | `QueryBuilderCombinator` option                 |
+| `any`             | `"Any"`                                          | `QueryBuilderCombinator` option                 |
+| `not`             | `"Not"`                                          | `QueryBuilderNegate` text                       |
+| `combinator`      | `"Combinator"`                                   | Combinator select's accessible name             |
+| `matchAll`        | `"All of the following are true…"`               | Group title                                     |
+| `matchAny`        | `"Any of the following are true…"`               | Group title                                     |
+| `matchNotAll`     | `"Not all of the following are true…"`           | Negated group title                             |
+| `matchNone`       | `"None of the following are true…"`              | Negated group title                             |
+| `field`           | `"Field"`                                        | Field picker's accessible name and placeholder  |
+| `searchFields`    | `"Search fields"`                                | Field search placeholder                        |
+| `noFields`        | `"No fields found."`                             | Field picker empty state                        |
+| `operator`        | `"Operator"`                                     | Operator picker's accessible name               |
+| `operatorLabel`   | `getQueryOperatorLabel`                          | Operator text, like "contains" or "is before"   |
+| `searchOperators` | `"Search operators"`                             | Operator search placeholder                     |
+| `noOperators`     | `"No operators found."`                          | Operator picker empty state                     |
+| `enterValue`      | `"Enter a value"`                                | Value input placeholder                         |
+| `selectValue`     | `"Select a value"`                               | Value picker placeholder                        |
+| `selectValues`    | `"Select values"`                                | Value picker placeholder for several values     |
+| `searchValues`    | `` (field) => `Search ${field.toLowerCase()}` `` | Value search placeholder                        |
+| `selected`        | `` (count) => `${count} selected` ``             | Value picker summary                            |
+| `noValue`         | `"no value"`                                     | Value picker's accessible name when empty       |
+| `noValues`        | `"No results."`                                  | Value picker empty state                        |
+| `between`         | `"and"`                                          | Text between range inputs                       |
+| `from`            | `"from"`                                         | First range input's accessible name             |
+| `to`              | `"to"`                                           | Second range input's accessible name            |
+| `true`            | `"True"`                                         | Boolean option                                  |
+| `false`           | `"False"`                                        | Boolean option                                  |
+| `addRule`         | `"Add rule"`                                     | `QueryBuilderAddRule` text                      |
+| `addGroup`        | `"Add group"`                                    | `QueryBuilderAddGroup` text                     |
+| `removeRule`      | `"Remove rule"`                                  | `QueryBuilderRemove` accessible name in a rule  |
+| `removeGroup`     | `"Remove group"`                                 | `QueryBuilderRemove` accessible name in a group |
 
-Operator labels come from `getQueryOperatorLabel` in `lib/query-builder.ts`.
+Operator text comes from `operatorLabel`, which takes the operator and the field type, so a date field can say "is before" instead of "is less than". With an i18n library, pass something like `` (operator) => t(`operators.${operator}`) ``.
 
 ## Examples
 

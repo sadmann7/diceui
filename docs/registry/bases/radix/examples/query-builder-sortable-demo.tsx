@@ -15,7 +15,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { GripVerticalIcon, PlusIcon } from "lucide-react";
+import { GripVerticalIcon, ListPlusIcon, PlusIcon } from "lucide-react";
 import * as React from "react";
 
 import {
@@ -212,6 +212,9 @@ function QueryBuilderSortableLayout({
           <QueryBuilderAddRule size="icon-sm" aria-label="Add rule">
             <PlusIcon />
           </QueryBuilderAddRule>
+          <QueryBuilderAddGroup size="icon-sm" aria-label="Add group">
+            <ListPlusIcon />
+          </QueryBuilderAddGroup>
           <QueryBuilderRemove />
           {group.id !== rootId && (
             <QueryBuilderSortableHandle label="Move group" variant="ghost" />

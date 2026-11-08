@@ -328,6 +328,62 @@ describe.each([
     ).toBeInTheDocument();
   });
 
+  test("falls back to the default for labels set to undefined", () => {
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField]}
+        labels={{ where: undefined, addRule: "Ajouter" }}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [{ id: "1", field: "title", operator: "iLike", value: "" }],
+        }}
+      >
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderRuleList>
+              <QueryBuilder.QueryBuilderRule>
+                <QueryBuilder.QueryBuilderConnector />
+              </QueryBuilder.QueryBuilderRule>
+            </QueryBuilder.QueryBuilderRuleList>
+            <QueryBuilder.QueryBuilderAddRule />
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    expect(screen.getByText("Where")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ajouter" })).toBeInTheDocument();
+  });
+
+  test("uses operatorLabel for the operator picker", () => {
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField]}
+        labels={{ operatorLabel: (operator) => `op:${operator}` }}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [{ id: "1", field: "title", operator: "iLike", value: "" }],
+        }}
+      >
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderRuleList>
+              <QueryBuilder.QueryBuilderRule>
+                <QueryBuilder.QueryBuilderOperator />
+              </QueryBuilder.QueryBuilderRule>
+            </QueryBuilder.QueryBuilderRuleList>
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Operator: op:iLike" }),
+    ).toHaveTextContent("op:iLike");
+  });
+
   test("passes HTML attributes to the value control", () => {
     render(
       <QueryBuilder.QueryBuilder
