@@ -256,19 +256,22 @@ function Kanban<T>(props: KanbanProps<T>) {
     [getItemValueProp],
   );
 
+  const itemColumns = React.useMemo(() => {
+    const columns = new Map<UniqueIdentifier, UniqueIdentifier>();
+    for (const [columnId, columnItems] of Object.entries(value)) {
+      for (const item of columnItems) {
+        columns.set(getItemValue(item), columnId);
+      }
+    }
+    return columns;
+  }, [value, getItemValue]);
+
   const getColumn = React.useCallback(
     (targetId: UniqueIdentifier) => {
       if (targetId in value) return targetId;
-
-      for (const [columnId, columnItems] of Object.entries(value)) {
-        if (columnItems.some((item) => getItemValue(item) === targetId)) {
-          return columnId;
-        }
-      }
-
-      return null;
+      return itemColumns.get(targetId) ?? null;
     },
-    [value, getItemValue],
+    [value, itemColumns],
   );
 
   const collisionDetection: CollisionDetection = React.useCallback(
@@ -304,9 +307,7 @@ function Kanban<T>(props: KanbanProps<T>) {
             droppableContainers: args.droppableContainers.filter(
               (container) =>
                 container.id !== overId &&
-                containerItems.some(
-                  (item) => getItemValue(item) === container.id,
-                ),
+                String(itemColumns.get(container.id)) === String(overId),
             ),
           });
 
@@ -319,7 +320,7 @@ function Kanban<T>(props: KanbanProps<T>) {
       lastOverIdRef.current = overId;
       return [{ id: overId }];
     },
-    [activeId, value, getItemValue],
+    [activeId, value, itemColumns],
   );
 
   const onDragStart = React.useCallback(
