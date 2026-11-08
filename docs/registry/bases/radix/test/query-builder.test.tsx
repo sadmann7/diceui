@@ -504,6 +504,67 @@ describe.each([
     },
   );
 
+  test("keeps the selection in the value picker's name with aria-labelledby", () => {
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[getStatusField(false)]}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [{ id: "1", field: "status", operator: "eq", value: "todo" }],
+        }}
+      >
+        <span id="status-label">State</span>
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderRuleList>
+              <QueryBuilder.QueryBuilderRule>
+                <QueryBuilder.QueryBuilderValue aria-labelledby="status-label" />
+              </QueryBuilder.QueryBuilderRule>
+            </QueryBuilder.QueryBuilderRuleList>
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "State todo" }),
+    ).toBeInTheDocument();
+  });
+
+  test("keeps the field and operator in their names with aria-labelledby", () => {
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[titleField]}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [{ id: "1", field: "title", operator: "iLike", value: "" }],
+        }}
+      >
+        <span id="column-label">Column</span>
+        <span id="match-label">Match</span>
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderRuleList>
+              <QueryBuilder.QueryBuilderRule>
+                <QueryBuilder.QueryBuilderField aria-labelledby="column-label" />
+                <QueryBuilder.QueryBuilderOperator aria-labelledby="match-label" />
+              </QueryBuilder.QueryBuilderRule>
+            </QueryBuilder.QueryBuilderRuleList>
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Column Title" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Match contains" }),
+    ).toBeInTheDocument();
+  });
+
   test("passes each rule to function children", () => {
     render(
       <QueryBuilder.QueryBuilder

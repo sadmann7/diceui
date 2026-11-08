@@ -37,7 +37,6 @@ export interface QueryField {
   value: string;
   label: string;
   type: QueryFieldType;
-  /** The SQL column, like `created_at` or `tasks.title`. Defaults to `value`. */
   column?: string;
   operators?: QueryOperator[];
   options?: QueryFieldOption[];
@@ -217,9 +216,15 @@ export function setQueryRuleField(
     return { ...rule, field: to.value };
   }
   const options = new Set(to.options?.map((option) => option.value));
-  const value = Array.isArray(rule.value)
-    ? rule.value.filter((item) => options.has(item))
-    : rule.value && options.has(rule.value)
+  if (Array.isArray(rule.value)) {
+    return setQueryRuleValues(
+      { ...rule, field: to.value },
+      to,
+      rule.value.filter((item) => options.has(item)),
+    );
+  }
+  const value =
+    rule.value && options.has(rule.value)
       ? rule.value
       : getDefaultQueryValue(to, rule.operator);
   return { ...rule, field: to.value, value };
@@ -386,7 +391,8 @@ export function moveQueryNode(
   const node = findQueryNode(root, id);
   if (!node || node === root) return root;
   if (getIsQueryGroup(node) && findQueryNode(node, groupId)) return root;
-  if (!findQueryNode(root, groupId)) return root;
+  const group = findQueryNode(root, groupId);
+  if (!group || !getIsQueryGroup(group)) return root;
   return updateQueryNode(removeQueryNode(root, id), groupId, (group) => {
     if (!getIsQueryGroup(group)) return group;
     const rules = [...group.rules];

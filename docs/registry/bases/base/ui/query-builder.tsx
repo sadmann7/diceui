@@ -628,12 +628,16 @@ function QueryBuilderNegate({
 }
 
 function QueryBuilderField({
+  id,
+  "aria-labelledby": ariaLabelledBy,
   className,
   disabled: disabledProp,
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { fields, labels, disabled } = useQueryBuilderContext(FIELD_NAME);
   const isDisabled = disabled || disabledProp;
+  const generatedId = React.useId();
+  const triggerId = id ?? generatedId;
   const rule = useRuleContext(FIELD_NAME);
   const { update } = useQueryActions(FIELD_NAME);
   const currentField = fields.find((field) => field.value === rule.field);
@@ -656,10 +660,18 @@ function QueryBuilderField({
             variant="outline"
             size="sm"
             aria-label={
-              currentField
-                ? `${labels.field}: ${currentField.label}`
-                : labels.field
+              ariaLabelledBy
+                ? currentField
+                  ? currentField.label
+                  : labels.field
+                : currentField
+                  ? `${labels.field}: ${currentField.label}`
+                  : labels.field
             }
+            aria-labelledby={
+              ariaLabelledBy ? `${ariaLabelledBy} ${triggerId}` : undefined
+            }
+            id={triggerId}
             data-slot="query-builder-field"
             disabled={isDisabled}
             {...props}
@@ -711,12 +723,16 @@ function QueryBuilderField({
 }
 
 function QueryBuilderOperator({
+  id,
+  "aria-labelledby": ariaLabelledBy,
   className,
   disabled: disabledProp,
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { fields, labels, disabled } = useQueryBuilderContext(OPERATOR_NAME);
   const isDisabled = disabled || disabledProp;
+  const generatedId = React.useId();
+  const triggerId = id ?? generatedId;
   const rule = useRuleContext(OPERATOR_NAME);
   const { update } = useQueryActions(OPERATOR_NAME);
   const field = fields.find((item) => item.value === rule.field);
@@ -744,7 +760,15 @@ function QueryBuilderOperator({
           <Button
             variant="outline"
             size="sm"
-            aria-label={`${labels.operator}: ${labels.operatorLabel(rule.operator, field.type)}`}
+            aria-label={
+              ariaLabelledBy
+                ? labels.operatorLabel(rule.operator, field.type)
+                : `${labels.operator}: ${labels.operatorLabel(rule.operator, field.type)}`
+            }
+            aria-labelledby={
+              ariaLabelledBy ? `${ariaLabelledBy} ${triggerId}` : undefined
+            }
+            id={triggerId}
             data-slot="query-builder-operator"
             disabled={isDisabled}
             {...props}
@@ -902,7 +926,7 @@ function QueryBuilderValue({
   const { update } = useQueryActions(VALUE_NAME);
   const field = fields.find((item) => item.value === rule.field);
 
-  const rangeId = React.useId();
+  const generatedId = React.useId();
 
   if (!field) return null;
 
@@ -938,8 +962,8 @@ function QueryBuilderValue({
 
   if (rule.operator === "isBetween") {
     const [start = "", end = ""] = Array.isArray(rule.value) ? rule.value : [];
-    const fromId = id ?? `${rangeId}-from`;
-    const toId = `${rangeId}-to`;
+    const fromId = id ?? `${generatedId}-from`;
+    const toId = `${generatedId}-to`;
     return (
       <>
         <Input
@@ -1017,10 +1041,18 @@ function QueryBuilderValue({
             <Button
               variant="outline"
               size="sm"
-              aria-label={`${label}: ${selectedLabels || labels.noValue}`}
-              aria-labelledby={ariaLabelledBy}
+              aria-label={
+                ariaLabelledBy
+                  ? selectedLabels || labels.noValue
+                  : `${label}: ${selectedLabels || labels.noValue}`
+              }
+              aria-labelledby={
+                ariaLabelledBy
+                  ? `${ariaLabelledBy} ${id ?? generatedId}`
+                  : undefined
+              }
               title={selected.length > 1 ? selectedLabels : undefined}
-              id={id}
+              id={id ?? generatedId}
               {...props}
               data-slot="query-builder-value"
               data-operator={rule.operator}

@@ -1518,7 +1518,7 @@
 
   /* MARK: Query Builder */
   .cn-query-builder {
-    @apply gap-2;
+    @apply min-w-64 gap-2;
   }
 
   .cn-query-builder-group {

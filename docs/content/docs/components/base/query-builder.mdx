@@ -432,7 +432,7 @@ Renders nothing outside `QueryBuilderRuleList`. The select's accessible name is 
 
 A searchable [Faceted](/docs/components/base/faceted) picker for the rule's field. Accepts the props of `Button`.
 
-- Switching to a field of the same type that supports the current operator keeps the operator and value, minus select values the new field doesn't have.
+- Switching to a field of the same type that supports the current operator keeps the operator and value, minus select values the new field doesn't have. If one value is left, "is any of" becomes "is" and "is none of" becomes "is not".
 - Otherwise the rule resets to the new field's first operator.
 
 To hide the chevron in the field, operator and value pickers, target `data-slot="query-builder-select-icon"`, like `**:data-[slot=query-builder-select-icon]:hidden` on a wrapper.

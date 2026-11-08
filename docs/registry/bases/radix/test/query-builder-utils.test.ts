@@ -339,6 +339,8 @@ describe("moveQueryNode", () => {
 
   test("won't move a group into itself or the root", () => {
     expect(moveQueryNode(tree, "nested", "nested", 0)).toBe(tree);
+    expect(moveQueryNode(tree, "status-eq", "archived-eq", 0)).toBe(tree);
+    expect(moveQueryNode(tree, "status-eq", "status-eq", 0)).toBe(tree);
     expect(moveQueryNode(tree, "root", "nested", 0)).toBe(tree);
     expect(moveQueryNode(tree, "title-iLike", "missing", 0)).toBe(tree);
   });
@@ -445,8 +447,8 @@ describe("setQueryRuleField", () => {
       ),
     ).toMatchObject({
       field: "priority",
-      operator: "inArray",
-      value: ["todo"],
+      operator: "eq",
+      value: "todo",
     });
     expect(
       setQueryRuleField(
