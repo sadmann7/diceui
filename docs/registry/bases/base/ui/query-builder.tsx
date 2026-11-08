@@ -936,10 +936,11 @@ function QueryBuilderValue({
         tabIndex={-1}
         id={id}
         {...props}
-        disabled
+        value=""
+        readOnly
         data-slot="query-builder-value"
         data-operator={rule.operator}
-        className={valueClassName}
+        className={cn("pointer-events-none", valueClassName)}
       />
     );
   }
