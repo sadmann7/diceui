@@ -37,9 +37,9 @@ import {
 } from "@/registry/bases/radix/ui/select";
 
 const fields: QueryField[] = [
-  { name: "title", label: "Title", type: "text" },
+  { value: "title", label: "Title", type: "text" },
   {
-    name: "status",
+    value: "status",
     label: "Status",
     type: "select",
     options: [
@@ -48,8 +48,8 @@ const fields: QueryField[] = [
       { label: "Done", value: "done" },
     ],
   },
-  { name: "estimate", label: "Estimate", type: "number" },
-  { name: "dueDate", label: "Due date", type: "date", column: "due_date" },
+  { value: "estimate", label: "Estimate", type: "number" },
+  { value: "dueDate", label: "Due date", type: "date", column: "due_date" },
 ];
 
 const defaultQuery: QueryGroup = {

@@ -34,10 +34,10 @@ export interface QueryFieldOption {
 }
 
 export interface QueryField {
-  name: string;
+  value: string;
   label: string;
   type: QueryFieldType;
-  /** The SQL column, like `created_at` or `tasks.title`. Defaults to `name`. */
+  /** The SQL column, like `created_at` or `tasks.title`. Defaults to `value`. */
   column?: string;
   operators?: QueryOperator[];
   options?: QueryFieldOption[];
@@ -142,7 +142,7 @@ export function createQueryRule(field: QueryField): QueryRule {
   const operator = getQueryOperators(field)[0] ?? "eq";
   return {
     id: createId(),
-    field: field.name,
+    field: field.value,
     operator,
     value: getDefaultQueryValue(field, operator),
   };
@@ -214,7 +214,7 @@ export function setQueryRuleField(
     return { ...createQueryRule(to), id: rule.id };
   }
   if (to.type !== "select" && to.type !== "multiSelect") {
-    return { ...rule, field: to.name };
+    return { ...rule, field: to.value };
   }
   const options = new Set(to.options?.map((option) => option.value));
   const value = Array.isArray(rule.value)
@@ -222,7 +222,7 @@ export function setQueryRuleField(
     : rule.value && options.has(rule.value)
       ? rule.value
       : getDefaultQueryValue(to, rule.operator);
-  return { ...rule, field: to.name, value };
+  return { ...rule, field: to.value, value };
 }
 
 const OPERATOR_COUNTERPARTS: Partial<Record<QueryOperator, QueryOperator>> = {
@@ -291,11 +291,11 @@ export function setQuerySelection(
   const current = getQuerySelection(query);
   let rules = query.rules;
   for (const field of fields) {
-    const values = selection[field.name] ?? [];
-    if (getIsSameValues(values, current[field.name] ?? [])) continue;
+    const values = selection[field.value] ?? [];
+    if (getIsSameValues(values, current[field.value] ?? [])) continue;
     const rule = rules.find(
       (node): node is QueryRule =>
-        !getIsQueryGroup(node) && node.field === field.name,
+        !getIsQueryGroup(node) && node.field === field.value,
     );
     if (values.length === 0) {
       rules = rules.filter((node) => node !== rule);
@@ -395,8 +395,8 @@ export function moveQueryNode(
   });
 }
 
-function getField(fields: QueryField[], name: string) {
-  return fields.find((field) => field.name === name);
+function getField(fields: QueryField[], value: string) {
+  return fields.find((field) => field.value === value);
 }
 
 function getIsFilled(value: unknown) {
@@ -550,7 +550,7 @@ function matchesGroup(
     }
     const field = getField(fields, node.field);
     if (!field || !getIsQueryRuleActive(node, field)) continue;
-    results.push(matchesRule(row[field.name], node, field));
+    results.push(matchesRule(row[field.value], node, field));
   }
   if (results.length === 0) return undefined;
   const matches =
@@ -597,7 +597,7 @@ function formatRule(
   dialect: SqlDialect,
   addParam: (value: unknown) => string,
 ): string | undefined {
-  const column = quoteIdentifier(field.column ?? field.name, dialect);
+  const column = quoteIdentifier(field.column ?? field.value, dialect);
   const { operator, value } = rule;
 
   if (operator === "isEmpty" || operator === "isNotEmpty") {

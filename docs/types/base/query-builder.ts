@@ -18,8 +18,8 @@ export interface QueryBuilderProps extends EmptyProps<"div">, RenderProps {
    *
    * ```ts
    * fields={[
-   *   { name: "title", label: "Title", type: "text" },
-   *   { name: "createdAt", label: "Created", type: "date", column: "created_at" },
+   *   { value: "title", label: "Title", type: "text" },
+   *   { value: "createdAt", label: "Created", type: "date", column: "created_at" },
    * ]}
    * ```
    */
@@ -171,7 +171,7 @@ export interface QueryBuilderAddRuleProps extends Omit<
   keyof React.ComponentProps<"button">
 > {
   /**
-   * The name of the field the new rule uses. Defaults to the first field.
+   * The `value` of the field the new rule uses. Defaults to the first field.
    *
    * ```ts
    * field="status"
@@ -185,7 +185,7 @@ export interface QueryBuilderAddGroupProps extends Omit<
   keyof React.ComponentProps<"button">
 > {
   /**
-   * The name of the field the new rule uses. Defaults to the first field.
+   * The `value` of the field the new rule uses. Defaults to the first field.
    *
    * ```ts
    * field="status"

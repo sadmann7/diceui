@@ -18,8 +18,8 @@ export interface QueryBuilderProps extends EmptyProps<"div">, CompositionProps {
    *
    * ```ts
    * fields={[
-   *   { name: "title", label: "Title", type: "text" },
-   *   { name: "createdAt", label: "Created", type: "date", column: "created_at" },
+   *   { value: "title", label: "Title", type: "text" },
+   *   { value: "createdAt", label: "Created", type: "date", column: "created_at" },
    * ]}
    * ```
    */
@@ -133,8 +133,7 @@ export interface QueryBuilderGroupTitleProps
 export interface QueryBuilderGroupFooterProps
   extends EmptyProps<"div">, CompositionProps {}
 
-export interface QueryBuilderRuleListProps
-  extends EmptyProps<"div">, CompositionProps {
+export interface QueryBuilderRuleListProps extends EmptyProps<"div"> {
   /**
    * The layout for each rule. Pass a function to read each rule and nested
    * group, like its `id` for a sortable item. A function renders nested groups
@@ -177,7 +176,7 @@ export interface QueryBuilderAddRuleProps extends Omit<
   keyof React.ComponentProps<"button">
 > {
   /**
-   * The name of the field the new rule uses. Defaults to the first field.
+   * The `value` of the field the new rule uses. Defaults to the first field.
    *
    * ```ts
    * field="status"
@@ -191,7 +190,7 @@ export interface QueryBuilderAddGroupProps extends Omit<
   keyof React.ComponentProps<"button">
 > {
   /**
-   * The name of the field the new rule uses. Defaults to the first field.
+   * The `value` of the field the new rule uses. Defaults to the first field.
    *
    * ```ts
    * field="status"

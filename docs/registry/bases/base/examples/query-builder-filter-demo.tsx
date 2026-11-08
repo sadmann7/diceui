@@ -42,9 +42,9 @@ const statuses = [
 ];
 
 const fields: QueryField[] = [
-  { name: "trick", label: "Trick", type: "text" },
-  { name: "status", label: "Status", type: "select", options: statuses },
-  { name: "attempts", label: "Attempts", type: "number" },
+  { value: "trick", label: "Trick", type: "text" },
+  { value: "status", label: "Status", type: "select", options: statuses },
+  { value: "attempts", label: "Attempts", type: "number" },
 ];
 
 const tricks = [

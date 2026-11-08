@@ -21,25 +21,25 @@ import {
   updateQueryNode,
 } from "@/registry/bases/radix/lib/query-builder";
 
-const titleField: QueryField = { name: "title", label: "Title", type: "text" };
+const titleField: QueryField = { value: "title", label: "Title", type: "text" };
 const estimateField: QueryField = {
-  name: "estimate",
+  value: "estimate",
   label: "Estimate",
   type: "number",
 };
 const createdAtField: QueryField = {
-  name: "createdAt",
+  value: "createdAt",
   label: "Created",
   type: "date",
   column: "tasks.created_at",
 };
 const archivedField: QueryField = {
-  name: "archived",
+  value: "archived",
   label: "Archived",
   type: "boolean",
 };
 const statusField: QueryField = {
-  name: "status",
+  value: "status",
   label: "Status",
   type: "select",
   options: [
@@ -410,9 +410,9 @@ describe("setQueryRuleOperator", () => {
 });
 
 describe("setQueryRuleField", () => {
-  const nameField: QueryField = { name: "name", label: "Name", type: "text" };
+  const nameField: QueryField = { value: "name", label: "Name", type: "text" };
   const priorityField: QueryField = {
-    name: "priority",
+    value: "priority",
     label: "Priority",
     type: "select",
     options: [
@@ -547,7 +547,7 @@ describe("setQueryRuleValues", () => {
 
 describe("query selection", () => {
   const priorityField: QueryField = {
-    name: "priority",
+    value: "priority",
     label: "Priority",
     type: "select",
     options: [

@@ -392,7 +392,13 @@ function QueryBuilderGroupTitle({
       {...props}
       className={cn("cn-query-builder-group-title", className)}
     >
-      {children ?? title}
+      {asChild ? (
+        <SlotPrimitive.Slottable child={children}>
+          {(content) => content ?? title}
+        </SlotPrimitive.Slottable>
+      ) : (
+        (children ?? title)
+      )}
     </TitlePrimitive>
   );
 }
@@ -431,22 +437,22 @@ function QueryBuilderGroupContent({ asChild, className, ...props }: DivProps) {
   );
 }
 
-interface QueryBuilderRuleListProps extends Omit<DivProps, "children"> {
+interface QueryBuilderRuleListProps extends Omit<
+  React.ComponentProps<"div">,
+  "children"
+> {
   children?: React.ReactNode | ((node: QueryNode) => React.ReactNode);
 }
 
 function QueryBuilderRuleList({
-  asChild,
   className,
   children,
   ...props
 }: QueryBuilderRuleListProps) {
   const { group } = useGroupContext(RULE_LIST_NAME);
 
-  const RulesPrimitive = asChild ? SlotPrimitive.Slot : "div";
-
   return (
-    <RulesPrimitive
+    <div
       role="list"
       data-slot="query-builder-rule-list"
       {...props}
@@ -469,7 +475,7 @@ function QueryBuilderRuleList({
           )}
         </NodeContext.Provider>
       ))}
-    </RulesPrimitive>
+    </div>
   );
 }
 
@@ -546,7 +552,12 @@ function QueryBuilderCombinator({
   );
 }
 
-function QueryBuilderConnector({ asChild, className, ...props }: DivProps) {
+function QueryBuilderConnector({
+  asChild,
+  className,
+  children,
+  ...props
+}: DivProps) {
   const { labels } = useQueryBuilderContext(CONNECTOR_NAME);
   const node = React.useContext(NodeContext);
 
@@ -565,6 +576,7 @@ function QueryBuilderConnector({ asChild, className, ...props }: DivProps) {
       {...props}
       className={cn("cn-query-builder-connector flex items-center", className)}
     >
+      {asChild && <SlotPrimitive.Slottable>{children}</SlotPrimitive.Slottable>}
       {index === 1 ? (
         <CombinatorSelect
           group={group}
@@ -621,14 +633,17 @@ function QueryBuilderField({
   const { fields, labels, disabled } = useQueryBuilderContext(FIELD_NAME);
   const rule = useRuleContext(FIELD_NAME);
   const { update } = useQueryActions(FIELD_NAME);
-  const current = fields.find((field) => field.name === rule.field);
+  const current = fields.find((field) => field.value === rule.field);
 
   return (
     <Faceted
-      items={fields.map((field) => ({ label: field.label, value: field.name }))}
+      items={fields.map((field) => ({
+        label: field.label,
+        value: field.value,
+      }))}
       value={rule.field}
-      onValueChange={(name) => {
-        const field = fields.find((item) => item.name === name);
+      onValueChange={(value) => {
+        const field = fields.find((item) => item.value === value);
         if (!field) return;
         update(rule.id, (node) =>
           setQueryRuleField(node as QueryRule, current, field),
@@ -679,7 +694,7 @@ function QueryBuilderField({
           <FacetedEmpty>{labels.noFields}</FacetedEmpty>
           <FacetedGroup>
             {fields.map((field) => (
-              <FacetedItem key={field.name} value={field.name}>
+              <FacetedItem key={field.value} value={field.value}>
                 <span className="flex-1 truncate">{field.label}</span>
                 <FacetedItemIndicator />
               </FacetedItem>
@@ -698,7 +713,7 @@ function QueryBuilderOperator({
   const { fields, labels, disabled } = useQueryBuilderContext(OPERATOR_NAME);
   const rule = useRuleContext(OPERATOR_NAME);
   const { update } = useQueryActions(OPERATOR_NAME);
-  const field = fields.find((item) => item.name === rule.field);
+  const field = fields.find((item) => item.value === rule.field);
 
   if (!field) return null;
 
@@ -868,15 +883,21 @@ interface QueryBuilderValueProps extends Omit<
 function QueryBuilderValue({
   display = "list",
   id,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
   className,
   ...props
 }: QueryBuilderValueProps) {
   const { fields, labels, disabled } = useQueryBuilderContext(VALUE_NAME);
   const rule = useRuleContext(VALUE_NAME);
   const { update } = useQueryActions(VALUE_NAME);
-  const field = fields.find((item) => item.name === rule.field);
+  const field = fields.find((item) => item.value === rule.field);
+
+  const rangeId = React.useId();
 
   if (!field) return null;
+
+  const label = ariaLabel ?? field.label;
 
   const onChange = (value: QueryValue) =>
     update(rule.id, (node) => ({ ...node, value }));
@@ -908,12 +929,17 @@ function QueryBuilderValue({
 
   if (rule.operator === "isBetween") {
     const [start = "", end = ""] = Array.isArray(rule.value) ? rule.value : [];
+    const fromId = id ?? `${rangeId}-from`;
+    const toId = `${rangeId}-to`;
     return (
       <>
         <Input
           type={inputType}
-          aria-label={`${field.label} ${labels.from}`}
-          id={id}
+          id={fromId}
+          aria-label={ariaLabelledBy ? labels.from : `${label} ${labels.from}`}
+          aria-labelledby={
+            ariaLabelledBy ? `${ariaLabelledBy} ${fromId}` : undefined
+          }
           {...props}
           data-slot="query-builder-value"
           data-operator={rule.operator}
@@ -927,7 +953,11 @@ function QueryBuilderValue({
         </span>
         <Input
           type={inputType}
-          aria-label={`${field.label} ${labels.to}`}
+          id={toId}
+          aria-label={ariaLabelledBy ? labels.to : `${label} ${labels.to}`}
+          aria-labelledby={
+            ariaLabelledBy ? `${ariaLabelledBy} ${toId}` : undefined
+          }
           {...props}
           data-slot="query-builder-value"
           data-operator={rule.operator}
@@ -977,7 +1007,8 @@ function QueryBuilderValue({
           <Button
             variant="outline"
             size="sm"
-            aria-label={`${field.label}: ${selectedLabels || labels.noValue}`}
+            aria-label={`${label}: ${selectedLabels || labels.noValue}`}
+            aria-labelledby={ariaLabelledBy}
             title={selected.length > 1 ? selectedLabels : undefined}
             id={id}
             {...props}
@@ -1042,7 +1073,8 @@ function QueryBuilderValue({
   return (
     <Input
       type={inputType}
-      aria-label={field.label}
+      aria-label={label}
+      aria-labelledby={ariaLabelledBy}
       placeholder={field.placeholder ?? labels.enterValue}
       id={id}
       {...props}
@@ -1056,10 +1088,10 @@ function QueryBuilderValue({
   );
 }
 
-function getField(fields: QueryField[], name?: string) {
-  return name === undefined
+function getField(fields: QueryField[], value?: string) {
+  return value === undefined
     ? fields[0]
-    : fields.find((field) => field.name === name);
+    : fields.find((field) => field.value === value);
 }
 
 interface QueryBuilderAddRuleProps extends React.ComponentProps<typeof Button> {

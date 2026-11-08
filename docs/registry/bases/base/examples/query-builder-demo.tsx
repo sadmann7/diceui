@@ -35,9 +35,9 @@ import {
 } from "@/registry/bases/base/ui/query-builder";
 
 const fields: QueryField[] = [
-  { name: "title", label: "Title", type: "text" },
+  { value: "title", label: "Title", type: "text" },
   {
-    name: "status",
+    value: "status",
     label: "Status",
     type: "select",
     options: [
@@ -46,9 +46,9 @@ const fields: QueryField[] = [
       { label: "Done", value: "done", icon: CircleCheckIcon },
     ],
   },
-  { name: "estimate", label: "Estimate", type: "number" },
-  { name: "dueDate", label: "Due date", type: "date" },
-  { name: "archived", label: "Archived", type: "boolean" },
+  { value: "estimate", label: "Estimate", type: "number" },
+  { value: "dueDate", label: "Due date", type: "date" },
+  { value: "archived", label: "Archived", type: "boolean" },
 ];
 
 const defaultQuery: QueryGroup = {

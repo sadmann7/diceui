@@ -21,7 +21,7 @@ beforeAll(() => {
   };
 });
 
-const titleField: QueryField = { name: "title", label: "Title", type: "text" };
+const titleField: QueryField = { value: "title", label: "Title", type: "text" };
 
 function StatusIcon(props: React.SVGProps<SVGSVGElement>) {
   return <svg {...props} />;
@@ -29,7 +29,7 @@ function StatusIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function getStatusField(withIcons: boolean): QueryField {
   return {
-    name: "status",
+    value: "status",
     label: "Status",
     type: "select",
     options: ["todo", "doing", "done"].map((value) => ({
@@ -358,6 +358,45 @@ describe.each([
     expect(input).toHaveAttribute("aria-describedby", "hint");
   });
 
+  test.each([
+    [{ "aria-label": "Price" }],
+    [{ "aria-labelledby": "price-label" }],
+  ])("names both range inputs from %o", (labelProps) => {
+    render(
+      <QueryBuilder.QueryBuilder
+        fields={[{ value: "estimate", label: "Estimate", type: "number" }]}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [
+            {
+              id: "1",
+              field: "estimate",
+              operator: "isBetween",
+              value: ["1", "5"],
+            },
+          ],
+        }}
+      >
+        <span id="price-label">Price</span>
+        <QueryBuilder.QueryBuilderGroup>
+          <QueryBuilder.QueryBuilderGroupContent>
+            <QueryBuilder.QueryBuilderRuleList>
+              <QueryBuilder.QueryBuilderRule>
+                <QueryBuilder.QueryBuilderValue {...labelProps} />
+              </QueryBuilder.QueryBuilderRule>
+            </QueryBuilder.QueryBuilderRuleList>
+          </QueryBuilder.QueryBuilderGroupContent>
+        </QueryBuilder.QueryBuilderGroup>
+      </QueryBuilder.QueryBuilder>,
+    );
+
+    expect(screen.getByRole("spinbutton", { name: "Price from" })).toHaveValue(
+      1,
+    );
+    expect(screen.getByRole("spinbutton", { name: "Price to" })).toHaveValue(5);
+  });
+
   test("passes each rule to function children", () => {
     render(
       <QueryBuilder.QueryBuilder
@@ -426,6 +465,84 @@ describe.each([
     expect(nested).toHaveClass("root-layout", "extra");
     expect(
       nested?.querySelector("[data-group=nested] [data-id=b]"),
+    ).toBeInTheDocument();
+  });
+});
+
+const COMPOSABLE_PARTS = [
+  "QueryBuilder",
+  "QueryBuilderGroup",
+  "QueryBuilderGroupContent",
+  "QueryBuilderGroupHeader",
+  "QueryBuilderGroupTitle",
+  "QueryBuilderGroupFooter",
+  "QueryBuilderRule",
+  "QueryBuilderConnector",
+] as const;
+
+describe.each([
+  ["base", BaseQueryBuilder],
+  ["radix", RadixQueryBuilder],
+] as const)("composition (%s)", (base, QueryBuilder) => {
+  function Part({
+    name,
+    target,
+    children,
+    ...props
+  }: {
+    name: (typeof COMPOSABLE_PARTS)[number];
+    target: string;
+    children?: React.ReactNode;
+  } & Record<string, unknown>) {
+    const Component = QueryBuilder[name] as React.ComponentType<
+      Record<string, unknown>
+    >;
+    if (name !== target) return <Component {...props}>{children}</Component>;
+    return base === "base" ? (
+      <Component {...props} render={<section />}>
+        {children}
+      </Component>
+    ) : (
+      <Component {...props} asChild>
+        <section>{children}</section>
+      </Component>
+    );
+  }
+
+  test.each(COMPOSABLE_PARTS)("renders %s into the given element", (target) => {
+    render(
+      <Part
+        name="QueryBuilder"
+        target={target}
+        fields={[titleField]}
+        value={{
+          id: "root",
+          combinator: "and",
+          rules: [{ id: "1", field: "title", operator: "iLike", value: "" }],
+        }}
+      >
+        <Part name="QueryBuilderGroup" target={target}>
+          <Part name="QueryBuilderGroupContent" target={target}>
+            <Part name="QueryBuilderGroupHeader" target={target}>
+              <Part name="QueryBuilderGroupTitle" target={target} />
+            </Part>
+            <QueryBuilder.QueryBuilderRuleList>
+              <Part name="QueryBuilderRule" target={target}>
+                <Part name="QueryBuilderConnector" target={target} />
+              </Part>
+            </QueryBuilder.QueryBuilderRuleList>
+            <Part name="QueryBuilderGroupFooter" target={target} />
+          </Part>
+        </Part>
+      </Part>,
+    );
+
+    const slot = target.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
+    const element = document.querySelector(`[data-slot=${slot}]`);
+    expect(element?.tagName).toBe("SECTION");
+    expect(screen.getByText("Where")).toBeInTheDocument();
+    expect(
+      screen.getByText("All of the following are true…"),
     ).toBeInTheDocument();
   });
 });

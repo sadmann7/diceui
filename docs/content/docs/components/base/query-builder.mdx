@@ -138,6 +138,42 @@ Pass `labels` to reword or translate the built-in text. Labels you leave out kee
 />
 ```
 
+| Label             | Default                                          |
+| ----------------- | ------------------------------------------------ |
+| `where`           | `"Where"`                                        |
+| `and`             | `"And"`                                          |
+| `or`              | `"Or"`                                           |
+| `all`             | `"All"`                                          |
+| `any`             | `"Any"`                                          |
+| `not`             | `"Not"`                                          |
+| `combinator`      | `"Combinator"`                                   |
+| `matchAll`        | `"All of the following are true…"`               |
+| `matchAny`        | `"Any of the following are true…"`               |
+| `matchNotAll`     | `"Not all of the following are true…"`           |
+| `matchNone`       | `"None of the following are true…"`              |
+| `field`           | `"Field"`                                        |
+| `searchFields`    | `"Search fields"`                                |
+| `noFields`        | `"No fields found."`                             |
+| `operator`        | `"Operator"`                                     |
+| `searchOperators` | `"Search operators"`                             |
+| `noOperators`     | `"No operators found."`                          |
+| `enterValue`      | `"Enter a value"`                                |
+| `selectValue`     | `"Select a value"`                               |
+| `selectValues`    | `"Select values"`                                |
+| `searchValues`    | `` (field) => `Search ${field.toLowerCase()}` `` |
+| `selected`        | `` (count) => `${count} selected` ``             |
+| `noValue`         | `"no value"`                                     |
+| `noValues`        | `"No results."`                                  |
+| `between`         | `"and"`                                          |
+| `from`            | `"from"`                                         |
+| `to`              | `"to"`                                           |
+| `true`            | `"True"`                                         |
+| `false`           | `"False"`                                        |
+| `addRule`         | `"Add rule"`                                     |
+| `addGroup`        | `"Add group"`                                    |
+| `removeRule`      | `"Remove rule"`                                  |
+| `removeGroup`     | `"Remove group"`                                 |
+
 Operator labels come from `getQueryOperatorLabel` in `lib/query-builder.ts`.
 
 ## Examples
@@ -395,8 +431,8 @@ Renders nothing outside `QueryBuilderRuleList`. The select's accessible name is 
 
 A searchable [Faceted](/docs/components/base/faceted) picker for the rule's field. Accepts the props of `Button`.
 
-- Switching to a field of the same type keeps the operator and value, minus select values the new field doesn't have.
-- Switching to another type resets the rule.
+- Switching to a field of the same type that supports the current operator keeps the operator and value, minus select values the new field doesn't have.
+- Otherwise the rule resets to the new field's first operator.
 
 To hide the chevron in the field, operator and value pickers, target `data-slot="query-builder-select-icon"`, like `**:data-[slot=query-builder-select-icon]:hidden` on a wrapper.
 
@@ -450,7 +486,7 @@ The rule's value, based on the field type and operator:
 - A searchable [Faceted](/docs/components/base/faceted) picker for select and boolean fields.
 - An empty, read-only input for `isEmpty` and `isNotEmpty`. It keeps the rule's width and is hidden from screen readers.
 
-It renders the control without a wrapper, so it fits in a `ButtonGroup`, and passes HTML attributes like `id` to it. For a range, `id` goes on the first input.
+It renders the control without a wrapper, so it fits in a `ButtonGroup`, and passes HTML attributes like `id` to it. For a range, `id` goes on the first input, `aria-label` or `aria-labelledby` names both, like "Price from" and "Price to", and other attributes go on both.
 
 A select field takes several values when its `operators` include both forms, like Linear's filters. Picking a second value switches `eq` to `inArray` and `ne` to `notInArray`, and removing it switches back. `setQueryRuleValues` does the same outside the picker.
 
@@ -463,7 +499,7 @@ The trigger shows a badge per value, then `+N` for the ones that don't fit, and 
 
 ### QueryBuilderAddRule
 
-Adds a rule to the group. Set `field` to the name of the field the rule starts with, or leave it out to use the first field.
+Adds a rule to the group. Set `field` to the `value` of the field the rule starts with, or leave it out to use the first field.
 
 <AutoTypeTable
   path="./types/base/query-builder.ts"

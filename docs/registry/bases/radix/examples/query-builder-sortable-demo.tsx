@@ -54,9 +54,9 @@ import {
 } from "@/registry/bases/radix/ui/sortable";
 
 const fields: QueryField[] = [
-  { name: "title", label: "Title", type: "text" },
+  { value: "title", label: "Title", type: "text" },
   {
-    name: "status",
+    value: "status",
     label: "Status",
     type: "select",
     options: [
@@ -65,8 +65,8 @@ const fields: QueryField[] = [
       { label: "Done", value: "done" },
     ],
   },
-  { name: "estimate", label: "Estimate", type: "number" },
-  { name: "dueDate", label: "Due date", type: "date" },
+  { value: "estimate", label: "Estimate", type: "number" },
+  { value: "dueDate", label: "Due date", type: "date" },
 ];
 
 const defaultQuery: QueryGroup = {
@@ -87,6 +87,7 @@ const defaultQuery: QueryGroup = {
 };
 
 const OVERLAY_ID = "overlay";
+const MAX_DEPTH = 2;
 
 function getNodes(group: QueryGroup): QueryNode[] {
   return group.rules.flatMap((node) =>
@@ -103,6 +104,17 @@ function getParent(root: QueryGroup, id: string): QueryGroup | undefined {
     }
   }
   return undefined;
+}
+
+function getDepth(root: QueryGroup, id: string): number {
+  const parent = getParent(root, id);
+  return parent ? getDepth(root, parent.id) + 1 : 0;
+}
+
+function getHeight(node: QueryNode): number {
+  return getIsQueryGroup(node)
+    ? 1 + Math.max(0, ...node.rules.map(getHeight))
+    : 0;
 }
 
 function getIsInside(root: QueryGroup, id: string, ancestorId: string) {
@@ -336,6 +348,9 @@ export default function QueryBuilderSortableDemo() {
         ? overNode
         : getParent(query, overKey);
     if (!from || !to || from.id === to.id) return;
+    const activeNode = findQueryNode(query, activeKey);
+    if (!activeNode) return;
+    if (getDepth(query, to.id) + getHeight(activeNode) > MAX_DEPTH) return;
     const overIndex = to.rules.findIndex((node) => node.id === overKey);
     const y = getPointerY(event);
     const isBelow = y !== undefined && y > over.rect.top + over.rect.height / 2;
@@ -400,6 +415,7 @@ export default function QueryBuilderSortableDemo() {
         <QueryBuilder
           ref={queryBuilderRef}
           fields={fields}
+          maxDepth={MAX_DEPTH}
           value={query}
           onValueChange={setQuery}
           className="w-full max-w-lg"
