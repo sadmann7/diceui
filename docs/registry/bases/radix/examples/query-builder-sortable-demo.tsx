@@ -147,7 +147,13 @@ function QueryBuilderSortableHandle({
   );
 }
 
-function QueryBuilderSortableNode({ node }: { node: QueryNode }) {
+function QueryBuilderSortableNode({
+  node,
+  hideConnector,
+}: {
+  node: QueryNode;
+  hideConnector: boolean;
+}) {
   if (getIsQueryGroup(node)) {
     return (
       <SortableItem value={node.id} asChild>
@@ -159,7 +165,9 @@ function QueryBuilderSortableNode({ node }: { node: QueryNode }) {
   return (
     <SortableItem value={node.id} asChild>
       <QueryBuilderRule className="data-dragging:opacity-0">
-        <QueryBuilderConnector />
+        <QueryBuilderConnector
+          className={hideConnector ? "invisible" : undefined}
+        />
         <ButtonGroup>
           <QueryBuilderField />
           <QueryBuilderOperator />
@@ -175,13 +183,17 @@ function QueryBuilderSortableNode({ node }: { node: QueryNode }) {
 function QueryBuilderSortableLayout({
   group,
   rootId,
+  hideConnector = false,
 }: {
   group: QueryGroup;
   rootId: string;
+  hideConnector?: boolean;
 }) {
   return (
     <>
-      <QueryBuilderConnector />
+      <QueryBuilderConnector
+        className={hideConnector ? "invisible" : undefined}
+      />
       <QueryBuilderGroupContent>
         <QueryBuilderGroupHeader className="data-[depth=0]:hidden">
           <QueryBuilderGroupTitle />
@@ -198,7 +210,12 @@ function QueryBuilderSortableLayout({
           strategy={verticalListSortingStrategy}
         >
           <QueryBuilderRules>
-            {(node) => <QueryBuilderSortableNode node={node} />}
+            {(node) => (
+              <QueryBuilderSortableNode
+                node={node}
+                hideConnector={group.id === OVERLAY_ID}
+              />
+            )}
           </QueryBuilderRules>
         </SortableContext>
         {group.id === rootId && rootId !== OVERLAY_ID && (
@@ -406,7 +423,11 @@ export default function QueryBuilderSortableDemo() {
           >
             <QueryBuilderGroup>
               {(group) => (
-                <QueryBuilderSortableLayout group={group} rootId={OVERLAY_ID} />
+                <QueryBuilderSortableLayout
+                  group={group}
+                  rootId={OVERLAY_ID}
+                  hideConnector={group.id === activeNode.id}
+                />
               )}
             </QueryBuilderGroup>
           </QueryBuilder>
