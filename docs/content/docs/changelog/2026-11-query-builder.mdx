@@ -15,7 +15,7 @@ npx shadcn@latest add @diceui/query-builder
 - **Composable parts.** Build the layout from parts like `QueryBuilderGroup`, `QueryBuilderRuleList` and `QueryBuilderRule`. Nested groups reuse the root group's layout.
 - **Fields.** Each field has a `value`, a `label` and a `type`: text, number, date, boolean, select or multi-select, each with its own operators.
 - **Multiple values.** Select fields switch from "is" to "is any of" when a second value is picked, like Linear's filters.
-- **Negated groups.** `QueryBuilderNot` turns a group into `NOT (...)`.
+- **Negated groups.** `QueryBuilderNegate` turns a group into `NOT (...)`.
 - **Labels.** Pass `labels` to reword or translate the built-in text.
 
 ## Utilities

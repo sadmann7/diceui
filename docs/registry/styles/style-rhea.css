@@ -1618,7 +1618,7 @@
     @apply text-muted-foreground;
   }
 
-  .cn-query-builder-not {
+  .cn-query-builder-negate {
     @apply text-muted-foreground aria-pressed:bg-muted aria-pressed:text-foreground;
   }
 

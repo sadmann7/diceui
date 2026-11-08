@@ -271,7 +271,7 @@ const rows = tasks.filter((task) => matchesQuery(task, query, fields));
 
 ### QueryBuilder
 
-The root component. Holds the query and the fields it can use.
+The root component. Holds the query and the fields it can use. `disabled` disables every part, and each control also takes its own `disabled`.
 
 <AutoTypeTable
   path="./types/radix/query-builder.ts"
@@ -459,13 +459,13 @@ A select for the group's combinator, labeled "All" and "Any", for headers like "
   name="QueryBuilderCombinatorProps"
 />
 
-### QueryBuilderNot
+### QueryBuilderNegate
 
 A toggle that negates the group, so it matches when its rules don't. Accepts the props of `Button` and sets `aria-pressed` while on. The [SQL](#sql) example negates its nested group, which outputs `NOT (...)`.
 
 <AutoTypeTable
   path="./types/radix/query-builder.ts"
-  name="QueryBuilderNotProps"
+  name="QueryBuilderNegateProps"
 />
 
 <DataAttributesTable

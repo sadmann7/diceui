@@ -108,7 +108,7 @@ export interface QueryBuilderCombinatorProps extends Omit<
   keyof React.ComponentProps<"button">
 > {}
 
-export interface QueryBuilderNotProps extends Omit<
+export interface QueryBuilderNegateProps extends Omit<
   ButtonProps,
   keyof React.ComponentProps<"button">
 > {}
@@ -164,6 +164,14 @@ export interface QueryBuilderValueProps {
    * @default "list"
    */
   display?: "list" | "summary";
+
+  /**
+   * Whether the value control is disabled. The control is also disabled
+   * while the root is.
+   *
+   * @default false
+   */
+  disabled?: boolean;
 }
 
 export interface QueryBuilderAddRuleProps extends Omit<

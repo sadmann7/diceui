@@ -272,7 +272,7 @@ describe.each([
         >
           <QueryBuilder.QueryBuilderGroup>
             <QueryBuilder.QueryBuilderGroupTitle />
-            <QueryBuilder.QueryBuilderNot />
+            <QueryBuilder.QueryBuilderNegate />
           </QueryBuilder.QueryBuilderGroup>
         </QueryBuilder.QueryBuilder>
       );
@@ -396,6 +396,57 @@ describe.each([
     );
     expect(screen.getByRole("spinbutton", { name: "Price to" })).toHaveValue(5);
   });
+
+  test.each([
+    [false, true],
+    [true, false],
+  ])(
+    "disables each part when the root is %s and the part is %s",
+    (rootDisabled, partDisabled) => {
+      render(
+        <QueryBuilder.QueryBuilder
+          fields={[titleField]}
+          disabled={rootDisabled}
+          value={{
+            id: "root",
+            combinator: "and",
+            rules: [{ id: "1", field: "title", operator: "iLike", value: "" }],
+          }}
+        >
+          <QueryBuilder.QueryBuilderGroup>
+            <QueryBuilder.QueryBuilderGroupContent>
+              <QueryBuilder.QueryBuilderNegate disabled={partDisabled} />
+              <QueryBuilder.QueryBuilderRuleList>
+                <QueryBuilder.QueryBuilderRule>
+                  <QueryBuilder.QueryBuilderField disabled={partDisabled} />
+                  <QueryBuilder.QueryBuilderOperator disabled={partDisabled} />
+                  <QueryBuilder.QueryBuilderValue disabled={partDisabled} />
+                  <QueryBuilder.QueryBuilderRemove disabled={partDisabled} />
+                </QueryBuilder.QueryBuilderRule>
+              </QueryBuilder.QueryBuilderRuleList>
+              <QueryBuilder.QueryBuilderAddRule disabled={partDisabled} />
+              <QueryBuilder.QueryBuilderAddGroup disabled={partDisabled} />
+            </QueryBuilder.QueryBuilderGroupContent>
+          </QueryBuilder.QueryBuilderGroup>
+        </QueryBuilder.QueryBuilder>,
+      );
+
+      for (const slot of [
+        "negate",
+        "field",
+        "operator",
+        "value",
+        "remove",
+        "add-rule",
+        "add-group",
+      ]) {
+        expect(
+          document.querySelector(`[data-slot=query-builder-${slot}]`),
+          slot,
+        ).toBeDisabled();
+      }
+    },
+  );
 
   test("passes each rule to function children", () => {
     render(

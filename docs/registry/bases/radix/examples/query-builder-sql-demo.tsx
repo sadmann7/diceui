@@ -21,7 +21,7 @@ import {
   QueryBuilderGroupFooter,
   QueryBuilderGroupHeader,
   QueryBuilderGroupTitle,
-  QueryBuilderNot,
+  QueryBuilderNegate,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
@@ -99,7 +99,7 @@ export default function QueryBuilderSqlDemo() {
           <QueryBuilderGroupContent>
             <QueryBuilderGroupHeader className="data-[depth=0]:hidden">
               <QueryBuilderGroupTitle />
-              <QueryBuilderNot />
+              <QueryBuilderNegate />
               <QueryBuilderAddRule size="icon-sm" aria-label="Add rule">
                 <PlusIcon />
               </QueryBuilderAddRule>

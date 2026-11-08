@@ -62,7 +62,7 @@ const RULE_LIST_NAME = "QueryBuilderRuleList";
 const RULE_NAME = "QueryBuilderRule";
 const COMBINATOR_NAME = "QueryBuilderCombinator";
 const CONNECTOR_NAME = "QueryBuilderConnector";
-const NOT_NAME = "QueryBuilderNot";
+const NEGATE_NAME = "QueryBuilderNegate";
 const FIELD_NAME = "QueryBuilderField";
 const OPERATOR_NAME = "QueryBuilderOperator";
 const VALUE_NAME = "QueryBuilderValue";
@@ -226,8 +226,8 @@ interface QueryBuilderProps extends Omit<DivProps, "defaultValue"> {
   value?: QueryGroup;
   defaultValue?: QueryGroup;
   onValueChange?: (value: QueryGroup) => void;
-  labels?: Partial<QueryBuilderLabels>;
   maxDepth?: number;
+  labels?: Partial<QueryBuilderLabels>;
   disabled?: boolean;
 }
 
@@ -236,8 +236,8 @@ function QueryBuilder({
   value: valueProp,
   defaultValue,
   onValueChange: onValueChangeProp,
-  labels: labelsProp,
   maxDepth = 2,
+  labels: labelsProp,
   disabled = false,
   asChild,
   className,
@@ -505,7 +505,12 @@ interface CombinatorSelectProps extends React.ComponentProps<
   items: Record<QueryCombinator, string>;
 }
 
-function CombinatorSelect({ group, items, ...props }: CombinatorSelectProps) {
+function CombinatorSelect({
+  group,
+  items,
+  disabled: disabledProp,
+  ...props
+}: CombinatorSelectProps) {
   const { disabled, labels } = useQueryBuilderContext(COMBINATOR_NAME);
   const { update } = useQueryActions(COMBINATOR_NAME);
 
@@ -518,7 +523,7 @@ function CombinatorSelect({ group, items, ...props }: CombinatorSelectProps) {
           combinator: combinator as QueryCombinator,
         }))
       }
-      disabled={disabled}
+      disabled={disabled || disabledProp}
     >
       <SelectTrigger size="sm" aria-label={labels.combinator} {...props}>
         <SelectValue />
@@ -592,15 +597,16 @@ function QueryBuilderConnector({
   );
 }
 
-function QueryBuilderNot({
+function QueryBuilderNegate({
   onClick,
   children,
   className,
+  disabled: disabledProp,
   ...props
 }: React.ComponentProps<typeof Button>) {
-  const { disabled, labels } = useQueryBuilderContext(NOT_NAME);
-  const { group } = useGroupContext(NOT_NAME);
-  const { update } = useQueryActions(NOT_NAME);
+  const { disabled, labels } = useQueryBuilderContext(NEGATE_NAME);
+  const { group } = useGroupContext(NEGATE_NAME);
+  const { update } = useQueryActions(NEGATE_NAME);
 
   return (
     <Button
@@ -608,9 +614,9 @@ function QueryBuilderNot({
       variant="ghost"
       size="sm"
       aria-pressed={!!group.not}
-      data-slot="query-builder-not"
+      data-slot="query-builder-negate"
       data-state={group.not ? "on" : "off"}
-      disabled={disabled}
+      disabled={disabled || disabledProp}
       {...props}
       onClick={(event) => {
         onClick?.(event);
@@ -619,7 +625,7 @@ function QueryBuilderNot({
           getIsQueryGroup(node) ? { ...node, not: !node.not } : node,
         );
       }}
-      className={cn("cn-query-builder-not", className)}
+      className={cn("cn-query-builder-negate", className)}
     >
       {children ?? labels.not}
     </Button>
@@ -628,12 +634,13 @@ function QueryBuilderNot({
 
 function QueryBuilderField({
   className,
+  disabled: disabledProp,
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { fields, labels, disabled } = useQueryBuilderContext(FIELD_NAME);
   const rule = useRuleContext(FIELD_NAME);
   const { update } = useQueryActions(FIELD_NAME);
-  const current = fields.find((field) => field.value === rule.field);
+  const currentField = fields.find((field) => field.value === rule.field);
 
   return (
     <Faceted
@@ -646,7 +653,7 @@ function QueryBuilderField({
         const field = fields.find((item) => item.value === value);
         if (!field) return;
         update(rule.id, (node) =>
-          setQueryRuleField(node as QueryRule, current, field),
+          setQueryRuleField(node as QueryRule, currentField, field),
         );
       }}
     >
@@ -655,10 +662,12 @@ function QueryBuilderField({
           variant="outline"
           size="sm"
           aria-label={
-            current ? `${labels.field}: ${current.label}` : labels.field
+            currentField
+              ? `${labels.field}: ${currentField.label}`
+              : labels.field
           }
           data-slot="query-builder-field"
-          disabled={disabled}
+          disabled={disabled || disabledProp}
           {...props}
           className={cn(
             "cn-query-builder-field cn-query-builder-select",
@@ -708,6 +717,7 @@ function QueryBuilderField({
 
 function QueryBuilderOperator({
   className,
+  disabled: disabledProp,
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { fields, labels, disabled } = useQueryBuilderContext(OPERATOR_NAME);
@@ -739,7 +749,7 @@ function QueryBuilderOperator({
           size="sm"
           aria-label={`${labels.operator}: ${getQueryOperatorLabel(rule.operator, field.type)}`}
           data-slot="query-builder-operator"
-          disabled={disabled}
+          disabled={disabled || disabledProp}
           {...props}
           className={cn(
             "cn-query-builder-operator cn-query-builder-select",
@@ -878,6 +888,7 @@ interface QueryBuilderValueProps extends Omit<
   "children" | "defaultValue" | "onChange"
 > {
   display?: "list" | "summary";
+  disabled?: boolean;
 }
 
 function QueryBuilderValue({
@@ -886,6 +897,7 @@ function QueryBuilderValue({
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
   className,
+  disabled: disabledProp,
   ...props
 }: QueryBuilderValueProps) {
   const { fields, labels, disabled } = useQueryBuilderContext(VALUE_NAME);
@@ -945,7 +957,7 @@ function QueryBuilderValue({
           data-operator={rule.operator}
           value={start}
           onChange={(event) => onChange([event.target.value, end])}
-          disabled={disabled}
+          disabled={disabled || disabledProp}
           className={valueClassName}
         />
         <span className="cn-query-builder-value-separator">
@@ -963,7 +975,7 @@ function QueryBuilderValue({
           data-operator={rule.operator}
           value={end}
           onChange={(event) => onChange([start, event.target.value])}
-          disabled={disabled}
+          disabled={disabled || disabledProp}
           className={valueClassName}
         />
       </>
@@ -1014,7 +1026,7 @@ function QueryBuilderValue({
             {...props}
             data-slot="query-builder-value"
             data-operator={rule.operator}
-            disabled={disabled}
+            disabled={disabled || disabledProp}
             className={cn("cn-query-builder-select", valueClassName)}
           >
             <FacetedValue>
@@ -1080,7 +1092,7 @@ function QueryBuilderValue({
       {...props}
       value={typeof rule.value === "string" ? rule.value : ""}
       onChange={(event) => onChange(event.target.value)}
-      disabled={disabled}
+      disabled={disabled || disabledProp}
       data-slot="query-builder-value"
       data-operator={rule.operator}
       className={valueClassName}
@@ -1103,6 +1115,7 @@ function QueryBuilderAddRule({
   onClick,
   children,
   className,
+  disabled: disabledProp,
   ...props
 }: QueryBuilderAddRuleProps) {
   const { fields, labels, disabled } = useQueryBuilderContext(ADD_RULE_NAME);
@@ -1116,7 +1129,7 @@ function QueryBuilderAddRule({
       variant="ghost"
       size="sm"
       data-slot="query-builder-add-rule"
-      disabled={disabled || !field}
+      disabled={disabled || disabledProp || !field}
       {...props}
       onClick={(event) => {
         onClick?.(event);
@@ -1152,6 +1165,7 @@ function QueryBuilderAddGroup({
   onClick,
   children,
   className,
+  disabled: disabledProp,
   ...props
 }: QueryBuilderAddGroupProps) {
   const { fields, labels, disabled, maxDepth } =
@@ -1168,7 +1182,7 @@ function QueryBuilderAddGroup({
       variant="ghost"
       size="sm"
       data-slot="query-builder-add-group"
-      disabled={disabled || !field}
+      disabled={disabled || disabledProp || !field}
       {...props}
       onClick={(event) => {
         onClick?.(event);
@@ -1202,6 +1216,7 @@ function QueryBuilderRemove({
   onClick,
   children,
   className,
+  disabled: disabledProp,
   ...props
 }: React.ComponentProps<typeof Button>) {
   const { disabled, labels } = useQueryBuilderContext(REMOVE_NAME);
@@ -1219,7 +1234,7 @@ function QueryBuilderRemove({
       size="icon-sm"
       aria-label={rule ? labels.removeRule : labels.removeGroup}
       data-slot="query-builder-remove"
-      disabled={disabled}
+      disabled={disabled || disabledProp}
       {...props}
       onClick={(event) => {
         onClick?.(event);
@@ -1253,7 +1268,7 @@ export {
   QueryBuilderGroupFooter,
   QueryBuilderGroupHeader,
   QueryBuilderGroupTitle,
-  QueryBuilderNot,
+  QueryBuilderNegate,
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
