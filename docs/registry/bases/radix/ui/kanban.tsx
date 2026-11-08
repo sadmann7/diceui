@@ -226,6 +226,9 @@ function Kanban<T>(props: KanbanProps<T>) {
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null);
   const hasMovedRef = React.useRef(false);
+  const valueBeforeDragRef = React.useRef<Record<UniqueIdentifier, T[]> | null>(
+    null,
+  );
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: { distance: 4 },
@@ -321,18 +324,15 @@ function Kanban<T>(props: KanbanProps<T>) {
   const onDragStart = React.useCallback(
     (event: DragStartEvent) => {
       onDragStartProp?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
+      valueBeforeDragRef.current = value;
       setActiveId(event.active.id);
     },
-    [onDragStartProp],
+    [value, onDragStartProp],
   );
 
   const onDragOver = React.useCallback(
     (event: DragOverEvent) => {
       onDragOverProp?.(event);
-
-      if (event.activatorEvent.defaultPrevented) return;
 
       const { active, over } = event;
       if (!over) return;
@@ -397,8 +397,7 @@ function Kanban<T>(props: KanbanProps<T>) {
       onDragEndProp?.(event);
       setActiveId(null);
       hasMovedRef.current = false;
-
-      if (event.activatorEvent.defaultPrevented) return;
+      valueBeforeDragRef.current = null;
 
       const { active, over } = event;
       if (!over) return;
@@ -470,8 +469,14 @@ function Kanban<T>(props: KanbanProps<T>) {
       onDragCancelProp?.(event);
       setActiveId(null);
       hasMovedRef.current = false;
+
+      const valueBeforeDrag = valueBeforeDragRef.current;
+      valueBeforeDragRef.current = null;
+      if (valueBeforeDrag && valueBeforeDrag !== value) {
+        onValueChange?.(valueBeforeDrag);
+      }
     },
-    [onDragCancelProp],
+    [value, onValueChange, onDragCancelProp],
   );
 
   const announcements: Announcements = React.useMemo(

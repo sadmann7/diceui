@@ -1,6 +1,12 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, test } from "vitest";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 import * as BaseKanban from "@/registry/bases/base/ui/kanban";
 import * as BaseSortable from "@/registry/bases/base/ui/sortable";
@@ -8,6 +14,13 @@ import * as RadixKanban from "@/registry/bases/radix/ui/kanban";
 import * as RadixSortable from "@/registry/bases/radix/ui/sortable";
 
 afterEach(cleanup);
+
+async function pressKey(element: Element, key: string, code = key) {
+  await act(async () => {
+    fireEvent.keyDown(element, { key, code });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+}
 
 describe.each([
   ["base", BaseSortable],
@@ -39,6 +52,38 @@ describe.each([
       "aria-controls",
       itemB?.id,
     );
+  });
+
+  test("starts and ends keyboard drags", async () => {
+    const onDragEnd = vi.fn();
+    render(
+      <Sortable.Sortable
+        value={["a", "b"]}
+        getItemValue={(item) => item}
+        onDragEnd={onDragEnd}
+      >
+        <Sortable.SortableContent>
+          <Sortable.SortableItem value="a">
+            <Sortable.SortableItemHandle aria-label="Move a" />
+          </Sortable.SortableItem>
+          <Sortable.SortableItem value="b">
+            <Sortable.SortableItemHandle aria-label="Move b" />
+          </Sortable.SortableItem>
+        </Sortable.SortableContent>
+        <Sortable.SortableOverlay>
+          {({ value }) => <div>Dragging {value}</div>}
+        </Sortable.SortableOverlay>
+      </Sortable.Sortable>,
+    );
+
+    const handle = screen.getByLabelText("Move a");
+    handle.focus();
+    await pressKey(handle, " ", "Space");
+    expect(screen.getByText("Dragging a")).toBeInTheDocument();
+
+    await pressKey(handle, " ", "Space");
+    expect(onDragEnd).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText("Dragging a")).not.toBeInTheDocument();
   });
 
   test("only marks disabled items and handles as disabled", () => {
@@ -104,6 +149,38 @@ describe.each([
       "data-slot",
       "kanban-item",
     );
+  });
+
+  test("starts and ends keyboard drags", async () => {
+    const onDragEnd = vi.fn();
+    render(
+      <Kanban.Kanban
+        value={{ todo: ["a"], done: [] }}
+        getItemValue={(item) => item}
+        onDragEnd={onDragEnd}
+      >
+        <Kanban.KanbanBoard>
+          <Kanban.KanbanColumn value="todo">
+            <Kanban.KanbanItem value="a">
+              <Kanban.KanbanItemHandle aria-label="Move a" />
+            </Kanban.KanbanItem>
+          </Kanban.KanbanColumn>
+          <Kanban.KanbanColumn value="done">{null}</Kanban.KanbanColumn>
+        </Kanban.KanbanBoard>
+        <Kanban.KanbanOverlay>
+          {({ value }) => <div>Dragging {value}</div>}
+        </Kanban.KanbanOverlay>
+      </Kanban.Kanban>,
+    );
+
+    const handle = screen.getByLabelText("Move a");
+    handle.focus();
+    await pressKey(handle, " ", "Space");
+    expect(screen.getByText("Dragging a")).toBeInTheDocument();
+
+    await pressKey(handle, " ", "Space");
+    expect(onDragEnd).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText("Dragging a")).not.toBeInTheDocument();
   });
 
   test("only marks disabled columns and items as disabled", () => {
