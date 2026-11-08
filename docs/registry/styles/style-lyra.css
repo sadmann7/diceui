@@ -1546,7 +1546,7 @@
   }
 
   .cn-query-builder-rule {
-    @apply gap-2 @max-[28rem]:flex-nowrap @max-[28rem]:*:data-[slot=button-group]:min-w-0 @max-[28rem]:*:data-[slot=button-group]:flex-1 has-data-[operator=isBetween]:flex-nowrap has-data-[operator=isBetween]:*:data-[slot=button-group]:min-w-0 has-data-[operator=isBetween]:*:data-[slot=button-group]:flex-1;
+    @apply gap-2 @max-[28rem]:flex-nowrap @max-[28rem]:*:data-[slot=button-group]:min-w-0 @max-[28rem]:*:data-[slot=button-group]:flex-1 has-data-[operator=isBetween]:flex-nowrap has-data-[operator=isBetween]:*:data-[slot=button-group]:min-w-0 has-data-[operator=isBetween]:*:data-[slot=button-group]:flex-1 [&>[data-slot=button-group]>*:not(:first-child)]:-ml-px [&>[data-slot=button-group]>*:not(:first-child)]:border-l!;
   }
 
   .cn-query-builder-combinator {
