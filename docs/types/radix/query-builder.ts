@@ -4,12 +4,15 @@ import type {
   QueryNode,
 } from "@/registry/bases/radix/lib/query-builder";
 import type { Button } from "@/registry/bases/radix/ui/button";
-import type { QueryBuilderLabels } from "@/registry/bases/radix/ui/query-builder";
+import type { QueryBuilder } from "@/registry/bases/radix/ui/query-builder";
 import type { SelectTrigger } from "@/registry/bases/radix/ui/select";
 import type { CompositionProps, EmptyProps } from "@/types";
 
 type ButtonProps = React.ComponentProps<typeof Button>;
 type SelectTriggerProps = React.ComponentProps<typeof SelectTrigger>;
+type QueryBuilderLabels = NonNullable<
+  React.ComponentProps<typeof QueryBuilder>["labels"]
+>;
 
 export interface QueryBuilderProps extends EmptyProps<"div">, CompositionProps {
   /**
@@ -78,7 +81,7 @@ export interface QueryBuilderProps extends EmptyProps<"div">, CompositionProps {
    * }}
    * ```
    */
-  labels?: Partial<QueryBuilderLabels>;
+  labels?: QueryBuilderLabels;
 }
 
 export interface QueryBuilderGroupProps

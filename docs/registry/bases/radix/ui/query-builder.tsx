@@ -74,43 +74,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-interface QueryBuilderLabels {
-  where: string;
-  and: string;
-  or: string;
-  all: string;
-  any: string;
-  not: string;
-  combinator: string;
-  matchAll: string;
-  matchAny: string;
-  matchNotAll: string;
-  matchNone: string;
-  field: string;
-  searchFields: string;
-  noFields: string;
-  operator: string;
-  searchOperators: string;
-  noOperators: string;
-  enterValue: string;
-  selectValue: string;
-  selectValues: string;
-  searchValues: (field: string) => string;
-  selected: (count: number) => string;
-  noValue: string;
-  noValues: string;
-  between: string;
-  from: string;
-  to: string;
-  true: string;
-  false: string;
-  addRule: string;
-  addGroup: string;
-  removeRule: string;
-  removeGroup: string;
-}
-
-const DEFAULT_LABELS: QueryBuilderLabels = {
+const DEFAULT_LABELS = {
   where: "Where",
   and: "And",
   or: "Or",
@@ -131,8 +95,8 @@ const DEFAULT_LABELS: QueryBuilderLabels = {
   enterValue: "Enter a value",
   selectValue: "Select a value",
   selectValues: "Select values",
-  searchValues: (field) => `Search ${field.toLowerCase()}`,
-  selected: (count) => `${count} selected`,
+  searchValues: (field: string) => `Search ${field.toLowerCase()}`,
+  selected: (count: number) => `${count} selected`,
   noValue: "no value",
   noValues: "No results.",
   between: "and",
@@ -145,6 +109,8 @@ const DEFAULT_LABELS: QueryBuilderLabels = {
   removeRule: "Remove rule",
   removeGroup: "Remove group",
 };
+
+type QueryBuilderLabels = typeof DEFAULT_LABELS;
 
 interface QueryBuilderContextValue {
   fields: QueryField[];
@@ -1271,5 +1237,4 @@ export {
   QueryBuilderRule,
   QueryBuilderRuleList,
   QueryBuilderValue,
-  type QueryBuilderLabels,
 };

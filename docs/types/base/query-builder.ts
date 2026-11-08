@@ -4,12 +4,15 @@ import type {
   QueryNode,
 } from "@/registry/bases/base/lib/query-builder";
 import type { Button } from "@/registry/bases/base/ui/button";
-import type { QueryBuilderLabels } from "@/registry/bases/base/ui/query-builder";
+import type { QueryBuilder } from "@/registry/bases/base/ui/query-builder";
 import type { SelectTrigger } from "@/registry/bases/base/ui/select";
 import type { EmptyProps, RenderProps } from "@/types";
 
 type ButtonProps = React.ComponentProps<typeof Button>;
 type SelectTriggerProps = React.ComponentProps<typeof SelectTrigger>;
+type QueryBuilderLabels = NonNullable<
+  React.ComponentProps<typeof QueryBuilder>["labels"]
+>;
 
 export interface QueryBuilderProps extends EmptyProps<"div">, RenderProps {
   /**
@@ -78,7 +81,7 @@ export interface QueryBuilderProps extends EmptyProps<"div">, RenderProps {
    * }}
    * ```
    */
-  labels?: Partial<QueryBuilderLabels>;
+  labels?: QueryBuilderLabels;
 }
 
 export interface QueryBuilderGroupProps extends EmptyProps<"div">, RenderProps {
