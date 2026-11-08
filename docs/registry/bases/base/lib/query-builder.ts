@@ -564,7 +564,6 @@ function matchesGroup(
   return group.not ? !matches : matches;
 }
 
-// Rules that aren't filled in yet are skipped, so an empty query matches everything.
 export function matchesQuery(
   row: Record<string, unknown>,
   query: QueryGroup,
@@ -592,7 +591,6 @@ function quoteIdentifier(identifier: string, dialect: SqlDialect) {
     .join(".");
 }
 
-// `!` escapes LIKE wildcards in every dialect, unlike `\`.
 function escapeLike(value: string) {
   return value.replace(/[!%_]/g, "!$&");
 }
@@ -643,7 +641,6 @@ function formatRule(
       ].filter(Boolean);
       return parts.length > 1 ? `(${parts.join(" AND ")})` : parts[0];
     }
-    // A date matches the whole day, from its start to the next day's start.
     const day = String(value);
     const nextDay = getNextDateKey(day);
     switch (operator) {
@@ -714,7 +711,6 @@ function formatGroup(
   return group.not ? `NOT (${sql})` : sql;
 }
 
-// Columns only come from `fields`, so column names never come from user input.
 export function formatQuery(
   query: QueryGroup,
   fields: QueryField[],
