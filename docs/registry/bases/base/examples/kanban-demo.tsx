@@ -17,10 +17,16 @@ import {
 interface Task {
   id: string;
   title: string;
+  label: string;
   priority: "low" | "medium" | "high";
-  assignee?: string;
-  dueDate?: string;
+  dueDate: string;
 }
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  timeZone: "UTC",
+});
 
 const COLUMN_TITLES: Record<string, string> = {
   backlog: "Backlog",
@@ -33,56 +39,56 @@ export default function KanbanDemo() {
     backlog: [
       {
         id: "1",
-        title: "Add authentication",
-        priority: "high",
-        assignee: "John Doe",
-        dueDate: "2024-04-01",
+        title: "Add keyboard shortcuts to the command menu",
+        label: "Feature",
+        priority: "medium",
+        dueDate: "2026-11-18",
       },
       {
         id: "2",
-        title: "Create API endpoints",
-        priority: "medium",
-        assignee: "Jane Smith",
-        dueDate: "2024-04-05",
+        title: "Fix date picker overflow on small screens",
+        label: "Bug",
+        priority: "high",
+        dueDate: "2026-11-12",
       },
       {
         id: "3",
-        title: "Write documentation",
+        title: "Write the migration guide for v2",
+        label: "Docs",
         priority: "low",
-        assignee: "Bob Johnson",
-        dueDate: "2024-04-10",
+        dueDate: "2026-11-24",
       },
     ],
     inProgress: [
       {
         id: "4",
-        title: "Design system updates",
+        title: "Add filters to the search page",
+        label: "Feature",
         priority: "high",
-        assignee: "Alice Brown",
-        dueDate: "2024-03-28",
+        dueDate: "2026-11-10",
       },
       {
         id: "5",
-        title: "Implement dark mode",
+        title: "Reduce re-renders while dragging cards",
+        label: "Performance",
         priority: "medium",
-        assignee: "Charlie Wilson",
-        dueDate: "2024-04-02",
+        dueDate: "2026-11-14",
       },
     ],
     done: [
       {
-        id: "7",
-        title: "Setup project",
-        priority: "high",
-        assignee: "Eve Davis",
-        dueDate: "2024-03-25",
+        id: "6",
+        title: "Set up visual regression tests",
+        label: "Testing",
+        priority: "low",
+        dueDate: "2026-11-03",
       },
       {
-        id: "8",
-        title: "Initial commit",
-        priority: "low",
-        assignee: "Frank White",
-        dueDate: "2024-03-24",
+        id: "7",
+        title: "Fix focus ring on disabled buttons",
+        label: "Bug",
+        priority: "medium",
+        dueDate: "2026-11-01",
       },
     ],
   });
@@ -93,7 +99,7 @@ export default function KanbanDemo() {
       onValueChange={setColumns}
       getItemValue={(item) => item.id}
     >
-      <KanbanBoard className="grid auto-rows-fr sm:grid-cols-3">
+      <KanbanBoard className="grid h-fit auto-rows-fr sm:grid-cols-3">
         {Object.entries(columns).map(([columnValue, tasks]) => (
           <TaskColumn key={columnValue} value={columnValue} tasks={tasks} />
         ))}
@@ -131,36 +137,37 @@ function TaskCard({ task, ...props }: TaskCardProps) {
     <KanbanItem
       key={task.id}
       value={task.id}
-      render={<div className="rounded-md border bg-card p-3 shadow-xs" />}
+      render={
+        <div className="flex flex-col gap-2.5 rounded-md border bg-card p-3 shadow-xs" />
+      }
       {...props}
     >
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-2">
-          <span className="line-clamp-1 text-sm font-medium">{task.title}</span>
-          <Badge
-            variant={
-              task.priority === "high"
-                ? "destructive"
-                : task.priority === "medium"
-                  ? "default"
-                  : "secondary"
-            }
-            className="pointer-events-none h-5 px-1.5 text-[11px] capitalize"
-          >
-            {task.priority}
-          </Badge>
-        </div>
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          {task.assignee && (
-            <div className="flex items-center gap-1">
-              <div className="size-2 rounded-full bg-primary/20" />
-              <span className="line-clamp-1">{task.assignee}</span>
-            </div>
-          )}
-          {task.dueDate && (
-            <time className="text-[10px] tabular-nums">{task.dueDate}</time>
-          )}
-        </div>
+      <span className="line-clamp-2 text-sm font-medium">{task.title}</span>
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Badge
+          variant={
+            task.priority === "high"
+              ? "destructive"
+              : task.priority === "medium"
+                ? "default"
+                : "secondary"
+          }
+          className="pointer-events-none h-5 px-1.5 text-[11px] capitalize"
+        >
+          {task.priority}
+        </Badge>
+        <Badge
+          variant="outline"
+          className="pointer-events-none h-5 px-1.5 text-[11px]"
+        >
+          {task.label}
+        </Badge>
+        <time
+          dateTime={task.dueDate}
+          className="ml-auto text-xs text-muted-foreground tabular-nums"
+        >
+          {dateFormatter.format(new Date(task.dueDate))}
+        </time>
       </div>
     </KanbanItem>
   );
