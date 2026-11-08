@@ -1888,6 +1888,51 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "selection-wheel-demo",
+    type: "registry:example",
+    registryDependencies: ["selection-wheel"],
+    files: [
+      {
+        path: "examples/selection-wheel-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "selection-wheel-trigger-demo",
+    type: "registry:example",
+    registryDependencies: ["selection-wheel"],
+    files: [
+      {
+        path: "examples/selection-wheel-trigger-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "selection-wheel-menu-demo",
+    type: "registry:example",
+    dependencies: ["sonner"],
+    registryDependencies: ["selection-wheel"],
+    files: [
+      {
+        path: "examples/selection-wheel-menu-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "selection-wheel-controlled-demo",
+    type: "registry:example",
+    registryDependencies: ["button", "selection-wheel"],
+    files: [
+      {
+        path: "examples/selection-wheel-controlled-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "speed-dial-demo",
     type: "registry:example",
     registryDependencies: ["speed-dial"],

@@ -558,6 +558,22 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "selection-wheel",
+    type: "registry:ui",
+    dependencies: ["radix-ui"],
+    registryDependencies: [
+      "button",
+      "@diceui/use-value-as-ref",
+      "@diceui/use-ref-with-init",
+    ],
+    files: [
+      {
+        path: "ui/selection-wheel.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "sortable",
     type: "registry:ui",
     dependencies: [

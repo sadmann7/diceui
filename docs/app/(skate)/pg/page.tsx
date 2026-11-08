@@ -1,17 +1,17 @@
 import { Demo, DemoItemGroup } from "@/components/demo";
 import { Shell } from "@/components/shell";
-import QueryBuilderBaseDemo from "@/registry/bases/base/examples/query-builder-demo";
-import QueryBuilderRadixDemo from "@/registry/bases/radix/examples/query-builder-demo";
+import SelectionWheelBaseDemo from "@/registry/bases/base/examples/selection-wheel-demo";
+import SelectionWheelRadixDemo from "@/registry/bases/radix/examples/selection-wheel-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
         <DemoItemGroup>
-          <QueryBuilderBaseDemo />
+          <SelectionWheelBaseDemo />
         </DemoItemGroup>
         <DemoItemGroup>
-          <QueryBuilderRadixDemo />
+          <SelectionWheelRadixDemo />
         </DemoItemGroup>
       </Demo>
     </Shell>

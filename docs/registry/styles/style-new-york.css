@@ -1770,6 +1770,31 @@
     @apply mx-0.5 h-6 w-px bg-border;
   }
 
+  /* MARK: Selection Wheel */
+  .cn-selection-wheel {
+    @apply relative inline-flex;
+  }
+
+  .cn-selection-wheel-trigger {
+    @apply touch-none select-none;
+  }
+
+  .cn-selection-wheel-content {
+    @apply relative isolate flex size-(--selection-wheel-size) shrink-0 touch-none items-center justify-center rounded-full border bg-popover text-popover-foreground shadow-md outline-none select-none focus-visible:ring-2 focus-visible:ring-ring/50 data-[mode=overlay]:fixed data-[mode=overlay]:z-50 data-[mode=overlay]:-translate-1/2 data-[mode=overlay]:animate-in data-[mode=overlay]:duration-150 data-[mode=overlay]:fade-in-0 data-[mode=overlay]:zoom-in-90 data-disabled:opacity-50 motion-reduce:animate-none;
+  }
+
+  .cn-selection-wheel-indicator {
+    @apply pointer-events-none absolute inset-0 rounded-full bg-accent transition-[rotate,opacity] duration-150 ease-out data-[state=inactive]:opacity-0 motion-reduce:transition-none;
+  }
+
+  .cn-selection-wheel-item {
+    @apply absolute top-1/2 left-1/2 flex size-10 items-center justify-center rounded-full text-muted-foreground transition-colors outline-none select-none data-highlighted:text-accent-foreground data-[state=checked]:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50 group-focus-visible/selection-wheel:data-highlighted:ring-2 group-focus-visible/selection-wheel:data-highlighted:ring-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5 motion-reduce:transition-none;
+  }
+
+  .cn-selection-wheel-label {
+    @apply pointer-events-none absolute flex size-[calc(var(--selection-wheel-dead-zone)*2)] items-center justify-center overflow-hidden rounded-full border bg-background p-2 text-center text-sm font-medium text-balance text-foreground data-[state=empty]:text-muted-foreground;
+  }
+
   /* MARK: Skip Nav */
   .cn-skip-nav {
     @apply sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-4 focus-visible:left-4 focus-visible:z-100 focus-visible:rounded-md focus-visible:bg-background focus-visible:px-4 focus-visible:py-2 focus-visible:text-sm focus-visible:font-medium focus-visible:text-foreground focus-visible:shadow-md focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none;

@@ -1,0 +1,21 @@
+---
+title: November 2026 - Selection Wheel
+description: A radial picker that highlights the slice you point at, like the item and weapon wheels in games.
+date: 2026-11-08T18:00:00Z
+---
+
+[Selection Wheel](/docs/components/selection-wheel) lays items out around a circle and picks the one you point at. It works for weapon and tool wheels, quick actions, and emoji reactions.
+
+```package-install
+npx shadcn@latest add @diceui/selection-wheel
+```
+
+<ComponentTabs name="selection-wheel-demo" />
+
+## Features
+
+- **Pick by angle.** Pointing anywhere in a slice highlights it, so you don't have to hit the icon. The center is a dead zone that cancels.
+- **Hold to pick.** Add a trigger to open the wheel around the pointer. Press, drag and release to pick, like a game. A tap keeps it open.
+- **Inline or overlay.** Without a trigger the wheel renders in place and is always open.
+- **Two modes.** `type="radio"` holds a value. `type="menu"` runs an action per item through `onSelect`.
+- **Accessible.** A `radiogroup` or `menu` with `aria-activedescendant`, so screen readers announce "Sword, 2 of 8". Arrow keys move around the wheel, number keys jump, Enter picks and Escape closes. Animations respect reduced motion.

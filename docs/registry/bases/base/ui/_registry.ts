@@ -555,6 +555,18 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "selection-wheel",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/selection-wheel.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: ["button", "direction"],
+    dependencies: ["@base-ui/react", "@base-ui/utils"],
+  },
+  {
     name: "sortable",
     type: "registry:ui",
     files: [
