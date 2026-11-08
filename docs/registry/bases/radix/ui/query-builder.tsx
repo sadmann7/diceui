@@ -644,10 +644,7 @@ function QueryBuilderField({
 
   return (
     <Faceted
-      items={fields.map((field) => ({
-        label: field.label,
-        value: field.value,
-      }))}
+      items={fields}
       value={rule.field}
       onValueChange={(value) => {
         const field = fields.find((item) => item.value === value);
