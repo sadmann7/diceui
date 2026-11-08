@@ -133,7 +133,7 @@ export interface QueryBuilderGroupTitleProps
 export interface QueryBuilderGroupFooterProps
   extends EmptyProps<"div">, CompositionProps {}
 
-export interface QueryBuilderRulesProps
+export interface QueryBuilderRuleListProps
   extends EmptyProps<"div">, CompositionProps {
   /**
    * The layout for each rule. Pass a function to read each rule and nested

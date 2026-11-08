@@ -46,7 +46,7 @@ import {
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
-  QueryBuilderRules,
+  QueryBuilderRuleList,
   QueryBuilderValue,
 } from "@/registry/bases/base/ui/query-builder";
 
@@ -162,7 +162,7 @@ export default function QueryBuilderCommandFilterDemo() {
       <QueryBuilder fields={fields} value={query} onValueChange={setQuery}>
         <QueryBuilderGroup>
           <QueryBuilderGroupContent className="flex-row flex-wrap items-center data-[depth=0]:min-w-0">
-            <QueryBuilderRules className="contents">
+            <QueryBuilderRuleList className="contents">
               <QueryBuilderRule>
                 <ButtonGroup className="**:data-[slot=query-builder-select-icon]:hidden">
                   <QueryBuilderField className="w-auto" />
@@ -173,7 +173,7 @@ export default function QueryBuilderCommandFilterDemo() {
                   </QueryBuilderRemove>
                 </ButtonGroup>
               </QueryBuilderRule>
-            </QueryBuilderRules>
+            </QueryBuilderRuleList>
             <Popover>
               <PopoverTrigger render={<Button variant="ghost" size="sm" />}>
                 <ListFilterIcon />

@@ -42,7 +42,7 @@ import {
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
-  QueryBuilderRules,
+  QueryBuilderRuleList,
   QueryBuilderValue,
 } from "@/registry/bases/radix/ui/query-builder";
 import {
@@ -209,14 +209,14 @@ function QueryBuilderSortableLayout({
           items={group.rules.map((node) => node.id)}
           strategy={verticalListSortingStrategy}
         >
-          <QueryBuilderRules>
+          <QueryBuilderRuleList>
             {(node) => (
               <QueryBuilderSortableNode
                 node={node}
                 hideConnector={group.id === OVERLAY_ID}
               />
             )}
-          </QueryBuilderRules>
+          </QueryBuilderRuleList>
         </SortableContext>
         {group.id === rootId && rootId !== OVERLAY_ID && (
           <QueryBuilderGroupFooter>

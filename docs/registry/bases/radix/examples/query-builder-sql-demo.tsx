@@ -25,7 +25,7 @@ import {
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
-  QueryBuilderRules,
+  QueryBuilderRuleList,
   QueryBuilderValue,
 } from "@/registry/bases/radix/ui/query-builder";
 import {
@@ -108,7 +108,7 @@ export default function QueryBuilderSqlDemo() {
               </QueryBuilderAddGroup>
               <QueryBuilderRemove />
             </QueryBuilderGroupHeader>
-            <QueryBuilderRules>
+            <QueryBuilderRuleList>
               <QueryBuilderRule>
                 <QueryBuilderConnector />
                 <ButtonGroup>
@@ -118,7 +118,7 @@ export default function QueryBuilderSqlDemo() {
                   <QueryBuilderRemove variant="outline" />
                 </ButtonGroup>
               </QueryBuilderRule>
-            </QueryBuilderRules>
+            </QueryBuilderRuleList>
             <QueryBuilderGroupFooter className="not-data-[depth=0]:hidden">
               <QueryBuilderAddRule />
               <QueryBuilderAddGroup />

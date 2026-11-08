@@ -60,7 +60,7 @@ npx shadcn@latest add @diceui/faceted
 
 ## Layout
 
-Compose the parts like this. `QueryBuilderRules` renders its children once per rule, and nested groups reuse the root group's layout. Wrap a rule's controls in a `ButtonGroup` to join them.
+Compose the parts like this. `QueryBuilderRuleList` renders its children once per rule, and nested groups reuse the root group's layout. Wrap a rule's controls in a `ButtonGroup` to join them.
 
 ```tsx
 import { ButtonGroup } from "@/components/ui/button-group";
@@ -78,7 +78,7 @@ import {
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
-  QueryBuilderRules,
+  QueryBuilderRuleList,
   QueryBuilderValue,
 } from "@/components/ui/query-builder";
 
@@ -93,7 +93,7 @@ return (
           <QueryBuilderAddGroup />
           <QueryBuilderRemove />
         </QueryBuilderGroupHeader>
-        <QueryBuilderRules>
+        <QueryBuilderRuleList>
           <QueryBuilderRule>
             <QueryBuilderConnector />
             <ButtonGroup>
@@ -103,7 +103,7 @@ return (
               <QueryBuilderRemove />
             </ButtonGroup>
           </QueryBuilderRule>
-        </QueryBuilderRules>
+        </QueryBuilderRuleList>
         <QueryBuilderGroupFooter>
           <QueryBuilderAddRule />
           <QueryBuilderAddGroup />
@@ -159,7 +159,7 @@ Filter rows in the browser with `matchesQuery`.
 Drag rules and nested groups with [Sortable](/docs/components/radix/sortable).
 
 - Pass a function to `QueryBuilderGroup` to get the group's rules.
-- Pass a function to `QueryBuilderRules` to wrap each rule and nested group in a sortable item.
+- Pass a function to `QueryBuilderRuleList` to wrap each rule and nested group in a sortable item.
 - Use `moveQueryNode` to move an item into another group.
 
 <ComponentTabs name="query-builder-sortable-demo" />
@@ -340,13 +340,13 @@ Holds actions below the group's rules.
   ]}
 />
 
-### QueryBuilderRules
+### QueryBuilderRuleList
 
 Renders the group's rules and nested groups. Pass the layout for each rule as children, or a function that takes each rule or nested group. In the function, render `<QueryBuilderGroup />` for a nested group to reuse the root group's layout.
 
 <AutoTypeTable
   path="./types/radix/query-builder.ts"
-  name="QueryBuilderRulesProps"
+  name="QueryBuilderRuleListProps"
 />
 
 ### QueryBuilderRule
@@ -375,7 +375,7 @@ Shows how a rule or nested group joins the ones before it:
 - A combinator select before the second.
 - "And" or "Or" after that.
 
-Renders nothing outside `QueryBuilderRules`. The select's accessible name is the `combinator` label.
+Renders nothing outside `QueryBuilderRuleList`. The select's accessible name is the `combinator` label.
 
 <AutoTypeTable
   path="./types/radix/query-builder.ts"

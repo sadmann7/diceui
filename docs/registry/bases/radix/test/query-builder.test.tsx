@@ -99,11 +99,11 @@ describe.each([
         >
           <QueryBuilder.QueryBuilderGroup>
             <QueryBuilder.QueryBuilderGroupContent>
-              <QueryBuilder.QueryBuilderRules>
+              <QueryBuilder.QueryBuilderRuleList>
                 <QueryBuilder.QueryBuilderRule>
                   <QueryBuilder.QueryBuilderValue />
                 </QueryBuilder.QueryBuilderRule>
-              </QueryBuilder.QueryBuilderRules>
+              </QueryBuilder.QueryBuilderRuleList>
             </QueryBuilder.QueryBuilderGroupContent>
           </QueryBuilder.QueryBuilderGroup>
         </QueryBuilder.QueryBuilder>,
@@ -133,11 +133,11 @@ describe.each([
         >
           <QueryBuilder.QueryBuilderGroup>
             <QueryBuilder.QueryBuilderGroupContent>
-              <QueryBuilder.QueryBuilderRules>
+              <QueryBuilder.QueryBuilderRuleList>
                 <QueryBuilder.QueryBuilderRule>
                   <QueryBuilder.QueryBuilderValue display="summary" />
                 </QueryBuilder.QueryBuilderRule>
-              </QueryBuilder.QueryBuilderRules>
+              </QueryBuilder.QueryBuilderRuleList>
             </QueryBuilder.QueryBuilderGroupContent>
           </QueryBuilder.QueryBuilderGroup>
         </QueryBuilder.QueryBuilder>,
@@ -165,12 +165,12 @@ describe.each([
       >
         <QueryBuilder.QueryBuilderGroup>
           <QueryBuilder.QueryBuilderGroupContent>
-            <QueryBuilder.QueryBuilderRules>
+            <QueryBuilder.QueryBuilderRuleList>
               <QueryBuilder.QueryBuilderRule>
                 <QueryBuilder.QueryBuilderField />
                 <QueryBuilder.QueryBuilderOperator />
               </QueryBuilder.QueryBuilderRule>
-            </QueryBuilder.QueryBuilderRules>
+            </QueryBuilder.QueryBuilderRuleList>
           </QueryBuilder.QueryBuilderGroupContent>
         </QueryBuilder.QueryBuilderGroup>
       </QueryBuilder.QueryBuilder>,
@@ -223,7 +223,7 @@ describe.each([
       >
         <QueryBuilder.QueryBuilderGroup ref={ref} id="root-group">
           <QueryBuilder.QueryBuilderGroupContent>
-            <QueryBuilder.QueryBuilderRules />
+            <QueryBuilder.QueryBuilderRuleList />
           </QueryBuilder.QueryBuilderGroupContent>
         </QueryBuilder.QueryBuilderGroup>
       </QueryBuilder.QueryBuilder>,
@@ -309,12 +309,12 @@ describe.each([
       >
         <QueryBuilder.QueryBuilderGroup>
           <QueryBuilder.QueryBuilderGroupContent>
-            <QueryBuilder.QueryBuilderRules>
+            <QueryBuilder.QueryBuilderRuleList>
               <QueryBuilder.QueryBuilderRule>
                 <QueryBuilder.QueryBuilderConnector />
                 <QueryBuilder.QueryBuilderRemove />
               </QueryBuilder.QueryBuilderRule>
-            </QueryBuilder.QueryBuilderRules>
+            </QueryBuilder.QueryBuilderRuleList>
             <QueryBuilder.QueryBuilderAddRule />
           </QueryBuilder.QueryBuilderGroupContent>
         </QueryBuilder.QueryBuilderGroup>
@@ -340,14 +340,14 @@ describe.each([
       >
         <QueryBuilder.QueryBuilderGroup>
           <QueryBuilder.QueryBuilderGroupContent>
-            <QueryBuilder.QueryBuilderRules>
+            <QueryBuilder.QueryBuilderRuleList>
               <QueryBuilder.QueryBuilderRule>
                 <QueryBuilder.QueryBuilderValue
                   id="title-value"
                   aria-describedby="hint"
                 />
               </QueryBuilder.QueryBuilderRule>
-            </QueryBuilder.QueryBuilderRules>
+            </QueryBuilder.QueryBuilderRuleList>
           </QueryBuilder.QueryBuilderGroupContent>
         </QueryBuilder.QueryBuilderGroup>
       </QueryBuilder.QueryBuilder>,
@@ -372,9 +372,9 @@ describe.each([
         }}
       >
         <QueryBuilder.QueryBuilderGroup>
-          <QueryBuilder.QueryBuilderRules>
+          <QueryBuilder.QueryBuilderRuleList>
             {(rule) => <QueryBuilder.QueryBuilderRule data-id={rule.id} />}
-          </QueryBuilder.QueryBuilderRules>
+          </QueryBuilder.QueryBuilderRuleList>
         </QueryBuilder.QueryBuilderGroup>
       </QueryBuilder.QueryBuilder>,
     );
@@ -405,7 +405,7 @@ describe.each([
       >
         <QueryBuilder.QueryBuilderGroup className="root-layout">
           {(group) => (
-            <QueryBuilder.QueryBuilderRules data-group={group.id}>
+            <QueryBuilder.QueryBuilderRuleList data-group={group.id}>
               {(node) =>
                 "rules" in node ? (
                   <div data-wrapper={node.id}>
@@ -415,7 +415,7 @@ describe.each([
                   <QueryBuilder.QueryBuilderRule data-id={node.id} />
                 )
               }
-            </QueryBuilder.QueryBuilderRules>
+            </QueryBuilder.QueryBuilderRuleList>
           )}
         </QueryBuilder.QueryBuilderGroup>
       </QueryBuilder.QueryBuilder>,

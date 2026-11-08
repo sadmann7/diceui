@@ -23,7 +23,7 @@ import {
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
-  QueryBuilderRules,
+  QueryBuilderRuleList,
   QueryBuilderValue,
 } from "@/registry/bases/base/ui/query-builder";
 import {
@@ -96,7 +96,7 @@ export default function QueryBuilderFilterDemo() {
               </QueryBuilderAddGroup>
               <QueryBuilderRemove />
             </QueryBuilderGroupHeader>
-            <QueryBuilderRules>
+            <QueryBuilderRuleList>
               <QueryBuilderRule>
                 <QueryBuilderConnector />
                 <ButtonGroup>
@@ -106,7 +106,7 @@ export default function QueryBuilderFilterDemo() {
                   <QueryBuilderRemove variant="outline" />
                 </ButtonGroup>
               </QueryBuilderRule>
-            </QueryBuilderRules>
+            </QueryBuilderRuleList>
             <QueryBuilderGroupFooter className="not-data-[depth=0]:hidden">
               <QueryBuilderAddRule />
               <QueryBuilderAddGroup />

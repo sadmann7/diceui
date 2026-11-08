@@ -59,7 +59,7 @@ const GROUP_HEADER_NAME = "QueryBuilderGroupHeader";
 const GROUP_TITLE_NAME = "QueryBuilderGroupTitle";
 const GROUP_FOOTER_NAME = "QueryBuilderGroupFooter";
 const GROUP_CONTENT_NAME = "QueryBuilderGroupContent";
-const RULES_NAME = "QueryBuilderRules";
+const RULE_LIST_NAME = "QueryBuilderRuleList";
 const RULE_NAME = "QueryBuilderRule";
 const COMBINATOR_NAME = "QueryBuilderCombinator";
 const CONNECTOR_NAME = "QueryBuilderConnector";
@@ -451,24 +451,24 @@ function QueryBuilderGroupContent({ className, render, ...props }: DivProps) {
   });
 }
 
-interface QueryBuilderRulesProps extends Omit<DivProps, "children"> {
+interface QueryBuilderRuleListProps extends Omit<DivProps, "children"> {
   children?: React.ReactNode | ((node: QueryNode) => React.ReactNode);
 }
 
-function QueryBuilderRules({
+function QueryBuilderRuleList({
   className,
   children,
   render,
   ...props
-}: QueryBuilderRulesProps) {
-  const { group } = useGroupContext(RULES_NAME);
+}: QueryBuilderRuleListProps) {
+  const { group } = useGroupContext(RULE_LIST_NAME);
 
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
         role: "list",
-        className: cn("cn-query-builder-rules flex flex-col", className),
+        className: cn("cn-query-builder-rule-list flex flex-col", className),
         children: (
           <>
             {group.rules.map((node, index) => (
@@ -494,7 +494,7 @@ function QueryBuilderRules({
       props,
     ),
     render,
-    state: { slot: "query-builder-rules" },
+    state: { slot: "query-builder-rule-list" },
   });
 }
 
@@ -1266,7 +1266,7 @@ export {
   QueryBuilderOperator,
   QueryBuilderRemove,
   QueryBuilderRule,
-  QueryBuilderRules,
+  QueryBuilderRuleList,
   QueryBuilderValue,
   type QueryBuilderLabels,
 };

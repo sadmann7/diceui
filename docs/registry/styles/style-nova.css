@@ -1541,7 +1541,7 @@
     @apply gap-1;
   }
 
-  .cn-query-builder-rules {
+  .cn-query-builder-rule-list {
     @apply gap-1.5;
   }
 

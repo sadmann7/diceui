@@ -132,7 +132,8 @@ export interface QueryBuilderGroupTitleProps
 export interface QueryBuilderGroupFooterProps
   extends EmptyProps<"div">, RenderProps {}
 
-export interface QueryBuilderRulesProps extends EmptyProps<"div">, RenderProps {
+export interface QueryBuilderRuleListProps
+  extends EmptyProps<"div">, RenderProps {
   /**
    * The layout for each rule. Pass a function to read each rule and nested
    * group, like its `id` for a sortable item. A function renders nested groups
