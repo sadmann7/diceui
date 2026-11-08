@@ -51,6 +51,12 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source:
+          "/r/:style(new-york|new-york-v4|default)/:component((?:use-)?data-(?:table|grid).*\\.json)",
+        destination: "https://tablecn.com/r/radix-vega/:component",
+        permanent: true,
+      },
+      {
         source: "/r/:style/:component((?:use-)?data-(?:table|grid).*\\.json)",
         destination: "https://tablecn.com/r/:style/:component",
         permanent: true,
