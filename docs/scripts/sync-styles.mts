@@ -280,6 +280,7 @@ export function createStyleGenerator(roles: Roles) {
     // A variant the part doesn't style, like `data-[size=sm]:`, takes the
     // part's base radius when it repeats ours.
     const mapRadius = (token: string) => {
+      if (getUtility(token).utility.startsWith("rounded-[")) return [token];
       if (!role || getFamily(token) !== "rounded") {
         return split(getFallback(token, style) ?? token);
       }

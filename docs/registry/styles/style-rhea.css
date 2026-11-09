@@ -1780,19 +1780,19 @@
   }
 
   .cn-selection-wheel-content {
-    @apply relative isolate flex size-(--selection-wheel-size) shrink-0 touch-none items-center justify-center rounded-2xl border bg-popover text-popover-foreground shadow-lg outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 data-[mode=overlay]:fixed data-[mode=overlay]:z-50 data-[mode=overlay]:-translate-1/2 data-[mode=overlay]:animate-in data-[mode=overlay]:duration-150 data-[mode=overlay]:fade-in-0 data-[mode=overlay]:zoom-in-90 data-disabled:opacity-50 motion-reduce:animate-none;
+    @apply relative isolate flex size-(--selection-wheel-size) shrink-0 touch-none items-center justify-center rounded-[50%] border bg-popover text-popover-foreground shadow-lg outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 data-[mode=overlay]:fixed data-[mode=overlay]:z-50 data-[mode=overlay]:-translate-1/2 data-[mode=overlay]:animate-in data-[mode=overlay]:duration-150 data-[mode=overlay]:fade-in-0 data-[mode=overlay]:zoom-in-90 after:pointer-events-none after:absolute after:inset-0 after:rounded-[50%] after:bg-[repeating-conic-gradient(from_calc(var(--selection-wheel-slice)/2),var(--color-border)_0_0.5deg,transparent_0.5deg_var(--selection-wheel-slice))] after:[mask-image:radial-gradient(circle,transparent_var(--selection-wheel-dead-zone),#000_calc(var(--selection-wheel-dead-zone)+1px))] data-disabled:opacity-50 motion-reduce:animate-none;
   }
 
   .cn-selection-wheel-indicator {
-    @apply pointer-events-none absolute inset-0 rounded-2xl bg-accent transition-[rotate,opacity] duration-150 ease-out data-[state=inactive]:opacity-0 motion-reduce:transition-none;
+    @apply pointer-events-none absolute inset-0 rounded-[50%] bg-accent transition-[rotate,opacity] duration-150 ease-out data-[state=inactive]:opacity-0 motion-reduce:transition-none;
   }
 
   .cn-selection-wheel-item {
-    @apply absolute top-1/2 left-1/2 [transform:translate(-50%,-50%)_rotate(var(--selection-wheel-angle))_translateY(calc(var(--selection-wheel-radius)*-1))_rotate(calc(var(--selection-wheel-angle)*-1))] flex size-10 items-center justify-center rounded-2xl text-muted-foreground transition-colors outline-none select-none data-highlighted:text-accent-foreground data-[state=checked]:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50 group-focus-visible/selection-wheel:data-highlighted:ring-2 group-focus-visible/selection-wheel:data-highlighted:ring-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5 motion-reduce:transition-none;
+    @apply absolute top-1/2 left-1/2 [transform:translate(-50%,-50%)_rotate(var(--selection-wheel-angle))_translateY(calc(var(--selection-wheel-radius)*-1))_rotate(calc(var(--selection-wheel-angle)*-1))] flex size-10 items-center justify-center rounded-[50%] text-muted-foreground transition-colors outline-none select-none data-highlighted:text-accent-foreground data-[state=checked]:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50 group-focus-visible/selection-wheel:data-highlighted:ring-2 group-focus-visible/selection-wheel:data-highlighted:ring-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5 motion-reduce:transition-none;
   }
 
   .cn-selection-wheel-label {
-    @apply pointer-events-none absolute flex size-[calc(var(--selection-wheel-dead-zone)*2)] items-center justify-center overflow-hidden rounded-2xl border bg-background p-2 text-center text-xs font-medium text-balance text-muted-foreground data-[state=empty]:text-muted-foreground;
+    @apply pointer-events-none absolute flex size-[calc(var(--selection-wheel-dead-zone)*2)] items-center justify-center overflow-hidden rounded-[50%] border bg-background p-2 text-center text-xs font-medium text-balance text-muted-foreground data-[state=empty]:text-muted-foreground;
   }
 
   /* MARK: Skip Nav */
