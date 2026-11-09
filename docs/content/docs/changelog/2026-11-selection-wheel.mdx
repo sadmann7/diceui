@@ -16,6 +16,8 @@ npx shadcn@latest add @diceui/selection-wheel
 
 - **Pick by angle.** Pointing anywhere in a slice highlights it, so you don't have to hit the icon. The center is a dead zone that cancels.
 - **Hold to pick.** Add a trigger to open the wheel around the pointer. Press, drag and release to pick, like a game. A tap keeps it open.
+- **Open anywhere.** Wrap a region in `SelectionWheelArea` to open the wheel at the pointer on right-click, or while a key is held.
+- **Nested wheels.** Group items behind a slice with `SelectionWheelSub`. Picking it swaps the ring in place, and Escape goes back.
 - **Inline or overlay.** Without a trigger the wheel renders in place and is always open.
 - **Two modes.** `type="radio"` holds a value. `type="menu"` runs an action per item through `onSelect`.
 - **Accessible.** A `radiogroup` or `menu` with `aria-activedescendant`, so screen readers announce "Sword, 2 of 8". Arrow keys move around the wheel, number keys jump, Enter picks and Escape closes. Animations respect reduced motion.

@@ -74,6 +74,22 @@ export interface SelectionWheelTriggerProps
     Omit<ButtonProps, keyof React.ComponentProps<"button">>,
     CompositionProps {}
 
+export interface SelectionWheelAreaProps
+  extends EmptyProps<"div">, CompositionProps {
+  /**
+   * A key that opens the wheel at the pointer while held, like a game's weapon wheel.
+   * Releasing it picks the highlighted item, or closes the wheel when nothing is highlighted.
+   * The area becomes focusable so it can receive the key.
+   */
+  openKey?: string;
+
+  /**
+   * When `true`, right-clicks and the open key do nothing.
+   * @default false
+   */
+  disabled?: boolean;
+}
+
 export interface SelectionWheelContentProps
   extends EmptyProps<"div">, CompositionProps {
   /**
@@ -160,6 +176,11 @@ export interface SelectionWheelItemProps
    */
   onSelect?: (event: Event) => void;
 }
+
+export interface SelectionWheelSubTriggerProps extends Omit<
+  SelectionWheelItemProps,
+  "onSelect"
+> {}
 
 export interface SelectionWheelLabelProps
   extends EmptyProps<"div">, CompositionProps {}

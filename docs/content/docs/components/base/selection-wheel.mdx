@@ -84,6 +84,18 @@ Add a `SelectionWheelTrigger` to open the wheel as an overlay around the pointer
 
 <ComponentTabs name="selection-wheel-trigger-demo" />
 
+### Open at a Point
+
+Wrap a region in `SelectionWheelArea` to open the wheel wherever the user right-clicks, like a pie menu. Where right-clicks fire on press, as on macOS, holding the button, dragging and releasing picks too. Set `openKey` to open it at the pointer while a key is held, then release the key to pick, like a game's weapon wheel.
+
+<ComponentTabs name="selection-wheel-area-demo" />
+
+### Nested
+
+Wrap a `SelectionWheelSubTrigger` and a `SelectionWheelSubContent` in a `SelectionWheelSub` to group items behind one slice. Picking the sub trigger swaps the ring for its items, centered on the same spot. Press `Escape` or `Backspace`, or click the center, to go back. In a radio wheel, the sub trigger shows as checked when the selected value is inside it. Values must be unique across all levels.
+
+<ComponentTabs name="selection-wheel-nested-demo" />
+
 ### Actions
 
 Set `type="menu"` when items run actions instead of holding a value. The wheel renders as a menu, and each item's `onSelect` fires when it's picked.
@@ -144,6 +156,28 @@ A button that opens the wheel as an overlay around the pointer. Without a trigge
     {
       title: "[data-state]",
       value: ["open", "closed"],
+    },
+  ]}
+/>
+
+### SelectionWheelArea
+
+A region that opens the wheel at the pointer on right-click, or while `openKey` is held. Use it instead of, or alongside, a trigger.
+
+<AutoTypeTable
+  path="./types/base/selection-wheel.ts"
+  name="SelectionWheelAreaProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-state]",
+      value: ["open", "closed"],
+    },
+    {
+      title: "[data-disabled]",
+      value: "Present when the area is disabled.",
     },
   ]}
 />
@@ -256,6 +290,36 @@ An item on the wheel. Items are positioned by their index and rotated so their c
   ]}
 />
 
+### SelectionWheelSub
+
+Groups a sub trigger with the items it opens.
+
+### SelectionWheelSubTrigger
+
+An item on the parent ring that opens its sub wheel instead of being picked. It takes the same props as `SelectionWheelItem`, except `onSelect`.
+
+<AutoTypeTable
+  path="./types/base/selection-wheel.ts"
+  name="SelectionWheelSubTriggerProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-sub]",
+      value: "Always present on a sub trigger.",
+    },
+    {
+      title: "[data-state]",
+      value: ["checked", "unchecked"],
+    },
+  ]}
+/>
+
+### SelectionWheelSubContent
+
+Holds the items of a sub wheel. It renders no element of its own.
+
 ### SelectionWheelLabel
 
 A label in the center of the wheel. It shows the highlighted item's `label`, then the selected item's, then its own children.
@@ -307,8 +371,16 @@ The wheel is a `radiogroup` of `radio` items, or a `menu` of `menuitem`s when `t
       description: "Highlights the item at that position.",
     },
     {
+      keys: ["Backspace"],
+      description: "In a sub wheel, goes back to the parent ring.",
+    },
+    {
+      keys: ["Tab"],
+      description: "Closes the overlay and returns focus to the trigger.",
+    },
+    {
       keys: ["Escape"],
-      description: "Closes the overlay and returns focus to the trigger. Inline, clears the highlight.",
+      description: "In a sub wheel, goes back to the parent ring. Otherwise closes the overlay and returns focus to the trigger, or clears the highlight inline.",
     },
   ]}
 />

@@ -1,14 +1,19 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { Dialog } from "radix-ui";
 import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import {
   SelectionWheel,
+  SelectionWheelArea,
   SelectionWheelContent,
   SelectionWheelIndicator,
   SelectionWheelItem,
   SelectionWheelLabel,
+  SelectionWheelSub,
+  SelectionWheelSubContent,
+  SelectionWheelSubTrigger,
   SelectionWheelTrigger,
 } from "@/registry/bases/radix/ui/selection-wheel";
 
@@ -57,6 +62,81 @@ function OverlayWheel(props: React.ComponentProps<typeof SelectionWheel>) {
         ))}
       </SelectionWheelContent>
     </SelectionWheel>
+  );
+}
+
+function AreaWheel(
+  props: React.ComponentProps<typeof SelectionWheel> & { openKey?: string },
+) {
+  const { openKey, ...rootProps } = props;
+  return (
+    <SelectionWheel {...rootProps}>
+      <SelectionWheelArea data-testid="area" openKey={openKey}>
+        Canvas
+      </SelectionWheelArea>
+      <SelectionWheelContent data-testid="content" aria-label="Weapon">
+        {items.map((item) => (
+          <SelectionWheelItem
+            key={item.value}
+            value={item.value}
+            label={item.label}
+            disabled={item.disabled}
+          >
+            {item.label}
+          </SelectionWheelItem>
+        ))}
+      </SelectionWheelContent>
+    </SelectionWheel>
+  );
+}
+
+function NestedWheel(
+  props: React.ComponentProps<typeof SelectionWheel> & { overlay?: boolean },
+) {
+  const { overlay, ...rootProps } = props;
+  return (
+    <SelectionWheel {...rootProps}>
+      {overlay ? (
+        <SelectionWheelTrigger data-testid="trigger">
+          Open
+        </SelectionWheelTrigger>
+      ) : null}
+      <SelectionWheelContent data-testid="content" aria-label="Weapon">
+        <SelectionWheelItem value="sword" label="Sword">
+          Sword
+        </SelectionWheelItem>
+        <SelectionWheelSub>
+          <SelectionWheelSubTrigger value="magic" label="Magic">
+            Magic
+          </SelectionWheelSubTrigger>
+          <SelectionWheelSubContent>
+            <SelectionWheelItem value="fire" label="Fire">
+              Fire
+            </SelectionWheelItem>
+            <SelectionWheelItem value="ice" label="Ice">
+              Ice
+            </SelectionWheelItem>
+            <SelectionWheelItem value="bolt" label="Bolt">
+              Bolt
+            </SelectionWheelItem>
+          </SelectionWheelSubContent>
+        </SelectionWheelSub>
+        <SelectionWheelItem value="bow" label="Bow">
+          Bow
+        </SelectionWheelItem>
+        <SelectionWheelLabel data-testid="label">Pick</SelectionWheelLabel>
+      </SelectionWheelContent>
+    </SelectionWheel>
+  );
+}
+
+function expectCenteredAt(x: number, y: number) {
+  fireEvent.pointerMove(screen.getByTestId("content"), {
+    clientX: x,
+    clientY: y - 100,
+  });
+  expect(screen.getByRole("radio", { name: "Sword" })).toHaveAttribute(
+    "data-highlighted",
   );
 }
 
@@ -124,6 +204,35 @@ describe("SelectionWheel", () => {
         "aria-checked",
         "true",
       );
+    });
+
+    it("picks nothing on a click in the center", () => {
+      const onValueChange = vi.fn();
+      render(<Wheel defaultValue="axe" onValueChange={onValueChange} />);
+
+      const content = screen.getByTestId("content");
+      content.getBoundingClientRect = () => ({
+        left: 0,
+        top: 0,
+        width: 240,
+        height: 240,
+        right: 240,
+        bottom: 240,
+        x: 0,
+        y: 0,
+        toJSON: () => {},
+      });
+      fireEvent.pointerDown(content, {
+        button: 0,
+        pointerId: 1,
+        clientX: 120,
+        clientY: 120,
+      });
+      content.focus();
+      fireEvent.click(content, { clientX: 120, clientY: 120, detail: 1 });
+
+      expect(onValueChange).not.toHaveBeenCalled();
+      expect(content).not.toHaveAttribute("aria-activedescendant");
     });
 
     it("does not select a disabled item", async () => {
@@ -376,6 +485,211 @@ describe("SelectionWheel", () => {
     });
   });
 
+  describe("nested", () => {
+    it("shows only the top level at first", () => {
+      render(<NestedWheel />);
+
+      const radios = screen.getAllByRole("radio");
+      expect(radios.map((radio) => radio.getAttribute("aria-label"))).toEqual([
+        "Sword",
+        "Magic",
+        "Bow",
+      ]);
+      expect(radios[1]).toHaveAttribute("data-sub");
+      expect(radios[1]).toHaveAttribute("aria-setsize", "3");
+    });
+
+    it("opens the sub wheel without picking", async () => {
+      const user = userEvent.setup();
+      const onValueChange = vi.fn();
+      render(<NestedWheel onValueChange={onValueChange} />);
+
+      await user.click(screen.getByRole("radio", { name: "Magic" }));
+
+      expect(onValueChange).not.toHaveBeenCalled();
+      const radios = screen.getAllByRole("radio");
+      expect(radios.map((radio) => radio.getAttribute("aria-label"))).toEqual([
+        "Fire",
+        "Ice",
+        "Bolt",
+      ]);
+      expect(radios[1]).toHaveAttribute("aria-posinset", "2");
+      expect(radios[1]).toHaveStyle({ "--selection-wheel-angle": "120deg" });
+      expect(screen.getByTestId("label")).toHaveTextContent("Magic");
+    });
+
+    it("picks inside the sub wheel and marks its trigger checked", async () => {
+      const user = userEvent.setup();
+      const onValueChange = vi.fn();
+      render(<NestedWheel onValueChange={onValueChange} />);
+
+      await user.click(screen.getByRole("radio", { name: "Magic" }));
+      await user.click(screen.getByRole("radio", { name: "Ice" }));
+      expect(onValueChange).toHaveBeenCalledWith("ice");
+
+      screen.getByTestId("content").focus();
+      await user.keyboard("{Escape}");
+
+      expect(screen.getByRole("radio", { name: "Magic" })).toHaveAttribute(
+        "aria-checked",
+        "true",
+      );
+      expect(screen.getByTestId("label")).toHaveTextContent("Ice");
+    });
+
+    it("goes back on Backspace and Escape", async () => {
+      const user = userEvent.setup();
+      render(<NestedWheel />);
+
+      screen.getByTestId("content").focus();
+      await user.keyboard("{ArrowRight}{Enter}");
+      expect(screen.getByRole("radio", { name: "Fire" })).toBeInTheDocument();
+
+      await user.keyboard("{Backspace}");
+      expect(screen.getByRole("radio", { name: "Magic" })).toBeInTheDocument();
+
+      await user.keyboard("{ArrowRight}{Enter}{Escape}");
+      expect(screen.getByRole("radio", { name: "Magic" })).toBeInTheDocument();
+    });
+
+    it("goes back on a click in the center", async () => {
+      const user = userEvent.setup();
+      render(<NestedWheel />);
+
+      await user.click(screen.getByRole("radio", { name: "Magic" }));
+
+      const content = screen.getByTestId("content");
+      content.getBoundingClientRect = () => ({
+        left: 0,
+        top: 0,
+        width: 240,
+        height: 240,
+        right: 240,
+        bottom: 240,
+        x: 0,
+        y: 0,
+        toJSON: () => {},
+      });
+      fireEvent.pointerDown(content, { button: 0, clientX: 120, clientY: 120 });
+      fireEvent.click(content, { clientX: 120, clientY: 120, detail: 1 });
+
+      expect(screen.getByRole("radio", { name: "Magic" })).toBeInTheDocument();
+    });
+
+    it("steps back before closing the overlay on Escape", async () => {
+      const user = userEvent.setup();
+      render(<NestedWheel overlay />);
+
+      fireEvent.click(screen.getByTestId("trigger"));
+      await user.keyboard("{ArrowRight}{Enter}");
+      expect(screen.getByRole("radio", { name: "Fire" })).toBeInTheDocument();
+
+      await user.keyboard("{Escape}");
+      expect(screen.getByRole("radio", { name: "Magic" })).toBeInTheDocument();
+
+      await user.keyboard("{Escape}");
+      expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+    });
+
+    it("starts at the top level when reopened", async () => {
+      const user = userEvent.setup();
+      render(<NestedWheel overlay />);
+
+      fireEvent.click(screen.getByTestId("trigger"));
+      await user.keyboard("{ArrowRight}{Enter}");
+      await user.keyboard("{Tab}");
+      expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId("trigger"));
+      expect(screen.getByRole("radio", { name: "Magic" })).toBeInTheDocument();
+    });
+  });
+
+  describe("area", () => {
+    it("opens at the pointer on right-click", () => {
+      render(<AreaWheel />);
+      expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+
+      fireEvent.contextMenu(screen.getByTestId("area"), {
+        clientX: 300,
+        clientY: 300,
+      });
+
+      expect(screen.getByTestId("content")).toHaveAttribute(
+        "data-mode",
+        "overlay",
+      );
+      expectCenteredAt(300, 300);
+    });
+
+    it("picks on right-button drag and release", () => {
+      const onValueChange = vi.fn();
+      render(<AreaWheel onValueChange={onValueChange} />);
+
+      fireEvent.contextMenu(screen.getByTestId("area"), {
+        clientX: 300,
+        clientY: 300,
+        buttons: 2,
+      });
+      fireEvent.pointerMove(document, { clientX: 300, clientY: 200 });
+      fireEvent.pointerUp(document, { clientX: 300, clientY: 200 });
+
+      expect(onValueChange).toHaveBeenCalledWith("sword");
+      expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+    });
+
+    it("stays open after a right-click without dragging", () => {
+      render(<AreaWheel />);
+
+      fireEvent.contextMenu(screen.getByTestId("area"), {
+        clientX: 300,
+        clientY: 300,
+        buttons: 2,
+      });
+      fireEvent.pointerMove(document, { clientX: 302, clientY: 301 });
+      fireEvent.pointerUp(document, { clientX: 302, clientY: 301 });
+
+      expect(screen.getByTestId("content")).toHaveFocus();
+    });
+
+    it("picks on key hold and release", () => {
+      const onValueChange = vi.fn();
+      render(<AreaWheel openKey="q" onValueChange={onValueChange} />);
+
+      const area = screen.getByTestId("area");
+      area.focus();
+      fireEvent.pointerMove(area, { clientX: 300, clientY: 300 });
+      fireEvent.keyDown(area, { key: "q" });
+      expect(screen.getByTestId("content")).toBeInTheDocument();
+
+      fireEvent.pointerMove(document, { clientX: 300, clientY: 200 });
+      fireEvent.keyUp(document, { key: "q" });
+
+      expect(onValueChange).toHaveBeenCalledWith("sword");
+      expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+      expect(area).toHaveFocus();
+    });
+
+    it("cancels when the key is released without a pick", () => {
+      const onValueChange = vi.fn();
+      render(<AreaWheel openKey="q" onValueChange={onValueChange} />);
+
+      const area = screen.getByTestId("area");
+      area.focus();
+      fireEvent.keyDown(area, { key: "q" });
+      expect(screen.getByTestId("content")).toBeInTheDocument();
+      expect(
+        screen.getByTestId("content").querySelector("[data-highlighted]"),
+      ).toBeNull();
+
+      fireEvent.keyUp(document, { key: "q" });
+
+      expect(onValueChange).not.toHaveBeenCalled();
+      expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+      expect(area).toHaveFocus();
+    });
+  });
+
   describe("overlay", () => {
     it("keeps focus on the wheel after a tap", () => {
       render(<OverlayWheel defaultValue="axe" />);
@@ -404,10 +718,7 @@ describe("SelectionWheel", () => {
     it("centers on the trigger when opened by prop", () => {
       render(<OverlayWheel defaultOpen />);
 
-      expect(screen.getByTestId("content")).toHaveStyle({
-        left: "128px",
-        top: "128px",
-      });
+      expectCenteredAt(128, 128);
     });
 
     it("returns focus to the trigger when closed by prop", () => {
@@ -526,7 +837,7 @@ describe("SelectionWheel", () => {
       });
       expect(onOpenChange).toHaveBeenCalledWith(true);
       const content = screen.getByTestId("content");
-      expect(content).toHaveStyle({ left: "300px", top: "300px" });
+      expect(content).toBeInTheDocument();
 
       // Straight up from the press point: first slice.
       fireEvent.pointerMove(trigger, {
@@ -580,10 +891,7 @@ describe("SelectionWheel", () => {
       });
 
       // size 240 / 2 + 8px padding
-      expect(screen.getByTestId("content")).toHaveStyle({
-        left: "128px",
-        top: "128px",
-      });
+      expectCenteredAt(128, 128);
     });
 
     it("closes on outside pointer down", async () => {
@@ -600,14 +908,52 @@ describe("SelectionWheel", () => {
         fireEvent.click(screen.getByTestId("trigger"));
         expect(screen.getByTestId("content")).toBeInTheDocument();
 
-        vi.runAllTimers();
+        vi.advanceTimersByTime(1);
         fireEvent.pointerDown(screen.getByTestId("outside"));
+        fireEvent.click(screen.getByTestId("outside"));
+        vi.advanceTimersByTime(1);
 
         expect(onOpenChange).toHaveBeenLastCalledWith(false);
         expect(screen.queryByTestId("content")).not.toBeInTheDocument();
       } finally {
         vi.useRealTimers();
       }
+    });
+
+    it("closes on Tab and returns focus to the trigger", async () => {
+      const user = userEvent.setup();
+      render(<OverlayWheel />);
+
+      fireEvent.click(screen.getByTestId("trigger"));
+      expect(screen.getByTestId("content")).toHaveFocus();
+
+      await user.keyboard("{Tab}");
+
+      expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+      expect(screen.getByTestId("trigger")).toHaveFocus();
+    });
+
+    it("closes only the wheel on Escape inside a dialog", async () => {
+      const user = userEvent.setup();
+      render(
+        <Dialog.Root defaultOpen>
+          <Dialog.Portal>
+            <Dialog.Content data-testid="dialog" aria-describedby={undefined}>
+              <Dialog.Title>Dialog</Dialog.Title>
+              <OverlayWheel />
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>,
+      );
+
+      fireEvent.click(screen.getByTestId("trigger"));
+      expect(screen.getByTestId("content")).toHaveFocus();
+
+      await user.keyboard("{Escape}");
+
+      expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+      expect(screen.getByTestId("dialog")).toBeInTheDocument();
+      expect(screen.getByTestId("trigger")).toHaveFocus();
     });
 
     it("keeps the wheel open when onSelect prevents default", async () => {

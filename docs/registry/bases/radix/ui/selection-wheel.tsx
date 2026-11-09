@@ -3,11 +3,11 @@
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
+  Popover as PopoverPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
 import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
-import * as ReactDOM from "react-dom";
 
 import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
 import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
@@ -15,13 +15,16 @@ import { Button } from "@/registry/bases/radix/ui/button";
 
 const ROOT_NAME = "SelectionWheel";
 const TRIGGER_NAME = "SelectionWheelTrigger";
+const AREA_NAME = "SelectionWheelArea";
 const CONTENT_NAME = "SelectionWheelContent";
 const INDICATOR_NAME = "SelectionWheelIndicator";
 const ITEM_NAME = "SelectionWheelItem";
 const LABEL_NAME = "SelectionWheelLabel";
+const SUB_NAME = "SelectionWheelSub";
+const SUB_TRIGGER_NAME = "SelectionWheelSubTrigger";
+const SUB_CONTENT_NAME = "SelectionWheelSubContent";
 
 const ITEM_SELECT = "selectionWheel.itemSelect";
-const INTERACT_OUTSIDE = "selectionWheel.interactOutside";
 const EVENT_OPTIONS = { bubbles: true, cancelable: true };
 
 const DEFAULT_SIZE = 240;
@@ -39,14 +42,19 @@ interface DivProps extends React.ComponentProps<"div"> {
 
 type RootElement = React.ComponentRef<typeof SelectionWheel>;
 type TriggerElement = HTMLButtonElement;
+type AreaElement = React.ComponentRef<typeof SelectionWheelArea>;
 type ContentElement = React.ComponentRef<typeof SelectionWheelContent>;
 type ItemElement = React.ComponentRef<typeof SelectionWheelItem>;
 
-interface InteractOutsideEvent extends CustomEvent {
-  detail: {
-    originalEvent: PointerEvent;
-  };
-}
+type PopoverContentProps = React.ComponentProps<
+  typeof PopoverPrimitive.Content
+>;
+type PointerDownOutsideEvent = Parameters<
+  NonNullable<PopoverContentProps["onPointerDownOutside"]>
+>[0];
+type FocusOutsideEvent = Parameters<
+  NonNullable<PopoverContentProps["onFocusOutside"]>
+>[0];
 
 interface Point {
   x: number;
@@ -86,6 +94,8 @@ interface ItemData {
   value: string;
   label: string | undefined;
   disabled: boolean;
+  group: string;
+  subId: string | null;
   ref: React.RefObject<ItemElement | null>;
   onSelectRef: React.RefObject<((event: Event) => void) | undefined>;
 }
@@ -95,6 +105,7 @@ interface StoreState {
   value: string;
   highlightedValue: string | null;
   items: ItemData[];
+  path: string[];
   origin: Point | null;
 }
 
@@ -105,6 +116,13 @@ interface Store {
   notify: () => void;
   registerItem: (item: ItemData) => void;
   unregisterItem: (id: string) => void;
+  openAt: (point: Point) => void;
+  enterSub: (subId: string) => void;
+  back: () => boolean;
+  resetPath: () => void;
+  getItem: (value: string) => ItemData | undefined;
+  getSubTrigger: (subId: string) => ItemData | undefined;
+  isWithin: (subId: string, value: string) => boolean;
   highlightFromPointer: (point: Point) => void;
   select: (value: string) => void;
   close: (options?: { focusTrigger?: boolean }) => void;
@@ -149,6 +167,7 @@ interface SelectionWheelContextValue {
   contentId: string;
   rootRef: React.RefObject<RootElement | null>;
   triggerRef: React.RefObject<TriggerElement | null>;
+  areaRef: React.RefObject<AreaElement | null>;
   contentRef: React.RefObject<ContentElement | null>;
   deadZoneRef: React.RefObject<number>;
   pressingRef: React.RefObject<boolean>;
@@ -157,6 +176,18 @@ interface SelectionWheelContextValue {
 
 const SelectionWheelContext =
   React.createContext<SelectionWheelContextValue | null>(null);
+
+const GroupContext = React.createContext("");
+const SubContext = React.createContext<string | null>(null);
+const SubTriggerContext = React.createContext<string | null>(null);
+
+function useSubContext(consumerName: string) {
+  const context = React.useContext(SubContext);
+  if (context === null) {
+    throw new Error(`\`${consumerName}\` must be used within \`${SUB_NAME}\``);
+  }
+  return context;
+}
 
 function useSelectionWheelContext(consumerName: string) {
   const context = React.useContext(SelectionWheelContext);
@@ -201,6 +232,7 @@ function SelectionWheel(props: SelectionWheelProps) {
   const rootRef = React.useRef<RootElement | null>(null);
   const composedRef = useComposedRefs(ref, rootRef);
   const triggerRef = React.useRef<TriggerElement | null>(null);
+  const areaRef = React.useRef<AreaElement | null>(null);
   const contentRef = React.useRef<ContentElement | null>(null);
   const deadZoneRef = React.useRef(DEFAULT_DEAD_ZONE);
   const pressingRef = React.useRef(false);
@@ -215,6 +247,7 @@ function SelectionWheel(props: SelectionWheelProps) {
     value: valueProp ?? defaultValue ?? "",
     highlightedValue: null,
     items: [],
+    path: [],
     origin: null,
   }));
 
@@ -253,13 +286,70 @@ function SelectionWheel(props: SelectionWheelProps) {
       },
       registerItem: (item) => {
         itemsRef.current.set(item.id, item);
-        stateRef.current.items = getSortedItems(itemsRef.current);
+        stateRef.current.items = getSortedItems(
+          itemsRef.current,
+          getActiveGroup(stateRef.current.path),
+        );
         store.notify();
       },
       unregisterItem: (id) => {
         itemsRef.current.delete(id);
-        stateRef.current.items = getSortedItems(itemsRef.current);
+        stateRef.current.items = getSortedItems(
+          itemsRef.current,
+          getActiveGroup(stateRef.current.path),
+        );
         store.notify();
+      },
+      enterSub: (subId) => {
+        const path = [...stateRef.current.path, subId];
+        stateRef.current.path = path;
+        stateRef.current.items = getSortedItems(itemsRef.current, subId);
+        stateRef.current.highlightedValue = null;
+        store.notify();
+      },
+      back: () => {
+        if (stateRef.current.path.length === 0) return false;
+        const path = stateRef.current.path.slice(0, -1);
+        stateRef.current.path = path;
+        stateRef.current.items = getSortedItems(
+          itemsRef.current,
+          getActiveGroup(path),
+        );
+        stateRef.current.highlightedValue = null;
+        store.notify();
+        return true;
+      },
+      resetPath: () => {
+        if (stateRef.current.path.length === 0) return;
+        stateRef.current.path = [];
+        stateRef.current.items = getSortedItems(itemsRef.current, "");
+        store.notify();
+      },
+      getItem: (value) => {
+        for (const item of itemsRef.current.values()) {
+          if (item.value === value && item.subId === null) return item;
+        }
+        return undefined;
+      },
+      getSubTrigger: (subId) => {
+        for (const item of itemsRef.current.values()) {
+          if (item.subId === subId) return item;
+        }
+        return undefined;
+      },
+      isWithin: (subId, value) => {
+        let group = store.getItem(value)?.group;
+        while (group) {
+          if (group === subId) return true;
+          group = store.getSubTrigger(group)?.group;
+        }
+        return false;
+      },
+      openAt: (point) => {
+        store.resetPath();
+        store.setState("origin", point);
+        store.setState("highlightedValue", null);
+        store.setState("open", true);
       },
       highlightFromPointer: (point) => {
         const { items, origin } = stateRef.current;
@@ -293,6 +383,11 @@ function SelectionWheel(props: SelectionWheelProps) {
         const element = item?.ref.current;
         if (!item || !element || item.disabled) return;
 
+        if (item.subId !== null) {
+          store.enterSub(item.subId);
+          return;
+        }
+
         const selectEvent = new CustomEvent(ITEM_SELECT, EVENT_OPTIONS);
         element.addEventListener(
           ITEM_SELECT,
@@ -322,7 +417,9 @@ function SelectionWheel(props: SelectionWheelProps) {
         store.setState("highlightedValue", null);
 
         if (shouldFocusTrigger) {
-          triggerRef.current?.focus({ preventScroll: true });
+          (triggerRef.current ?? areaRef.current)?.focus({
+            preventScroll: true,
+          });
         }
       },
     };
@@ -338,7 +435,10 @@ function SelectionWheel(props: SelectionWheelProps) {
       return;
     }
 
-    if (!store.getState().open) store.setState("origin", null);
+    if (!store.getState().open) {
+      store.resetPath();
+      store.setState("origin", null);
+    }
     store.setState("open", true);
   }, [openProp, store]);
 
@@ -350,6 +450,13 @@ function SelectionWheel(props: SelectionWheelProps) {
 
   const open = useStore((state) => state.open, store);
 
+  const onPopoverOpenChange = React.useCallback(
+    (nextOpen: boolean) => {
+      if (!nextOpen) store.close();
+    },
+    [store],
+  );
+
   const contextValue = React.useMemo<SelectionWheelContextValue>(
     () => ({
       type,
@@ -360,6 +467,7 @@ function SelectionWheel(props: SelectionWheelProps) {
       contentId,
       rootRef,
       triggerRef,
+      areaRef,
       contentRef,
       deadZoneRef,
       pressingRef,
@@ -373,23 +481,32 @@ function SelectionWheel(props: SelectionWheelProps) {
   return (
     <StoreContext.Provider value={store}>
       <SelectionWheelContext.Provider value={contextValue}>
-        <RootPrimitive
-          data-slot="selection-wheel"
-          data-state={getDataState(hasTrigger ? open : true)}
-          data-disabled={disabled ? "" : undefined}
-          dir={dir}
-          {...rootProps}
-          ref={composedRef}
-          className={cn("cn-selection-wheel", className)}
-        />
+        <PopoverPrimitive.Root
+          open={hasTrigger && open}
+          onOpenChange={onPopoverOpenChange}
+        >
+          <RootPrimitive
+            data-slot="selection-wheel"
+            data-state={getDataState(hasTrigger ? open : true)}
+            data-disabled={disabled ? "" : undefined}
+            dir={dir}
+            {...rootProps}
+            ref={composedRef}
+            className={cn("cn-selection-wheel", className)}
+          />
+        </PopoverPrimitive.Root>
       </SelectionWheelContext.Provider>
     </StoreContext.Provider>
   );
 }
 
-function getSortedItems(items: Map<string, ItemData>) {
+function getActiveGroup(path: string[]) {
+  return path[path.length - 1] ?? "";
+}
+
+function getSortedItems(items: Map<string, ItemData>, group: string) {
   return Array.from(items.values())
-    .filter((item) => item.ref.current)
+    .filter((item) => item.group === group && item.ref.current)
     .sort((a, b) => {
       const elementA = a.ref.current;
       const elementB = b.ref.current;
@@ -458,15 +575,6 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
     };
   }, [onTriggerMount, triggerRenderedRef]);
 
-  const openAt = React.useCallback(
-    (origin: Point) => {
-      store.setState("origin", origin);
-      store.setState("highlightedValue", null);
-      store.setState("open", true);
-    },
-    [store],
-  );
-
   const onPointerDown = React.useCallback(
     (event: React.PointerEvent<TriggerElement>) => {
       propsRef.current.onPointerDown?.(event);
@@ -477,7 +585,7 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
         return;
       }
 
-      openAt({ x: event.clientX, y: event.clientY });
+      store.openAt({ x: event.clientX, y: event.clientY });
       capturePointer(event.currentTarget, event.pointerId);
       pressRef.current = {
         pointerId: event.pointerId,
@@ -486,7 +594,7 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
       };
       pressingRef.current = true;
     },
-    [propsRef, isDisabled, store, openAt, pressingRef],
+    [propsRef, isDisabled, store, pressingRef],
   );
 
   const onPointerMove = React.useCallback(
@@ -518,13 +626,12 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
       pressRef.current = null;
       pressingRef.current = false;
 
-      const { highlightedValue, open } = store.getState();
-      if (highlightedValue !== null) {
-        store.select(highlightedValue);
-        return;
-      }
+      const { highlightedValue } = store.getState();
+      if (highlightedValue !== null) store.select(highlightedValue);
 
-      if (open) contentRef.current?.focus({ preventScroll: true });
+      if (store.getState().open) {
+        contentRef.current?.focus({ preventScroll: true });
+      }
     },
     [propsRef, store, pressingRef, contentRef],
   );
@@ -553,12 +660,12 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
       }
 
       const rect = event.currentTarget.getBoundingClientRect();
-      openAt({
+      store.openAt({
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2,
       });
     },
-    [propsRef, isDisabled, store, openAt],
+    [propsRef, isDisabled, store],
   );
 
   return (
@@ -582,13 +689,187 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
   );
 }
 
+interface SelectionWheelAreaProps extends DivProps {
+  openKey?: string;
+  disabled?: boolean;
+}
+
+function SelectionWheelArea(props: SelectionWheelAreaProps) {
+  const {
+    openKey,
+    disabled: disabledProp,
+    onContextMenu: onContextMenuProp,
+    onKeyDown: onKeyDownProp,
+    onPointerMove: onPointerMoveProp,
+    asChild,
+    className,
+    ref,
+    ...areaProps
+  } = props;
+
+  const store = useStoreContext(AREA_NAME);
+  const {
+    areaRef,
+    contentRef,
+    pressingRef,
+    triggerRenderedRef,
+    disabled,
+    onTriggerMount,
+  } = useSelectionWheelContext(AREA_NAME);
+
+  triggerRenderedRef.current = true;
+
+  const open = useStore((state) => state.open);
+  const isDisabled = disabledProp || disabled;
+
+  const composedRef = useComposedRefs(ref, areaRef);
+  const pointRef = React.useRef<Point | null>(null);
+  const cleanupRef = React.useRef<(() => void) | null>(null);
+
+  const propsRef = useValueAsRef({
+    onContextMenu: onContextMenuProp,
+    onKeyDown: onKeyDownProp,
+    onPointerMove: onPointerMoveProp,
+  });
+
+  useLayoutEffect(() => {
+    onTriggerMount(true);
+    return () => {
+      triggerRenderedRef.current = false;
+      onTriggerMount(false);
+    };
+  }, [onTriggerMount, triggerRenderedRef]);
+
+  React.useEffect(() => {
+    return () => cleanupRef.current?.();
+  }, []);
+
+  const track = React.useCallback(
+    (start: Point, key?: string) => {
+      cleanupRef.current?.();
+
+      const ownerDocument = areaRef.current?.ownerDocument ?? document;
+      let moved = false;
+      pressingRef.current = true;
+
+      const onPointerMove = (event: PointerEvent) => {
+        const point = { x: event.clientX, y: event.clientY };
+        if (!moved) {
+          if (getDistance(start, point) < PRESS_SLOP) return;
+          moved = true;
+        }
+        store.highlightFromPointer(point);
+      };
+
+      const finish = () => {
+        cleanup();
+        pressingRef.current = false;
+
+        const { highlightedValue } = store.getState();
+        if (highlightedValue !== null) {
+          store.select(highlightedValue);
+        } else if (key) {
+          store.close({ focusTrigger: true });
+          return;
+        }
+
+        if (store.getState().open) {
+          contentRef.current?.focus({ preventScroll: true });
+        }
+      };
+
+      const onRelease = (event: PointerEvent | KeyboardEvent) => {
+        if (key && (!("key" in event) || event.key !== key)) return;
+        finish();
+      };
+
+      const releaseEvent = key ? "keyup" : "pointerup";
+
+      function cleanup() {
+        ownerDocument.removeEventListener("pointermove", onPointerMove);
+        ownerDocument.removeEventListener(releaseEvent, onRelease);
+        cleanupRef.current = null;
+      }
+
+      ownerDocument.addEventListener("pointermove", onPointerMove);
+      ownerDocument.addEventListener(releaseEvent, onRelease);
+      cleanupRef.current = () => {
+        cleanup();
+        pressingRef.current = false;
+      };
+    },
+    [areaRef, contentRef, pressingRef, store],
+  );
+
+  const onContextMenu = React.useCallback(
+    (event: React.MouseEvent<AreaElement>) => {
+      propsRef.current.onContextMenu?.(event);
+      if (event.defaultPrevented || isDisabled) return;
+
+      event.preventDefault();
+
+      const point = { x: event.clientX, y: event.clientY };
+      store.openAt(point);
+
+      if (event.buttons !== 0) track(point);
+    },
+    [propsRef, isDisabled, store, track],
+  );
+
+  const onKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<AreaElement>) => {
+      propsRef.current.onKeyDown?.(event);
+      if (event.defaultPrevented || isDisabled || !openKey) return;
+      if (event.key !== openKey) return;
+
+      event.preventDefault();
+      if (event.repeat || store.getState().open) return;
+
+      const rect = event.currentTarget.getBoundingClientRect();
+      const point = pointRef.current ?? {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      };
+
+      store.openAt(point);
+      track(point, openKey);
+    },
+    [propsRef, isDisabled, openKey, store, track],
+  );
+
+  const onPointerMove = React.useCallback(
+    (event: React.PointerEvent<AreaElement>) => {
+      propsRef.current.onPointerMove?.(event);
+      pointRef.current = { x: event.clientX, y: event.clientY };
+    },
+    [propsRef],
+  );
+
+  const AreaPrimitive = asChild ? SlotPrimitive.Slot : "div";
+
+  return (
+    <AreaPrimitive
+      tabIndex={openKey && !isDisabled ? 0 : undefined}
+      data-slot="selection-wheel-area"
+      data-state={getDataState(open)}
+      data-disabled={isDisabled ? "" : undefined}
+      {...areaProps}
+      ref={composedRef}
+      className={cn("cn-selection-wheel-area", className)}
+      onContextMenu={onContextMenu}
+      onKeyDown={onKeyDown}
+      onPointerMove={onPointerMove}
+    />
+  );
+}
+
 interface SelectionWheelContentProps extends DivProps {
   size?: number;
   deadZone?: number;
   forceMount?: boolean;
   container?: Element | DocumentFragment | null;
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
-  onInteractOutside?: (event: InteractOutsideEvent) => void;
+  onInteractOutside?: (event: PointerDownOutsideEvent) => void;
 }
 
 function SelectionWheelContent(props: SelectionWheelContentProps) {
@@ -626,6 +907,7 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
     contentRef,
     deadZoneRef,
     triggerRef,
+    areaRef,
     pressingRef,
     triggerRenderedRef,
   } = useSelectionWheelContext(CONTENT_NAME);
@@ -659,12 +941,6 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
     onBlur: onBlurProp,
   });
 
-  const mounted = React.useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
-  );
-
   useLayoutEffect(() => {
     deadZoneRef.current = deadZone;
   }, [deadZoneRef, deadZone]);
@@ -672,14 +948,16 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
   useLayoutEffect(() => {
     if (mode !== "overlay" || !open || origin) return;
 
-    const rect = triggerRef.current?.getBoundingClientRect();
+    const rect = (
+      triggerRef.current ?? areaRef.current
+    )?.getBoundingClientRect();
     store.setState(
       "origin",
       rect
         ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
         : { x: window.innerWidth / 2, y: window.innerHeight / 2 },
     );
-  }, [mode, open, origin, triggerRef, store]);
+  }, [mode, open, origin, triggerRef, areaRef, store]);
 
   // Keep the whole wheel on screen, and keep the stored origin in sync with
   // where it actually renders so pointer angles stay correct.
@@ -697,57 +975,56 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
     }
   }, [mode, open, origin, size, store]);
 
-  React.useEffect(() => {
-    if (mode !== "overlay" || !open) return;
-    contentRef.current?.focus({ preventScroll: true });
-  }, [mode, open, contentRef]);
+  const anchorRef = React.useRef({
+    getBoundingClientRect: () => {
+      const { x, y } = store.getState().origin ?? { x: 0, y: 0 };
+      return DOMRect.fromRect({ x, y, width: 0, height: 0 });
+    },
+  });
 
-  React.useEffect(() => {
-    if (mode !== "overlay" || !open) return;
+  const onOpenAutoFocus = React.useCallback(
+    (event: Event) => {
+      event.preventDefault();
+      contentRef.current?.focus({ preventScroll: true });
+    },
+    [contentRef],
+  );
 
-    const ownerDocument =
-      contentRef.current?.ownerDocument ?? globalThis?.document;
+  const onCloseAutoFocus = React.useCallback((event: Event) => {
+    event.preventDefault();
+  }, []);
 
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-
+  const onEscapeKeyDownHandler = React.useCallback(
+    (event: KeyboardEvent) => {
+      if (store.back()) {
+        event.preventDefault();
+        return;
+      }
       propsRef.current.onEscapeKeyDown?.(event);
-      if (event.defaultPrevented) return;
+    },
+    [propsRef, store],
+  );
 
-      store.close({ focusTrigger: true });
-    };
+  const onPointerDownOutside = React.useCallback(
+    (event: PointerDownOutsideEvent) => {
+      if (rootRef.current?.contains(event.target as Node)) {
+        event.preventDefault();
+        return;
+      }
 
-    const onPointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null;
-      if (!target) return;
+      propsRef.current.onInteractOutside?.(event);
+    },
+    [rootRef, propsRef],
+  );
 
-      const isInside =
-        contentRef.current?.contains(target) ||
-        rootRef.current?.contains(target);
-      if (isInside) return;
-
-      const interactEvent = new CustomEvent(INTERACT_OUTSIDE, {
-        ...EVENT_OPTIONS,
-        detail: { originalEvent: event },
-      }) as InteractOutsideEvent;
-
-      propsRef.current.onInteractOutside?.(interactEvent);
-      if (interactEvent.defaultPrevented) return;
-
-      store.close();
-    };
-
-    ownerDocument.addEventListener("keydown", onKeyDown);
-    const timerId = window.setTimeout(() => {
-      ownerDocument.addEventListener("pointerdown", onPointerDown);
-    }, 0);
-
-    return () => {
-      window.clearTimeout(timerId);
-      ownerDocument.removeEventListener("keydown", onKeyDown);
-      ownerDocument.removeEventListener("pointerdown", onPointerDown);
-    };
-  }, [mode, open, contentRef, rootRef, propsRef, store]);
+  const onFocusOutside = React.useCallback(
+    (event: FocusOutsideEvent) => {
+      if (rootRef.current?.contains(event.target as Node)) {
+        event.preventDefault();
+      }
+    },
+    [rootRef],
+  );
 
   const getEnabledItems = React.useCallback(
     () => store.getState().items.filter((item) => !item.disabled),
@@ -794,7 +1071,22 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
           if (highlightedValue !== null) store.select(highlightedValue);
           return;
         }
+        case "Tab": {
+          if (mode === "overlay") {
+            event.preventDefault();
+            store.close({ focusTrigger: true });
+          }
+          return;
+        }
+        case "Backspace": {
+          if (store.back()) event.preventDefault();
+          return;
+        }
         case "Escape": {
+          if (store.back()) {
+            event.preventDefault();
+            return;
+          }
           if (mode === "inline" && highlightedValue !== null) {
             event.preventDefault();
             store.setState("highlightedValue", null);
@@ -908,7 +1200,7 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
         return;
       }
 
-      const { highlightedValue, items } = store.getState();
+      const { highlightedValue, items, path } = store.getState();
       if (highlightedValue !== null) {
         store.select(highlightedValue);
         return;
@@ -918,9 +1210,22 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
       // item element itself.
       const target = event.target as Node;
       const item = items.find((item) => item.ref.current?.contains(target));
-      if (item) store.select(item.value);
+      if (item) {
+        store.select(item.value);
+        return;
+      }
+
+      if (path.length > 0 && event.detail !== 0) {
+        const rect = event.currentTarget.getBoundingClientRect();
+        const center = {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        };
+        const point = { x: event.clientX, y: event.clientY };
+        if (getDistance(center, point) < deadZone) store.back();
+      }
     },
-    [propsRef, disabled, store],
+    [propsRef, disabled, store, deadZone],
   );
 
   const onFocus = React.useCallback(
@@ -932,7 +1237,7 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
 
       // A press on the trigger focuses the wheel too. Nothing is highlighted
       // until the pointer moves, so releasing in place picks nothing.
-      if (pressingRef.current) return;
+      if (pressingRef.current || pressRef.current) return;
 
       const { highlightedValue, value } = store.getState();
       if (highlightedValue !== null) return;
@@ -968,12 +1273,9 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
       "--selection-wheel-radius": `${radius}px`,
       "--selection-wheel-count": items.length,
       "--selection-wheel-slice": `${slice}deg`,
-      ...(mode === "overlay" && origin
-        ? { left: origin.x, top: origin.y }
-        : undefined),
       ...style,
     }),
-    [size, deadZone, radius, items.length, slice, mode, origin, style],
+    [size, deadZone, radius, items.length, slice, style],
   );
 
   const ContentPrimitive = asChild ? SlotPrimitive.Slot : "div";
@@ -1011,9 +1313,32 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
 
   if (mode === "inline") return content;
 
-  if (!mounted || (!open && !forceMount)) return null;
-
-  return ReactDOM.createPortal(content, container ?? document.body);
+  return (
+    <>
+      <PopoverPrimitive.Anchor virtualRef={anchorRef} />
+      <PopoverPrimitive.Portal
+        container={container}
+        forceMount={forceMount || undefined}
+      >
+        <PopoverPrimitive.Content
+          asChild
+          forceMount={forceMount || undefined}
+          side="bottom"
+          sideOffset={-size / 2}
+          align="center"
+          avoidCollisions={false}
+          updatePositionStrategy="always"
+          onOpenAutoFocus={onOpenAutoFocus}
+          onCloseAutoFocus={onCloseAutoFocus}
+          onEscapeKeyDown={onEscapeKeyDownHandler}
+          onPointerDownOutside={onPointerDownOutside}
+          onFocusOutside={onFocusOutside}
+        >
+          {content}
+        </PopoverPrimitive.Content>
+      </PopoverPrimitive.Portal>
+    </>
+  );
 }
 
 function SelectionWheelIndicator(props: DivProps) {
@@ -1086,6 +1411,8 @@ function SelectionWheelItem(props: SelectionWheelItemProps) {
 
   const store = useStoreContext(ITEM_NAME);
   const { type, disabled: rootDisabled } = useSelectionWheelContext(ITEM_NAME);
+  const group = React.useContext(GroupContext);
+  const subId = React.useContext(SubTriggerContext);
 
   const instanceId = React.useId();
   const id = idProp ?? instanceId;
@@ -1101,11 +1428,13 @@ function SelectionWheelItem(props: SelectionWheelItemProps) {
       value,
       label,
       disabled: isDisabled,
+      group,
+      subId,
       ref: itemRef,
       onSelectRef,
     });
     return () => store.unregisterItem(id);
-  }, [store, id, value, label, isDisabled, onSelectRef]);
+  }, [store, id, value, label, isDisabled, group, subId, onSelectRef]);
 
   const index = useStore(
     React.useCallback(
@@ -1119,9 +1448,16 @@ function SelectionWheelItem(props: SelectionWheelItemProps) {
   );
   const isChecked = useStore(
     React.useCallback(
-      (state) => type === "radio" && state.value === value,
-      [type, value],
+      (state) =>
+        type === "radio" &&
+        (subId === null
+          ? state.value === value
+          : store.isWithin(subId, state.value)),
+      [type, value, subId, store],
     ),
+  );
+  const isActiveGroup = useStore(
+    React.useCallback((state) => getActiveGroup(state.path) === group, [group]),
   );
 
   const slice = count > 0 ? 360 / count : 360;
@@ -1129,10 +1465,14 @@ function SelectionWheelItem(props: SelectionWheelItemProps) {
   const itemStyle = React.useMemo<React.CSSProperties>(
     () => ({
       "--selection-wheel-angle": `${Math.max(index, 0) * slice}deg`,
-      ...(index < 0 ? { visibility: "hidden" } : undefined),
+      ...(!isActiveGroup
+        ? { display: "none" }
+        : index < 0
+          ? { visibility: "hidden" }
+          : undefined),
       ...style,
     }),
-    [index, slice, style],
+    [index, slice, isActiveGroup, style],
   );
 
   const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
@@ -1143,6 +1483,7 @@ function SelectionWheelItem(props: SelectionWheelItemProps) {
       id={id}
       aria-label={label}
       aria-checked={type === "radio" ? isChecked : undefined}
+      aria-haspopup={subId !== null && type === "menu" ? "menu" : undefined}
       aria-disabled={isDisabled || undefined}
       aria-posinset={index >= 0 ? index + 1 : undefined}
       aria-setsize={count > 0 ? count : undefined}
@@ -1152,6 +1493,7 @@ function SelectionWheelItem(props: SelectionWheelItemProps) {
       data-state={isChecked ? "checked" : "unchecked"}
       data-highlighted={isHighlighted ? "" : undefined}
       data-disabled={isDisabled ? "" : undefined}
+      data-sub={subId !== null ? "" : undefined}
       {...itemProps}
       ref={composedRef}
       className={cn("cn-selection-wheel-item", className)}
@@ -1163,19 +1505,20 @@ function SelectionWheelItem(props: SelectionWheelItemProps) {
 function SelectionWheelLabel(props: DivProps) {
   const { asChild, className, children, ...labelProps } = props;
 
+  const store = useStoreContext(LABEL_NAME);
   const { type } = useSelectionWheelContext(LABEL_NAME);
 
   const label = useStore(
     React.useCallback(
       (state) => {
+        const sub = state.path[state.path.length - 1];
         const current =
           state.items.find((item) => item.value === state.highlightedValue) ??
-          (type === "radio"
-            ? state.items.find((item) => item.value === state.value)
-            : undefined);
+          (sub ? store.getSubTrigger(sub) : undefined) ??
+          (type === "radio" ? store.getItem(state.value) : undefined);
         return current?.label ?? current?.value ?? null;
       },
-      [type],
+      [type, store],
     ),
   );
 
@@ -1194,12 +1537,58 @@ function SelectionWheelLabel(props: DivProps) {
   );
 }
 
+interface SelectionWheelSubProps {
+  children?: React.ReactNode;
+}
+
+function SelectionWheelSub(props: SelectionWheelSubProps) {
+  useSelectionWheelContext(SUB_NAME);
+  const subId = React.useId();
+
+  return (
+    <SubContext.Provider value={subId}>{props.children}</SubContext.Provider>
+  );
+}
+
+interface SelectionWheelSubTriggerProps extends Omit<
+  SelectionWheelItemProps,
+  "onSelect"
+> {}
+
+function SelectionWheelSubTrigger(props: SelectionWheelSubTriggerProps) {
+  const subId = useSubContext(SUB_TRIGGER_NAME);
+
+  return (
+    <SubTriggerContext.Provider value={subId}>
+      <SelectionWheelItem {...props} />
+    </SubTriggerContext.Provider>
+  );
+}
+
+interface SelectionWheelSubContentProps {
+  children?: React.ReactNode;
+}
+
+function SelectionWheelSubContent(props: SelectionWheelSubContentProps) {
+  const subId = useSubContext(SUB_CONTENT_NAME);
+
+  return (
+    <GroupContext.Provider value={subId}>
+      {props.children}
+    </GroupContext.Provider>
+  );
+}
+
 export {
   SelectionWheel,
+  SelectionWheelArea,
   SelectionWheelContent,
   SelectionWheelIndicator,
   SelectionWheelItem,
   SelectionWheelLabel,
   type SelectionWheelProps,
+  SelectionWheelSub,
+  SelectionWheelSubContent,
+  SelectionWheelSubTrigger,
   SelectionWheelTrigger,
 };

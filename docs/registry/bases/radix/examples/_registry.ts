@@ -893,6 +893,28 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "selection-wheel-area-demo",
+    type: "registry:example",
+    registryDependencies: ["selection-wheel"],
+    files: [
+      {
+        path: "examples/selection-wheel-area-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "selection-wheel-nested-demo",
+    type: "registry:example",
+    registryDependencies: ["selection-wheel"],
+    files: [
+      {
+        path: "examples/selection-wheel-nested-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "selection-wheel-menu-demo",
     type: "registry:example",
     dependencies: ["sonner"],

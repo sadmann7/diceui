@@ -71,6 +71,21 @@ export interface SelectionWheelTriggerProps extends Omit<
   keyof React.ComponentProps<"button">
 > {}
 
+export interface SelectionWheelAreaProps extends RenderProps {
+  /**
+   * A key that opens the wheel at the pointer while held, like a game's weapon wheel.
+   * Releasing it picks the highlighted item, or closes the wheel when nothing is highlighted.
+   * The area becomes focusable so it can receive the key.
+   */
+  openKey?: string;
+
+  /**
+   * When `true`, right-clicks and the open key do nothing.
+   * @default false
+   */
+  disabled?: boolean;
+}
+
 export interface SelectionWheelContentProps extends RenderProps {
   /**
    * The diameter of the wheel in pixels.
@@ -96,7 +111,7 @@ export interface SelectionWheelContentProps extends RenderProps {
    * The element to portal the overlay into.
    * @default document.body
    */
-  container?: Element | DocumentFragment | null;
+  container?: HTMLElement | ShadowRoot | null;
 
   /**
    * Event handler called when the `Escape` key is pressed while the overlay is open.
@@ -154,5 +169,10 @@ export interface SelectionWheelItemProps extends RenderProps {
    */
   onSelect?: (event: Event) => void;
 }
+
+export interface SelectionWheelSubTriggerProps extends Omit<
+  SelectionWheelItemProps,
+  "onSelect"
+> {}
 
 export interface SelectionWheelLabelProps extends RenderProps {}
