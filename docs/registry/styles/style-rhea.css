@@ -1788,7 +1788,7 @@
   }
 
   .cn-selection-wheel-item {
-    @apply absolute top-1/2 left-1/2 flex size-10 items-center justify-center rounded-2xl text-muted-foreground transition-colors outline-none select-none data-highlighted:text-accent-foreground data-[state=checked]:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50 group-focus-visible/selection-wheel:data-highlighted:ring-2 group-focus-visible/selection-wheel:data-highlighted:ring-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5 motion-reduce:transition-none;
+    @apply absolute top-1/2 left-1/2 [transform:translate(-50%,-50%)_rotate(var(--selection-wheel-angle))_translateY(calc(var(--selection-wheel-radius)*-1))_rotate(calc(var(--selection-wheel-angle)*-1))] flex size-10 items-center justify-center rounded-2xl text-muted-foreground transition-colors outline-none select-none data-highlighted:text-accent-foreground data-[state=checked]:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50 group-focus-visible/selection-wheel:data-highlighted:ring-2 group-focus-visible/selection-wheel:data-highlighted:ring-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5 motion-reduce:transition-none;
   }
 
   .cn-selection-wheel-label {

@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { renderToString } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import {
@@ -61,6 +62,24 @@ function OverlayWheel(props: React.ComponentProps<typeof SelectionWheel>) {
 
 describe("SelectionWheel", () => {
   describe("inline", () => {
+    it("hides items until they are positioned", () => {
+      const html = renderToString(<Wheel />);
+      const hidden = html.match(/visibility:hidden/g) ?? [];
+      expect(hidden).toHaveLength(4);
+
+      render(<Wheel />);
+      for (const radio of screen.getAllByRole("radio")) {
+        expect(radio).not.toHaveStyle({ visibility: "hidden" });
+      }
+    });
+
+    it("renders the wheel on the server", () => {
+      const html = renderToString(<Wheel />);
+
+      expect(html).toContain('data-slot="selection-wheel-content"');
+      expect(html).toContain('data-mode="inline"');
+    });
+
     it("renders a radiogroup of radios with positions", () => {
       render(<Wheel defaultValue="axe" />);
 
@@ -283,7 +302,176 @@ describe("SelectionWheel", () => {
     });
   });
 
+  describe("content presses", () => {
+    const rect = {
+      left: 0,
+      top: 0,
+      width: 240,
+      height: 240,
+      right: 240,
+      bottom: 240,
+      x: 0,
+      y: 0,
+      toJSON: () => {},
+    };
+
+    it("picks once on touch drag and release", () => {
+      const onSelect = vi.fn();
+      render(
+        <SelectionWheel type="menu">
+          <SelectionWheelContent data-testid="content" aria-label="Actions">
+            <SelectionWheelItem value="copy" label="Copy" onSelect={onSelect}>
+              Copy
+            </SelectionWheelItem>
+            <SelectionWheelItem value="share" label="Share">
+              Share
+            </SelectionWheelItem>
+          </SelectionWheelContent>
+        </SelectionWheel>,
+      );
+      const content = screen.getByTestId("content");
+      content.getBoundingClientRect = () => rect;
+
+      fireEvent.pointerDown(content, {
+        button: 0,
+        pointerId: 1,
+        pointerType: "touch",
+        clientX: 120,
+        clientY: 120,
+      });
+      fireEvent.pointerMove(content, {
+        pointerId: 1,
+        pointerType: "touch",
+        clientX: 120,
+        clientY: 20,
+      });
+      fireEvent.pointerUp(content, {
+        pointerId: 1,
+        pointerType: "touch",
+        clientX: 120,
+        clientY: 20,
+      });
+      expect(onSelect).toHaveBeenCalledTimes(1);
+
+      fireEvent.click(content);
+      expect(onSelect).toHaveBeenCalledTimes(1);
+    });
+
+    it("clears the highlight when the press is cancelled", () => {
+      render(<Wheel />);
+      const content = screen.getByTestId("content");
+      content.getBoundingClientRect = () => rect;
+
+      fireEvent.pointerDown(content, {
+        button: 0,
+        pointerId: 1,
+        pointerType: "touch",
+        clientX: 220,
+        clientY: 120,
+      });
+      expect(content).toHaveAttribute("aria-activedescendant");
+
+      fireEvent.pointerCancel(content, { pointerId: 1, pointerType: "touch" });
+      expect(content).not.toHaveAttribute("aria-activedescendant");
+    });
+  });
+
   describe("overlay", () => {
+    it("keeps focus on the wheel after a tap", () => {
+      render(<OverlayWheel defaultValue="axe" />);
+
+      const trigger = screen.getByTestId("trigger");
+      fireEvent.pointerDown(trigger, {
+        button: 0,
+        pointerId: 1,
+        clientX: 300,
+        clientY: 300,
+      });
+      trigger.focus();
+      fireEvent.pointerUp(trigger, {
+        pointerId: 1,
+        clientX: 300,
+        clientY: 300,
+      });
+
+      const content = screen.getByTestId("content");
+      expect(content).toHaveFocus();
+      expect(screen.getByRole("radio", { name: "Axe" })).toHaveAttribute(
+        "data-highlighted",
+      );
+    });
+
+    it("centers on the trigger when opened by prop", () => {
+      render(<OverlayWheel defaultOpen />);
+
+      expect(screen.getByTestId("content")).toHaveStyle({
+        left: "128px",
+        top: "128px",
+      });
+    });
+
+    it("returns focus to the trigger when closed by prop", () => {
+      const { rerender } = render(<OverlayWheel open />);
+      expect(screen.getByTestId("content")).toHaveFocus();
+
+      rerender(<OverlayWheel open={false} />);
+
+      expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+      expect(screen.getByTestId("trigger")).toHaveFocus();
+    });
+
+    it("ignores jitter after a press near the viewport edge", () => {
+      const onValueChange = vi.fn();
+      render(<OverlayWheel onValueChange={onValueChange} />);
+
+      const trigger = screen.getByTestId("trigger");
+      fireEvent.pointerDown(trigger, {
+        button: 0,
+        pointerId: 1,
+        clientX: 0,
+        clientY: 0,
+      });
+      fireEvent.pointerMove(trigger, {
+        pointerId: 1,
+        clientX: 2,
+        clientY: 1,
+      });
+      expect(
+        screen.getByTestId("content").querySelector("[data-highlighted]"),
+      ).toBeNull();
+
+      fireEvent.pointerUp(trigger, { pointerId: 1, clientX: 2, clientY: 1 });
+      expect(onValueChange).not.toHaveBeenCalled();
+      expect(screen.getByTestId("content")).toBeInTheDocument();
+    });
+
+    it("highlights once the pointer travels past the threshold", () => {
+      render(<OverlayWheel />);
+
+      const trigger = screen.getByTestId("trigger");
+      fireEvent.pointerDown(trigger, {
+        button: 0,
+        pointerId: 1,
+        clientX: 300,
+        clientY: 300,
+      });
+      fireEvent.pointerMove(trigger, {
+        pointerId: 1,
+        clientX: 300,
+        clientY: 200,
+      });
+      expect(screen.getByRole("radio", { name: "Sword" })).toHaveAttribute(
+        "data-highlighted",
+      );
+    });
+
+    it("renders no wheel on the server", () => {
+      const html = renderToString(<OverlayWheel />);
+
+      expect(html).toContain('data-slot="selection-wheel-trigger"');
+      expect(html).not.toContain('data-slot="selection-wheel-content"');
+    });
+
     it("is closed until the trigger is activated", () => {
       render(<OverlayWheel />);
 

@@ -27,6 +27,7 @@ const EVENT_OPTIONS = { bubbles: true, cancelable: true };
 const DEFAULT_SIZE = 240;
 const DEFAULT_DEAD_ZONE = 40;
 const VIEWPORT_PADDING = 8;
+const PRESS_SLOP = 6;
 
 type Direction = "ltr" | "rtl";
 type WheelType = "radio" | "menu";
@@ -151,6 +152,7 @@ interface SelectionWheelContextValue {
   contentRef: React.RefObject<ContentElement | null>;
   deadZoneRef: React.RefObject<number>;
   pressingRef: React.RefObject<boolean>;
+  triggerRenderedRef: React.RefObject<boolean>;
 }
 
 const SelectionWheelContext =
@@ -202,6 +204,7 @@ function SelectionWheel(props: SelectionWheelProps) {
   const contentRef = React.useRef<ContentElement | null>(null);
   const deadZoneRef = React.useRef(DEFAULT_DEAD_ZONE);
   const pressingRef = React.useRef(false);
+  const triggerRenderedRef = React.useRef(false);
 
   const [hasTrigger, setHasTrigger] = React.useState(false);
 
@@ -328,9 +331,15 @@ function SelectionWheel(props: SelectionWheelProps) {
   }, [listenersRef, stateRef, propsRef]);
 
   useLayoutEffect(() => {
-    if (openProp !== undefined) {
-      store.setState("open", openProp);
+    if (openProp === undefined) return;
+
+    if (!openProp) {
+      store.close();
+      return;
     }
+
+    if (!store.getState().open) store.setState("origin", null);
+    store.setState("open", true);
   }, [openProp, store]);
 
   useLayoutEffect(() => {
@@ -354,6 +363,7 @@ function SelectionWheel(props: SelectionWheelProps) {
       contentRef,
       deadZoneRef,
       pressingRef,
+      triggerRenderedRef,
     }),
     [type, dir, disabled, hasTrigger, contentId],
   );
@@ -409,14 +419,28 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
   } = props;
 
   const store = useStoreContext(TRIGGER_NAME);
-  const { type, contentId, triggerRef, pressingRef, disabled, onTriggerMount } =
-    useSelectionWheelContext(TRIGGER_NAME);
+  const {
+    type,
+    contentId,
+    triggerRef,
+    contentRef,
+    pressingRef,
+    triggerRenderedRef,
+    disabled,
+    onTriggerMount,
+  } = useSelectionWheelContext(TRIGGER_NAME);
+
+  triggerRenderedRef.current = true;
 
   const open = useStore((state) => state.open);
   const isDisabled = disabledProp || disabled;
 
   const composedRef = useComposedRefs(ref, triggerRef);
-  const pressRef = React.useRef<{ pointerId: number } | null>(null);
+  const pressRef = React.useRef<{
+    pointerId: number;
+    start: Point;
+    moved: boolean;
+  } | null>(null);
 
   const propsRef = useValueAsRef({
     onClick: onClickProp,
@@ -428,8 +452,11 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
 
   useLayoutEffect(() => {
     onTriggerMount(true);
-    return () => onTriggerMount(false);
-  }, [onTriggerMount]);
+    return () => {
+      triggerRenderedRef.current = false;
+      onTriggerMount(false);
+    };
+  }, [onTriggerMount, triggerRenderedRef]);
 
   const openAt = React.useCallback(
     (origin: Point) => {
@@ -452,7 +479,11 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
 
       openAt({ x: event.clientX, y: event.clientY });
       capturePointer(event.currentTarget, event.pointerId);
-      pressRef.current = { pointerId: event.pointerId };
+      pressRef.current = {
+        pointerId: event.pointerId,
+        start: { x: event.clientX, y: event.clientY },
+        moved: false,
+      };
       pressingRef.current = true;
     },
     [propsRef, isDisabled, store, openAt, pressingRef],
@@ -463,9 +494,17 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
       propsRef.current.onPointerMove?.(event);
       if (event.defaultPrevented) return;
 
-      if (pressRef.current?.pointerId !== event.pointerId) return;
+      const press = pressRef.current;
+      if (press?.pointerId !== event.pointerId) return;
 
-      store.highlightFromPointer({ x: event.clientX, y: event.clientY });
+      const point = { x: event.clientX, y: event.clientY };
+
+      if (!press.moved) {
+        if (getDistance(press.start, point) < PRESS_SLOP) return;
+        press.moved = true;
+      }
+
+      store.highlightFromPointer(point);
     },
     [propsRef, store],
   );
@@ -479,12 +518,15 @@ function SelectionWheelTrigger(props: SelectionWheelTriggerProps) {
       pressRef.current = null;
       pressingRef.current = false;
 
-      const { highlightedValue } = store.getState();
+      const { highlightedValue, open } = store.getState();
       if (highlightedValue !== null) {
         store.select(highlightedValue);
+        return;
       }
+
+      if (open) contentRef.current?.focus({ preventScroll: true });
     },
-    [propsRef, store, pressingRef],
+    [propsRef, store, pressingRef, contentRef],
   );
 
   const onPointerCancel = React.useCallback(
@@ -561,6 +603,8 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
     onPointerDown: onPointerDownProp,
     onPointerMove: onPointerMoveProp,
     onPointerLeave: onPointerLeaveProp,
+    onPointerUp: onPointerUpProp,
+    onPointerCancel: onPointerCancelProp,
     onClick: onClickProp,
     onFocus: onFocusProp,
     onBlur: onBlurProp,
@@ -581,10 +625,13 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
     rootRef,
     contentRef,
     deadZoneRef,
+    triggerRef,
     pressingRef,
+    triggerRenderedRef,
   } = useSelectionWheelContext(CONTENT_NAME);
 
-  const mode: Mode = hasTrigger ? "overlay" : "inline";
+  const mode: Mode =
+    hasTrigger || triggerRenderedRef.current ? "overlay" : "inline";
 
   const storeOpen = useStore((state) => state.open);
   const open = mode === "inline" || storeOpen;
@@ -593,7 +640,10 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
   const origin = useStore((state) => state.origin);
 
   const composedRef = useComposedRefs(ref, contentRef);
-  const pressRef = React.useRef<{ pointerId: number } | null>(null);
+  const pressRef = React.useRef<{ pointerId: number; start: Point } | null>(
+    null,
+  );
+  const skipClickRef = React.useRef(false);
 
   const propsRef = useValueAsRef({
     onEscapeKeyDown,
@@ -602,6 +652,8 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
     onPointerDown: onPointerDownProp,
     onPointerMove: onPointerMoveProp,
     onPointerLeave: onPointerLeaveProp,
+    onPointerUp: onPointerUpProp,
+    onPointerCancel: onPointerCancelProp,
     onClick: onClickProp,
     onFocus: onFocusProp,
     onBlur: onBlurProp,
@@ -616,6 +668,18 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
   useLayoutEffect(() => {
     deadZoneRef.current = deadZone;
   }, [deadZoneRef, deadZone]);
+
+  useLayoutEffect(() => {
+    if (mode !== "overlay" || !open || origin) return;
+
+    const rect = triggerRef.current?.getBoundingClientRect();
+    store.setState(
+      "origin",
+      rect
+        ? { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
+        : { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+    );
+  }, [mode, open, origin, triggerRef, store]);
 
   // Keep the whole wheel on screen, and keep the stored origin in sync with
   // where it actually renders so pointer angles stay correct.
@@ -762,7 +826,11 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
       if (event.defaultPrevented || event.button !== 0 || disabled) return;
 
       capturePointer(event.currentTarget, event.pointerId);
-      pressRef.current = { pointerId: event.pointerId };
+      pressRef.current = {
+        pointerId: event.pointerId,
+        start: { x: event.clientX, y: event.clientY },
+      };
+      skipClickRef.current = false;
       store.highlightFromPointer({ x: event.clientX, y: event.clientY });
     },
     [propsRef, disabled, store],
@@ -776,6 +844,43 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
       store.highlightFromPointer({ x: event.clientX, y: event.clientY });
     },
     [propsRef, disabled, store],
+  );
+
+  const onPointerUp = React.useCallback(
+    (event: React.PointerEvent<ContentElement>) => {
+      propsRef.current.onPointerUp?.(event);
+      if (event.defaultPrevented || disabled) return;
+
+      const press = pressRef.current;
+      if (press?.pointerId !== event.pointerId) return;
+
+      if (event.pointerType === "mouse") return;
+
+      const point = { x: event.clientX, y: event.clientY };
+      if (getDistance(press.start, point) < PRESS_SLOP) return;
+
+      pressRef.current = null;
+
+      const { highlightedValue } = store.getState();
+      if (highlightedValue === null) return;
+
+      skipClickRef.current = true;
+      store.select(highlightedValue);
+    },
+    [propsRef, disabled, store],
+  );
+
+  const onPointerCancel = React.useCallback(
+    (event: React.PointerEvent<ContentElement>) => {
+      propsRef.current.onPointerCancel?.(event);
+      pressRef.current = null;
+
+      const ownerDocument = event.currentTarget.ownerDocument;
+      if (event.currentTarget.contains(ownerDocument.activeElement)) return;
+
+      store.setState("highlightedValue", null);
+    },
+    [propsRef, store],
   );
 
   const onPointerLeave = React.useCallback(
@@ -797,6 +902,11 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
       if (event.defaultPrevented || disabled) return;
 
       pressRef.current = null;
+
+      if (skipClickRef.current) {
+        skipClickRef.current = false;
+        return;
+      }
 
       const { highlightedValue, items } = store.getState();
       if (highlightedValue !== null) {
@@ -891,6 +1001,8 @@ function SelectionWheelContent(props: SelectionWheelContentProps) {
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerLeave={onPointerLeave}
+      onPointerUp={onPointerUp}
+      onPointerCancel={onPointerCancel}
       onClick={onClick}
       onFocus={onFocus}
       onBlur={onBlur}
@@ -1017,6 +1129,7 @@ function SelectionWheelItem(props: SelectionWheelItemProps) {
   const itemStyle = React.useMemo<React.CSSProperties>(
     () => ({
       "--selection-wheel-angle": `${Math.max(index, 0) * slice}deg`,
+      ...(index < 0 ? { visibility: "hidden" } : undefined),
       ...style,
     }),
     [index, slice, style],
