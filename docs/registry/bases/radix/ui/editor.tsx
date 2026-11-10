@@ -461,6 +461,7 @@ function Editor<TFormat extends EditorFormat = "html">({
       extensions: [
         StarterKit.configure({
           heading: { levels: [1, 2, 3] },
+          trailingNode: false,
           link: {
             openOnClick: false,
             autolink: true,
