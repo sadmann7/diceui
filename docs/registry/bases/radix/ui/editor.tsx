@@ -436,24 +436,22 @@ interface EditorJsonProps extends EditorBaseProps {
 
 type EditorProps = EditorStringProps | EditorJsonProps;
 
-function Editor(props: EditorProps) {
-  const {
-    format = "html",
-    value: valueProp,
-    defaultValue,
-    onValueChange,
-    extensions = [],
-    placeholder,
-    limit,
-    autoFocus = false,
-    disabled = false,
-    readOnly = false,
-    labels: labelsProp,
-    asChild,
-    className,
-    ...rootProps
-  } = props;
-
+function Editor({
+  format = "html",
+  value: valueProp,
+  defaultValue,
+  onValueChange,
+  extensions = [],
+  placeholder,
+  limit,
+  autoFocus = false,
+  disabled = false,
+  readOnly = false,
+  labels: labelsProp,
+  asChild,
+  className,
+  ...props
+}: EditorProps) {
   const editable = !disabled && !readOnly;
   const [initialValue] = React.useState(() => valueProp ?? defaultValue);
   const valueRef = React.useRef<EditorValue | undefined>(initialValue);
@@ -602,7 +600,7 @@ function Editor(props: EditorProps) {
         data-slot="editor"
         data-disabled={disabled ? "" : undefined}
         data-readonly={readOnly ? "" : undefined}
-        {...rootProps}
+        {...props}
         className={cn("cn-editor flex flex-col", className)}
       />
     </EditorContext.Provider>
@@ -1231,6 +1229,7 @@ function useEditorFloating(
   open: boolean,
   editor: TiptapEditor | null,
   getRect: () => DOMRect | null,
+  boundary: Element | null,
   {
     side = "top",
     sideOffset = 8,
@@ -1265,9 +1264,11 @@ function useEditorFloating(
     strategy: "fixed",
     middleware: [
       offset({ mainAxis: sideOffset, alignmentAxis: alignOffset }),
-      avoidCollisions && flip({ padding: collisionPadding }),
-      avoidCollisions && shift({ padding: collisionPadding }),
-      hide({ strategy: "referenceHidden" }),
+      avoidCollisions &&
+        flip({ padding: collisionPadding, boundary: boundary ?? undefined }),
+      avoidCollisions &&
+        shift({ padding: collisionPadding, boundary: boundary ?? undefined }),
+      hide({ strategy: "referenceHidden", boundary: boundary ?? undefined }),
     ],
     whileElementsMounted: autoUpdate,
     elements: { reference },
@@ -1328,10 +1329,13 @@ function EditorBubbleMenu({
   });
 
   const open = editable && !!state?.visible && (state.focused || hasFocus);
+  const contentElement = editor?.view.dom.parentElement ?? null;
   const getSelectionRect = React.useCallback(() => {
     if (!editor) return null;
-    const { from, to } = editor.state.selection;
-    return posToDOMRect(editor.view, from, to);
+    const { from, to, head } = editor.state.selection;
+    const rect = posToDOMRect(editor.view, from, to);
+    const headRect = posToDOMRect(editor.view, head, head);
+    return rect.height > headRect.height * 1.5 ? headRect : rect;
   }, [editor]);
   const blurTimeoutRef = React.useRef<number | null>(null);
 
@@ -1349,7 +1353,7 @@ function EditorBubbleMenu({
     update,
     side: placedSide,
     style,
-  } = useEditorFloating(open, editor, getSelectionRect, {
+  } = useEditorFloating(open, editor, getSelectionRect, contentElement, {
     side,
     sideOffset,
     align,
@@ -1663,7 +1667,7 @@ function EditorSlashMenu({
     update,
     side: placedSide,
     style,
-  } = useEditorFloating(state.open, editor, getTriggerRect, {
+  } = useEditorFloating(state.open, editor, getTriggerRect, null, {
     side,
     sideOffset,
     align,
@@ -1895,10 +1899,5 @@ export {
   EditorCharacterCount,
   useEditorInstance,
   getDefaultSlashMenuItems,
-  type EditorProps,
-  type EditorValue,
-  type EditorFormat,
-  type EditorMarkType,
-  type EditorBlockType,
   type EditorSlashMenuItemData,
 };
