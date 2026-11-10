@@ -215,6 +215,8 @@ function getIsSameValue(a: EditorValue | undefined, b: EditorValue) {
 }
 
 function normalizeHref(href: string) {
+  if (/^[^\s/:@]+@[^\s/:@]+\.[^\s/:@]+$/.test(href)) return `mailto:${href}`;
+  if (/^(localhost|[\w-]+(\.[\w-]+)+):\d/i.test(href)) return `https://${href}`;
   return /^([a-z][\w+.-]*:|[/#?])/i.test(href) ? href : `https://${href}`;
 }
 
@@ -455,7 +457,8 @@ function Editor<TFormat extends EditorFormat = "html">({
   const [initialValue] = React.useState(() => valueProp ?? defaultValue);
   const valueRef = React.useRef<EditorValue | undefined>(initialValue);
   const linkOpeners = React.useMemo(() => new Set<() => boolean>(), []);
-  const propsRef = useValueAsRef({ format, onValueChange });
+  const [initialLimit] = React.useState(limit);
+  const propsRef = useValueAsRef({ format, onValueChange, placeholder });
 
   const editor = useEditor(
     {
@@ -471,10 +474,11 @@ function Editor<TFormat extends EditorFormat = "html">({
         }),
         TaskList,
         TaskItem.configure({ nested: true }),
+        // oxlint-disable-next-line react/refs -- read when tiptap draws the placeholder, not during render
         Placeholder.configure({
-          placeholder: placeholder ?? "",
+          placeholder: () => propsRef.current.placeholder ?? "",
         }),
-        CharacterCount.configure({ limit }),
+        CharacterCount.configure({ limit: initialLimit }),
         Markdown,
         Extension.create({
           name: "editorLinkShortcut",
@@ -550,13 +554,9 @@ function Editor<TFormat extends EditorFormat = "html">({
     !!editor && (createdEditor === editor || editor.isInitialized);
 
   React.useEffect(() => {
-    const extension = editor?.extensionManager.extensions.find(
-      (extension) => extension.name === "placeholder",
-    );
-    if (!editor || !extension) return;
-    if (extension.options.placeholder === (placeholder ?? "")) return;
-    extension.options.placeholder = placeholder ?? "";
+    if (!editor || editor.isDestroyed) return;
     editor.view.dispatch(editor.state.tr);
+    // oxlint-disable-next-line react/exhaustive-effect-dependencies -- redraws the placeholder when it changes
   }, [editor, placeholder]);
 
   React.useEffect(() => {
@@ -582,10 +582,10 @@ function Editor<TFormat extends EditorFormat = "html">({
       instance: editor,
       labels,
       editable,
-      limit,
+      limit: initialLimit,
       linkOpeners,
     }),
-    [editor, isCreated, labels, editable, limit, linkOpeners],
+    [editor, isCreated, labels, editable, initialLimit, linkOpeners],
   );
 
   const element = useRender({
@@ -996,6 +996,7 @@ function EditorLink({
   const triggerRef = React.useRef<HTMLButtonElement>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const appliedRef = React.useRef(false);
+  const [invalid, setInvalid] = React.useState(false);
   const inputId = React.useId();
 
   const state = useEditorState({
@@ -1016,6 +1017,7 @@ function EditorLink({
       if (next && editor) {
         setUrl((editor.getAttributes("link").href as string | undefined) ?? "");
         appliedRef.current = false;
+        setInvalid(false);
       }
       if (openProp === undefined) setUncontrolledOpen(next);
       onOpenChangeRef.current?.(next);
@@ -1041,6 +1043,10 @@ function EditorLink({
       if (!editor) return;
       const trimmed = href.trim();
       const normalized = normalizeHref(trimmed);
+      if (trimmed && !editor.can().setLink({ href: normalized })) {
+        setInvalid(true);
+        return;
+      }
       const chain = editor.chain().focus().extendMarkRange("link");
       if (!trimmed) {
         chain.unsetLink().run();
@@ -1111,7 +1117,11 @@ function EditorLink({
             autoComplete="off"
             placeholder={labels.linkPlaceholder}
             value={url}
-            onChange={(event) => setUrl(event.target.value)}
+            aria-invalid={invalid || undefined}
+            onChange={(event) => {
+              setUrl(event.target.value);
+              setInvalid(false);
+            }}
             className="cn-editor-link-input"
           />
           <Button
@@ -1658,7 +1668,6 @@ function EditorSlashMenu({
     if (!editor || !state.open) return;
     const dom = editor.view.dom;
     dom.setAttribute("aria-controls", listboxId);
-    dom.setAttribute("aria-expanded", "true");
     dom.setAttribute("aria-autocomplete", "list");
     if (highlightedItem) {
       dom.setAttribute(
@@ -1671,7 +1680,6 @@ function EditorSlashMenu({
     return () => {
       for (const name of [
         "aria-controls",
-        "aria-expanded",
         "aria-autocomplete",
         "aria-activedescendant",
       ]) {

@@ -283,6 +283,99 @@ describe.each([
     expect(textbox).not.toHaveAttribute("aria-controls");
   });
 
+  test("rejects links with a disallowed protocol", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <Editor.Editor format="markdown" onValueChange={onValueChange}>
+        <Editor.EditorToolbar>
+          <Editor.EditorLink />
+        </Editor.EditorToolbar>
+        <Editor.EditorContent />
+      </Editor.Editor>,
+    );
+
+    const link = screen.getByRole("button", { name: "Link" });
+    await waitFor(() => expect(link).toBeEnabled());
+    fireEvent.click(link);
+    const input = await screen.findByRole("textbox", { name: "URL" });
+    fireEvent.change(input, { target: { value: "javascript:alert(1)" } });
+    fireEvent.submit(input.closest("form") as HTMLFormElement);
+
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(onValueChange).not.toHaveBeenCalled();
+
+    fireEvent.change(input, { target: { value: "localhost:3000" } });
+    fireEvent.submit(input.closest("form") as HTMLFormElement);
+
+    expect(onValueChange).toHaveBeenLastCalledWith(
+      "[localhost:3000](https://localhost:3000)",
+    );
+
+    act(() => {
+      getTiptap().chain().clearContent().focus().run();
+    });
+    fireEvent.click(link);
+    const nextInput = await screen.findByRole("textbox", { name: "URL" });
+    fireEvent.change(nextInput, { target: { value: "tel:5551234" } });
+    fireEvent.submit(nextInput.closest("form") as HTMLFormElement);
+
+    expect(onValueChange).toHaveBeenLastCalledWith(
+      "[tel:5551234](tel:5551234)",
+    );
+  });
+
+  test("keeps the limit it was created with", async () => {
+    const { rerender } = render(
+      <Editor.Editor defaultValue="<p>abc</p>" limit={3}>
+        <Editor.EditorContent />
+        <Editor.EditorCharacterCount />
+      </Editor.Editor>,
+    );
+
+    await screen.findByRole("textbox");
+    await waitFor(() => expect(screen.getByText("3/3")).toBeInTheDocument());
+
+    rerender(
+      <Editor.Editor defaultValue="<p>abc</p>" limit={10}>
+        <Editor.EditorContent />
+        <Editor.EditorCharacterCount />
+      </Editor.Editor>,
+    );
+    act(() => {
+      getTiptap().commands.insertContentAt(4, "d");
+    });
+    expect(getTiptap().getText()).toBe("abc");
+    expect(screen.getByText("3/3")).toBeInTheDocument();
+  });
+
+  test("updates the placeholder", async () => {
+    const { container, rerender } = render(
+      <Editor.Editor placeholder="First">
+        <Editor.EditorContent />
+      </Editor.Editor>,
+    );
+
+    await screen.findByRole("textbox");
+    await waitFor(() =>
+      expect(container.querySelector("[data-placeholder]")).toHaveAttribute(
+        "data-placeholder",
+        "First",
+      ),
+    );
+
+    rerender(
+      <Editor.Editor placeholder="Second">
+        <Editor.EditorContent />
+      </Editor.Editor>,
+    );
+    await waitFor(() =>
+      expect(container.querySelector("[data-placeholder]")).toHaveAttribute(
+        "data-placeholder",
+        "Second",
+      ),
+    );
+  });
+
   test("shows the character count against the limit", async () => {
     render(
       <Editor.Editor defaultValue="<p>Hello</p>" limit={5}>
