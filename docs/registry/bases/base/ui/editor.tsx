@@ -597,6 +597,7 @@ function Editor<TFormat extends EditorFormat = "html">({
     render,
     state: {
       slot: "editor",
+      pending: !isCreated,
       disabled,
       readonly: readOnly,
     },
@@ -617,7 +618,12 @@ function EditorContent({
   "aria-invalid": ariaInvalid,
   ...props
 }: React.ComponentProps<"div">) {
-  const { instance: editor, labels, editable } = useEditorContext(CONTENT_NAME);
+  const {
+    editor: readyEditor,
+    instance: editor,
+    labels,
+    editable,
+  } = useEditorContext(CONTENT_NAME);
 
   useIsoLayoutEffect(() => {
     if (!editor) return;
@@ -650,6 +656,7 @@ function EditorContent({
     <EditorContentPrimitive
       editor={editor}
       data-slot="editor-content"
+      data-pending={readyEditor ? undefined : ""}
       {...props}
       className={cn("cn-editor-content cn-editor-prose", className)}
     />
