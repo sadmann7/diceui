@@ -83,8 +83,14 @@ const BLOCKS = [
 
 type EditorMarkType = (typeof MARKS)[number];
 type EditorBlockType = (typeof BLOCKS)[number];
-type EditorFormat = "html" | "markdown" | "json";
-type EditorValue = string | JSONContent;
+interface EditorValueMap {
+  html: string;
+  markdown: string;
+  json: JSONContent;
+}
+
+type EditorFormat = keyof EditorValueMap;
+type EditorValue = EditorValueMap[EditorFormat];
 type Side = "top" | "right" | "bottom" | "left";
 type Align = "start" | "center" | "end";
 
@@ -411,7 +417,14 @@ function useEditorInstance() {
   return useEditorContext("useEditorInstance").editor;
 }
 
-interface EditorBaseProps extends Omit<DivProps, "defaultValue"> {
+interface EditorProps<TFormat extends EditorFormat = "html"> extends Omit<
+  DivProps,
+  "defaultValue"
+> {
+  format?: TFormat;
+  value?: EditorValueMap[TFormat];
+  defaultValue?: EditorValueMap[TFormat];
+  onValueChange?: (value: EditorValueMap[TFormat]) => void;
   extensions?: AnyExtension[];
   placeholder?: string;
   limit?: number;
@@ -421,24 +434,8 @@ interface EditorBaseProps extends Omit<DivProps, "defaultValue"> {
   labels?: Partial<EditorLabels>;
 }
 
-interface EditorStringProps extends EditorBaseProps {
-  format?: "html" | "markdown";
-  value?: string;
-  defaultValue?: string;
-  onValueChange?: (value: string) => void;
-}
-
-interface EditorJsonProps extends EditorBaseProps {
-  format: "json";
-  value?: JSONContent;
-  defaultValue?: JSONContent;
-  onValueChange?: (value: JSONContent) => void;
-}
-
-type EditorProps = EditorStringProps | EditorJsonProps;
-
-function Editor({
-  format = "html",
+function Editor<TFormat extends EditorFormat = "html">({
+  format: formatProp,
   value: valueProp,
   defaultValue,
   onValueChange,
@@ -452,7 +449,8 @@ function Editor({
   render,
   className,
   ...props
-}: EditorProps) {
+}: EditorProps<TFormat>) {
+  const format: EditorFormat = formatProp ?? "html";
   const editable = !disabled && !readOnly;
   const [initialValue] = React.useState(() => valueProp ?? defaultValue);
   const valueRef = React.useRef<EditorValue | undefined>(initialValue);
@@ -520,11 +518,7 @@ function Editor({
       onUpdate: ({ editor }) => {
         const value = getValue(editor, propsRef.current.format);
         valueRef.current = value;
-        (
-          propsRef.current.onValueChange as
-            | ((value: EditorValue) => void)
-            | undefined
-        )?.(value);
+        propsRef.current.onValueChange?.(value as EditorValueMap[TFormat]);
       },
     },
     [],
