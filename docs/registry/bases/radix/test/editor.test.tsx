@@ -77,6 +77,31 @@ describe.each([
     expect(onValueChange).toHaveBeenLastCalledWith("");
   });
 
+  test("doesn't change the content on focus", async () => {
+    const onValueChange = vi.fn();
+    render(
+      <Editor.Editor
+        defaultValue="<blockquote><p>Quote</p></blockquote>"
+        onValueChange={onValueChange}
+      >
+        <Editor.EditorToolbar>
+          <Editor.EditorUndo />
+        </Editor.EditorToolbar>
+        <Editor.EditorContent />
+      </Editor.Editor>,
+    );
+
+    await screen.findByRole("textbox");
+    await waitFor(() => expect(getTiptap().isInitialized).toBe(true));
+    act(() => {
+      getTiptap().commands.focus("end");
+    });
+
+    expect(getTiptap().getHTML()).toBe("<blockquote><p>Quote</p></blockquote>");
+    expect(onValueChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Undo" })).toBeDisabled();
+  });
+
   test("reads and writes markdown", async () => {
     const onValueChange = vi.fn();
     render(
