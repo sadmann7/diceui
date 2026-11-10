@@ -57,6 +57,21 @@ describe.each([
     await waitFor(() => expect(textbox).toHaveTextContent("Hello world"));
   });
 
+  test("drops the pending state once mounted", async () => {
+    const { container } = render(
+      <Editor.Editor defaultValue="<p>Text</p>">
+        <Editor.EditorContent />
+      </Editor.Editor>,
+    );
+
+    const root = container.querySelector("[data-slot=editor]");
+    const content = container.querySelector("[data-slot=editor-content]");
+    expect(root).toHaveAttribute("data-pending");
+    expect(content).toHaveAttribute("data-pending");
+    await waitFor(() => expect(root).not.toHaveAttribute("data-pending"));
+    expect(content).not.toHaveAttribute("data-pending");
+  });
+
   test("emits html, and an empty string once cleared", async () => {
     const onValueChange = vi.fn();
     render(
