@@ -177,7 +177,6 @@ const BLOCK_COMMANDS: Record<
   },
 };
 
-// Lists and quotes wrap paragraphs, so they're checked before `paragraph`.
 const BLOCK_PRIORITY: EditorBlockType[] = [
   "codeBlock",
   "taskList",
@@ -196,7 +195,6 @@ function getCurrentBlock(editor: TiptapEditor) {
 
 function getValue(editor: TiptapEditor, format: EditorFormat): EditorValue {
   if (format === "json") return editor.getJSON();
-  // The trailing empty paragraph would add blank lines at the end.
   if (format === "markdown") return editor.getMarkdown().replace(/\n+$/, "");
   return editor.isEmpty ? "" : editor.getHTML();
 }
@@ -209,7 +207,6 @@ function getIsSameValue(a: EditorValue | undefined, b: EditorValue) {
   return false;
 }
 
-// Links typed without a scheme, like `diceui.com`, open as https.
 function normalizeHref(href: string) {
   return /^([a-z][\w+.-]*:|[/#?])/i.test(href) ? href : `https://${href}`;
 }
@@ -500,8 +497,6 @@ function Editor(props: EditorProps) {
                       (opened, open) => opened || open(),
                       false,
                     );
-                    // Keeps app-wide shortcuts, like a search dialog, from
-                    // also handling it.
                     if (opened) event.stopPropagation();
                     return opened;
                   },
@@ -546,8 +541,6 @@ function Editor(props: EditorProps) {
     });
   }, [editor, valueProp, format]);
 
-  // Parts get the editor once its view is mounted, so `can()` checks are
-  // accurate on the first render.
   const [createdEditor, setCreatedEditor] = React.useState<TiptapEditor | null>(
     null,
   );
@@ -569,7 +562,6 @@ function Editor(props: EditorProps) {
     if (!editor || !extension) return;
     if (extension.options.placeholder === (placeholder ?? "")) return;
     extension.options.placeholder = placeholder ?? "";
-    // Redraws the placeholder decoration.
     editor.view.dispatch(editor.state.tr);
   }, [editor, placeholder]);
 
@@ -627,8 +619,6 @@ function EditorContent({
 }: React.ComponentProps<"div">) {
   const { instance: editor, labels, editable } = useEditorContext(CONTENT_NAME);
 
-  // ProseMirror owns the editable element, so its accessible name is set on
-  // the element directly instead of on this wrapper.
   useLayoutEffect(() => {
     if (!editor) return;
     const dom = editor.view.dom;
@@ -675,7 +665,6 @@ function getToolbarItems(toolbar: HTMLElement | null) {
   ].filter((item) => !item.matches(":disabled, [aria-disabled='true']"));
 }
 
-// Toolbars are a single tab stop, and arrow keys move between their items.
 function useRovingFocus(
   ref: React.RefObject<HTMLElement | null>,
   orientation: "horizontal" | "vertical",
@@ -816,7 +805,6 @@ interface EditorButtonProps extends React.ComponentProps<typeof Button> {
   pressed?: boolean;
 }
 
-// Keeps the editor focused, so its selection stays put while a button runs.
 function EditorButton({
   pressed,
   variant = "ghost",
@@ -853,8 +841,6 @@ function EditorMark({
   ...props
 }: EditorMarkProps) {
   const { editor, labels, editable } = useEditorContext(MARK_NAME);
-  // Selectors read `editor` from context, since Tiptap's snapshot keeps the
-  // editor it saw first until the next transaction.
   const state = useEditorState({
     editor,
     selector: () =>
@@ -1349,7 +1335,6 @@ function EditorBubbleMenu({
   }, [editor]);
   const blurTimeoutRef = React.useRef<number | null>(null);
 
-  // Focus can't be inside a menu that isn't shown.
   if (!state?.visible && hasFocus) setHasFocus(false);
 
   React.useEffect(
@@ -1373,7 +1358,6 @@ function EditorBubbleMenu({
     collisionPadding,
   });
 
-  // The selection can change while the menu stays open.
   React.useEffect(() => {
     if (open) update();
     // oxlint-disable-next-line react/exhaustive-effect-dependencies -- the menu follows the selection as it moves
@@ -1406,7 +1390,6 @@ function EditorBubbleMenu({
         className={cn("cn-editor-bubble-menu flex items-center", className)}
         onMouseDown={(event: React.MouseEvent<HTMLDivElement>) => {
           onMouseDownProp?.(event);
-          // Keeps the editor's selection while the menu is used.
           if (!(event.target instanceof HTMLInputElement)) {
             event.preventDefault();
           }
@@ -1420,8 +1403,6 @@ function EditorBubbleMenu({
         }}
         onBlur={(event: React.FocusEvent<HTMLDivElement>) => {
           onBlurProp?.(event);
-          // Focus moving into a portaled popover from the menu, like the link
-          // input, blurs and refocuses within the same task.
           blurTimeoutRef.current = window.setTimeout(() => setHasFocus(false));
         }}
         onKeyDown={(event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -1603,7 +1584,6 @@ function EditorSlashMenu({
           item.onSelect({ editor, range });
         },
         render: () => ({
-          // `clientRect` reads the trigger's position each time it's called.
           onStart: (props) => {
             commandRef.current = props.command;
             setState({
@@ -1635,7 +1615,6 @@ function EditorSlashMenu({
       },
     );
 
-    // Runs before the editor's keymaps, so Enter picks an item.
     editor.registerPlugin(plugin, (plugin, plugins) => [plugin, ...plugins]);
     return () => {
       if (!editor.isDestroyed) editor.unregisterPlugin(pluginKey);
@@ -1653,7 +1632,6 @@ function EditorSlashMenu({
     [listboxId],
   );
 
-  // The editable element keeps focus, so it points at the highlighted option.
   useLayoutEffect(() => {
     if (!editor || !state.open) return;
     const dom = editor.view.dom;
