@@ -1,17 +1,29 @@
 import { Demo, DemoItemGroup } from "@/components/demo";
 import { Shell } from "@/components/shell";
-import QueryBuilderBaseDemo from "@/registry/bases/base/examples/query-builder-demo";
-import QueryBuilderRadixDemo from "@/registry/bases/radix/examples/query-builder-demo";
+import EditorCharacterCountBaseDemo from "@/registry/bases/base/examples/editor-character-count-demo";
+import EditorBaseDemo from "@/registry/bases/base/examples/editor-demo";
+import EditorMarkdownBaseDemo from "@/registry/bases/base/examples/editor-markdown-demo";
+import EditorMinimalBaseDemo from "@/registry/bases/base/examples/editor-minimal-demo";
+import EditorCharacterCountRadixDemo from "@/registry/bases/radix/examples/editor-character-count-demo";
+import EditorRadixDemo from "@/registry/bases/radix/examples/editor-demo";
+import EditorMarkdownRadixDemo from "@/registry/bases/radix/examples/editor-markdown-demo";
+import EditorMinimalRadixDemo from "@/registry/bases/radix/examples/editor-minimal-demo";
 
 export default function PlaygroundPage() {
   return (
     <Shell>
       <Demo>
         <DemoItemGroup>
-          <QueryBuilderBaseDemo />
+          <EditorBaseDemo />
+          <EditorMinimalBaseDemo />
+          <EditorMarkdownBaseDemo />
+          <EditorCharacterCountBaseDemo />
         </DemoItemGroup>
         <DemoItemGroup>
-          <QueryBuilderRadixDemo />
+          <EditorRadixDemo />
+          <EditorMinimalRadixDemo />
+          <EditorMarkdownRadixDemo />
+          <EditorCharacterCountRadixDemo />
         </DemoItemGroup>
       </Demo>
     </Shell>
