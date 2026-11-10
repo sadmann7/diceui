@@ -1,0 +1,25 @@
+---
+title: November 2026 - Editor
+description: A composable rich text editor built on Tiptap, with a toolbar, bubble menu, slash commands, and HTML, Markdown or JSON output.
+date: 2026-11-10T12:00:00Z
+---
+
+[Editor](/docs/components/editor) is a rich text editor built on [Tiptap](https://tiptap.dev).
+
+```package-install
+npx shadcn@latest add @diceui/editor
+```
+
+## Features
+
+- **Composable parts.** Build the editor from `EditorToolbar`, `EditorMark`, `EditorBlock`, `EditorBlockSelect`, `EditorLink`, `EditorUndo` and `EditorRedo`.
+- **Bubble menu.** `EditorBubbleMenu` floats a toolbar above selected text.
+- **Slash commands.** `EditorSlashMenu` opens a command menu on `/`. Pass `items` to add your own commands.
+- **Formats.** Read and write HTML, Markdown or Tiptap JSON with `format`.
+- **Character limit.** Set `limit` and show the count with `EditorCharacterCount`.
+- **Extensions.** Add more Tiptap extensions with `extensions`.
+- **Labels.** Pass `labels` to reword or translate the built-in text.
+
+## Examples
+
+The docs include a Notion-style editor, Markdown output, and a character limit.

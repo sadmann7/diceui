@@ -18,6 +18,7 @@
     "data-grid",
     "data-table",
     "editable",
+    "editor",
     "faceted",
     "file-upload",
     "fps",

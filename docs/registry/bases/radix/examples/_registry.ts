@@ -623,6 +623,50 @@ export const examples: Registry["items"] = [
     ],
   },
   {
+    name: "editor-demo",
+    type: "registry:example",
+    registryDependencies: ["editor"],
+    files: [
+      {
+        path: "examples/editor-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "editor-minimal-demo",
+    type: "registry:example",
+    registryDependencies: ["editor"],
+    files: [
+      {
+        path: "examples/editor-minimal-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "editor-markdown-demo",
+    type: "registry:example",
+    registryDependencies: ["editor"],
+    files: [
+      {
+        path: "examples/editor-markdown-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
+    name: "editor-character-count-demo",
+    type: "registry:example",
+    registryDependencies: ["editor"],
+    files: [
+      {
+        path: "examples/editor-character-count-demo.tsx",
+        type: "registry:example",
+      },
+    ],
+  },
+  {
     name: "file-upload-demo",
     type: "registry:example",
     dependencies: ["sonner"],
