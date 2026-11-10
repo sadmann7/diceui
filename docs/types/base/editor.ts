@@ -3,8 +3,8 @@ import type { AnyExtension, JSONContent } from "@tiptap/core";
 import type { Button } from "@/registry/bases/base/ui/button";
 import type {
   Editor,
-  EditorBlockType,
-  EditorMarkType,
+  EditorBlock,
+  EditorMark,
   EditorSlashMenuItemData,
 } from "@/registry/bases/base/ui/editor";
 import type { SelectTrigger } from "@/registry/bases/base/ui/select";
@@ -12,6 +12,8 @@ import type { Align, EmptyProps, RenderProps, Side } from "@/types";
 
 type ButtonProps = React.ComponentProps<typeof Button>;
 type SelectTriggerProps = React.ComponentProps<typeof SelectTrigger>;
+type EditorMarkType = React.ComponentProps<typeof EditorMark>["mark"];
+type EditorBlockType = React.ComponentProps<typeof EditorBlock>["block"];
 type EditorLabels = NonNullable<React.ComponentProps<typeof Editor>["labels"]>;
 
 export interface EditorProps extends EmptyProps<"div">, RenderProps {
