@@ -23,7 +23,6 @@ beforeAll(() => {
     unobserve() {}
     disconnect() {}
   };
-  // ProseMirror measures ranges to scroll the selection into view.
   const rect = () => new DOMRect(0, 0, 0, 0);
   Range.prototype.getBoundingClientRect ??= rect;
   Range.prototype.getClientRects ??= () => {
@@ -206,7 +205,6 @@ describe.each([
     );
 
     const textbox = await screen.findByRole("textbox");
-    // Parts, like the slash menu's plugin, get the editor once it's created.
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "Bold" })).toBeEnabled(),
     );
@@ -214,8 +212,6 @@ describe.each([
       getTiptap().chain().focus().insertContent("/head").run();
     });
 
-    // jsdom can't position the menu, so it stays `visibility: hidden` and
-    // has no computed accessible name.
     const listbox = await screen.findByRole("listbox", { hidden: true });
     expect(listbox).toHaveAttribute("aria-label", "Commands");
     const getOption = (label: string) =>
