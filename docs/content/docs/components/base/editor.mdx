@@ -126,6 +126,12 @@ Set `limit` to cap the length, and show the count with `EditorCharacterCount`.
 
 HTML from users can contain anything, so sanitize it before rendering it outside the editor.
 
+The editor mounts in the browser, so the content area is empty until it loads. Style `[data-pending]` to show a loading state:
+
+```tsx
+<EditorContent className="data-pending:animate-pulse data-pending:bg-muted" />
+```
+
 ## Slash commands
 
 `EditorSlashMenu` lists a command for each block and a divider. Pass a function to `items` to change them, like adding descriptions or your own commands.
@@ -223,6 +229,10 @@ The root component. Creates the Tiptap editor and holds its content.
       title: "[data-readonly]",
       value: "Present when read-only.",
     },
+    {
+      title: "[data-pending]",
+      value: "Present until the editor has mounted.",
+    },
   ]}
 />
 
@@ -231,6 +241,15 @@ The root component. Creates the Tiptap editor and holds its content.
 The editable area. Its `aria-label`, `aria-labelledby`, `aria-describedby` and `aria-invalid` go on the editable element.
 
 <AutoTypeTable path="./types/base/editor.ts" name="EditorContentProps" />
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-pending]",
+      value: "Present until the editor has mounted.",
+    },
+  ]}
+/>
 
 ### EditorToolbar
 

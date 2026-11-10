@@ -593,6 +593,7 @@ function Editor<TFormat extends EditorFormat = "html">({
     <EditorContext.Provider value={contextValue}>
       <RootPrimitive
         data-slot="editor"
+        data-pending={isCreated ? undefined : ""}
         data-disabled={disabled ? "" : undefined}
         data-readonly={readOnly ? "" : undefined}
         {...props}
@@ -610,7 +611,12 @@ function EditorContent({
   "aria-invalid": ariaInvalid,
   ...props
 }: React.ComponentProps<"div">) {
-  const { instance: editor, labels, editable } = useEditorContext(CONTENT_NAME);
+  const {
+    editor: readyEditor,
+    instance: editor,
+    labels,
+    editable,
+  } = useEditorContext(CONTENT_NAME);
 
   useLayoutEffect(() => {
     if (!editor) return;
@@ -643,6 +649,7 @@ function EditorContent({
     <EditorContentPrimitive
       editor={editor}
       data-slot="editor-content"
+      data-pending={readyEditor ? undefined : ""}
       {...props}
       className={cn("cn-editor-content cn-editor-prose", className)}
     />
