@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc", "react", "import", "nextjs"],
+  "jsPlugins": ["./lint/plugin.ts"],
   "categories": {
     "correctness": "error",
     "suspicious": "warn"
@@ -87,7 +88,9 @@
     "unicorn/no-new-array": "warn",
     "unicorn/no-invalid-remove-event-listener": "warn",
     "unicorn/no-array-sort": "off",
-    "unicorn/catch-error-name": ["warn", { "name": "error" }]
+    "unicorn/catch-error-name": ["warn", { "name": "error" }],
+    "diceui/comment-style": "error",
+    "diceui/no-low-value-comments": "error"
   },
   "overrides": [
     {
