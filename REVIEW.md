@@ -16,7 +16,7 @@ Dice UI ships published `@diceui/*` packages and copy-paste registry components 
 - **Published packages.** Changes to `packages/*` that change behavior or public types need a changeset. Breaking changes need a major or a clear migration note.
 - **Accessibility.** Roles, `aria-*` state, focus management, and keyboard support match the WAI-ARIA pattern for the component. Check RTL for anything directional.
 - **Fixes.** A bug fix names the cause and fixes it, not the symptom.
-- **Comments.** A comment that restates the code, narrates steps, or explains the fix, which belongs in the PR. Lint only checks the form.
+- **Comments.** Comments that restate the code, narrate steps, or explain the fix, and JSDoc on components, parts, or internal helpers. Lint only checks the form.
 
 ## Skip
 
