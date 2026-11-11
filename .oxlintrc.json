@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc", "react", "import", "nextjs"],
+  "jsPlugins": ["./lint/plugin.ts"],
   "categories": {
     "correctness": "error",
     "suspicious": "warn"
@@ -87,9 +88,26 @@
     "unicorn/no-new-array": "warn",
     "unicorn/no-invalid-remove-event-listener": "warn",
     "unicorn/no-array-sort": "off",
-    "unicorn/catch-error-name": ["warn", { "name": "error" }]
+    "unicorn/catch-error-name": ["warn", { "name": "error" }],
+    "diceui/comment-style": "error",
+    "diceui/no-low-value-comments": "error"
   },
   "overrides": [
+    {
+      "files": [
+        "docs/registry/bases/*/components/data-table/**",
+        "docs/registry/bases/*/components/data-grid/**",
+        "docs/registry/bases/*/hooks/use-data-*.ts",
+        "docs/hooks/use-badge-overflow.ts",
+        "docs/hooks/use-debounced-callback.ts",
+        "docs/hooks/use-value-as-ref.ts",
+        "docs/lib/data-*.ts"
+      ],
+      "rules": {
+        "diceui/comment-style": "off",
+        "diceui/no-low-value-comments": "off"
+      }
+    },
     {
       "files": ["**/*.{test,spec}.{ts,tsx}"],
       "env": {

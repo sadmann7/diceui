@@ -51,7 +51,7 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
           (event) => {
             if (isDisabled) return;
 
-            // prevent implicit pointer capture
+            // prevent implicit pointer capture.
             const target = event.target;
             if (!(target instanceof Element)) return;
             if (target.hasPointerCapture(event.pointerId)) {
@@ -63,7 +63,7 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
               !event.ctrlKey &&
               event.pointerType === "mouse"
             ) {
-              // prevent cancel from stealing focus from the input
+              // prevent cancel from stealing focus from the input.
               event.preventDefault();
             }
           },

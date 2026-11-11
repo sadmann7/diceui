@@ -142,7 +142,7 @@ function BadgeOverflow<T = string>(
       const badgeWidth = badgeWidths.get(label);
 
       if (!badgeWidth) {
-        // Skip items that haven't been measured yet
+        // Skip items that haven't been measured yet.
         continue;
       }
 
@@ -163,7 +163,7 @@ function BadgeOverflow<T = string>(
         currentLineWidth = widthWithGap;
         visible.push(item);
       } else {
-        // We're on the last line and this badge doesn't fit
+        // We're on the last line and this badge doesn't fit.
         break;
       }
     }

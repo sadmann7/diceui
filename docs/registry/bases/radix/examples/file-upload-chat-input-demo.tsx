@@ -35,27 +35,27 @@ export default function FileUploadChatInputDemo() {
     async (files, { onProgress, onSuccess, onError }) => {
       try {
         setIsUploading(true);
-        // Process each file individually
+        // Process each file individually.
         const uploadPromises = files.map(async (file) => {
           try {
-            // Simulate file upload with progress
+            // Simulate file upload with progress.
             const totalChunks = 10;
             let uploadedChunks = 0;
 
-            // Simulate chunk upload with delays
+            // Simulate chunk upload with delays.
             for (let i = 0; i < totalChunks; i++) {
-              // Simulate network delay (100-300ms per chunk)
+              // Simulate network delay (100-300ms per chunk).
               await new Promise((resolve) =>
                 setTimeout(resolve, Math.random() * 200 + 100),
               );
 
-              // Update progress for this specific file
+              // Update progress for this specific file.
               uploadedChunks++;
               const progress = (uploadedChunks / totalChunks) * 100;
               onProgress(file, progress);
             }
 
-            // Simulate server processing delay
+            // Simulate server processing delay.
             await new Promise((resolve) => setTimeout(resolve, 500));
             onSuccess(file);
           } catch (error) {
@@ -68,10 +68,10 @@ export default function FileUploadChatInputDemo() {
           }
         });
 
-        // Wait for all uploads to complete
+        // Wait for all uploads to complete.
         await Promise.all(uploadPromises);
       } catch (error) {
-        // This handles any error that might occur outside the individual upload processes
+        // This handles any error that might occur outside the individual upload processes.
         console.error("Unexpected error during upload:", error);
       }
     },
@@ -107,7 +107,7 @@ export default function FileUploadChatInputDemo() {
     >
       <FileUploadDropzone
         tabIndex={-1}
-        // Prevents the dropzone from triggering on click
+        // Prevents the dropzone from triggering on click.
         onClick={(event) => event.preventDefault()}
         className="absolute top-0 left-0 z-0 flex size-full items-center justify-center rounded-none border-none bg-background/50 p-0 opacity-0 backdrop-blur transition-opacity duration-200 ease-out data-dragging:z-10 data-dragging:opacity-100"
       >

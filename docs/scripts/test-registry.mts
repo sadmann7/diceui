@@ -26,7 +26,7 @@ const PROD_URL = "https://diceui.com";
 const LOCAL_URLS = ["http://localhost:3000", "http://localhost:3001"];
 const VERBOSE = process.env.VERBOSE === "true";
 
-// Extract hooks and components from all bases (using default style)
+// Extract hooks and components from all bases (using default style).
 const HOOKS: RegistryItem[] = [];
 const COMPONENTS: RegistryItem[] = [];
 
@@ -34,7 +34,7 @@ for (const base of BASES) {
   const baseName = base.name;
   const registry = registries[baseName];
 
-  // Extract hooks
+  // Extract hooks.
   const baseHooks = registry.items
     .filter((item) => item.type === "registry:hook")
     .map((item) => ({
@@ -45,7 +45,7 @@ for (const base of BASES) {
     }));
   HOOKS.push(...baseHooks);
 
-  // Extract components with @diceui dependencies
+  // Extract components with @diceui dependencies.
   const baseComponents = registry.items
     .filter(
       (item) =>
@@ -62,11 +62,11 @@ for (const base of BASES) {
 }
 
 async function detectServer(): Promise<ServerInfo> {
-  // Use the first hook or component to test server availability
+  // Use the first hook or component to test server availability.
   const testStyleName = `${BASES[0]?.name ?? "base"}-${DEFAULT_STYLE}`;
   const testItemName = HOOKS[0]?.name ?? COMPONENTS[0]?.name ?? "utils";
 
-  // Check local servers first
+  // Check local servers first.
   for (const url of LOCAL_URLS) {
     try {
       const response = await fetch(
@@ -77,11 +77,11 @@ async function detectServer(): Promise<ServerInfo> {
         return { url, local: true };
       }
     } catch {
-      // Server not available, try next
+      // Server not available, try next.
     }
   }
 
-  // Fall back to production
+  // Fall back to production.
   return { url: PROD_URL, local: false };
 }
 
@@ -125,7 +125,7 @@ async function main(): Promise<void> {
   console.log("🧪 Dice UI Registry Test");
   console.log("=======================\n");
 
-  // Detect server
+  // Detect server.
   console.log("🔍 Detecting server...");
   const { url, local } = await detectServer();
   console.log(`✅ ${local ? "Local" : "Production"}: ${url}`);
@@ -141,7 +141,7 @@ async function main(): Promise<void> {
   let failed = 0;
   const failedItems: string[] = [];
 
-  // Test hooks
+  // Test hooks.
   console.log(`🔧 Testing Hooks (${HOOKS.length})...`);
   for (const hook of HOOKS) {
     const result = await testItem(hook, url);
@@ -157,7 +157,7 @@ async function main(): Promise<void> {
     }
   }
 
-  // Test components
+  // Test components.
   console.log(`\n📦 Testing Components (${COMPONENTS.length})...`);
   for (const component of COMPONENTS) {
     const result = await testItem(component, url);
@@ -175,7 +175,7 @@ async function main(): Promise<void> {
 
   const duration = ((Date.now() - startTime) / 1000).toFixed(1);
 
-  // Summary
+  // Summary.
   console.log("\n=======================");
   console.log("Summary");
   console.log("=======================");

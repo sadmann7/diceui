@@ -5,14 +5,14 @@ import { describe, expect, test, vi } from "vitest";
 
 import * as TagsInput from "../src/index";
 
-// Mock ResizeObserver
+// Mock ResizeObserver.
 class ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
-// Add to global
+// Add to global.
 global.ResizeObserver = ResizeObserver;
 
 const placeholder = "Add tag...";
@@ -78,7 +78,7 @@ describe("TagsInput", () => {
 
     expect(onValueChange).toHaveBeenCalledWith(["initial", "new tag"]);
 
-    // Test value update
+    // Test value update.
     rerender(
       <TagsInput.Root
         value={["initial", "new tag"]}
@@ -113,7 +113,7 @@ describe("TagsInput", () => {
     await user.type(input, "tag1,");
     expect(onValueChange).toHaveBeenCalledWith(["initial", "tag1"]);
 
-    // Simulate controlled update
+    // Simulate controlled update.
     rerender(
       <TagsInput.Root value={["initial", "tag1"]} onValueChange={onValueChange}>
         {({ value }) => (
@@ -163,10 +163,10 @@ describe("TagsInput", () => {
       throw new Error("Form element not found");
     }
 
-    // Add a tag and submit
+    // Add a tag and submit.
     await user.type(input, "test tag{Enter}");
 
-    // Submit form after adding tag
+    // Submit form after adding tag.
     fireEvent.submit(form);
     expect(onSubmit).toHaveBeenCalled();
   });
@@ -174,7 +174,7 @@ describe("TagsInput", () => {
   test("handles blur behavior", async () => {
     const user = userEvent.setup();
 
-    // Test "add" behavior
+    // Test "add" behavior.
     const onAddValueChange = vi.fn();
     const { unmount } = renderTagsInput({
       blurBehavior: "add",
@@ -188,7 +188,7 @@ describe("TagsInput", () => {
     expect(onAddValueChange).toHaveBeenCalledWith(["new tag"]);
     unmount();
 
-    // Test "clear" behavior
+    // Test "clear" behavior.
     const onClearValueChange = vi.fn();
     renderTagsInput({
       blurBehavior: "clear",
@@ -222,28 +222,28 @@ describe("TagsInput", () => {
 
     await user.dblClick(tagContainer);
 
-    // After double click, wait for the edit input to appear
+    // After double click, wait for the edit input to appear.
     const editInput = await screen.findByDisplayValue("initial tag");
     expect(editInput).toBeInTheDocument();
 
-    // Edit the tag
+    // Edit the tag.
     await user.clear(editInput);
     await user.type(editInput, "edited tag{Enter}");
 
-    // Wait for the edit to complete and verify the changes
+    // Wait for the edit to complete and verify the changes.
     await screen.findByText("edited tag");
 
     // Verify onValueChange was called with both tags
-    // The component appends the edited tag rather than replacing
+    // The component appends the edited tag rather than replacing.
     expect(onValueChange).toHaveBeenLastCalledWith([
       "initial tag",
       "edited tag",
     ]);
 
-    // Verify we're back in normal mode (no edit input)
+    // Back in normal mode, with no edit input.
     expect(screen.queryByDisplayValue("edited tag")).not.toBeInTheDocument();
 
-    // Both tags should be visible
+    // Both tags should be visible.
     expect(screen.getByText("initial tag")).toBeInTheDocument();
     expect(screen.getByText("edited tag")).toBeInTheDocument();
   });
@@ -258,7 +258,7 @@ describe("TagsInput", () => {
     const input = screen.getByPlaceholderText(placeholder);
     expect(input).toBeDisabled();
 
-    // Try to delete tag
+    // Try to delete tag.
     const deleteButton = screen.getByLabelText("Remove tag");
     await user.click(deleteButton);
     expect(screen.getByText("tag1")).toBeInTheDocument();
@@ -286,7 +286,7 @@ describe("TagsInput", () => {
 
     const input = screen.getByPlaceholderText(placeholder);
 
-    // Try adding tag that's too long
+    // Try adding tag that's too long.
     await user.type(input, "this is a very long tag{Enter}");
     expect(onValidate).toHaveBeenCalledWith("this is a very long tag");
     expect(onInvalid).toHaveBeenCalledWith("this is a very long tag");
@@ -294,7 +294,7 @@ describe("TagsInput", () => {
       screen.queryByText("this is a very long tag"),
     ).not.toBeInTheDocument();
 
-    // Add valid tag
+    // Add valid tag.
     await user.clear(input);
     await user.type(input, "short tag{Enter}");
     expect(onValidate).toHaveBeenCalledWith("short tag");
@@ -339,26 +339,26 @@ describe("TagsInput", () => {
       loop: true,
     });
 
-    await user.tab(); // Focus input
-    await user.keyboard("{ArrowLeft}"); // Move to last tag
+    await user.tab(); // Focus input.
+    await user.keyboard("{ArrowLeft}"); // Move to last tag.
     expect(screen.getByText("tag3").closest("div")).toHaveAttribute(
       "data-state",
       "active",
     );
 
-    await user.keyboard("{ArrowLeft}"); // Move to second tag
+    await user.keyboard("{ArrowLeft}"); // Move to second tag.
     expect(screen.getByText("tag2").closest("div")).toHaveAttribute(
       "data-state",
       "active",
     );
 
-    await user.keyboard("{ArrowLeft}"); // Move to first tag
+    await user.keyboard("{ArrowLeft}"); // Move to first tag.
     expect(screen.getByText("tag1").closest("div")).toHaveAttribute(
       "data-state",
       "active",
     );
 
-    // Test loop from first to last
+    // Test loop from first to last.
     await user.keyboard("{ArrowLeft}");
     expect(screen.getByText("tag3").closest("div")).toHaveAttribute(
       "data-state",
@@ -439,15 +439,15 @@ describe("TagsInput", () => {
 
     const submitButton = screen.getByText("Submit");
 
-    // Try submitting without tags
+    // Try submitting without tags.
     await user.click(submitButton);
     expect(mockSubmit).not.toHaveBeenCalled();
 
-    // Add a tag
+    // Add a tag.
     const input = screen.getByPlaceholderText(placeholder);
     await user.type(input, "tag1{Enter}");
 
-    // Try submitting with a tag
+    // Try submitting with a tag.
     await user.click(submitButton);
     expect(mockSubmit).toHaveBeenCalled();
   });
@@ -489,18 +489,18 @@ describe("TagsInput", () => {
       </form>,
     );
 
-    // Verify initial state
+    // Verify initial state.
     expect(screen.getByText("initial")).toBeInTheDocument();
 
-    // Add new tag
+    // Add new tag.
     const input = screen.getByPlaceholderText(placeholder);
     await user.type(input, "new tag{Enter}");
 
-    // Reset form
+    // Reset form.
     const resetButton = screen.getByText("Reset");
     await user.click(resetButton);
 
-    // Verify reset state
+    // Verify reset state.
     expect(onValueChange).toHaveBeenLastCalledWith(["initial"]);
     expect(screen.getByText("initial")).toBeInTheDocument();
     expect(screen.queryByText("new tag")).not.toBeInTheDocument();
@@ -516,16 +516,16 @@ describe("TagsInput", () => {
       onValueChange,
     });
 
-    // Input should be readOnly
+    // Input should be readOnly.
     const input = screen.getByPlaceholderText(placeholder);
     expect(input).toHaveAttribute("readOnly");
 
-    // Try to add a new tag
+    // Try to add a new tag.
     await user.type(input, "new tag{Enter}");
     expect(screen.queryByText("new tag")).not.toBeInTheDocument();
     expect(onValueChange).not.toHaveBeenCalled();
 
-    // Try to delete existing tag
+    // Try to delete existing tag.
     const deleteButton = screen.getAllByLabelText("Remove tag")[0];
     if (!deleteButton) {
       throw new Error("Delete button not found");
@@ -534,7 +534,7 @@ describe("TagsInput", () => {
     expect(screen.getByText("tag1")).toBeInTheDocument();
     expect(onValueChange).not.toHaveBeenCalled();
 
-    // Verify all initial tags remain
+    // Verify all initial tags remain.
     expect(screen.getByText("tag1")).toBeInTheDocument();
     expect(screen.getByText("tag2")).toBeInTheDocument();
   });
@@ -564,24 +564,24 @@ describe("TagsInput", () => {
       </TagsInput.Root>,
     );
 
-    // Test label association
+    // Test label association.
     const input = screen.getByLabelText("Tags");
     expect(input).toHaveAttribute("aria-describedby", "tagsHint");
 
-    // Test delete button accessibility
+    // Test delete button accessibility.
     const deleteButtons = screen.getAllByRole("button");
     expect(deleteButtons[0]).toHaveAttribute("aria-label", "Remove tag1");
     expect(deleteButtons[1]).toHaveAttribute("aria-label", "Remove tag2");
 
-    // Test keyboard navigation
-    await user.tab(); // Focus input
-    await user.keyboard("{ArrowLeft}"); // Move to last tag
+    // Test keyboard navigation.
+    await user.tab(); // Focus input.
+    await user.keyboard("{ArrowLeft}"); // Move to last tag.
     expect(screen.getByText("tag2").closest("div")).toHaveAttribute(
       "data-state",
       "active",
     );
 
-    // Test focus management after deletion
+    // Test focus management after deletion.
     await user.keyboard("{Delete}");
     expect(screen.queryByText("tag2")).not.toBeInTheDocument();
     expect(document.activeElement).toBe(input);

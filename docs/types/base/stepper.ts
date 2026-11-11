@@ -122,7 +122,7 @@ export interface StepperProps extends RenderProps {
   disabled?: boolean;
 
   /**
-   * Whether keyboard navigation should loop around
+   * Whether keyboard navigation should loop around.
    * @defaultValue false
    */
   loop?: boolean;

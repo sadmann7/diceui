@@ -61,15 +61,15 @@ const ComboboxTrigger = React.forwardRef<
         (event) => {
           if (context.disabled) return;
 
-          // prevent implicit pointer capture
+          // prevent implicit pointer capture.
           const target = event.target;
           if (!(target instanceof Element)) return;
           if (target.hasPointerCapture(event.pointerId)) {
             target.releasePointerCapture(event.pointerId);
           }
 
-          // Only prevent default if we're not clicking on the input
-          // This allows text selection in the input while still preventing focus stealing elsewhere
+          // Clicks on the input keep their default so its text stays selectable, while
+          // clicks elsewhere can't steal focus.
           if (
             event.button === 0 &&
             !event.ctrlKey &&

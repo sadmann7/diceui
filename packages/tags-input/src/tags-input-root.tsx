@@ -96,7 +96,7 @@ interface TagsInputRootProps<T = InputValue> extends Omit<
   disabled?: boolean;
 
   /**
-   * Allow editing of existing tags
+   * Allow editing of existing tags.
    * @default false
    */
   editable?: boolean;
@@ -545,7 +545,7 @@ const TagsInputRoot = React.forwardRef<CollectionElement, TagsInputRootProps>(
         if (!(target instanceof HTMLElement)) return;
 
         if (getIsClickedInEmptyRoot(target)) {
-          // prevent root from stealing focus from the input
+          // prevent root from stealing focus from the input.
           event.preventDefault();
         }
       },

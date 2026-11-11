@@ -28,12 +28,12 @@ function useEventCallback<E, T extends AnyFunction>(
 ): (event: E, ...args: Parameters<T>) => ReturnType<T> {
   const callbackRef = React.useRef(callback);
 
-  // Update ref each render so the callback stays fresh
+  // Update ref each render so the callback stays fresh.
   React.useLayoutEffect(() => {
     callbackRef.current = callback;
   });
 
-  // Return stable function reference
+  // Return stable function reference.
   return React.useCallback((event: E, ...args: Parameters<T>) => {
     const fn = callbackRef.current;
     return fn(event, ...args);

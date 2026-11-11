@@ -51,11 +51,10 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   onDataChange?: (data: TData[], details: DataChangeDetails<TData>) => void;
 
   /**
-   * Creates a new row when the user adds one.
-   * `details.reason` is `"add-row-press"` for the footer button, `"insert-below"`
-   * for Shift+Enter on a cell (with `afterRowId`), or `"paste"` when a paste needs more rows.
-   * The grid inserts the returned row and focuses it. Return null to skip adding a row.
-   * Can be async to support server-side row creation.
+   * Creates a new row when the user adds one, and can be async for server-side creation.
+   * `details.reason` is `"add-row-press"` for the footer button, `"insert-below"` for
+   * Shift+Enter on a cell (with `afterRowId`), or `"paste"` when a paste needs more rows.
+   * The grid inserts and focuses the returned row. Return null to skip adding one.
    *
    * ```ts
    * createRow={async () => {

@@ -26,7 +26,7 @@ export default function SpeedDialControlledDemo() {
         </SpeedDialTrigger>
         <SpeedDialContent
           onInteractOutside={(event) => {
-            // Prevent closing when clicking the external trigger
+            // Prevent closing when clicking the external trigger.
             if (
               externalTriggerRef.current?.contains(
                 event.detail.originalEvent.target as Node,

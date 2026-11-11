@@ -4,14 +4,14 @@ import { describe, expect, test, vi } from "vitest";
 
 import * as CheckboxGroup from "../src/index";
 
-// Mock ResizeObserver
+// Mock ResizeObserver.
 class ResizeObserverMock {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
-// Add to global
+// Add to global.
 global.ResizeObserver = ResizeObserverMock;
 
 describe("CheckboxGroup", () => {
@@ -118,7 +118,7 @@ describe("CheckboxGroup", () => {
       </CheckboxGroup.Root>,
     );
 
-    // Select first two items
+    // Select first two items.
     await user.click(screen.getByRole("checkbox", { name: "Kickflip" }));
     await user.click(screen.getByRole("checkbox", { name: "Heelflip" }));
     expect(onValidate).toHaveBeenCalledWith(["kickflip", "heelflip"]);
@@ -126,7 +126,7 @@ describe("CheckboxGroup", () => {
       screen.queryByText("Maximum 2 items allowed"),
     ).not.toBeInTheDocument();
 
-    // Try to select third item
+    // Try to select third item.
     await user.click(screen.getByRole("checkbox", { name: "FS 540" }));
     expect(onValidate).toHaveBeenCalledWith(["kickflip", "heelflip", "fs-540"]);
     expect(screen.getByText("Maximum 2 items allowed")).toBeInTheDocument();
@@ -186,11 +186,11 @@ describe("CheckboxGroup", () => {
 
     const submitButton = screen.getByText("Submit");
 
-    // Try submitting without selection
+    // Try submitting without selection.
     await user.click(submitButton);
     expect(onSubmit).not.toHaveBeenCalled();
 
-    // Select an item and submit
+    // Select an item and submit.
     await user.click(screen.getByRole("checkbox", { name: "Kickflip" }));
     await user.click(submitButton);
     expect(onSubmit).toHaveBeenCalledTimes(1);
@@ -202,19 +202,19 @@ describe("CheckboxGroup", () => {
 
     const checkboxes = screen.getAllByRole("checkbox");
 
-    // Tab to first checkbox
+    // Tab to first checkbox.
     await user.tab();
     expect(checkboxes[0]).toHaveFocus();
 
-    // Space to select
+    // Space to select.
     await user.keyboard(" ");
     expect(checkboxes[0]).toHaveAttribute("aria-checked", "true");
 
-    // Tab to next checkbox
+    // Tab to next checkbox.
     await user.tab();
     expect(checkboxes[1]).toHaveFocus();
 
-    // Space to select
+    // Space to select.
     await user.keyboard(" ");
     expect(checkboxes[1]).toHaveAttribute("aria-checked", "true");
   });
@@ -235,23 +235,23 @@ describe("CheckboxGroup", () => {
   test("supports accessibility features", () => {
     const { unmount } = renderCheckboxGroup();
 
-    // Test group role and ARIA attributes
+    // Test group role and ARIA attributes.
     const group = screen.getByRole("group", { name: "Favorite tricks" });
     expect(group).toBeInTheDocument();
     expect(group).toHaveAttribute("aria-labelledby");
     expect(group).toHaveAttribute("aria-describedby");
     expect(group).toHaveAttribute("aria-orientation", "vertical");
 
-    // Test label and description
+    // Test label and description.
     expect(screen.getByText("Favorite tricks")).toBeInTheDocument();
     expect(screen.getByText("Select your favorite tricks")).toBeInTheDocument();
 
-    // Test checkbox roles and states
+    // Test checkbox roles and states.
     const kickflipCheckbox = screen.getByRole("checkbox", { name: "Kickflip" });
     const heelflipCheckbox = screen.getByRole("checkbox", { name: "Heelflip" });
     const fs540Checkbox = screen.getByRole("checkbox", { name: "FS 540" });
 
-    // Test checkbox attributes
+    // Test checkbox attributes.
     const checkboxes = [kickflipCheckbox, heelflipCheckbox, fs540Checkbox];
     for (const checkbox of checkboxes) {
       expect(checkbox).toHaveAttribute("type", "button");
@@ -259,10 +259,10 @@ describe("CheckboxGroup", () => {
       expect(checkbox).toHaveAttribute("aria-disabled", "false");
     }
 
-    // Clean up previous render
+    // Clean up previous render.
     unmount();
 
-    // Test disabled state in a new render
+    // Test disabled state in a new render.
     renderCheckboxGroup({ disabled: true });
     const disabledCheckbox = screen.getByRole("checkbox", { name: "Kickflip" });
     expect(disabledCheckbox).toHaveAttribute("aria-disabled", "true");

@@ -8,7 +8,7 @@ import {
   type MaskPattern,
 } from "@/registry/bases/base/ui/mask-input";
 
-// Custom license plate pattern (e.g., ABC-1234)
+// Custom license plate pattern (e.g., ABC-1234).
 const licensePattern: MaskPattern = {
   pattern: "###-####",
   transform: (value) => value.replace(/[^A-Z0-9]/gi, "").toUpperCase(),
@@ -18,29 +18,29 @@ const licensePattern: MaskPattern = {
   },
 };
 
-// Custom product code pattern (e.g., PRD-ABC-123)
+// Custom product code pattern (e.g., PRD-ABC-123).
 const productCodePattern: MaskPattern = {
   pattern: "###-###-###",
   transform: (value) => {
     const cleaned = value.replace(/[^A-Z0-9]/gi, "").toUpperCase();
 
-    // If empty or just partial PRD, allow it to be empty
+    // If empty or just partial PRD, allow it to be empty.
     if (cleaned.length === 0) {
       return "";
     }
 
     // If user is typing and it doesn't start with PRD, prepend it
-    // But only if they have more than just partial PRD characters
+    // But only if they have more than just partial PRD characters.
     if (!cleaned.startsWith("PRD")) {
-      // If user typed partial PRD (like "P" or "PR"), don't auto-complete
+      // If user typed partial PRD (like "P" or "PR"), don't auto-complete.
       if (cleaned.length <= 2 && "PRD".startsWith(cleaned)) {
         return cleaned;
       }
-      // Otherwise, prepend PRD to their input
+      // Otherwise, prepend PRD to their input.
       return `PRD${cleaned}`;
     }
 
-    // If it already starts with PRD, keep as is
+    // If it already starts with PRD, keep as is.
     return cleaned;
   },
   validate: (value) => {

@@ -73,7 +73,7 @@ describe("Slot", () => {
     );
 
     const element = screen.getByText("Styled Content");
-    // Child's color overrides slot's color
+    // Child's color overrides slot's color.
     expect(element).toHaveStyle(
       "color: rgb(0, 0, 255); font-size: 16px; font-weight: 700;",
     );

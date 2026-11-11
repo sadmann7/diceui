@@ -9,7 +9,7 @@ export interface TimePickerProps extends RenderProps {
 
   /**
    * The default value for uncontrolled usage.
-   * Format: "HH:mm" or "HH:mm:ss"
+   * Format: "HH:mm" or "HH:mm:ss".
    * @default ""
    *
    * ```ts

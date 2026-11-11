@@ -12,7 +12,7 @@ export default function PendingDemo() {
 
   const onSubmit = React.useCallback(() => {
     setIsSubmitting(true);
-    // Simulate API call
+    // Simulate API call.
     setTimeout(() => {
       setIsSubmitting(false);
     }, 2000);

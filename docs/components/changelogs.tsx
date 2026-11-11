@@ -36,7 +36,7 @@ export function Changelogs() {
                 id={slug}
                 className={cn(
                   "not-prose text-2xl font-semibold tracking-tight",
-                  // The first entry scrolls to the top of the page, keeping the page description in view
+                  // The first entry scrolls to the top of the page, keeping the page description in view.
                   index === 0 ? "scroll-mt-96" : "scroll-mt-20 md:scroll-mt-10",
                 )}
               >

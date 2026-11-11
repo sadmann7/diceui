@@ -123,7 +123,7 @@ export interface StepperProps extends EmptyProps<"div">, CompositionProps {
   disabled?: boolean;
 
   /**
-   * Whether keyboard navigation should loop around
+   * Whether keyboard navigation should loop around.
    * @defaultValue false
    */
   loop?: boolean;

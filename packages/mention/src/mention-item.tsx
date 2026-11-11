@@ -106,7 +106,7 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
             (event) => {
               if (isDisabled) return;
 
-              // prevent implicit pointer capture
+              // prevent implicit pointer capture.
               const target = event.target;
               if (!(target instanceof HTMLElement)) return;
               if (target.hasPointerCapture(event.pointerId)) {
@@ -114,7 +114,7 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
               }
 
               if (event.button === 0 && !event.ctrlKey) {
-                // prevent item from stealing focus from the input for both mouse and touch
+                // prevent item from stealing focus from the input for both mouse and touch.
                 event.preventDefault();
               }
             },

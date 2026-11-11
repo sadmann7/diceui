@@ -21,18 +21,18 @@ export default function FileUploadValidationDemo() {
 
   const onFileValidate = React.useCallback(
     (file: File): string | null => {
-      // Validate max files
+      // Validate max files.
       if (files.length >= 2) {
         return "You can only upload up to 2 files";
       }
 
-      // Validate file type (only images)
+      // Validate file type (only images).
       if (!file.type.startsWith("image/")) {
         return "Only image files are allowed";
       }
 
-      // Validate file size (max 2MB)
-      const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+      // Validate file size (max 2MB).
+      const MAX_SIZE = 2 * 1024 * 1024; // 2MB.
       if (file.size > MAX_SIZE) {
         return `File size must be less than ${MAX_SIZE / (1024 * 1024)}MB`;
       }

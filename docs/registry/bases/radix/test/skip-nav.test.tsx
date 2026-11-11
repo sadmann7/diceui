@@ -12,7 +12,7 @@ import {
 } from "@/registry/bases/radix/components/skip-nav";
 
 beforeAll(() => {
-  // jsdom doesn't implement scrollIntoView
+  // jsdom doesn't implement scrollIntoView.
   Element.prototype.scrollIntoView = vi.fn();
 });
 

@@ -10,25 +10,25 @@ import { describe, expect, test, vi } from "vitest";
 
 import * as Combobox from "../src/index";
 
-// Mock ResizeObserver
+// Mock ResizeObserver.
 class ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
-// Add to global
+// Add to global.
 global.ResizeObserver = ResizeObserver;
 
-// Mock requestAnimationFrame
+// Mock requestAnimationFrame.
 global.requestAnimationFrame = (fn) => setTimeout(fn, 0);
 
-// Mock pointer capture methods
+// Mock pointer capture methods.
 Element.prototype.setPointerCapture = vi.fn();
 Element.prototype.releasePointerCapture = vi.fn();
 Element.prototype.hasPointerCapture = vi.fn();
 
-// Mock scrollIntoView
+// Mock scrollIntoView.
 Element.prototype.scrollIntoView = vi.fn();
 
 function getInputPlaceholder(multiple?: boolean) {
@@ -106,11 +106,11 @@ describe("Combobox", () => {
     const trigger = screen.getByTestId("trigger");
     const input = screen.getByPlaceholderText(getInputPlaceholder());
 
-    // Test initial state
+    // Test initial state.
     expect(input).toHaveValue("kickflip");
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 
-    // Test open state
+    // Test open state.
     await waitFor(() => {
       fireEvent.click(trigger);
     });
@@ -118,11 +118,11 @@ describe("Combobox", () => {
     expect(onOpenChange).toHaveBeenCalledWith(true);
     expect(screen.getByRole("listbox")).toBeInTheDocument();
 
-    // Test selected item state
+    // Test selected item state.
     const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
     expect(kickflipOption).toHaveAttribute("aria-selected", "true");
 
-    // Test selecting a new item
+    // Test selecting a new item.
     const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
     await waitFor(() => {
       fireEvent.click(heelflipOption);
@@ -130,7 +130,7 @@ describe("Combobox", () => {
     expect(onValueChange).toHaveBeenCalledWith("heelflip");
     expect(onOpenChange).toHaveBeenCalledWith(false);
 
-    // Test input typing
+    // Test input typing.
     fireEvent.change(input, { target: { value: "fs" } });
     await waitFor(() => {
       expect(onInputValueChange).toHaveBeenCalledWith("fs");
@@ -140,14 +140,14 @@ describe("Combobox", () => {
     expect(kickflipOption).not.toBeInTheDocument();
     expect(heelflipOption).not.toBeInTheDocument();
 
-    // Navigate to the filtered option
+    // Navigate to the filtered option.
     fireEvent.keyDown(input, { key: "ArrowDown" });
     await waitFor(() => {
       expect(fs540Option).toHaveAttribute("data-highlighted", "");
       expect(input).toHaveAttribute("aria-activedescendant", fs540Option.id);
     });
 
-    // Select the highlighted option
+    // Select the highlighted option.
     fireEvent.keyDown(input, { key: "Enter" });
     expect(onValueChange).toHaveBeenCalledWith("fs-540");
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -165,19 +165,19 @@ describe("Combobox", () => {
     const input = screen.getByPlaceholderText(getInputPlaceholder());
     const trigger = screen.getByTestId("trigger");
 
-    // Open the combobox
+    // Open the combobox.
     fireEvent.click(trigger);
     await waitFor(() => {
       expect(screen.getByRole("listbox")).toBeInTheDocument();
     });
 
-    // Focus the input
+    // Focus the input.
     fireEvent.focus(input);
     await waitFor(() => {
       expect(input).toHaveFocus();
     });
 
-    // Test keyboard navigation
+    // Test keyboard navigation.
     fireEvent.keyDown(input, { key: "ArrowDown" });
     await waitFor(() => {
       const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
@@ -185,7 +185,7 @@ describe("Combobox", () => {
       expect(input).toHaveAttribute("aria-activedescendant", kickflipOption.id);
     });
 
-    // Test selection
+    // Test selection.
     fireEvent.keyDown(input, { key: "Enter" });
     expect(onValueChange).toHaveBeenCalledWith("kickflip");
     expect(onOpenChange).toHaveBeenCalledWith(false);
@@ -205,13 +205,13 @@ describe("Combobox", () => {
     const input = screen.getByPlaceholderText(getInputPlaceholder(true));
     const trigger = screen.getByTestId("trigger");
 
-    // Open the combobox
+    // Open the combobox.
     fireEvent.click(trigger);
     await waitFor(() => {
       expect(screen.getByTestId("content")).toBeInTheDocument();
     });
 
-    // Select another item
+    // Select another item.
     const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
     await waitFor(() => {
       fireEvent.click(heelflipOption);
@@ -220,7 +220,7 @@ describe("Combobox", () => {
     expect(onValueChange).toHaveBeenCalledWith(["kickflip", "heelflip"]);
     expect(input).toHaveValue("");
 
-    // Delete a badge using keyboard navigation
+    // Delete a badge using keyboard navigation.
     fireEvent.keyDown(input, { key: "ArrowLeft" });
     await waitFor(() => {
       expect(screen.getByRole("option", { name: "kickflip" })).toHaveAttribute(
@@ -245,17 +245,17 @@ describe("Combobox", () => {
 
     const input = screen.getByPlaceholderText(getInputPlaceholder(true));
 
-    // Focus input and navigate to badges
+    // Focus input and navigate to badges.
     fireEvent.focus(input);
     fireEvent.keyDown(input, { key: "ArrowLeft" });
 
-    // Check if the last badge is highlighted
+    // Check if the last badge is highlighted.
     const lastBadge = screen
       .getByText("heelflip")
       .closest("[data-highlighted]");
     expect(lastBadge).toBeInTheDocument();
 
-    // Delete highlighted badge with Enter
+    // Delete highlighted badge with Enter.
     fireEvent.keyDown(input, { key: "Enter" });
     expect(onValueChange).toHaveBeenCalledWith(["kickflip"]);
   });
@@ -264,7 +264,7 @@ describe("Combobox", () => {
     renderCombobox();
     const input = screen.getByPlaceholderText(getInputPlaceholder());
 
-    // Type fuzzy match
+    // Type fuzzy match.
     fireEvent.change(input, { target: { value: "flp" } });
 
     const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
@@ -277,7 +277,7 @@ describe("Combobox", () => {
       expect(fs540Option).not.toBeInTheDocument();
     });
 
-    // Type exact match
+    // Type exact match.
     fireEvent.change(input, { target: { value: "Kickflip" } });
     await waitFor(() => {
       expect(kickflipOption).toBeInTheDocument();
@@ -294,14 +294,14 @@ describe("Combobox", () => {
     const input = screen.getByPlaceholderText(getInputPlaceholder());
     const trigger = screen.getByTestId("trigger");
 
-    // Open the combobox
+    // Open the combobox.
     fireEvent.click(trigger);
 
     const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
     const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
     const fs540Option = screen.getByRole("option", { name: "FS 540" });
 
-    // Type exact match
+    // Type exact match.
     fireEvent.change(input, { target: { value: "Kickflip" } });
     await waitFor(() => {
       expect(kickflipOption).toBeInTheDocument();
@@ -309,7 +309,7 @@ describe("Combobox", () => {
       expect(fs540Option).not.toBeInTheDocument();
     });
 
-    // Type partial match
+    // Type partial match.
     fireEvent.change(input, { target: { value: "kick" } });
     await waitFor(() => {
       expect(kickflipOption).toBeInTheDocument();
@@ -330,10 +330,10 @@ describe("Combobox", () => {
 
     const input = screen.getByPlaceholderText(getInputPlaceholder());
 
-    // Type to filter
+    // Type to filter.
     fireEvent.change(input, { target: { value: "FLIP" } });
 
-    // Check if case-insensitive filtering works
+    // Check if case-insensitive filtering works.
     await waitFor(() => {
       expect(screen.getByText("Kickflip")).toBeInTheDocument();
       expect(screen.getByText("Heelflip")).toBeInTheDocument();
@@ -348,7 +348,7 @@ describe("Combobox", () => {
 
     const input = screen.getByPlaceholderText(getInputPlaceholder());
 
-    // Focus should open the combobox
+    // Focus should open the combobox.
     fireEvent.focus(input);
     await waitFor(() => {
       expect(screen.getByRole("listbox")).toBeInTheDocument();
@@ -362,7 +362,7 @@ describe("Combobox", () => {
 
     const input = screen.getByPlaceholderText(getInputPlaceholder());
 
-    // Type something and blur
+    // Type something and blur.
     fireEvent.change(input, { target: { value: "test" } });
     await waitFor(() => {
       expect(input).toHaveValue("test");
@@ -414,11 +414,11 @@ describe("Combobox", () => {
   test("supports RTL direction", async () => {
     renderCombobox({ dir: "rtl" });
     const input = screen.getByPlaceholderText(getInputPlaceholder());
-    // Input is inside an anchor
+    // Input is inside an anchor.
     const anchor = input.closest("div[dir]");
     const trigger = screen.getByTestId("trigger");
 
-    // Open the combobox
+    // Open the combobox.
     fireEvent.click(trigger);
     const content = screen.getByRole("listbox");
 
@@ -437,17 +437,17 @@ describe("Combobox", () => {
     const input = screen.getByPlaceholderText(getInputPlaceholder());
     const trigger = screen.getByTestId("trigger");
 
-    // Open the combobox
+    // Open the combobox.
     fireEvent.click(trigger);
 
-    // First option should be automatically highlighted
+    // First option should be automatically highlighted.
     await waitFor(() => {
       const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
       expect(kickflipOption).toHaveAttribute("data-highlighted", "");
       expect(input).toHaveAttribute("aria-activedescendant", kickflipOption.id);
     });
 
-    // Type to filter and check if highlight updates
+    // Type to filter and check if highlight updates.
     fireEvent.change(input, { target: { value: "heel" } });
     await waitFor(() => {
       const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
@@ -457,7 +457,7 @@ describe("Combobox", () => {
   });
 
   test("handles badge list orientation", async () => {
-    // Test default horizontal orientation
+    // Test default horizontal orientation.
     renderCombobox({
       value: ["kickflip", "heelflip"],
       multiple: true,
@@ -473,7 +473,7 @@ describe("Combobox", () => {
       "horizontal",
     );
 
-    // Cleanup and test vertical orientation
+    // Cleanup and test vertical orientation.
     cleanup();
     renderCombobox({
       value: ["kickflip", "heelflip"],
@@ -494,7 +494,7 @@ describe("Combobox", () => {
 
     const badges = screen.getAllByRole("option");
 
-    // Focus first badge
+    // Focus first badge.
     const firstBadge = badges[0];
     if (firstBadge) {
       fireEvent.focus(firstBadge);
@@ -504,7 +504,7 @@ describe("Combobox", () => {
       });
     }
 
-    // Focus second badge
+    // Focus second badge.
     const secondBadge = badges[1];
     if (secondBadge) {
       fireEvent.focus(secondBadge);
@@ -515,7 +515,7 @@ describe("Combobox", () => {
         expect(firstBadge).not.toHaveAttribute("aria-selected", "true");
       });
 
-      // Blur should remove highlight
+      // Blur should remove highlight.
       fireEvent.blur(secondBadge);
       await waitFor(() => {
         expect(secondBadge).not.toHaveAttribute("data-highlighted");
@@ -536,28 +536,28 @@ describe("Combobox", () => {
     const input = screen.getByPlaceholderText(getInputPlaceholder(true));
     const badges = screen.getAllByRole("option");
 
-    // Focus input and navigate to badges
+    // Focus input and navigate to badges.
     fireEvent.focus(input);
     fireEvent.keyDown(input, { key: "ArrowLeft" });
 
-    // Check if the last badge is highlighted
+    // Check if the last badge is highlighted.
     await waitFor(() => {
       expect(badges[1]).toHaveAttribute("data-highlighted", "");
       expect(badges[1]).toHaveAttribute("aria-selected", "true");
     });
 
-    // Navigate to previous badge
+    // Navigate to previous badge.
     fireEvent.keyDown(input, { key: "ArrowLeft" });
     await waitFor(() => {
       expect(badges[0]).toHaveAttribute("data-highlighted", "");
       expect(badges[0]).toHaveAttribute("aria-selected", "true");
     });
 
-    // Delete highlighted badge with Enter
+    // Delete highlighted badge with Enter.
     fireEvent.keyDown(input, { key: "Enter" });
     expect(onValueChange).toHaveBeenCalledWith(["heelflip"]);
 
-    // Navigate back to input
+    // Navigate back to input.
     fireEvent.keyDown(input, { key: "ArrowRight" });
     await waitFor(() => {
       expect(badges[0]).not.toHaveAttribute("data-highlighted");
@@ -575,11 +575,11 @@ describe("Combobox", () => {
 
     const input = screen.getByPlaceholderText(getInputPlaceholder(true));
 
-    // Press backspace with empty input
+    // Press backspace with empty input.
     fireEvent.keyDown(input, { key: "Backspace" });
     expect(onValueChange).toHaveBeenCalledWith(["kickflip"]);
 
-    // Reset mock and test delete key
+    // Reset mock and test delete key.
     onValueChange.mockReset();
     fireEvent.keyDown(input, { key: "Delete" });
     expect(onValueChange).toHaveBeenCalledWith(["kickflip"]);
@@ -596,7 +596,7 @@ describe("Combobox", () => {
     const input = screen.getByPlaceholderText(getInputPlaceholder(true));
     const badges = screen.getAllByRole("option");
 
-    // Navigate to highlight second badge
+    // Navigate to highlight second badge.
     fireEvent.focus(input);
     fireEvent.keyDown(input, { key: "ArrowLeft" });
     fireEvent.keyDown(input, { key: "ArrowLeft" });
@@ -605,27 +605,27 @@ describe("Combobox", () => {
       expect(badges[1]).toHaveAttribute("data-highlighted", "");
     });
 
-    // Delete highlighted badge with backspace
+    // Delete highlighted badge with backspace.
     fireEvent.keyDown(input, { key: "Backspace" });
     expect(onValueChange).toHaveBeenCalledWith(["kickflip", "fs-540"]);
 
-    // Verify highlighted index updates
+    // Verify highlighted index updates.
     const updatedBadges = screen.getAllByRole("option");
     await waitFor(() => {
       expect(updatedBadges[0]).toHaveAttribute("data-highlighted", "");
     });
 
-    // Delete highlighted badge with delete key
+    // Delete highlighted badge with delete key.
     onValueChange.mockReset();
     fireEvent.keyDown(input, { key: "Delete" });
     expect(onValueChange).toHaveBeenCalledWith(["heelflip", "fs-540"]);
 
-    // Return focus to input to clear highlight
+    // Return focus to input to clear highlight.
     fireEvent.keyDown(input, { key: "ArrowRight" });
     fireEvent.keyDown(input, { key: "ArrowRight" });
     fireEvent.focus(input);
 
-    // Verify highlight is removed
+    // Verify highlight is removed.
     const finalBadges = screen.getAllByRole("option");
     await waitFor(() => {
       expect(finalBadges[0]).not.toHaveAttribute("data-highlighted");
@@ -645,7 +645,7 @@ describe("Combobox", () => {
 
     const input = screen.getByPlaceholderText(getInputPlaceholder(true));
 
-    // Type something in input and ensure the value is set
+    // Type something in input and ensure the value is set.
     fireEvent.focus(input);
     fireEvent.change(input, { target: { value: "test" } });
 
@@ -655,11 +655,11 @@ describe("Combobox", () => {
 
     onValueChange.mockReset();
 
-    // Press backspace with non-empty input - should not remove badge
+    // Press backspace with non-empty input - should not remove badge.
     fireEvent.keyDown(input, { key: "Backspace" });
     expect(onValueChange).not.toHaveBeenCalled();
 
-    // Press delete with non-empty input - should not remove badge
+    // Press delete with non-empty input - should not remove badge.
     fireEvent.keyDown(input, { key: "Delete" });
     expect(onValueChange).not.toHaveBeenCalled();
   });
@@ -684,13 +684,13 @@ describe("Combobox", () => {
     const badges = screen.getAllByRole("option");
     expect(badges).toHaveLength(2);
 
-    // First badge
+    // First badge.
     expect(badges[0]).toHaveAttribute("aria-posinset", "1");
     expect(badges[0]).toHaveAttribute("aria-setsize", "2");
     expect(badges[0]).toHaveAttribute("aria-orientation", "horizontal");
     expect(badges[0]).toHaveAttribute("data-orientation", "horizontal");
 
-    // Second badge
+    // Second badge.
     expect(badges[1]).toHaveAttribute("aria-posinset", "2");
     expect(badges[1]).toHaveAttribute("aria-setsize", "2");
   });
