@@ -69,7 +69,7 @@ const CheckboxGroupItem = React.forwardRef<
 
       const now = Date.now();
       // Ignore rapid subsequent clicks (debounce)
-      // This prevents event bubbling from clicking on the indicator
+      // This prevents event bubbling from clicking on the indicator.
       if (now - lastClickTimeRef.current < 50) {
         event.stopPropagation();
         return;
@@ -111,7 +111,7 @@ const CheckboxGroupItem = React.forwardRef<
         ref={composedRef}
         onClick={onClick}
         onKeyDown={composeEventHandlers(props.onKeyDown, (event) => {
-          // Checkbox group items should not trigger on enter key press
+          // Checkbox group items should not trigger on enter key press.
           if (event.key === "Enter") event.preventDefault();
         })}
       />

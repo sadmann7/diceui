@@ -112,7 +112,6 @@ interface MentionRootProps extends Omit<
   /** Event handler called when the open state changes. */
   onOpenChange?: (open: boolean) => void;
 
-  /** The current input value. */
   inputValue?: string;
 
   /** Event handler called when the input value changes. */
@@ -246,7 +245,7 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
       exactMatch,
       onCallback: (itemCount) => {
         if (itemCount === 0) {
-          // Close the menu if no items match the filter
+          // Close the menu if no items match the filter.
           setOpen(false);
           setHighlightedItem(null);
           setVirtualAnchor(null);
@@ -343,7 +342,7 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
     const onMentionsRemove = React.useCallback(
       (mentionsToRemove: Mention[]) => {
         setMentions((prev) => {
-          // must match their actual order in the text
+          // must match their actual order in the text.
           const removed = [...mentionsToRemove].sort(
             (a, b) => a.start - b.start,
           );
@@ -354,7 +353,7 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
               return !isRemoved;
             })
             .map((mention) => {
-              // Shift mentions
+              // Shift mentions.
               const shift = removed
                 .filter((r) => r.start < mention.start)
                 .reduce((acc, r) => acc + (r.end - r.start + 1), 0);

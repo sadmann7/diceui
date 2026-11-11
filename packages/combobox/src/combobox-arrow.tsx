@@ -52,7 +52,7 @@ const ComboboxArrow = React.forwardRef<SVGSVGElement, ComboboxArrowProps>(
           ref={forwardedRef}
           style={{
             ...arrowProps.style,
-            // ensure the svg is measured correctly
+            // ensure the svg is measured correctly.
             display: "block",
           }}
         >

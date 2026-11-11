@@ -42,7 +42,6 @@ async function main() {
       console.log(`   - Homepage: ${registry.homepage}`);
       console.log(`   - Total items: ${registry.items.length}`);
 
-      // Count by type
       const typeCounts: Record<string, number> = {};
       for (const item of registry.items) {
         typeCounts[item.type] = (typeCounts[item.type] || 0) + 1;

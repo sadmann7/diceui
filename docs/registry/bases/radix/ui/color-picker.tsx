@@ -320,7 +320,7 @@ function hslToRgb(
 function parseColorString(value: string): ColorValue | null {
   const trimmed = value.trim();
 
-  // Parse hex colors
+  // Parse hex colors.
   if (trimmed.startsWith("#")) {
     const hexMatch = trimmed.match(/^#([a-fA-F0-9]{3}|[a-fA-F0-9]{6})$/);
     if (hexMatch) {
@@ -328,7 +328,7 @@ function parseColorString(value: string): ColorValue | null {
     }
   }
 
-  // Parse rgb/rgba colors
+  // Parse rgb/rgba colors.
   const rgbMatch = trimmed.match(
     /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)$/,
   );
@@ -341,7 +341,7 @@ function parseColorString(value: string): ColorValue | null {
     };
   }
 
-  // Parse hsl/hsla colors
+  // Parse hsl/hsla colors.
   const hslMatch = trimmed.match(
     /^hsla?\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*(?:,\s*([\d.]+))?\s*\)$/,
   );
@@ -351,7 +351,7 @@ function parseColorString(value: string): ColorValue | null {
     const l = Number.parseInt(hslMatch[3] ?? "0", 10) / 100;
     const a = hslMatch[4] ? Number.parseFloat(hslMatch[4]) : 1;
 
-    // Convert HSL to RGB
+    // Convert HSL to RGB.
     const c = (1 - Math.abs(2 * l - 1)) * s;
     const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
     const m = l - c / 2;
@@ -394,7 +394,7 @@ function parseColorString(value: string): ColorValue | null {
     };
   }
 
-  // Parse hsb/hsba colors
+  // Parse hsb/hsba colors.
   const hsbMatch = trimmed.match(
     /^hsba?\(\s*(\d+)\s*,\s*(\d+)%\s*,\s*(\d+)%\s*(?:,\s*([\d.]+))?\s*\)$/,
   );

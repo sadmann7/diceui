@@ -120,7 +120,7 @@ function getCachedCurrencySymbols(opts: TransformOptions): CurrencySymbols {
     if (decimalPart) decimalSeparator = decimalPart.value;
     if (groupPart) groupSeparator = groupPart.value;
   } catch {
-    // Keep defaults
+    // Keep defaults.
   }
 
   const symbols: CurrencySymbols = {
@@ -348,7 +348,7 @@ const MASK_PATTERNS: Record<MaskPatternKey, MaskPattern> = {
 
         if (decimalPart) localeDecimalSeparator = decimalPart.value;
       } catch {
-        // Keep defaults
+        // Keep defaults.
       }
 
       const cleaned = value.replace(REGEX_CACHE.nonCurrencyChars, "");
@@ -1286,7 +1286,7 @@ function MaskInput(props: MaskInputProps) {
         }
         newCursorPosition = position;
       } catch {
-        // fallback to end
+        // fallback to end.
       }
 
       target.setSelectionRange(newCursorPosition, newCursorPosition);

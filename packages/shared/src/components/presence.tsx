@@ -80,16 +80,12 @@ function usePresence(present: boolean) {
         currentAnimationName === "none" ||
         styles?.display === "none"
       ) {
-        // If there is no exit animation or the element is hidden, animations won't run
-        // so we unmount instantly
+        // Without an exit animation, or with the element hidden, no animation runs,
+        // so it unmounts right away.
         send("UNMOUNT");
       } else {
-        /**
-         * When `present` changes to `false`, we check changes to animation-name to
-         * determine whether an animation has started. We chose this approach (reading
-         * computed styles) because there is no `animationrun` event and `animationstart`
-         * fires after `animation-delay` has expired which would be too late.
-         */
+        // There is no `animationrun` event, and `animationstart` fires after
+        // `animation-delay`, so a changed animation-name signals the exit animation.
         const isAnimating = prevAnimationName !== currentAnimationName;
 
         if (wasPresent && isAnimating) {
@@ -108,9 +104,8 @@ function usePresence(present: boolean) {
       let timeoutId: number;
       const ownerWindow = node.ownerDocument.defaultView ?? window;
       /**
-       * Triggering an ANIMATION_OUT during an ANIMATION_IN will fire an `animationcancel`
-       * event for ANIMATION_IN after we have entered `unmountSuspended` state. So, we
-       * make sure we only trigger ANIMATION_END for the currently active animation.
+       * An ANIMATION_OUT during ANIMATION_IN fires `animationcancel` for ANIMATION_IN
+       * after entering `unmountSuspended`, so only the active animation ends it.
        */
       function onAnimationEnd(event: AnimationEvent) {
         const currentAnimationName = getAnimationName(stylesRef.current);
@@ -118,15 +113,9 @@ function usePresence(present: boolean) {
           event.animationName,
         );
         if (event.target === node && isCurrentAnimation) {
-          // With React 18 concurrency this update is applied a frame after the
-          // animation ends, creating a flash of visible content. By setting the
-          // animation fill mode to "forwards", we force the node to keep the
-          // styles of the last keyframe, removing the flash.
-          //
-          // Previously we flushed the update via ReactDom.flushSync, but with
-          // exit animations this resulted in the node being removed from the
-          // DOM before the synthetic animationEnd event was dispatched, meaning
-          // user-provided event handlers would not be called.
+          // With React 18 concurrency this update lands a frame after the animation
+          // ends, so the "forwards" fill mode keeps the last keyframe to avoid a flash.
+          // flushSync instead removed the node before animationEnd reached user handlers.
           // https://github.com/radix-ui/primitives/pull/1849
           send("ANIMATION_END");
           if (!prevPresentRef.current) {

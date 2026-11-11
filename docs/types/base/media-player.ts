@@ -589,15 +589,11 @@ export interface MediaPlayerSettingsProps extends EmptyCompProps<
   "button"
 > {
   /**
-   * The settings menu provides a unified interface for adjusting playback speed,
-   * video quality, and captions. It automatically detects available options
-   * and only shows relevant settings.
-   *
-   * Features:
-   * - Playback speed control (uses `speeds` prop)
-   * - Video quality selection (when multiple renditions available)
-   * - Captions/subtitles toggle and track selection
-   * - Organized in expandable submenus
+   * A settings menu for playback speed, video quality, and captions, organized in
+   * submenus. It only shows the options the current media supports:
+   * - Playback speed, from the `speeds` prop
+   * - Video quality, when multiple HLS or DASH renditions are available
+   * - Captions and subtitles, when the media has text tracks
    *
    * ```tsx
    * // Basic usage with default speeds
@@ -608,11 +604,6 @@ export interface MediaPlayerSettingsProps extends EmptyCompProps<
    * // Custom playback speeds
    * <MediaPlayer.Settings speeds={[0.25, 0.5, 1, 1.5, 2]} />
    * ```
-   *
-   * The component automatically adapts based on:
-   * - Available video renditions (HLS/DASH quality options)
-   * - Text tracks for captions/subtitles
-   * - Media type (video vs audio)
    */
 }
 

@@ -110,7 +110,7 @@ const MentionContent = React.forwardRef<ContentElement, MentionContentProps>(
         ...style,
         ...positionerContext.floatingStyles,
         ...(!context.open && forceMount ? { visibility: "hidden" } : {}),
-        // Hide content visually during pasting while keeping items registered
+        // Hide content visually during pasting while keeping items registered.
         ...(context.isPasting ? visuallyHidden : {}),
       };
     }, [

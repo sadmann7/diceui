@@ -1,10 +1,10 @@
-// Data attributes
+// Data attributes.
 const DATA_ITEM_ATTR = "data-dice-collection-item";
 const DATA_DISMISSABLE_LAYER_ATTR = "data-dice-dismissable-layer";
 const DATA_DISMISSABLE_LAYER_STYLE_ATTR = "data-dice-dismissable-layer-style";
 const DATA_VALUE_ATTR = "data-value";
 
-// CSS variables
+// CSS variables.
 const VAR_TRANSFORM_ORIGIN = "--dice-transform-origin";
 const VAR_ANCHOR_WIDTH = "--dice-anchor-width";
 const VAR_ANCHOR_HEIGHT = "--dice-anchor-height";

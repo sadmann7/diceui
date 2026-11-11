@@ -3,19 +3,19 @@ import type { EmptyProps, RenderProps } from "@/types";
 
 export interface Country {
   /**
-   * ISO 3166-1 alpha-2 country code
+   * ISO 3166-1 alpha-2 country code.
    */
   code: string;
   /**
-   * Country name
+   * Country name.
    */
   name: string;
   /**
-   * Country calling code (e.g., "+1" for US)
+   * Country calling code (e.g., "+1" for US).
    */
   dialCode: string;
   /**
-   * Optional flag emoji
+   * Optional flag emoji.
    */
   flag?: string;
 }

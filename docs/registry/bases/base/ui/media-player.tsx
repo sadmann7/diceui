@@ -2020,7 +2020,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       collisionDataRef.current = null;
       lastSeekCommitTimeRef.current = Date.now();
 
-      // Reset movement tracking after seek commit
+      // Reset movement tracking after seek commit.
       pointerEnterTimeRef.current = Date.now();
       horizontalMovementRef.current = 0;
       verticalMovementRef.current = 0;

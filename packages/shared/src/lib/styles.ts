@@ -51,7 +51,7 @@ const focusRing: React.CSSProperties = {
 
 /**
  * CSS style object to create a scrollable container that hides scrollbars.
- * Note: For webkit browsers, you'll need to add additional CSS for ::-webkit-scrollbar
+ * Note: For webkit browsers, you'll need to add additional CSS for ::-webkit-scrollbar.
  */
 const scrollableHidden: React.CSSProperties = {
   overflow: "auto",

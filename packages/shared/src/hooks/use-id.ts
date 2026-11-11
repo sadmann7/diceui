@@ -6,7 +6,7 @@ import * as React from "react";
 
 import { useLayoutEffect } from "./use-layout-effect";
 
-// We spaces with `.trim().toString()` to prevent bundlers from trying to `import { useId } from 'react';`
+// We spaces with `.trim().toString()` to prevent bundlers from trying to `import { useId } from 'react';`.
 const useReactId =
   (React as { [key: string]: unknown })[" useId ".trim()] || (() => undefined);
 let count = 0;

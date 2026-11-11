@@ -11,7 +11,6 @@ interface TestItemData {
 }
 
 describe("useListHighlighting", () => {
-  // Helper to create test items
   function createTestItems(
     count: number,
     options: { selectedIndexes?: number[] } = {},
@@ -27,7 +26,7 @@ describe("useListHighlighting", () => {
     });
   }
 
-  // Base setup for tests
+  // Base setup for tests.
   function setupTest(
     options: {
       items?: CollectionItem<HTMLDivElement, TestItemData>[];

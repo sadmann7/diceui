@@ -103,7 +103,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
         onPointerMoveProp?.(event);
         if (event.defaultPrevented) return;
 
-        // Remember pointer type when sliding over to this item from another one
+        // Remember pointer type when sliding over to this item from another one.
         pointerTypeRef.current = event.pointerType;
         if (disabled) {
           context.onItemLeave();

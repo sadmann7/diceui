@@ -12,7 +12,7 @@ export default function PendingLinkDemo() {
       event.preventDefault();
       setIsPending(true);
 
-      // Simulate async navigation
+      // Simulate async navigation.
       setTimeout(() => {
         setIsPending(false);
       }, 2000);

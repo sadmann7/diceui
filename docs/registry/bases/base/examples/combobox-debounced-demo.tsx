@@ -26,7 +26,7 @@ const tricks = [
   { label: "The 900", value: "the-900" },
 ];
 
-// Random delay between 400-700ms
+// Random delay between 400-700ms.
 function getRandomDelay() {
   return Math.random() * 300 + 400;
 }
@@ -38,14 +38,14 @@ export default function ComboboxDebouncedDemo() {
   const [progress, setProgress] = React.useState(0);
   const [filteredItems, setFilteredItems] = React.useState(tricks);
 
-  // Debounce search with loading simulation
+  // Debounce search with loading simulation.
   const debouncedSearch = React.useMemo(
     () =>
       debounce(async (searchTerm: string) => {
         setIsLoading(true);
         setProgress(0);
 
-        // Simulate a more realistic progress pattern
+        // Simulate a more realistic progress pattern.
         const progressSteps = [15, 35, 65, 85, 95] as const;
         let currentStepIndex = 0;
 
@@ -56,7 +56,7 @@ export default function ComboboxDebouncedDemo() {
           }
         }, 150);
 
-        // Simulate API delay with variable timing
+        // Simulate API delay with variable timing.
         const delay = getRandomDelay();
         await new Promise((resolve) => setTimeout(resolve, delay));
 

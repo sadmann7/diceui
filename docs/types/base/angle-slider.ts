@@ -131,12 +131,8 @@ export interface AngleSliderValueProps extends RenderProps {
   unit?: string;
 
   /**
-   * Custom formatter for the displayed value.
-   * Receives the current value(s) and should return a formatted string.
-   * For single-value sliders, receives a number.
-   * For range sliders, receives an array of numbers.
-   *
-   * When provided, this overrides the default unit-based formatting.
+   * Custom formatter for the displayed value, overriding the unit-based default.
+   * Receives a number for single-value sliders and an array for range sliders.
    *
    * ```ts
    * // Custom percentage formatting

@@ -36,7 +36,7 @@ export function VisuallyHiddenInput<T = InputValue>(
   const prevValue = usePrevious(type === "hidden" ? value : checked);
   const controlSize = useSize(control);
 
-  // Bubble value/checked change to parents
+  // Bubble value/checked change to parents.
   React.useEffect(() => {
     if (!input) return;
     const inputProto = window.HTMLInputElement.prototype;
@@ -58,7 +58,7 @@ export function VisuallyHiddenInput<T = InputValue>(
     }
   }, [input, prevValue, value, checked, bubbles, isCheckInput]);
 
-  // Trigger on onReset callback when form is reset
+  // Trigger on onReset callback when form is reset.
   useFormReset({
     form: input?.form ?? null,
     defaultValue: isCheckInput ? (checked as T) : value,

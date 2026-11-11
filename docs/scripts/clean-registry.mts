@@ -9,14 +9,14 @@ import { STYLES } from "../registry/styles";
 
 const STYLES_PATH = path.resolve(import.meta.dirname, "../public/r/styles");
 
-// Reserved file names within each style directory
+// Reserved file names within each style directory.
 const RESERVED_NAMES = new Set(["index", "registry"]);
 
 async function cleanRegistry() {
   console.log("🧹 Starting registry cleanup...");
 
   try {
-    // Build expected style directory names
+    // Build expected style directory names.
     const expectedStyleDirs = new Set<string>();
     for (const base of BASES) {
       for (const style of STYLES) {
@@ -24,7 +24,7 @@ async function cleanRegistry() {
       }
     }
 
-    // Check if styles directory exists
+    // Check if styles directory exists.
     try {
       await fs.access(STYLES_PATH);
     } catch {
@@ -32,13 +32,13 @@ async function cleanRegistry() {
       return;
     }
 
-    // Get all directories in styles/
+    // Get all directories in styles/.
     const styleDirs = await fs.readdir(STYLES_PATH, { withFileTypes: true });
     const existingDirs = styleDirs
       .filter((d) => d.isDirectory())
       .map((d) => d.name);
 
-    // Find orphaned style directories
+    // Find orphaned style directories.
     const orphanedDirs = existingDirs.filter(
       (dir) => !expectedStyleDirs.has(dir),
     );
@@ -54,7 +54,7 @@ async function cleanRegistry() {
       }
     }
 
-    // Clean orphaned files within each valid style directory
+    // Clean orphaned files within each valid style directory.
     let totalOrphaned = 0;
     let totalValid = 0;
 
@@ -62,14 +62,14 @@ async function cleanRegistry() {
       const baseName = base.name;
       const registry = registries[baseName];
 
-      // Build expected item names for this base
+      // Build expected item names for this base.
       const expectedItems = new Set<string>();
       for (const item of registry.items) {
         if (!RESERVED_NAMES.has(item.name)) {
           expectedItems.add(item.name);
         }
       }
-      // Add reserved file names
+      // Add reserved file names.
       for (const name of RESERVED_NAMES) {
         expectedItems.add(name);
       }
@@ -81,7 +81,7 @@ async function cleanRegistry() {
         try {
           await fs.access(styleDir);
         } catch {
-          continue; // Directory doesn't exist, skip
+          continue; // Directory doesn't exist, skip.
         }
 
         const files = await fs.readdir(styleDir);
@@ -102,20 +102,20 @@ async function cleanRegistry() {
       }
     }
 
-    // Also clean the styles/index.json if it exists but is orphaned
+    // Also clean the styles/index.json if it exists but is orphaned.
     const indexPath = path.join(STYLES_PATH, "index.json");
     try {
       await fs.access(indexPath);
       totalValid++;
     } catch {
-      // index.json doesn't exist, that's fine
+      // index.json doesn't exist, that's fine.
     }
 
     console.log(
       `\n🎉 Cleanup completed! Removed ${totalOrphaned + orphanedDirs.length} orphaned items.`,
     );
 
-    // Summary
+    // Summary.
     console.log("\n📊 Summary:");
     console.log(`  - Expected style directories: ${expectedStyleDirs.size}`);
     console.log(`  - Orphaned directories removed: ${orphanedDirs.length}`);
@@ -127,7 +127,7 @@ async function cleanRegistry() {
   }
 }
 
-// Run the cleanup if this script is executed directly
+// Run the cleanup if this script is executed directly.
 if (
   process.argv[1] &&
   fileURLToPath(import.meta.url) === path.resolve(process.argv[1])

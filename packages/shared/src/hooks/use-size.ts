@@ -13,13 +13,13 @@ function useSize(element: HTMLElement | null) {
 
   useLayoutEffect(() => {
     if (element) {
-      // Provide size as early as possible
+      // Provide size as early as possible.
       setSize({ width: element.offsetWidth, height: element.offsetHeight });
 
       const resizeObserver = new ResizeObserver((entries) => {
         if (!Array.isArray(entries)) return;
 
-        // Since we only observe the one element, we don't need to loop over the array
+        // Only one element is observed, so the first entry is enough.
         if (!entries.length) return;
 
         const entry = entries[0];
@@ -28,15 +28,14 @@ function useSize(element: HTMLElement | null) {
 
         if (entry && "borderBoxSize" in entry) {
           const borderSizeEntry = entry.borderBoxSize;
-          // iron out differences between browsers
+          // iron out differences between browsers.
           const borderSize = Array.isArray(borderSizeEntry)
             ? borderSizeEntry[0]
             : borderSizeEntry;
           width = borderSize.inlineSize;
           height = borderSize.blockSize;
         } else {
-          // For browsers that don't support `borderBoxSize`
-          // we calculate it ourselves to get the correct border box.
+          // Browsers without `borderBoxSize` measure the border box from offset sizes.
           width = element.offsetWidth;
           height = element.offsetHeight;
         }

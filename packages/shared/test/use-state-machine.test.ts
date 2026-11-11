@@ -57,7 +57,7 @@ describe("useStateMachine", () => {
     const [, send] = result.current;
 
     act(() => {
-      send("SUCCESS"); // Invalid from initial state
+      send("SUCCESS"); // Invalid from initial state.
     });
 
     const [state] = result.current;
@@ -68,7 +68,7 @@ describe("useStateMachine", () => {
     const { result } = renderHook(() => useStateMachine(config));
     const [, send] = result.current;
 
-    // idle -> loading -> error -> loading -> success -> idle
+    // idle -> loading -> error -> loading -> success -> idle.
     act(() => {
       send("START");
     });
@@ -105,7 +105,7 @@ describe("useStateMachine", () => {
     expect(result.current[0]).toBe("loading");
 
     act(() => {
-      send("RESET"); // RESET is not valid in loading state
+      send("RESET"); // RESET is not valid in loading state.
     });
     expect(result.current[0]).toBe("loading");
   });

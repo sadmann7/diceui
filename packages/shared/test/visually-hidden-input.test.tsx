@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { VisuallyHiddenInput } from "../src/components/visually-hidden-input";
 
-// Mock ResizeObserver using Vitest 4's class mocking
+// Mock ResizeObserver using Vitest 4's class mocking.
 global.ResizeObserver = vi.fn(
   class ResizeObserver {
     callback: ResizeObserverCallback;
@@ -15,7 +15,7 @@ global.ResizeObserver = vi.fn(
     }
 
     observe = vi.fn((target: HTMLElement) => {
-      // Simulate resize observation by calling the callback
+      // Simulate resize observation by calling the callback.
       const width = target.offsetWidth ?? 0;
       const height = target.offsetHeight ?? 0;
 
@@ -174,7 +174,7 @@ describe("VisuallyHiddenInput", () => {
     it.skip("should render without crashing when control element has size", () => {
       // Skipped: This test requires proper ResizeObserver mocking which is difficult in JSDOM
       // The size synchronization feature works in real browsers but is hard to test
-      // Create a fresh control element for this test
+      // Create a fresh control element for this test.
       const controlWithSize = document.createElement("div");
       Object.defineProperty(controlWithSize, "offsetWidth", {
         configurable: true,
@@ -189,7 +189,7 @@ describe("VisuallyHiddenInput", () => {
       const input = screen.getByTestId("input");
 
       // Check that the input renders with visually hidden styles
-      // Note: Size synchronization depends on ResizeObserver which is difficult to test properly
+      // Note: Size synchronization depends on ResizeObserver which is difficult to test properly.
       expect(input).toBeInTheDocument();
     });
   });

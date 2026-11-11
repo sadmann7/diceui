@@ -18,7 +18,7 @@ export default function PendingFormDemo() {
     setIsSubmitting(true);
     setSubmitted(false);
 
-    // Simulate API call
+    // Simulate API call.
     setTimeout(() => {
       setIsSubmitting(false);
       setSubmitted(true);

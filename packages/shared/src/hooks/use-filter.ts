@@ -14,7 +14,7 @@ class LRUCache<K, V> {
   get(key: K): V | undefined {
     const value = this.cache.get(key);
     if (value !== undefined) {
-      // Move to most recently used
+      // Move to most recently used.
       const index = this.keyOrder.indexOf(key);
       if (index > -1) {
         this.keyOrder.splice(index, 1);
@@ -26,14 +26,14 @@ class LRUCache<K, V> {
 
   set(key: K, value: V): void {
     if (this.cache.has(key)) {
-      // Update existing key
+      // Update existing key.
       this.cache.set(key, value);
       const index = this.keyOrder.indexOf(key);
       if (index > -1) {
         this.keyOrder.splice(index, 1);
       }
     } else {
-      // Add new key
+      // Add new key.
       if (this.keyOrder.length >= this.maxSize) {
         const lruKey = this.keyOrder.shift();
         if (lruKey !== undefined) {
@@ -55,9 +55,9 @@ class LRUCache<K, V> {
   }
 }
 
-// Cache sizes tuned for typical usage patterns
-const collatorCache = new LRUCache<string, Intl.Collator>(10); // Few collator options typically used
-const normalizedCache = new LRUCache<string, string>(1000); // More strings to normalize
+// Cache sizes tuned for typical usage patterns.
+const collatorCache = new LRUCache<string, Intl.Collator>(10); // Few collator options typically used.
+const normalizedCache = new LRUCache<string, string>(1000); // More strings to normalize.
 
 const SEPARATORS_PATTERN = /[-_\s./\\|:;,]+/g;
 const UNWANTED_CHARS = /[^\p{L}\p{N}\s]/gu;
@@ -88,12 +88,12 @@ function normalizeWithGaps(str: string) {
   }
 
   // If the string only contained special characters, it will be empty after normalization
-  // Return a special value that won't match anything
+  // Return a special value that won't match anything.
   if (normalized === "" && str.length > 0) {
-    normalized = "\u0000"; // Using null character as a special non-matching value
+    normalized = "\u0000"; // Using null character as a special non-matching value.
   }
 
-  // Cache the normalized string
+  // Cache the normalized string.
   normalizedCache.set(str, normalized);
   return normalized;
 }

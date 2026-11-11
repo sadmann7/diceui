@@ -10,8 +10,8 @@ export function isMobileFirefox(): boolean | undefined {
   const userAgent = navigator.userAgent;
   return (
     typeof window !== "undefined" &&
-    ((/Firefox/.test(userAgent) && /Mobile/.test(userAgent)) || // Android Firefox
-      /FxiOS/.test(userAgent)) // iOS Firefox
+    ((/Firefox/.test(userAgent) && /Mobile/.test(userAgent)) || // Android Firefox.
+      /FxiOS/.test(userAgent)) // iOS Firefox.
   );
 }
 
@@ -30,7 +30,7 @@ export function isSafari(): boolean | undefined {
 export function isIPad(): boolean | undefined {
   return (
     testPlatform(/^iPad/) ||
-    // iPadOS 13 lies and says it's a Mac, but we can distinguish by detecting touch support.
+    // iPadOS 13 reports itself as a Mac, so touch support tells them apart.
     (isMac() && navigator.maxTouchPoints > 1)
   );
 }

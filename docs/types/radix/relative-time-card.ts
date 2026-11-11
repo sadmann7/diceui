@@ -86,7 +86,6 @@ export interface RelativeTimeCardProps
   sideOffset?: HoverCardContentProps["sideOffset"];
 
   /**
-  /**
    * The preferred alignment against the trigger. May change when collisions occur.
    *
    * @default "center"

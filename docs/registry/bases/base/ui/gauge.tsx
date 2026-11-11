@@ -92,7 +92,7 @@ function describeArc(
 ) {
   const angleDiff = endAngle - startAngle;
 
-  // For full circles (360 degrees), draw as two semi-circles
+  // For full circles (360 degrees), draw as two semi-circles.
   if (Math.abs(angleDiff) >= 360) {
     const start = polarToCartesian(x, y, radius, startAngle);
     const mid = polarToCartesian(x, y, radius, startAngle + 180);
@@ -243,7 +243,7 @@ function Gauge(props: GaugeProps) {
     : null;
 
   // Calculate the visual center Y of the arc for text positioning
-  // For full circles, use geometric center. For partial arcs, calculate based on bounding box
+  // For full circles, use geometric center. For partial arcs, calculate based on bounding box.
   const angleDiffDeg = Math.abs(endAngle - startAngle);
   const isFullCircle = angleDiffDeg >= 360;
 

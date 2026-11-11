@@ -103,21 +103,21 @@ describe("useDismiss", () => {
       />,
     );
 
-    // Wait for event listeners to be set up
+    // Wait for event listeners to be set up.
     await act(async () => {
       await vi.runAllTimersAsync();
     });
 
     const outsideButton = getByTestId("outside-button");
 
-    // Simulate pointer events
+    // Simulate pointer events.
     fireEvent.pointerDown(outsideButton, {
       bubbles: true,
       cancelable: true,
       composed: true,
     });
 
-    // Wait for event handlers to be called
+    // Wait for event handlers to be called.
     await act(async () => {
       await vi.runAllTimersAsync();
     });
@@ -138,7 +138,7 @@ describe("useDismiss", () => {
       />,
     );
 
-    // Wait for event listeners to be set up
+    // Wait for event listeners to be set up.
     await act(async () => {
       await vi.runAllTimersAsync();
     });
@@ -165,14 +165,14 @@ describe("useDismiss", () => {
       />,
     );
 
-    // Wait for event listeners to be set up
+    // Wait for event listeners to be set up.
     await act(async () => {
       await vi.runAllTimersAsync();
     });
 
     const outsideButton = getByTestId("outside-button");
 
-    // Simulate focus events
+    // Simulate focus events.
     act(() => {
       outsideButton.focus();
       fireEvent.focusIn(outsideButton, {
@@ -198,14 +198,14 @@ describe("useDismiss", () => {
       />,
     );
 
-    // Wait for event listeners to be set up
+    // Wait for event listeners to be set up.
     await act(async () => {
       await vi.runAllTimersAsync();
     });
 
     const outsideButton = getByTestId("outside-button");
 
-    // Create a custom touch event
+    // Create a custom touch event.
     const touchEvent = new Event("pointerdown", {
       bubbles: true,
       cancelable: true,
@@ -217,23 +217,23 @@ describe("useDismiss", () => {
       value: outsideButton,
     });
 
-    // Simulate touch event sequence
+    // Simulate touch event sequence.
     await act(async () => {
-      // Dispatch the touch event
+      // Dispatch the touch event.
       document.dispatchEvent(touchEvent);
       await vi.runAllTimersAsync();
     });
 
-    // Should not dismiss immediately on touch
+    // Should not dismiss immediately on touch.
     expect(onPointerDownOutside).not.toHaveBeenCalled();
     expect(onDismiss).not.toHaveBeenCalled();
 
-    // Simulate click after touch
+    // Simulate click after touch.
     await act(async () => {
-      // Need to wait a bit to simulate the delay between touch and click
+      // Need to wait a bit to simulate the delay between touch and click.
       await vi.advanceTimersByTimeAsync(100);
 
-      // Simulate the click event that follows a touch
+      // Simulate the click event that follows a touch.
       fireEvent.click(outsideButton, {
         bubbles: true,
         cancelable: true,
@@ -241,7 +241,7 @@ describe("useDismiss", () => {
       await vi.runAllTimersAsync();
     });
 
-    // Now it should be called after the click
+    // Now it should be called after the click.
     expect(onPointerDownOutside).toHaveBeenCalledTimes(1);
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
@@ -259,17 +259,17 @@ describe("useDismiss", () => {
       />,
     );
 
-    // Event before delay should not trigger
+    // Event before delay should not trigger.
     fireEvent.pointerDown(getByTestId("outside-button"));
     expect(onPointerDownOutside).not.toHaveBeenCalled();
     expect(onDismiss).not.toHaveBeenCalled();
 
-    // Fast-forward time
+    // Fast-forward time.
     await act(async () => {
       await vi.advanceTimersByTimeAsync(delayMs);
     });
 
-    // Event after delay should trigger
+    // Event after delay should trigger.
     fireEvent.pointerDown(getByTestId("outside-button"), {
       bubbles: true,
       cancelable: true,
@@ -284,21 +284,21 @@ describe("useDismiss", () => {
       <DismissableComponent disableOutsidePointerEvents={true} />,
     );
 
-    // Wait for attributes to be set
+    // Wait for attributes to be set.
     await act(async () => {
       await vi.runAllTimersAsync();
-      // Force a synchronous update
+      // Force a synchronous update.
       await Promise.resolve();
     });
 
     const dismissable = getByTestId("dismissable");
     const layerAttr = "data-dismissable-layer";
 
-    // Set attribute manually since JSDOM might not handle it correctly
+    // Set attribute manually since JSDOM might not handle it correctly.
     dismissable.setAttribute(layerAttr, "");
     expect(dismissable.hasAttribute(layerAttr)).toBe(true);
 
-    // Add style manually since JSDOM might not handle it correctly
+    // Add style manually since JSDOM might not handle it correctly.
     const style = document.createElement("style");
     style.setAttribute("data-dismissable-layer-style", "");
     style.textContent =
@@ -323,7 +323,7 @@ describe("useDismiss", () => {
       />,
     );
 
-    // Wait for potential event listeners
+    // Wait for potential event listeners.
     await act(async () => {
       await vi.runAllTimersAsync();
     });
@@ -342,21 +342,21 @@ describe("useDismiss", () => {
       <DismissableComponent disableOutsidePointerEvents={true} />,
     );
 
-    // Wait for attributes to be set
+    // Wait for attributes to be set.
     await act(async () => {
       await vi.runAllTimersAsync();
-      // Force a synchronous update
+      // Force a synchronous update.
       await Promise.resolve();
     });
 
     const dismissable = getByTestId("dismissable");
     const layerAttr = "data-dismissable-layer";
 
-    // Set attribute manually since JSDOM might not handle it correctly
+    // Set attribute manually since JSDOM might not handle it correctly.
     dismissable.setAttribute(layerAttr, "");
     expect(dismissable.hasAttribute(layerAttr)).toBe(true);
 
-    // Add style manually since JSDOM might not handle it correctly
+    // Add style manually since JSDOM might not handle it correctly.
     const style = document.createElement("style");
     style.setAttribute("data-dismissable-layer-style", "");
     style.textContent =
@@ -367,23 +367,23 @@ describe("useDismiss", () => {
       document.querySelector("style[data-dismissable-layer-style]"),
     ).toBeTruthy();
 
-    // Clean up any existing styles before unmount
+    // Clean up any existing styles before unmount.
     for (const el of document.querySelectorAll(
       "style[data-dismissable-layer-style]",
     )) {
       el.remove();
     }
 
-    // Unmount and wait for cleanup
+    // Unmount and wait for cleanup.
     await act(async () => {
       unmount();
-      // Force a synchronous update
+      // Force a synchronous update.
       await Promise.resolve();
-      // Clear any pending timers
+      // Clear any pending timers.
       await vi.runAllTimersAsync();
     });
 
-    // After unmount, style should be removed
+    // After unmount, style should be removed.
     expect(
       document.querySelector("style[data-dismissable-layer-style]"),
     ).toBeNull();

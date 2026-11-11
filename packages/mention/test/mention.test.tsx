@@ -4,28 +4,28 @@ import { describe, expect, test, vi } from "vitest";
 
 import * as Mention from "../src/index";
 
-// Mock ResizeObserver
+// Mock ResizeObserver.
 class ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
-// Add to global
+// Add to global.
 global.ResizeObserver = ResizeObserver;
 
-// Mock requestAnimationFrame
+// Mock requestAnimationFrame.
 global.requestAnimationFrame = (fn) => setTimeout(fn, 0);
 
-// Mock pointer capture methods
+// Mock pointer capture methods.
 Element.prototype.setPointerCapture = vi.fn();
 Element.prototype.releasePointerCapture = vi.fn();
 Element.prototype.hasPointerCapture = vi.fn();
 
-// Mock scrollIntoView
+// Mock scrollIntoView.
 Element.prototype.scrollIntoView = vi.fn();
 
-// Mock getComputedStyle
+// Mock getComputedStyle.
 global.getComputedStyle = vi.fn().mockReturnValue({
   getPropertyValue: () => "16px",
   lineHeight: "24px",
@@ -69,18 +69,18 @@ describe("Mention", () => {
 
     const input = screen.getByPlaceholderText(placeholder);
 
-    // Test initial state
+    // Test initial state.
     expect(input).toHaveValue("");
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 
-    // Test opening mention list with trigger
+    // Test opening mention list with trigger.
     await userEvent.type(input, "@");
     await waitFor(() => {
       expect(onOpenChange).toHaveBeenCalledWith(true);
       expect(screen.getByRole("listbox")).toBeInTheDocument();
     });
 
-    // Test selecting a mention
+    // Test selecting a mention.
     const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
     await waitFor(() => {
       fireEvent.click(kickflipOption);
@@ -97,23 +97,23 @@ describe("Mention", () => {
 
     const input = screen.getByPlaceholderText(placeholder);
 
-    // Open mention list
+    // Open mention list.
     await userEvent.type(input, "@");
     await waitFor(() => {
       expect(screen.getByRole("listbox")).toBeInTheDocument();
     });
 
-    // Wait for requestAnimationFrame to complete
+    // Wait for requestAnimationFrame to complete.
     await new Promise((resolve) => requestAnimationFrame(resolve));
 
-    // Navigate to first option
+    // Navigate to first option.
     fireEvent.keyDown(input, { key: "ArrowDown" });
     await waitFor(() => {
       const options = screen.getAllByRole("option");
       expect(options[1]).toHaveAttribute("data-highlighted", "");
     });
 
-    // Select highlighted option
+    // Select highlighted option.
     fireEvent.keyDown(input, { key: "Enter" });
     expect(onValueChange).toHaveBeenCalledWith(["heelflip"]);
     expect(input).toHaveValue("@heelflip ");
@@ -145,13 +145,13 @@ describe("Mention", () => {
     renderMention();
     const input = screen.getByPlaceholderText(placeholder);
 
-    // Open mention list
+    // Open mention list.
     await userEvent.type(input, "@");
     await waitFor(() => {
       expect(screen.getByRole("listbox")).toBeInTheDocument();
     });
 
-    // Type to filter
+    // Type to filter.
     await userEvent.type(input, "kck");
     await waitFor(() => {
       expect(screen.getByText("Kickflip")).toBeInTheDocument();
@@ -164,13 +164,13 @@ describe("Mention", () => {
     renderMention({ exactMatch: true });
     const input = screen.getByPlaceholderText(placeholder);
 
-    // Open mention list
+    // Open mention list.
     await userEvent.type(input, "@");
     await waitFor(() => {
       expect(screen.getByRole("listbox")).toBeInTheDocument();
     });
 
-    // Type exact match
+    // Type exact match.
     await userEvent.type(input, "kickflip");
     await waitFor(() => {
       expect(screen.getByText("Kickflip")).toBeInTheDocument();
@@ -188,13 +188,13 @@ describe("Mention", () => {
     renderMention({ onFilter: customFilter });
     const input = screen.getByPlaceholderText(placeholder);
 
-    // Open mention list
+    // Open mention list.
     await userEvent.type(input, "@");
     await waitFor(() => {
       expect(screen.getByRole("listbox")).toBeInTheDocument();
     });
 
-    // Type to filter with custom case-insensitive filter
+    // Type to filter with custom case-insensitive filter.
     await userEvent.type(input, "KICKFLIP");
     await waitFor(() => {
       expect(screen.getByText("Kickflip")).toBeInTheDocument();
@@ -209,15 +209,15 @@ describe("Mention", () => {
 
     const input = screen.getByPlaceholderText(placeholder);
 
-    // Test that @ doesn't trigger the mention list
+    // Test that @ doesn't trigger the mention list.
     await userEvent.type(input, "@");
     expect(onOpenChange).not.toHaveBeenCalledWith(true);
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 
-    // Clear the input and wait for state to update
+    // Clear the input and wait for state to update.
     fireEvent.change(input, { target: { value: "" } });
 
-    // Test that # triggers the mention list
+    // Test that # triggers the mention list.
     fireEvent.change(input, { target: { value: "#" } });
     await waitFor(() => {
       expect(onOpenChange).toHaveBeenCalledWith(true);
@@ -252,34 +252,34 @@ describe("Mention", () => {
       throw new Error("Input element not found");
     }
 
-    // Add a mention
+    // Add a mention.
     await userEvent.type(input, "@kickflip");
     const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
     await waitFor(() => {
       fireEvent.click(kickflipOption);
     });
 
-    // Test regular backspace at end of mention
-    input.setSelectionRange(9, 9); // Position cursor at end of mention
+    // Test regular backspace at end of mention.
+    input.setSelectionRange(9, 9); // Position cursor at end of mention.
     fireEvent.keyDown(input, { key: "Backspace" });
     expect(onValueChange).toHaveBeenLastCalledWith([]);
     expect(onInputValueChange).toHaveBeenLastCalledWith("");
 
-    // Reset input for next test
+    // Reset input for next test.
     fireEvent.change(input, { target: { value: "" } });
     onValueChange.mockClear();
     onInputValueChange.mockClear();
 
-    // Add mention with trailing space
+    // Add mention with trailing space.
     await userEvent.type(input, "@kickflip");
     await waitFor(() => {
       fireEvent.click(kickflipOption);
     });
 
-    // Move cursor after space and backspace
-    input.setSelectionRange(10, 10); // After space
+    // Move cursor after space and backspace.
+    input.setSelectionRange(10, 10); // After space.
     fireEvent.keyDown(input, { key: "Backspace" });
-    expect(onValueChange).not.toHaveBeenCalled(); // Should only remove space
+    expect(onValueChange).not.toHaveBeenCalled(); // Should only remove space.
     expect(onInputValueChange).toHaveBeenCalledWith("@kickflip");
   });
 
@@ -294,35 +294,35 @@ describe("Mention", () => {
       throw new Error("Input element not found");
     }
 
-    // Add first mention
+    // Add first mention.
     await userEvent.type(input, "@kickflip");
     const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
     await waitFor(() => {
       fireEvent.click(kickflipOption);
     });
 
-    // Add second mention
+    // Add second mention.
     await userEvent.type(input, "some text @heelflip");
     const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
     await waitFor(() => {
       fireEvent.click(heelflipOption);
     });
 
-    // Test Cmd/Ctrl backspace from end of input
-    input.setSelectionRange(29, 29); // End of input after "@heelflip "
+    // Test Cmd/Ctrl backspace from end of input.
+    input.setSelectionRange(29, 29); // End of input after "@heelflip ".
     fireEvent.keyDown(input, { key: "Backspace", metaKey: true });
     expect(onValueChange).toHaveBeenLastCalledWith(["kickflip"]);
     expect(onInputValueChange).toHaveBeenLastCalledWith("@kickflip some text ");
 
-    // Update input value to match the state after first deletion
+    // Update input value to match the state after first deletion.
     fireEvent.change(input, { target: { value: "@kickflip some text " } });
 
-    // Clear mocks for next test
+    // Clear mocks for next test.
     onValueChange.mockClear();
     onInputValueChange.mockClear();
 
-    // Test Cmd/Ctrl backspace with cursor after first mention
-    input.setSelectionRange(9, 9); // After "@kickflip"
+    // Test Cmd/Ctrl backspace with cursor after first mention.
+    input.setSelectionRange(9, 9); // After "@kickflip".
     fireEvent.keyDown(input, { key: "Backspace", metaKey: true });
     expect(onValueChange).toHaveBeenLastCalledWith([]);
     expect(onInputValueChange).toHaveBeenLastCalledWith("some text ");
@@ -351,25 +351,25 @@ describe("Mention", () => {
       throw new Error("Input element not found");
     }
 
-    // Add first mention: @kickflip
+    // Add first mention: @kickflip.
     await userEvent.type(input, "@kickflip");
     const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
     await waitFor(() => {
       fireEvent.click(kickflipOption);
     });
 
-    // Add some text and another mention
+    // Add some text and another mention.
     await userEvent.type(input, "and @heelflip");
     const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
     await waitFor(() => {
       fireEvent.click(heelflipOption);
     });
 
-    // At this point input value = "@kickflip and @heelflip "
+    // At this point input value = "@kickflip and @heelflip ".
     expect(input.value).toBe("@kickflip and @heelflip ");
 
     // Simulate deleting the first mention (@kickflip)
-    // Put cursor right after @kickflip and hit backspace enough times to trigger removal
+    // Put cursor right after @kickflip and hit backspace enough times to trigger removal.
     input.setSelectionRange(9, 9);
     fireEvent.keyDown(input, { key: "Backspace", metaKey: true });
 
@@ -378,7 +378,7 @@ describe("Mention", () => {
       expect(onInputValueChange).toHaveBeenLastCalledWith("and @heelflip ");
     });
 
-    // Ensure the input now shows only the second mention
+    // Ensure the input now shows only the second mention.
     expect(input.value).toBe("and @heelflip ");
   });
 
@@ -393,24 +393,24 @@ describe("Mention", () => {
       throw new Error("Input element not found");
     }
 
-    // Add first mention
+    // Add first mention.
     await userEvent.type(input, "@kickflip");
     const kickflipOption = screen.getByRole("option", { name: "Kickflip" });
     await waitFor(() => {
       fireEvent.click(kickflipOption);
     });
 
-    // Add some text after the first mention
+    // Add some text after the first mention.
     await userEvent.type(input, " and then ");
 
-    // Add another mention after the text
+    // Add another mention after the text.
     await userEvent.type(input, "@heelflip");
     const heelflipOption = screen.getByRole("option", { name: "Heelflip" });
     await waitFor(() => {
       fireEvent.click(heelflipOption);
     });
 
-    // Verify both mentions are present and the text between them is preserved
+    // Verify both mentions are present and the text between them is preserved.
     expect(input.value).toBe("@kickflip  and then @heelflip ");
     expect(onValueChange).toHaveBeenLastCalledWith(["kickflip", "heelflip"]);
   });

@@ -16,25 +16,25 @@ import {
   toUnmaskedIndex,
 } from "@/registry/bases/radix/ui/mask-input";
 
-// Mock ResizeObserver
+// Mock ResizeObserver.
 class ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
-// Add to global
+// Add to global.
 global.ResizeObserver = ResizeObserver;
 
-// Mock requestAnimationFrame
+// Mock requestAnimationFrame.
 global.requestAnimationFrame = (fn) => setTimeout(fn, 0);
 
-// Mock pointer capture methods
+// Mock pointer capture methods.
 Element.prototype.setPointerCapture = vi.fn();
 Element.prototype.releasePointerCapture = vi.fn();
 Element.prototype.hasPointerCapture = vi.fn();
 
-// Mock scrollIntoView
+// Mock scrollIntoView.
 Element.prototype.scrollIntoView = vi.fn();
 
 describe("MaskInput", () => {
@@ -286,10 +286,10 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("currency-input");
 
-      // Type in de-DE format: comma as decimal separator
+      // Type in de-DE format: comma as decimal separator.
       await user.type(input, "1234,56");
 
-      // EUR formatting in de-DE locale: 1.234,56 € (with non-breaking space)
+      // EUR formatting in de-DE locale: 1.234,56 € (with non-breaking space).
       const expectedEurFormat = new Intl.NumberFormat("de-DE", {
         style: "currency",
         currency: "EUR",
@@ -339,7 +339,7 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("currency-input");
 
-      // Type digits incrementally
+      // Type digits incrementally.
       await user.type(input, "1");
       expect(input).toHaveValue("$1");
 
@@ -410,7 +410,7 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("ipv4-input");
 
-      // Type partial IPv4 address (natural typing - no auto-dots)
+      // Type partial IPv4 address (natural typing - no auto-dots).
       await user.type(input, "192168111");
 
       expect(input).toHaveValue("192168111");
@@ -462,11 +462,11 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("validation-input");
 
-      // Valid value
+      // Valid value.
       await user.type(input, "150");
       expect(onValidate).toHaveBeenLastCalledWith(true, "150");
 
-      // Clear and type invalid value
+      // Clear and type invalid value.
       await user.clear(input);
       await user.type(input, "50");
       expect(onValidate).toHaveBeenLastCalledWith(false, "50");
@@ -492,7 +492,7 @@ describe("MaskInput", () => {
 
         const input = screen.getByTestId("validation-input");
 
-        // Type incomplete phone number
+        // Type incomplete phone number.
         await user.type(input, "123");
 
         if (mode === "onChange" || mode === "all") {
@@ -503,7 +503,7 @@ describe("MaskInput", () => {
 
         onValidate.mockClear();
 
-        // Blur the input
+        // Blur the input.
         await user.tab();
 
         if (mode === "onBlur" || mode === "onTouched" || mode === "all") {
@@ -535,14 +535,14 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("validation-input");
 
-      // Type and blur first (marks as touched)
+      // Type and blur first (marks as touched).
       await user.type(input, "123");
       await user.tab();
       expect(onValidate).toHaveBeenCalled();
 
       onValidate.mockClear();
 
-      // Focus back and type more - should validate on change now
+      // Focus back and type more - should validate on change now.
       await user.click(input);
       await user.type(input, "4");
       expect(onValidate).toHaveBeenCalled();
@@ -568,18 +568,18 @@ describe("MaskInput", () => {
         throw new Error("Input element not found");
       }
 
-      // Type full phone number
+      // Type full phone number.
       await user.type(input, "1234567890");
       expect(input).toHaveValue("(123) 456-7890");
 
-      // Backspace should remove the last digit
+      // Backspace should remove the last digit.
       await user.keyboard("{Backspace}");
       expect(input).toHaveValue("(123) 456-789");
 
-      // Test backspace at specific position - should remove the digit before cursor
-      input.setSelectionRange(9, 9); // Position after "456-"
+      // Test backspace at specific position - should remove the digit before cursor.
+      input.setSelectionRange(9, 9); // Position after "456-".
       await user.keyboard("{Backspace}");
-      // Should remove the '6' digit, resulting in "(123) 457-89"
+      // Should remove the '6' digit, resulting in "(123) 457-89".
       expect(input).toHaveValue("(123) 457-89");
     });
 
@@ -596,18 +596,17 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("phone-input");
 
-      // Simulate IME composition
+      // Simulate IME composition.
       fireEvent.compositionStart(input);
       fireEvent.change(input, { target: { value: "あ" } });
 
-      // During composition, the component may not update the display value immediately
-      // Let's test the composition behavior more accurately
+      // The display value may not update while composition is in progress.
       expect(onValueChange).not.toHaveBeenCalled();
 
       fireEvent.compositionEnd(input);
       fireEvent.change(input, { target: { value: "1" } });
 
-      // After composition ends, masking should apply
+      // After composition ends, masking should apply.
       expect(input).toHaveValue("(1");
     });
 
@@ -628,12 +627,12 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("phone-input");
 
-      // Focus without maskPlaceholder should keep original placeholder
+      // Focus without maskPlaceholder should keep original placeholder.
       await user.click(input);
       expect(onFocus).toHaveBeenCalled();
       expect(input).toHaveAttribute("placeholder", "Enter phone");
 
-      // Blur should keep original placeholder
+      // Blur should keep original placeholder.
       await user.tab();
       expect(onBlur).toHaveBeenCalled();
       expect(input).toHaveAttribute("placeholder", "Enter phone");
@@ -655,14 +654,14 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("phone-input");
 
-      // Initially should show regular placeholder
+      // Initially should show regular placeholder.
       expect(input).toHaveAttribute("placeholder", "Enter phone");
 
-      // Focus should show mask placeholder
+      // Focus should show mask placeholder.
       await user.click(input);
       expect(input).toHaveAttribute("placeholder", "(___) ___-____");
 
-      // Blur should revert to original placeholder
+      // Blur should revert to original placeholder.
       await user.tab();
       expect(input).toHaveAttribute("placeholder", "Enter phone");
     });
@@ -680,14 +679,14 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("phone-input");
 
-      // Initially should show regular placeholder
+      // Initially should show regular placeholder.
       expect(input).toHaveAttribute("placeholder", "Enter phone");
 
-      // Focus should keep regular placeholder
+      // Focus should keep regular placeholder.
       await user.click(input);
       expect(input).toHaveAttribute("placeholder", "Enter phone");
 
-      // Blur should keep regular placeholder
+      // Blur should keep regular placeholder.
       await user.tab();
       expect(input).toHaveAttribute("placeholder", "Enter phone");
     });
@@ -706,14 +705,14 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("currency-input");
 
-      // Initially should show regular placeholder
+      // Initially should show regular placeholder.
       expect(input).toHaveAttribute("placeholder", "Enter amount");
 
-      // Focus should show formatted currency placeholder
+      // Focus should show formatted currency placeholder.
       await user.click(input);
       expect(input).toHaveAttribute("placeholder", "$0.00");
 
-      // Blur should revert to original placeholder
+      // Blur should revert to original placeholder.
       await user.tab();
       expect(input).toHaveAttribute("placeholder", "Enter amount");
     });
@@ -732,14 +731,14 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("percentage-input");
 
-      // Initially should show regular placeholder
+      // Initially should show regular placeholder.
       expect(input).toHaveAttribute("placeholder", "Enter percentage");
 
-      // Focus should show percentage placeholder
+      // Focus should show percentage placeholder.
       await user.click(input);
       expect(input).toHaveAttribute("placeholder", "0.00%");
 
-      // Blur should revert to original placeholder
+      // Blur should revert to original placeholder.
       await user.tab();
       expect(input).toHaveAttribute("placeholder", "Enter percentage");
     });
@@ -763,14 +762,14 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("custom-input");
 
-      // Initially should show regular placeholder
+      // Initially should show regular placeholder.
       expect(input).toHaveAttribute("placeholder", "Enter code");
 
-      // Focus should show custom mask placeholder
+      // Focus should show custom mask placeholder.
       await user.click(input);
       expect(input).toHaveAttribute("placeholder", "ABC-123");
 
-      // Blur should revert to original placeholder
+      // Blur should revert to original placeholder.
       await user.tab();
       expect(input).toHaveAttribute("placeholder", "Enter code");
     });
@@ -788,14 +787,14 @@ describe("MaskInput", () => {
 
       const input = screen.getByTestId("phone-input");
 
-      // Initially should have no placeholder
+      // Initially should have no placeholder.
       expect(input).not.toHaveAttribute("placeholder");
 
-      // Focus should show mask placeholder
+      // Focus should show mask placeholder.
       await user.click(input);
       expect(input).toHaveAttribute("placeholder", "(___) ___-____");
 
-      // Blur should remove placeholder
+      // Blur should remove placeholder.
       await user.tab();
       expect(input).not.toHaveAttribute("placeholder");
     });
@@ -827,7 +826,7 @@ describe("MaskInput", () => {
     });
 
     test("controlled vs uncontrolled behavior", async () => {
-      // Uncontrolled
+      // Uncontrolled.
       const { rerender } = render(
         <MaskInput mask="phone" defaultValue="123" data-testid="phone-input" />,
       );
@@ -835,7 +834,7 @@ describe("MaskInput", () => {
       let input = screen.getByTestId("phone-input");
       expect(input).toHaveValue("(123");
 
-      // Controlled
+      // Controlled.
       rerender(
         <MaskInput mask="phone" value="456" data-testid="phone-input" />,
       );
@@ -875,7 +874,7 @@ describe("MaskInput", () => {
         </MaskInput>,
       );
 
-      // Should render the custom component structure
+      // Should render the custom component structure.
       expect(screen.getByTestId("custom-wrapper")).toBeInTheDocument();
       expect(screen.getByTestId("custom-input")).toBeInTheDocument();
     });
@@ -928,7 +927,7 @@ describe("MaskInput", () => {
           locale: "de-DE",
           mask: "currency",
         });
-        // EUR in de-DE: 1.234,56 €  (note: uses non-breaking space)
+        // EUR in de-DE: 1.234,56 €  (note: uses non-breaking space).
         expect(result).toMatch(/1\.234,56\s+€/);
       });
 
@@ -953,7 +952,7 @@ describe("MaskInput", () => {
           currency: "EUR",
           locale: "de-DE",
         });
-        // EUR in de-DE: 1.234,56 €  (note: uses non-breaking space)
+        // EUR in de-DE: 1.234,56 €  (note: uses non-breaking space).
         expect(result).toMatch(/1\.234,56\s+€/);
       });
 
@@ -972,7 +971,7 @@ describe("MaskInput", () => {
           currency: "JPY",
           locale: "ja-JP",
         });
-        // JPY doesn't use decimals, so it should format as whole number
+        // JPY doesn't use decimals, so it should format as whole number.
         expect(result).toMatch(/[¥￥]1,234/);
       });
 
@@ -983,7 +982,7 @@ describe("MaskInput", () => {
 
       test("handles invalid numeric values", () => {
         const result = applyCurrencyMask({ value: "abc" });
-        // Invalid values with no digits return empty string
+        // Invalid values with no digits return empty string.
         expect(result).toBe("");
       });
 
@@ -1003,7 +1002,7 @@ describe("MaskInput", () => {
       });
 
       test("handles incremental input correctly", () => {
-        // Test that single digits don't become full currency amounts
+        // Test that single digits don't become full currency amounts.
         expect(applyCurrencyMask({ value: "1" })).toBe("$1");
         expect(applyCurrencyMask({ value: "12" })).toBe("$12");
         expect(applyCurrencyMask({ value: "123" })).toBe("$123");
@@ -1060,15 +1059,15 @@ describe("MaskInput", () => {
       test("converts masked position to unmasked position", () => {
         const masked = "(123) 456-7890";
         const pattern = "(###) ###-####";
-        const result = toUnmaskedIndex({ masked, pattern, caret: 9 }); // Position after "456-"
-        expect(result).toBe(6); // 6th digit in unmasked value
+        const result = toUnmaskedIndex({ masked, pattern, caret: 9 }); // Position after "456-".
+        expect(result).toBe(6); // 6th digit in unmasked value.
       });
 
       test("converts unmasked position to masked position", () => {
         const masked = "(123) 456-7890";
         const pattern = "(###) ###-####";
-        const result = fromUnmaskedIndex({ masked, pattern, unmaskedIndex: 6 }); // 6th digit
-        expect(result).toBe(9); // Position after "456-" in masked value (0-indexed)
+        const result = fromUnmaskedIndex({ masked, pattern, unmaskedIndex: 6 }); // 6th digit.
+        expect(result).toBe(9); // Position after "456-" in masked value (0-indexed).
       });
     });
   });
@@ -1083,115 +1082,115 @@ describe("MaskInput", () => {
 
     test("date pattern validation", () => {
       const { validate } = MASK_PATTERNS.date;
-      expect(validate?.("12252023")).toBe(true); // Valid date
-      expect(validate?.("13252023")).toBe(false); // Invalid month
-      expect(validate?.("12322023")).toBe(false); // Invalid day
-      expect(validate?.("02292023")).toBe(false); // Invalid leap year day
-      expect(validate?.("02292024")).toBe(true); // Valid leap year day
+      expect(validate?.("12252023")).toBe(true); // Valid date.
+      expect(validate?.("13252023")).toBe(false); // Invalid month.
+      expect(validate?.("12322023")).toBe(false); // Invalid day.
+      expect(validate?.("02292023")).toBe(false); // Invalid leap year day.
+      expect(validate?.("02292024")).toBe(true); // Valid leap year day.
     });
 
     test("time pattern validation", () => {
       const { validate } = MASK_PATTERNS.time;
-      expect(validate?.("1430")).toBe(true); // Valid time
-      expect(validate?.("2430")).toBe(false); // Invalid hour
-      expect(validate?.("1460")).toBe(false); // Invalid minute
+      expect(validate?.("1430")).toBe(true); // Valid time.
+      expect(validate?.("2430")).toBe(false); // Invalid hour.
+      expect(validate?.("1460")).toBe(false); // Invalid minute.
     });
 
     test("creditCard pattern validation", () => {
       const { validate } = MASK_PATTERNS.creditCard;
 
-      // Valid credit card numbers (pass Luhn algorithm via validateCardNumber)
-      expect(validate?.("4242424242424242")).toBe(true); // Stripe test card
-      expect(validate?.("4000000000000002")).toBe(true); // Another valid card
-      expect(validate?.("5555555555554444")).toBe(true); // Mastercard test card
-      expect(validate?.("378282246310005")).toBe(true); // American Express (15 digits)
-      expect(validate?.("6011111111111117")).toBe(true); // Discover test card
+      // Valid credit card numbers (pass Luhn algorithm via validateCardNumber).
+      expect(validate?.("4242424242424242")).toBe(true); // Stripe test card.
+      expect(validate?.("4000000000000002")).toBe(true); // Another valid card.
+      expect(validate?.("5555555555554444")).toBe(true); // Mastercard test card.
+      expect(validate?.("378282246310005")).toBe(true); // American Express (15 digits).
+      expect(validate?.("6011111111111117")).toBe(true); // Discover test card.
 
-      // Invalid credit card numbers (fail Luhn algorithm)
-      expect(validate?.("1231231231231231")).toBe(false); // User's example - invalid
-      expect(validate?.("4242424242424243")).toBe(false); // One digit changed
-      expect(validate?.("1234567890123456")).toBe(false); // Sequential numbers
-      expect(validate?.("1111111111111111")).toBe(false); // All ones
+      // Invalid credit card numbers (fail Luhn algorithm).
+      expect(validate?.("1231231231231231")).toBe(false); // User's example - invalid.
+      expect(validate?.("4242424242424243")).toBe(false); // One digit changed.
+      expect(validate?.("1234567890123456")).toBe(false); // Sequential numbers.
+      expect(validate?.("1111111111111111")).toBe(false); // All ones.
 
-      // Note: "0000000000000000" technically passes Luhn (sum=0, 0%10=0) but is not a real card
-      expect(validate?.("0000000000000000")).toBe(true); // All zeros - passes Luhn but not realistic
+      // "0000000000000000" passes Luhn (sum=0) without being a real card.
+      expect(validate?.("0000000000000000")).toBe(true); // All zeros - passes Luhn but not realistic.
 
-      // Invalid length
-      expect(validate?.("123456789012")).toBe(false); // Too short (12 digits)
-      expect(validate?.("12345678901234567890")).toBe(false); // Too long (20 digits)
-      expect(validate?.("123")).toBe(false); // Way too short
-      expect(validate?.("")).toBe(false); // Empty
+      // Invalid length.
+      expect(validate?.("123456789012")).toBe(false); // Too short (12 digits).
+      expect(validate?.("12345678901234567890")).toBe(false); // Too long (20 digits).
+      expect(validate?.("123")).toBe(false); // Way too short.
+      expect(validate?.("")).toBe(false); // Empty.
 
-      // Invalid characters (should be filtered by transform first)
+      // Invalid characters (should be filtered by transform first).
       expect(validate?.("abcd")).toBe(false);
     });
 
     test("creditCardExpiry pattern validation", () => {
       const { validate } = MASK_PATTERNS.creditCardExpiry;
 
-      // Mock current date to December 2025 for consistent testing using Vitest fake timers
+      // Mock current date to December 2025 for consistent testing using Vitest fake timers.
       vi.useFakeTimers();
-      vi.setSystemTime(new Date(2025, 11, 15)); // December 15, 2025
+      vi.setSystemTime(new Date(2025, 11, 15)); // December 15, 2025.
 
-      // Valid future dates
-      expect(validate?.("1226")).toBe(true); // December 2026
-      expect(validate?.("0126")).toBe(true); // January 2026
-      expect(validate?.("1225")).toBe(true); // December 2025 (current month)
-      expect(validate?.("1239")).toBe(true); // December 2039 (within 50 years)
+      // Valid future dates.
+      expect(validate?.("1226")).toBe(true); // December 2026.
+      expect(validate?.("0126")).toBe(true); // January 2026.
+      expect(validate?.("1225")).toBe(true); // December 2025 (current month).
+      expect(validate?.("1239")).toBe(true); // December 2039 (within 50 years).
 
-      // Invalid past dates
-      expect(validate?.("1125")).toBe(false); // November 2025 (past month)
-      expect(validate?.("1224")).toBe(false); // December 2024 (past year)
+      // Invalid past dates.
+      expect(validate?.("1125")).toBe(false); // November 2025 (past month).
+      expect(validate?.("1224")).toBe(false); // December 2024 (past year).
 
-      // Invalid months
-      expect(validate?.("0025")).toBe(false); // Month 00
-      expect(validate?.("1325")).toBe(false); // Month 13
+      // Invalid months.
+      expect(validate?.("0025")).toBe(false); // Month 00.
+      expect(validate?.("1325")).toBe(false); // Month 13.
 
-      // Invalid format (wrong length)
-      expect(validate?.("125")).toBe(false); // Too short
-      expect(validate?.("12255")).toBe(false); // Too long
-      expect(validate?.("")).toBe(false); // Empty
+      // Invalid format (wrong length).
+      expect(validate?.("125")).toBe(false); // Too short.
+      expect(validate?.("12255")).toBe(false); // Too long.
+      expect(validate?.("")).toBe(false); // Empty.
 
-      // Invalid characters (should be filtered by transform)
+      // Invalid characters (should be filtered by transform).
       expect(validate?.("ab25")).toBe(false);
 
-      // Edge cases for year validation
-      expect(validate?.("1240")).toBe(true); // Year 40 (2040) is valid (within 50 years from 2025)
-      expect(validate?.("1250")).toBe(true); // Year 50 (2050) is valid (within 50 years from 2025)
-      expect(validate?.("1299")).toBe(false); // Year 99 (1999) is in the past
-      expect(validate?.("1200")).toBe(false); // Year 00 (2000) is in the past
-      expect(validate?.("1230")).toBe(true); // Year 30 (2030) is valid
-      expect(validate?.("1249")).toBe(true); // Year 49 (2049) is valid (within 50 years from 2025)
-      expect(validate?.("1275")).toBe(true); // Year 75 (2075) is valid (exactly 50 years from 2025)
-      expect(validate?.("1276")).toBe(false); // Year 76 (1976) is in the past
+      // Edge cases for year validation.
+      expect(validate?.("1240")).toBe(true); // Year 40 (2040) is valid (within 50 years from 2025).
+      expect(validate?.("1250")).toBe(true); // Year 50 (2050) is valid (within 50 years from 2025).
+      expect(validate?.("1299")).toBe(false); // Year 99 (1999) is in the past.
+      expect(validate?.("1200")).toBe(false); // Year 00 (2000) is in the past.
+      expect(validate?.("1230")).toBe(true); // Year 30 (2030) is valid.
+      expect(validate?.("1249")).toBe(true); // Year 49 (2049) is valid (within 50 years from 2025).
+      expect(validate?.("1275")).toBe(true); // Year 75 (2075) is valid (exactly 50 years from 2025).
+      expect(validate?.("1276")).toBe(false); // Year 76 (1976) is in the past.
 
-      // Restore real timers
+      // Restore real timers.
       vi.useRealTimers();
     });
 
     test("ipv4 pattern validation", () => {
       const { validate } = MASK_PATTERNS.ipv4;
-      expect(validate?.("192168001001")).toBe(true); // Valid unmasked IPv4 (192.168.001.001 -> chunks: 192, 168, 001, 001)
-      expect(validate?.("256168001001")).toBe(false); // Invalid octet (256 > 255)
-      expect(validate?.("192168001")).toBe(true); // Incomplete but valid partial (192.168.001)
-      expect(validate?.("192168111")).toBe(true); // Valid partial (192.168.111)
-      expect(validate?.("1921680010011")).toBe(false); // Too long (> 12 digits)
+      expect(validate?.("192168001001")).toBe(true); // Valid unmasked IPv4 (192.168.001.001 -> chunks: 192, 168, 001, 001).
+      expect(validate?.("256168001001")).toBe(false); // Invalid octet (256 > 255).
+      expect(validate?.("192168001")).toBe(true); // Incomplete but valid partial (192.168.001).
+      expect(validate?.("192168111")).toBe(true); // Valid partial (192.168.111).
+      expect(validate?.("1921680010011")).toBe(false); // Too long (> 12 digits).
     });
 
     test("currency pattern validation", () => {
       const { validate } = MASK_PATTERNS.currency;
       expect(validate?.("123.45")).toBe(true);
       expect(validate?.("123")).toBe(true);
-      expect(validate?.("123.456")).toBe(false); // Too many decimal places
-      expect(validate?.("abc")).toBe(false); // Non-numeric
+      expect(validate?.("123.456")).toBe(false); // Too many decimal places.
+      expect(validate?.("abc")).toBe(false); // Non-numeric.
     });
 
     test("percentage pattern validation", () => {
       const { validate } = MASK_PATTERNS.percentage;
       expect(validate?.("25.5")).toBe(true);
       expect(validate?.("100")).toBe(true);
-      expect(validate?.("101")).toBe(false); // Over 100%
-      expect(validate?.("-5")).toBe(false); // Negative
+      expect(validate?.("101")).toBe(false); // Over 100%.
+      expect(validate?.("-5")).toBe(false); // Negative.
     });
   });
 
@@ -1201,23 +1200,23 @@ describe("MaskInput", () => {
       render(<MaskInput mask="creditCard" data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type full credit card number
+      // Type full credit card number.
       await user.type(input, "4242424242424242");
       expect(input).toHaveValue("4242 4242 4242 4242");
 
-      // Move cursor to position 13 (middle of third group)
+      // Move cursor to position 13 (middle of third group).
       input.setSelectionRange(13, 13);
       expect(input.selectionStart).toBe(13);
 
-      // Delete character at position 13
+      // Delete character at position 13.
       await user.keyboard("{Backspace}");
       expect(input).toHaveValue("4242 4242 4224 242");
       expect(input.selectionStart).toBe(12);
 
-      // Type a character at position 12
+      // Type a character at position 12.
       await user.keyboard("4");
       expect(input).toHaveValue("4242 4242 4242 4242");
-      // Cursor should be at position 13 (right after the inserted character)
+      // Cursor should be at position 13 (right after the inserted character).
       expect(input.selectionStart).toBe(13);
     });
 
@@ -1226,17 +1225,17 @@ describe("MaskInput", () => {
       render(<MaskInput mask="creditCard" data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type partial number
+      // Type partial number.
       await user.type(input, "424242");
       expect(input).toHaveValue("4242 42");
 
-      // Move cursor to beginning
+      // Move cursor to beginning.
       input.setSelectionRange(0, 0);
 
-      // Type at beginning
+      // Type at beginning.
       await user.keyboard("1");
       expect(input).toHaveValue("1424 242");
-      // Cursor should be at position 1
+      // Cursor should be at position 1.
       expect(input.selectionStart).toBe(1);
     });
 
@@ -1245,17 +1244,17 @@ describe("MaskInput", () => {
       render(<MaskInput mask="creditCard" data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type to create first group
+      // Type to create first group.
       await user.type(input, "4242");
       expect(input).toHaveValue("4242");
 
-      // Move cursor to position 4 (end of first group, before space)
+      // Move cursor to position 4 (end of first group, before space).
       input.setSelectionRange(4, 4);
 
-      // Type another digit - should insert and handle the space correctly
+      // Type another digit - should insert and handle the space correctly.
       await user.keyboard("5");
       expect(input).toHaveValue("4242 5");
-      // Cursor should be at position 6 (after space and new digit)
+      // Cursor should be at position 6 (after space and new digit).
       expect(input.selectionStart).toBe(6);
     });
 
@@ -1264,22 +1263,22 @@ describe("MaskInput", () => {
       render(<MaskInput mask="phone" data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type full phone number
+      // Type full phone number.
       await user.type(input, "5551234567");
       expect(input).toHaveValue("(555) 123-4567");
 
-      // Move cursor to position 10 (after "123-")
+      // Move cursor to position 10 (after "123-").
       input.setSelectionRange(10, 10);
 
-      // Delete character
+      // Delete character.
       await user.keyboard("{Backspace}");
       expect(input).toHaveValue("(555) 124-567");
       expect(input.selectionStart).toBe(8);
 
-      // Type character back
+      // Type character back.
       await user.keyboard("3");
       expect(input).toHaveValue("(555) 123-4567");
-      // Cursor should be at position 9
+      // Cursor should be at position 9.
       expect(input.selectionStart).toBe(9);
     });
 
@@ -1288,24 +1287,24 @@ describe("MaskInput", () => {
       render(<MaskInput mask="date" data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type full date
+      // Type full date.
       await user.type(input, "12252025");
       expect(input).toHaveValue("12/25/2025");
 
-      // Move cursor to position 3 (after month, before day)
+      // Move cursor to position 3 (after month, before day).
       input.setSelectionRange(3, 3);
 
-      // Delete the day's first digit
+      // Delete the day's first digit.
       await user.keyboard("{Delete}");
       expect(input).toHaveValue("12/52/025");
 
-      // Move back to position 3
+      // Move back to position 3.
       input.setSelectionRange(3, 3);
 
-      // Type the correct digit
+      // Type the correct digit.
       await user.keyboard("2");
       expect(input).toHaveValue("12/25/2025");
-      // Cursor should be at position 4
+      // Cursor should be at position 4.
       expect(input.selectionStart).toBe(4);
     });
 
@@ -1314,15 +1313,15 @@ describe("MaskInput", () => {
       render(<MaskInput mask="creditCard" data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type incrementally at the end
+      // Type incrementally at the end.
       await user.type(input, "4242");
       expect(input).toHaveValue("4242");
       expect(input.selectionStart).toBe(4);
 
-      // After 4 digits, space is added
+      // After 4 digits, space is added.
       await user.keyboard("4");
       expect(input).toHaveValue("4242 4");
-      expect(input.selectionStart).toBe(6); // After space
+      expect(input.selectionStart).toBe(6); // After space.
     });
 
     test("maintains cursor position when inserting in the middle of SSN", async () => {
@@ -1330,14 +1329,14 @@ describe("MaskInput", () => {
       render(<MaskInput mask="ssn" data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type full SSN
+      // Type full SSN.
       await user.type(input, "123456789");
       expect(input).toHaveValue("123-45-6789");
 
-      // Move cursor to position 7 (middle of last group)
+      // Move cursor to position 7 (middle of last group).
       input.setSelectionRange(7, 7);
 
-      // Delete and retype
+      // Delete and retype.
       await user.keyboard("{Backspace}");
       expect(input).toHaveValue("123-46-789");
       expect(input.selectionStart).toBe(5);
@@ -1352,17 +1351,17 @@ describe("MaskInput", () => {
       render(<MaskInput mask="creditCard" data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type first 8 digits
+      // Type first 8 digits.
       await user.type(input, "42424242");
       expect(input).toHaveValue("4242 4242");
 
-      // Move cursor to position 5 (start of second group)
+      // Move cursor to position 5 (start of second group).
       input.setSelectionRange(5, 5);
 
-      // Type multiple characters rapidly
+      // Type multiple characters rapidly.
       await user.keyboard("111");
       expect(input).toHaveValue("4242 1114 242");
-      // Cursor should be after the inserted characters
+      // Cursor should be after the inserted characters.
       expect(input.selectionStart).toBe(8);
     });
 
@@ -1371,17 +1370,17 @@ describe("MaskInput", () => {
       render(<MaskInput mask="phone" data-testid="mask-input" />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type enough to create "(555) 1"
+      // Type enough to create "(555) 1".
       await user.type(input, "5551");
       expect(input).toHaveValue("(555) 1");
 
-      // Move cursor to position 6 (right after space, before "1")
+      // Move cursor to position 6 (right after space, before "1").
       input.setSelectionRange(6, 6);
 
-      // Backspace should remove the last "5"
+      // Backspace should remove the last "5".
       await user.keyboard("{Backspace}");
       expect(input).toHaveValue("(551");
-      // Cursor should be at position 3
+      // Cursor should be at position 3.
       expect(input.selectionStart).toBe(3);
     });
 
@@ -1402,17 +1401,17 @@ describe("MaskInput", () => {
       render(<TestComponent />);
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type some digits
+      // Type some digits.
       await user.type(input, "4242");
       expect(input).toHaveValue("4242");
 
-      // Move cursor to position 2
+      // Move cursor to position 2.
       input.setSelectionRange(2, 2);
 
-      // Type a digit in the middle
+      // Type a digit in the middle.
       await user.keyboard("1");
       expect(input).toHaveValue("4214 2");
-      // Cursor should be at position 3
+      // Cursor should be at position 3.
       expect(input.selectionStart).toBe(3);
     });
 
@@ -1428,24 +1427,24 @@ describe("MaskInput", () => {
       );
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type EUR amount (German format uses comma as decimal separator)
+      // Type EUR amount (German format uses comma as decimal separator).
       await user.type(input, "123456");
-      // Should format as "1.234,56 €" in German locale
+      // Should format as "1.234,56 €" in German locale.
       expect(input.value).toContain("1");
       expect(input.value).toContain("234");
       expect(input.value).toContain("56");
 
-      // Get current cursor position (at end)
+      // Get current cursor position (at end).
       const endPosition = input.selectionStart ?? 0;
 
-      // Move cursor to middle (after first digit group)
+      // Move cursor to middle (after first digit group).
       const middlePosition = input.value.indexOf("234");
       input.setSelectionRange(middlePosition, middlePosition);
 
-      // Delete a character
+      // Delete a character.
       await user.keyboard("{Backspace}");
 
-      // Cursor should stay near the middle, not jump to end
+      // Cursor should stay near the middle, not jump to end.
       const newPosition = input.selectionStart ?? 0;
       expect(newPosition).toBeLessThan(endPosition - 2);
       expect(newPosition).toBeGreaterThan(0);
@@ -1463,18 +1462,18 @@ describe("MaskInput", () => {
       );
       const input = screen.getByTestId("mask-input") as HTMLInputElement;
 
-      // Type USD amount
+      // Type USD amount.
       await user.type(input, "123456");
       expect(input.value).toBe("$123,456");
 
-      // Move cursor after the dollar sign (position 1)
+      // Move cursor after the dollar sign (position 1).
       input.setSelectionRange(1, 1);
 
-      // Type a digit
+      // Type a digit.
       await user.keyboard("9");
       expect(input.value).toBe("$9,123,456");
 
-      // Cursor should be at position 2 (after the 9)
+      // Cursor should be at position 2 (after the 9).
       expect(input.selectionStart).toBe(2);
     });
   });

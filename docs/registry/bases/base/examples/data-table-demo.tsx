@@ -148,7 +148,7 @@ const columns: ColumnDef<DataTableFeatures, Project>[] = [
 ];
 
 export default function DataTableDemo() {
-  // Client mode sorts, filters, and paginates `data` in the browser
+  // Client mode sorts, filters, and paginates `data` in the browser.
   const { table } = useDataTable({
     mode: "client",
     data,

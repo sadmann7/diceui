@@ -71,7 +71,6 @@ describe("useCollection", () => {
       useCollection<HTMLDivElement, ItemData>(),
     );
 
-    // Create a container for our collection
     render(
       <div ref={result.current.collectionRef}>
         <Item
@@ -129,7 +128,6 @@ describe("useCollection", () => {
       useCollection<HTMLDivElement, ItemData>(),
     );
 
-    // Create a container for our collection
     render(<div ref={result.current.collectionRef} />);
 
     const nullRef = { current: null };

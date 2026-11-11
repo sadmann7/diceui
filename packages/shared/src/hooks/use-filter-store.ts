@@ -100,7 +100,7 @@ function useFilterStore<
         }
       }
 
-      // Sort by score in descending order and add to filterStore
+      // Sort by score in descending order and add to filterStore.
       const sortedScores = Array.from(scores.entries()).sort(
         ([, a], [, b]) => b - a,
       );
@@ -112,7 +112,7 @@ function useFilterStore<
       pendingBatch = [];
     }
 
-    // Process items in batches
+    // Process items in batches.
     for (const [id, value] of itemMap) {
       pendingBatch.push([id, value]);
 
@@ -121,14 +121,14 @@ function useFilterStore<
       }
     }
 
-    // Process remaining items
+    // Process remaining items.
     if (pendingBatch.length > 0) {
       processBatch();
     }
 
     setFilterItemCount(filterStore, itemCount);
 
-    // Update groups if needed
+    // Update groups if needed.
     if (groupMap && filterStore.groups && groupMap.size && itemCount > 0) {
       const matchingItems = new Set(filterStore.items.keys());
 

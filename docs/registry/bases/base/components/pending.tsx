@@ -1,5 +1,5 @@
 /**
- * Based on React Aria's Button implementation
+ * Based on React Aria's Button implementation.
  * @see https://github.com/adobe/react-spectrum/blob/main/packages/react-aria-components/src/Button.tsx
  */
 

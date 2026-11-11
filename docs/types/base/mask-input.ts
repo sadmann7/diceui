@@ -69,7 +69,7 @@ export interface MaskPattern {
   validate?: (value: string, opts?: ValidateOptions) => boolean;
 }
 
-/** Predefined mask pattern keys for common input formats */
+/** Predefined mask pattern keys for common input formats. */
 export type MaskPatternKey =
   | "phone"
   | "ssn"
@@ -87,19 +87,19 @@ export type MaskPatternKey =
   | "isbn"
   | "ein";
 
-/** Validation modes that control when validation occurs */
+/** Validation modes that control when validation occurs. */
 export type ValidationMode =
-  | "onChange" // Validate on every change (current behavior)
-  | "onBlur" // Validate only when field loses focus
-  | "onSubmit" // Validate only on form submission (no automatic validation)
-  | "onTouched" // Validate on first blur, then on every change
-  | "all"; // Validate on both blur and change events
+  | "onChange" // Validate on every change (current behavior).
+  | "onBlur" // Validate only when field loses focus.
+  | "onSubmit" // Validate only on form submission (no automatic validation).
+  | "onTouched" // Validate on first blur, then on every change.
+  | "all"; // Validate on both blur and change events.
 
 export interface MaskInputProps extends RenderProps {
-  /** Controlled value */
+  /** Controlled value. */
   value?: string;
 
-  /** Default uncontrolled value */
+  /** Default uncontrolled value. */
   defaultValue?: string;
 
   /**

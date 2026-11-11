@@ -5,7 +5,7 @@
 import * as React from "react";
 
 /**
- * Creates a type-safe context and provider with automatic error handling
+ * Creates a type-safe context and provider with automatic error handling.
  * @template T The type of the context value
  * @param name The name of the root component for error messages
  * @param defaultValue Optional default value for the context
@@ -20,7 +20,7 @@ function createContext<T extends object | null>(
   function Provider(props: T & { children: React.ReactNode }) {
     const { children, ...contextValue } = props;
 
-    // Memoize the context value by its values
+    // Memoize the context value by its values.
     const value = React.useMemo(
       () => contextValue,
       // oxlint-disable-next-line react/exhaustive-deps -- we want to memoize by all values

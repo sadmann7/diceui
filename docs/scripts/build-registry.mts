@@ -104,9 +104,7 @@ async function resolveItemDependencies(
   return dependencies;
 }
 
-// ----------------------------------------------------------------------------
 // Build public/r/styles/{base}-{style}/registry.json and index.json.
-// ----------------------------------------------------------------------------
 async function buildRegistryJson() {
   for (const { name: styleName, base } of STYLE_COMBINATIONS) {
     const baseName = base.name;
@@ -165,9 +163,7 @@ async function buildRegistryJson() {
   }
 }
 
-// ----------------------------------------------------------------------------
 // Build public/r/styles/index.json listing all available styles.
-// ----------------------------------------------------------------------------
 async function buildStylesIndex() {
   const stylesIndex = STYLE_COMBINATIONS.map(({ name, title, base }) => ({
     name,
@@ -183,9 +179,7 @@ async function buildStylesIndex() {
   );
 }
 
-// ----------------------------------------------------------------------------
 // Build public/r/index.json (top-level UI component listing).
-// ----------------------------------------------------------------------------
 async function buildRootIndex() {
   const registry = registries[DEFAULT_BASE];
 
@@ -222,9 +216,7 @@ async function buildRootIndex() {
   );
 }
 
-// ----------------------------------------------------------------------------
 // Build public/r/styles/{base}-{style}/{name}.json with inlined file content.
-// ----------------------------------------------------------------------------
 const compiledSources = new Map<string, Promise<string>>();
 
 // Compiled sources persist in `.next/cache`, which Vercel restores between
@@ -390,18 +382,14 @@ async function buildPublicItems() {
   }
 }
 
-// ----------------------------------------------------------------------------
 // Build registry/bases/{base}/ui-rtl for the *-rtl-demo examples: the ui files
 // they import, run through the shadcn rtl transform. Markers stay, and `cnRtl`
 // expands them with the current style's RTL classes. Gitignored.
-// ----------------------------------------------------------------------------
 const FILE_HEADER = /^\/\*\*[\s\S]*?\*\/\n\n?/;
 
-// ----------------------------------------------------------------------------
 // Build styles/{base}-{DEFAULT_STYLE}/ui: every ui file compiled with the
 // default style, for the docs' own UI so it ignores the style switcher.
 // Gitignored.
-// ----------------------------------------------------------------------------
 async function buildDocsUi() {
   const styleMap = (await getStyleMaps()).get(DEFAULT_STYLE)!;
 
@@ -500,7 +488,7 @@ async function buildRtlUi() {
 try {
   const totalStart = performance.now();
 
-  // Validate all registries before touching any output
+  // Validate all registries before touching any output.
   for (const base of BASES) {
     const baseName = base.name;
     const result = registrySchema.safeParse(registries[baseName]);
@@ -536,7 +524,7 @@ try {
 
   console.log(`💅 Building ${STYLE_COMBINATIONS.length} style variants...`);
 
-  // Build per-item JSONs (once per base, then copy across styles)
+  // Build per-item JSONs (once per base, then copy across styles).
   await buildPublicItems();
 
   // Write registry.json + index.json metadata for each style directory.

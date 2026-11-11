@@ -67,10 +67,10 @@ const MentionHighlighter = React.memo(
           onSyncScrollAndResize();
         }
 
-        // Create a ResizeObserver to listen for the input's size changes
+        // Create a ResizeObserver to listen for the input's size changes.
         const resizeObserver = new ResizeObserver(onResize);
 
-        // Create a MutationObserver to listen for the input's class changes
+        // Create a MutationObserver to listen for the input's class changes.
         const mutationObserver = new MutationObserver((mutations) => {
           if (
             mutations.some(
@@ -135,7 +135,7 @@ const MentionHighlighter = React.memo(
         let lastIndex = 0;
 
         for (const { start, end } of context.mentions) {
-          // Add text before mention
+          // Add text before mention.
           if (start > lastIndex) {
             segments.push(
               <span key={`text-${lastIndex}`}>
@@ -144,7 +144,7 @@ const MentionHighlighter = React.memo(
             );
           }
 
-          // Add highlighted mention
+          // Add highlighted mention.
           segments.push(
             <span key={`mention-${start}`} data-tag="">
               {value.slice(start, end)}
@@ -154,7 +154,7 @@ const MentionHighlighter = React.memo(
           lastIndex = end;
         }
 
-        // Add text after mention
+        // Add text after mention.
         if (lastIndex < value.length) {
           segments.push(
             <span key={`text-end-${value.length}`}>
@@ -163,7 +163,7 @@ const MentionHighlighter = React.memo(
           );
         }
 
-        // Add space after text
+        // Add space after text.
         segments.push(<span key="space">&nbsp;</span>);
 
         return segments;
