@@ -1,4 +1,4 @@
-name: code-check
+name: Code check
 
 on:
   pull_request:
@@ -19,6 +19,7 @@ env:
 jobs:
   format:
     runs-on: ubuntu-latest
+    name: Format
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
@@ -29,6 +30,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    name: Build
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
@@ -39,6 +41,7 @@ jobs:
 
   lint:
     runs-on: ubuntu-latest
+    name: Lint
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
@@ -53,6 +56,7 @@ jobs:
 
   test:
     runs-on: ubuntu-latest
+    name: Test
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
@@ -63,6 +67,7 @@ jobs:
 
   typecheck:
     runs-on: ubuntu-latest
+    name: Typecheck
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
