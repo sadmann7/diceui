@@ -58,7 +58,6 @@ export function VisuallyHiddenInput<T = InputValue>(
     }
   }, [input, prevValue, value, checked, bubbles, isCheckInput]);
 
-  // Trigger on onReset callback when form is reset.
   useFormReset({
     form: input?.form ?? null,
     defaultValue: isCheckInput ? (checked as T) : value,

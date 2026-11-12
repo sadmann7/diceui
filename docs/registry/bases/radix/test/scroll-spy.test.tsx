@@ -10,7 +10,6 @@ import {
   ScrollSpyViewport,
 } from "@/registry/bases/radix/ui/scroll-spy";
 
-// Mock IntersectionObserver.
 class MockIntersectionObserver {
   observe = vi.fn();
   disconnect = vi.fn();
@@ -23,7 +22,7 @@ class MockIntersectionObserver {
 
 vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
 
-// Mock window.matchMedia for getDefaultScrollBehavior.
+// jsdom lacks matchMedia, which getDefaultScrollBehavior reads.
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
@@ -97,7 +96,6 @@ describe("ScrollSpy", () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 
-    // Mock scrollTo.
     window.scrollTo = vi.fn();
 
     render(<ScrollSpyTest onValueChange={onValueChange} />);
@@ -128,12 +126,10 @@ describe("ScrollSpy", () => {
     const links = screen.getAllByRole("link");
     expect(links).toHaveLength(3);
 
-    // Initially, first link should be active.
     expect(links[0]).toHaveAttribute("data-state", "active");
     expect(links[1]).toHaveAttribute("data-state", "inactive");
     expect(links[2]).toHaveAttribute("data-state", "inactive");
 
-    // Click second link.
     const secondLink = links[1];
     if (!secondLink) throw new Error("Second link not found");
     await user.click(secondLink);
@@ -157,13 +153,11 @@ describe("ScrollSpy", () => {
     expect(links).toHaveLength(3);
     expect(links[0]).toHaveAttribute("data-state", "active");
 
-    // Click on section 2.
     const secondLink = links[1];
     if (!secondLink) throw new Error("Second link not found");
     await user.click(secondLink);
     expect(onValueChange).toHaveBeenCalledWith("section2");
 
-    // Update controlled value.
     rerender(<ScrollSpyTest value="section2" onValueChange={onValueChange} />);
 
     await waitFor(() => {
@@ -269,7 +263,6 @@ describe("ScrollSpy", () => {
 
     unmount();
 
-    // After unmount, observer should be disconnected.
     const sectionsAfter = document.querySelectorAll(
       "[data-slot='scroll-spy-section']",
     );
@@ -282,8 +275,6 @@ describe("ScrollSpy", () => {
 
     render(<ScrollSpyTest offset={100} onValueChange={onValueChange} />);
 
-    // Offset is used internally for scroll calculations
-    // We just verify it renders without errors.
     const links = screen.getAllByRole("link");
     expect(links).toHaveLength(3);
   });
@@ -373,7 +364,6 @@ describe("ScrollSpy", () => {
     expect(customButton).toHaveAttribute("data-state", "active");
 
     await user.click(customButton);
-    // Should still work with asChild.
     expect(customButton).toHaveAttribute("data-state", "active");
   });
 

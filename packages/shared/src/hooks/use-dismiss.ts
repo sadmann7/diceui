@@ -23,10 +23,7 @@ interface UseDismissProps {
   /** Whether the dismissable layer is enabled. */
   enabled: boolean;
 
-  /**
-   * Event handler called when the dismissable layer is dismissed.
-   * @param event - The event that triggered the dismissal.
-   */
+  /** Event handler called when the dismissable layer is dismissed. */
   onDismiss: (
     event?: FocusOutsideEvent | KeyboardEvent,
   ) => void | Promise<void>;
@@ -34,46 +31,21 @@ interface UseDismissProps {
   /** References to elements that should not trigger dismissal when clicked. */
   refs: React.RefObject<Element | null>[];
 
-  /**
-   * Event handler called when the escape key is pressed.
-   * Can be prevented.
-   *
-   * @param event - The event that triggered the escape key press.
-   */
+  /** Event handler called when the escape key is pressed, which can be prevented. */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
-  /**
-   * Event handler called when the focus moves outside of the dismissable layer.
-   * Can be prevented.
-   *
-   * @param event - The event that triggered the focus move outside.
-   */
+  /** Event handler called when focus moves outside the dismissable layer, which can be prevented. */
   onFocusOutside?: (event: FocusOutsideEvent) => void;
 
-  /**
-   * Event handler called when an interaction happens outside the dismissable layer.
-   * Specifically, when a `pointerdown` event happens outside or focus moves outside of it.
-   * Can be prevented.
-   *
-   * @param event - The event that triggered the interaction outside.
-   */
+  /** Event handler called on a `pointerdown` or focus outside the dismissable layer, which can be prevented. */
   onInteractOutside?: (
     event: PointerDownOutsideEvent | FocusOutsideEvent,
   ) => void;
 
-  /**
-   * Event handler called when the a `pointerdown` event happens outside of the dismissable layer.
-   * Can be prevented.
-   *
-   * @param event - The event that triggered the interaction outside.
-   */
+  /** Event handler called on a `pointerdown` outside the dismissable layer, which can be prevented. */
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 
-  /**
-   * Whether to disable hover/focus/click interactions on elements outside the dismissable layer.
-   * Outside elements need to be clicked twice to interact with them: once to close the
-   * dismissable layer, and again to trigger the element.
-   */
+  /** Whether to disable pointer interactions outside the dismissable layer, so the first outside click only dismisses it. */
   disableOutsidePointerEvents?: boolean;
 
   /**

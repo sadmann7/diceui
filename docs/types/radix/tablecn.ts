@@ -64,10 +64,7 @@ type SelectContentProps = React.ComponentProps<typeof SelectContent>;
 
 type HtmlKeys = Keys<React.AllHTMLAttributes<HTMLElement>> | "key" | "ref";
 
-/**
- * Documented props that tablecn no longer has, plus tablecn props the docs
- * leave out. `Base` is what the real props extend, which the docs don't repeat.
- */
+// Props documented but missing from tablecn, plus tablecn props the docs omit, ignoring `Base`.
 type Drift<Docs, Real, Base = unknown> = Expand<
   | Exclude<Keys<Docs>, Keys<Real>>
   | Exclude<Keys<Real>, Keys<Docs> | HtmlKeys | Keys<Base>>

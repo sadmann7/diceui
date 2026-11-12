@@ -36,18 +36,10 @@ interface ComboboxItemProps extends Omit<
   React.ComponentPropsWithoutRef<typeof Primitive.div>,
   "onSelect"
 > {
-  /**
-   * The value of the item.
-   *
-   * Cannot be an empty string.
-   */
+  /** The value of the item, which can't be an empty string. */
   value: string;
 
-  /**
-   * The label of the item. By default, value is used as the label.
-   *
-   * Override the text value for the selected item in the input.
-   */
+  /** The text the item puts in the input, `value` by default. */
   label?: string;
 
   /** Whether the item is disabled. */

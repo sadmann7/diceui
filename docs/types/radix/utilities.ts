@@ -33,9 +33,8 @@ export interface PortalProps extends CompositionProps {
 
 export interface SkipNavProps {
   /**
-   * The hash of the element to skip to. On click, focus moves to that element.
-   * Defaults to `MAIN_CONTENT_ID`. A custom `href` replaces it, so the target
-   * needs the matching `id`.
+   * The hash of the element that receives focus on click.
+   * A custom `href` replaces `MAIN_CONTENT_ID`, so the target needs the matching `id`.
    * @default "#main-content"
    */
   href?: string;
@@ -51,8 +50,7 @@ export interface VisuallyHiddenProps extends CompositionProps {}
 
 export interface VisuallyHiddenInputProps {
   /**
-   * The HTML element that visually represents the input.
-   * This is used to match the size of the visual control.
+   * The HTML element that visually represents the input, whose size the input matches.
    *
    * ```ts
    * control={buttonRef.current}
@@ -79,8 +77,7 @@ export interface VisuallyHiddenInputProps {
 
 export interface HitboxProps extends CompositionProps {
   /**
-   * The size of the hitbox expansion.
-   * Can be a preset ("default" | "sm" | "lg") or a custom CSS value.
+   * The size of the hitbox expansion, as a preset or a custom CSS value.
    * @default "default"
    */
   size?: "default" | "sm" | "lg" | (string & {});

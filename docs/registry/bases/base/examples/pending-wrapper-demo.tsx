@@ -11,7 +11,6 @@ export default function PendingWrapperDemo() {
 
   const onSubmit = React.useCallback(() => {
     setIsSubmitting(true);
-    // Simulate API call.
     setTimeout(() => {
       setIsSubmitting(false);
     }, 2000);

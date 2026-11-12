@@ -5,8 +5,7 @@ import type { ButtonProps, CompositionProps, EmptyProps } from "@/types";
 export interface SelectionToolbarProps
   extends EmptyProps<"div">, CompositionProps {
   /**
-   * Whether the toolbar is open.
-   * Use this prop to control the component externally.
+   * The controlled open state of the toolbar.
    *
    * ```tsx
    * const [open, setOpen] = useState(false)
@@ -106,7 +105,6 @@ export interface SelectionToolbarProps
 
   /**
    * The element(s) to keep the toolbar within.
-   * Can be a single element or an array of elements.
    *
    * ```tsx
    * const boundaryRef = useRef<HTMLDivElement>(null)
@@ -120,9 +118,7 @@ export interface SelectionToolbarProps
   collisionBoundary?: Element | null | (Element | null)[];
 
   /**
-   * The distance in pixels from the boundary edges where collision
-   * detection should occur. Can be a number for all sides or an object
-   * for per-side values.
+   * The distance in pixels from the boundary edges where collision detection should occur.
    *
    * ```tsx
    * <SelectionToolbar collisionPadding={10} />

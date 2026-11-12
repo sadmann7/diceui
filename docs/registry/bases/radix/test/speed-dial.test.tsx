@@ -93,7 +93,6 @@ describe("SpeedDial", () => {
 
       expect(onOpenChange).toHaveBeenCalledWith(true);
 
-      // Simulate parent component updating open state.
       rerender(<SpeedDialTest open onOpenChange={onOpenChange} />);
 
       expect(trigger).toHaveAttribute("aria-expanded", "true");
@@ -170,8 +169,7 @@ describe("SpeedDial", () => {
       const end = performance.now();
       const renderTime = end - start;
 
-      // Should complete quickly even with 50 items
-      // If O(n²) bug exists, this would take significantly longer.
+      // An O(n²) item registration would blow this budget.
       expect(renderTime).toBeLessThan(1000);
     });
   });
@@ -198,12 +196,10 @@ describe("SpeedDial", () => {
 
       const trigger = screen.getByTestId("trigger");
 
-      // Rapidly toggle.
-      await user.click(trigger); // Open.
-      await user.click(trigger); // Close immediately.
-      await user.click(trigger); // Open again.
+      await user.click(trigger);
+      await user.click(trigger);
+      await user.click(trigger);
 
-      // Should handle without errors.
       expect(onOpenChange).toHaveBeenCalledTimes(3);
       expect(onOpenChange).toHaveBeenNthCalledWith(1, true);
       expect(onOpenChange).toHaveBeenNthCalledWith(2, false);
@@ -332,7 +328,6 @@ describe("SpeedDial", () => {
 
       render(<ForceMountSpeedDial />);
 
-      // Content should be in DOM even when closed.
       expect(screen.getByTestId("content")).toBeInTheDocument();
     });
   });

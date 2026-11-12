@@ -47,7 +47,6 @@ export default function CheckboxGroupMultiSelectionDemo() {
 }
 
 interface UseShiftMultiSelectProps<T> {
-  /** The items for selection. */
   items: T[];
 
   getItemValue: (item: T) => string;
@@ -72,7 +71,6 @@ function useShiftMultiSelect<T>({
 
   const onValueChange = React.useCallback(
     (newValue: string[]) => {
-      // Handle single selection.
       if (!isShiftPressedRef.current || lastSelected === null) {
         setSelectedValues(newValue);
         const clickedValue =
@@ -89,7 +87,6 @@ function useShiftMultiSelect<T>({
         return;
       }
 
-      // Find the currently clicked item.
       const clickedValue =
         newValue.find((v) => !selectedValues.includes(v)) ??
         selectedValues.find((v) => !newValue.includes(v));
@@ -100,7 +97,6 @@ function useShiftMultiSelect<T>({
       );
       if (currentIndex === -1) return;
 
-      // Handle shift-click selection.
       const start = Math.min(lastSelected, currentIndex);
       const end = Math.max(lastSelected, currentIndex);
       const rangeValues = items

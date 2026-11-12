@@ -37,8 +37,7 @@ export interface UseDataTableProps<TData extends RowData> extends Pick<
   pageCount?: number;
 
   /**
-   * Custom query keys for URL state management.
-   * Can be used to render multiple tables in the same page.
+   * Custom query keys for URL state management, for rendering multiple tables on the same page.
    *
    * ```ts
    * queryKeys: {
@@ -68,7 +67,7 @@ export interface UseDataTableProps<TData extends RowData> extends Pick<
 
   /**
    * Maximum time (ms) to wait between URL query string updates.
-   * Helps with browser rate-limiting. Minimum effective value is 50ms.
+   * The minimum effective value is 50ms.
    *
    * @default 50
    */
@@ -76,7 +75,6 @@ export interface UseDataTableProps<TData extends RowData> extends Pick<
 
   /**
    * Clear URL query key-value pair when state is set to default.
-   * Keep URL meaning consistent when defaults change.
    *
    * @default false
    */
@@ -99,9 +97,7 @@ export interface UseDataTableProps<TData extends RowData> extends Pick<
 
   /**
    * Observe Server Component loading states for non-shallow updates.
-   * Pass `startTransition` from `React.useTransition()`.
-   * Sets `shallow` to `false` automatically.
-   * So shallow: true` and `startTransition` cannot be used at the same time.
+   * Pass `startTransition` from `React.useTransition()`, which sets `shallow` to `false`.
    * @see https://react.dev/reference/react/useTransition
    */
   startTransition?: React.TransitionStartFunction;
@@ -260,7 +256,7 @@ export interface DataTableSkeletonProps extends EmptyProps<"div"> {
 
   /**
    * Array of CSS width values for each table column.
-   * The maximum length of the array must match columnCount, extra values will be ignored.
+   * Values past `columnCount` are ignored.
    *
    * @default ["auto"]
    */

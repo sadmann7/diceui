@@ -36,18 +36,10 @@ interface ComboboxContentProps
   extends
     AnchorPositionerProps,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  /**
-   * Event handler called when the `Escape` key is pressed.
-   *
-   * Can be used to prevent input value from being reset on `Escape` key press.
-   */
+  /** Event handler called when the `Escape` key is pressed, which can prevent the input value reset. */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
-  /**
-   * Event handler called when a `pointerdown` event happens outside of the content.
-   *
-   * Can be used to prevent the popover from closing when the pointer is outside of the content.
-   */
+  /** Event handler called on a `pointerdown` outside the content, which can prevent the popover from closing. */
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 }
 

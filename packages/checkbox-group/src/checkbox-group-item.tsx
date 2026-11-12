@@ -68,8 +68,7 @@ const CheckboxGroupItem = React.forwardRef<
       if (event.defaultPrevented) return;
 
       const now = Date.now();
-      // Ignore rapid subsequent clicks (debounce)
-      // This prevents event bubbling from clicking on the indicator.
+      // A click on the indicator bubbles as a second click within this window.
       if (now - lastClickTimeRef.current < 50) {
         event.stopPropagation();
         return;
@@ -81,8 +80,7 @@ const CheckboxGroupItem = React.forwardRef<
       if (isFormControl) {
         const isPropagationStopped = event.isPropagationStopped();
         setHasConsumerStoppedPropagation(isPropagationStopped);
-        // Stop button click propagation in forms to ensure only the input's event is triggered,
-        // allowing native validation and reflecting checkbox updates.
+        // In forms only the hidden input's event may fire, so native validation sees the update.
         if (!isPropagationStopped) event.stopPropagation();
       }
     },

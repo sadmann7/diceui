@@ -7,8 +7,7 @@ import type {
 
 export interface ScrollSpyProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The currently active section ID.
-   * Use for controlled behavior.
+   * The controlled active section ID.
    *
    * ```ts
    * value="introduction"
@@ -17,8 +16,7 @@ export interface ScrollSpyProps extends EmptyProps<"div">, CompositionProps {
   value?: string;
 
   /**
-   * The default active section ID.
-   * Use for uncontrolled behavior.
+   * The default active section ID for uncontrolled usage.
    *
    * @default undefined
    */
@@ -36,8 +34,7 @@ export interface ScrollSpyProps extends EmptyProps<"div">, CompositionProps {
   onValueChange?: (value: string) => void;
 
   /**
-   * Root margin for the intersection observer.
-   * Useful for adjusting when sections become "active".
+   * Root margin for the intersection observer, which adjusts when sections become active.
    *
    * ```ts
    * rootMargin="-100px 0px 0px 0px"
@@ -59,8 +56,7 @@ export interface ScrollSpyProps extends EmptyProps<"div">, CompositionProps {
   threshold?: number | number[];
 
   /**
-   * Scroll offset when navigating to sections.
-   * Useful for fixed headers.
+   * Scroll offset when navigating to sections, such as the height of a fixed header.
    *
    * ```ts
    * offset={100}

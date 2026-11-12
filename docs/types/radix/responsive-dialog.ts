@@ -15,8 +15,7 @@ export interface ResponsiveDialogProps extends EmptyCompProps<
   "div"
 > {
   /**
-   * The breakpoint (in pixels) at which to switch between dialog and drawer.
-   * Below this width, the drawer will be shown. Above it, the dialog will be shown.
+   * The breakpoint in pixels below which the drawer is shown instead of the dialog.
    * @default 768
    */
   breakpoint?: number;

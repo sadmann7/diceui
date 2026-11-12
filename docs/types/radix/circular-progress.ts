@@ -10,7 +10,6 @@ export interface CircularProgressProps
 
   /**
    * A function that returns the accessible text representation of the current value.
-   * Useful for providing custom formatting or localization.
    *
    * ```ts
    * getValueText={(value, min, max) => `${value} of ${max} completed`}
@@ -36,8 +35,7 @@ export interface CircularProgressProps
   min?: number;
 
   /**
-   * The size of the circular progress in pixels.
-   * This determines both the width and height of the component.
+   * The width and height of the circular progress in pixels.
    *
    * @default 48
    */
@@ -45,7 +43,6 @@ export interface CircularProgressProps
 
   /**
    * The thickness of the progress track and range in pixels.
-   * A larger value creates a thicker progress ring.
    *
    * @default 4
    */

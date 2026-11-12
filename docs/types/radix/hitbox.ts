@@ -11,9 +11,7 @@ export interface HitboxProps
     >,
     CompositionProps {
   /**
-   * The size of the hitbox area.
-   *
-   * Can be one of the predefined sizes or a custom CSS value.
+   * The size of the hitbox area, as a preset or a custom CSS value.
    *
    * ```ts
    * // Predefined sizes

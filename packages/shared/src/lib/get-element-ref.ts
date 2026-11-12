@@ -4,9 +4,7 @@
 
 import * as React from "react";
 
-/**
- * Get the ref from a React element without throwing warnings.
- */
+/** Reads the ref of a React element without triggering React's warnings. */
 function getElementRef(element: React.ReactElement) {
   if (!React.isValidElement(element)) return undefined;
 

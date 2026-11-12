@@ -45,16 +45,14 @@ export interface KanbanProps<T> extends DndContextProps {
   getItemValue?: (item: T) => UniqueIdentifier;
 
   /**
-   * Event handler called when an item is moved. Receives the DragEndEvent with active and over indexes.
-   *
-   * Overrides default reordering behavior.
+   * Event handler called when an item is moved, replacing the default reordering.
    */
   onMove?: (
     event: DragEndEvent & { activeIndex: number; overIndex: number },
   ) => void;
 
   /**
-   * The array of modifiers that will be used to modify the behavior of the kanban component.
+   * The modifiers that change the drag behavior of the kanban component.
    * @default undefined
    */
   modifiers?: DndContextProps["modifiers"];
@@ -73,7 +71,7 @@ export interface KanbanProps<T> extends DndContextProps {
   strategy?: SortableContextProps["strategy"];
 
   /**
-   * An array of sensors that will be used to detect drag and drop interactions.
+   * The sensors that detect drag and drop interactions.
    *
    * @default
    * [
@@ -229,9 +227,7 @@ export interface KanbanOverlayProps extends Omit<
   dropAnimation?: DropAnimation;
 
   /**
-   * The children of the overlay component.
-   *
-   * Can be a React node or a function that receives the value and variant of the active item.
+   * The content of the overlay, or a function that receives the value and variant of the active item.
    * ```ts
    * children={<Skeleton className="size-full" />}
    * children={(params) => <div className="size-full">{params.value}</div>}

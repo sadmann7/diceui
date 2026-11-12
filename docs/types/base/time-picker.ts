@@ -19,8 +19,7 @@ export interface TimePickerProps extends RenderProps {
   defaultValue?: string;
 
   /**
-   * The controlled value of the time picker component.
-   * Format: "HH:mm" or "HH:mm:ss"
+   * The controlled value of the time picker component. Format: "HH:mm" or "HH:mm:ss".
    *
    * ```ts
    * value="14:30"
@@ -117,8 +116,7 @@ export interface TimePickerProps extends RenderProps {
   invalid?: boolean;
 
   /**
-   * The minimum time value allowed.
-   * Format: "HH:mm" or "HH:mm:ss"
+   * The minimum time value allowed. Format: "HH:mm" or "HH:mm:ss".
    *
    * ```ts
    * min="09:00"
@@ -127,8 +125,7 @@ export interface TimePickerProps extends RenderProps {
   min?: string;
 
   /**
-   * The maximum time value allowed.
-   * Format: "HH:mm" or "HH:mm:ss"
+   * The maximum time value allowed. Format: "HH:mm" or "HH:mm:ss".
    *
    * ```ts
    * max="17:00"
@@ -143,10 +140,8 @@ export interface TimePickerProps extends RenderProps {
   showSeconds?: boolean;
 
   /**
-   * Optional locale to determine time format display (12-hour vs 24-hour).
-   * If not provided, uses the browser's default locale.
-   * The value is always stored in 24-hour format (HH:mm or HH:mm:ss).
-   * Display format is auto-detected from locale settings.
+   * The locale that picks the 12-hour or 24-hour display, defaulting to the browser's locale.
+   * The value is always stored in 24-hour format.
    *
    * ```ts
    * // 12-hour format with AM/PM
@@ -191,8 +186,7 @@ export interface TimePickerProps extends RenderProps {
   hourStep?: number;
 
   /**
-   * Placeholder text for empty time segments.
-   * Can be a string to apply to all segments, or an object to set per-segment placeholders.
+   * Placeholder text for empty time segments, for all segments or per segment.
    * @default "--"
    *
    * ```ts

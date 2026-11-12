@@ -29,11 +29,10 @@ export default function SelectionToolbarDemo() {
       newRange.selectNodeContents(wrapper);
       selection.addRange(newRange);
     } catch {
-      // Fallback: extract, wrap, and insert.
+      // surroundContents throws when the range partially selects a non-text node.
       wrapper.textContent = selectedText;
       range.deleteContents();
       range.insertNode(wrapper);
-      // Re-select the wrapped content.
       selection.removeAllRanges();
       const newRange = document.createRange();
       newRange.selectNodeContents(wrapper);
@@ -65,7 +64,6 @@ export default function SelectionToolbarDemo() {
 
     try {
       range.surroundContents(link);
-      // Re-select the linked content.
       selection.removeAllRanges();
       const newRange = document.createRange();
       newRange.selectNodeContents(link);
@@ -74,7 +72,6 @@ export default function SelectionToolbarDemo() {
       link.textContent = range.toString();
       range.deleteContents();
       range.insertNode(link);
-      // Re-select the linked content.
       selection.removeAllRanges();
       const newRange = document.createRange();
       newRange.selectNodeContents(link);

@@ -37,18 +37,10 @@ interface MentionContentProps
   extends
     AnchorPositionerProps,
     React.ComponentPropsWithoutRef<typeof Primitive.div> {
-  /**
-   * Event handler called when the `Escape` key is pressed.
-   *
-   * Can be used to prevent the popover from closing when the `Escape` key is pressed.
-   */
+  /** Event handler called when the `Escape` key is pressed, which can prevent the popover from closing. */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
 
-  /**
-   * Event handler called when a `pointerdown` event happens outside of the content.
-   *
-   * Can be used to prevent the popover from closing when the pointer is outside of the content.
-   */
+  /** Event handler called on a `pointerdown` outside the content, which can prevent the popover from closing. */
   onPointerDownOutside?: (event: PointerDownOutsideEvent) => void;
 }
 

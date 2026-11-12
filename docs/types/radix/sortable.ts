@@ -39,9 +39,7 @@ export interface SortableProps<TData> extends DndContextProps {
   getItemValue?: (item: TData) => UniqueIdentifier;
 
   /**
-   * Event handler called when an item is moved. Receives the DragEndEvent with active and over indexes.
-   *
-   * Overrides default reordering behavior.
+   * Event handler called when an item is moved, replacing the default reordering.
    *
    * ```ts
    * onMove={(event) => onCustomMove({activeIndex: event.activeIndex, overIndex: event.overIndex})}
@@ -52,7 +50,7 @@ export interface SortableProps<TData> extends DndContextProps {
   ) => void;
 
   /**
-   * The array of modifiers that will be used to modify the behavior of the sortable component.
+   * The modifiers that change the drag behavior of the sortable component.
    *
    * @default
    * Automatically selected based on orientation:
@@ -74,7 +72,7 @@ export interface SortableProps<TData> extends DndContextProps {
   strategy?: SortableContextProps["strategy"];
 
   /**
-   * An array of sensors that will be used to detect the position of the sortable items.
+   * The sensors that detect the position of the sortable items.
    *
    * @default
    * [
@@ -224,9 +222,7 @@ export interface SortableOverlayProps extends Omit<
   dropAnimation?: DropAnimation;
 
   /**
-   * The children of the sortable component.
-   *
-   * Can be a React node or a function that receives the value of the active item as an argument.
+   * The content of the overlay, or a function that receives the value of the active item.
    *
    * ```ts
    * children={<Skeleton className="size-full" />}

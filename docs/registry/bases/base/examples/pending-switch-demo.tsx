@@ -13,7 +13,6 @@ export default function PendingSwitchDemo() {
   const onToggle = React.useCallback(() => {
     setIsPending(true);
 
-    // Simulate async API call to save setting.
     setTimeout(() => {
       setIsEnabled((prev) => !prev);
       setIsPending(false);

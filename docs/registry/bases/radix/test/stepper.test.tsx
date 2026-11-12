@@ -101,15 +101,13 @@ describe("Stepper", () => {
     const user = userEvent.setup();
     const onValueChange = vi.fn();
 
-    // Create a stepper without validation first.
     render(<StepperTest onValueChange={onValueChange} />);
 
     const nextButton = screen.getByText("Next");
     const prevButton = screen.getByText("Previous");
 
-    // Wait for steps to be registered.
     await waitFor(() => {
-      expect(prevButton).toBeDisabled(); // Should be disabled on first step.
+      expect(prevButton).toBeDisabled();
     });
 
     // The next button can start disabled before the steps register.
@@ -117,12 +115,10 @@ describe("Stepper", () => {
       await user.click(nextButton);
       expect(onValueChange).toHaveBeenCalledWith("step2");
 
-      // After moving to step2, previous should be enabled.
       await waitFor(() => {
         expect(prevButton).not.toBeDisabled();
       });
 
-      // Previous button should work.
       await user.click(prevButton);
       expect(onValueChange).toHaveBeenCalledWith("step1");
     } else {
@@ -156,11 +152,9 @@ describe("Stepper", () => {
     const step1Trigger = screen.getByRole("tab", { name: /step 1/i });
     step1Trigger.focus();
 
-    // Arrow right should move to next step.
     await user.keyboard("{ArrowRight}");
     expect(onValueChange).toHaveBeenCalledWith("step2");
 
-    // Arrow left should move to previous step.
     await user.keyboard("{ArrowLeft}");
     expect(onValueChange).toHaveBeenCalledWith("step1");
   });
@@ -174,11 +168,9 @@ describe("Stepper", () => {
     const step2Trigger = screen.getByRole("tab", { name: /step 2/i });
     step2Trigger.focus();
 
-    // Home should go to first step.
     await user.keyboard("{Home}");
     expect(onValueChange).toHaveBeenCalledWith("step1");
 
-    // End should go to last step.
     await user.keyboard("{End}");
     expect(onValueChange).toHaveBeenCalledWith("step3");
   });
@@ -192,7 +184,6 @@ describe("Stepper", () => {
       <StepperTest onValueChange={onValueChange} onValidate={onValidate} />,
     );
 
-    // Click on step 2 trigger directly (this should trigger validation).
     const step2Trigger = screen.getByRole("tab", { name: /step 2/i });
     await act(async () => {
       await user.click(step2Trigger);
@@ -213,7 +204,6 @@ describe("Stepper", () => {
       <StepperTest onValueChange={onValueChange} onValidate={onValidate} />,
     );
 
-    // Click on step 2 trigger directly (this should trigger validation).
     const step2Trigger = screen.getByRole("tab", { name: /step 2/i });
     await act(async () => {
       await user.click(step2Trigger);
@@ -223,7 +213,7 @@ describe("Stepper", () => {
       expect(onValidate).toHaveBeenCalledWith("step2", "next");
     });
 
-    // Wait a bit to ensure onValueChange is not called.
+    // Gives a late onValueChange call time to land.
     await new Promise((resolve) => setTimeout(resolve, 100));
     expect(onValueChange).not.toHaveBeenCalled();
   });
@@ -239,10 +229,8 @@ describe("Stepper", () => {
     const step2Trigger = screen.getByRole("tab", { name: /step 2/i });
     step2Trigger.focus();
 
-    // Focus should not change the step in manual mode.
     expect(onValueChange).not.toHaveBeenCalled();
 
-    // Enter or Space should activate the step.
     await user.keyboard("{Enter}");
     expect(onValueChange).toHaveBeenCalledWith("step2");
   });
@@ -306,7 +294,6 @@ describe("Stepper", () => {
     const step3Trigger = screen.getByRole("tab", { name: /step 3/i });
     step3Trigger.focus();
 
-    // Arrow right on last step should loop to first step.
     await user.keyboard("{ArrowRight}");
     expect(onValueChange).toHaveBeenCalledWith("step1");
   });
@@ -316,14 +303,11 @@ describe("Stepper", () => {
 
     const triggers = screen.getAllByRole("tab");
 
-    // Step 1 should be completed (before current).
     expect(triggers[0]).toHaveAttribute("data-state", "completed");
 
-    // Step 2 should be active (current).
     expect(triggers[1]).toHaveAttribute("data-state", "active");
     expect(triggers[1]).toHaveAttribute("aria-selected", "true");
 
-    // Step 3 should be inactive (after current).
     expect(triggers[2]).toHaveAttribute("data-state", "inactive");
   });
 
@@ -364,7 +348,6 @@ describe("Stepper", () => {
     const step2Trigger = screen.getByRole("tab", { name: /step 2/i });
     await user.click(step2Trigger);
 
-    // Should not change step in non-interactive mode.
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
@@ -381,7 +364,7 @@ describe("Stepper", () => {
     });
 
     const contents = screen.getAllByRole("tabpanel");
-    expect(contents).toHaveLength(1); // Only active content should be rendered.
+    expect(contents).toHaveLength(1);
   });
 
   it("supports custom step positions", () => {

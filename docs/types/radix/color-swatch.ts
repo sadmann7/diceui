@@ -2,7 +2,7 @@ import type { CompositionProps, EmptyProps } from "@/types";
 
 export interface ColorSwatchProps extends EmptyProps<"div">, CompositionProps {
   /**
-   * The color value to display. Can be any valid CSS color value.
+   * The CSS color value to display.
    * @default undefined
    * @example "#ff0000" | "rgb(255, 0, 0)" | "hsl(0, 100%, 50%)" | "rgba(255, 0, 0, 0.5)"
    */

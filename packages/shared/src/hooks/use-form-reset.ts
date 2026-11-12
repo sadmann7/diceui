@@ -3,26 +3,17 @@ import * as React from "react";
 import { useCallbackRef } from "./use-callback-ref";
 
 interface UseFormResetParams<T> {
-  /**
-   * The form element to attach reset handler to.
-   */
+  /** The form element to attach the reset handler to. */
   form?: HTMLFormElement | null;
 
-  /**
-   * The default value to reset to.
-   */
+  /** The default value to reset to. */
   defaultValue?: T;
 
-  /**
-   * Event handler called when form is reset.
-   */
+  /** Event handler called when the form is reset. */
   onReset?: (value: T) => void;
 }
 
-/**
- * A hook to handle form reset events.
- * Can be triggered by onReset callback or by form reset event.
- */
+/** Calls `onReset` with `defaultValue` when the form resets. */
 function useFormReset<T>({
   form,
   defaultValue,

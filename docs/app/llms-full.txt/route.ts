@@ -1,7 +1,7 @@
 import { getLLMText } from "@/lib/get-llm-text";
 import { source } from "@/lib/source";
 
-// cached forever.
+// Cached forever.
 export const revalidate = false;
 
 export async function GET() {

@@ -96,7 +96,6 @@ export interface BannerProps extends RenderProps, BannerVariantProps {
 
   /**
    * Auto-dismiss duration in milliseconds.
-   * When set, the banner automatically dismisses after the specified time.
    */
   duration?: number;
 
@@ -218,8 +217,7 @@ export interface UseBannersReturn {
 
 export interface BannerAddOptions {
   /**
-   * The content to render inside the banner.
-   * Can be a React node or a render function that receives banner props.
+   * The content to render inside the banner, or a function that receives the banner props.
    *
    * ```tsx
    * content: ({ onClose, onRemove }) => (

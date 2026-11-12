@@ -35,27 +35,21 @@ export default function FileUploadChatInputDemo() {
     async (files, { onProgress, onSuccess, onError }) => {
       try {
         setIsUploading(true);
-        // Process each file individually.
         const uploadPromises = files.map(async (file) => {
           try {
-            // Simulate file upload with progress.
             const totalChunks = 10;
             let uploadedChunks = 0;
 
-            // Simulate chunk upload with delays.
             for (let i = 0; i < totalChunks; i++) {
-              // Simulate network delay (100-300ms per chunk).
               await new Promise((resolve) =>
                 setTimeout(resolve, Math.random() * 200 + 100),
               );
 
-              // Update progress for this specific file.
               uploadedChunks++;
               const progress = (uploadedChunks / totalChunks) * 100;
               onProgress(file, progress);
             }
 
-            // Simulate server processing delay.
             await new Promise((resolve) => setTimeout(resolve, 500));
             onSuccess(file);
           } catch (error) {
@@ -68,10 +62,8 @@ export default function FileUploadChatInputDemo() {
           }
         });
 
-        // Wait for all uploads to complete.
         await Promise.all(uploadPromises);
       } catch (error) {
-        // This handles any error that might occur outside the individual upload processes.
         console.error("Unexpected error during upload:", error);
       }
     },

@@ -68,7 +68,6 @@ describe("useStateMachine", () => {
     const { result } = renderHook(() => useStateMachine(config));
     const [, send] = result.current;
 
-    // idle -> loading -> error -> loading -> success -> idle.
     act(() => {
       send("START");
     });

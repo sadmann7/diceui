@@ -107,13 +107,7 @@ interface TagsInputRootProps<T = InputValue> extends Omit<
    */
   loop?: boolean;
 
-  /**
-   * Behavior when the input loses focus.
-   * - "add": Add the current input value as a new tag.
-   * - "clear": Reset the input field, removing its value.
-   * By default, the input value will stay in the input field.
-   * Can be overridden by the preventDefault() call in the input's onBlur handler.
-   */
+  /** Whether blurring the input adds its value as a tag or clears it, unless the input's `onBlur` calls `preventDefault()`. */
   blurBehavior?: "add" | "clear";
 
   /**
@@ -140,12 +134,7 @@ interface TagsInputRootProps<T = InputValue> extends Omit<
    */
   readOnly?: boolean;
 
-  /**
-   * The content of the tags input.
-   *
-   * Can be a React node or a function that receives the current value as an argument.
-   * @default undefined
-   */
+  /** The content of the tags input, or a function that receives the current value. */
   children?:
     | React.ReactNode
     | ((context: { value: InputValue[] }) => React.ReactNode);
@@ -545,7 +534,7 @@ const TagsInputRoot = React.forwardRef<CollectionElement, TagsInputRootProps>(
         if (!(target instanceof HTMLElement)) return;
 
         if (getIsClickedInEmptyRoot(target)) {
-          // prevent root from stealing focus from the input.
+          // Keeps the root from stealing focus from the input.
           event.preventDefault();
         }
       },

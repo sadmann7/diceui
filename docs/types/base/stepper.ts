@@ -169,9 +169,7 @@ export interface StepperTriggerProps
 
 export interface StepperIndicatorProps extends Omit<RenderProps, "children"> {
   /**
-   * The display content for the indicator (e.g., step number).
-   *
-   * Can be a React node or a function that receives the current data state.
+   * The content of the indicator, such as the step number, or a function that receives the current data state.
    *
    * ```tsx
    * children={1}
@@ -201,7 +199,6 @@ export interface StepperContentProps extends RenderProps {
 
   /**
    * When `true`, forces the content to be rendered even if it's not active.
-   * Useful for controlling animations with external animation libraries.
    *
    * @default false
    */

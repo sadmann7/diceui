@@ -106,8 +106,6 @@ export interface TourProps extends RenderProps {
    * Event handler called when a pointer down event occurs outside the tour step.
    * You can prevent the dismissing behavior by calling event.preventDefault().
    *
-   * The event is a CustomEvent containing the original PointerEvent in event.detail.originalEvent.
-   *
    * ```ts
    * onPointerDownOutside={(event) => {
    *   console.log("Pointer down outside:", event)
@@ -121,8 +119,6 @@ export interface TourProps extends RenderProps {
   /**
    * Event handler called when an interaction (pointer or focus) occurs outside the tour step.
    * You can prevent the dismissing behavior by calling event.preventDefault().
-   *
-   * The event is a CustomEvent containing the original event in event.detail.originalEvent.
    *
    * ```ts
    * onInteractOutside={(event) => {
@@ -234,9 +230,7 @@ export interface TourProps extends RenderProps {
   modal?: boolean;
 
   /**
-   * Default footer element to be used for all steps that don't have their own footer.
-   *
-   * Steps can override the default footer by including their own TourFooter component.
+   * Default footer for steps that don't render their own `TourFooter`.
    *
    * ```tsx
    * stepFooter={
@@ -314,7 +308,7 @@ export interface TourStepProps extends RenderProps {
   alignOffset?: number;
 
   /**
-   * The boundary elements used to prevent collisions. Can be a single element or an array of elements.
+   * The boundary elements used to prevent collisions.
    *
    * ```ts
    * collisionBoundary={document.querySelector('.scroll-container')}
@@ -328,7 +322,6 @@ export interface TourStepProps extends RenderProps {
 
   /**
    * The padding between the popover and the edge of the viewport to prevent collisions.
-   * Can be a single number for all sides or an object with individual side values.
    *
    * @default 0
    */

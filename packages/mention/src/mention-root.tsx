@@ -126,15 +126,11 @@ interface MentionRootProps extends Omit<
   /** Whether the mention is disabled. */
   disabled?: boolean;
 
-  /**
-   * Event handler called when the filter is applied.
-   * Can be used to prevent the default filtering behavior.
-   */
+  /** A custom filter that returns the matching options in place of the default filtering. */
   onFilter?: (options: string[], term: string) => string[];
 
   /**
-   * Whether the mention uses exact string matching or fuzzy matching.
-   * When onFilter is provided, this prop is ignored.
+   * Whether the mention uses exact instead of fuzzy matching, ignored with `onFilter`.
    * @default false
    */
   exactMatch?: boolean;
@@ -245,7 +241,6 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
       exactMatch,
       onCallback: (itemCount) => {
         if (itemCount === 0) {
-          // Close the menu if no items match the filter.
           setOpen(false);
           setHighlightedItem(null);
           setVirtualAnchor(null);
@@ -342,7 +337,6 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
     const onMentionsRemove = React.useCallback(
       (mentionsToRemove: Mention[]) => {
         setMentions((prev) => {
-          // must match their actual order in the text.
           const removed = [...mentionsToRemove].sort(
             (a, b) => a.start - b.start,
           );
@@ -353,7 +347,6 @@ const MentionRoot = React.forwardRef<RootElement, MentionRootProps>(
               return !isRemoved;
             })
             .map((mention) => {
-              // Shift mentions.
               const shift = removed
                 .filter((r) => r.start < mention.start)
                 .reduce((acc, r) => acc + (r.end - r.start + 1), 0);

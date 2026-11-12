@@ -5,14 +5,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useScrollLock } from "../src/hooks/use-scroll-lock";
 import * as browser from "../src/lib/browser";
 
-// Mock browser detection functions.
 vi.mock("../src/lib/browser", () => ({
   isFirefox: vi.fn(() => false),
   isIOS: vi.fn(() => false),
   isSafari: vi.fn(() => false),
 }));
 
-// Mock scrollbar width and height by setting up window and document dimensions.
 const mockInnerWidth = 1024;
 const mockClientWidth = 1004;
 const scrollbarWidth = mockInnerWidth - mockClientWidth;
@@ -58,10 +56,8 @@ describe("useScrollLock", () => {
   let originalScrollWidth: number;
 
   beforeEach(() => {
-    // Enable fake timers.
     vi.useFakeTimers();
 
-    // Store original values.
     originalGetComputedStyle = window.getComputedStyle;
     originalInnerWidth = window.innerWidth;
     originalInnerHeight = window.innerHeight;
@@ -70,14 +66,12 @@ describe("useScrollLock", () => {
     originalScrollHeight = document.documentElement.scrollHeight;
     originalScrollWidth = document.documentElement.scrollWidth;
 
-    // Mock scrollTo.
     Object.defineProperty(window, "scrollTo", {
       value: vi.fn(),
       writable: true,
       configurable: true,
     });
 
-    // Mock getComputedStyle with more comprehensive values.
     window.getComputedStyle = vi.fn().mockReturnValue({
       marginTop: "10px",
       marginBottom: "10px",
@@ -88,7 +82,6 @@ describe("useScrollLock", () => {
       overscrollBehavior: "auto",
     });
 
-    // Mock window dimensions.
     Object.defineProperty(window, "innerWidth", {
       value: mockInnerWidth,
       configurable: true,
@@ -120,7 +113,6 @@ describe("useScrollLock", () => {
       writable: true,
     });
 
-    // Mock CSS.supports.
     Object.defineProperty(window, "CSS", {
       value: {
         supports: vi.fn((prop, value) => prop === "height" && value === "1dvh"),
@@ -129,28 +121,23 @@ describe("useScrollLock", () => {
       writable: true,
     });
 
-    // Mock visualViewport.
     Object.defineProperty(window, "visualViewport", {
       value: { scale: 1, height: mockInnerHeight },
       configurable: true,
       writable: true,
     });
 
-    // Reset all mocks before each test.
     vi.clearAllMocks();
 
-    // Reset body and documentElement styles.
     document.body.style.cssText = "";
     document.documentElement.style.cssText = "";
 
-    // Reset browser detection mocks.
     (browser.isFirefox as ReturnType<typeof vi.fn>).mockReturnValue(false);
     (browser.isIOS as ReturnType<typeof vi.fn>).mockReturnValue(false);
     (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(false);
   });
 
   afterEach(() => {
-    // Restore original values.
     window.getComputedStyle = originalGetComputedStyle;
     Object.defineProperty(window, "innerWidth", {
       value: originalInnerWidth,
@@ -183,11 +170,9 @@ describe("useScrollLock", () => {
       writable: true,
     });
 
-    // Reset styles.
     document.body.style.cssText = "";
     document.documentElement.style.cssText = "";
 
-    // Restore real timers.
     vi.useRealTimers();
   });
 
@@ -199,7 +184,6 @@ describe("useScrollLock", () => {
   it("should apply scroll lock to body when enabled", () => {
     render(<ScrollLockComponent enabled={true} />);
 
-    // Force a layout calculation.
     vi.runAllTimers();
 
     expect(document.body.style.overflow).toBe("hidden");
@@ -210,7 +194,6 @@ describe("useScrollLock", () => {
     const customElement = document.createElement("div");
     document.body.appendChild(customElement);
 
-    // Mock scrollable state.
     window.getComputedStyle = vi.fn().mockReturnValue({
       marginRight: "0px",
       marginTop: "0px",
@@ -225,7 +208,6 @@ describe("useScrollLock", () => {
       <ScrollLockComponent enabled={true} referenceElement={customElement} />,
     );
 
-    // Force a layout calculation.
     vi.runAllTimers();
 
     // The hook applies styles to document/body even with reference element.
@@ -249,7 +231,6 @@ describe("useScrollLock", () => {
       writable: true,
     });
 
-    // Mock getComputedStyle with margins.
     window.getComputedStyle = vi.fn().mockReturnValue({
       marginRight: "10px",
       marginTop: "10px",
@@ -262,7 +243,6 @@ describe("useScrollLock", () => {
 
     render(<ScrollLockComponent enabled={true} />);
 
-    // Force a layout calculation.
     vi.runAllTimers();
 
     expect(document.body.style.position).toBe("fixed");
@@ -279,7 +259,6 @@ describe("useScrollLock", () => {
   });
 
   it("should handle Firefox specific behavior", () => {
-    // Mock Firefox detection.
     (browser.isFirefox as ReturnType<typeof vi.fn>).mockReturnValue(true);
     (browser.isIOS as ReturnType<typeof vi.fn>).mockReturnValue(false);
     (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(false);
@@ -291,14 +270,12 @@ describe("useScrollLock", () => {
       writable: true,
     });
 
-    // Set up document dimensions.
     Object.defineProperty(document.documentElement, "clientWidth", {
       value: mockClientWidth,
       configurable: true,
       writable: true,
     });
 
-    // Mock getComputedStyle to return necessary styles.
     window.getComputedStyle = vi.fn().mockReturnValue({
       marginRight: "0px",
       marginTop: "0px",
@@ -311,10 +288,8 @@ describe("useScrollLock", () => {
 
     render(<ScrollLockComponent enabled={true} />);
 
-    // Force a layout calculation.
     vi.runAllTimers();
 
-    // Assert that both overflow and margin-right are applied correctly.
     expect(document.body.style.overflow).toBe("hidden");
     expect(document.documentElement.style.overflowY).toBe("scroll");
     expect(document.body.style.width).toBe(`calc(100vw - ${scrollbarWidth}px)`);
@@ -323,7 +298,6 @@ describe("useScrollLock", () => {
   it("should handle Safari with pinch zoom", () => {
     (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(true);
 
-    // Mock visualViewport with zoomed scale.
     Object.defineProperty(window, "visualViewport", {
       value: { scale: 2, height: mockInnerHeight },
       configurable: true,
@@ -332,7 +306,6 @@ describe("useScrollLock", () => {
     render(<ScrollLockComponent enabled={true} allowPinchZoom={false} />);
     expect(document.body.style.overflow).toBe("");
 
-    // Test with allowPinchZoom true.
     render(<ScrollLockComponent enabled={true} allowPinchZoom={true} />);
     expect(document.body.style.overflow).toBe("hidden");
   });
@@ -356,7 +329,6 @@ describe("useScrollLock", () => {
     scrollableElement.style.overflow = "auto";
     document.body.appendChild(scrollableElement);
 
-    // Mock getComputedStyle for scrollable element.
     const originalGetComputedStyle = window.getComputedStyle;
     window.getComputedStyle = (element: Element) => {
       if (element === scrollableElement) {
@@ -372,7 +344,6 @@ describe("useScrollLock", () => {
 
     render(<ScrollLockComponent enabled={true} />);
 
-    // Force a layout calculation.
     vi.runAllTimers();
 
     expect(scrollableElement.style.overflow).toBe("auto");
@@ -383,7 +354,6 @@ describe("useScrollLock", () => {
   });
 
   it("should handle scrollbar-gutter stable", () => {
-    // Mock getComputedStyle with all necessary values.
     window.getComputedStyle = vi.fn().mockReturnValue({
       marginRight: "0px",
       marginTop: "0px",
@@ -394,7 +364,6 @@ describe("useScrollLock", () => {
       scrollbarGutter: "stable",
     });
 
-    // Mock dimensions to simulate no scrollbar width.
     Object.defineProperty(window, "innerWidth", {
       value: 1024,
       configurable: true,
@@ -414,7 +383,6 @@ describe("useScrollLock", () => {
   });
 
   it("should handle dvh units when supported", () => {
-    // Mock CSS.supports to return true for dvh.
     Object.defineProperty(window, "CSS", {
       value: {
         supports: vi.fn((prop, value) => prop === "height" && value === "1dvh"),
@@ -428,7 +396,6 @@ describe("useScrollLock", () => {
   });
 
   it("should handle vh units when dvh is not supported", () => {
-    // Mock CSS.supports to return false for dvh.
     Object.defineProperty(window, "CSS", {
       value: {
         supports: vi.fn(() => false),
@@ -460,7 +427,6 @@ describe("useScrollLock", () => {
   it("should handle resize events", () => {
     render(<ScrollLockComponent enabled={true} />);
 
-    // Trigger resize event.
     window.dispatchEvent(new Event("resize"));
     vi.runAllTimers();
 
@@ -477,7 +443,6 @@ describe("useScrollLock", () => {
     scrollableElement.setAttribute("data-scrollable", "");
     scrollableElement.style.overflow = "auto";
 
-    // Mock scroll dimensions to make element actually scrollable.
     Object.defineProperty(scrollableElement, "scrollHeight", { value: 200 });
     Object.defineProperty(scrollableElement, "clientHeight", { value: 100 });
     Object.defineProperty(scrollableElement, "scrollWidth", { value: 200 });
@@ -485,7 +450,6 @@ describe("useScrollLock", () => {
 
     document.body.appendChild(scrollableElement);
 
-    // Mock getComputedStyle specifically for the scrollable element.
     const originalGetComputedStyle = window.getComputedStyle;
     window.getComputedStyle = (element: Element) => {
       if (element === scrollableElement) {
@@ -509,7 +473,6 @@ describe("useScrollLock", () => {
 
     render(<ScrollLockComponent enabled={true} />);
 
-    // Simulate touch events.
     const touchStartEvent = new TouchEvent("touchstart", {
       touches: [{ clientX: 0, clientY: 0 } as Touch],
     });
@@ -529,7 +492,6 @@ describe("useScrollLock", () => {
       `calc(100vh - ${scrollbarHeight + 20}px)`,
     );
 
-    // Restore original getComputedStyle.
     window.getComputedStyle = originalGetComputedStyle;
     document.body.removeChild(scrollableElement);
   });
@@ -541,7 +503,6 @@ describe("useScrollLock", () => {
     input.type = "text";
     document.body.appendChild(input);
 
-    // Mock visualViewport.addEventListener.
     const mockAddEventListener = vi.fn();
     Object.defineProperty(window.visualViewport, "addEventListener", {
       value: mockAddEventListener,
@@ -553,15 +514,12 @@ describe("useScrollLock", () => {
     const focusEvent = new FocusEvent("focus");
     input.dispatchEvent(focusEvent);
 
-    // Check initial transform.
     expect(input.style.transform).toBe("translateY(-2000px)");
 
-    // Run animation frame.
     vi.runAllTimers();
 
     expect(input.style.transform).toBe("");
 
-    // Verify visualViewport event listener was called.
     expect(mockAddEventListener).toHaveBeenCalledWith(
       "resize",
       expect.any(Function),
@@ -574,17 +532,14 @@ describe("useScrollLock", () => {
   it("should handle allowPinchZoom in Safari", () => {
     (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(true);
 
-    // Mock visualViewport with zoomed scale.
     Object.defineProperty(window, "visualViewport", {
       value: { scale: 2, height: mockInnerHeight },
       configurable: true,
     });
 
-    // Test with allowPinchZoom true.
     render(<ScrollLockComponent enabled={true} allowPinchZoom={true} />);
     expect(document.body.style.overflow).toBe("hidden");
 
-    // Test with allowPinchZoom false.
     render(<ScrollLockComponent enabled={true} allowPinchZoom={false} />);
     expect(document.body.style.overflow).toBe("hidden");
   });
@@ -600,7 +555,6 @@ describe("useScrollLock", () => {
       scrollbarGutter: "stable",
     });
 
-    // Mock dimensions to simulate no scrollbar width.
     Object.defineProperty(window, "innerWidth", {
       value: mockClientWidth, // Same as clientWidth to simulate no scrollbar.
       configurable: true,

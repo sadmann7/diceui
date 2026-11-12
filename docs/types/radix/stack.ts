@@ -1,8 +1,5 @@
 import type { CompositionProps, EmptyProps } from "@/types";
 
-/**
- * Props for the Stack root component.
- */
 export interface StackProps extends EmptyProps<"div">, CompositionProps {
   /**
    * Direction from which items stack.
@@ -32,8 +29,7 @@ export interface StackProps extends EmptyProps<"div">, CompositionProps {
   gap?: number;
 
   /**
-   * Scale factor for each subsequent item in collapsed state.
-   * Each item is scaled down by this factor.
+   * Scale factor applied to each subsequent item in collapsed state.
    * @default 0.05 (5% smaller per item)
    */
   scale?: number;
@@ -51,7 +47,4 @@ export interface StackProps extends EmptyProps<"div">, CompositionProps {
   expandOnHover?: boolean;
 }
 
-/**
- * Props for individual Stack items.
- */
 export interface StackItemProps extends EmptyProps<"div">, CompositionProps {}

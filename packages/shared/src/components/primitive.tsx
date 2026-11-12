@@ -70,7 +70,7 @@ const Primitive = new Proxy(
 ) as Primitives;
 
 /**
- * Flush custom event dispatch for React 18 batching.
+ * Dispatches a custom event and flushes its updates synchronously, as React 18 batches them.
  * @see https://github.com/facebook/react/blob/a8a4742f1c54493df00da648a3f9d26e3db9c8b5/packages/react-dom/src/events/ReactDOMEventListener.js#L294-L350
  */
 function dispatchDiscreteCustomEvent<E extends CustomEvent>(

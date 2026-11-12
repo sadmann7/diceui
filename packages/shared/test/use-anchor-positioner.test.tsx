@@ -9,7 +9,6 @@ import {
   useAnchorPositioner,
 } from "../src/hooks/use-anchor-positioner";
 
-// Test component that uses useAnchorPositioner.
 function TestPopover({
   defaultOpen = false,
   side = "bottom",
@@ -38,7 +37,6 @@ function TestPopover({
 
   const arrowRef = React.useRef<HTMLDivElement>(null);
 
-  // Test arrow positioning right away without settting component for it.
   React.useEffect(() => {
     if (arrowRef.current) {
       onArrowChange(arrowRef.current);
@@ -493,10 +491,8 @@ describe("useAnchorPositioner boundary collision detection", () => {
       await new Promise((resolve) => setTimeout(resolve, 16));
     });
 
-    // Get the computed top position from the style.
     const computedTop = Number.parseFloat(floating.style.top);
 
-    // Mock getBoundingClientRect to return the correct position.
     const floatingBox = {
       width: 100,
       height: 40,
@@ -508,7 +504,6 @@ describe("useAnchorPositioner boundary collision detection", () => {
       left: rect.x,
     };
 
-    // Debug output.
     console.log({
       virtualAnchorBottom: rect.bottom,
       floatingTop: floatingBox.top,

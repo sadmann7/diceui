@@ -13,7 +13,7 @@ export interface RelativeTimeCardProps
       "align" | "side" | "alignOffset" | "sideOffset"
     > {
   /**
-   * The date to display. Can be a Date object, string, or number.
+   * The date to display.
    *
    * ```tsx
    * <RelativeTimeCard date={new Date()} />
@@ -46,18 +46,14 @@ export interface RelativeTimeCardProps
   variant?: "default" | "muted" | "ghost";
 
   /**
-   * How long to wait before the hover card opens.
-   *
-   * Specified in milliseconds.
+   * How long to wait in milliseconds before the hover card opens.
    *
    * @default 500
    */
   delay?: PreviewCardPrimitive.Trigger.Props["delay"];
 
   /**
-   * How long to wait before closing the hover card.
-   *
-   * Specified in milliseconds.
+   * How long to wait in milliseconds before closing the hover card.
    *
    * @default 300
    */

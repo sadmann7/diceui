@@ -4,12 +4,7 @@
 
 import * as React from "react";
 
-/**
- * Creates a type-safe context and provider with automatic error handling.
- * @template T The type of the context value
- * @param name The name of the root component for error messages
- * @param defaultValue Optional default value for the context
- */
+/** Creates a context provider and a hook that throws outside it unless the context is optional. */
 function createContext<T extends object | null>(
   rootComponentName: string,
   defaultValue?: T,
@@ -20,10 +15,9 @@ function createContext<T extends object | null>(
   function Provider(props: T & { children: React.ReactNode }) {
     const { children, ...contextValue } = props;
 
-    // Memoize the context value by its values.
     const value = React.useMemo(
       () => contextValue,
-      // oxlint-disable-next-line react/exhaustive-deps -- we want to memoize by all values
+      // oxlint-disable-next-line react/exhaustive-deps -- memoized by every context value
       Object.values(contextValue),
     ) as T;
 
@@ -36,10 +30,6 @@ function createContext<T extends object | null>(
     ? T | undefined
     : T;
 
-  /**
-   * @param consumerName The name of the component that is consuming the context
-   * @param optional Whether the context is optional (defaults to false)
-   */
   function useContext<Optional extends boolean = false>(
     consumerName: string,
     optional?: Optional,

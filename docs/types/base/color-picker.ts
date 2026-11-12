@@ -82,7 +82,7 @@ export interface ColorPickerProps
   onFormatChange?: (format: ColorFormat) => void;
 
   /**
-   * The name of the color picker. Used for form submission.
+   * The name of the color picker for form submission.
    */
   name?: string;
 

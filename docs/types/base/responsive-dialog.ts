@@ -15,8 +15,7 @@ export interface ResponsiveDialogProps extends EmptyCompProps<
   "div"
 > {
   /**
-   * The breakpoint (in pixels) at which to switch between dialog and drawer.
-   * Below this width, the drawer will be shown. Above it, the dialog will be shown.
+   * The breakpoint in pixels below which the drawer is shown instead of the dialog.
    * @default 768
    */
   breakpoint?: number;
@@ -38,9 +37,8 @@ export interface ResponsiveDialogProps extends EmptyCompProps<
   onOpenChange?: (open: boolean) => void;
 
   /**
-   * Whether the dialog should be modal.
-   * On desktop (Dialog), this controls focus trapping and backdrop dismissal.
-   * On mobile (Drawer), this is ignored.
+   * Whether the dialog traps focus and dismisses on backdrop click.
+   * Ignored on mobile (Drawer).
    */
   modal?: boolean;
 
@@ -81,7 +79,7 @@ export interface ResponsiveDialogOverlayProps extends EmptyCompProps<
 > {
   /**
    * Render prop for custom overlay rendering.
-   * Only used on desktop (Dialog). Ignored on mobile (Drawer).
+   * Only applies on desktop (Dialog).
    */
   render?: React.ComponentProps<typeof DialogOverlay>["render"];
 }
@@ -92,7 +90,7 @@ export interface ResponsiveDialogContentProps extends EmptyCompProps<
 > {
   /**
    * Whether to show the close button in the top-right corner.
-   * Only applies on desktop (Dialog). Ignored on mobile (Drawer).
+   * Only applies on desktop (Dialog).
    * @default true
    */
   showCloseButton?: boolean;
@@ -103,7 +101,7 @@ export interface ResponsiveDialogHeaderProps extends EmptyProps<"div"> {}
 export interface ResponsiveDialogFooterProps extends EmptyProps<"div"> {
   /**
    * Whether to show a close button in the footer.
-   * Only applies on desktop (Dialog). Ignored on mobile (Drawer).
+   * Only applies on desktop (Dialog).
    * @default false
    */
   showCloseButton?: boolean;

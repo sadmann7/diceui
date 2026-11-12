@@ -7,9 +7,7 @@ import * as React from "react";
 type AnyFunction = (...args: unknown[]) => unknown;
 
 /**
- * A hook that returns a stable callback reference that can access the latest props/state
- * and receive events. This is useful for callbacks that need to be passed to child components
- * while still having access to the latest values without causing unnecessary re-renders.
+ * Returns a stable callback that always calls the latest `callback`.
  *
  * @example
  * ```tsx
@@ -28,12 +26,10 @@ function useEventCallback<E, T extends AnyFunction>(
 ): (event: E, ...args: Parameters<T>) => ReturnType<T> {
   const callbackRef = React.useRef(callback);
 
-  // Update ref each render so the callback stays fresh.
   React.useLayoutEffect(() => {
     callbackRef.current = callback;
   });
 
-  // Return stable function reference.
   return React.useCallback((event: E, ...args: Parameters<T>) => {
     const fn = callbackRef.current;
     return fn(event, ...args);
@@ -41,8 +37,7 @@ function useEventCallback<E, T extends AnyFunction>(
 }
 
 /**
- * A simpler version of useEventCallback that doesn't require explicit event typing.
- * Useful when you don't need to type the event parameter.
+ * Like `useEventCallback`, without a separate event type parameter.
  *
  * @example
  * ```tsx

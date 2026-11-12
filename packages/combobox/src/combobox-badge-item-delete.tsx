@@ -47,7 +47,7 @@ const ComboboxBadgeItemDelete = React.forwardRef<
       onPointerDown={composeEventHandlers(props.onPointerDown, (event) => {
         if (badgeItemContext.disabled) return;
 
-        // prevent implicit pointer capture.
+        // Prevents implicit pointer capture.
         const target = event.target;
         if (!(target instanceof Element)) return;
         if (target.hasPointerCapture(event.pointerId)) {
@@ -59,7 +59,7 @@ const ComboboxBadgeItemDelete = React.forwardRef<
           !event.ctrlKey &&
           event.pointerType === "mouse"
         ) {
-          // prevent item from stealing focus from the input.
+          // Keeps the item from stealing focus from the input.
           event.preventDefault();
         }
       })}

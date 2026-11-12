@@ -29,7 +29,6 @@ const branchesByRepository: Record<string, string[]> = {
 const repositories = Object.keys(branchesByRepository);
 
 async function fetchBranches(repository: string, signal: AbortSignal) {
-  // Simulate a network request.
   await new Promise<void>((resolve, reject) => {
     const timeout = setTimeout(resolve, 600);
     signal.addEventListener("abort", () => {

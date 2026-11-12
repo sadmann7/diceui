@@ -28,7 +28,6 @@ export type StyleName = Style["name"];
 export type ThemeName = Theme["name"];
 export type BaseColorName = BaseColor["name"];
 
-// Derive font values from registry fonts (e.g., "font-inter" -> "inter").
 const fontValues = fonts.map((f) => f.name.replace("font-", "")) as [
   string,
   ...string[],
@@ -112,7 +111,6 @@ export function getBaseColor(name: BaseColorName) {
   return BASE_COLORS.find((color) => color.name === name);
 }
 
-// Builds a registry:theme item from a design system config.
 export function buildRegistryTheme(config: DesignSystemConfig) {
   const baseColor = getBaseColor(config.baseColor);
   const theme = getTheme(config.theme);
@@ -123,7 +121,6 @@ export function buildRegistryTheme(config: DesignSystemConfig) {
     );
   }
 
-  // Merge base color and theme CSS vars.
   const lightVars: Record<string, string> = {
     ...(baseColor.cssVars?.light as Record<string, string>),
     ...(theme.cssVars?.light as Record<string, string>),
@@ -133,7 +130,6 @@ export function buildRegistryTheme(config: DesignSystemConfig) {
     ...(theme.cssVars?.dark as Record<string, string>),
   };
 
-  // Apply radius transformation.
   if (config.radius && config.radius !== "default") {
     const radius = RADII.find((r) => r.name === config.radius);
     if (radius?.value) {
@@ -151,7 +147,6 @@ export function buildRegistryTheme(config: DesignSystemConfig) {
   };
 }
 
-// Builds a registry:base item from a design system config.
 export function buildRegistryBase(config: DesignSystemConfig) {
   const baseItem = getBase(config.base);
 
@@ -161,7 +156,6 @@ export function buildRegistryBase(config: DesignSystemConfig) {
 
   const registryTheme = buildRegistryTheme(config);
 
-  // Build dependencies.
   const dependencies = [
     "class-variance-authority",
     "tailwindcss-animate",

@@ -47,10 +47,8 @@ export interface SegmentedInputProps
 export interface SegmentedInputItemProps
   extends EmptyProps<"input">, CompositionProps {
   /**
-   * The position of the input within the segment.
-   * Controls the visual styling and borders.
-   *
-   * If not provided, it will be automatically detected based on the input's position:
+   * The position of the input within the segment, which sets its borders and corners.
+   * If not provided, it's detected from the input's position:
    * - "isolated": Single standalone input in the segment
    * - "first": First input in the segment
    * - "middle": Middle input in the segment

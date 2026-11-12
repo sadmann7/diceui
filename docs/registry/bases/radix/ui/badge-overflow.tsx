@@ -162,7 +162,6 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
         currentLineWidth = widthWithGap;
         visible.push(item);
       } else {
-        // We're on the last line and this badge doesn't fit.
         break;
       }
     }

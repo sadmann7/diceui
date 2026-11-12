@@ -2,8 +2,7 @@ import type { RenderProps } from "@/types";
 
 export interface FileUploadProps extends RenderProps {
   /**
-   * The array of files currently being managed.
-   * Use this prop to control the component.
+   * The controlled array of files.
    *
    * ```tsx
    * // Controlled usage
@@ -18,8 +17,7 @@ export interface FileUploadProps extends RenderProps {
   value?: File[];
 
   /**
-   * The default array of files.
-   * Use this prop for uncontrolled usage.
+   * The default array of files for uncontrolled usage.
    *
    * ```tsx
    * // Uncontrolled usage
@@ -41,8 +39,7 @@ export interface FileUploadProps extends RenderProps {
   onValueChange?: (files: File[]) => void;
 
   /**
-   * Event handler called when files are accepted (after validation).
-   * This is called after all validation checks pass.
+   * Event handler called when files are accepted after validation.
    *
    * ```ts
    * onAccept={(files) => {
@@ -78,10 +75,8 @@ export interface FileUploadProps extends RenderProps {
   onFileReject?: (file: File, message: string) => void;
 
   /**
-   * Custom validation callback for individual files.
-   *
-   * Return a string with the error message or null or undefined if the file is valid.
-   * This will override the default validation message from `onFileReject`.
+   * Custom validation for each file, returning an error message, or null or undefined if the file is valid.
+   * The message replaces the default one passed to `onFileReject`.
    *
    * ```ts
    * onFileValidate={(file) => {
@@ -101,7 +96,6 @@ export interface FileUploadProps extends RenderProps {
 
   /**
    * Callback for uploading files.
-   * This can be used to upload files directly to a storage bucket.
    *
    * ```ts
    * onUpload={async (files, { onProgress, onSuccess, onError }) => {
@@ -187,8 +181,7 @@ export interface FileUploadProps extends RenderProps {
   dir?: "ltr" | "rtl";
 
   /**
-   * The label for the file upload component.
-   * Useful for labelling the hidden file input.
+   * The label for the hidden file input.
    *
    * ```ts
    * <FileUpload label="Upload files" />
@@ -199,8 +192,7 @@ export interface FileUploadProps extends RenderProps {
   label?: string;
 
   /**
-   * The name attribute for the file input element.
-   * Useful when using the component in a form.
+   * The name of the file input for form submission.
    *
    * ```ts
    * <form>
@@ -282,7 +274,6 @@ export interface FileUploadListProps extends RenderProps {
 
   /**
    * Whether to force mount the list even if there are no files.
-   * Useful for animating the list with animation libraries.
    *
    * ```tsx
    * <FileUploadList forceMount>
@@ -317,10 +308,7 @@ export interface FileUploadItemProps extends RenderProps {
 export interface FileUploadItemPreviewProps extends RenderProps {
   /**
    * The custom render function for the preview.
-   * Override the default preview with access to fallback behavior.
-   *
-   * The second parameter is a fallback function that renders the default preview
-   * (image preview for image files, appropriate icons for other file types).
+   * The second parameter renders the default preview.
    *
    * ```tsx
    * <FileUploadItemPreview
@@ -403,7 +391,6 @@ export interface FileUploadItemProgressProps extends RenderProps {
 
   /**
    * Whether to force mount the progress indicator even if the file is not uploading.
-   * Useful for animating the progress indicator with animation libraries.
    *
    * ```tsx
    * <FileUploadItemProgress forceMount />
@@ -419,7 +406,6 @@ export interface FileUploadItemDeleteProps extends RenderProps {}
 export interface FileUploadClearProps extends RenderProps {
   /**
    * Whether to force mount the clear button even if there are no files.
-   * Useful for animating the clear button with animation libraries.
    *
    * ```tsx
    * <FileUploadClear forceMount />

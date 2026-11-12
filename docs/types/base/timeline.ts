@@ -20,7 +20,6 @@ export interface TimelineProps extends RenderProps {
 
   /**
    * The reading direction of the timeline.
-   * This affects the layout direction and works with RTL languages.
    *
    * @default "ltr"
    */
@@ -66,7 +65,6 @@ export interface TimelineDotProps extends RenderProps {}
 export interface TimelineConnectorProps extends RenderProps {
   /**
    * When `true`, forces the connector to be rendered even if it's the last item.
-   * Useful for controlling animations with external animation libraries.
    *
    * @default false
    */

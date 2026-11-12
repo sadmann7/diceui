@@ -2,7 +2,7 @@ import type { RenderProps } from "@/types";
 
 export interface TransformOptions {
   /**
-   * The currency to format the value in
+   * The currency to format the value in.
    *
    * ```ts
    * currency: "USD"
@@ -11,7 +11,7 @@ export interface TransformOptions {
   currency?: string;
 
   /**
-   * The locale to format the value in
+   * The locale to format the value in.
    *
    * ```ts
    * locale: "en-US"
@@ -22,7 +22,7 @@ export interface TransformOptions {
 
 export interface ValidateOptions {
   /**
-   * The minimum value to validate
+   * The minimum value to validate.
    *
    * ```ts
    * min: 0
@@ -31,7 +31,7 @@ export interface ValidateOptions {
   min?: number;
 
   /**
-   * The maximum value to validate
+   * The maximum value to validate.
    *
    * ```ts
    * max: 100
@@ -42,7 +42,7 @@ export interface ValidateOptions {
 
 export interface MaskPattern {
   /**
-   * The pattern string where # represents input characters and other characters are literals
+   * The pattern string, where `#` marks an input character and other characters are literals.
    *
    * ```ts
    * pattern: "###-###-####"
@@ -51,7 +51,7 @@ export interface MaskPattern {
   pattern: string;
 
   /**
-   * Transform function to clean/format input before applying mask
+   * Transform function to clean or format input before applying the mask.
    *
    * ```ts
    * transform: (value, opts) => value.replace(/[^0-9]/g, "")
@@ -60,7 +60,7 @@ export interface MaskPattern {
   transform?: (value: string, opts?: TransformOptions) => string;
 
   /**
-   * Validation function to check if the unmasked value is valid
+   * Validation function to check if the unmasked value is valid.
    *
    * ```ts
    * validate: (value, opts) => value.length === 10
@@ -89,11 +89,11 @@ export type MaskPatternKey =
 
 /** Validation modes that control when validation occurs. */
 export type ValidationMode =
-  | "onChange" // Validate on every change (current behavior).
-  | "onBlur" // Validate only when field loses focus.
-  | "onSubmit" // Validate only on form submission (no automatic validation).
-  | "onTouched" // Validate on first blur, then on every change.
-  | "all"; // Validate on both blur and change events.
+  | "onChange"
+  | "onBlur"
+  | "onSubmit"
+  | "onTouched"
+  | "all";
 
 export interface MaskInputProps extends RenderProps {
   /** Controlled value. */
@@ -155,7 +155,6 @@ export interface MaskInputProps extends RenderProps {
 
   /**
    * Predefined mask type or custom mask pattern.
-   * Can be a predefined mask type or a custom mask pattern.
    *
    * ```ts
    * // Predefined mask type
@@ -172,32 +171,33 @@ export interface MaskInputProps extends RenderProps {
   mask?: MaskPatternKey | MaskPattern;
 
   /**
-   * Currency code for currency formatting (defaults to "USD").
-   * Used when mask is "currency".
+   * Currency code for currency formatting, used when `mask` is `"currency"`.
    *
    * ```ts
    * currency="EUR"  // €1,234.56
    * currency="JPY"  // ¥1,235
    * currency="GBP"  // £1,234.56
    * ```
+   *
+   * @default "USD"
    */
   currency?: string;
 
   /**
-   * Locale for currency formatting (defaults to "en-US").
-   * Used when mask is "currency".
+   * Locale for currency formatting, used when `mask` is `"currency"`.
    *
    * ```ts
    * locale="en-US"  // $1,234.56
    * locale="de-DE"  // 1.234,56 €
    * locale="ja-JP"  // ￥1,235
    * ```
+   *
+   * @default "en-US"
    */
   locale?: string;
 
   /**
-   * Custom placeholder to show when focused and mask is active.
-   * Only shows when this prop is provided and the input is focused.
+   * Custom placeholder shown while the input is focused and the mask is active.
    *
    * ```ts
    * // Show mask placeholder when focused

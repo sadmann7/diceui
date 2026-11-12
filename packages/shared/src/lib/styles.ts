@@ -1,9 +1,6 @@
 import type * as React from "react";
 
-/**
- * CSS style object that visually hides content while keeping it accessible to screen readers.
- * This follows accessibility best practices for visually hidden content.
- */
+/** Visually hides content while keeping it accessible to screen readers. */
 const visuallyHidden: React.CSSProperties = {
   border: 0,
   clip: "rect(0 0 0 0)",
@@ -17,10 +14,7 @@ const visuallyHidden: React.CSSProperties = {
   width: "1px",
 } as const;
 
-/**
- * CSS style object for a full-screen overlay backdrop.
- * Useful for modals, dialogs, and other overlay components.
- */
+/** A full-screen overlay backdrop. */
 const overlay: React.CSSProperties = {
   position: "fixed",
   inset: 0,
@@ -29,40 +23,28 @@ const overlay: React.CSSProperties = {
   zIndex: 50,
 } as const;
 
-/**
- * CSS style object for text truncation with ellipsis.
- * Ensures text fits within its container.
- */
+/** Truncates text with an ellipsis. */
 const truncate: React.CSSProperties = {
   overflow: "hidden",
   textOverflow: "ellipsis",
   whiteSpace: "nowrap",
 } as const;
 
-/**
- * CSS style object for a custom focus ring style.
- * Provides a consistent, accessible focus indicator.
- */
+/** A custom focus ring. */
 const focusRing: React.CSSProperties = {
   outline: "none",
   boxShadow: "0 0 0 2px rgba(66, 153, 225, 0.6)",
   borderRadius: "0.25rem",
 } as const;
 
-/**
- * CSS style object to create a scrollable container that hides scrollbars.
- * Note: For webkit browsers, you'll need to add additional CSS for ::-webkit-scrollbar.
- */
+/** A scrollable container with hidden scrollbars, which WebKit also needs a `::-webkit-scrollbar` rule for. */
 const scrollableHidden: React.CSSProperties = {
   overflow: "auto",
   scrollbarWidth: "none",
   msOverflowStyle: "none",
 } as const;
 
-/**
- * CSS style object for absolutely positioning an element to fill its container.
- * Useful for overlays, backgrounds, and full-size children.
- */
+/** Absolutely positions an element to fill its container. */
 const fullSize: React.CSSProperties = {
   position: "absolute",
   top: 0,
@@ -71,20 +53,14 @@ const fullSize: React.CSSProperties = {
   left: 0,
 } as const;
 
-/**
- * CSS style object for centering content both vertically and horizontally.
- * Uses flexbox for better browser support.
- */
+/** Centers content both vertically and horizontally. */
 const center: React.CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
 } as const;
 
-/**
- * CSS style object to prevent text selection.
- * Useful for interactive elements like buttons.
- */
+/** Prevents text selection. */
 const noSelect: React.CSSProperties = {
   userSelect: "none",
   WebkitUserSelect: "none",

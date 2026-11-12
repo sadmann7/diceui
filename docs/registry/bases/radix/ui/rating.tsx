@@ -380,8 +380,7 @@ function Rating(props: RatingProps) {
           const items = Array.from(itemsRef.current.values()).filter(
             (item) => !item.disabled,
           );
-          // For half-step ratings, find the item that represents the selected value
-          // by looking for the ceiling value (e.g., 3.5 → find item with value 4).
+          // A half value belongs to the item above it, so 3.5 selects item 4.
           const selectedItem =
             propsRef.current.step < 1
               ? items.find((item) => item.value === Math.ceil(value))
@@ -679,8 +678,6 @@ function RatingItem(props: RatingItemProps) {
         activationMode !== "manual" &&
         isKeyboardFocus
       ) {
-        // For half-step mode, check if the current value is a half-step that belongs to this item
-        // e.g., if value is 3.5 and itemValue is 4, don't change it.
         const isHalfStepValue = step < 1 && value === itemValue - step;
 
         if (!isHalfStepValue) {
@@ -740,7 +737,6 @@ function RatingItem(props: RatingItemProps) {
           return;
         event.preventDefault();
 
-        // For half-step mode, increment/decrement by step value instead of jumping to next item.
         if (step < 1 && (focusIntent === "prev" || focusIntent === "next")) {
           if (!isDisabled && !isReadOnly) {
             let newValue = value;
@@ -753,7 +749,6 @@ function RatingItem(props: RatingItemProps) {
 
             store.setState("value", newValue);
 
-            // Find and focus the item that represents this value.
             const items = focusContext
               .getItems()
               .filter((item) => !item.disabled);
@@ -767,7 +762,6 @@ function RatingItem(props: RatingItemProps) {
           return;
         }
 
-        // For full-step mode or Home/End keys, use the original navigation.
         const items = focusContext.getItems().filter((item) => !item.disabled);
         let candidateRefs = items.map((item) => item.ref);
 
