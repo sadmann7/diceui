@@ -288,9 +288,10 @@ export function createStyleGenerator(roles: Roles) {
       if (radius) return split(radius);
       const base =
         variants && newYork.includes(utility) ? findRadius("") : undefined;
+      const important = token.endsWith("!") ? "!" : "";
       return split(
         base
-          ? `${variants}${getUtility(base).utility}`
+          ? `${variants}${getUtility(base).utility}${important}`
           : (getFallback(token, style) ?? token),
       );
     };
