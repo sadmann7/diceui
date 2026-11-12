@@ -1,37 +1,102 @@
 name: Release
+
 on:
   push:
     branches:
       - main
 
-env:
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+permissions: {}
 
-permissions:
-  contents: write
-  pull-requests: write
-  id-token: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+env:
+  FORCE_COLOR: 3
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
 
 jobs:
-  release:
-    name: Release
+  select-mode:
     runs-on: ubuntu-latest
+    name: Select mode
+    permissions:
+      contents: read
+    outputs:
+      mode: ${{ steps.select-mode.outputs.mode }}
+      publish-plan-artifact-id: ${{ steps.select-mode.outputs.publish-plan-artifact-id }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - uses: ./.github/setup
 
-      - name: Build
+      - name: Select Changesets mode
+        id: select-mode
+        uses: changesets/action/select-mode@v2.1.2
+
+  version:
+    if: needs.select-mode.outputs.mode == 'version'
+    needs: select-mode
+    runs-on: ubuntu-latest
+    name: Version
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/setup
+
+      - name: Version packages
+        uses: changesets/action/version@v2.1.2
+        with:
+          commit-message: "chore(release): version packages"
+          pr-title: "chore(release): version packages"
+          github-token: ${{ secrets.MY_GITHUB_TOKEN }}
+
+  pack:
+    if: needs.select-mode.outputs.mode == 'publish'
+    needs: select-mode
+    runs-on: ubuntu-latest
+    name: Pack
+    permissions:
+      contents: read
+    outputs:
+      pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/setup
+
+      - name: Build packages
         run: pnpm build --filter=!docs
 
-      - name: Create Release
-        id: changesets
-        uses: changesets/action@v1.4.1
+      - name: Pack packages
+        id: pack
+        uses: changesets/action/pack@v2.1.2
         with:
-          commit: "chore(release): version packages"
-          title: "chore(release): version packages"
-          publish: pnpm changeset publish
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-          # Trusted Publishing (OIDC) is configured - no NPM_TOKEN needed
+          publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
+
+  publish:
+    needs: pack
+    runs-on: ubuntu-latest
+    name: Publish
+    permissions:
+      contents: write
+      id-token: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: ./.github/setup
+
+      - name: Publish packages
+        uses: changesets/action/publish@v2.1.2
+        with:
+          pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}
