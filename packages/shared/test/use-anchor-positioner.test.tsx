@@ -1,3 +1,4 @@
+import { flip } from "@floating-ui/react";
 import { act, render, renderHook, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import * as React from "react";
@@ -8,6 +9,11 @@ import {
   type AnchorPositionerProps,
   useAnchorPositioner,
 } from "../src/hooks/use-anchor-positioner";
+
+vi.mock("@floating-ui/react", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@floating-ui/react")>();
+  return { ...actual, flip: vi.fn(actual.flip) };
+});
 
 function TestPopover({
   defaultOpen = false,
@@ -225,6 +231,20 @@ describe("useAnchorPositioner", () => {
     });
 
     expect(result.current.arrowStyles).toHaveProperty("position", "absolute");
+  });
+
+  it("avoids collisions by default", () => {
+    renderHook(() => useAnchorPositioner(defaultProps));
+
+    expect(flip).toHaveBeenCalled();
+  });
+
+  it("skips collision avoidance when avoidCollisions is false", () => {
+    renderHook(() =>
+      useAnchorPositioner({ ...defaultProps, avoidCollisions: false }),
+    );
+
+    expect(flip).not.toHaveBeenCalled();
   });
 
   it("handles collision avoidance", () => {
@@ -464,6 +484,7 @@ describe("useAnchorPositioner boundary collision detection", () => {
         side: "bottom",
         sideOffset: 5,
         strategy: "fixed",
+        avoidCollisions: false,
       });
 
       return (
