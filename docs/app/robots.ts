@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-import { siteConfig } from "@/config/site";
+import { SITE_URL } from "@/lib/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: "/private/",
     },
-    sitemap: `${siteConfig.url}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

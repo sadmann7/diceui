@@ -1,4 +1,4 @@
-import { siteConfig } from "@/config/site";
+import { X_URL } from "@/lib/site";
 
 export function SiteFooter() {
   return (
@@ -7,7 +7,7 @@ export function SiteFooter() {
         <p className="text-sm text-muted-foreground">
           Built by{" "}
           <a
-            href={siteConfig.links.x}
+            href={X_URL}
             rel="noreferrer noopener"
             target="_blank"
             className="font-medium underline underline-offset-4 transition-colors hover:text-foreground/80"

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { siteConfig } from "@/config/site";
+import { GITHUB_URL, SITE_DESCRIPTION, SITE_TAGLINE } from "@/lib/site";
 import { source } from "@/lib/source";
 import { Button } from "@/styles/radix-nova/ui/button";
 
@@ -19,13 +19,13 @@ export default function IndexPage(_props: PageProps<"/">) {
           className="animate-fade-up bg-linear-to-br from-foreground/80 to-muted-foreground bg-clip-text text-center text-4xl/tight leading-tight font-bold tracking-tighter text-balance text-transparent opacity-0 drop-shadow-xs md:text-5xl/tight"
           style={{ animationDelay: "0.20s", animationFillMode: "forwards" }}
         >
-          {siteConfig.tagline}
+          {SITE_TAGLINE}
         </h1>
         <p
           className="max-w-2xl animate-fade-up text-center text-lg font-light text-balance text-muted-foreground opacity-0 md:text-xl"
           style={{ animationDelay: "0.30s", animationFillMode: "forwards" }}
         >
-          {siteConfig.description}
+          {SITE_DESCRIPTION}
         </p>
         <div
           className="flex animate-fade-up justify-center gap-4 pt-2 opacity-0"
@@ -35,11 +35,7 @@ export default function IndexPage(_props: PageProps<"/">) {
             <Link href={firstComponentUrl}>View Components</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link
-              target="_blank"
-              rel="noreferrer"
-              href={siteConfig.links.github}
-            >
+            <Link target="_blank" rel="noreferrer" href={GITHUB_URL}>
               GitHub
             </Link>
           </Button>
