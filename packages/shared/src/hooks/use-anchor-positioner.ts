@@ -187,7 +187,7 @@ function useAnchorPositioner({
   arrowPadding = 0,
   sticky = "partial",
   strategy = "absolute",
-  avoidCollisions = false,
+  avoidCollisions = true,
   disableArrow = false,
   fitViewport = false,
   forceMount = false,
