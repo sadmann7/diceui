@@ -44,6 +44,7 @@ next-env.d.ts
 .nuxt/
 tmp/
 temp/
+/plans/
 .docusaurus
 
 # TYPESCRIPT
