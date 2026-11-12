@@ -115,10 +115,8 @@ export interface MediaPlayerProps extends EmptyProps<"div">, CompositionProps {
   onMediaError?: (error: MediaError | null) => void;
 
   /**
-   * Callback function triggered when triggering picture in picture (PiP) state.
-   *
-   * The first argument is the unknown error that occurred.
-   * The second argument is the state on which the error occurred.
+   * Event handler called when entering or exiting picture-in-picture fails.
+   * Receives the error and the state it failed on:
    * - `enter`: The error occurred when entering PIP.
    * - `exit`: The error occurred when exiting PIP.
    */
@@ -182,10 +180,8 @@ export interface MediaPlayerProps extends EmptyProps<"div">, CompositionProps {
   tooltipDelayDuration?: number;
 
   /**
-   * Whether to enable auto-hiding behavior for controls and overlay components.
-   *
-   * Controls will show on pause/interaction and auto-hide after 3 seconds
-   * of inactivity during playback. Also hides immediately on mouse leave.
+   * Whether controls and overlays auto-hide after 3 seconds of inactivity during playback.
+   * They show again on pause or interaction, and hide on mouse leave.
    *
    * ```ts
    * <MediaPlayer autoHide />
@@ -378,8 +374,7 @@ export interface MediaPlayerSeekProps
   withoutTooltip?: boolean;
 
   /**
-   * Custom preview thumbnail source for seek preview.
-   * Can be a string URL or a function that returns a URL based on time.
+   * Custom thumbnail source for the seek preview, or a function that returns one for a time.
    *
    * ```ts
    * // Static thumbnail
@@ -437,7 +432,6 @@ export interface MediaPlayerSeekProps
 
   /**
    * The padding in pixels from the collision boundary for tooltip positioning.
-   * Can be a number for uniform padding or an object for per-side padding.
    *
    * ```ts
    * // Uniform padding
@@ -538,8 +532,7 @@ export interface MediaPlayerPiPProps
     CompositionProps,
     Pick<MediaPlayerProps, "onPipError"> {
   /**
-   * The content to render inside the picture-in-picture button.
-   * Can be a React node or a function that receives the current PiP state.
+   * The content to render inside the picture-in-picture button, or a function that receives the current PiP state.
    *
    * ```tsx
    * // Static content
@@ -598,9 +591,7 @@ export interface MediaPlayerSettingsProps
 
 export interface MediaPlayerPortalProps {
   /**
-   * The content to render in the portal.
-   * This content will be rendered in the appropriate container
-   * based on the current fullscreen state.
+   * The content to render in the portal, which follows the media player into fullscreen.
    */
   children: React.ReactNode;
 }
@@ -624,7 +615,6 @@ export interface MediaPlayerTooltipProps
 
   /**
    * Keyboard shortcut(s) to display in the tooltip.
-   * Can be a string for a single shortcut or an array for multiple shortcuts.
    *
    * ```tsx
    * // Single shortcut

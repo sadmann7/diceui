@@ -183,7 +183,7 @@ function ScrollSpy(props: ScrollSpyProps) {
         return;
       }
 
-      // Set flag to prevent observer from firing during programmatic scroll.
+      // Keeps the observer from firing during the programmatic scroll.
       isScrollingRef.current = true;
       store.setState("value", sectionId);
 

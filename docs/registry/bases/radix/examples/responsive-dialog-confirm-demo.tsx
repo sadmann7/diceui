@@ -20,7 +20,6 @@ export default function ResponsiveDialogConfirmDemo() {
 
   const onDelete = React.useCallback(() => {
     setIsDeleting(true);
-    // Simulate deletion.
     setTimeout(() => {
       setIsDeleting(false);
     }, 1000);

@@ -61,7 +61,7 @@ const ComboboxTrigger = React.forwardRef<
         (event) => {
           if (context.disabled) return;
 
-          // prevent implicit pointer capture.
+          // Prevents implicit pointer capture.
           const target = event.target;
           if (!(target instanceof Element)) return;
           if (target.hasPointerCapture(event.pointerId)) {

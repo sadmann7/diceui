@@ -138,8 +138,7 @@ export interface RatingItemProps
   index?: number;
 
   /**
-   * The content to render inside the rating item.
-   * Can be a React node or a function that receives the data state.
+   * The content to render inside the rating item, or a function that receives the data state.
    *
    * ```tsx
    * children={<Star />}

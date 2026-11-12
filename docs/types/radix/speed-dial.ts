@@ -95,7 +95,6 @@ export interface SpeedDialContentProps
 
   /**
    * When `true`, forces the content to be rendered even if it's not active.
-   * Useful for controlling animations with external animation libraries.
    * @default false
    */
   forceMount?: boolean;

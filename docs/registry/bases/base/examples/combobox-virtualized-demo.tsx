@@ -86,14 +86,13 @@ export default function ComboboxVirtualizedDemo() {
     (value: string) => {
       setInputValue(value);
       if (content) {
-        content.scrollTop = 0; // Reset scroll position.
+        content.scrollTop = 0;
         virtualizer.measure();
       }
     },
     [content, virtualizer],
   );
 
-  // Re-measure virtualizer when filteredItems changes.
   React.useEffect(() => {
     if (content) {
       virtualizer.measure();

@@ -26,7 +26,6 @@ describe("useListHighlighting", () => {
     });
   }
 
-  // Base setup for tests.
   function setupTest(
     options: {
       items?: CollectionItem<HTMLDivElement, TestItemData>[];

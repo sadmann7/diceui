@@ -20,25 +20,20 @@ import {
   EditableTrigger,
 } from "@/registry/bases/radix/ui/editable";
 
-// Mock ResizeObserver.
 class ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
-// Add to global.
 global.ResizeObserver = ResizeObserver;
 
-// Mock requestAnimationFrame.
 global.requestAnimationFrame = (fn) => setTimeout(fn, 0);
 
-// Mock pointer capture methods.
 Element.prototype.setPointerCapture = vi.fn();
 Element.prototype.releasePointerCapture = vi.fn();
 Element.prototype.hasPointerCapture = vi.fn();
 
-// Mock scrollIntoView.
 Element.prototype.scrollIntoView = vi.fn();
 
 describe("Editable", () => {
@@ -81,12 +76,10 @@ describe("Editable", () => {
       onEdit,
     });
 
-    // Test initial state.
     const preview = screen.getByRole("button");
     expect(preview).toHaveTextContent("Initial Value");
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
 
-    // Test entering edit mode.
     await waitFor(() => {
       fireEvent.click(preview);
     });
@@ -99,18 +92,15 @@ describe("Editable", () => {
     expect(input).toHaveValue("Initial Value");
     expect(preview).not.toBeInTheDocument();
 
-    // Test changing value.
     fireEvent.change(input, { target: { value: "New Value" } });
     expect(onValueChange).toHaveBeenCalledWith("New Value");
 
-    // Test submitting.
     const submitButton = screen.getByTestId("submit");
     fireEvent.click(submitButton);
 
     expect(onSubmit).toHaveBeenCalledWith("New Value");
     expect(onEditingChange).toHaveBeenCalledWith(false);
 
-    // After submit, preview should be visible again.
     await waitFor(() => {
       expect(screen.getByRole("button")).toBeInTheDocument();
       expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
@@ -127,23 +117,19 @@ describe("Editable", () => {
       onCancel,
     });
 
-    // Enter edit mode.
     const preview = screen.getByRole("button");
     fireEvent.click(preview);
 
     const input = screen.getByRole("textbox");
 
-    // Change value.
     fireEvent.change(input, { target: { value: "Changed Value" } });
     expect(onValueChange).toHaveBeenCalledWith("Changed Value");
 
-    // Cancel edit.
     const cancelButton = screen.getByTestId("cancel");
     fireEvent.click(cancelButton);
 
     expect(onCancel).toHaveBeenCalled();
 
-    // After cancel, preview should be visible with original value.
     await waitFor(() => {
       const previewAfterCancel = screen.getByRole("button");
       expect(previewAfterCancel).toBeInTheDocument();
@@ -162,17 +148,14 @@ describe("Editable", () => {
       onCancel,
     });
 
-    // Enter edit mode.
     const preview = screen.getByRole("button");
     fireEvent.click(preview);
 
     const input = screen.getByRole("textbox");
 
-    // Submit with Enter key.
     fireEvent.keyDown(input, { key: "Enter" });
     expect(onSubmit).toHaveBeenCalledWith("Initial Value");
 
-    // Re-enter edit mode.
     await waitFor(() => {
       const previewAfterSubmit = screen.getByRole("button");
       fireEvent.click(previewAfterSubmit);
@@ -180,7 +163,6 @@ describe("Editable", () => {
 
     const inputAfterReenter = screen.getByRole("textbox");
 
-    // Cancel with Escape key.
     fireEvent.keyDown(inputAfterReenter, { key: "Escape" });
     expect(onCancel).toHaveBeenCalled();
   });
@@ -197,10 +179,8 @@ describe("Editable", () => {
     const preview = screen.getByRole("button");
     expect(preview).toHaveAttribute("data-disabled", "");
 
-    // Try to enter edit mode.
     fireEvent.click(preview);
 
-    // Should not enter edit mode.
     expect(onEdit).not.toHaveBeenCalled();
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
   });
@@ -214,16 +194,13 @@ describe("Editable", () => {
       onValueChange,
     });
 
-    // In read-only mode, preview should not be clickable.
     expect(
       screen.queryByRole("button", { name: /Read Only Value/i }),
     ).not.toBeInTheDocument();
 
-    // Input should be visible but read-only.
     const input = screen.getByRole("textbox");
     expect(input).toHaveAttribute("readonly");
 
-    // Try to change value.
     fireEvent.change(input, { target: { value: "New Value" } });
     expect(onValueChange).not.toHaveBeenCalled();
   });
@@ -243,16 +220,12 @@ describe("Editable", () => {
       maxLength: 10,
     });
 
-    // Enter edit mode.
     const preview = screen.getByRole("button");
     fireEvent.click(preview);
 
     // JSDOM doesn't apply maxLength, so only the render is checked.
     const input = screen.getByRole("textbox");
     expect(input).toBeInTheDocument();
-
-    // Skip the maxLength test as it's not properly supported in the test environment
-    // The actual implementation should handle maxLength correctly.
   });
 
   test("handles autosize", async () => {
@@ -261,25 +234,21 @@ describe("Editable", () => {
       autosize: true,
     });
 
-    // Enter edit mode.
     const preview = screen.getByRole("button");
     fireEvent.click(preview);
 
     const input = screen.getByRole("textbox");
 
-    // Change value to trigger autosize.
     fireEvent.change(input, {
       target: { value: "Longer text to trigger autosize" },
     });
 
-    // Check if autosize class is applied.
     expect(input).toHaveClass("w-auto");
   });
 
   test("handles different trigger modes", async () => {
     const onEdit = vi.fn();
 
-    // Test double-click trigger mode.
     renderEditable({
       triggerMode: "dblclick",
       onEdit,
@@ -287,15 +256,12 @@ describe("Editable", () => {
 
     const preview = screen.getByRole("button");
 
-    // Single click should not trigger edit.
     fireEvent.click(preview);
     expect(onEdit).not.toHaveBeenCalled();
 
-    // Double click should trigger edit.
     fireEvent.doubleClick(preview);
     expect(onEdit).toHaveBeenCalled();
 
-    // Cleanup and test focus trigger mode.
     cleanup();
     onEdit.mockReset();
 
@@ -306,7 +272,6 @@ describe("Editable", () => {
 
     const focusPreview = screen.getByRole("button");
 
-    // Focus should trigger edit.
     fireEvent.focus(focusPreview);
     expect(onEdit).toHaveBeenCalled();
   });
@@ -314,7 +279,6 @@ describe("Editable", () => {
   test("handles external trigger", async () => {
     const onEdit = vi.fn();
 
-    // Create a wrapper component that provides the Editable context.
     render(
       <Editable onEdit={onEdit}>
         <EditableLabel>Title</EditableLabel>
@@ -337,7 +301,6 @@ describe("Editable", () => {
       dir: "rtl",
     });
 
-    // Enter edit mode.
     const preview = screen.getByRole("button");
     fireEvent.click(preview);
 
@@ -351,7 +314,6 @@ describe("Editable", () => {
   test("handles form integration", async () => {
     const onSubmit = vi.fn();
 
-    // Create a form with the Editable component.
     render(
       <form
         data-testid="test-form"
@@ -376,7 +338,6 @@ describe("Editable", () => {
     const formSubmitButton = screen.getByTestId("form-submit");
     fireEvent.click(formSubmitButton);
 
-    // Verify the form submission handler was called.
     expect(onSubmit).toHaveBeenCalled();
 
     // The hidden input value isn't readable here, so only the submission is checked.
@@ -390,7 +351,6 @@ describe("Editable", () => {
     const label = screen.getByText("Title");
     expect(label).toHaveAttribute("data-invalid", "");
 
-    // Enter edit mode.
     const preview = screen.getByRole("button");
     fireEvent.click(preview);
 
@@ -406,7 +366,6 @@ describe("Editable", () => {
     const label = screen.getByText("Title");
     expect(label).toHaveAttribute("data-required", "");
 
-    // Enter edit mode.
     const preview = screen.getByRole("button");
     fireEvent.click(preview);
 
@@ -422,16 +381,13 @@ describe("Editable", () => {
       onSubmit,
     });
 
-    // Enter edit mode.
     const preview = screen.getByRole("button");
     fireEvent.click(preview);
 
     const input = screen.getByRole("textbox");
 
-    // Change value.
     fireEvent.change(input, { target: { value: "New Value" } });
 
-    // Blur should submit.
     fireEvent.blur(input);
 
     expect(onSubmit).toHaveBeenCalledWith("New Value");
@@ -446,13 +402,11 @@ describe("Editable", () => {
       onCancel,
     });
 
-    // Enter edit mode.
     const preview = screen.getByRole("button");
     fireEvent.click(preview);
 
     const input = screen.getByRole("textbox");
 
-    // Press Escape.
     fireEvent.keyDown(input, { key: "Escape" });
 
     expect(onEscapeKeyDown).toHaveBeenCalled();

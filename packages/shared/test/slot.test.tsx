@@ -65,7 +65,7 @@ describe("Slot", () => {
   it("merges styles properly", () => {
     render(
       <Slot style={{ color: "red", fontSize: "16px" }}>
-        {/* Browser computed style convert color value to rgb, so keeping rgb value. */}
+        {/* Computed styles report colors as rgb. */}
         <div style={{ color: "rgb(0, 0, 255)", fontWeight: "bold" }}>
           Styled Content
         </div>

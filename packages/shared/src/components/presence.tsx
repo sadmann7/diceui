@@ -80,8 +80,6 @@ function usePresence(present: boolean) {
         currentAnimationName === "none" ||
         styles?.display === "none"
       ) {
-        // Without an exit animation, or with the element hidden, no animation runs,
-        // so it unmounts right away.
         send("UNMOUNT");
       } else {
         // There is no `animationrun` event, and `animationstart` fires after
@@ -103,10 +101,8 @@ function usePresence(present: boolean) {
     if (node) {
       let timeoutId: number;
       const ownerWindow = node.ownerDocument.defaultView ?? window;
-      /**
-       * An ANIMATION_OUT during ANIMATION_IN fires `animationcancel` for ANIMATION_IN
-       * after entering `unmountSuspended`, so only the active animation ends it.
-       */
+      // An ANIMATION_OUT during ANIMATION_IN fires `animationcancel` for ANIMATION_IN
+      // after entering `unmountSuspended`, so only the active animation ends it.
       function onAnimationEnd(event: AnimationEvent) {
         const currentAnimationName = getAnimationName(stylesRef.current);
         const isCurrentAnimation = currentAnimationName.includes(
@@ -115,15 +111,12 @@ function usePresence(present: boolean) {
         if (event.target === node && isCurrentAnimation) {
           // With React 18 concurrency this update lands a frame after the animation
           // ends, so the "forwards" fill mode keeps the last keyframe to avoid a flash.
-          // flushSync instead removed the node before animationEnd reached user handlers.
           // https://github.com/radix-ui/primitives/pull/1849
           send("ANIMATION_END");
           if (!prevPresentRef.current) {
             const currentFillMode = node.style.animationFillMode;
             node.style.animationFillMode = "forwards";
-            // Reset the style after the node had time to unmount (for cases
-            // where the component chooses not to unmount). Doing this any
-            // sooner than `setTimeout` (e.g. with `requestAnimationFrame`)
+            // Resetting any sooner than `setTimeout`, even in `requestAnimationFrame`,
             // still causes a flash.
             timeoutId = ownerWindow.setTimeout(() => {
               if (node.style.animationFillMode === "forwards") {
@@ -135,7 +128,6 @@ function usePresence(present: boolean) {
       }
       function onAnimationStart(event: AnimationEvent) {
         if (event.target === node) {
-          // if animation occurred, store its name as the previous animation.
           prevAnimationNameRef.current = getAnimationName(stylesRef.current);
         }
       }
@@ -150,8 +142,7 @@ function usePresence(present: boolean) {
       };
     }
 
-    // Transition to the unmounted state if the node is removed prematurely.
-    // We avoid doing so during cleanup as the node may change but still exist.
+    // Not done in cleanup, where the node may change but still exist.
     send("ANIMATION_END");
   }, [node, send]);
 

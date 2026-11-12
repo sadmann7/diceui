@@ -46,18 +46,15 @@ function scrollIntoView(target: Element) {
   let currentNode: Element | null = target;
 
   while (currentNode && currentNode !== root) {
-    // Skip non-scrollable nodes.
     while (currentNode && !isNodeScrollable(currentNode)) {
       currentNode = currentNode.parentElement;
     }
 
-    // No more scrollable parents found.
     if (!currentNode || currentNode === root) break;
 
     const { top: scrollableTop } = currentNode.getBoundingClientRect();
     const { top: targetTop } = target.getBoundingClientRect();
 
-    // Only scroll if target is below the visible area.
     if (targetTop > scrollableTop + target.clientHeight) {
       currentNode.scrollTop += targetTop - scrollableTop;
     }
@@ -138,17 +135,14 @@ function useScrollLock({
     preventScrollCount++;
     if (preventScrollCount !== 1) return;
 
-    // Store scroll position.
     scrollPositionRef.current = {
       top: win.scrollY,
       left: win.scrollX,
     };
 
-    // Get computed styles.
     const htmlStyle = win.getComputedStyle(html);
     const bodyStyle = win.getComputedStyle(body);
 
-    // Store original styles.
     originalStyle = {
       htmlOverflowY: html.style.overflowY,
       htmlOverflowX: html.style.overflowX,
@@ -171,7 +165,6 @@ function useScrollLock({
     const isInsetScroll = getIsInsetScroll(referenceElement);
 
     function onScrollLock() {
-      // Handle scrollbar-gutter in modern browsers.
       const isScrollbarGutterStable =
         htmlStyle.scrollbarGutter?.includes("stable");
       const isScrollableY = html.scrollHeight > html.clientHeight;
@@ -181,7 +174,6 @@ function useScrollLock({
       const isOverflowXScroll =
         htmlStyle.overflowX === "scroll" || bodyStyle.overflowX === "scroll";
 
-      // Calculate margins to prevent content shift.
       const marginY =
         Number.parseFloat(bodyStyle.marginTop) +
         Number.parseFloat(bodyStyle.marginBottom);
@@ -207,20 +199,16 @@ function useScrollLock({
         body.style.overflow = "hidden";
         body.style.boxSizing = "border-box";
 
-        // Store the scroll position values for restoration.
         body.setAttribute("data-scroll-lock-top", String(topValue));
         body.setAttribute("data-scroll-lock-left", String(leftValue));
 
-        // Set top and left - try to apply even if JSDOM doesn't reflect them.
         body.style.top = `-${topValue}px`;
         body.style.left = `-${leftValue}px`;
 
-        // Enhanced iOS Safari handling.
         function onTouchStart(event: TouchEvent) {
           const target = event.target as Element;
           let currentNode: Element | null = target;
 
-          // Find the first scrollable parent.
           while (currentNode && currentNode !== html) {
             if (
               isNodeScrollable(currentNode) &&
@@ -300,7 +288,6 @@ function useScrollLock({
           doc.removeEventListener("focus", onFocus, true);
         };
       } else {
-        // Standard scroll lock.
         Object.assign(html.style, {
           overflowY:
             !isScrollbarGutterStable && (isScrollableY || isOverflowYScroll)
@@ -330,12 +317,10 @@ function useScrollLock({
           overflow: "hidden",
         });
 
-        // Firefox without inset scrollbars.
         if (isFirefox() && !isInsetScroll) {
           body.style.marginRight = `${scrollbarWidth}px`;
         }
 
-        // Restore scroll position.
         body.scrollTop = scrollPositionRef.current.top;
         body.scrollLeft = scrollPositionRef.current.left;
 
@@ -365,7 +350,6 @@ function useScrollLock({
       body.removeAttribute("data-scroll-lock-top");
       body.removeAttribute("data-scroll-lock-left");
 
-      // Restore scroll position.
       win.scrollTo(
         scrollPositionRef.current.left,
         scrollPositionRef.current.top,
@@ -375,7 +359,6 @@ function useScrollLock({
     function onResize() {
       cancelAnimationFrame(resizeRef.current);
       resizeRef.current = requestAnimationFrame(() => {
-        // Restore and reapply to handle viewport changes.
         onScrollUnlock();
         onScrollLock();
       });

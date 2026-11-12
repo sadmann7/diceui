@@ -2,7 +2,7 @@ import type { EmptyProps } from "@/types";
 
 export interface UsePendingOptions {
   /**
-   * The ID of the element. If not provided, an ID will be automatically generated.
+   * The ID of the element, generated automatically if not provided.
    *
    * ```tsx
    * const { pendingProps } = usePending({
@@ -66,14 +66,14 @@ export interface UsePendingReturn<T extends HTMLElement = HTMLElement> {
   };
 
   /**
-   * Whether the element is currently in a pending state.
+   * Whether the element is in a pending state.
    */
   isPending: boolean;
 }
 
 export interface PendingProps extends EmptyProps<"div"> {
   /**
-   * The ID of the element. If not provided, an ID will be automatically generated.
+   * The ID of the element, generated automatically if not provided.
    */
   id?: string;
 

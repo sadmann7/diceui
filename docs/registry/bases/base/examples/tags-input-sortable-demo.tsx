@@ -45,7 +45,6 @@ export default function TagsInputSortableDemo() {
               <SortableItem
                 key={trick}
                 value={trick}
-                // to prevent tag item from being tabbable.
                 tabIndex={-1}
                 asHandle
                 render={<TagsInputItem value={trick}>{trick}</TagsInputItem>}

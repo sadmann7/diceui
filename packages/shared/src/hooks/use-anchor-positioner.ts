@@ -58,120 +58,92 @@ interface UseAnchorPositionerProps {
   /** Event handler called when the popover is opened or closed. */
   onOpenChange: (open: boolean) => void;
 
-  /**
-   * Reference to the anchor element.
-   * Can be either a VirtualElement or React ref to an HTMLElement element.
-   */
+  /** The anchor element, as a ref or a virtual element. */
   anchorRef?: React.RefObject<HTMLElement | null> | VirtualElement | null;
 
   /**
-   * The preferred placement of the popover relative to its anchor element.
-   * If there is not enough space, it will be adjusted automatically.
-   * - 'top': Position the popover above the anchor
-   * - 'right': Position the popover to the right of the anchor
-   * - 'bottom': Position the popover below the anchor
-   * - 'left': Position the popover to the left of the anchor
+   * The preferred side of the anchor to render against, flipped when there is not enough space.
    * @default "bottom"
    */
   side?: Side;
 
   /**
    * The distance in pixels from the anchor element to the popover.
-   * This creates a gap between the anchor and popover.
    * @default 4
    */
   sideOffset?: number;
 
   /**
    * The alignment of the popover relative to its anchor element.
-   * - 'start': Align with the start edge of the anchor
-   * - 'center': Center align with the anchor
-   * - 'end': Align with the end edge of the anchor
    * @default "start"
    */
   align?: Align;
 
   /**
-   * The distance in pixels from the aligned edge when using align.
-   * Allows the popover to be offset from its default aligned position.
+   * The offset in pixels from the aligned edge.
    * @default 0
    */
   alignOffset?: number;
 
-  /**
-   * The element or elements that constrain where the popover can be positioned.
-   * By default, this is the viewport (browser window).
-   */
+  /** The element or elements that constrain where the popover can be positioned, the viewport by default. */
   collisionBoundary?: Boundary;
 
   /**
-   * The amount of padding around the boundary edges for collision detection.
-   * This prevents the popover from touching the edges of its container.
+   * The padding around the boundary edges for collision detection.
    * @default 0
    */
   collisionPadding?: number | Partial<Record<Side, number>>;
 
   /**
    * The padding between the arrow element and the popover edges.
-   * Prevents the arrow from reaching the very edge of the popover.
    * @default 0
    */
   arrowPadding?: number;
 
   /**
-   * Controls how the popover responds to scroll events.
-   * - 'partial': Allows partial visibility when scrolling
-   * - 'always': Maintains full visibility by shifting position
+   * Whether the popover may go partially out of view or always shifts to stay fully visible.
    * @default "partial"
    */
   sticky?: "partial" | "always";
 
   /**
-   * The positioning strategy to use.
-   * - 'absolute': Position relative to closest positioned ancestor
-   * - 'fixed': Position relative to viewport
+   * The CSS positioning strategy to use.
    * @default "absolute"
    */
   strategy?: Strategy;
 
   /**
-   * Whether the popover should automatically adjust its placement to stay in view.
-   * When enabled, changes position when there's not enough space in the current placement.
+   * Whether the popover should change its placement to stay in view.
    * @default true
    */
   avoidCollisions?: boolean;
 
   /**
-   * Whether to disable the floating pointer/indicator.
-   * When true, the pointer will not be rendered and pointer middleware will not be added.
+   * Whether to skip rendering and positioning the arrow.
    * @default false
    */
   disableArrow?: boolean;
 
   /**
    * Whether the popover should be constrained to the viewport dimensions.
-   * When true, the popover will not exceed the browser window width/height.
    * @default false
    */
   fitViewport?: boolean;
 
   /**
-   * Whether the popover should be mounted in the DOM even when closed.
-   * Useful for animations or when you need to measure the popover before displaying it.
+   * Whether the popover should stay mounted in the DOM when closed.
    * @default false
    */
   forceMount?: boolean;
 
   /**
-   * Whether the popover should be hidden when it would be positioned outside its boundary.
-   * Useful for preventing partially visible popovers.
+   * Whether the popover should be hidden when its anchor is outside the boundary.
    * @default false
    */
   hideWhenDetached?: boolean;
 
   /**
-   * Whether the popover should track the anchor element's position changes.
-   * When true, updates position on scroll and resize events.
+   * Whether the popover should follow the anchor on scroll and resize.
    * @default true
    */
   trackAnchor?: boolean;

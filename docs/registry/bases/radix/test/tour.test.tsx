@@ -11,7 +11,7 @@ import {
   TourTitle,
 } from "@/registry/bases/radix/ui/tour";
 
-// Mock window.matchMedia for getDefaultScrollBehavior.
+// jsdom lacks matchMedia, which getDefaultScrollBehavior reads.
 Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({

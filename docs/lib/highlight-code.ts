@@ -14,7 +14,6 @@ export async function highlightCode(
       defaultColor: false,
     });
   } catch {
-    // Fallback to plain text if the language is not supported.
     return await codeToHtml(code, {
       lang: "text",
       themes: {

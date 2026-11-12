@@ -43,7 +43,6 @@ const ComboboxBadgeList = React.forwardRef<
   const context = useComboboxContext(BADGE_LIST_NAME);
   const values = Array.isArray(context.value) ? context.value : [];
   const composedRef = useComposedRefs(forwardedRef, (node) => {
-    // If the list is not rendered, don't need to consider badge list keyboard navigation.
     context.onHasBadgeListChange(!!node);
   });
 

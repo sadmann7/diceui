@@ -42,8 +42,7 @@ export interface MarqueeProps extends RenderProps {
   gap?: string | number;
 
   /**
-   * Automatically duplicate content to fill the container width/height.
-   * When enabled, content will be repeated until it fills the visible area.
+   * Whether to repeat the content until it fills the container's width or height.
    * @default false
    */
   autoFill?: boolean;

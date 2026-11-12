@@ -38,7 +38,6 @@ const users: User[] = [
 ];
 
 async function searchUsers(query: string, signal: AbortSignal) {
-  // Simulate a network request.
   await new Promise<void>((resolve, reject) => {
     const timeout = setTimeout(resolve, 500);
     signal.addEventListener("abort", () => {

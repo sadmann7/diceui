@@ -6,10 +6,6 @@ import * as React from "react";
 
 type PossibleRef<T> = React.Ref<T> | undefined;
 
-/**
- * Set a given ref to a given value.
- * This utility takes care of different types of refs: callback refs and RefObject(s).
- */
 function setRef<T>(ref: PossibleRef<T>, value: T) {
   if (typeof ref === "function") {
     return ref(value);
@@ -20,10 +16,7 @@ function setRef<T>(ref: PossibleRef<T>, value: T) {
   }
 }
 
-/**
- * A utility to compose multiple refs together.
- * Accepts callback refs and RefObject(s).
- */
+/** Composes callback refs and ref objects into one callback ref. */
 function composeRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
   return (node) => {
     let hasCleanup = false;
@@ -52,12 +45,9 @@ function composeRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
   };
 }
 
-/**
- * A custom hook that composes multiple refs.
- * Accepts callback refs and RefObject(s).
- */
+/** A memoized `composeRefs`. */
 function useComposedRefs<T>(...refs: PossibleRef<T>[]): React.RefCallback<T> {
-  // oxlint-disable-next-line react/exhaustive-deps -- we want to memoize by all values
+  // oxlint-disable-next-line react/exhaustive-deps -- memoized by every ref
   return React.useCallback(composeRefs(...refs), refs);
 }
 

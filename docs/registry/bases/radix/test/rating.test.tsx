@@ -5,17 +5,14 @@ import { afterEach, describe, expect, test } from "vitest";
 
 import { Rating, RatingItem } from "@/registry/bases/radix/ui/rating";
 
-// Mock ResizeObserver.
 class ResizeObserver {
   observe() {}
   unobserve() {}
   disconnect() {}
 }
 
-// Add to global.
 global.ResizeObserver = ResizeObserver;
 
-// Mock requestAnimationFrame.
 global.requestAnimationFrame = (fn) => setTimeout(fn, 0);
 
 afterEach(cleanup);
@@ -36,14 +33,12 @@ describe("Rating Component", () => {
       const items = screen.getAllByRole("radio");
       expect(items).toHaveLength(5);
 
-      // Check that items have correct aria-posinset values (1-based).
       expect(items[0]).toHaveAttribute("aria-posinset", "1");
       expect(items[1]).toHaveAttribute("aria-posinset", "2");
       expect(items[2]).toHaveAttribute("aria-posinset", "3");
       expect(items[3]).toHaveAttribute("aria-posinset", "4");
       expect(items[4]).toHaveAttribute("aria-posinset", "5");
 
-      // Check that the first 3 items are filled (defaultValue={3}).
       expect(items[0]).toHaveAttribute("data-state", "full");
       expect(items[1]).toHaveAttribute("data-state", "full");
       expect(items[2]).toHaveAttribute("data-state", "full");
@@ -63,12 +58,10 @@ describe("Rating Component", () => {
       const items = screen.getAllByRole("radio");
       expect(items).toHaveLength(3);
 
-      // Check that items have correct aria-posinset values (1-based).
       expect(items[0]).toHaveAttribute("aria-posinset", "1");
       expect(items[1]).toHaveAttribute("aria-posinset", "2");
       expect(items[2]).toHaveAttribute("aria-posinset", "3");
 
-      // Check that the first 2 items are filled (defaultValue={2}).
       expect(items[0]).toHaveAttribute("data-state", "full");
       expect(items[1]).toHaveAttribute("data-state", "full");
       expect(items[2]).toHaveAttribute("data-state", "empty");
@@ -88,16 +81,11 @@ describe("Rating Component", () => {
       const items = screen.getAllByRole("radio");
       expect(items).toHaveLength(5);
 
-      // Check the actual behavior: manual indices are used as-is, auto indices increment from 0
-      // First item: index={0} -> aria-posinset="1".
+      // Manual indices are used as-is and auto indices count up from 0 on their own.
       expect(items[0]).toHaveAttribute("aria-posinset", "1");
-      // Second item: auto (gets index 0) -> aria-posinset="1".
       expect(items[1]).toHaveAttribute("aria-posinset", "1");
-      // Third item: index={2} -> aria-posinset="3".
       expect(items[2]).toHaveAttribute("aria-posinset", "3");
-      // Fourth item: auto (gets index 1) -> aria-posinset="2".
       expect(items[3]).toHaveAttribute("aria-posinset", "2");
-      // Fifth item: auto (gets index 2) -> aria-posinset="3".
       expect(items[4]).toHaveAttribute("aria-posinset", "3");
     });
 
@@ -114,7 +102,6 @@ describe("Rating Component", () => {
 
       const items = screen.getAllByRole("radio");
 
-      // Click on the second item.
       const secondItem = items[1];
 
       if (!secondItem) {
@@ -122,7 +109,6 @@ describe("Rating Component", () => {
       }
       await user.click(secondItem);
 
-      // First two items should be filled.
       expect(items[0]).toHaveAttribute("data-state", "full");
       expect(items[1]).toHaveAttribute("data-state", "full");
       expect(items[2]).toHaveAttribute("data-state", "empty");
@@ -143,7 +129,6 @@ describe("Rating Component", () => {
 
       const items = screen.getAllByRole("radio");
 
-      // Record initial aria-posinset values.
       const initialPositions = items.map((item) =>
         item.getAttribute("aria-posinset"),
       );
@@ -154,10 +139,8 @@ describe("Rating Component", () => {
         throw new Error("Fourth item not found");
       }
 
-      // Click on the fourth item to trigger a re-render.
       await user.click(fourthItem);
 
-      // Check that aria-posinset values remain the same (no index reassignment).
       const afterClickPositions = items.map((item) =>
         item.getAttribute("aria-posinset"),
       );
@@ -165,7 +148,6 @@ describe("Rating Component", () => {
       expect(afterClickPositions).toEqual(initialPositions);
       expect(afterClickPositions).toEqual(["1", "2", "3", "4", "5"]);
 
-      // Verify the rating state changed correctly.
       expect(items[0]).toHaveAttribute("data-state", "full");
       expect(items[1]).toHaveAttribute("data-state", "full");
       expect(items[2]).toHaveAttribute("data-state", "full");

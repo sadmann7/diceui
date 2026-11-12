@@ -13,7 +13,6 @@ export interface GaugeProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * A function that returns the accessible text representation of the current value.
-   * Useful for providing custom formatting or localization.
    *
    * ```ts
    * // Show percentage with symbol
@@ -49,8 +48,7 @@ export interface GaugeProps extends EmptyProps<"div">, CompositionProps {
   min?: number;
 
   /**
-   * The size of the gauge in pixels.
-   * This determines both the width and height of the component.
+   * The width and height of the gauge in pixels.
    *
    * @default 120
    */
@@ -58,7 +56,6 @@ export interface GaugeProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The thickness of the gauge track and range in pixels.
-   * A larger value creates a thicker gauge arc.
    *
    * @default 8
    */

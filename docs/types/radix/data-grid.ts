@@ -38,7 +38,6 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   /**
    * Event handler called whenever the data changes, from edits, pastes,
    * `table.updateCells`, added or deleted rows, or undo/redo.
-   * Receives the next data and details about what changed.
    * Passing the data back is optional, since the grid keeps its own copy.
    *
    * ```ts
@@ -138,14 +137,12 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   }) => void | Promise<void>;
 
   /**
-   * Text direction for the grid.
-   * Used for RTL support in layout, pinning, and navigation.
+   * Text direction for the grid's layout, pinning, and navigation.
    */
   dir?: Direction;
 
   /**
    * Number of items to render outside of the visible area for smoother scrolling.
-   * Higher values improve scroll performance but use more memory.
    * @default 3
    */
   overscan?: number;
@@ -172,36 +169,33 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   enableSingleCellSelection?: boolean;
 
   /**
-   * Enable column selection functionality.
-   * When enabled, clicking on column headers will select all cells in that column.
+   * Whether clicking a column header selects all cells in that column.
    * @default false
    */
   enableColumnSelection?: boolean;
 
   /**
-   * Enable search functionality with Ctrl+F (or Cmd+F on Mac) shortcut.
-   * Provides find-in-grid capabilities with match navigation.
+   * Whether to enable find-in-grid search with Ctrl+F (or Cmd+F on Mac).
    * @default false
    */
   enableSearch?: boolean;
 
   /**
-   * Enable paste functionality with Ctrl+V (or Cmd+V on Mac) shortcut.
-   * Allows pasting data from clipboard into the grid.
+   * Whether to enable pasting from the clipboard with Ctrl+V (or Cmd+V on Mac).
    * Uses `createRow` to add rows when a paste runs past the last row.
    * @default false
    */
   enablePaste?: boolean;
 
   /**
-   * Whether cells can be edited. Set it to `false` to keep the grid navigable and selectable without editing. Columns can also set `enableCellEditing` on their own.
+   * Whether cells can be edited.
+   * Columns can also set `enableCellEditing` on their own.
    * @default true
    */
   enableCellEditing?: boolean;
 
   /**
-   * Whether the grid is read-only.
-   * When true, prevents all editing operations across the entire grid.
+   * Whether the grid is read-only, preventing all editing.
    * @default false
    */
   readOnly?: boolean;
@@ -218,25 +212,21 @@ export interface DataGridProps<
 
   /**
    * Reference to the main grid container element.
-   * Used for focus management and scroll handling.
    */
   dataGridRef: React.RefObject<HTMLDivElement | null>;
 
   /**
    * Reference to the header container element.
-   * Used for measuring header height in scroll calculations.
    */
   headerRef: React.RefObject<HTMLDivElement | null>;
 
   /**
    * Reference to the footer container element.
-   * Used for measuring footer height in scroll calculations.
    */
   footerRef: React.RefObject<HTMLDivElement | null>;
 
   /**
    * Map of row indexes to their DOM elements.
-   * Used for efficient row scrolling and navigation.
    */
   rowMapRef: React.RefObject<Map<number, HTMLDivElement>>;
 
@@ -271,14 +261,12 @@ export interface DataGridProps<
 
   /**
    * CSS variables for column sizing.
-   * Applied to the grid for dynamic column width management.
    */
   columnSizeVars: React.CSSProperties;
 
   /**
    * Event handler called when adding a new row.
    * Only defined when `createRow` is provided to useDataGrid.
-   * Handles the row addition interaction from the grid footer.
    */
   onRowAdd?: (
     event?:
@@ -292,22 +280,19 @@ export interface DataGridProps<
   adjustLayout: boolean;
 
   /**
-   * Text direction for the grid.
-   * Used for RTL support in layout, pinning, and navigation.
+   * Text direction for the grid's layout, pinning, and navigation.
    * @default "ltr"
    */
   dir?: Direction;
 
   /**
    * Height of the grid container in pixels.
-   * Controls the visible area of the grid.
    * @default 600
    */
   height?: number;
 
   /**
-   * Whether columns should stretch to fill available space.
-   * When true, columns grow to fill the grid width.
+   * Whether columns stretch to fill the grid width.
    * @default false
    */
   stretchColumns?: boolean;
@@ -431,7 +416,6 @@ export type GetDataGridActionsColumnProps<TData extends RowData> = Omit<
 export interface DataGridColumnHeaderProps<TData extends RowData> {
   /**
    * The header instance from TanStack Table.
-   * Provides column metadata, sorting state, and sizing information.
    *
    * ```tsx
    * <DataGridColumnHeader header={header} table={table} />
@@ -441,7 +425,6 @@ export interface DataGridColumnHeaderProps<TData extends RowData> {
 
   /**
    * The table instance.
-   * Used to access table state and trigger actions like sorting.
    */
   table: ReactTable<DataGridFeatures, TData>;
 }
@@ -459,38 +442,32 @@ export interface DataGridCellProps<TData extends RowData> {
   columnIndex: number;
 
   /**
-   * The height of the row.
-   * Used to size multi-line cell content.
+   * The row height setting, which sizes multi-line cell content.
    */
   rowHeight: RowHeightValue;
 
   /**
-   * Whether the cell is currently focused.
-   * Used to render focus ring and enable editing mode.
+   * Whether the cell is focused.
    */
   isFocused: boolean;
 
   /**
-   * Whether the cell is currently being edited.
-   * Used to show edit UI (input, select, textarea, etc).
+   * Whether the cell is being edited.
    */
   isEditing: boolean;
 
   /**
    * Whether the cell is selected.
-   * Used to render selection highlight for multi-cell selection.
    */
   isSelected: boolean;
 
   /**
    * Whether the cell matches the current search query.
-   * Used to highlight cells that match search results.
    */
   isSearchMatch: boolean;
 
   /**
-   * Whether the cell is the currently active search match.
-   * Used to highlight the specific match being navigated to.
+   * Whether the cell is the active search match.
    */
   isActiveSearchMatch: boolean;
 
@@ -501,7 +478,6 @@ export interface DataGridCellProps<TData extends RowData> {
 
   /**
    * Whether the cell is read-only.
-   * When true, prevents editing and shows read-only UI.
    */
   readOnly: boolean;
 
@@ -563,7 +539,6 @@ export interface DataGridRowProps<
 > extends EmptyProps<"div"> {
   /**
    * The row instance from TanStack Table.
-   * Contains row data, cells, and selection state.
    */
   row: Row<DataGridFeatures, TData>;
 
@@ -574,7 +549,6 @@ export interface DataGridRowProps<
 
   /**
    * The virtual item representing this row.
-   * Contains positioning and measurement data for virtualization.
    */
   virtualItem: VirtualItem;
 
@@ -620,7 +594,6 @@ export interface DataGridSortMenuProps<
 > extends EmptyProps<typeof PopoverContent> {
   /**
    * The table instance from useDataGrid hook.
-   * Used to read and update sorting state with drag-and-drop reordering.
    *
    * ```tsx
    * <DataGridSortMenu table={table} />
@@ -640,7 +613,6 @@ export interface DataGridRowHeightMenuProps<
 > extends EmptyProps<typeof PopoverContent> {
   /**
    * The table instance from useDataGrid hook.
-   * Used to read and update the row height setting.
    *
    * ```tsx
    * <DataGridRowHeightMenu table={table} />
@@ -660,7 +632,6 @@ export interface DataGridViewMenuProps<
 > extends EmptyProps<typeof PopoverContent> {
   /**
    * The table instance from useDataGrid hook.
-   * Used to read and update column visibility settings.
    *
    * ```tsx
    * <DataGridViewMenu table={table} />
@@ -680,7 +651,6 @@ export interface DataGridFilterMenuProps<
 > extends EmptyProps<typeof PopoverContent> {
   /**
    * The table instance from useDataGrid hook.
-   * Used to read and update column filter state with support for multiple operators and values.
    *
    * ```tsx
    * <DataGridFilterMenu table={table} />
@@ -709,9 +679,8 @@ export interface DataGridPasteDialogProps<TData extends RowData> {
 
 export interface DataGridKeyboardShortcutsProps {
   /**
-   * Whether to show the shortcuts related to search functionality.
-   * Should be set to true when `enableSearch` is true in useDataGrid.
-   * Adds search-specific shortcuts (Ctrl+F, Enter, Shift+Enter) to the dialog.
+   * Whether to show the search shortcuts (Ctrl+F, Enter, Shift+Enter).
+   * Set it when `enableSearch` is true in useDataGrid.
    *
    * ```tsx
    * <DataGridKeyboardShortcuts enableSearch />
@@ -722,9 +691,8 @@ export interface DataGridKeyboardShortcutsProps {
   enableSearch?: boolean;
 
   /**
-   * Whether to show the shortcuts related to undo/redo functionality.
-   * Should be set to true unless the grid is read-only or `enableUndoRedo` is false.
-   * Adds undo/redo shortcuts (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y) to the dialog.
+   * Whether to show the undo/redo shortcuts (Ctrl+Z, Ctrl+Shift+Z, Ctrl+Y).
+   * Set it unless the grid is read-only or `enableUndoRedo` is false.
    *
    * ```tsx
    * <DataGridKeyboardShortcuts enableUndoRedo />
@@ -735,9 +703,8 @@ export interface DataGridKeyboardShortcutsProps {
   enableUndoRedo?: boolean;
 
   /**
-   * Whether to show the shortcuts related to paste functionality.
-   * Should be set to true when `enablePaste` is true in useDataGrid.
-   * Adds paste shortcut (Ctrl+V) to the dialog.
+   * Whether to show the paste shortcut (Ctrl+V).
+   * Set it when `enablePaste` is true in useDataGrid.
    *
    * ```tsx
    * <DataGridKeyboardShortcuts enablePaste />
@@ -748,9 +715,8 @@ export interface DataGridKeyboardShortcutsProps {
   enablePaste?: boolean;
 
   /**
-   * Whether to show the shortcuts related to row addition.
-   * Should be set to true when `createRow` is provided to useDataGrid.
-   * Adds row insertion shortcut (Shift+Enter) to the dialog.
+   * Whether to show the row insertion shortcut (Shift+Enter).
+   * Set it when `createRow` is provided to useDataGrid.
    *
    * ```tsx
    * <DataGridKeyboardShortcuts enableRowCreation />
@@ -761,9 +727,8 @@ export interface DataGridKeyboardShortcutsProps {
   enableRowCreation?: boolean;
 
   /**
-   * Whether to show the shortcuts related to row deletion.
-   * Should be set to true when `enableRowDeletion` is true in useDataGrid.
-   * Adds row deletion shortcuts (Ctrl+Backspace, Ctrl+Delete) to the dialog.
+   * Whether to show the row deletion shortcuts (Ctrl+Backspace, Ctrl+Delete).
+   * Set it when `enableRowDeletion` is true in useDataGrid.
    *
    * ```tsx
    * <DataGridKeyboardShortcuts enableRowDeletion />
@@ -778,8 +743,7 @@ export interface DataGridSkeletonProps extends EmptyProps<"div"> {}
 
 export interface DataGridSkeletonToolbarProps extends EmptyProps<"div"> {
   /**
-   * Alignment of the toolbar skeleton.
-   * Controls the horizontal positioning of action button skeletons.
+   * Horizontal alignment of the toolbar's action button skeletons.
    *
    * ```tsx
    * <DataGridSkeletonToolbar align="end" />
@@ -790,8 +754,7 @@ export interface DataGridSkeletonToolbarProps extends EmptyProps<"div"> {
   align?: "start" | "center" | "end";
 
   /**
-   * Number of action button skeletons to display.
-   * Represents the number of toolbar actions (filter, sort, view, etc).
+   * Number of toolbar action button skeletons to display.
    *
    * ```tsx
    * <DataGridSkeletonToolbar actionCount={5} />

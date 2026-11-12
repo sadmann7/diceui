@@ -17,25 +17,18 @@ export interface MasonryProps
   columnWidth?: number;
 
   /**
-   * The number of columns to display.
-   *
-   * If not provided, it will be calculated based on the container width and columnWidth.
+   * The number of columns to display, calculated from the container width and `columnWidth` if not provided.
    */
   columnCount?: number;
 
   /**
    * The maximum number of columns to display for responsive layout.
-   *
-   * If not provided, it will be calculated based on the container width and columnWidth.
-   *
-   * If `columnCount` is provided, it will be ignored.
+   * Ignored when `columnCount` is provided.
    */
   maxColumnCount?: number;
 
   /**
-   * The gap between items in pixels.
-   *
-   * Can be a number for equal gaps, or an object specifying different column and row gaps.
+   * The gap between items in pixels, or separate column and row gaps.
    *
    * ```ts
    * // Equal gaps
@@ -49,45 +42,34 @@ export interface MasonryProps
 
   /**
    * The default height for items before they are measured.
-   *
-   * Used for estimating the total height of the masonry layout.
    * @default 300
    */
   itemHeight?: number;
 
   /**
-   * The default width of the container during server-side rendering.
-   *
-   * Used before the actual container width can be measured.
+   * The default width of the container during server-side rendering, before it can be measured.
    */
   defaultWidth?: number;
 
   /**
-   * The default height of the container during server-side rendering.
-   *
-   * Used before the actual container height can be measured.
+   * The default height of the container during server-side rendering, before it can be measured.
    */
   defaultHeight?: number;
 
   /**
    * The number of viewport heights to render outside the visible area.
-   *
-   * Larger values reduce blank space when scrolling but increase memory usage.
    * @default 2
    */
   overscan?: number;
 
   /**
    * The maximum number of scroll position updates per second.
-   * Higher values make scrolling more responsive but may impact performance.
    * @default 12
    */
   scrollFps?: number;
 
   /**
    * Fallback content to show when the masonry is not mounted.
-   *
-   * Useful for server-side rendering and initial load states.
    *
    * ```tsx
    * fallback={<LoadingPlaceholder />}

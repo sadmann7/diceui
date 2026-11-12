@@ -25,7 +25,6 @@ export interface TimelineProps extends EmptyProps<"div">, CompositionProps {
 
   /**
    * The reading direction of the timeline.
-   * This affects the layout direction and works with RTL languages.
    *
    * @default "ltr"
    */
@@ -78,7 +77,6 @@ export interface TimelineConnectorProps
   extends EmptyProps<"div">, CompositionProps {
   /**
    * When `true`, forces the connector to be rendered even if it's the last item.
-   * Useful for controlling animations with external animation libraries.
    *
    * @default false
    */

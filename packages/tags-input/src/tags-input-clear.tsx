@@ -9,9 +9,7 @@ interface TagsInputClearProps extends React.ComponentPropsWithoutRef<
   typeof Primitive.button
 > {
   /**
-   * Whether the clear button should always be rendered.
-   *
-   * Can be used to animate the enter and exit of the clear button.
+   * Whether the clear button should always render, so its enter and exit can be animated.
    * @default false
    */
   forceMount?: boolean;

@@ -95,7 +95,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           style.getPropertyValue("padding-top") ?? "0",
         );
 
-        // Calculate wrapped lines before cursor.
         const containerWidth = input.clientWidth - paddingLeft - paddingRight;
         const wrappedLines = Math.floor(textWidth / containerWidth);
         const totalLines = currentLine + wrappedLines;
@@ -103,7 +102,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const scrollTop = input.scrollTop;
         const scrollLeft = input.scrollLeft;
 
-        // Calculate x position considering text wrapping and RTL.
         const effectiveTextWidth = textWidth % containerWidth;
         const isRTL = context.dir === "rtl";
         const x = isRTL
@@ -116,7 +114,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               rect.right - 10,
             );
 
-        // Calculate y position considering wrapped lines.
         const y = rect.top + paddingTop + (totalLines * lineHeight - scrollTop);
 
         return {
@@ -178,7 +175,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           return false;
         }
 
-        // Check if the trigger is part of an existing mention.
         const isPartOfExistingMention = mentions.some(
           (mention) =>
             mention.start <= lastTriggerIndex && mention.end > lastTriggerIndex,
@@ -193,16 +189,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           return false;
         }
 
-        // Check if trigger is part of continuous text (like username@domain, passwords, etc).
+        // A trigger inside a word, like `user@domain`, doesn't start a mention.
         function getIsTriggerPartOfText() {
-          // Look for characters before the trigger.
           const textBeforeTrigger = value.slice(0, lastTriggerIndex);
           const hasTextBeforeTrigger = /\S/.test(textBeforeTrigger);
 
-          // If there's no text before trigger, it's a valid mention trigger.
           if (!hasTextBeforeTrigger) return false;
 
-          // Check if there's no space or newline before the trigger.
           const lastCharBeforeTrigger = textBeforeTrigger.slice(-1);
           return (
             lastCharBeforeTrigger !== " " && lastCharBeforeTrigger !== "\n"
@@ -296,11 +289,9 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const prevValue = inputValue;
         const insertedLength = newValue.length - prevValue.length;
 
-        // Update mentions positions based on text changes.
         if (insertedLength !== 0) {
           onMentionsChange((prev) =>
             prev.map((mention) => {
-              // Only update positions for mentions that come after the cursor.
               if (
                 mention.start >=
                 cursorPosition - (insertedLength > 0 ? insertedLength : 0)
@@ -347,7 +338,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
         if (!hasSelection) return;
 
-        // Find mentions that are fully or partially within the selection.
         const affectedMentions = mentions.filter(
           (m) =>
             (m.start >= cursorPosition && m.start < selectionEnd) ||
@@ -357,7 +347,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         if (affectedMentions.length > 0) {
           // The browser copies to the clipboard; the state updates after the cut.
           requestAnimationFrame(() => {
-            // Remove affected mentions from context value.
             const remainingValues = contextValue.filter(
               (v) => !affectedMentions.some((m) => m.value === v),
             );
@@ -390,7 +379,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const selectionEnd = input.selectionEnd ?? cursorPosition;
         const hasSelection = cursorPosition !== selectionEnd;
 
-        // Handle cursor navigation around mentions.
         if (
           (event.key === "ArrowLeft" || event.key === "ArrowRight") &&
           !hasSelection &&
@@ -399,49 +387,40 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           const isCtrlOrCmd = event.metaKey || event.ctrlKey;
           const isLeftArrow = event.key === "ArrowLeft";
 
-          // Find mention that's immediately before or after cursor, considering spaces.
           const adjacentMention = mentions.find((m) => {
             if (isLeftArrow) {
-              // For left arrow, check if cursor is at or before the end of mention (including spaces).
               const textBetween = input.value.slice(m.end, cursorPosition);
               const isOnlySpaces = /^\s*$/.test(textBetween);
 
-              // Handle Ctrl/Cmd differently - jump to start of mention.
               if (isCtrlOrCmd) {
                 return (
-                  cursorPosition > m.start && // Cursor after mention start.
-                  (cursorPosition === m.end || // Cursor at mention end.
-                    (cursorPosition > m.end && // Or after mention end with only spaces.
-                      isOnlySpaces)) // Only spaces between.
+                  cursorPosition > m.start &&
+                  (cursorPosition === m.end ||
+                    (cursorPosition > m.end && isOnlySpaces))
                 );
               }
 
-              // Regular arrow key - move one position at a time.
               return (
-                cursorPosition === m.end || // At mention end.
-                (cursorPosition > m.end && // Or after mention with only spaces.
+                cursorPosition === m.end ||
+                (cursorPosition > m.end &&
                   cursorPosition <= m.end + 1 &&
                   isOnlySpaces)
               );
             }
 
-            // For right arrow.
             const textBetween = input.value.slice(cursorPosition, m.start);
             const isOnlySpaces = /^\s*$/.test(textBetween);
 
-            // Handle Ctrl/Cmd differently - jump to end of mention.
             if (isCtrlOrCmd) {
               return (
-                (cursorPosition >= m.start && cursorPosition < m.end) || // Cursor inside mention.
-                (cursorPosition < m.start && // Or cursor before mention start.
-                  isOnlySpaces) // Only spaces between.
+                (cursorPosition >= m.start && cursorPosition < m.end) ||
+                (cursorPosition < m.start && isOnlySpaces)
               );
             }
 
-            // Regular arrow key - move one position at a time.
             return (
-              cursorPosition === m.start || // At mention start.
-              (cursorPosition < m.start && // Or before mention with only spaces.
+              cursorPosition === m.start ||
+              (cursorPosition < m.start &&
                 cursorPosition >= m.start - 1 &&
                 isOnlySpaces)
             );
@@ -468,7 +447,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           if (isCtrlOrCmd) return;
         }
 
-        // Handle text clearing with selection.
         if (
           (event.key === "Backspace" || event.key === "Delete") &&
           hasSelection
@@ -477,7 +455,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             input.value.slice(0, cursorPosition) +
             input.value.slice(selectionEnd);
 
-          // Find mentions that are fully or partially within the selection.
           const affectedMentions = mentions.filter(
             (m) =>
               (m.start >= cursorPosition && m.start < selectionEnd) ||
@@ -487,52 +464,40 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           if (affectedMentions.length > 0) {
             event.preventDefault();
 
-            // Update input value directly and through context.
             input.value = newValue;
             onInputValueChange?.(newValue);
 
-            // Remove affected mentions from context value.
             const remainingValues = contextValue.filter(
               (v) => !affectedMentions.some((m) => m.value === v),
             );
             onValueChange?.(remainingValues);
             onMentionsRemove(affectedMentions);
 
-            // Update cursor position.
             input.setSelectionRange(cursorPosition, cursorPosition);
             return;
           }
         }
 
-        // Handle backspace for mention deletion.
         if (event.key === "Backspace" && !open && !hasSelection) {
           const isCtrlOrCmd = event.metaKey || event.ctrlKey;
 
-          // Find the mention that's immediately before the cursor.
           const mentionBeforeCursor = mentions.find((m) => {
-            // For regular backspace, check if cursor is right after mention (accounting for space).
             if (!isCtrlOrCmd) {
               return (
-                cursorPosition === m.end || // Cursor exactly at end.
-                (cursorPosition === m.end + 1 && input.value[m.end] === " ") || // Or after space.
-                (cursorPosition > m.start && cursorPosition <= m.end) // Or inside mention (for mobile).
+                cursorPosition === m.end ||
+                (cursorPosition === m.end + 1 && input.value[m.end] === " ") ||
+                (cursorPosition > m.start && cursorPosition <= m.end) // Mobile keyboards can leave the cursor inside a mention.
               );
             }
 
-            // For Cmd/Ctrl + Backspace, check if there's no meaningful text between cursor and mention
-            // AND ensure the mention is before the cursor.
             const textBetween = input.value.slice(m.end, cursorPosition);
-            return (
-              m.end <= cursorPosition && // Mention must end before or at cursor.
-              /^\s*$/.test(textBetween) // Only whitespace between mention and cursor.
-            );
+            return m.end <= cursorPosition && /^\s*$/.test(textBetween);
           });
 
           if (mentionBeforeCursor) {
             const hasTrailingSpace =
               input.value[mentionBeforeCursor.end] === " ";
 
-            // If cursor is inside mention, always remove the entire mention.
             const isCursorInsideMention =
               cursorPosition > mentionBeforeCursor.start &&
               cursorPosition <= mentionBeforeCursor.end;
@@ -559,7 +524,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               return;
             }
 
-            // If there's a trailing space and not using Ctrl/Cmd, just remove the space.
             if (
               hasTrailingSpace &&
               cursorPosition === mentionBeforeCursor.end + 1 &&
@@ -579,7 +543,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               return;
             }
 
-            // Otherwise remove the entire mention.
             event.preventDefault();
             const newValue =
               input.value.slice(0, mentionBeforeCursor.start) +
@@ -669,14 +632,14 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
             break;
           }
           case "Home": {
-            if (event.metaKey || event.ctrlKey) return; // Let default behavior happen for Ctrl/Cmd + Home.
+            if (event.metaKey || event.ctrlKey) return;
             if (readonly) return;
             event.preventDefault();
             onHighlightMove("first");
             break;
           }
           case "End": {
-            if (event.metaKey || event.ctrlKey) return; // Let default behavior happen for Ctrl/Cmd + End.
+            if (event.metaKey || event.ctrlKey) return;
             if (readonly) return;
             event.preventDefault();
             onHighlightMove("last");
@@ -708,14 +671,13 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
       ],
     );
 
-    // Add beforeinput event handler for better mobile support.
+    // Mobile keyboards report deletions through `beforeinput` rather than `keydown`.
     const onBeforeInput = React.useCallback(
       (event: React.FormEvent<InputElement> & { inputType?: string }) => {
         if (disabled || readonly) return;
         const input = event.currentTarget;
         const cursorPosition = input.selectionStart ?? 0;
 
-        // Handle deleteContentBackward on mobile.
         if (event.inputType === "deleteContentBackward") {
           const mentionAtCursor = mentions.find(
             (m) => cursorPosition > m.start && cursorPosition <= m.end,
@@ -768,13 +730,11 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         if (context.disabled || context.readonly) return;
         const input = event.currentTarget;
 
-        // Get click position relative to input.
         const rect = input.getBoundingClientRect();
         const style = window.getComputedStyle(input);
         const paddingLeft = Number.parseFloat(style.paddingLeft);
         const clickX = event.clientX - rect.left - paddingLeft;
 
-        // Calculate approximate character position.
         const textWidth = getTextWidth(
           input.value.slice(0, input.value.length),
           input,
@@ -782,7 +742,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const charWidth = textWidth / input.value.length;
         const approximateClickPosition = Math.round(clickX / charWidth);
 
-        // Find if click is within a mention.
         const clickedMention = context.mentions.find(
           (mention) =>
             approximateClickPosition >= mention.start &&
@@ -791,7 +750,6 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
 
         if (clickedMention) {
           event.preventDefault();
-          // Move cursor to end of mention.
           requestAnimationFrame(() => {
             input.setSelectionRange(clickedMention.end, clickedMention.end);
           });
@@ -809,18 +767,15 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         const cursorPosition = inputElement.selectionStart ?? 0;
         const selectionEnd = inputElement.selectionEnd ?? cursorPosition;
 
-        // Check if pasted text contains trigger.
         const triggerIndex = pastedText.indexOf(trigger);
-        if (triggerIndex === -1) return; // No trigger found, allow default paste.
+        if (triggerIndex === -1) return;
 
         event.preventDefault();
 
-        // Split text by trigger and process each mention.
         const parts = pastedText.split(trigger);
 
         let newText = "";
 
-        // Handle first part (before any triggers).
         if (parts[0]) {
           newText += parts[0];
         }
@@ -851,43 +806,36 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
         }
 
         requestAnimationFrame(async () => {
-          // Register items.
           onIsPastingChange(true);
           onOpenChange(true);
 
-          // Wait for the next frame to ensure the DOM is updated, otherwise the items will be empty.
+          // Waits a frame for the items to mount, otherwise they're empty.
           await new Promise((resolve) => requestAnimationFrame(resolve));
 
-          // Process remaining parts that come after triggers.
           const items = getEnabledItems();
           const newMentions: Mention[] = [];
           const newValues = [...contextValue];
 
-          // Keep track of trailing spaces after the last part.
           const trailingSpaces = pastedText.match(/\s+$/)?.[0] ?? "";
 
           for (let i = 1; i < parts.length; i++) {
             const part = parts[i];
             if (!part) continue;
 
-            // Try to find the longest valid mention by checking each word combination.
             const words = part.split(/(\s+)/);
             let mentionText = "";
             let spaces = "";
             let remainingText = "";
             let foundValidMention = false;
 
-            // Try combinations from longest to shortest, preserving spaces.
             for (let wordCount = words.length; wordCount > 0; wordCount--) {
-              // Join only non-space segments for the candidate text.
               const candidateWords = words
                 .slice(0, wordCount)
-                .filter((_, index) => index % 2 === 0); // Take only non-space segments.
+                .filter((_, index) => index % 2 === 0); // The capturing split puts spaces at odd indexes.
 
               const candidateText = candidateWords.join(" ").trim();
               if (!candidateText) continue;
 
-              // Check if mention exists in available items.
               const mentionItem = items.find(
                 (item) =>
                   normalizeWithGaps(item.value) ===
@@ -899,12 +847,10 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
                 const usedWordCount = candidateWords.length;
                 const usedSegments = usedWordCount * 2 - 1;
 
-                // Get spaces after the mention (if any).
                 const nextSegmentIndex = usedSegments;
                 const nextSegment = words[nextSegmentIndex];
                 const afterNextSegment = words[nextSegmentIndex + 1];
 
-                // If next segment is a space and there's text after it, keep the space.
                 if (nextSegment?.match(/^\s+/) && afterNextSegment) {
                   spaces = nextSegment;
                   remainingText = words.slice(nextSegmentIndex + 1).join("");
@@ -918,11 +864,9 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               }
             }
 
-            // Calculate the position where this mention starts.
             const mentionStartPosition = cursorPosition + newText.length;
 
             if (foundValidMention) {
-              // The item exists, since it matched above.
               const mentionItem = items.find(
                 (item) =>
                   normalizeWithGaps(item.value) ===
@@ -930,9 +874,7 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
               );
 
               if (mentionItem) {
-                // Add mention with its label.
                 const mentionLabel = `${trigger}${mentionItem.label}`;
-                // Add trailing spaces only if this is the last part and there's no remaining text.
                 const shouldAddTrailingSpaces =
                   i === parts.length - 1 && !remainingText;
                 newText +=
@@ -949,18 +891,15 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
                 });
               }
             } else {
-              // If no valid mention found, keep first word and spaces as original text.
               const firstWord = words[0] ?? "";
               const spaceSegment = words[1] ?? "";
               spaces = spaceSegment?.match(/^\s+/) ? spaceSegment : "";
               remainingText = words.slice(2).join("");
-              // Add trailing spaces only if this is the last part.
               const shouldAddTrailingSpaces = i === parts.length - 1;
               newText += `${trigger}${firstWord}${spaces}${remainingText}${shouldAddTrailingSpaces ? trailingSpaces : ""}`;
             }
           }
 
-          // Update input value.
           const finalValue =
             inputElement.value.slice(0, cursorPosition) +
             newText +
@@ -969,17 +908,14 @@ const MentionInput = React.forwardRef<InputElement, MentionInputProps>(
           inputElement.value = finalValue;
           onInputValueChange(finalValue);
 
-          // Update mentions and values.
           if (newMentions.length > 0) {
             onValueChange(newValues);
             onMentionsChange((prev) => [...prev, ...newMentions]);
           }
 
-          // Set cursor position after all mentions.
           const newCursorPosition = cursorPosition + newText.length;
           inputElement.setSelectionRange(newCursorPosition, newCursorPosition);
 
-          // Cleanup after all operations are complete.
           onIsPastingChange(false);
           onOpenChange(false);
         });

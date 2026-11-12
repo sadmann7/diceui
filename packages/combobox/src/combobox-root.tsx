@@ -102,28 +102,13 @@ interface ComboboxRootProps<Multiple extends boolean = false> extends Omit<
   React.ComponentPropsWithoutRef<typeof Primitive.div>,
   "value" | "defaultValue" | "onValueChange"
 > {
-  /**
-   * The current value of the combobox.
-   *
-   * - When multiple is false: `string`
-   * - When multiple is true: `string[]`
-   */
+  /** The current value of the combobox, an array when `multiple` is true. */
   value?: Value<Multiple>;
 
-  /**
-   * The default value of the combobox.
-   *
-   * - When multiple is false: `string`
-   * - When multiple is true: `string[]`
-   */
+  /** The default value of the combobox, an array when `multiple` is true. */
   defaultValue?: Value<Multiple>;
 
-  /**
-   * Event handler called when the value changes.
-   *
-   * - When multiple is false: `(value: string) => void`
-   * - When multiple is true: `(value: string[]) => void`
-   */
+  /** Event handler called when the value changes, with an array when `multiple` is true. */
   onValueChange?: (value: Value<Multiple>) => void;
 
   /** Whether the combobox is open. */
@@ -143,11 +128,7 @@ interface ComboboxRootProps<Multiple extends boolean = false> extends Omit<
   /** Event handler called when the input value changes. */
   onInputValueChange?: (value: string) => void;
 
-  /**
-   * Event handler called when the filter is applied.
-   *
-   * Can be used to prevent the default filtering behavior.
-   */
+  /** A custom filter that returns the matching options in place of the default filtering. */
   onFilter?: (options: string[], inputValue: string) => string[];
 
   /**
@@ -166,11 +147,7 @@ interface ComboboxRootProps<Multiple extends boolean = false> extends Omit<
   disabled?: boolean;
 
   /**
-   * Whether the combobox uses exact string matching or fuzzy matching.
-   *
-   * When `manualFiltering` is true, this prop is ignored.
-   * When `onFilter` is provided, the combobox will use the provided filter function instead.
-   *
+   * Whether the combobox uses exact instead of fuzzy matching, ignored with `manualFiltering` or `onFilter`.
    * @default false
    */
   exactMatch?: boolean;
@@ -207,8 +184,6 @@ interface ComboboxRootProps<Multiple extends boolean = false> extends Omit<
 
   /**
    * Whether to preserve the input value when the input is blurred and no item is selected.
-   *
-   * Only applicable when items are not selected.
    * @default false
    */
   preserveInputOnBlur?: boolean;

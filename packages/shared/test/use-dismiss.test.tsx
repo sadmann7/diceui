@@ -110,7 +110,6 @@ describe("useDismiss", () => {
 
     const outsideButton = getByTestId("outside-button");
 
-    // Simulate pointer events.
     fireEvent.pointerDown(outsideButton, {
       bubbles: true,
       cancelable: true,
@@ -172,7 +171,6 @@ describe("useDismiss", () => {
 
     const outsideButton = getByTestId("outside-button");
 
-    // Simulate focus events.
     act(() => {
       outsideButton.focus();
       fireEvent.focusIn(outsideButton, {
@@ -205,7 +203,6 @@ describe("useDismiss", () => {
 
     const outsideButton = getByTestId("outside-button");
 
-    // Create a custom touch event.
     const touchEvent = new Event("pointerdown", {
       bubbles: true,
       cancelable: true,
@@ -217,23 +214,18 @@ describe("useDismiss", () => {
       value: outsideButton,
     });
 
-    // Simulate touch event sequence.
     await act(async () => {
-      // Dispatch the touch event.
       document.dispatchEvent(touchEvent);
       await vi.runAllTimersAsync();
     });
 
-    // Should not dismiss immediately on touch.
     expect(onPointerDownOutside).not.toHaveBeenCalled();
     expect(onDismiss).not.toHaveBeenCalled();
 
-    // Simulate click after touch.
     await act(async () => {
       // Need to wait a bit to simulate the delay between touch and click.
       await vi.advanceTimersByTimeAsync(100);
 
-      // Simulate the click event that follows a touch.
       fireEvent.click(outsideButton, {
         bubbles: true,
         cancelable: true,
@@ -241,7 +233,6 @@ describe("useDismiss", () => {
       await vi.runAllTimersAsync();
     });
 
-    // Now it should be called after the click.
     expect(onPointerDownOutside).toHaveBeenCalledTimes(1);
     expect(onDismiss).toHaveBeenCalledTimes(1);
   });
@@ -259,17 +250,14 @@ describe("useDismiss", () => {
       />,
     );
 
-    // Event before delay should not trigger.
     fireEvent.pointerDown(getByTestId("outside-button"));
     expect(onPointerDownOutside).not.toHaveBeenCalled();
     expect(onDismiss).not.toHaveBeenCalled();
 
-    // Fast-forward time.
     await act(async () => {
       await vi.advanceTimersByTimeAsync(delayMs);
     });
 
-    // Event after delay should trigger.
     fireEvent.pointerDown(getByTestId("outside-button"), {
       bubbles: true,
       cancelable: true,
@@ -287,7 +275,6 @@ describe("useDismiss", () => {
     // Wait for attributes to be set.
     await act(async () => {
       await vi.runAllTimersAsync();
-      // Force a synchronous update.
       await Promise.resolve();
     });
 
@@ -345,7 +332,6 @@ describe("useDismiss", () => {
     // Wait for attributes to be set.
     await act(async () => {
       await vi.runAllTimersAsync();
-      // Force a synchronous update.
       await Promise.resolve();
     });
 
@@ -367,23 +353,18 @@ describe("useDismiss", () => {
       document.querySelector("style[data-dismissable-layer-style]"),
     ).toBeTruthy();
 
-    // Clean up any existing styles before unmount.
     for (const el of document.querySelectorAll(
       "style[data-dismissable-layer-style]",
     )) {
       el.remove();
     }
 
-    // Unmount and wait for cleanup.
     await act(async () => {
       unmount();
-      // Force a synchronous update.
       await Promise.resolve();
-      // Clear any pending timers.
       await vi.runAllTimersAsync();
     });
 
-    // After unmount, style should be removed.
     expect(
       document.querySelector("style[data-dismissable-layer-style]"),
     ).toBeNull();

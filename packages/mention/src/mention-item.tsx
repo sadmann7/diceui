@@ -23,18 +23,10 @@ const [MentionItemProvider, useMentionItemContext] =
 interface MentionItemProps extends React.ComponentPropsWithoutRef<
   typeof Primitive.div
 > {
-  /**
-   * The value of the item.
-   *
-   * Cannot be an empty string.
-   */
+  /** The value of the item, which can't be an empty string. */
   value: string;
 
-  /**
-   * The label of the item. By default value is used as label.
-   *
-   * Override the text value for mention item in the input.
-   */
+  /** The text the item puts in the input, `value` by default. */
   label?: string;
 
   /** Whether the item is disabled. */
@@ -106,7 +98,7 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
             (event) => {
               if (isDisabled) return;
 
-              // prevent implicit pointer capture.
+              // Prevents implicit pointer capture.
               const target = event.target;
               if (!(target instanceof HTMLElement)) return;
               if (target.hasPointerCapture(event.pointerId)) {
@@ -114,7 +106,7 @@ const MentionItem = React.forwardRef<ItemElement, MentionItemProps>(
               }
 
               if (event.button === 0 && !event.ctrlKey) {
-                // prevent item from stealing focus from the input for both mouse and touch.
+                // Keeps the item from stealing focus from the input, for mouse and touch.
                 event.preventDefault();
               }
             },

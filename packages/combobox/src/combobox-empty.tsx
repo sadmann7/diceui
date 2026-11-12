@@ -9,9 +9,7 @@ interface ComboboxEmptyProps extends React.ComponentPropsWithoutRef<
   typeof Primitive.div
 > {
   /**
-   * Whether to render the empty state even when search filtering is active.
-   *
-   * Can be used for `manualFiltering` comboboxes to show the empty state.
+   * Whether to render the empty state even while filtering, as `manualFiltering` comboboxes need.
    * @default false
    */
   keepVisible?: boolean;

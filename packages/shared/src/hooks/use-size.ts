@@ -13,13 +13,11 @@ function useSize(element: HTMLElement | null) {
 
   useLayoutEffect(() => {
     if (element) {
-      // Provide size as early as possible.
       setSize({ width: element.offsetWidth, height: element.offsetHeight });
 
       const resizeObserver = new ResizeObserver((entries) => {
         if (!Array.isArray(entries)) return;
 
-        // Only one element is observed, so the first entry is enough.
         if (!entries.length) return;
 
         const entry = entries[0];
@@ -28,7 +26,7 @@ function useSize(element: HTMLElement | null) {
 
         if (entry && "borderBoxSize" in entry) {
           const borderSizeEntry = entry.borderBoxSize;
-          // iron out differences between browsers.
+          // Some browsers report a single entry instead of an array.
           const borderSize = Array.isArray(borderSizeEntry)
             ? borderSizeEntry[0]
             : borderSizeEntry;
@@ -48,8 +46,7 @@ function useSize(element: HTMLElement | null) {
       return () => resizeObserver.unobserve(element);
     }
 
-    // We only want to reset to `undefined` when the element becomes `null`,
-    // not if it changes to another element.
+    // Resets only when the element becomes `null`, not when it changes to another one.
     setSize(undefined);
   }, [element]);
 

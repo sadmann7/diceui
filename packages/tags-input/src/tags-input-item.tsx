@@ -81,8 +81,7 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
         onPointerUpProp?.(event);
         if (event.defaultPrevented) return;
 
-        // Using a mouse you should be able to do pointer down, move through
-        // the list, and release the pointer over the item to select it.
+        // A mouse can press, drag through the list, and release over an item to select it.
         if (pointerTypeRef.current === "mouse") onItemSelect();
       },
       [onPointerUpProp, onItemSelect],
@@ -103,13 +102,11 @@ const TagsInputItem = React.forwardRef<HTMLDivElement, TagsInputItemProps>(
         onPointerMoveProp?.(event);
         if (event.defaultPrevented) return;
 
-        // Remember pointer type when sliding over to this item from another one.
         pointerTypeRef.current = event.pointerType;
         if (disabled) {
           context.onItemLeave();
         } else if (pointerTypeRef.current === "mouse") {
-          // even though safari doesn't support this option, it's acceptable
-          // as it only means it might scroll a few pixels when using the pointer.
+          // Safari ignores `preventScroll`, so it may scroll a few pixels.
           event.currentTarget.focus({ preventScroll: true });
         }
       },

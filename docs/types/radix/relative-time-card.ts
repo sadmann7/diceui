@@ -9,7 +9,7 @@ type HoverCardContentProps = React.ComponentProps<typeof HoverCard.Content>;
 export interface RelativeTimeCardProps
   extends EmptyProps<"button">, CompositionProps {
   /**
-   * The date to display. Can be a Date object, string, or number.
+   * The date to display.
    *
    * ```tsx
    * <RelativeTimeCard date={new Date()} />
@@ -113,8 +113,6 @@ export interface RelativeTimeCardProps
 
   /**
    * The distance in pixels from the boundary edges where collision detection should occur.
-   *
-   * Can be a single number or an object with specific padding values.
    * @default 0
    */
   collisionPadding?: HoverCardContentProps["collisionPadding"];

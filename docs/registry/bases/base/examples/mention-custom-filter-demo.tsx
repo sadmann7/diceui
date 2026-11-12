@@ -38,7 +38,6 @@ const commands = [
   },
 ];
 
-// Custom filter that matches commands starting with the search term.
 function onFilter(options: string[], term: string) {
   return options.filter((option) =>
     option.toLowerCase().startsWith(term.toLowerCase()),

@@ -13,9 +13,7 @@ interface ComboboxCancelProps extends React.ComponentPropsWithoutRef<
   typeof Primitive.button
 > {
   /**
-   * Whether the cancel button should always be rendered.
-   *
-   * By default, the cancel button is only rendered when the input has a value.
+   * Whether the cancel button should render even when the input is empty.
    * @default false
    */
   forceMount?: boolean;
@@ -51,7 +49,7 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
           (event) => {
             if (isDisabled) return;
 
-            // prevent implicit pointer capture.
+            // Prevents implicit pointer capture.
             const target = event.target;
             if (!(target instanceof Element)) return;
             if (target.hasPointerCapture(event.pointerId)) {
@@ -63,7 +61,7 @@ const ComboboxCancel = React.forwardRef<HTMLButtonElement, ComboboxCancelProps>(
               !event.ctrlKey &&
               event.pointerType === "mouse"
             ) {
-              // prevent cancel from stealing focus from the input.
+              // Keeps the cancel button from stealing focus from the input.
               event.preventDefault();
             }
           },

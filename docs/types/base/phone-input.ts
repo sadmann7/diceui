@@ -11,7 +11,7 @@ export interface Country {
    */
   name: string;
   /**
-   * Country calling code (e.g., "+1" for US).
+   * Country calling code, such as "+1" for US.
    */
   dialCode: string;
   /**

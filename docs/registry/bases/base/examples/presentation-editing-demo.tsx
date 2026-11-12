@@ -85,12 +85,8 @@ import {
 
 const DEMO_DECK_PATH = "/assets/demo.pptx";
 
-/**
- * Keep the source item visible during the drop animation.
- *
- * The default side effect sets its opacity to `0`, delaying the thumbnail
- * item's focus ring from reappearing until roughly 250 ms after pointer release.
- */
+// The default side effect hides the source item, which delays its focus ring
+// until roughly 250 ms after pointer release.
 const DROP_ANIMATION: DropAnimation = {
   ...defaultDropAnimation,
   sideEffects: defaultDropAnimationSideEffects({ styles: { active: {} } }),
@@ -416,11 +412,8 @@ function SortableThumbnailList({ store }: SortableThumbnailListProps) {
   const { presentation } = usePresentation();
   const slideIds = presentation?.slides.map((slide) => slide.id) ?? [];
 
-  /**
-   * Order to paint while a drop is being committed. `store.edit()` is async, so
-   * without this the strip would snap back to the old order for a frame between
-   * the pointer release and the edit landing.
-   */
+  // `store.edit()` is async, so without this order the strip snaps back for a
+  // frame between the pointer release and the edit landing.
   const [pendingIds, setPendingIds] = React.useState<string[] | null>(null);
   const orderedIds = pendingIds ?? slideIds;
 

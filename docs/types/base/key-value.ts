@@ -118,8 +118,7 @@ export interface KeyValueProps extends RenderProps {
   enablePaste?: boolean;
 
   /**
-   * Event handler called when paste is detected.
-   * Can be used to customize paste parsing.
+   * Event handler called when paste is detected, for custom paste parsing.
    *
    * ```ts
    * onPaste={(event, items) => {
