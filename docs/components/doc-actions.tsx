@@ -4,7 +4,7 @@ import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { Check, ChevronDown, Copy, TextIcon } from "lucide-react";
 import * as React from "react";
 
-import { siteConfig } from "@/config/site";
+import { SITE_URL } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { Button } from "@/styles/base-nova/ui/button";
 import {
@@ -89,7 +89,7 @@ interface PageMenuProps extends React.ComponentProps<typeof Button> {
 
 function PageMenu({ markdownUrl, className, ...props }: PageMenuProps) {
   const items = React.useMemo(() => {
-    const fullMarkdownUrl = new URL(markdownUrl, siteConfig.url);
+    const fullMarkdownUrl = new URL(markdownUrl, SITE_URL);
     const q = `Read ${fullMarkdownUrl}, I want to ask questions about it.`;
 
     return [

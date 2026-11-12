@@ -2,12 +2,12 @@ import type { DocsLayoutProps } from "fumadocs-ui/layouts/docs";
 import type { BaseLayoutProps, LinkItemType } from "fumadocs-ui/layouts/shared";
 
 import { Icons } from "@/components/icons";
-import { siteConfig } from "@/config/site";
+import { GITHUB_URL, SITE_NAME } from "@/lib/site";
 import { source } from "@/lib/source";
 
 const githubLink: LinkItemType = {
   type: "icon",
-  url: siteConfig.links.github,
+  url: GITHUB_URL,
   text: "Github",
   icon: <Icons.gitHub className="size-4" />,
   external: true,
@@ -19,7 +19,7 @@ export const baseOptions: BaseLayoutProps = {
       <>
         <Icons.logo className="size-4" />
         <span className="font-medium in-[.uwu]:hidden in-[header]:text-[15px]">
-          {siteConfig.name}
+          {SITE_NAME}
         </span>
       </>
     ),
