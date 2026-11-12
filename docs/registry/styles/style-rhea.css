@@ -1522,7 +1522,7 @@
   }
 
   .cn-query-builder-group {
-    @apply items-start gap-2 @max-[28rem]/query-builder:gap-1.5;
+    @apply items-start gap-2 @max-[28rem]/query-builder:gap-1.5 @max-[28rem]/query-builder:flex-col @max-[28rem]/query-builder:items-stretch;
   }
 
   .cn-query-builder-group-content {
@@ -1546,7 +1546,7 @@
   }
 
   .cn-query-builder-rule {
-    @apply gap-2 *:data-[slot=button-group]:min-w-0 @max-[28rem]/query-builder:gap-1.5 @max-[28rem]/query-builder:*:data-[slot=button-group]:flex-1 @max-[28rem]/query-builder:**:data-[slot=query-builder-select-icon]:hidden has-data-[operator=isBetween]:*:data-[slot=button-group]:flex-1 [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-1 [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-solid [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-ring [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:-outline-offset-1;
+    @apply gap-2 *:data-[slot=button-group]:min-w-0 @max-[28rem]/query-builder:gap-1.5 @max-[28rem]/query-builder:*:data-[slot=button-group]:flex-1 @max-[28rem]/query-builder:**:data-[slot=query-builder-select-icon]:hidden has-data-[operator=isBetween]:*:data-[slot=button-group]:flex-1 [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-1 [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-solid [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:outline-ring [&>[data-slot=button-group]>*:not(:first-child):focus-visible]:-outline-offset-1 @max-[28rem]/query-builder:data-[operator=isBetween]:items-start @max-[28rem]/query-builder:data-[operator=isBetween]:*:data-[slot=button-group]:flex-wrap @max-[28rem]/query-builder:data-[operator=isBetween]:*:data-[slot=button-group]:gap-y-1;
   }
 
   .cn-query-builder-combinator {
@@ -1554,12 +1554,12 @@
   }
 
   .cn-query-builder-connector {
-    @apply h-7 w-18 shrink-0 data-[type=group]:mt-2 @max-[28rem]/query-builder:w-15;
+    @apply h-7 w-18 shrink-0 data-[type=group]:mt-2 @max-[28rem]/query-builder:w-15 @max-[28rem]/query-builder:data-[type=group]:mt-0;
   }
 
   /* @role cn-button */
   .cn-query-builder-connector-select {
-    @apply w-full rounded-2xl data-[size=sm]:rounded-2xl @max-[28rem]/query-builder:gap-1 @max-[28rem]/query-builder:px-1.5;
+    @apply w-full rounded-2xl data-[size=sm]:rounded-2xl @max-[28rem]/query-builder:gap-1 @max-[28rem]/query-builder:px-1.5 @max-[28rem]/query-builder:[&_svg]:hidden;
   }
 
   .cn-query-builder-connector-label {
@@ -1567,20 +1567,22 @@
   }
 
   .cn-query-builder-field {
-    @apply w-24 min-w-0 @max-[28rem]/query-builder:w-auto @max-[28rem]/query-builder:flex-1;
+    @apply w-24 min-w-0 @max-[28rem]/query-builder:w-auto @max-[28rem]/query-builder:flex-1 @max-[28rem]/query-builder:in-data-[operator=isBetween]:basis-1/2;
   }
 
+  /* @role cn-button */
   .cn-query-builder-operator {
-    @apply w-28 min-w-0 @max-[28rem]/query-builder:w-auto @max-[28rem]/query-builder:flex-1;
+    @apply w-28 min-w-0 @max-[28rem]/query-builder:w-auto @max-[28rem]/query-builder:flex-1 @max-[28rem]/query-builder:in-data-[operator=isBetween]:basis-1/2 @max-[28rem]/query-builder:in-data-[operator=isBetween]:rounded-r-2xl!;
   }
 
+  /* @role cn-input */
   .cn-query-builder-value {
-    @apply h-7 w-32 min-w-0 @max-[28rem]/query-builder:w-auto @max-[28rem]/query-builder:flex-1 data-[operator=isBetween]:w-auto data-[operator=isBetween]:flex-1;
+    @apply h-7 w-32 min-w-0 @max-[28rem]/query-builder:w-auto @max-[28rem]/query-builder:flex-1 data-[operator=isBetween]:w-auto data-[operator=isBetween]:flex-1 @max-[28rem]/query-builder:data-[operator=isBetween]:first-of-type:rounded-l-2xl! @max-[28rem]/query-builder:data-[operator=isBetween]:first-of-type:border-l!;
   }
 
   /* @role cn-input */
   .cn-query-builder-value-separator {
-    @apply flex h-7 items-center border-y border-e border-transparent bg-input/50 px-2 text-sm text-muted-foreground;
+    @apply flex h-7 items-center border-y border-e border-transparent bg-input/50 px-2 text-sm text-muted-foreground @max-[28rem]/query-builder:hidden;
   }
 
   .cn-query-builder-select {
