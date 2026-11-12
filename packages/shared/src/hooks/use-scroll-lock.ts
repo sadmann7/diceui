@@ -89,8 +89,8 @@ interface ScrollLockOptions {
   enabled?: boolean;
 
   /**
-   * Whether to allow pinch zoom in Safari.
-   * @default window.visualViewport?.scale !== 1
+   * Whether to lock scroll in Safari while the page is pinch-zoomed.
+   * @default false
    */
   allowPinchZoom?: boolean;
 }
@@ -124,11 +124,11 @@ function useScrollLock({
     const html = doc.documentElement;
     const body = doc.body;
 
-    const shouldAllowPinchZoom =
-      allowPinchZoom ?? win.visualViewport?.scale !== 1;
-
-    // Don't lock if pinch-zoom is active in Safari.
-    if (isSafari() && !shouldAllowPinchZoom) {
+    if (
+      isSafari() &&
+      !allowPinchZoom &&
+      (win.visualViewport?.scale ?? 1) !== 1
+    ) {
       return;
     }
 
