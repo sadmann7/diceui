@@ -571,6 +571,18 @@ describe("useScrollLock", () => {
     document.body.removeChild(input);
   });
 
+  it("should lock in Safari when the page isn't zoomed", () => {
+    (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(true);
+
+    Object.defineProperty(window, "visualViewport", {
+      value: { scale: 1, height: mockInnerHeight },
+      configurable: true,
+    });
+
+    render(<ScrollLockComponent enabled={true} />);
+    expect(document.body.style.overflow).toBe("hidden");
+  });
+
   it("should handle allowPinchZoom in Safari", () => {
     (browser.isSafari as ReturnType<typeof vi.fn>).mockReturnValue(true);
 
