@@ -949,6 +949,7 @@ function QueryBuilderValue({
         <Input
           type={inputType}
           id={fromId}
+          placeholder={labels.from}
           aria-label={ariaLabelledBy ? labels.from : `${label} ${labels.from}`}
           aria-labelledby={
             ariaLabelledBy ? `${ariaLabelledBy} ${fromId}` : undefined
@@ -967,6 +968,7 @@ function QueryBuilderValue({
         <Input
           type={inputType}
           id={toId}
+          placeholder={labels.to}
           aria-label={ariaLabelledBy ? labels.to : `${label} ${labels.to}`}
           aria-labelledby={
             ariaLabelledBy ? `${ariaLabelledBy} ${toId}` : undefined
