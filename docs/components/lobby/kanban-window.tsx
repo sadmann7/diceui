@@ -140,7 +140,7 @@ function TaskCard({ task, selected, className, ...props }: TaskCardProps) {
         <div
           className={cn(
             "flex flex-col gap-2.5 rounded-[9px] border bg-card p-2.5 transition-colors",
-            selected && "border-ring/50 ring-[3px] ring-ring/10",
+            selected && "ring-3 ring-ring/50",
             className,
           )}
         />
@@ -318,7 +318,7 @@ export function KanbanWindow() {
             </KanbanOverlay>
           </Kanban>
         </div>
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[120px] bg-linear-to-b from-transparent to-background to-85%" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[150px] bg-linear-to-b from-transparent to-background to-85%" />
         <ActionBar
           open={selectedIds.size > 0}
           onOpenChange={onOpenChange}
