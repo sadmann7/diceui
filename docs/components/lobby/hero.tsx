@@ -12,7 +12,7 @@ const FADE_UP =
 export function Hero() {
   return (
     <section className="overflow-hidden">
-      <div className="mx-auto flex max-w-[1248px] flex-col items-center gap-16 px-6 pt-16 pb-[72px] md:pt-24">
+      <div className="mx-auto flex max-w-312 flex-col items-center gap-16 px-6 pt-16 pb-18 md:pt-24">
         <div className="flex flex-col items-center text-center">
           <Link
             href="/docs/components/base/query-builder"
@@ -24,11 +24,8 @@ export function Hero() {
             <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300">
               New
             </span>
-            <span>
-              Query Builder and Presentation
-              <span className="hidden sm:inline"> just landed</span>
-            </span>
-            <ArrowRight className="size-[13px] text-muted-foreground/70 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" />
+            <span>Query Builder and Presentation</span>
+            <ArrowRight className="size-3.25 text-muted-foreground/70 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" />
           </Link>
           <h1
             className={cn(
@@ -43,7 +40,7 @@ export function Hero() {
           <p
             className={cn(
               FADE_UP,
-              "max-w-[600px] pt-6 text-base leading-[1.55] text-muted-foreground [animation-delay:120ms] md:text-lg",
+              "max-w-150 pt-6 text-base leading-[1.55] text-muted-foreground [animation-delay:120ms] md:text-lg",
             )}
           >
             {SITE_DESCRIPTION}
@@ -54,13 +51,13 @@ export function Hero() {
               "flex flex-wrap justify-center gap-2.5 pt-8 [animation-delay:180ms]",
             )}
           >
-            <Button asChild>
+            <Button size="lg" asChild>
               <Link href="/docs">
                 Get started
                 <ArrowRight data-icon="inline-end" />
               </Link>
             </Button>
-            <Button variant="outline" asChild>
+            <Button variant="outline" size="lg" asChild>
               <Link href="/docs/components">
                 <LayoutGrid data-icon="inline-start" />
                 View components
