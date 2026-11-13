@@ -21,20 +21,19 @@ return (
 
 const principles = [
   {
-    title: "Edge cases handled",
+    title: "Every state covered",
     description:
-      "Hover, focus, disabled, empty and error states, RTL and keyboard support are covered in the styles and ARIA wiring.",
+      "Hover, focus, disabled, empty and error states are all styled. Keyboard navigation, RTL and screen reader support work out of the box.",
   },
   {
-    title: "Composable all the way down",
+    title: "Built from parts",
     description:
-      "Render props, controlled and uncontrolled modes, and asChild composition, so each part can be extended or swapped.",
+      "Every part works controlled or uncontrolled and takes a render prop or asChild, so you can extend or replace any piece.",
   },
   {
-    title: "Two bases, one API",
+    title: "Base UI or Radix UI",
     description:
-      "Use the primitive library your app already uses. Component names, props and styles stay the same.",
-    bases: ["Base UI", "Radix UI", "shadcn/ui style"],
+      "Pick the primitive library that matches your app. Component names, props and styles stay the same either way.",
   },
 ];
 
@@ -74,18 +73,6 @@ export async function Source() {
                 <p className="text-sm leading-[1.65] text-muted-foreground">
                   {principle.description}
                 </p>
-                {principle.bases ? (
-                  <div className="flex flex-wrap gap-2 pt-1.5">
-                    {principle.bases.map((base) => (
-                      <span
-                        key={base}
-                        className="rounded-md border bg-muted px-2 py-1 font-mono text-[11px] text-muted-foreground"
-                      >
-                        {base}
-                      </span>
-                    ))}
-                  </div>
-                ) : null}
               </li>
             ))}
           </ul>
