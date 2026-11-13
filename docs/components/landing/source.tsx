@@ -1,89 +1,23 @@
+import { codeToTokens } from "shiki";
+
 import { CopyButton } from "@/components/copy-button";
 
-type TokenKind = "keyword" | "punctuation" | "name" | "string";
+const code = `import {
+  ActionBar,
+  ActionBarGroup,
+  ActionBarItem,
+} from "@/components/ui/action-bar";
 
-const tokenClassNames: Record<TokenKind, string> = {
-  keyword: "text-muted-foreground",
-  punctuation: "text-muted-foreground/70",
-  name: "text-foreground",
-  string: "text-emerald-700 dark:text-emerald-300",
-};
-
-const code: [string, TokenKind][][] = [
-  [
-    ["import ", "keyword"],
-    ["{", "punctuation"],
-  ],
-  [
-    ["  ActionBar", "name"],
-    [",", "punctuation"],
-  ],
-  [
-    ["  ActionBarGroup", "name"],
-    [",", "punctuation"],
-  ],
-  [
-    ["  ActionBarItem", "name"],
-    [",", "punctuation"],
-  ],
-  [
-    ["} ", "punctuation"],
-    ["from ", "keyword"],
-    ['"@/components/ui/action-bar"', "string"],
-    [";", "punctuation"],
-  ],
-  [],
-  [
-    ["<", "punctuation"],
-    ["ActionBar", "name"],
-    [" open", "keyword"],
-    ["={", "punctuation"],
-    ["open", "name"],
-    ["} ", "punctuation"],
-    ["onOpenChange", "keyword"],
-    ["={", "punctuation"],
-    ["setOpen", "name"],
-    ["}>", "punctuation"],
-  ],
-  [
-    ["  <", "punctuation"],
-    ["ActionBarGroup", "name"],
-    [">", "punctuation"],
-  ],
-  [
-    ["    <", "punctuation"],
-    ["ActionBarItem", "name"],
-    [" onSelect", "keyword"],
-    ["={", "punctuation"],
-    ["onAssign", "name"],
-    ["}>", "punctuation"],
-  ],
-  [
-    ["      <", "punctuation"],
-    ["UserPlus", "name"],
-    [" />", "punctuation"],
-  ],
-  [["      Assign", "name"]],
-  [
-    ["    </", "punctuation"],
-    ["ActionBarItem", "name"],
-    [">", "punctuation"],
-  ],
-  [
-    ["  </", "punctuation"],
-    ["ActionBarGroup", "name"],
-    [">", "punctuation"],
-  ],
-  [
-    ["</", "punctuation"],
-    ["ActionBar", "name"],
-    [">", "punctuation"],
-  ],
-];
-
-const codeText = code
-  .map((line) => line.map(([text]) => text).join(""))
-  .join("\n");
+return (
+  <ActionBar open={open} onOpenChange={setOpen}>
+    <ActionBarGroup>
+      <ActionBarItem onSelect={onAssign}>
+        <UserPlus />
+        Assign
+      </ActionBarItem>
+    </ActionBarGroup>
+  </ActionBar>
+);`;
 
 const principles = [
   {
@@ -104,7 +38,16 @@ const principles = [
   },
 ];
 
-export function Source() {
+export async function Source() {
+  const { tokens } = await codeToTokens(code, {
+    lang: "tsx",
+    themes: {
+      light: "github-light",
+      dark: "github-dark",
+    },
+    defaultColor: false,
+  });
+
   return (
     <section className="border-t">
       <div className="mx-auto flex max-w-[1248px] flex-col gap-12 px-6 pt-[88px] pb-24">
@@ -160,11 +103,11 @@ export function Source() {
                   components/task-actions.tsx
                 </span>
               </span>
-              <CopyButton value={codeText} className="-me-1.5 size-6" />
+              <CopyButton value={code} className="-me-1.5 size-6" />
             </figcaption>
             <pre className="overflow-x-auto py-4 pr-4 pl-3 font-mono text-[11px] leading-5">
               <code className="flex flex-col">
-                {code.map((line, index) => (
+                {tokens.map((line, index) => (
                   <span key={index} className="flex gap-3.5">
                     <span
                       aria-hidden="true"
@@ -175,12 +118,13 @@ export function Source() {
                     <span className="whitespace-pre">
                       {line.length === 0
                         ? " "
-                        : line.map(([text, kind], tokenIndex) => (
+                        : line.map((token, tokenIndex) => (
                             <span
                               key={tokenIndex}
-                              className={tokenClassNames[kind]}
+                              style={token.htmlStyle}
+                              className="text-(--shiki-light) dark:text-(--shiki-dark)"
                             >
-                              {text}
+                              {token.content}
                             </span>
                           ))}
                     </span>
@@ -188,10 +132,6 @@ export function Source() {
                 ))}
               </code>
             </pre>
-            <div className="flex items-center justify-between border-t px-4 py-[9px] font-mono text-[10px] text-muted-foreground/70">
-              <span>plain tsx · 14 lines</span>
-              <span>your bundler, your config</span>
-            </div>
           </figure>
         </div>
       </div>
