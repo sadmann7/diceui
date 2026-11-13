@@ -2,6 +2,7 @@ import { ArrowRight, LayoutGrid } from "lucide-react";
 import Link from "next/link";
 
 import { KanbanWindow } from "@/components/landing/kanban-window";
+import { SITE_DESCRIPTION } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { Button } from "@/styles/radix-nova/ui/button";
 
@@ -45,8 +46,7 @@ export function Hero() {
               "max-w-[600px] pt-6 text-base leading-[1.55] text-muted-foreground [animation-delay:120ms] md:text-lg",
             )}
           >
-            Accessible components built with React, TypeScript and Tailwind CSS.
-            Copy-paste ready and fully customizable.
+            {SITE_DESCRIPTION}
           </p>
           <div
             className={cn(
