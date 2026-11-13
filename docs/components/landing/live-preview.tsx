@@ -39,7 +39,9 @@ export function LivePreview({ name }: { name: PreviewName }) {
       {isNearViewport ? (
         <StyleScope>
           <React.Suspense fallback={fallback}>
-            <Preview />
+            <div className="flex min-h-0 flex-1 animate-in flex-col duration-200 fade-in-0 motion-reduce:animate-none">
+              <Preview />
+            </div>
           </React.Suspense>
         </StyleScope>
       ) : (
