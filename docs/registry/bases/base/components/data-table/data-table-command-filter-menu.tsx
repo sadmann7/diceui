@@ -25,6 +25,7 @@ import {
   getFilterOperators,
   getFilterVariant,
   getIsEditableTarget,
+  getIsTableShortcutTarget,
   getIsValuelessOperator,
   getSelectFilterValue,
 } from "@/lib/data-table-utils";
@@ -80,6 +81,10 @@ interface CommandQuery {
 }
 
 const EMPTY_QUERY: CommandQuery = { columnId: null, search: "" };
+const BOOLEAN_OPTIONS = [
+  { label: "True", value: "true" },
+  { label: "False", value: "false" },
+];
 
 interface DataTableCommandFilterMenuProps<
   TData extends RowData,
@@ -130,6 +135,13 @@ function DataTableCommandFilterMenuContent<TData extends RowData>({
 
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
+      if (disabled) return;
+      if (
+        !open &&
+        !getIsTableShortcutTarget(triggerRef.current, event.target)
+      ) {
+        return;
+      }
       if (getIsEditableTarget(event.target)) return;
       if (
         event.key.toLowerCase() !== FILTER_SHORTCUT_KEY ||
@@ -145,10 +157,10 @@ function DataTableCommandFilterMenuContent<TData extends RowData>({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [disabled, open]);
 
   const columns = React.useMemo(
-    () => table.getAllColumns().filter((column) => column.getCanFilter()),
+    () => table.getAllLeafColumns().filter((column) => column.getCanFilter()),
     [table],
   );
 
@@ -176,7 +188,7 @@ function DataTableCommandFilterMenuContent<TData extends RowData>({
 
     table.addColumnFilter({
       ...defaults,
-      value: defaults.variant === "multi-select" ? [value] : value,
+      value: defaults.operator === "inArray" ? [value] : value,
       filterId: generateId({ length: 8 }),
     });
     setOpen(false);
@@ -193,7 +205,7 @@ function DataTableCommandFilterMenuContent<TData extends RowData>({
 
   function onFiltersReset() {
     table.resetColumnFilters(true);
-    table.resetJoinOperator(true);
+    table.resetJoinOperator();
   }
 
   function onTriggerKeyDown(event: React.KeyboardEvent<HTMLButtonElement>) {
@@ -207,11 +219,14 @@ function DataTableCommandFilterMenuContent<TData extends RowData>({
   return (
     <div
       data-slot="data-table-command-filter-menu"
-      className="flex flex-wrap items-center gap-2"
+      className="flex max-w-full min-w-0 flex-wrap items-center gap-2"
     >
       {hasFilters && (
         <>
-          <div role="list" className="flex flex-wrap items-center gap-2">
+          <div
+            role="list"
+            className="flex max-w-full min-w-0 flex-wrap items-center gap-2"
+          >
             {filters.map((filter) => (
               <DataTableFilterItem
                 key={filter.filterId}
@@ -355,7 +370,7 @@ function DataTableFilterItem<TData extends RowData>({
     <div
       role="listitem"
       id={filterItemId}
-      className="flex h-8 items-center rounded-md bg-background"
+      className="flex h-8 max-w-full min-w-0 items-center rounded-md bg-background"
       onKeyDown={onItemKeyDown}
     >
       <FilterFieldSelector
@@ -383,7 +398,7 @@ function DataTableFilterItem<TData extends RowData>({
         aria-controls={filterItemId}
         aria-label={`Remove ${columnMeta?.label ?? column.id} filter`}
         variant="ghost"
-        className="h-full rounded-none rounded-e-md border border-s-0 border-input px-1.5 dark:bg-input/30"
+        className="h-full shrink-0 rounded-none rounded-e-md border border-s-0 border-input px-1.5 dark:bg-input/30"
         onClick={() => onFilterRemove(filter.filterId)}
       >
         <IconPlaceholder
@@ -440,14 +455,14 @@ function FilterFieldSelector<TData extends RowData>({
         render={
           <Button
             variant="ghost"
-            className="rounded-none rounded-s-md border border-e-0 border-input dark:bg-input/30"
+            className="min-w-0 shrink rounded-none rounded-s-md border border-e-0 border-input dark:bg-input/30"
           />
         }
       >
         {columnMeta?.icon && (
           <columnMeta.icon className="text-muted-foreground" />
         )}
-        {columnMeta?.label ?? column.id}
+        <bdi className="truncate">{columnMeta?.label ?? column.id}</bdi>
       </FacetedTrigger>
       <FacetedContent dir={dir} className="w-48">
         <FacetedInput placeholder="Search fields..." />
@@ -486,6 +501,7 @@ function FilterOperatorSelector({
       open={open}
       onOpenChange={onOpenChange}
       value={filter.operator}
+      items={getFilterOperators(filter.variant)}
       onValueChange={(operator) => {
         if (operator == null) return;
         onFilterUpdate(filter.filterId, {
@@ -548,7 +564,6 @@ function FilterValueInput<TData extends RowData>(
   switch (filter.variant) {
     case "text":
     case "number":
-    case "range":
       if (filter.operator === "isBetween") {
         return (
           <DataTableRangeFilter
@@ -556,7 +571,7 @@ function FilterValueInput<TData extends RowData>(
             column={column}
             inputId={inputId}
             onFilterUpdate={onFilterUpdate}
-            className="size-full max-w-28 gap-0 **:data-[slot='data-table-range-filter-min']:border-e-0 **:data-[slot='data-table-range-filter-separator']:sr-only [&_input]:rounded-none [&_input]:px-1.5"
+            className="h-full w-40 min-w-32 shrink gap-0 **:data-[slot='data-table-range-filter-min']:border-e-0 **:data-[slot='data-table-range-filter-separator']:sr-only [&_input]:min-w-16 [&_input]:rounded-none [&_input]:px-1.5"
           />
         );
       }
@@ -568,7 +583,7 @@ function FilterValueInput<TData extends RowData>(
           aria-label={`${columnMeta?.label ?? column.id} filter value`}
           inputMode={filter.variant === "text" ? undefined : "numeric"}
           placeholder={columnMeta?.placeholder ?? "Enter value..."}
-          className="h-full w-24 rounded-none px-1.5"
+          className="h-full w-24 min-w-0 shrink rounded-none px-1.5"
           defaultValue={typeof filter.value === "string" ? filter.value : ""}
           onChange={(event) =>
             onFilterUpdate(filter.filterId, { value: event.target.value })
@@ -580,11 +595,9 @@ function FilterValueInput<TData extends RowData>(
       return <BooleanFilterValue {...props} />;
 
     case "select":
-    case "multi-select":
       return <SelectFilterValue {...props} />;
 
     case "date":
-    case "date-range":
       return <DateFilterValue {...props} />;
 
     default:
@@ -607,7 +620,12 @@ function BooleanFilterValue<TData extends RowData>({
     <Select
       open={open}
       onOpenChange={onOpenChange}
-      value={typeof filter.value === "string" ? filter.value : "true"}
+      value={
+        typeof filter.value === "string" && filter.value !== ""
+          ? filter.value
+          : null
+      }
+      items={BOOLEAN_OPTIONS}
       onValueChange={(value) => {
         if (value == null) return;
         onFilterUpdate(filter.filterId, { value });
@@ -619,7 +637,7 @@ function BooleanFilterValue<TData extends RowData>({
         aria-label={`${column.columnDef.meta?.label ?? column.id} boolean filter`}
         className="rounded-none bg-transparent px-1.5 py-0.5 [&_svg]:hidden"
       >
-        <SelectValue />
+        <SelectValue placeholder="Select value" />
       </SelectTrigger>
       <SelectContent dir={dir} id={listboxId}>
         <SelectGroup>
@@ -644,7 +662,8 @@ function SelectFilterValue<TData extends RowData>({
   const columnMeta = column.columnDef.meta;
   const options = getColumnSelectOptions(columnMeta);
   const value = getSelectFilterValue(filter);
-  const multiple = filter.variant === "multi-select";
+  const multiple =
+    filter.operator === "inArray" || filter.operator === "notInArray";
 
   return (
     <Faceted
@@ -664,20 +683,22 @@ function SelectFilterValue<TData extends RowData>({
             aria-controls={listboxId}
             aria-label={`${columnMeta?.label ?? column.id} filter value${multiple ? "s" : ""}`}
             variant="ghost"
-            className="h-full min-w-16 rounded-none border border-input px-1.5 dark:bg-input/30"
+            className="h-full min-w-16 shrink rounded-none border border-input px-1.5 dark:bg-input/30"
           />
         }
       >
         <SelectedOptions
           options={options}
           value={value}
-          placeholder={`Select option${multiple ? "s" : ""}...`}
+          placeholder={
+            columnMeta?.placeholder ?? `Select option${multiple ? "s" : ""}...`
+          }
         />
       </FacetedTrigger>
       <FacetedContent dir={dir} id={listboxId} className="w-48">
         <FacetedInput
           aria-label={`Search ${columnMeta?.label ?? column.id} options`}
-          placeholder="Search options..."
+          placeholder={columnMeta?.placeholder ?? "Search options..."}
         />
         <FacetedList>
           <FacetedEmpty>No options found.</FacetedEmpty>
@@ -685,7 +706,7 @@ function SelectFilterValue<TData extends RowData>({
             {options.map((option) => (
               <FacetedItem key={option.value} value={option.value}>
                 {option.icon && <option.icon />}
-                <span className="truncate">{option.label}</span>
+                <bdi className="truncate">{option.label}</bdi>
                 <FacetedItemIndicator />
               </FacetedItem>
             ))}
@@ -729,11 +750,13 @@ function SelectedOptions({
             ),
         )}
       </div>
-      <span className="truncate">
-        {selectedOptions.length > 1
-          ? `${selectedOptions.length} selected`
-          : selectedOptions[0]?.label}
-      </span>
+      <bdi className="truncate">
+        {selectedOptions.length > 1 ? (
+          <bdi>{`${selectedOptions.length} selected`}</bdi>
+        ) : (
+          selectedOptions[0]?.label
+        )}
+      </bdi>
     </>
   );
 }
@@ -761,7 +784,7 @@ function DateFilterValue<TData extends RowData>({
             aria-label={`${label} date filter`}
             variant="ghost"
             className={cn(
-              "h-full rounded-none border px-1.5 dark:bg-input/30",
+              "h-full min-w-0 shrink rounded-none border px-1.5 dark:bg-input/30",
               !startDate && "text-muted-foreground",
             )}
           />
@@ -775,9 +798,9 @@ function DateFilterValue<TData extends RowData>({
           remixicon="RiCalendarLine"
           className="size-3.5"
         />
-        <span className="truncate">
+        <bdi className="truncate">
           {getDateFilterLabel(filter) ?? "Pick date..."}
-        </span>
+        </bdi>
       </PopoverTrigger>
       <PopoverContent
         dir={dir}
@@ -850,7 +873,6 @@ function FilterValueOptions<TData extends RowData>({
       );
 
     case "select":
-    case "multi-select":
       return (
         <>
           <CommandEmpty>No options found.</CommandEmpty>
@@ -864,7 +886,7 @@ function FilterValueOptions<TData extends RowData>({
                 onSelect={() => onSelect(option.value)}
               >
                 {option.icon && <option.icon />}
-                <span className="truncate">{option.label}</span>
+                <bdi className="truncate">{option.label}</bdi>
                 {option.count !== undefined && (
                   <span className="ms-auto font-mono text-xs">
                     {option.count}
@@ -877,7 +899,6 @@ function FilterValueOptions<TData extends RowData>({
       );
 
     case "date":
-    case "date-range":
       return (
         <Calendar
           autoFocus
@@ -977,7 +998,7 @@ function ColumnLabel<TData extends RowData>({
   return (
     <>
       {columnMeta?.icon && <columnMeta.icon />}
-      <span className="truncate">{columnMeta?.label ?? column.id}</span>
+      <bdi className="truncate">{columnMeta?.label ?? column.id}</bdi>
     </>
   );
 }

@@ -163,6 +163,12 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
   autoFocus?: boolean | Partial<CellPosition>;
 
   /**
+   * Called when Escape is pressed while cells are selected, before the selection clears.
+   * Call `event.preventDefault()` to keep the selection.
+   */
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
+
+  /**
    * Select the clicked cell on single click, not only on drag or shift-click.
    * @default false
    */

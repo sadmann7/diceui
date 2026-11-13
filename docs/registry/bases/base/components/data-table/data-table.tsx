@@ -38,11 +38,15 @@ interface DataTableProps<
 > extends React.ComponentProps<"div"> {
   table: ReactTable<DataTableFeatures, TData, unknown>;
   actionBar?: React.ReactNode;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
+  stickyHeader?: boolean;
 }
 
 export function DataTable<TData extends RowData>({
   table,
   actionBar,
+  onEscapeKeyDown,
+  stickyHeader = false,
   children,
   className,
   "aria-label": ariaLabel,
@@ -50,6 +54,30 @@ export function DataTable<TData extends RowData>({
   ...props
 }: DataTableProps<TData>) {
   const dir = useDirection();
+
+  function onTableKeyDown(event: React.KeyboardEvent<HTMLDivElement>) {
+    const nativeEvent = event.nativeEvent;
+    if (event.key !== "Escape" || nativeEvent.defaultPrevented) return;
+    if (
+      !(event.target instanceof Node) ||
+      !event.currentTarget.contains(event.target)
+    ) {
+      return;
+    }
+
+    const selectedRowIds = getVisibleSelectedRows(table).map((row) => row.id);
+    if (selectedRowIds.length === 0) return;
+
+    onEscapeKeyDown?.(nativeEvent);
+    if (nativeEvent.defaultPrevented) return;
+
+    event.preventDefault();
+    table.setRowSelection((prev) => {
+      const next = { ...prev };
+      for (const rowId of selectedRowIds) delete next[rowId];
+      return next;
+    });
+  }
 
   return (
     <div
@@ -59,13 +87,21 @@ export function DataTable<TData extends RowData>({
       {...props}
     >
       {children}
-      <div className="isolate overflow-hidden rounded-md border">
+      <div
+        className={cn(
+          "isolate rounded-md border",
+          stickyHeader
+            ? "min-h-0 scroll-pt-10 overflow-auto [&:has(thead>tr:nth-child(2))]:scroll-pt-20 [&:has(thead>tr:nth-child(3))]:scroll-pt-30 [&>[data-slot=table-container]]:overflow-visible"
+            : "overflow-hidden",
+        )}
+        onKeyDown={onTableKeyDown}
+      >
         <DataTableLayout
           table={table}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
         >
-          <DataTableHeader table={table} />
+          <DataTableHeader table={table} stickyHeader={stickyHeader} />
           <DataTableBody table={table} />
         </DataTableLayout>
       </div>
@@ -109,15 +145,22 @@ function DataTableLayout<TData extends RowData>({
 
 interface DataTableHeaderProps<TData extends RowData> {
   table: ReactTable<DataTableFeatures, TData, unknown>;
+  stickyHeader: boolean;
 }
 
 function DataTableHeader<TData extends RowData>({
   table,
+  stickyHeader,
 }: DataTableHeaderProps<TData>) {
   return (
     <table.Subscribe selector={selectHeaderState}>
       {() => (
-        <TableHeader>
+        <TableHeader
+          className={cn(
+            stickyHeader &&
+              "sticky top-0 z-30 bg-background [&_th]:shadow-[inset_0_-1px_0_var(--border)] [&_tr]:border-b-0",
+          )}
+        >
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id} className="group/row">
               {headerGroup.headers.map((header) => (

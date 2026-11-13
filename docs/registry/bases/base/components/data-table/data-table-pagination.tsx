@@ -7,7 +7,10 @@ import * as React from "react";
 
 import type { DataTableFeatures } from "@/lib/data-table-features";
 
-import { getVisibleSelectedRows } from "@/lib/data-table-utils";
+import {
+  DEFAULT_PAGE_SIZE_OPTIONS,
+  getVisibleSelectedRows,
+} from "@/lib/data-table-utils";
 import { Button } from "@/registry/bases/base/ui/button";
 import { useDirection } from "@/registry/bases/base/ui/direction";
 import {
@@ -24,12 +27,10 @@ interface DataTablePaginationProps<
   TData extends RowData,
 > extends React.ComponentProps<"div"> {
   table: ReactTable<DataTableFeatures, TData, unknown>;
-  pageSizeOptions?: number[];
 }
 
 export function DataTablePagination<TData extends RowData>({
   table,
-  pageSizeOptions = [10, 20, 30, 40, 50],
   className,
   ...props
 }: DataTablePaginationProps<TData>) {
@@ -49,7 +50,9 @@ export function DataTablePagination<TData extends RowData>({
           pageSize={pageSize}
           selectedRowCount={selectedRowCount}
           visibleSelectedRowCount={visibleSelectedRowCount}
-          pageSizeOptions={pageSizeOptions}
+          pageSizeOptions={
+            table.options.pageSizeOptions ?? DEFAULT_PAGE_SIZE_OPTIONS
+          }
           className={className}
           {...props}
         />
@@ -66,7 +69,7 @@ interface DataTablePaginationContentProps<
   pageSize: number;
   selectedRowCount: number;
   visibleSelectedRowCount: number;
-  pageSizeOptions: number[];
+  pageSizeOptions: readonly number[];
 }
 
 function DataTablePaginationContent<TData extends RowData>({
@@ -80,6 +83,9 @@ function DataTablePaginationContent<TData extends RowData>({
   ...props
 }: DataTablePaginationContentProps<TData>) {
   const pageSizeLabelId = React.useId();
+  const sizeOptions = pageSizeOptions.includes(pageSize)
+    ? pageSizeOptions
+    : [...pageSizeOptions, pageSize].sort((a, b) => a - b);
   const pageCount = table.getPageCount();
   const canPreviousPage = table.getCanPreviousPage();
   const canNextPage = table.getCanNextPage();
@@ -98,9 +104,10 @@ function DataTablePaginationContent<TData extends RowData>({
         role="status"
         className="flex-1 text-sm whitespace-nowrap text-muted-foreground"
       >
-        {selectedRowCount} {selectedRowCount === 1 ? "row" : "rows"} selected
+        {selectedRowCount.toLocaleString()}{" "}
+        {selectedRowCount === 1 ? "row" : "rows"} selected
         {selectedRowCount > visibleSelectedRowCount
-          ? ` (${selectedRowCount - visibleSelectedRowCount} not shown)`
+          ? ` (${(selectedRowCount - visibleSelectedRowCount).toLocaleString()} not shown)`
           : ""}
         .
       </div>
@@ -124,9 +131,9 @@ function DataTablePaginationContent<TData extends RowData>({
             </SelectTrigger>
             <SelectContent side="top" dir={dir}>
               <SelectGroup>
-                {pageSizeOptions.map((pageSize) => (
-                  <SelectItem key={pageSize} value={`${pageSize}`}>
-                    {pageSize}
+                {sizeOptions.map((size) => (
+                  <SelectItem key={size} value={`${size}`}>
+                    {size}
                   </SelectItem>
                 ))}
               </SelectGroup>

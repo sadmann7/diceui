@@ -97,7 +97,7 @@ const columns: ColumnDef<DataTableFeatures, Project>[] = [
     },
     meta: {
       label: "Status",
-      variant: "multi-select",
+      variant: "select",
       options: [
         { label: "Active", value: "active", icon: CheckCircle },
         { label: "Inactive", value: "inactive", icon: XCircle },
@@ -150,8 +150,8 @@ export default function DataTableDemo() {
     mode: "client",
     data,
     columns,
+    config: { defaultSorting: [{ id: "title", desc: true }] },
     initialState: {
-      sorting: [{ id: "title", desc: true }],
       columnPinning: { start: [], end: ["actions"] },
     },
     getRowId: (row) => row.id,

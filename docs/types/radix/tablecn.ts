@@ -3,7 +3,9 @@ import type * as React from "react";
 
 import type { DataGridFeatures } from "@/lib/data-grid-features";
 import type { DataGridCellProps as RealDataGridCellProps } from "@/lib/data-grid-types";
+import type { DataTableConfigOptions } from "@/lib/data-table-config";
 import type { DataTableFeatures } from "@/lib/data-table-features";
+import type { DataTableColumnConfigs } from "@/lib/data-table-types";
 import type { DataGrid } from "@/registry/bases/radix/components/data-grid/data-grid";
 import type { getDataGridActionsColumn } from "@/registry/bases/radix/components/data-grid/data-grid-actions-column";
 import type { DataGridCell } from "@/registry/bases/radix/components/data-grid/data-grid-cell";
@@ -75,6 +77,12 @@ type Expand<T> = T extends string ? `${T}` : T;
 type Expect<T extends never> = T;
 
 export type DataTableDocs = [
+  Expect<
+    Drift<
+      Table.CreateDataTableConfigProps,
+      DataTableConfigOptions<DataTableColumnConfigs>
+    >
+  >,
   Expect<
     Drift<
       Table.UseDataTableProps<RowData>,
