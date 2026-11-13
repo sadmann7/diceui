@@ -1,5 +1,13 @@
 # @diceui/tags-input
 
+## 1.0.3
+
+### Patch Changes
+
+- Updated dependencies [cae9fd5]
+- Updated dependencies [0534b23]
+  - @diceui/shared@1.0.2
+
 ## 1.0.2
 
 ### Patch Changes
