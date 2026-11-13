@@ -1,9 +1,5 @@
 name: Sync tablecn
 
-# Opens or refreshes a PR when tablecn's main has data table or data grid
-# changes the pin doesn't have yet. PRs opened with the workflow token don't
-# trigger other workflows, so Code check is dispatched on the branch.
-
 on:
   schedule:
     - cron: "0 6 * * 1"
