@@ -366,6 +366,7 @@ function QueryBuilderGroupTitle({
   return (
     <TitlePrimitive
       data-slot="query-builder-group-title"
+      dir="auto"
       {...props}
       className={cn("cn-query-builder-group-title", className)}
     >
@@ -406,7 +407,10 @@ function QueryBuilderGroupContent({ asChild, className, ...props }: DivProps) {
       data-slot="query-builder-group-content"
       data-depth={depth}
       {...props}
-      className={cn("cn-query-builder-group-content flex flex-col", className)}
+      className={cn(
+        "cn-query-builder-group-content @container/query-builder flex flex-col",
+        className,
+      )}
     />
   );
 }
@@ -648,6 +652,7 @@ function QueryBuilderField({
           aria-labelledby={
             ariaLabelledBy ? `${ariaLabelledBy} ${triggerId}` : undefined
           }
+          title={currentField?.label}
           id={triggerId}
           data-slot="query-builder-field"
           disabled={isDisabled}
@@ -659,14 +664,14 @@ function QueryBuilderField({
         >
           <FacetedValue>
             {([item]) => (
-              <span
+              <bdi
                 className={cn(
                   "cn-query-builder-select-value",
                   !item && "text-muted-foreground",
                 )}
               >
                 {item ? item.label : labels.field}
-              </span>
+              </bdi>
             )}
           </FacetedValue>
           <IconPlaceholder
@@ -687,7 +692,7 @@ function QueryBuilderField({
           <FacetedGroup>
             {fields.map((field) => (
               <FacetedItem key={field.value} value={field.value}>
-                <span className="flex-1 truncate">{field.label}</span>
+                <bdi className="flex-1 truncate">{field.label}</bdi>
                 <FacetedItemIndicator />
               </FacetedItem>
             ))}
@@ -743,6 +748,7 @@ function QueryBuilderOperator({
           aria-labelledby={
             ariaLabelledBy ? `${ariaLabelledBy} ${triggerId}` : undefined
           }
+          title={labels.operatorLabel(rule.operator, field.type)}
           id={triggerId}
           data-slot="query-builder-operator"
           disabled={isDisabled}
@@ -754,9 +760,7 @@ function QueryBuilderOperator({
         >
           <FacetedValue>
             {([item]) => (
-              <span className="cn-query-builder-select-value">
-                {item?.label}
-              </span>
+              <bdi className="cn-query-builder-select-value">{item?.label}</bdi>
             )}
           </FacetedValue>
           <IconPlaceholder
@@ -777,7 +781,7 @@ function QueryBuilderOperator({
           <FacetedGroup>
             {operators.map((operator) => (
               <FacetedItem key={operator.value} value={operator.value}>
-                <span className="flex-1 truncate">{operator.label}</span>
+                <bdi className="flex-1 truncate">{operator.label}</bdi>
                 <FacetedItemIndicator />
               </FacetedItem>
             ))}
@@ -796,7 +800,7 @@ function getSelectedValues(value: QueryValue | undefined) {
 function QueryBuilderValueList({ options }: { options: QueryFieldOption[] }) {
   const listRef = React.useRef<HTMLSpanElement>(null);
   const itemRefs = React.useRef<(HTMLSpanElement | null)[]>([]);
-  const labelRefs = React.useRef<(HTMLSpanElement | null)[]>([]);
+  const labelRefs = React.useRef<(HTMLElement | null)[]>([]);
   const countRef = React.useRef<HTMLSpanElement>(null);
   const [visibleCount, setVisibleCount] = React.useState(options.length);
 
@@ -859,14 +863,14 @@ function QueryBuilderValueList({ options }: { options: QueryFieldOption[] }) {
           className="cn-query-builder-value-item"
         >
           <FacetedBadge>
-            <span
+            <bdi
               ref={(node) => {
                 labelRefs.current[index] = node;
               }}
               className="cn-query-builder-value-label"
             >
               {label}
-            </span>
+            </bdi>
           </FacetedBadge>
         </span>
       ))}
@@ -945,6 +949,7 @@ function QueryBuilderValue({
         <Input
           type={inputType}
           id={fromId}
+          placeholder={labels.from}
           aria-label={ariaLabelledBy ? labels.from : `${label} ${labels.from}`}
           aria-labelledby={
             ariaLabelledBy ? `${ariaLabelledBy} ${fromId}` : undefined
@@ -963,6 +968,7 @@ function QueryBuilderValue({
         <Input
           type={inputType}
           id={toId}
+          placeholder={labels.to}
           aria-label={ariaLabelledBy ? labels.to : `${label} ${labels.to}`}
           aria-labelledby={
             ariaLabelledBy ? `${ariaLabelledBy} ${toId}` : undefined
@@ -1026,7 +1032,7 @@ function QueryBuilderValue({
                 ? `${ariaLabelledBy} ${id ?? generatedId}`
                 : undefined
             }
-            title={selected.length > 1 ? selectedLabels : undefined}
+            title={selectedLabels || undefined}
             id={id ?? generatedId}
             {...props}
             data-slot="query-builder-value"
@@ -1038,21 +1044,21 @@ function QueryBuilderValue({
               {() => {
                 if (selected.length > 0 && display === "summary") {
                   return (
-                    <span className="cn-query-builder-select-value">
+                    <bdi className="cn-query-builder-select-value">
                       {selected.length > 1
                         ? labels.selected(selected.length)
                         : selected[0]?.label}
-                    </span>
+                    </bdi>
                   );
                 }
                 if (selected.length > 0) {
                   return <QueryBuilderValueList options={selected} />;
                 }
                 return (
-                  <span className="cn-query-builder-select-value text-muted-foreground">
+                  <bdi className="cn-query-builder-select-value text-muted-foreground">
                     {field.placeholder ??
                       (multiple ? labels.selectValues : labels.selectValue)}
-                  </span>
+                  </bdi>
                 );
               }}
             </FacetedValue>
@@ -1075,7 +1081,7 @@ function QueryBuilderValue({
               {options.map((option) => (
                 <FacetedItem key={option.value} value={option.value}>
                   {option.icon && <option.icon aria-hidden="true" />}
-                  <span className="flex-1 truncate">{option.label}</span>
+                  <bdi className="flex-1 truncate">{option.label}</bdi>
                   <FacetedItemIndicator />
                 </FacetedItem>
               ))}
