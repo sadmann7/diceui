@@ -34,13 +34,13 @@ interface Task {
 const columnTitles: Record<string, string> = {
   backlog: "Backlog",
   inProgress: "In progress",
-  shipped: "Shipped",
+  done: "Done",
 };
 
 const columnDots: Record<string, string> = {
   backlog: "bg-muted-foreground/60",
   inProgress: "bg-amber-400",
-  shipped: "bg-emerald-500",
+  done: "bg-emerald-500",
 };
 
 const initialColumns: Record<string, Task[]> = {
@@ -84,7 +84,7 @@ const initialColumns: Record<string, Task[]> = {
       assignees: ["SK"],
     },
   ],
-  shipped: [
+  done: [
     {
       id: "DUI-229",
       tags: ["Base UI", "Release", "Radix", "Docs", "Registry"],
