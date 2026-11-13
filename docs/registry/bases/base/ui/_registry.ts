@@ -189,6 +189,30 @@ export const ui: Registry["items"] = [
     dependencies: ["@base-ui/react", "@base-ui/utils"],
   },
   {
+    name: "editor",
+    type: "registry:ui",
+    files: [
+      {
+        path: "ui/editor.tsx",
+        type: "registry:ui",
+      },
+    ],
+    registryDependencies: ["button", "input", "popover", "select", "separator"],
+    dependencies: [
+      "@base-ui/react",
+      "@base-ui/utils",
+      "@floating-ui/react-dom",
+      "@tiptap/core",
+      "@tiptap/extension-list",
+      "@tiptap/extensions",
+      "@tiptap/markdown",
+      "@tiptap/pm",
+      "@tiptap/react",
+      "@tiptap/starter-kit",
+      "@tiptap/suggestion",
+    ],
+  },
+  {
     name: "faceted",
     type: "registry:ui",
     files: [

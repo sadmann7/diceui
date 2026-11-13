@@ -195,6 +195,36 @@ export const ui: Registry["items"] = [
     ],
   },
   {
+    name: "editor",
+    type: "registry:ui",
+    dependencies: [
+      "@floating-ui/react-dom",
+      "@tiptap/core",
+      "@tiptap/extension-list",
+      "@tiptap/extensions",
+      "@tiptap/markdown",
+      "@tiptap/pm",
+      "@tiptap/react",
+      "@tiptap/starter-kit",
+      "@tiptap/suggestion",
+      "radix-ui",
+    ],
+    registryDependencies: [
+      "button",
+      "input",
+      "popover",
+      "select",
+      "separator",
+      "@diceui/use-value-as-ref",
+    ],
+    files: [
+      {
+        path: "ui/editor.tsx",
+        type: "registry:ui",
+      },
+    ],
+  },
+  {
     name: "editable",
     type: "registry:ui",
     dependencies: ["radix-ui"],
