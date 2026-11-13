@@ -12,7 +12,7 @@ import {
 
 export default function IndexLayout({ children }: LayoutProps<"/">) {
   return (
-    <div className="relative flex min-h-screen flex-col">
+    <div className="relative flex min-h-screen flex-col [&_#nd-home-layout]:[--fd-layout-width:1232px]">
       <SkipNav />
       <HomeLayout
         {...baseOptions}

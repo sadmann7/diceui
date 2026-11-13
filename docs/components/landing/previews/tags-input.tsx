@@ -18,7 +18,7 @@ export default function TagsInputPreview() {
   ]);
 
   return (
-    <div className="flex flex-1 flex-col justify-center p-5">
+    <div className="mx-auto flex w-full max-w-xs flex-1 flex-col justify-center py-5">
       <TagsInput
         value={tags}
         onValueChange={setTags}
@@ -35,6 +35,9 @@ export default function TagsInputPreview() {
           <TagsInputInput placeholder="Add…" />
         </TagsInputList>
       </TagsInput>
+      <p className="pt-3 text-xs text-muted-foreground">
+        Enter to add, Backspace to remove, double-click to edit.
+      </p>
     </div>
   );
 }

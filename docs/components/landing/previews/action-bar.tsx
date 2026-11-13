@@ -80,7 +80,7 @@ export default function ActionBarPreview() {
             <Copy />
             Duplicate
           </ActionBarItem>
-          <ActionBarItem variant="destructive">
+          <ActionBarItem>
             <Archive />
             Archive
           </ActionBarItem>

@@ -166,7 +166,7 @@ export function KanbanWindow() {
   const [columns, setColumns] = React.useState(initialColumns);
 
   return (
-    <div className="relative flex h-[480px] w-full max-w-[1120px] flex-col overflow-hidden rounded-2xl border bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_24px_64px_rgb(0_0_0/0.08)] dark:shadow-[0_1px_2px_rgb(0_0_0/0.4),0_24px_64px_rgb(0_0_0/0.5)]">
+    <div className="relative flex h-[400px] w-full flex-col overflow-hidden rounded-2xl border bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_24px_64px_rgb(0_0_0/0.08)] dark:shadow-[0_1px_2px_rgb(0_0_0/0.4),0_24px_64px_rgb(0_0_0/0.5)]">
       <div
         aria-hidden="true"
         className="flex h-[46px] shrink-0 items-center justify-between border-b px-3.5"
@@ -224,7 +224,7 @@ export function KanbanWindow() {
           </Kanban>
         </StyleScope>
       </div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[120px] bg-linear-to-b from-transparent to-background to-85%" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-linear-to-b from-transparent to-background" />
     </div>
   );
 }

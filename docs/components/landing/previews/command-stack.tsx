@@ -10,7 +10,6 @@ import {
   CommandStackItem,
   CommandStackList,
   CommandStackPage,
-  CommandStackShortcut,
 } from "@/registry/bases/base/ui/command-stack";
 
 const components = ["Action Bar", "Command Stack", "Data Grid", "Kanban"];
@@ -31,7 +30,6 @@ export default function CommandStackPreview() {
               <CommandStackItem page="components">
                 <Box />
                 Browse components
-                <CommandStackShortcut>C</CommandStackShortcut>
               </CommandStackItem>
               <CommandStackItem>
                 <Moon />

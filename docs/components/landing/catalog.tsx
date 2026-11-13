@@ -31,7 +31,7 @@ const tiles: Tile[] = [
 
 export function Catalog() {
   return (
-    <section className="border-t">
+    <section className="border-t bg-muted/40 dark:bg-transparent">
       <div className="mx-auto flex max-w-[1248px] flex-col gap-11 px-6 pt-20 pb-24">
         <div className="flex flex-col gap-3.5">
           <span className="font-mono text-xs tracking-[0.1em] text-muted-foreground">
@@ -54,7 +54,7 @@ export function Catalog() {
               <div className="flex items-center justify-between border-b px-4 py-[13px]">
                 <Link
                   href={`/docs/components/base/${tile.slug}`}
-                  className="group flex items-center gap-1.5 font-mono text-[10px] tracking-wider text-muted-foreground uppercase transition-colors hover:text-foreground"
+                  className="group flex items-center gap-1.5 font-mono text-[11px] tracking-wider text-foreground/70 uppercase transition-colors hover:text-foreground"
                 >
                   {tile.name}
                   <ArrowUpRight className="size-[13px] transition-transform group-hover:translate-x-px group-hover:-translate-y-px" />
