@@ -63,6 +63,12 @@ const initialColumns: Record<string, Task[]> = {
       title: "Document the query builder output options",
       assignees: ["KO"],
     },
+    {
+      id: "DUI-231",
+      tags: ["Bug"],
+      title: "Badge overflow hides the last chip on narrow rows",
+      assignees: ["RT"],
+    },
   ],
   inProgress: [
     {
@@ -82,6 +88,12 @@ const initialColumns: Record<string, Task[]> = {
       tags: ["Design"],
       title: "Settle the segmented input focus ring",
       assignees: ["SK"],
+    },
+    {
+      id: "DUI-237",
+      tags: ["Docs"],
+      title: "Write the tour recipe for multi-step forms",
+      assignees: ["KO"],
     },
   ],
   done: [
@@ -103,6 +115,12 @@ const initialColumns: Record<string, Task[]> = {
       title: "Timeline: sticky markers and RTL support",
       assignees: ["SK"],
     },
+    {
+      id: "DUI-221",
+      tags: ["Base UI"],
+      title: "Gauge parity: thresholds and label slots",
+      assignees: ["AM"],
+    },
   ],
 };
 
@@ -122,7 +140,7 @@ function TaskCard({ task, selected, className, ...props }: TaskCardProps) {
         <div
           className={cn(
             "flex flex-col gap-2.5 rounded-[9px] border bg-card p-2.5 transition-colors",
-            selected && "border-input bg-muted",
+            selected && "border-ring/50 ring-[3px] ring-ring/10",
             className,
           )}
         />
@@ -134,12 +152,7 @@ function TaskCard({ task, selected, className, ...props }: TaskCardProps) {
           items={task.tags}
           className="max-w-44 flex-1"
           renderBadge={(_, label) => (
-            <span
-              className={cn(
-                "rounded-sm px-1.5 py-0.5 font-mono text-[9px] leading-3 text-foreground/75",
-                selected ? "bg-background" : "bg-muted",
-              )}
-            >
+            <span className="rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[9px] leading-3 text-foreground/75">
               {label}
             </span>
           )}
@@ -263,9 +276,6 @@ export function KanbanWindow() {
             kanban-board.tsx
           </span>
         </div>
-        <span className="rounded-sm bg-muted px-[7px] py-[3px] font-mono text-[9px] text-muted-foreground">
-          BASE UI
-        </span>
       </div>
       <StyleScope>
         <div className="flex-1 bg-background p-4">
