@@ -113,7 +113,7 @@ export default function DataGridPreview() {
 
   return (
     <div className="flex flex-1 flex-col justify-center p-5">
-      <DataGrid {...dataGridProps} table={table} height={236} stretchColumns />
+      <DataGrid {...dataGridProps} table={table} height={276} stretchColumns />
     </div>
   );
 }

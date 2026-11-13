@@ -11,10 +11,12 @@ const previews = {
     () => import("@/components/landing/previews/action-bar"),
   ),
   gauge: React.lazy(() => import("@/components/landing/previews/gauge")),
-  "tags-input": React.lazy(
-    () => import("@/components/landing/previews/tags-input"),
+  "file-upload": React.lazy(
+    () => import("@/components/landing/previews/file-upload"),
   ),
-  cropper: React.lazy(() => import("@/components/landing/previews/cropper")),
+  "color-picker": React.lazy(
+    () => import("@/components/landing/previews/color-picker"),
+  ),
   stepper: React.lazy(() => import("@/components/landing/previews/stepper")),
   "command-stack": React.lazy(
     () => import("@/components/landing/previews/command-stack"),
@@ -33,7 +35,7 @@ export function LivePreview({ name }: { name: PreviewName }) {
   const fallback = <Skeleton className="size-full rounded-none" />;
 
   return (
-    <div ref={ref} className="relative flex flex-1 flex-col">
+    <div ref={ref} className="relative flex min-h-0 flex-1 flex-col">
       {isNearViewport ? (
         <StyleScope>
           <React.Suspense fallback={fallback}>

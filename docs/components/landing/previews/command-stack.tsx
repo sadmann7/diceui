@@ -16,8 +16,8 @@ const components = ["Action Bar", "Command Stack", "Data Grid", "Kanban"];
 
 export default function CommandStackPreview() {
   return (
-    <div className="flex flex-1 flex-col justify-center p-5">
-      <CommandStack className="h-60 w-full border">
+    <div className="flex min-h-0 flex-1 flex-col p-5">
+      <CommandStack className="h-full w-full border">
         <CommandStackInput placeholder="Search commands, pages, actions…" />
         <CommandStackList>
           <CommandStackEmpty>No results found.</CommandStackEmpty>

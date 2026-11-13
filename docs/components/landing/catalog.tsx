@@ -22,8 +22,8 @@ const tiles: Tile[] = [
     className: "md:col-span-2",
   },
   { name: "Gauge", slug: "gauge" },
-  { name: "Tags Input", slug: "tags-input" },
-  { name: "Cropper", slug: "cropper" },
+  { name: "File Upload", slug: "file-upload" },
+  { name: "Color Picker", slug: "color-picker" },
   { name: "Stepper", slug: "stepper" },
   { name: "Command Stack", slug: "command-stack", isNew: true },
   { name: "Data Grid", slug: "data-grid", className: "lg:col-span-2" },
@@ -47,7 +47,7 @@ export function Catalog() {
             <div
               key={tile.slug}
               className={cn(
-                "flex h-80 flex-col overflow-hidden rounded-[14px] border bg-card dark:bg-card/40",
+                "flex h-90 flex-col overflow-hidden rounded-[14px] border bg-card dark:bg-card/40",
                 tile.className,
               )}
             >
