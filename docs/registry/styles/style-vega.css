@@ -743,7 +743,7 @@
   }
 
   .cn-file-upload-item-preview-2 {
-    @apply relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border bg-accent/50 [&>svg]:size-10;
+    @apply relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border bg-accent/50 [&>svg]:size-6;
   }
 
   .cn-file-upload-item-metadata {
@@ -2290,7 +2290,7 @@
 
   /* MARK: File Upload */
   .cn-file-upload-preview {
-    @apply relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border bg-accent/50 [&>svg]:size-10;
+    @apply relative flex size-10 shrink-0 items-center justify-center overflow-hidden rounded border bg-accent/50 [&>svg]:size-6;
   }
 
   .cn-file-upload-metadata {
