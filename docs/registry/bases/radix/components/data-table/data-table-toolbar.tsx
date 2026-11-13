@@ -12,8 +12,10 @@ import * as React from "react";
 import type { DataTableFeatures } from "@/lib/data-table-features";
 
 import {
+  getColumnNumberOptions,
   getColumnSelectOptions,
   getFilterVariant,
+  getIsNumberRangeColumn,
 } from "@/lib/data-table-utils";
 import { DataTableDateFilter } from "@/registry/bases/radix/components/data-table/data-table-date-filter";
 import { DataTableFacetedFilter } from "@/registry/bases/radix/components/data-table/data-table-faceted-filter";
@@ -29,44 +31,70 @@ import {
 } from "@/registry/bases/radix/ui/input-group";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
+const BOOLEAN_OPTIONS = [
+  { label: "True", value: "true" },
+  { label: "False", value: "false" },
+];
+
 interface DataTableToolbarProps<
   TData extends RowData,
 > extends React.ComponentProps<"div"> {
   table: ReactTable<DataTableFeatures, TData, unknown>;
+  globalFilterPlaceholder?: string;
 }
 
 export function DataTableToolbar<TData extends RowData>({
   table,
+  globalFilterPlaceholder,
   children,
   className,
   ...props
 }: DataTableToolbarProps<TData>) {
   const columns = React.useMemo(
-    () => table.getAllColumns().filter((column) => column.getCanFilter()),
+    () => table.getAllLeafColumns().filter((column) => column.getCanFilter()),
     [table],
   );
 
   function onReset() {
     table.resetColumnFilters(true);
-    table.resetJoinOperator(true);
+    table.resetJoinOperator();
+    table.resetGlobalFilter(true);
   }
 
   return (
     <div
       data-slot="data-table-toolbar"
       className={cn(
-        "flex w-full items-start justify-between gap-2 p-1",
+        "flex w-full flex-wrap items-start justify-between gap-2 p-1",
         className,
       )}
       {...props}
     >
-      <div className="flex flex-1 flex-wrap items-center gap-2">
+      <div className="flex min-w-[min(100%,24rem)] flex-1 flex-wrap items-center gap-2">
+        {globalFilterPlaceholder &&
+        table.options.enableGlobalFilter !== false ? (
+          <Subscribe
+            source={table.atoms.globalFilter}
+            selector={(globalFilter) => readFilterInputValue(globalFilter)}
+          >
+            {(globalFilter) => (
+              <Input
+                aria-label={globalFilterPlaceholder}
+                placeholder={globalFilterPlaceholder}
+                value={globalFilter}
+                onChange={(event) => table.setGlobalFilter(event.target.value)}
+                className="w-40 text-ellipsis lg:w-56"
+              />
+            )}
+          </Subscribe>
+        ) : null}
         {columns.map((column) => (
           <DataTableToolbarFilter key={column.id} column={column} />
         ))}
-        <Subscribe
-          source={table.atoms.columnFilters}
-          selector={(filters) => filters.length > 0}
+        <table.Subscribe
+          selector={(state) =>
+            state.columnFilters.length > 0 || Boolean(state.globalFilter)
+          }
         >
           {(isFiltered) =>
             isFiltered && (
@@ -86,9 +114,9 @@ export function DataTableToolbar<TData extends RowData>({
               </Button>
             )
           }
-        </Subscribe>
+        </table.Subscribe>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="ms-auto flex items-center gap-2">
         {children}
         <DataTableViewOptions table={table} align="end" />
       </div>
@@ -116,43 +144,46 @@ function DataTableToolbarFilter<TData extends RowData>({
         <DataTableFilterInput
           column={column}
           placeholder={placeholder}
-          className="w-40 lg:w-56"
+          className="w-40 text-ellipsis lg:w-56"
         />
       );
 
-    case "number":
+    case "number": {
+      if (getIsNumberRangeColumn(column)) {
+        return <DataTableSliderFilter column={column} title={title} />;
+      }
+
       return (
         <DataTableFilterInput
           column={column}
           type="number"
           inputMode="numeric"
           placeholder={placeholder}
-          unit={columnMeta.variant === "number" ? columnMeta.unit : undefined}
+          unit={getColumnNumberOptions(columnMeta)?.unit}
           className="w-30"
         />
       );
-
-    case "range":
-      return <DataTableSliderFilter column={column} title={title} />;
+    }
 
     case "date":
-    case "date-range":
-      return (
-        <DataTableDateFilter
-          column={column}
-          title={title}
-          multiple={filterVariant === "date-range"}
-        />
-      );
+      return <DataTableDateFilter column={column} title={title} multiple />;
 
     case "select":
-    case "multi-select":
       return (
         <DataTableFacetedFilter
           column={column}
           title={title}
           options={getColumnSelectOptions(columnMeta)}
-          multiple={filterVariant === "multi-select"}
+          multiple={columnMeta.multiple ?? true}
+        />
+      );
+
+    case "boolean":
+      return (
+        <DataTableFacetedFilter
+          column={column}
+          title={title}
+          options={BOOLEAN_OPTIONS}
         />
       );
 

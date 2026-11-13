@@ -9,6 +9,7 @@ import type { DataTableFeatures } from "@/lib/data-table-features";
 import type { ColumnFilterItem } from "@/lib/data-table-types";
 
 import {
+  getColumnNumberOptions,
   getRangeFilterBounds,
   getValidRangeFilterBounds,
 } from "@/lib/data-table-utils";
@@ -38,7 +39,7 @@ export function DataTableRangeFilter<TData extends RowData>({
   ...props
 }: DataTableRangeFilterProps<TData>) {
   const meta = column.columnDef.meta;
-  const bounds = meta?.variant === "number" ? meta : undefined;
+  const bounds = getColumnNumberOptions(meta);
 
   const [startValue, endValue] = getRangeFilterValues(filter.value).map(
     getInputValue,
@@ -127,7 +128,7 @@ export function DataTableRangeFilter<TData extends RowData>({
         data-slot="data-table-range-filter-min"
         inputMode="numeric"
         placeholder={bounds?.min?.toString() ?? "Min"}
-        className="w-full min-w-24"
+        className="w-full min-w-20"
         value={startInput}
         onChange={(event) => onDraftChange(0, event.target.value)}
         onKeyDown={onInputKeyDown}
@@ -146,7 +147,7 @@ export function DataTableRangeFilter<TData extends RowData>({
         data-slot="data-table-range-filter-max"
         inputMode="numeric"
         placeholder={bounds?.max?.toString() ?? "Max"}
-        className="w-full min-w-24"
+        className="w-full min-w-20"
         value={endInput}
         onChange={(event) => onDraftChange(1, event.target.value)}
         onKeyDown={onInputKeyDown}

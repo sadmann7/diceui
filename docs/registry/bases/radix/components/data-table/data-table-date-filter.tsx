@@ -81,9 +81,15 @@ function DataTableDateFilterContent<TData extends RowData>({
       }
 
       if (multiple && !("getTime" in date)) {
-        const from = date.from?.getTime();
-        const to = date.to?.getTime();
-        column.setFilterValue(from || to ? [from, to] : undefined);
+        const from = date.from ?? date.to;
+        const to = date.to ?? date.from;
+        if (!from || !to) {
+          column.setFilterValue(undefined);
+        } else if (from.toDateString() === to.toDateString()) {
+          column.setFilterValue(from.getTime());
+        } else {
+          column.setFilterValue([from.getTime(), to.getTime()]);
+        }
       } else if (!multiple && "getTime" in date) {
         column.setFilterValue(date.getTime());
       }
@@ -107,15 +113,15 @@ function DataTableDateFilterContent<TData extends RowData>({
     : formatDate(selectedDates[0]);
 
   const label = (
-    <span className="flex items-center gap-2">
-      <span>{title}</span>
+    <span className="flex min-w-0 items-center gap-2">
+      <bdi className="truncate">{title}</bdi>
       {hasValue && (
         <>
           <Separator
             orientation="vertical"
             className="mx-0.5 data-vertical:h-4 data-vertical:self-center"
           />
-          <span>{dateText}</span>
+          <bdi className="truncate">{dateText}</bdi>
         </>
       )}
     </span>
@@ -124,7 +130,7 @@ function DataTableDateFilterContent<TData extends RowData>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline">
+        <Button variant="outline" className="max-w-full shrink">
           {hasValue ? (
             <span
               aria-hidden="true"
@@ -220,6 +226,9 @@ function getIsDateRange(value: DateSelection): value is DateRange {
 
 function formatDateRange(range: DateRange) {
   if (range.from && range.to) {
+    if (range.from.toDateString() === range.to.toDateString()) {
+      return formatDate(range.from);
+    }
     return `${formatDate(range.from)} - ${formatDate(range.to)}`;
   }
   return formatDate(range.from ?? range.to);

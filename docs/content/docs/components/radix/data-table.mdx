@@ -120,13 +120,9 @@ return (
 
     const columns = React.useMemo(() => [
       {
-        // Provide an unique id for the column
-        // This id will be used as query key for the column filter
-        id: "title", // [!code highlight]
-        accessorKey: "title",
-        header: ({ column }) => (
-          <DataTableColumnHeader column={column} label="Title" />
-        ),
+        // The column id defaults to the `accessorKey` and is the URL key of its filter
+        accessorKey: "title", // [!code highlight]
+        header: ({ column }) => <DataTableColumnHeader column={column} />,
         cell: ({ row }) => <div>{row.getValue("title")}</div>,
         // Define the column meta options for sorting, filtering, and view options
         meta: { // [!code highlight]
@@ -155,10 +151,11 @@ return (
         // Pass the total number of pages for server-side data,
         // or set `mode: "client"` to sort, filter, and paginate in the browser
         pageCount, // [!code highlight]
-        initialState: {
-          sorting: [{ id: "createdAt", desc: true }],
-          pagination: { pageSize: 10 },
-        },
+        // Defaults used when the URL has no sorting or page size
+        config: { // [!code highlight]
+          defaultSorting: [{ id: "createdAt", desc: true }], // [!code highlight]
+          defaultPageSize: 10, // [!code highlight]
+        }, // [!code highlight]
         // Unique identifier for rows, can be used for unique row selection
         getRowId: (row) => row.id, // [!code highlight]
       });
@@ -310,6 +307,8 @@ cell: ({ row }) => (
 ),
 ```
 
+Press <Kbd>Escape</Kbd> inside the table to clear the row selection. Call `event.preventDefault()` in `onEscapeKeyDown` to keep it.
+
 ## Row Actions
 
 Use `getDataTableActionsColumn` to add a menu of actions to each row:
@@ -334,6 +333,16 @@ const columns = React.useMemo<ColumnDef<DataTableFeatures, Project>[]>(
 ```
 
 Pin it to the end with `initialState.columnPinning.end`, like `{ start: ["select"], end: ["actions"] }`.
+
+## Sticky Header
+
+Set `stickyHeader` to scroll the rows inside the table and keep the header in view. Set the height with `className`:
+
+```tsx
+<DataTable table={table} stickyHeader className="max-h-[600px]">
+  <DataTableToolbar table={table} />
+</DataTable>
+```
 
 ## Client and Server Mode
 
@@ -370,87 +379,92 @@ const { table } = useDataTable({
 
 ### Server Mode
 
-Use server mode for large datasets. Describe the filterable and sortable columns once, and share that config between the server and the column definitions.
+Use server mode for large datasets. Describe the table once with `createDataTableConfig`, and share that config between the server and `useDataTable`.
 
 <Steps>
   <Step>
-    Define the column configs and search params:
+    Create the table config in a file both the server and the client can import:
 
     ```ts title="lib/validations.ts"
-    import { createSearchParamsCache } from "nuqs/server";
+    import type { DataTableColumnConfigs } from "@/lib/data-table-types";
+    import { createDataTableConfig } from "@/lib/data-table-config";
 
-    import type { DataTableColumnConfig } from "@/lib/data-table-types";
-    import { getDataTableSearchParams } from "@/lib/data-table-parsers";
-
-    export const tasksColumnConfigs = {
-      // Sortable, not filterable
-      code: { isSortable: false },
-      title: { variant: "text" },
-      status: { variant: "multi-select" },
-      estimatedHours: { variant: "number", filter: "range" },
-      createdAt: { variant: "date", filter: "range" },
-    } as const satisfies Record<string, DataTableColumnConfig>;
-
-    export const searchParamsCache = createSearchParamsCache(
-      getDataTableSearchParams({
-        columnConfigs: tasksColumnConfigs,
-        defaultSorting: [{ id: "createdAt", desc: true }],
-      }),
-    );
+    export const tasksTableConfig = createDataTableConfig({
+      columns: {
+        // Sortable, not filterable
+        code: {},
+        // Filterable, not sortable
+        title: { variant: "text", enableSorting: false },
+        status: { variant: "select" },
+        estimatedHours: { variant: "number" },
+        createdAt: { variant: "date" },
+      } satisfies DataTableColumnConfigs<Task>,
+      defaultSorting: [{ id: "createdAt", desc: true }],
+    });
     ```
+
+    The config's `columns` is an allowlist: a column it doesn't list can't be filtered or sorted, even from the URL. `variant` turns on filtering for the column, and `enableSorting: false` turns off sorting. `DataTableColumnConfigs<Task>` checks the column ids against your row type.
   </Step>
 
   <Step>
     Parse the search params on the server and turn them into a query:
 
     ```tsx title="app/page.tsx"
-    import { getDataTableQuery } from "@/lib/data-table-parsers";
-
     export default async function Page(props: {
       searchParams: Promise<Record<string, string | string[] | undefined>>;
     }) {
-      const search = searchParamsCache.parse(await props.searchParams);
-      // { page, perPage, sorting, filters, joinOperator }
-      const query = getDataTableQuery(search, tasksColumnConfigs);
+      // { page, perPage, sorting, filters, joinOperator, globalFilter }
+      const query = tasksTableConfig.parse(await props.searchParams);
       const { data, pageCount } = await getTasks(query);
 
       return <TasksTable data={data} pageCount={pageCount} />;
     }
     ```
 
-    Type the query function's input with `DataTableColumnConfigsQuery<typeof tasksColumnConfigs>`. Each filter has an `id`, `variant`, `operator`, and `value` to map onto your database query.
+    Type the query function's input with `InferDataTableQuery<typeof tasksTableConfig>` from `@/lib/data-table-config`. Each filter has an `id`, `variant`, `operator`, and `value` to map onto your database query.
   </Step>
 
   <Step>
-    Spread `getColumnOptions` into each column so filtering and sorting match the config:
+    Pass the config, the server data, and `pageCount` to `useDataTable`. The config sets each column's filter and sorting, so the column definitions don't need `enableColumnFilter` or `meta.variant`. Pass `startTransition` from `React.useTransition()` and set `shallow` to `false` to show loading states while the server re-renders:
 
     ```tsx
-    import { getColumnOptions } from "@/lib/data-table-parsers";
+    import { tasksTableConfig } from "@/lib/validations";
 
-    {
-      id: "title",
-      accessorKey: "title",
-      meta: { label: "Title", variant: "text" },
-      ...getColumnOptions(tasksColumnConfigs.title), // [!code highlight]
-    }
-    ```
-  </Step>
-
-  <Step>
-    Pass the server data and `pageCount` to `useDataTable`. Pass `startTransition` from `React.useTransition()` to show loading states while the server re-renders:
-
-    ```tsx
     const [isPending, startTransition] = React.useTransition();
 
     const { table } = useDataTable({
+      config: tasksTableConfig, // [!code highlight]
       data,
       columns,
       pageCount,
+      shallow: false,
       startTransition,
     });
     ```
   </Step>
 </Steps>
+
+### Global Filter
+
+The global filter is stored in the URL as `?search=` and comes back from `config.parse` as `globalFilter`. Pass `globalFilterPlaceholder` to `DataTableToolbar` or `DataTableAdvancedToolbar` to render a search input for it:
+
+```tsx
+<DataTableToolbar table={table} globalFilterPlaceholder="Search tasks..." />
+```
+
+In client mode, TanStack Table's global filter runs over the rows. Set `enableGlobalFilter: false` in the config to turn it off.
+
+### Multiple Tables
+
+Give each config an `id` to render several tables on one page. The id prefixes every URL key, so the tables don't share state:
+
+```ts
+export const tasksTableConfig = createDataTableConfig({
+  id: "tasks",
+  columns,
+});
+// ?tasks.page=2&tasks.status=todo
+```
 
 ### URL Format
 
@@ -459,12 +473,13 @@ Each filterable column has its own search param, keyed by column id. The value i
 ```txt
 ?title=report                     # text, default operator (contains)
 ?title=eq.Weekly%20report         # text, "is"
-?status=todo,done                 # multi-select, default operator (has any of)
-?estimatedHours=2,8               # range, default operator (between)
-?estimatedHours=gt.4              # range, "is greater than"
+?status=todo,done                 # select, default operator (has any of)
+?estimatedHours=2,8               # number, two values (between)
+?estimatedHours=gt.4              # number, "is greater than"
 ?createdAt=is.empty               # no value
 ?sort=createdAt.desc,title.asc
 ?joinOperator=or
+?search=report                    # global filter
 ```
 
 ## API Reference
@@ -476,14 +491,10 @@ The column definitions are used to define the columns of the data table.
 ```tsx
 const columns = React.useMemo<ColumnDef<Project>[]>(() => [
   {
-    // Required: Unique identifier for the column
-    id: "title", // [!code highlight]
-    // Required: Key to access the data, `accessorFn` can also be used
+    // Required: Key to access the data, also used as the column id
     accessorKey: "title", // [!code highlight]
     // Optional: Custom header component
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} label="Title" />
-    ),
+    header: ({ column }) => <DataTableColumnHeader column={column} />,
     // Optional: Custom cell component
     cell: ({ row }) => <div>{row.getValue("title")}</div>,
     // Optional: Meta options for filtering, sorting, and view options
@@ -497,6 +508,7 @@ const columns = React.useMemo<ColumnDef<Project>[]>(() => [
     enableColumnFilter: true, // [!code highlight]
   },
   {
+    // Required with `accessorFn`: Unique identifier for the column
     id: "status",
     // Access nested data using `accessorFn`
     accessorFn: (row) => row.lineItem.status,
@@ -522,7 +534,7 @@ Core configuration options for defining columns.
   data={[
     {
       title: "id",
-      description: "Required: Unique identifier for the column",
+      description: "Unique identifier for the column, used as its URL key. Defaults to `accessorKey`; required with `accessorFn`",
     },
     {
       title: "accessorKey",
@@ -546,11 +558,11 @@ Core configuration options for defining columns.
     },
     {
       title: "enableColumnFilter",
-      description: "By default, the column will not be filtered. Set to `true` to enable filtering",
+      description: "By default, the column will not be filtered. Set to `true` to enable filtering. A config from `createDataTableConfig` sets this from its `variant`",
     },
     {
       title: "enableSorting",
-      description: "Enable sorting for this column",
+      description: "Enable sorting for this column. A config from `createDataTableConfig` sets this from its `enableSorting`",
     },
     {
       title: "enableHiding",
@@ -575,15 +587,23 @@ Column meta options for filtering, sorting, and view options.
     },
     {
       title: "variant",
-      description: "The type of filter to use (`text`, `number`, `select`, etc.)",
+      description: "The column's data type, which picks its filter (`text`, `number`, `date`, `boolean`, `select`). A config from `createDataTableConfig` sets this",
     },
     {
       title: "options",
-      description: "For select/multi-select filters, an array of options with `label`, `value`, and optional `count` and `icon`",
+      description: "For `select` filters, an array of options with `label`, `value`, and optional `count` and `icon`",
     },
     {
-      title: "range",
-      description: "For range filters, a tuple of `[min, max]` values",
+      title: "multiple",
+      description: "For `select` filters, whether the toolbar filter can pick more than one option. Defaults to `true`",
+    },
+    {
+      title: "min",
+      description: "For `number` filters, the lower bound of the toolbar slider",
+    },
+    {
+      title: "max",
+      description: "For `number` filters, the upper bound of the toolbar slider",
     },
     {
       title: "unit",
@@ -598,7 +618,7 @@ Column meta options for filtering, sorting, and view options.
 
 #### Filter Variants
 
-Available variants for [column meta](#column-meta). Set `filter: "range"` on a `number` or `date` column to filter between two values instead of one.
+Available variants for the table config and [column meta](#column-meta).
 
 <PropsTable
   variant="title"
@@ -610,12 +630,12 @@ Available variants for [column meta](#column-meta). Set `filter: "range"` on a `
     {
       title: "number",
       description:
-        "Numeric filters with equals, greater than, less than, etc. With `filter: \"range\"`, a slider between `min` and `max`.",
+        "Numeric filters with equals, greater than, less than, between, etc. The toolbar shows a slider when the column sets `min` and `max`, or in client mode.",
     },
     {
       title: "date",
       description:
-        "Date filters with equals, before, after, etc. With `filter: \"range\"`, a start and end date.",
+        "Date filters with equals, before, after, between, etc. The toolbar picks a start and end date.",
     },
     {
       title: "boolean",
@@ -623,16 +643,21 @@ Available variants for [column meta](#column-meta). Set `filter: "range"` on a `
     },
     {
       title: "select",
-      description: "Single-select filters with predefined options",
-    },
-    {
-      title: "multi-select",
-      description: "Multi-select filters with predefined options",
+      description: "Filters with predefined options. Set `multiple: false` in the column meta to pick one option in the toolbar.",
     },
   ]}
 />
 
 Reference the [TanStack Table Column Definitions Guide](https://tanstack.com/table/latest/docs/guide/column-defs#column-definitions-guide) for detailed column definition guide.
+
+### createDataTableConfig
+
+Creates the table config shared by the server and `useDataTable`. Read the URL on the server with `config.parse(searchParams)`.
+
+<AutoTypeTable
+  path="./types/radix/data-table.ts"
+  name="CreateDataTableConfigProps"
+/>
 
 ### useDataTable
 
@@ -751,14 +776,20 @@ Pagination controls for the data table.
       keys: ["Backspace", "Delete"],
       description: "Removes the focused filter/sort item. Removes the last applied filter/sort when menu trigger is focused.",
     },
+    {
+      keys: ["Escape"],
+      description: "Clears the row selection when focus is inside the table.",
+    },
   ]}
 />
 
 ## Features
 
-- **Advanced Filtering** - Multiple filter types (text, number, date, select, multi-select) with customizable operators
-- **URL State Management** - Sync table state with URL search params using [nuqs](https://nuqs.47ng.com)
+- **Advanced Filtering** - Multiple filter types (text, number, date, boolean, select) with customizable operators
+- **Shared Config** - One config per table for the server and the client, with an optional id for multiple tables on a page
+- **URL State Management** - Sync pagination, sorting, filters, and the global filter with URL search params using [nuqs](https://nuqs.47ng.com)
 - **Sorting** - Multi-column sorting with persistent state
+- **Sticky Header** - Keep the header in view while the rows scroll
 - **Pagination** - Server-side or client-side pagination with customizable page sizes
 - **Column Visibility** - Toggle column visibility with view options menu
 - **Row Selection** - Single or multi-row selection with action bar

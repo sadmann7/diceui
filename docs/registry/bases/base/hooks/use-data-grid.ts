@@ -67,6 +67,7 @@ interface UseDataGridProps<TData extends RowData> extends Omit<
 > {
   overscan?: number;
   autoFocus?: boolean | Partial<CellPosition>;
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
 }
 
 function useDataGrid<TData extends RowData>({
@@ -74,6 +75,7 @@ function useDataGrid<TData extends RowData>({
   columns,
   overscan = OVERSCAN,
   dir: dirProp,
+  onEscapeKeyDown,
   ...props
 }: UseDataGridProps<TData>) {
   const [pendingEdit, setPendingEdit] = React.useState({
@@ -97,6 +99,7 @@ function useDataGrid<TData extends RowData>({
     cell: CellPosition;
     shouldScroll: boolean;
   } | null>(null);
+  const onEscapeKeyDownRef = useValueAsRef(onEscapeKeyDown);
   const propsRef = useValueAsRef(props);
   const stableProps = useStableProps(props, propsRef);
 
@@ -426,7 +429,7 @@ function useDataGrid<TData extends RowData>({
       const focusedCell = getFocusedCell();
       const isUtilityCellFocused =
         focusedCell !== null && !getIsDataColumnId(focusedCell.columnId);
-      // The focused cell stays the active range so selecting rows elsewhere doesn't move focus and scroll to them
+      // The focused cell stays the active range so selecting rows elsewhere doesn't move focus and scroll to them.
       if (focusedCell) {
         ranges.push({
           anchorRowId: focusedCell.rowId,
@@ -468,7 +471,7 @@ function useDataGrid<TData extends RowData>({
       if (!container || !(target instanceof Element)) return null;
       if (!container.contains(target)) return null;
 
-      // Utility cells manage their own pointer and focus events
+      // Utility cells manage their own pointer and focus events.
       const cellElement = target.closest<HTMLElement>(
         '[data-slot="data-grid-cell"]:not([data-utility])',
       );
@@ -591,13 +594,14 @@ function useDataGrid<TData extends RowData>({
 
   const table = useTable(tableOptions, selectTableState);
 
-  const { store } = table;
   React.useEffect(
     () => () => {
-      tableRef.current?.commitCellUpdates();
-      revokeFileObjectUrls(store, dataPropRef.current);
+      const currentTable = tableRef.current;
+      if (!currentTable) return;
+      currentTable.commitCellUpdates();
+      revokeFileObjectUrls(currentTable, dataPropRef.current);
     },
-    [store, dataPropRef],
+    [dataPropRef],
   );
 
   if (tableRef.current === null) {
@@ -781,7 +785,7 @@ function useDataGrid<TData extends RowData>({
         case "ArrowUp":
           break;
         case "ArrowDown": {
-          // Stops the menu trigger from opening its menu
+          // Stops the menu trigger from opening its menu.
           event.stopPropagation();
           const firstRowId = getRowIdAtDisplayIndex(0);
           if (!firstRowId) break;
@@ -1081,6 +1085,7 @@ function useDataGrid<TData extends RowData>({
           direction = altKey ? "pageright" : "pagedown";
           break;
         case "Escape":
+          if (event.defaultPrevented) return;
           event.preventDefault();
           if (hasCellRangeSelection || currentTable.getHasRowSelection()) {
             currentTable.clearSelection();
@@ -1176,7 +1181,7 @@ function useDataGrid<TData extends RowData>({
 
       const isInDataGrid = dataGridElement.contains(target);
 
-      // Works from anywhere but text fields, editors and another grid, like an app's undo
+      // Works from anywhere but text fields, editors and another grid, like an app's undo.
       const undoRedoKey = key.toLowerCase();
       if (
         currentTable &&
@@ -1209,6 +1214,9 @@ function useDataGrid<TData extends RowData>({
           tableRef.current?.getHasRowSelection();
 
         if (hasSelections) {
+          onEscapeKeyDownRef.current?.(event);
+          if (event.defaultPrevented) return;
+
           event.preventDefault();
           event.stopPropagation();
           tableRef.current?.clearSelection();
@@ -1220,7 +1228,7 @@ function useDataGrid<TData extends RowData>({
     return () => {
       window.removeEventListener("keydown", onGlobalKeyDown, true);
     };
-  }, []);
+  }, [onEscapeKeyDownRef]);
 
   React.useEffect(() => {
     const autoFocus = propsRef.current.autoFocus;

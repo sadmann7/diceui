@@ -1,0 +1,118 @@
+---
+title: November 2026 - Data Table Config
+description: One config per Data Table, shared by the server and the hook, plus a URL global filter and a sticky header. Includes breaking changes.
+date: 2026-11-13T12:00:00Z
+---
+
+[Data Table](/docs/components/data-table) now describes each table once with `createDataTableConfig`. The server reads the URL with `config.parse`, and `useDataTable` takes the same config, so the two can't drift. This release has breaking changes for server mode, column configs, and table defaults.
+
+## Breaking changes
+
+- **One config for the server and the hook.** `getDataTableSearchParams` and `getDataTableQuery` are removed. Create the config once and parse the search params with it.
+
+  ```ts
+  import { getDataTableSearchParams } from "@/lib/data-table-parsers"; // [!code --]
+  import { createDataTableConfig } from "@/lib/data-table-config"; // [!code ++]
+
+  export const searchParamsCache = createSearchParamsCache( // [!code --]
+    getDataTableSearchParams({ columnConfigs, defaultSorting }), // [!code --]
+  ); // [!code --]
+  export const tasksTableConfig = createDataTableConfig({ // [!code ++]
+    columns: columnConfigs, // [!code ++]
+    defaultSorting, // [!code ++]
+  }); // [!code ++]
+
+  const search = searchParamsCache.parse(searchParams); // [!code --]
+  const query = getDataTableQuery(search, columnConfigs); // [!code --]
+  const query = tasksTableConfig.parse(searchParams); // [!code ++]
+  ```
+
+  Type the query with `InferDataTableQuery<typeof tasksTableConfig>` instead of `DataTableColumnConfigsQuery<typeof columnConfigs>`.
+
+- **Columns read the config.** `getColumnOptions` is removed. Pass the config to `useDataTable` and it sets each column's filter and sorting. Columns the config doesn't list can't be filtered or sorted.
+
+  ```tsx
+  {
+    accessorKey: "title",
+    meta: { label: "Title" },
+    ...getColumnOptions(columnConfigs.title), // [!code --]
+  }
+
+  useDataTable({
+    config: tasksTableConfig, // [!code ++]
+    data,
+    columns,
+    pageCount,
+  });
+  ```
+
+- **Defaults move to the config.** Sorting, page size, page size options, the join operator, and the global filter switch are set on the config. `useDataTable` also takes inline options, like `config: { defaultSorting }`.
+
+  ```tsx
+  useDataTable({
+    data,
+    columns,
+    initialState: { // [!code --]
+      sorting: [{ id: "createdAt", desc: true }], // [!code --]
+      pagination: { pageIndex: 0, pageSize: 20 }, // [!code --]
+    }, // [!code --]
+    enableGlobalFilter: false, // [!code --]
+    config: { // [!code ++]
+      defaultSorting: [{ id: "createdAt", desc: true }], // [!code ++]
+      defaultPageSize: 20, // [!code ++]
+      enableGlobalFilter: false, // [!code ++]
+    }, // [!code ++]
+  });
+
+  <DataTablePagination table={table} pageSizeOptions={[10, 25, 50]} /> // [!code --]
+  createDataTableConfig({ columns, pageSizeOptions: [10, 25, 50] }); // [!code ++]
+  ```
+
+- **`id` replaces `queryKeys`.** Give the config an `id` to render several tables on one page. It prefixes every URL key, like `?tasks.page=2`.
+
+  ```tsx
+  useDataTable({
+    queryKeys: { page: "tasksPage", perPage: "tasksPerPage" }, // [!code --]
+    config: createDataTableConfig({ id: "tasks", columns }), // [!code ++]
+  });
+  ```
+
+- **Column config and variant names.**
+
+  | Before | After |
+  | --- | --- |
+  | `isSortable: false` | `enableSorting: false` |
+  | `"multi-select"` | `"select"` |
+  | `"select"` (one option) | `"select"` with `multiple: false` in the column meta |
+  | `"number"` with `filter: "range"` | `"number"`, with `min` and `max` in the column meta for the slider |
+  | `"date"` with `filter: "range"` | `"date"` |
+
+- **Removed hook props.** `throttleMs` and `autoResetPageIndex` are removed. `debounceMs` only applies with `shallow: false` in server mode, and `clearOnDefault` now defaults to `true`.
+
+- **Removed helpers.** `isRelativeToToday` and the `DataTableQueryKeys` type are removed.
+
+## Data Table
+
+- **Global filter in the URL.** The global filter is stored as `?search=` and reaches the server as `query.globalFilter`. Pass `globalFilterPlaceholder` to either toolbar to show a search input.
+- **Sticky header.** Set `stickyHeader` on `DataTable` to scroll the rows inside the table and keep the header in view.
+- **Escape clears the selection.** Pressing <Kbd>Escape</Kbd> inside the table clears the row selection. Call `event.preventDefault()` in `onEscapeKeyDown` to keep it.
+- **Header sort.** Picking Asc or Desc in a column header makes it the first sort and keeps the others as tiebreakers, unless multi-sort is off.
+- **Column ids.** Columns defined by `accessorKey` alone now sort and filter through the URL, and `DataTableColumnHeader` reads its `label` from `meta.label` when you leave it out.
+- **Pagination.** A page size that isn't one of the options still shows in the select, and in client mode, changing rows no longer jumps back to page 1.
+- **Narrow widths and long labels.** Toolbars, filter menus, chips, and headers wrap or truncate instead of overflowing, and labels read correctly in right-to-left layouts.
+
+## Data Grid
+
+- **Escape.** `useDataGrid` takes `onEscapeKeyDown`. Call `event.preventDefault()` to keep the selection.
+- **Header sort.** Picking Asc or Desc in a column header makes it the first sort, like the Data Table.
+- **Narrow widths and long labels.** The filter, sort, and view menus stay readable at narrow widths and with long labels.
+
+## Migrating
+
+1. Reinstall the Data Table and Data Grid components you use.
+2. Replace `getDataTableSearchParams` with `createDataTableConfig`, and `getDataTableQuery` with `config.parse(searchParams)`.
+3. Remove `getColumnOptions` from your columns and pass `config` to `useDataTable`.
+4. Move `initialState.sorting`, the page size, `pageSizeOptions`, and `enableGlobalFilter` onto the config.
+5. Replace `queryKeys` with a config `id`.
+6. Rename variants and column configs using the table above.
+7. Remove `throttleMs` and `autoResetPageIndex` from `useDataTable`.
