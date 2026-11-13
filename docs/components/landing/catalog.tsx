@@ -47,7 +47,7 @@ export function Catalog() {
             <div
               key={tile.slug}
               className={cn(
-                "flex h-80 flex-col overflow-hidden rounded-[14px] border bg-card",
+                "flex h-80 flex-col overflow-hidden rounded-[14px] border bg-card dark:bg-card/40",
                 tile.className,
               )}
             >

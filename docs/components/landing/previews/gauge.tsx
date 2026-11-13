@@ -11,21 +11,26 @@ import {
 
 export default function GaugePreview() {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center gap-3">
-      <Gauge
-        value={74}
-        size={180}
-        thickness={14}
-        startAngle={-90}
-        endAngle={90}
-      >
-        <GaugeIndicator>
-          <GaugeTrack />
-          <GaugeRange />
-        </GaugeIndicator>
-        <GaugeValueText />
-        <GaugeLabel>Capacity</GaugeLabel>
-      </Gauge>
+    <div className="flex flex-1 flex-col items-center justify-center gap-2">
+      <div className="h-28 overflow-hidden">
+        <Gauge
+          value={74}
+          size={180}
+          thickness={14}
+          startAngle={-90}
+          endAngle={90}
+        >
+          <GaugeIndicator>
+            <GaugeTrack />
+            <GaugeRange />
+          </GaugeIndicator>
+          <GaugeValueText />
+          <GaugeLabel className="sr-only">Capacity</GaugeLabel>
+        </Gauge>
+      </div>
+      <span aria-hidden="true" className="text-sm text-muted-foreground">
+        Capacity
+      </span>
     </div>
   );
 }

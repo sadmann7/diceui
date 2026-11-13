@@ -16,11 +16,12 @@ export default function CropperPreview() {
   return (
     <div className="flex flex-1 flex-col p-5">
       <Cropper
-        aspectRatio={3 / 2}
+        aspectRatio={1}
         crop={crop}
         zoom={zoom}
         onCropChange={setCrop}
         onZoomChange={setZoom}
+        objectFit="cover"
         preventScrollZoom
         className="flex-1 rounded-md"
       >

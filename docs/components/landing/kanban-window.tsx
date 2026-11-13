@@ -139,7 +139,10 @@ function TaskColumn({
   return (
     <KanbanColumn
       value={value}
-      className={cn("bg-transparent p-1 shadow-none", className)}
+      className={cn(
+        "border-0 bg-transparent p-1 shadow-none dark:bg-transparent",
+        className,
+      )}
     >
       <div className="flex items-center gap-2 px-1 pb-1">
         <span className={cn("size-1.5 rounded-full", columnDots[value])} />

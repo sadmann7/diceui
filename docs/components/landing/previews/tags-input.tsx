@@ -19,7 +19,12 @@ export default function TagsInputPreview() {
 
   return (
     <div className="flex flex-1 flex-col justify-center p-5">
-      <TagsInput value={tags} onValueChange={setTags} editable>
+      <TagsInput
+        value={tags}
+        onValueChange={setTags}
+        editable
+        className="w-full"
+      >
         <TagsInputLabel>Stack</TagsInputLabel>
         <TagsInputList>
           {tags.map((tag) => (
