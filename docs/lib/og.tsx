@@ -1,17 +1,32 @@
+import { SITE_NAME, SITE_URL } from "@/lib/site";
+
 export const OG_IMAGE_SIZE = {
   width: 1200,
   height: 630,
 };
 
-function LogoMark() {
+const colors = {
+  background: "#060607",
+  foreground: "#f5f5f6",
+  muted: "#a2a2aa",
+  subtle: "#8a8a93",
+  border: "#1c1c20",
+};
+
+interface LogoMarkProps {
+  size: number;
+  color: string;
+}
+
+function LogoMark({ size, color }: LogoMarkProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="56"
-      height="56"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="white"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -27,24 +42,115 @@ function LogoMark() {
 
 interface OgImageProps {
   title: string;
+  titleAccent?: string;
   description?: string;
+  eyebrow?: string;
+  path?: string;
 }
 
-export function OgImage({ title, description }: OgImageProps) {
+export function OgImage({
+  title,
+  titleAccent,
+  description,
+  eyebrow,
+  path = "",
+}: OgImageProps) {
+  const titleSize = titleAccent ? 80 : title.length > 24 ? 72 : 96;
+
   return (
     <div
-      tw="flex h-full w-full flex-col p-16 text-white"
       style={{
+        display: "flex",
+        position: "relative",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        width: "100%",
+        height: "100%",
+        padding: "72px 80px",
+        overflow: "hidden",
         fontFamily: "Geist",
-        background: "linear-gradient(to bottom right, #111827, #000000)",
+        color: colors.foreground,
+        background: colors.background,
       }}
     >
-      <p tw="m-0 text-[82px] font-semibold">{title}</p>
-      <p tw="m-0 mt-4 text-[44px] text-[rgba(240,240,240,0.8)]">
-        {description}
-      </p>
-      <div tw="mt-auto flex justify-end">
-        <LogoMark />
+      <div
+        style={{ display: "flex", position: "absolute", left: 880, top: 380 }}
+      >
+        <LogoMark size={520} color={colors.border} />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <LogoMark size={36} color={colors.foreground} />
+          <span style={{ fontSize: 32, fontWeight: 600, letterSpacing: -0.8 }}>
+            {SITE_NAME}
+          </span>
+        </div>
+        <span
+          style={{
+            fontFamily: "Geist Mono",
+            fontSize: 22,
+            color: colors.subtle,
+          }}
+        >
+          {`${new URL(SITE_URL).host}${path}`}
+        </span>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: titleAccent ? 24 : 20,
+        }}
+      >
+        {eyebrow ? (
+          <span
+            style={{
+              fontFamily: "Geist Mono",
+              fontSize: 20,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              color: colors.subtle,
+            }}
+          >
+            {eyebrow}
+          </span>
+        ) : null}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            fontSize: titleSize,
+            fontWeight: 600,
+            lineHeight: 1.05,
+            letterSpacing: titleAccent ? -3 : -3.5,
+          }}
+        >
+          <span style={{ display: "block", lineClamp: 2 }}>{title}</span>
+          {titleAccent ? (
+            <span style={{ color: colors.subtle }}>{titleAccent}</span>
+          ) : null}
+        </div>
+        {description ? (
+          <p
+            style={{
+              display: "block",
+              width: 680,
+              margin: 0,
+              lineClamp: 3,
+              fontSize: titleAccent ? 26 : 28,
+              lineHeight: 1.45,
+              color: colors.muted,
+            }}
+          >
+            {description}
+          </p>
+        ) : null}
       </div>
     </div>
   );
