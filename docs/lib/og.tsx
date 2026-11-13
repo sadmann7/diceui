@@ -5,14 +5,6 @@ export const OG_IMAGE_SIZE = {
   height: 630,
 };
 
-const colors = {
-  background: "#060607",
-  foreground: "#f5f5f6",
-  muted: "#a2a2aa",
-  subtle: "#8a8a93",
-  border: "#1c1c20",
-};
-
 interface LogoMarkProps {
   size: number;
   color: string;
@@ -55,98 +47,59 @@ export function OgImage({
   eyebrow,
   path = "",
 }: OgImageProps) {
-  const titleSize = titleAccent ? 80 : title.length > 24 ? 72 : 96;
-
   return (
     <div
-      style={{
-        display: "flex",
-        position: "relative",
-        flexDirection: "column",
-        justifyContent: "space-between",
-        width: "100%",
-        height: "100%",
-        padding: "72px 80px",
-        overflow: "hidden",
-        fontFamily: "Geist",
-        color: colors.foreground,
-        background: colors.background,
-      }}
+      tw="relative flex h-full w-full flex-col justify-between overflow-hidden bg-[#060607] px-20 py-[72px] text-[#f5f5f6]"
+      style={{ fontFamily: "Geist" }}
     >
-      <div
-        style={{ display: "flex", position: "absolute", left: 880, top: 380 }}
-      >
-        <LogoMark size={520} color={colors.border} />
+      <div tw="absolute top-[380px] left-[880px] flex">
+        <LogoMark size={520} color="#1c1c20" />
       </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <LogoMark size={36} color={colors.foreground} />
-          <span style={{ fontSize: 32, fontWeight: 600, letterSpacing: -0.8 }}>
+      <div tw="flex items-center justify-between">
+        <div tw="flex items-center">
+          <LogoMark size={36} color="#f5f5f6" />
+          <span tw="ml-3 text-[32px] font-semibold tracking-[-0.8px]">
             {SITE_NAME}
           </span>
         </div>
         <span
-          style={{
-            fontFamily: "Geist Mono",
-            fontSize: 22,
-            color: colors.subtle,
-          }}
+          tw="text-[22px] text-[#8a8a93]"
+          style={{ fontFamily: "Geist Mono" }}
         >
           {`${new URL(SITE_URL).host}${path}`}
         </span>
       </div>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: titleAccent ? 24 : 20,
-        }}
-      >
+      <div tw="flex flex-col">
         {eyebrow ? (
           <span
-            style={{
-              fontFamily: "Geist Mono",
-              fontSize: 20,
-              letterSpacing: 2,
-              textTransform: "uppercase",
-              color: colors.subtle,
-            }}
+            tw="mb-5 text-[20px] tracking-[2px] text-[#8a8a93] uppercase"
+            style={{ fontFamily: "Geist Mono" }}
           >
             {eyebrow}
           </span>
         ) : null}
         <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            fontSize: titleSize,
-            fontWeight: 600,
-            lineHeight: 1.05,
-            letterSpacing: titleAccent ? -3 : -3.5,
-          }}
+          tw={
+            titleAccent
+              ? "flex flex-col text-[80px] leading-[1.05] font-semibold tracking-[-3px]"
+              : title.length > 24
+                ? "flex flex-col text-[72px] leading-[1.05] font-semibold tracking-[-3.5px]"
+                : "flex flex-col text-[96px] leading-[1.05] font-semibold tracking-[-3.5px]"
+          }
         >
-          <span style={{ display: "block", lineClamp: 2 }}>{title}</span>
-          {titleAccent ? (
-            <span style={{ color: colors.subtle }}>{titleAccent}</span>
-          ) : null}
+          <span tw="block" style={{ display: "block", lineClamp: 2 }}>
+            {title}
+          </span>
+          {titleAccent ? <span tw="text-[#8a8a93]">{titleAccent}</span> : null}
         </div>
         {description ? (
           <p
-            style={{
-              display: "block",
-              width: 680,
-              margin: 0,
-              lineClamp: 3,
-              fontSize: titleAccent ? 26 : 28,
-              lineHeight: 1.45,
-              color: colors.muted,
-            }}
+            tw={
+              titleAccent
+                ? "m-0 mt-6 block w-[680px] text-[26px] leading-[1.45] text-[#a2a2aa]"
+                : "m-0 mt-5 block w-[680px] text-[28px] leading-[1.45] text-[#a2a2aa]"
+            }
+            style={{ display: "block", lineClamp: 3 }}
           >
             {description}
           </p>
