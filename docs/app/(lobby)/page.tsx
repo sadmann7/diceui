@@ -1,46 +1,13 @@
-import Link from "next/link";
-
-import { GITHUB_URL, SITE_DESCRIPTION, SITE_TAGLINE } from "@/lib/site";
-import { source } from "@/lib/source";
-import { Button } from "@/styles/radix-nova/ui/button";
-
-const firstComponentUrl =
-  source
-    .getPages()
-    .filter((page) => page.url.startsWith("/docs/components/base/"))
-    .sort((a, b) => a.url.localeCompare(b.url))[0]?.url ??
-  "/docs/components/base/action-bar";
+import { Catalog } from "@/components/landing/catalog";
+import { Hero } from "@/components/landing/hero";
+import { Source } from "@/components/landing/source";
 
 export default function IndexPage(_props: PageProps<"/">) {
   return (
-    <section className="container flex flex-col items-center justify-center gap-6 pt-6 pb-8 md:py-10">
-      <div className="flex max-w-5xl flex-col items-center gap-4">
-        <h1
-          className="animate-fade-up bg-linear-to-br from-foreground/80 to-muted-foreground bg-clip-text text-center text-4xl/tight leading-tight font-bold tracking-tighter text-balance text-transparent opacity-0 drop-shadow-xs md:text-5xl/tight"
-          style={{ animationDelay: "0.20s", animationFillMode: "forwards" }}
-        >
-          {SITE_TAGLINE}
-        </h1>
-        <p
-          className="max-w-2xl animate-fade-up text-center text-lg font-light text-balance text-muted-foreground opacity-0 md:text-xl"
-          style={{ animationDelay: "0.30s", animationFillMode: "forwards" }}
-        >
-          {SITE_DESCRIPTION}
-        </p>
-        <div
-          className="flex animate-fade-up justify-center gap-4 pt-2 opacity-0"
-          style={{ animationDelay: "0.40s", animationFillMode: "forwards" }}
-        >
-          <Button asChild>
-            <Link href={firstComponentUrl}>View Components</Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link target="_blank" rel="noreferrer" href={GITHUB_URL}>
-              GitHub
-            </Link>
-          </Button>
-        </div>
-      </div>
-    </section>
+    <>
+      <Hero />
+      <Catalog />
+      <Source />
+    </>
   );
 }
