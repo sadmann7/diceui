@@ -6,7 +6,7 @@ import { SITE_DESCRIPTION } from "@/lib/site";
 import { cn } from "@/lib/utils";
 import { Button } from "@/styles/radix-nova/ui/button";
 
-const FADE_UP =
+const FADE_UP_CLASS_NAME =
   "animate-fade-up opacity-0 [animation-duration:400ms] [animation-fill-mode:forwards] [animation-timing-function:cubic-bezier(0.23,1,0.32,1)] motion-reduce:animate-none motion-reduce:opacity-100";
 
 export function Hero() {
@@ -17,7 +17,7 @@ export function Hero() {
           <Link
             href="/docs/components/base/query-builder"
             className={cn(
-              FADE_UP,
+              FADE_UP_CLASS_NAME,
               "group flex items-center gap-2 rounded-full border bg-card py-1 ps-1 pe-3 text-[13px] whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground",
             )}
           >
@@ -29,7 +29,7 @@ export function Hero() {
           </Link>
           <h1
             className={cn(
-              FADE_UP,
+              FADE_UP_CLASS_NAME,
               "pt-7 text-[40px] leading-[1.06] font-semibold tracking-[-0.04em] [animation-delay:60ms] sm:text-5xl md:text-[66px]",
             )}
           >
@@ -39,7 +39,7 @@ export function Hero() {
           </h1>
           <p
             className={cn(
-              FADE_UP,
+              FADE_UP_CLASS_NAME,
               "max-w-150 pt-6 text-base leading-[1.55] text-muted-foreground [animation-delay:120ms] md:text-lg",
             )}
           >
@@ -47,7 +47,7 @@ export function Hero() {
           </p>
           <div
             className={cn(
-              FADE_UP,
+              FADE_UP_CLASS_NAME,
               "flex flex-wrap justify-center gap-2.5 pt-8 [animation-delay:180ms]",
             )}
           >
@@ -65,7 +65,9 @@ export function Hero() {
             </Button>
           </div>
         </div>
-        <div className={cn(FADE_UP, "w-full [animation-delay:240ms]")}>
+        <div
+          className={cn(FADE_UP_CLASS_NAME, "w-full [animation-delay:240ms]")}
+        >
           <KanbanWindow />
         </div>
       </div>
