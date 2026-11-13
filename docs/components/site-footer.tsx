@@ -1,16 +1,21 @@
-import { X_URL } from "@/lib/site";
+import { SITE_NAME } from "@/lib/site";
+
+const year = new Date().getFullYear();
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t bg-fd-card py-6 text-fd-secondary-foreground">
-      <div className="container flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <p className="text-sm text-muted-foreground">
+    <footer className="mt-auto border-t">
+      <div className="mx-auto flex max-w-[1248px] items-center justify-between gap-4 px-6 py-7 font-mono text-xs text-muted-foreground">
+        <p>
+          © {year} {SITE_NAME}.
+        </p>
+        <p>
           Built by{" "}
           <a
-            href={X_URL}
+            href="https://x.com/sadmann17"
             rel="noreferrer noopener"
             target="_blank"
-            className="font-medium underline underline-offset-4 transition-colors hover:text-foreground/80"
+            className="text-foreground/70 underline underline-offset-4 transition-colors hover:text-foreground"
           >
             sadman
           </a>

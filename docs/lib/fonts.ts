@@ -13,11 +13,14 @@ export const fontMono = Geist_Mono({
 export async function loadFonts(): Promise<
   { name: string; data: Buffer; weight: 400 | 600; style: "normal" }[]
 > {
-  const [normal, semibold] = await Promise.all([
+  const [normal, semibold, mono] = await Promise.all([
     import("../assets/fonts/geist-regular-otf.json").then(
       (mod) => mod.default ?? mod,
     ),
     import("../assets/fonts/geist-semibold-otf.json").then(
+      (mod) => mod.default ?? mod,
+    ),
+    import("../assets/fonts/geistmono-regular-otf.json").then(
       (mod) => mod.default ?? mod,
     ),
   ]);
@@ -33,6 +36,12 @@ export async function loadFonts(): Promise<
       name: "Geist",
       data: Buffer.from(semibold.base64Font, "base64"),
       weight: 600 as const,
+      style: "normal" as const,
+    },
+    {
+      name: "Geist Mono",
+      data: Buffer.from(mono.base64Font, "base64"),
+      weight: 400 as const,
       style: "normal" as const,
     },
   ];

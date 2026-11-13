@@ -1,17 +1,24 @@
+import { SITE_NAME, SITE_URL } from "@/lib/site";
+
 export const OG_IMAGE_SIZE = {
-  width: 1200,
-  height: 630,
+  width: 2400,
+  height: 1260,
 };
 
-function LogoMark() {
+interface LogoMarkProps {
+  size: number;
+  color: string;
+}
+
+function LogoMark({ size, color }: LogoMarkProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="56"
-      height="56"
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
-      stroke="white"
+      stroke={color}
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -27,24 +34,76 @@ function LogoMark() {
 
 interface OgImageProps {
   title: string;
+  titleAccent?: string;
   description?: string;
+  eyebrow?: string;
+  path?: string;
 }
 
-export function OgImage({ title, description }: OgImageProps) {
+export function OgImage({
+  title,
+  titleAccent,
+  description,
+  eyebrow,
+  path = "",
+}: OgImageProps) {
   return (
     <div
-      tw="flex h-full w-full flex-col p-16 text-white"
-      style={{
-        fontFamily: "Geist",
-        background: "linear-gradient(to bottom right, #111827, #000000)",
-      }}
+      tw="relative flex h-full w-full flex-col justify-between overflow-hidden bg-[#060607] px-40 py-[144px] text-[#f5f5f6]"
+      style={{ fontFamily: "Geist" }}
     >
-      <p tw="m-0 text-[82px] font-semibold">{title}</p>
-      <p tw="m-0 mt-4 text-[44px] text-[rgba(240,240,240,0.8)]">
-        {description}
-      </p>
-      <div tw="mt-auto flex justify-end">
-        <LogoMark />
+      <div tw="absolute top-[760px] left-[1760px] flex">
+        <LogoMark size={1040} color="#1c1c20" />
+      </div>
+      <div tw="flex items-center justify-between">
+        <div tw="flex items-center">
+          <LogoMark size={72} color="#f5f5f6" />
+          <span tw="ml-6 text-[64px] font-semibold tracking-[-1.6px]">
+            {SITE_NAME}
+          </span>
+        </div>
+        <span
+          tw="text-[44px] text-[#8a8a93]"
+          style={{ fontFamily: "Geist Mono" }}
+        >
+          {`${new URL(SITE_URL).host}${path}`}
+        </span>
+      </div>
+      <div tw="flex flex-col">
+        {eyebrow ? (
+          <span
+            tw="mb-10 text-[40px] tracking-[4px] text-[#8a8a93] uppercase"
+            style={{ fontFamily: "Geist Mono" }}
+          >
+            {eyebrow}
+          </span>
+        ) : null}
+        <div
+          tw={
+            titleAccent
+              ? "flex flex-col text-[160px] leading-[1.05] font-semibold tracking-[-6px]"
+              : title.length > 24
+                ? "flex flex-col text-[144px] leading-[1.05] font-semibold tracking-[-7px]"
+                : "flex flex-col text-[192px] leading-[1.05] font-semibold tracking-[-7px]"
+          }
+        >
+          <span tw="block" style={{ display: "block", lineClamp: 2 }}>
+            {title}
+          </span>
+          {titleAccent ? <span tw="text-[#8a8a93]">{titleAccent}</span> : null}
+        </div>
+        {description ? (
+          <p
+            tw={
+              titleAccent
+                ? "m-0 mt-12 block w-[1360px] text-[52px] leading-[1.45] text-[#a2a2aa]"
+                : "m-0 mt-10 block w-[1360px] text-[56px] leading-[1.45] text-[#a2a2aa]"
+            }
+            style={{ display: "block", lineClamp: 3 }}
+          >
+            {description}
+          </p>
+        ) : null}
       </div>
     </div>
   );

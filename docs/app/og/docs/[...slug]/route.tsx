@@ -18,7 +18,12 @@ export async function GET(
   const fonts = await loadFonts();
 
   return new ImageResponse(
-    <OgImage title={page.data.title} description={page.data.description} />,
+    <OgImage
+      title={page.data.title}
+      description={page.data.description}
+      eyebrow={page.slugs.length > 1 ? page.slugs[0] : undefined}
+      path="/docs"
+    />,
     {
       ...OG_IMAGE_SIZE,
       fonts,

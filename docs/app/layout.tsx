@@ -50,9 +50,6 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
     creator: "@sadmann17",
   },
-  icons: {
-    icon: "/icon.png",
-  },
 };
 
 export const viewport: Viewport = {
