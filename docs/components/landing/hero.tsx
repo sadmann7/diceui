@@ -17,7 +17,7 @@ export function Hero() {
             href="/docs/components/base/query-builder"
             className={cn(
               enter,
-              "flex items-center gap-[9px] rounded-full border bg-card px-[11px] py-1.5 text-[13px] text-muted-foreground transition-colors hover:text-foreground",
+              "flex items-center gap-[9px] rounded-full border bg-card px-[11px] py-1.5 text-[13px] whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground",
             )}
           >
             <span className="size-[5px] rounded-full bg-emerald-500" />
@@ -25,7 +25,10 @@ export function Hero() {
               NEW
             </span>
             <span className="h-2.5 w-px bg-border" />
-            Query Builder and Presentation just landed
+            <span>
+              Query Builder and Presentation
+              <span className="hidden sm:inline"> just landed</span>
+            </span>
             <ArrowRight className="size-[13px]" />
           </Link>
           <h1

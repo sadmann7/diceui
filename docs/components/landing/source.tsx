@@ -1,4 +1,4 @@
-import { Copy } from "lucide-react";
+import { CopyButton } from "@/components/copy-button";
 
 type TokenKind = "keyword" | "punctuation" | "name" | "string";
 
@@ -81,6 +81,10 @@ const code: [string, TokenKind][][] = [
   ],
 ];
 
+const codeText = code
+  .map((line) => line.map(([text]) => text).join(""))
+  .join("\n");
+
 const principles = [
   {
     title: "Edge cases handled",
@@ -156,10 +160,7 @@ export function Source() {
                   components/task-actions.tsx
                 </span>
               </span>
-              <Copy
-                aria-hidden="true"
-                className="size-3 text-muted-foreground/70"
-              />
+              <CopyButton value={codeText} className="-me-1.5 size-6" />
             </figcaption>
             <pre className="overflow-x-auto py-4 pr-4 pl-3 font-mono text-[11px] leading-5">
               <code className="flex flex-col">

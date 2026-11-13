@@ -45,7 +45,7 @@ export default function ActionBarPreview() {
   return (
     <div
       ref={setContainer}
-      className="relative flex flex-1 flex-col items-center px-5 pt-6 pb-20"
+      className="relative flex flex-1 flex-col items-center justify-center px-5 pt-5 pb-[76px]"
     >
       <div className="flex w-full max-w-sm flex-col gap-1.5">
         {tasks.map((task) => (

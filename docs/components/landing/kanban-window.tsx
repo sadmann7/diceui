@@ -328,15 +328,15 @@ export function KanbanWindow() {
           <ActionBarGroup>
             <ActionBarItem>
               <UserPlus />
-              Assign
+              <span className="sr-only sm:not-sr-only">Assign</span>
             </ActionBarItem>
             <ActionBarItem>
               <Tag />
-              Label
+              <span className="sr-only sm:not-sr-only">Label</span>
             </ActionBarItem>
             <ActionBarItem onSelect={onArchive}>
               <Archive />
-              Archive
+              <span className="sr-only sm:not-sr-only">Archive</span>
             </ActionBarItem>
           </ActionBarGroup>
         </ActionBar>
