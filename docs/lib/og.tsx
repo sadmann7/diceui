@@ -1,8 +1,8 @@
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 export const OG_IMAGE_SIZE = {
-  width: 1200,
-  height: 630,
+  width: 2400,
+  height: 1260,
 };
 
 interface LogoMarkProps {
@@ -49,21 +49,21 @@ export function OgImage({
 }: OgImageProps) {
   return (
     <div
-      tw="relative flex h-full w-full flex-col justify-between overflow-hidden bg-[#060607] px-20 py-[72px] text-[#f5f5f6]"
+      tw="relative flex h-full w-full flex-col justify-between overflow-hidden bg-[#060607] px-40 py-[144px] text-[#f5f5f6]"
       style={{ fontFamily: "Geist" }}
     >
-      <div tw="absolute top-[380px] left-[880px] flex">
-        <LogoMark size={520} color="#1c1c20" />
+      <div tw="absolute top-[760px] left-[1760px] flex">
+        <LogoMark size={1040} color="#1c1c20" />
       </div>
       <div tw="flex items-center justify-between">
         <div tw="flex items-center">
-          <LogoMark size={36} color="#f5f5f6" />
-          <span tw="ml-3 text-[32px] font-semibold tracking-[-0.8px]">
+          <LogoMark size={72} color="#f5f5f6" />
+          <span tw="ml-6 text-[64px] font-semibold tracking-[-1.6px]">
             {SITE_NAME}
           </span>
         </div>
         <span
-          tw="text-[22px] text-[#8a8a93]"
+          tw="text-[44px] text-[#8a8a93]"
           style={{ fontFamily: "Geist Mono" }}
         >
           {`${new URL(SITE_URL).host}${path}`}
@@ -72,7 +72,7 @@ export function OgImage({
       <div tw="flex flex-col">
         {eyebrow ? (
           <span
-            tw="mb-5 text-[20px] tracking-[2px] text-[#8a8a93] uppercase"
+            tw="mb-10 text-[40px] tracking-[4px] text-[#8a8a93] uppercase"
             style={{ fontFamily: "Geist Mono" }}
           >
             {eyebrow}
@@ -81,10 +81,10 @@ export function OgImage({
         <div
           tw={
             titleAccent
-              ? "flex flex-col text-[80px] leading-[1.05] font-semibold tracking-[-3px]"
+              ? "flex flex-col text-[160px] leading-[1.05] font-semibold tracking-[-6px]"
               : title.length > 24
-                ? "flex flex-col text-[72px] leading-[1.05] font-semibold tracking-[-3.5px]"
-                : "flex flex-col text-[96px] leading-[1.05] font-semibold tracking-[-3.5px]"
+                ? "flex flex-col text-[144px] leading-[1.05] font-semibold tracking-[-7px]"
+                : "flex flex-col text-[192px] leading-[1.05] font-semibold tracking-[-7px]"
           }
         >
           <span tw="block" style={{ display: "block", lineClamp: 2 }}>
@@ -96,8 +96,8 @@ export function OgImage({
           <p
             tw={
               titleAccent
-                ? "m-0 mt-6 block w-[680px] text-[26px] leading-[1.45] text-[#a2a2aa]"
-                : "m-0 mt-5 block w-[680px] text-[28px] leading-[1.45] text-[#a2a2aa]"
+                ? "m-0 mt-12 block w-[1360px] text-[52px] leading-[1.45] text-[#a2a2aa]"
+                : "m-0 mt-10 block w-[1360px] text-[56px] leading-[1.45] text-[#a2a2aa]"
             }
             style={{ display: "block", lineClamp: 3 }}
           >
