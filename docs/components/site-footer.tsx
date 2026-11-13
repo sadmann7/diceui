@@ -7,18 +7,19 @@ export function SiteFooter() {
     <footer className="mt-auto border-t">
       <div className="mx-auto flex max-w-[1248px] items-center justify-between gap-4 px-6 py-7 font-mono text-xs text-muted-foreground">
         <p>
-          © {year} {SITE_NAME}
+          © {year} {SITE_NAME}.
         </p>
         <p>
           Built by{" "}
           <a
-            href="https://github.com/sadmann7"
+            href="https://x.com/sadmann17"
             rel="noreferrer noopener"
             target="_blank"
-            className="underline-offset-4 transition-colors hover:text-foreground hover:underline"
+            className="text-foreground/70 underline underline-offset-4 transition-colors hover:text-foreground"
           >
-            @sadmann7
+            sadman
           </a>
+          .
         </p>
       </div>
     </footer>
