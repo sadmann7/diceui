@@ -1,0 +1,109 @@
+name: Sync tablecn
+
+# Opens or refreshes a PR when tablecn's main has data table or data grid
+# changes the pin doesn't have yet. PRs opened with the workflow token don't
+# trigger other workflows, so Code check is dispatched on the branch.
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+
+env:
+  FORCE_COLOR: 3
+  BRANCH: sync/tablecn
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Sync
+    permissions:
+      actions: write
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: ./.github/setup
+
+      - name: Sync from tablecn main
+        id: sync
+        run: |
+          echo "from=$(jq -r .ref docs/registry/tablecn.json)" >> "$GITHUB_OUTPUT"
+          pnpm --filter=docs tablecn:sync --ref main
+          echo "to=$(jq -r .ref docs/registry/tablecn.json)" >> "$GITHUB_OUTPUT"
+          if [ -n "$(git status --porcelain docs)" ]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Open or refresh the PR
+        if: steps.sync.outputs.changed == 'true'
+        run: |
+          # A branch with commits from anyone but the bot has work on it.
+          if git ls-remote --exit-code --heads origin "$BRANCH" > /dev/null; then
+            git fetch --quiet origin "$BRANCH"
+            if git log "origin/main..origin/$BRANCH" --format=%ae | grep -qv "$BOT_EMAIL"; then
+              echo "::notice::$BRANCH has commits from someone else, so it was left alone."
+              exit 0
+            fi
+          fi
+
+          git clone --quiet --filter=blob:none https://github.com/sadmann7/tablecn "$RUNNER_TEMP/tablecn"
+          git -C "$RUNNER_TEMP/tablecn" log --reverse --format="%s sadmann7/tablecn@%h" "$FROM..$TO" -- \
+            ':(glob)src/registry/bases/radix/components/data-table/**' \
+            ':(glob)src/registry/bases/radix/components/data-grid/**' \
+            ':(glob)src/registry/bases/base/components/data-table/**' \
+            ':(glob)src/registry/bases/base/components/data-grid/**' \
+            ':(glob)src/registry/bases/*/hooks/use-data-table.ts' \
+            ':(glob)src/registry/bases/*/hooks/use-data-grid.ts' \
+            ':(glob)src/lib/data-table-*.ts' \
+            ':(glob)src/lib/data-grid-*.ts' \
+            src/hooks/use-badge-overflow.ts \
+            src/hooks/use-debounced-callback.ts \
+            src/hooks/use-value-as-ref.ts > "$RUNNER_TEMP/commits.txt"
+
+          {
+            echo "Brings the data table and data grid up to sadmann7/tablecn@${TO:0:7}."
+            echo
+            echo "- Synced https://github.com/sadmann7/tablecn/compare/${FROM:0:7}...${TO:0:7}"
+            echo "- Repinned \`docs/registry/tablecn.json\`"
+            echo
+            echo "**Commits from tablecn**"
+            echo
+            sed 's/^/- /' "$RUNNER_TEMP/commits.txt"
+            if grep -q '!:' "$RUNNER_TEMP/commits.txt"; then
+              echo
+              echo "**Breaking**: each of these needs a changelog in \`docs/content/docs/changelog\`, and the demos and docs may need updating."
+              echo
+              grep '!:' "$RUNNER_TEMP/commits.txt" | sed 's/^/- /'
+            fi
+          } > "$RUNNER_TEMP/body.md"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "$BOT_EMAIL"
+          git switch --create "$BRANCH"
+          git add docs
+          git commit --quiet --message "$TITLE"
+          git push --force origin "$BRANCH"
+
+          if [ "$(gh pr view "$BRANCH" --json state --jq .state 2> /dev/null)" = "OPEN" ]; then
+            gh pr edit "$BRANCH" --body-file "$RUNNER_TEMP/body.md"
+          else
+            gh pr create --head "$BRANCH" --title "$TITLE" --body-file "$RUNNER_TEMP/body.md"
+          fi
+          gh workflow run code-check.yml --ref "$BRANCH"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          FROM: ${{ steps.sync.outputs.from }}
+          TO: ${{ steps.sync.outputs.to }}
+          TITLE: "chore(data-table, data-grid): sync from tablecn"
+          BOT_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
