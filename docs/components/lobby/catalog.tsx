@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 
 interface Tile {
   name: string;
+  hint: string;
   slug: PreviewName;
   isNew?: boolean;
   className?: string;
@@ -14,16 +15,35 @@ interface Tile {
 const tiles: Tile[] = [
   {
     name: "Action Bar",
+    hint: "Act on a selection",
     slug: "action-bar",
     isNew: true,
     className: "md:col-span-2",
   },
-  { name: "Gauge", slug: "gauge" },
-  { name: "File Upload", slug: "file-upload" },
-  { name: "Color Picker", slug: "color-picker" },
-  { name: "Stepper", slug: "stepper" },
-  { name: "Command Stack", slug: "command-stack", isNew: true },
-  { name: "Data Grid", slug: "data-grid", className: "lg:col-span-2" },
+  { name: "Gauge", hint: "Show a value against a range", slug: "gauge" },
+  {
+    name: "File Upload",
+    hint: "Drop, track and remove files",
+    slug: "file-upload",
+  },
+  {
+    name: "Color Picker",
+    hint: "Pick from the area or type a hex",
+    slug: "color-picker",
+  },
+  { name: "Stepper", hint: "Guide users step by step", slug: "stepper" },
+  {
+    name: "Command Stack",
+    hint: "Nested pages in one palette",
+    slug: "command-stack",
+    isNew: true,
+  },
+  {
+    name: "Data Grid",
+    hint: "Edit cells from the keyboard",
+    slug: "data-grid",
+    className: "lg:col-span-2",
+  },
 ];
 
 export function Catalog() {
@@ -48,20 +68,25 @@ export function Catalog() {
                 tile.className,
               )}
             >
-              <div className="flex items-center justify-between border-b px-4 py-[13px]">
-                <Link
-                  href={`/docs/components/base/${tile.slug}`}
-                  className="group flex items-center gap-1.5 font-mono text-[11px] tracking-wider text-foreground/70 uppercase transition-colors hover:text-foreground"
-                >
+              <Link
+                href={`/docs/components/base/${tile.slug}`}
+                className="group flex items-center justify-between gap-4 border-b px-4 py-[13px]"
+              >
+                <span className="shrink-0 font-mono text-[10px] tracking-[0.09em] text-muted-foreground uppercase transition-colors group-hover:text-foreground">
                   {tile.name}
-                  <ArrowUpRight className="size-[13px] transition-transform group-hover:translate-x-px group-hover:-translate-y-px" />
-                </Link>
-                {tile.isNew ? (
-                  <span className="rounded-full bg-muted px-1.5 py-0.5 font-mono text-[9px] text-emerald-700 dark:text-emerald-300">
-                    NEW
+                </span>
+                <span className="flex min-w-0 items-center gap-2.5">
+                  <span className="truncate text-xs text-muted-foreground">
+                    {tile.hint}
                   </span>
-                ) : null}
-              </div>
+                  {tile.isNew ? (
+                    <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 font-mono text-[9px] leading-3 text-emerald-700 dark:text-emerald-300">
+                      NEW
+                    </span>
+                  ) : null}
+                  <ArrowUpRight className="size-[13px] shrink-0 text-muted-foreground transition-[color,translate] group-hover:translate-x-px group-hover:-translate-y-px group-hover:text-foreground motion-reduce:transition-none" />
+                </span>
+              </Link>
               <LivePreview name={tile.slug} />
             </div>
           ))}
