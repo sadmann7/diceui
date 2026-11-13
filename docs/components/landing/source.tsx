@@ -114,7 +114,7 @@ export function Source() {
             Yours to customize.
           </h2>
         </div>
-        <div className="grid items-start gap-12 lg:grid-cols-[492fr_612fr] lg:gap-24">
+        <div className="grid items-start gap-12 lg:grid-cols-[492px_1fr] lg:gap-14">
           <ul className="flex flex-col">
             {principles.map((principle) => (
               <li

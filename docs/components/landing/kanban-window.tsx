@@ -1,11 +1,21 @@
 "use client";
 
-import { Maximize2 } from "lucide-react";
+import { Archive, Tag, UserPlus, X } from "lucide-react";
 import * as React from "react";
 
 import { StyleScope } from "@/components/style-scope";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/registry/bases/base/ui/badge";
+import {
+  ActionBar,
+  ActionBarClose,
+  ActionBarGroup,
+  ActionBarItem,
+  ActionBarSelection,
+  ActionBarSeparator,
+} from "@/registry/bases/base/ui/action-bar";
+import { Avatar, AvatarFallback } from "@/registry/bases/base/ui/avatar";
+import { AvatarGroup } from "@/registry/bases/base/ui/avatar-group";
+import { BadgeOverflow } from "@/registry/bases/base/ui/badge-overflow";
 import {
   Kanban,
   KanbanBoard,
@@ -16,9 +26,9 @@ import {
 
 interface Task {
   id: string;
-  tag: string;
+  tags: string[];
   title: string;
-  assignee: string;
+  assignees: string[];
 }
 
 const columnTitles: Record<string, string> = {
@@ -37,125 +47,167 @@ const initialColumns: Record<string, Task[]> = {
   backlog: [
     {
       id: "DUI-241",
-      tag: "Design",
+      tags: ["Design", "A11y", "Keyboard", "RTL"],
       title: "Add keyboard support to the angle slider",
-      assignee: "AM",
+      assignees: ["AM", "JS", "KO"],
     },
     {
       id: "DUI-238",
-      tag: "API",
+      tags: ["API"],
       title: "Expose controlled value on the tour",
-      assignee: "JS",
+      assignees: ["JS"],
     },
     {
       id: "DUI-234",
-      tag: "Docs",
+      tags: ["Docs"],
       title: "Document the query builder output options",
-      assignee: "KO",
+      assignees: ["KO"],
     },
   ],
   inProgress: [
     {
       id: "DUI-243",
-      tag: "Feature",
+      tags: ["Feature"],
       title: "Cropper: pinch zoom on touch devices",
-      assignee: "AM",
+      assignees: ["AM", "RT"],
     },
     {
       id: "DUI-239",
-      tag: "Bug",
+      tags: ["Bug"],
       title: "Action bar closes on outside scroll",
-      assignee: "RT",
+      assignees: ["RT"],
     },
     {
       id: "DUI-236",
-      tag: "Design",
+      tags: ["Design"],
       title: "Settle the segmented input focus ring",
-      assignee: "SK",
+      assignees: ["SK"],
     },
   ],
   shipped: [
     {
       id: "DUI-229",
-      tag: "Base UI",
+      tags: ["Base UI", "Release", "Radix", "Docs", "Registry"],
       title: "Ship Base UI variants for every component",
-      assignee: "AM",
+      assignees: ["AM", "JS", "SK"],
     },
     {
       id: "DUI-226",
-      tag: "Release",
+      tags: ["Release"],
       title: "Command Stack: nested pages, inline or dialog",
-      assignee: "JS",
+      assignees: ["JS"],
     },
     {
       id: "DUI-224",
-      tag: "Release",
+      tags: ["Release"],
       title: "Timeline: sticky markers and RTL support",
-      assignee: "SK",
+      assignees: ["SK"],
     },
   ],
 };
 
-function TaskCard({
-  task,
-  ...props
-}: { task: Task } & Omit<React.ComponentProps<typeof KanbanItem>, "value">) {
+interface TaskCardProps extends Omit<
+  React.ComponentProps<typeof KanbanItem>,
+  "value"
+> {
+  task: Task;
+  selected?: boolean;
+}
+
+function TaskCard({ task, selected, className, ...props }: TaskCardProps) {
   return (
     <KanbanItem
       value={task.id}
       render={
-        <div className="flex flex-col gap-2.5 rounded-md border bg-card p-3 shadow-xs" />
+        <div
+          className={cn(
+            "flex flex-col gap-2.5 rounded-[9px] border bg-card p-2.5 transition-colors",
+            selected && "border-input bg-muted",
+            className,
+          )}
+        />
       }
       {...props}
     >
-      <div className="flex items-center justify-between">
-        <Badge
-          variant="secondary"
-          className="pointer-events-none h-5 px-1.5 font-mono text-[10px]"
-        >
-          {task.tag}
-        </Badge>
-        <span className="font-mono text-[10px] text-muted-foreground">
+      <div className="flex items-center justify-between gap-3">
+        <BadgeOverflow
+          items={task.tags}
+          className="max-w-44 flex-1"
+          renderBadge={(_, label) => (
+            <span
+              className={cn(
+                "rounded-sm px-1.5 py-0.5 font-mono text-[9px] leading-3 text-foreground/75",
+                selected ? "bg-background" : "bg-muted",
+              )}
+            >
+              {label}
+            </span>
+          )}
+          renderOverflow={(count) => (
+            <span className="rounded-sm border border-input px-[5px] py-px font-mono text-[9px] leading-3 text-muted-foreground">
+              +{count}
+            </span>
+          )}
+        />
+        <span className="font-mono text-[9px] text-muted-foreground">
           {task.id}
         </span>
       </div>
-      <span className="line-clamp-2 text-sm">{task.title}</span>
-      <span className="flex size-5 items-center justify-center rounded-full bg-muted text-[9px] font-semibold">
-        {task.assignee}
-      </span>
+      <span className="truncate text-xs leading-[1.4]">{task.title}</span>
+      <AvatarGroup size={18}>
+        {task.assignees.map((initials) => (
+          <Avatar key={initials} className="size-[18px]">
+            <AvatarFallback className="text-[7px] font-semibold text-foreground">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+        ))}
+      </AvatarGroup>
     </KanbanItem>
   );
+}
+
+interface TaskColumnProps {
+  value: string;
+  tasks: Task[];
+  selectedIds?: Set<string>;
+  onSelect?: (id: string) => void;
+  className?: string;
 }
 
 function TaskColumn({
   value,
   tasks,
+  selectedIds,
+  onSelect,
   className,
-}: {
-  value: string;
-  tasks: Task[];
-  className?: string;
-}) {
+}: TaskColumnProps) {
   return (
     <KanbanColumn
       value={value}
       className={cn(
-        "border-0 bg-transparent p-1 shadow-none dark:bg-transparent",
+        "gap-[9px] border-0 bg-transparent p-[9px] shadow-none dark:bg-transparent",
         className,
       )}
     >
-      <div className="flex items-center gap-2 px-1 pb-1">
+      <div className="flex h-[22px] items-center gap-[7px] px-0.5 pt-0.5 pb-1">
         <span className={cn("size-1.5 rounded-full", columnDots[value])} />
-        <span className="text-sm font-medium text-muted-foreground">
+        <span className="text-xs font-medium text-muted-foreground">
           {columnTitles[value]}
         </span>
-        <span className="font-mono text-xs text-muted-foreground/70">
+        <span className="font-mono text-[10px] text-muted-foreground/70">
           {tasks.length}
         </span>
       </div>
-      <div className="flex flex-col gap-2 p-0.5">
+      <div className="flex flex-col gap-[9px]">
         {tasks.map((task) => (
-          <TaskCard key={task.id} task={task} asHandle />
+          <TaskCard
+            key={task.id}
+            task={task}
+            selected={selectedIds?.has(task.id)}
+            onClick={() => onSelect?.(task.id)}
+            asHandle
+          />
         ))}
       </div>
     </KanbanColumn>
@@ -164,9 +216,41 @@ function TaskColumn({
 
 export function KanbanWindow() {
   const [columns, setColumns] = React.useState(initialColumns);
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(
+    () => new Set(["DUI-241", "DUI-238"]),
+  );
+  const [container, setContainer] = React.useState<HTMLDivElement | null>(null);
+
+  const onSelect = React.useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  const onOpenChange = React.useCallback((open: boolean) => {
+    if (!open) setSelectedIds(new Set());
+  }, []);
+
+  const onArchive = React.useCallback(() => {
+    setColumns((prev) =>
+      Object.fromEntries(
+        Object.entries(prev).map(([value, tasks]) => [
+          value,
+          tasks.filter((task) => !selectedIds.has(task.id)),
+        ]),
+      ),
+    );
+    setSelectedIds(new Set());
+  }, [selectedIds]);
 
   return (
-    <div className="relative flex h-[400px] w-full flex-col overflow-hidden rounded-2xl border bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_24px_64px_rgb(0_0_0/0.08)] dark:shadow-[0_1px_2px_rgb(0_0_0/0.4),0_24px_64px_rgb(0_0_0/0.5)]">
+    <div
+      ref={setContainer}
+      className="relative mx-auto flex h-[480px] w-full max-w-[1120px] flex-col overflow-hidden rounded-2xl border bg-card shadow-[0_1px_2px_rgb(0_0_0/0.04),0_24px_64px_rgb(0_0_0/0.08)] dark:shadow-[0_1px_2px_rgb(0_0_0/0.4),0_24px_64px_rgb(0_0_0/0.5)]"
+    >
       <div
         aria-hidden="true"
         className="flex h-[46px] shrink-0 items-center justify-between border-b px-3.5"
@@ -179,15 +263,12 @@ export function KanbanWindow() {
             kanban-board.tsx
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="rounded-sm bg-muted px-[7px] py-[3px] font-mono text-[9px] text-muted-foreground">
-            BASE UI
-          </span>
-          <Maximize2 className="size-3 text-muted-foreground" />
-        </div>
+        <span className="rounded-sm bg-muted px-[7px] py-[3px] font-mono text-[9px] text-muted-foreground">
+          BASE UI
+        </span>
       </div>
-      <div className="flex-1 bg-background p-4">
-        <StyleScope>
+      <StyleScope>
+        <div className="flex-1 bg-background p-4">
           <Kanban
             value={columns}
             onValueChange={setColumns}
@@ -199,6 +280,8 @@ export function KanbanWindow() {
                   key={value}
                   value={value}
                   tasks={tasks}
+                  selectedIds={selectedIds}
+                  onSelect={onSelect}
                   className={index > 0 ? "hidden sm:flex" : undefined}
                 />
               ))}
@@ -218,13 +301,46 @@ export function KanbanWindow() {
                   .flat()
                   .find((task) => task.id === value);
 
-                return task ? <TaskCard task={task} /> : null;
+                return task ? (
+                  <TaskCard task={task} selected={selectedIds.has(task.id)} />
+                ) : null;
               }}
             </KanbanOverlay>
           </Kanban>
-        </StyleScope>
-      </div>
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-linear-to-b from-transparent to-background" />
+        </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[120px] bg-linear-to-b from-transparent to-background to-85%" />
+        <ActionBar
+          open={selectedIds.size > 0}
+          onOpenChange={onOpenChange}
+          portalContainer={container}
+          sideOffset={24}
+          className="py-1"
+          style={{ position: "absolute" }}
+        >
+          <ActionBarSelection className="whitespace-nowrap">
+            {selectedIds.size} selected
+            <ActionBarSeparator />
+            <ActionBarClose>
+              <X />
+            </ActionBarClose>
+          </ActionBarSelection>
+          <ActionBarSeparator />
+          <ActionBarGroup>
+            <ActionBarItem>
+              <UserPlus />
+              Assign
+            </ActionBarItem>
+            <ActionBarItem>
+              <Tag />
+              Label
+            </ActionBarItem>
+            <ActionBarItem onSelect={onArchive}>
+              <Archive />
+              Archive
+            </ActionBarItem>
+          </ActionBarGroup>
+        </ActionBar>
+      </StyleScope>
     </div>
   );
 }
