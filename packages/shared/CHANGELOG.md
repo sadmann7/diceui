@@ -1,5 +1,12 @@
 # @diceui/shared
 
+## 1.0.2
+
+### Patch Changes
+
+- cae9fd5: Default `avoidCollisions` to `true` in `useAnchorPositioner`, matching its docs, so popovers flip and shift to stay in view unless they opt out.
+- 0534b23: Lock page scroll in Safari while a modal Combobox or Mention is open, unless the page is pinch-zoomed.
+
 ## 1.0.1
 
 ### Patch Changes
