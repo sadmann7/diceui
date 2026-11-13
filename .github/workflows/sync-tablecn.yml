@@ -44,7 +44,6 @@ jobs:
       - name: Open or refresh the PR
         if: steps.sync.outputs.changed == 'true'
         run: |
-          # A branch with commits from anyone but the bot has work on it.
           if git ls-remote --exit-code --heads origin "$BRANCH" > /dev/null; then
             git fetch --quiet origin "$BRANCH"
             if git log "origin/main..origin/$BRANCH" --format=%ae | grep -qv "$BOT_EMAIL"; then
