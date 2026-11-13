@@ -1,0 +1,61 @@
+---
+title: November 2026 - Presentation Controls
+description: Presentation adds PresentationControls for editor toolbars, built on @diceui/pptx 0.5. Includes breaking changes.
+date: 2026-11-13T12:00:00Z
+---
+
+[Presentation](/docs/components/presentation) adds `PresentationControls` for toolbars and other editor UI outside the slide, built on [`@diceui/pptx`](https://pptx.diceui.com/docs) 0.5.
+
+```package-install
+npx shadcn@latest add @diceui/presentation
+```
+
+## Controls
+
+`PresentationControls` wraps editor UI outside the slide, such as a toolbar. Pressing it keeps the selection and text editing, and so does pressing the popovers and menus it renders, even when they portal out. You no longer mark each menu yourself.
+
+```tsx
+<PresentationControls>
+  <FormattingToolbar />
+</PresentationControls>
+```
+
+The editing example now wraps its toolbar in it.
+
+## Fixes
+
+- **Drags.** Moving, resizing, rotating, drawing, and marquee selection end where the pointer is released, even when it's released before the last moves render.
+- **Table cells.** A cell range dragged while the table re-renders is kept, and keys typed over selected cells during a re-render are no longer lost.
+- **Scrolling.** Pressing a shape or starting a drawing no longer scrolls the page when the editor is partly off screen.
+- **Unmounting.** A presentation frees its picture URLs and removes the deck's embedded fonts when it unmounts, and `Presentation` and `useCreatePresentationStore` reset their store.
+
+## Breaking changes
+
+- **Controls attribute.** `data-pptx-keep-selection` is now `data-presentation-controls`, and `KEEP_SELECTION_ATTRIBUTE` is now `CONTROLS_ATTRIBUTE`. Wrap toolbars in `PresentationControls` instead of marking them.
+
+  ```tsx
+  <div data-pptx-keep-selection=""> // [!code --]
+  <PresentationControls> // [!code ++]
+    <FormattingToolbar />
+  </div> // [!code --]
+  </PresentationControls> // [!code ++]
+  ```
+
+- **Overlay part attributes.** The overlay parts carry `data-presentation-*` attributes, matching the `--presentation-*` CSS variables.
+
+  | Before | After |
+  | --- | --- |
+  | `[data-selection-box]` | `[data-presentation-selection-box]` |
+  | `[data-resize-handle]` | `[data-presentation-resize-handle]` |
+  | `[data-rotate-handle]` | `[data-presentation-rotate-handle]` |
+  | `[data-snap-guide]` | `[data-presentation-snap-guide]` |
+  | `[data-marquee]` | `[data-presentation-marquee]` |
+
+- **Slide index attribute.** Slide wrappers carry `data-pptx-slide-index` instead of `data-slide-index`.
+
+## Migrating
+
+1. Update `@diceui/pptx` to 0.5 and reinstall the Presentation component.
+2. Wrap toolbars in `PresentationControls`, and remove `data-pptx-keep-selection` from them and their menus.
+3. Rename any remaining `data-pptx-keep-selection` to `data-presentation-controls`, and `KEEP_SELECTION_ATTRIBUTE` to `CONTROLS_ATTRIBUTE`.
+4. Rename overlay part selectors using the table above, and `[data-slide-index]` to `[data-pptx-slide-index]`.

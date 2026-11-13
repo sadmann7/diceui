@@ -82,7 +82,7 @@ Without children, `PresentationSelection` renders its overlay parts with a defau
 
 ### Editing
 
-Load with `readOnly={false}` to move, resize, rotate, and edit shapes and tables. The toolbar is built with `useSelection`, and the zoom control is `@diceui/presentation-zoom-select`.
+Load with `readOnly={false}` to move, resize, rotate, and edit shapes and tables. The toolbar is built with `useSelection` and wrapped in `PresentationControls`, and the zoom control is `@diceui/presentation-zoom-select`.
 
 <ComponentTabs name="presentation-editing-demo" className="h-100 p-0" />
 
@@ -216,7 +216,7 @@ The outline around each selected shape. Rendered once per selected shape.
 <DataAttributesTable
   data={[
     {
-      title: "[data-selection-box]",
+      title: "[data-presentation-selection-box]",
       value: "Present on every outline.",
     },
     {
@@ -246,7 +246,7 @@ The handles on each edge and corner. Goes inside `PresentationSelectionBox`. On 
 <DataAttributesTable
   data={[
     {
-      title: "[data-resize-handle]",
+      title: "[data-presentation-resize-handle]",
       value: ["nw", "n", "ne", "e", "se", "s", "sw", "w"],
     },
   ]}
@@ -264,7 +264,7 @@ The handle above the shape for rotating. Goes inside `PresentationSelectionBox`.
 <DataAttributesTable
   data={[
     {
-      title: "[data-rotate-handle]",
+      title: "[data-presentation-rotate-handle]",
       value: "Present on the handle.",
     },
     {
@@ -286,7 +286,7 @@ The line shown when a shape snaps into place. Rendered once per snapped line whi
 <DataAttributesTable
   data={[
     {
-      title: "[data-snap-guide]",
+      title: "[data-presentation-snap-guide]",
       value: ["x", "y"],
     },
   ]}
@@ -304,12 +304,30 @@ The box drawn while dragging across empty canvas, or while drawing with a draw t
 <DataAttributesTable
   data={[
     {
-      title: "[data-marquee]",
+      title: "[data-presentation-marquee]",
       value: "Present on the marquee.",
     },
     {
       title: "[data-draw]",
       value: "Present while drawing a text box or shape.",
+    },
+  ]}
+/>
+
+### PresentationControls
+
+Wraps editor UI outside the slide, such as a toolbar. Pressing it keeps the selection and text editing, and so does pressing the popovers and menus it renders, even when they portal out. Must be used inside `PresentationProvider` or `Presentation`.
+
+<AutoTypeTable
+  path="./types/base/presentation.ts"
+  name="PresentationControlsProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-presentation-controls]",
+      value: "Present on the wrapper.",
     },
   ]}
 />
@@ -444,26 +462,31 @@ Undo, redo, and whether the deck has unsaved edits. Both `undo` and `redo` retur
 
 Reads the editing overlay's selection and its text formatting, and runs commands on it. Works anywhere under `PresentationProvider` or `Presentation`, so a toolbar can sit outside the slide.
 
-Pressing a toolbar would normally clear the selection and end text editing. Mark the toolbar, and the content of its popovers and menus, with `data-pptx-keep-selection` (exported as `KEEP_SELECTION_ATTRIBUTE`).
+Pressing a toolbar would normally clear the selection and end text editing. Wrap the toolbar in `PresentationControls` to keep them. Popovers and menus it renders count too, even when they portal out.
 
 ```tsx
 import { useSelection } from "@diceui/pptx";
 
-function BoldButton() {
+import { PresentationControls } from "@/components/ui/presentation";
+
+function FormattingToolbar() {
   const { textStyle, setTextStyle } = useSelection();
 
   return (
-    <button
-      data-pptx-keep-selection=""
-      aria-pressed={textStyle?.bold ?? false}
-      disabled={!textStyle}
-      onClick={() => void setTextStyle({ bold: !textStyle?.bold })}
-    >
-      Bold
-    </button>
+    <PresentationControls>
+      <button
+        aria-pressed={textStyle?.bold ?? false}
+        disabled={!textStyle}
+        onClick={() => void setTextStyle({ bold: !textStyle?.bold })}
+      >
+        Bold
+      </button>
+    </PresentationControls>
   );
 }
 ```
+
+For UI that `PresentationControls` can't wrap, such as a context menu around the slide, put `data-presentation-controls` on the element itself (exported as `CONTROLS_ATTRIBUTE`).
 
 Use `anchor` to position a floating toolbar over the selection, and show it while `mode` is `"selected"` or `"text"`.
 
