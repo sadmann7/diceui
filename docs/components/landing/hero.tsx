@@ -17,19 +17,17 @@ export function Hero() {
             href="/docs/components/base/query-builder"
             className={cn(
               enter,
-              "flex items-center gap-[9px] rounded-full border bg-card px-[11px] py-1.5 text-[13px] whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground",
+              "group flex items-center gap-2 rounded-full border bg-card py-1 ps-1 pe-3 text-[13px] whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground",
             )}
           >
-            <span className="size-[5px] rounded-full bg-emerald-500" />
-            <span className="font-mono text-xs tracking-wide text-emerald-700 dark:text-emerald-300">
-              NEW
+            <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-400/10 dark:text-emerald-300">
+              New
             </span>
-            <span className="h-2.5 w-px bg-border" />
             <span>
               Query Builder and Presentation
               <span className="hidden sm:inline"> just landed</span>
             </span>
-            <ArrowRight className="size-[13px]" />
+            <ArrowRight className="size-[13px] text-muted-foreground/70 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" />
           </Link>
           <h1
             className={cn(
