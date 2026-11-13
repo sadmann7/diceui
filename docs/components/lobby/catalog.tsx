@@ -1,10 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-import {
-  LivePreview,
-  type PreviewName,
-} from "@/components/landing/live-preview";
+import { LivePreview, type PreviewName } from "@/components/lobby/live-preview";
 import { cn } from "@/lib/utils";
 
 interface Tile {

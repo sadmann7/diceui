@@ -8,21 +8,21 @@ import { Skeleton } from "@/styles/radix-nova/ui/skeleton";
 
 const previews = {
   "action-bar": React.lazy(
-    () => import("@/components/landing/previews/action-bar"),
+    () => import("@/components/lobby/previews/action-bar"),
   ),
-  gauge: React.lazy(() => import("@/components/landing/previews/gauge")),
+  gauge: React.lazy(() => import("@/components/lobby/previews/gauge")),
   "file-upload": React.lazy(
-    () => import("@/components/landing/previews/file-upload"),
+    () => import("@/components/lobby/previews/file-upload"),
   ),
   "color-picker": React.lazy(
-    () => import("@/components/landing/previews/color-picker"),
+    () => import("@/components/lobby/previews/color-picker"),
   ),
-  stepper: React.lazy(() => import("@/components/landing/previews/stepper")),
+  stepper: React.lazy(() => import("@/components/lobby/previews/stepper")),
   "command-stack": React.lazy(
-    () => import("@/components/landing/previews/command-stack"),
+    () => import("@/components/lobby/previews/command-stack"),
   ),
   "data-grid": React.lazy(
-    () => import("@/components/landing/previews/data-grid"),
+    () => import("@/components/lobby/previews/data-grid"),
   ),
 };
 

@@ -1,6 +1,6 @@
-import { Catalog } from "@/components/landing/catalog";
-import { Hero } from "@/components/landing/hero";
-import { Source } from "@/components/landing/source";
+import { Catalog } from "@/components/lobby/catalog";
+import { Hero } from "@/components/lobby/hero";
+import { Source } from "@/components/lobby/source";
 
 export default function IndexPage(_props: PageProps<"/">) {
   return (
