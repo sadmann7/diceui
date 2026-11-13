@@ -65,6 +65,7 @@ import { Input } from "@/registry/bases/base/ui/input";
 import {
   Presentation,
   PresentationContent,
+  PresentationControls,
   PresentationError,
   PresentationLoading,
   PresentationProvider,
@@ -169,10 +170,7 @@ function PresentationToolbar({ store }: { store: PresentationStore }) {
   }
 
   return (
-    <div
-      data-pptx-keep-selection=""
-      className="flex items-center gap-1 border-b p-1.5"
-    >
+    <PresentationControls className="flex items-center gap-1 border-b p-1.5">
       <label htmlFor={`${id}-file`} className="sr-only">
         Open .pptx
       </label>
@@ -201,7 +199,7 @@ function PresentationToolbar({ store }: { store: PresentationStore }) {
         <FormattingToolbar disabled={status !== "ready"} />
       </div>
       <PresentationZoomSelect className="shrink-0" />
-    </div>
+    </PresentationControls>
   );
 }
 
@@ -306,7 +304,6 @@ function FormattingToolbar({ disabled }: FormattingToolbarProps) {
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          data-pptx-keep-selection=""
           aria-label="Text color"
           className="grid w-auto grid-cols-3 gap-1 p-1"
         >

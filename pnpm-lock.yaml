@@ -321,8 +321,8 @@ importers:
         specifier: workspace:*
         version: link:../packages/mention
       '@diceui/pptx':
-        specifier: ^0.4.0
-        version: 0.4.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+        specifier: ^0.5.0
+        version: 0.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@diceui/tags-input':
         specifier: workspace:*
         version: link:../packages/tags-input
@@ -971,11 +971,11 @@ packages:
   '@date-fns/tz@1.5.0':
     resolution: {integrity: sha512-lwYN/vDPeNRULcepoE/LO2Pgx+7/RV+S9ARfbc9lr2DtGkOD7pAiruHvbR1RX3Qyf6ja47EWJDMsNK5vK08DJg==}
 
-  '@diceui/pptx-core@0.4.0':
-    resolution: {integrity: sha512-5Oc4IAlcxyRKj/kvkxr4yaMsXiVvUvqRgJZaAHShRfLubT6x9FSWxJYm124K+u+9npFlpSk2+E+GQDWqXqsVxA==}
+  '@diceui/pptx-core@0.4.1':
+    resolution: {integrity: sha512-fZ+sDHhbIdGjN0dUHzGkuoF5uwl8wJfvqX8yf64IC+vYRItP/lD5ri3nW6yhimr2HUoQiebPJcm4Baa5D0eAEw==}
 
-  '@diceui/pptx@0.4.0':
-    resolution: {integrity: sha512-1NX5YAbiSN/YcBYhr85m7vp1TXqdhk0hhS9Y508UbyB9PUKDUEc0sXeqMM4jt5rWZ0iTiZ3YKQB3P8RswkI04w==}
+  '@diceui/pptx@0.5.0':
+    resolution: {integrity: sha512-cvanvh6bQh0NQhYEhvpgetfeKsXnr7VF7375UnLoqUvdOe0wnl/PoZQvUTlQHmpKoPxy+ocrqpDZd0VuhettLQ==}
     peerDependencies:
       '@types/react': '*'
       '@types/react-dom': '*'
@@ -7801,14 +7801,14 @@ snapshots:
 
   '@date-fns/tz@1.5.0': {}
 
-  '@diceui/pptx-core@0.4.0':
+  '@diceui/pptx-core@0.4.1':
     dependencies:
       echarts: 6.1.0
       jszip: 3.10.2
 
-  '@diceui/pptx@0.4.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+  '@diceui/pptx@0.5.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
-      '@diceui/pptx-core': 0.4.0
+      '@diceui/pptx-core': 0.4.1
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
     optionalDependencies:

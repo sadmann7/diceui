@@ -51,6 +51,11 @@ export type PresentationMarqueeProps = EmptyCompProps<
   "div"
 >;
 
+export type PresentationControlsProps = EmptyCompProps<
+  PresentationPrimitive.Controls.Props,
+  "div"
+>;
+
 export type PresentationLoadingProps = EmptyCompProps<
   PresentationPrimitive.Loading.Props,
   "div"
