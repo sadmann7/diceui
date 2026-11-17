@@ -1459,6 +1459,10 @@
     @apply w-full overflow-hidden rounded-2xl data-pending:bg-muted;
   }
 
+  .cn-presentation-layout-preview {
+    @apply w-full overflow-hidden rounded-2xl data-pending:bg-muted;
+  }
+
   .cn-presentation-thumbnail-item-number {
     @apply block text-center font-mono text-xs leading-none text-muted-foreground tabular-nums;
   }

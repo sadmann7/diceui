@@ -413,6 +413,24 @@ Renders the 1-based slide number for the enclosing `PresentationThumbnailItem`.
   name="PresentationThumbnailItemNumberProps"
 />
 
+### PresentationLayoutPreview
+
+Renders a slide layout from `getLayouts` as a new slide would show it, with its placeholder prompts. The preview is rendered once it scrolls into view.
+
+<AutoTypeTable
+  path="./types/radix/presentation.ts"
+  name="PresentationLayoutPreviewProps"
+/>
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-pending]",
+      value: "Present while the layout has not been rendered yet.",
+    },
+  ]}
+/>
+
 ### PresentationZoomSelect
 
 Companion select for Fit and explicit zoom levels. Must be used inside `PresentationProvider` or `Presentation`.

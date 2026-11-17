@@ -219,6 +219,19 @@ function PresentationThumbnailItemPreview({
   );
 }
 
+function PresentationLayoutPreview({
+  className,
+  ...props
+}: PresentationPrimitive.LayoutPreview.Props) {
+  return (
+    <PresentationPrimitive.LayoutPreview
+      data-slot="presentation-layout-preview"
+      className={cn("cn-presentation-layout-preview", className)}
+      {...props}
+    />
+  );
+}
+
 function PresentationThumbnailItemNumber({
   className,
   ...props
@@ -380,6 +393,7 @@ export {
   PresentationContent,
   PresentationControls,
   PresentationError,
+  PresentationLayoutPreview,
   PresentationLoading,
   PresentationMarquee,
   PresentationProvider,

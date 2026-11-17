@@ -81,6 +81,11 @@ export type PresentationThumbnailItemPreviewProps = EmptyCompProps<
   "div"
 >;
 
+export type PresentationLayoutPreviewProps = EmptyCompProps<
+  PresentationPrimitive.LayoutPreview.Props,
+  "div"
+>;
+
 export type PresentationThumbnailItemNumberProps = EmptyCompProps<
   PresentationPrimitive.ThumbnailItemNumber.Props,
   "span"
