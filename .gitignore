@@ -71,3 +71,6 @@ Thumbs.db
 /docs/registry/styles/__generated__/
 /docs/registry/icons/__generated__/
 /docs/styles/*-nova/
+
+# agent plans, kept out of harness-specific folders
+/plans/
