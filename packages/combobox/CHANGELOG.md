@@ -1,5 +1,14 @@
 # @diceui/combobox
 
+## 2.0.3
+
+### Patch Changes
+
+- 0534b23: Lock page scroll in Safari while a modal Combobox or Mention is open, unless the page is pinch-zoomed.
+- Updated dependencies [cae9fd5]
+- Updated dependencies [0534b23]
+  - @diceui/shared@1.0.2
+
 ## 2.0.2
 
 ### Patch Changes
