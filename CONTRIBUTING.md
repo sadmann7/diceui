@@ -232,6 +232,7 @@ test(tags-input): add validation tests
 - `test`: adding or updating tests
 - `chore`: maintenance tasks
 - `perf`: performance improvements
+- `style`: formatting, no logic change
 - `ci`: continuous integration changes
 
 **Scope:**
@@ -251,7 +252,7 @@ test(tags-input): add validation tests
 1. Create a new branch for your changes
 2. Make your changes following the guidelines above
 3. Test your changes locally
-4. Submit a pull request with:
+4. Submit a pull request titled in the commit format, since pull requests are squash-merged, with:
    - Clear description of changes
    - Screenshots/videos if UI changes
    - Updated tests
