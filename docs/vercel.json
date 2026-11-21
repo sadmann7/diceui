@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": {
+      "changeset-release/**": false,
+      "changesets-ghcommit-temp/**": false
+    }
+  }
+}
