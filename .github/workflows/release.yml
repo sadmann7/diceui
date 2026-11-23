@@ -55,7 +55,7 @@ jobs:
         with:
           commit-message: "chore(release): version packages"
           pr-title: "chore(release): version packages"
-          github-token: ${{ secrets.MY_GITHUB_TOKEN }}
+          github-token: ${{ secrets.RELEASE_TOKEN }}
 
   pack:
     if: needs.select-mode.outputs.mode == 'publish'
