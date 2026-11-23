@@ -1,27 +1,21 @@
----
-description: Dice UI component setup pipeline for creating new components with types, examples, registry entries, and documentation
-globs: 
-alwaysApply: false
----
+# Setting up a component
 
-# Dice UI Component Setup Rule
-
-You are an expert in TypeScript, React, and Dice UI component architecture. When a user asks you to create a new component using the pattern "@setup-component [component-name]", follow this comprehensive pipeline:
+Follow these steps when setting up a new Dice UI component.
 
 ## Base Selection
 
 Dice UI supports multiple UI base libraries. When creating a component, specify which base to use:
 
-- **Base UI** (default): `@docs/registry/bases/base/`
-- **Radix UI**: `@docs/registry/bases/radix/`
+- **Base UI** (default): `docs/registry/bases/base/`
+- **Radix UI**: `docs/registry/bases/radix/`
 
 ## Steps
 
-### 1. Create Component Types (@docs/types/[base]/[component-name].ts)
+### 1. Create Component Types (docs/types/[base]/[component-name].ts)
 
 - Create TypeScript interfaces for all component parts based on the base library
-- For Radix UI: Use `@docs/types/radix/[component-name].ts` with `CompositionProps` and `EmptyProps`
-- For Base UI: Use `@docs/types/base/[component-name].ts` with `useRender.ComponentProps` and `EmptyProps`
+- For Radix UI: Use `docs/types/radix/[component-name].ts` with `CompositionProps` and `EmptyProps`
+- For Base UI: Use `docs/types/base/[component-name].ts` with `useRender.ComponentProps` and `EmptyProps`
 - Follow the pattern from existing files like `action-bar.ts`
 - Include proper JSDoc comments with examples
 - Import necessary types from UI libraries and internal types
@@ -30,7 +24,7 @@ Dice UI supports multiple UI base libraries. When creating a component, specify 
 
 Finalize the API design first. Once it's been iterated on and completed, proceed to the other steps. This will minimize refactoring.
 
-### 2. Create Examples (@docs/registry/bases/[base]/examples/)
+### 2. Create Examples (docs/registry/bases/[base]/examples/)
 
 Create these example files in the appropriate base folder:
 
@@ -41,9 +35,9 @@ Create these example files in the appropriate base folder:
 
 ### 3. Update Registry Files
 
-Update the registry files in `@docs/registry/bases/[base]/`:
+Update the registry files in `docs/registry/bases/[base]/`:
 
-#### UI Registry (@docs/registry/bases/[base]/ui/_registry.ts)
+#### UI Registry (docs/registry/bases/[base]/ui/_registry.ts)
 
 Add UI component entry with:
 
@@ -53,7 +47,7 @@ Add UI component entry with:
 - Registry dependencies (internal UI components, hooks, libs)
 - File paths for UI component
 
-#### Examples Registry (@docs/registry/bases/[base]/examples/_registry.ts)
+#### Examples Registry (docs/registry/bases/[base]/examples/_registry.ts)
 
 Add example entries for each demo file created:
 
@@ -63,10 +57,10 @@ Add example entries for each demo file created:
 
 #### Hooks/Libs Registry (if needed)
 
-- Update `@docs/registry/bases/[base]/hooks/_registry.ts` for custom hooks
-- Update `@docs/registry/bases/[base]/lib/_registry.ts` for utility functions
+- Update `docs/registry/bases/[base]/hooks/_registry.ts` for custom hooks
+- Update `docs/registry/bases/[base]/lib/_registry.ts` for utility functions
 
-### 4. Create Documentation (@docs/content/docs/components/[base]/[component-name].mdx)
+### 4. Create Documentation (docs/content/docs/components/[base]/[component-name].mdx)
 
 Create comprehensive documentation including:
 
@@ -79,7 +73,7 @@ Create comprehensive documentation including:
 - Accessibility section with keyboard interactions
 - Any specific notes about browser support or limitations
 
-### 5. Update Navigation Meta (@docs/content/docs/components/[base]/meta.json)
+### 5. Update Navigation Meta (docs/content/docs/components/[base]/meta.json)
 
 Add the component name to the `pages` array in alphabetical order:
 
@@ -133,26 +127,19 @@ Add the component name to the `pages` array in alphabetical order:
 - Add accessibility considerations
 - Provide installation and setup instructions with correct dependencies
 
-## Example Usage
+## Checklist
 
-When user types: `@setup-component [component-name] --base=[radix|base]`
+A full setup touches these files:
 
-You should:
+1. `docs/registry/bases/[base]/ui/[component-name].tsx`: the component
+2. `docs/types/[base]/[component-name].ts`: its interfaces
+3. Examples like `[component-name]-demo.tsx` in `docs/registry/bases/[base]/examples/`
+4. `docs/registry/bases/[base]/ui/_registry.ts`: the component entry
+5. `docs/registry/bases/[base]/examples/_registry.ts`: the example entries
+6. `docs/content/docs/components/[base]/[component-name].mdx`: the docs page
+7. `docs/content/docs/components/[base]/meta.json`: the navigation entry
 
-1. Create `docs/registry/bases/[base]/ui/[component-name].tsx` with the component
-2. Create `docs/types/[base]/[component-name].ts` with proper interfaces
-3. Create example files like `[component-name]-demo.tsx` in `docs/registry/bases/[base]/examples/`
-4. Update `docs/registry/bases/[base]/ui/_registry.ts` with the component entry
-5. Update `docs/registry/bases/[base]/examples/_registry.ts` with example entries
-6. Create `docs/content/docs/components/[base]/[component-name].mdx` documentation
-7. Update `docs/content/docs/components/[base]/meta.json` to add the component to navigation
-
-And when user types: `@setup-only [component-name] --base=[radix|base]`
-
-1. Create `docs/registry/bases/[base]/ui/[component-name].tsx` with the component
-2. Create `docs/registry/bases/[base]/examples/[component-name]-demo.tsx` with the demo
-
-**Note:** If no `--base` flag is provided, default to Radix UI.
+When asked to set up only the component, do steps 1 and 3 with a single demo.
 
 ## Code Style
 
@@ -171,7 +158,7 @@ And when user types: `@setup-only [component-name] --base=[radix|base]`
 - The CLI skips `compoundVariants`, so use logical classes (`ms-*`, `start-*`, `rounded-s-*`) there.
 - When something must stay physical in RTL (an inline `left` style, a `side="left"` prop), use arbitrary properties like `[left:--spacing(2)]` or `[translate:-50%_0]`, which the CLI won't flip.
 - RTL demos (`*-rtl-demo.tsx`) import from `@/registry/bases/[base]/ui-rtl/`, which `pnpm build:registry` generates from `ui/`. Rerun it after changing a component an RTL demo uses.
-- In the layout portion of the docs don't pass any props, can reference the @file-upload.mdx.
+- In the layout portion of the docs don't pass any props, can reference `file-upload.mdx`.
 - Make sure not to update any `[component-name].json files, these will be autogenerated with the shadcn cli.
 
 ## File Organization
