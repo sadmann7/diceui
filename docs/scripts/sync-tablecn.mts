@@ -2,9 +2,12 @@
  * Copies the data table and data grid from tablecn, which is their source of
  * truth, so the docs registry can't fall behind.
  *
- * The tablecn commit is pinned in `registry/tablecn.json`. Files under tablecn
- * `src/` map one-to-one onto `docs/`, and the `components/data-*` re-exports
- * the examples import from are kept in step.
+ * The tablecn commit and the files synced from it are pinned in
+ * `registry/tablecn.json`. The files come from tablecn's `registry.json`
+ * data-table and data-grid items, for every base, except `ui/` primitives,
+ * which diceui owns. Files under tablecn `src/` map one-to-one onto `docs/`,
+ * and the `components/data-*` re-exports the examples import from are kept in
+ * step.
  *
  *   pnpm tablecn:sync                   sync from the pinned commit
  *   pnpm tablecn:sync --ref main        pin a new commit, then sync
@@ -21,16 +24,23 @@ const PIN_PATH = path.join(DOCS_PATH, "registry/tablecn.json");
 const BASES = ["radix", "base"] as const;
 const SHIM_DIRS = ["data-table", "data-grid"] as const;
 
-const SHARED_FILES = new Set([
-  "hooks/use-badge-overflow.ts",
-  "hooks/use-debounced-callback.ts",
-  "hooks/use-value-as-ref.ts",
-]);
+const ITEM_PATTERN = /^data-(table|grid)(-|$)/;
+const UI_PATTERN = /^registry\/bases\/[\w-]+\/ui\//;
+
+interface Pin {
+  ref: string;
+  files?: string[];
+}
+
+interface Registry {
+  items: { name: string; files?: { path: string }[] }[];
+}
 
 interface Source {
   label: string;
   listFiles: () => Promise<string[]>;
   readFile: (file: string) => Promise<string>;
+  readRegistry: () => Promise<Registry>;
 }
 
 const args = process.argv.slice(2);
@@ -42,7 +52,10 @@ const pin = await readPin();
 const ref = nextRef ? await resolveRef(nextRef) : pin.ref;
 const source = localPath ? getLocalSource(localPath) : getRemoteSource(ref);
 
-const upstreamFiles = (await source.listFiles()).filter(getIsSyncedFile);
+const upstreamFiles = getSyncedFiles(
+  await source.readRegistry(),
+  await source.listFiles(),
+);
 const expected = new Map<string, string>();
 await Promise.all(
   upstreamFiles.map(async (file) => {
@@ -53,8 +66,12 @@ for (const [file, content] of getShims(upstreamFiles)) {
   expected.set(file, content);
 }
 
+const pinnedFiles = new Set([
+  ...(pin.files ?? []),
+  ...getShims(pin.files ?? []).map(([file]) => file),
+]);
 const localFiles = (await listLocalFiles()).filter(
-  (file) => getIsSyncedFile(file) || getIsShim(file),
+  (file) => pinnedFiles.has(file) || getIsOwnedFile(file),
 );
 const changed = (
   await Promise.all(
@@ -66,11 +83,14 @@ const changed = (
 const removed = localFiles.filter((file) => !expected.has(file));
 
 if (isCheck) {
-  if (changed.length > 0 || removed.length > 0) {
+  const isPinStale = !localPath && !getIsSameList(pin.files, upstreamFiles);
+  if (changed.length > 0 || removed.length > 0 || isPinStale) {
     for (const file of changed) console.error(`  differs   ${file}`);
     for (const file of removed) console.error(`  extra     ${file}`);
+    if (isPinStale) console.error("  differs   registry/tablecn.json");
+    const count = changed.length + removed.length + (isPinStale ? 1 : 0);
     console.error(
-      `\n${changed.length + removed.length} files are out of sync with tablecn@${ref.slice(0, 7)}. Run \`pnpm tablecn:sync\`.`,
+      `\n${count} files are out of sync with tablecn@${ref.slice(0, 7)}. Run \`pnpm tablecn:sync\`.`,
     );
     process.exit(1);
   }
@@ -83,7 +103,7 @@ if (isCheck) {
     await fs.writeFile(path.join(DOCS_PATH, file), expected.get(file) ?? "");
   }
   for (const file of removed) await fs.rm(path.join(DOCS_PATH, file));
-  if (nextRef) await writePin(ref);
+  await writePin({ ref, files: upstreamFiles });
 
   const missing = await getMissingImports(expected);
   for (const file of changed) console.log(`  updated   ${file}`);
@@ -108,21 +128,40 @@ function getArg(name: string) {
   return index === -1 ? undefined : args[index + 1];
 }
 
-function getIsSyncedFile(file: string) {
-  if (SHARED_FILES.has(file)) return true;
-  if (/^lib\/data-(table|grid)-[\w-]+\.ts$/.test(file)) return true;
-  return BASES.some(
-    (base) =>
-      file === `registry/bases/${base}/hooks/use-data-table.ts` ||
-      file === `registry/bases/${base}/hooks/use-data-grid.ts` ||
-      SHIM_DIRS.some((dir) =>
+function getSyncedFiles(registry: Registry, files: string[]) {
+  const available = new Set(files);
+  const synced = registry.items
+    .filter((item) => ITEM_PATTERN.test(item.name))
+    .flatMap((item) => item.files ?? [])
+    .map((file) => file.path.replace(/^src\//, ""))
+    .filter((file) => !UI_PATTERN.test(file))
+    .flatMap((file) => {
+      const match = /^registry\/bases\/[\w-]+\/(.+)$/.exec(file);
+      return match
+        ? BASES.map((base) => `registry/bases/${base}/${match[1]}`)
+        : [file];
+    });
+  const missing = synced.filter(
+    (file) => file.startsWith("registry/bases/radix/") && !available.has(file),
+  );
+  if (missing.length > 0) {
+    throw new Error(`registry.json lists missing files: ${missing.join(", ")}`);
+  }
+  return [...new Set(synced)].filter((file) => available.has(file)).sort();
+}
+
+function getIsOwnedFile(file: string) {
+  return SHIM_DIRS.some(
+    (dir) =>
+      file.startsWith(`components/${dir}/`) ||
+      BASES.some((base) =>
         file.startsWith(`registry/bases/${base}/components/${dir}/`),
       ),
   );
 }
 
-function getIsShim(file: string) {
-  return SHIM_DIRS.some((dir) => file.startsWith(`components/${dir}/`));
+function getIsSameList(a: string[] | undefined, b: string[]) {
+  return a?.length === b.length && a.every((file, index) => file === b[index]);
 }
 
 function getShims(files: string[]) {
@@ -180,15 +219,12 @@ async function readLocal(file: string) {
   return fs.readFile(path.join(DOCS_PATH, file), "utf8").catch(() => null);
 }
 
-async function readPin(): Promise<{ ref: string }> {
+async function readPin(): Promise<Pin> {
   return JSON.parse(await fs.readFile(PIN_PATH, "utf8"));
 }
 
-async function writePin(nextPin: string) {
-  await fs.writeFile(
-    PIN_PATH,
-    `${JSON.stringify({ ref: nextPin }, null, 2)}\n`,
-  );
+async function writePin(nextPin: Pin) {
+  await fs.writeFile(PIN_PATH, `${JSON.stringify(nextPin, null, 2)}\n`);
 }
 
 async function resolveRef(name: string) {
@@ -220,6 +256,15 @@ function getRemoteSource(commit: string): Source {
       }
       return response.text();
     },
+    readRegistry: async () => {
+      const response = await fetch(
+        `https://raw.githubusercontent.com/${REPO}/${commit}/registry.json`,
+      );
+      if (!response.ok) {
+        throw new Error(`Failed to fetch registry.json: ${response.status}`);
+      }
+      return response.json() as Promise<Registry>;
+    },
   };
 }
 
@@ -237,6 +282,10 @@ function getLocalSource(root: string): Source {
         .filter(Boolean)
         .map((file) => file.slice("src/".length)),
     readFile: (file) => fs.readFile(path.join(srcPath, file), "utf8"),
+    readRegistry: async () =>
+      JSON.parse(
+        await fs.readFile(path.resolve(root, "registry.json"), "utf8"),
+      ) as Registry,
   };
 }
 
