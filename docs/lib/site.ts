@@ -10,3 +10,5 @@ export const SITE_URL = "https://diceui.com";
 export const GITHUB_URL = "https://github.com/sadmann7/diceui";
 
 export const X_URL = "https://x.com/sadmann17";
+
+export const SPONSOR_URL = "https://github.com/sponsors/sadmann7";
