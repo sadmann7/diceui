@@ -52,19 +52,13 @@ jobs:
             fi
           fi
 
+          mapfile -t paths < <(
+            { git show HEAD:docs/registry/tablecn.json; cat docs/registry/tablecn.json; } |
+              jq -r '.files[]? | "src/" + .' | sort -u
+          )
           git clone --quiet --filter=blob:none https://github.com/sadmann7/tablecn "$RUNNER_TEMP/tablecn"
           git -C "$RUNNER_TEMP/tablecn" log --reverse --format="%s sadmann7/tablecn@%h" "$FROM..$TO" -- \
-            ':(glob)src/registry/bases/radix/components/data-table/**' \
-            ':(glob)src/registry/bases/radix/components/data-grid/**' \
-            ':(glob)src/registry/bases/base/components/data-table/**' \
-            ':(glob)src/registry/bases/base/components/data-grid/**' \
-            ':(glob)src/registry/bases/*/hooks/use-data-table.ts' \
-            ':(glob)src/registry/bases/*/hooks/use-data-grid.ts' \
-            ':(glob)src/lib/data-table-*.ts' \
-            ':(glob)src/lib/data-grid-*.ts' \
-            src/hooks/use-badge-overflow.ts \
-            src/hooks/use-debounced-callback.ts \
-            src/hooks/use-value-as-ref.ts > "$RUNNER_TEMP/commits.txt"
+            "${paths[@]}" > "$RUNNER_TEMP/commits.txt"
 
           {
             echo "Brings the data table and data grid up to sadmann7/tablecn@${TO:0:7}."
