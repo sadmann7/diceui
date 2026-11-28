@@ -13,9 +13,15 @@ Components with a shared state now keep it the same way in both bases, on `React
 
 Both apply to Angle Slider, Color Picker, Compare Slider, Cropper, Editable, File Upload, Key Value, Phone Input, Rating, Responsive Dialog, Scroll Spy, Selection Toolbar, Speed Dial, Stepper, Swap, Time Picker and Tour.
 
+Editable, Key Value, Phone Input, Responsive Dialog and Swap now decide on their first render whether they're controlled, like Base UI's own inputs. Switching a prop between a value and `undefined` logs a warning in development and isn't followed. Pass a defined value from the start, such as `value={user?.name ?? ""}`.
+
 ## Other fixes
 
-- **Color Picker** calls `onValueChange` once per change instead of twice, and applies a controlled `format` after mount.
+- **Color Picker** calls `onValueChange` once per change instead of twice, applies a controlled `format` after mount, and keeps alpha and hue that a controlled hex value can't carry.
+- **Time Picker** in Base UI stays open with `openOnFocus` when you press another segment, as the Radix version does.
+- **Selection Toolbar** asks to open once per selection while a controlled `open` stays `false`, instead of on every selection or scroll update.
+- **Scroll Spy** scrolls to a controlled value it didn't report itself, even after a change the parent rejected.
+- **Visually Hidden** uses Base UI's hidden styles, which position the element `fixed` instead of `absolute`. Visually Hidden Input stays `absolute`.
 - **File Upload** calls `onValueChange` once when files are accepted in controlled mode, instead of twice.
 - **Cropper** no longer resets the crop on every parent render when `crop` isn't passed.
 - **Tour** calls `onStepLeave` with the step being left, not the step being entered, and calls `onSkip` only when the user closes the tour.
