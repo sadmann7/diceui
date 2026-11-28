@@ -1,8 +1,8 @@
 "use client";
 
-import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useControlled } from "@base-ui/utils/useControlled";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useStableCallback } from "@base-ui/utils/useStableCallback";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
@@ -30,10 +30,10 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootElement = React.ComponentRef<typeof KeyValue>;
-type KeyInputElement = React.ComponentRef<typeof KeyValueKeyInput>;
-type RemoveElement = React.ComponentRef<typeof KeyValueRemove>;
-type AddElement = React.ComponentRef<typeof KeyValueAdd>;
+type RootElement = HTMLDivElement;
+type KeyInputElement = HTMLInputElement;
+type RemoveElement = HTMLButtonElement;
+type AddElement = HTMLButtonElement;
 
 function getErrorId(rootId: string, itemId: string, field: Field) {
   return `${rootId}-${itemId}-${field}-error`;
@@ -52,36 +52,6 @@ function removeQuotes(string: string, shouldStrip: boolean): string {
   return trimmed;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => KeyValueState;
-  setState: <K extends keyof KeyValueState>(
-    key: K,
-    value: KeyValueState[K],
-  ) => void;
-  notify: () => void;
-}
-
-function useStore<T>(
-  selector: (state: KeyValueState) => T,
-  ogStore?: Store | null,
-): T {
-  const contextStore = React.useContext(StoreContext);
-
-  const store = ogStore ?? contextStore;
-
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
-  }
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
-}
-
 interface ItemData {
   id: string;
   key: string;
@@ -94,7 +64,14 @@ interface KeyValueState {
   errors: Record<string, { key?: string; value?: string }>;
 }
 
-const StoreContext = React.createContext<Store | null>(null);
+interface StoreContextValue {
+  state: KeyValueState;
+  setValue: (value: ItemData[]) => void;
+  setFocusedId: (focusedId: string | null) => void;
+  setErrors: (errors: KeyValueState["errors"]) => void;
+}
+
+const StoreContext = React.createContext<StoreContextValue | null>(null);
 
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
@@ -102,6 +79,10 @@ function useStoreContext(consumerName: string) {
     throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
+}
+
+function useKeyValueStore<T>(selector: (state: KeyValueState) => T): T {
+  return selector(useStoreContext("useKeyValueStore").state);
 }
 
 interface KeyValueContextValue {
@@ -204,53 +185,32 @@ function KeyValue(props: KeyValueProps) {
   const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<KeyValueState>(() => ({
-    value: valueProp ??
-      defaultValue ?? [{ id: crypto.randomUUID(), key: "", value: "" }],
-    focusedId: null,
-    errors: {},
-  }));
-  const propsRef = useValueAsRef({ onValueChange });
+  const [value, setValueState] = useControlled({
+    controlled: valueProp,
+    default: defaultValue ?? [{ id: crypto.randomUUID(), key: "", value: "" }],
+    name: ROOT_NAME,
+    state: "value",
+  });
+  const [focusedId, setFocusedId] = React.useState<string | null>(null);
+  const [errors, setErrors] = React.useState<KeyValueState["errors"]>({});
 
-  const store = React.useMemo<Store>(() => {
-    function notify() {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
-    }
+  const setValue = useStableCallback((nextValue: ItemData[]) => {
+    if (Object.is(nextValue, value)) return;
+    onValueChange?.(nextValue);
+    setValueState(nextValue);
+  });
 
-    return {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, val) => {
-        if (Object.is(stateRef.current[key], val)) return;
+  const storeContextValue = React.useMemo<StoreContextValue>(
+    () => ({
+      state: { value, focusedId, errors },
+      setValue,
+      setFocusedId,
+      setErrors,
+    }),
+    [value, focusedId, errors, setValue],
+  );
 
-        if (key === "value" && Array.isArray(val)) {
-          stateRef.current.value = val;
-          propsRef.current.onValueChange?.(val);
-        } else {
-          stateRef.current[key] = val;
-        }
-
-        notify();
-      },
-      notify,
-    };
-  }, [listenersRef, stateRef, propsRef]);
-
-  const value = useStore((state) => state.value, store);
-  const errors = useStore((state) => state.errors, store);
   const isInvalid = Object.keys(errors).length > 0;
-
-  useIsoLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
-    }
-  }, [valueProp, store]);
 
   const contextValue = React.useMemo<KeyValueContextValue>(
     () => ({
@@ -296,7 +256,7 @@ function KeyValue(props: KeyValueProps) {
   const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
-    <StoreContext.Provider value={store}>
+    <StoreContext.Provider value={storeContextValue}>
       <KeyValueContext.Provider value={contextValue}>
         <RootPrimitive
           id={id}
@@ -331,7 +291,7 @@ interface KeyValueListProps extends DivProps {
 function KeyValueList(props: KeyValueListProps) {
   const { orientation = "vertical", asChild, className, ...listProps } = props;
 
-  const value = useStore((state) => state.value);
+  const value = useKeyValueStore((state) => state.value);
 
   const ListPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
@@ -379,7 +339,7 @@ function KeyValueItem(props: KeyValueItemProps) {
   const { asChild, className, ...itemProps } = props;
   const itemData = useKeyValueItemContext(ITEM_NAME);
 
-  const focusedId = useStore((state) => state.focusedId);
+  const focusedId = useKeyValueStore((state) => state.focusedId);
 
   const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
@@ -412,7 +372,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
   const context = useKeyValueContext(KEY_INPUT_NAME);
   const itemData = useKeyValueItemContext(KEY_INPUT_NAME);
   const store = useStoreContext(KEY_INPUT_NAME);
-  const errors = useStore((state) => state.errors);
+  const errors = useKeyValueStore((state) => state.errors);
 
   const propsRef = useValueAsRef({
     onChange: onChangeProp,
@@ -426,7 +386,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
 
   const onChange = React.useCallback(
     (event: React.ChangeEvent<KeyInputElement>) => {
-      const state = store.getState();
+      const state = store.state;
       const newValue = state.value.map((item) => {
         if (item.id !== itemData.id) return item;
         const updated = { ...item, key: event.target.value };
@@ -434,7 +394,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
         return updated;
       });
 
-      store.setState("value", newValue);
+      store.setValue(newValue);
 
       const updatedItemData = newValue.find((item) => item.id === itemData.id);
       if (updatedItemData) {
@@ -472,7 +432,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
         } else {
           delete newErrorsState[itemData.id];
         }
-        store.setState("errors", newErrorsState);
+        store.setErrors(newErrorsState);
       }
 
       propsRef.current.onChange?.(event);
@@ -528,7 +488,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
         }
 
         if (parsed.length > 0) {
-          const state = store.getState();
+          const state = store.state;
           const currentIndex = state.value.findIndex(
             (item) => item.id === itemData.id,
           );
@@ -552,7 +512,7 @@ function KeyValueKeyInput(props: KeyValueKeyInputProps) {
             newValue = newValue.slice(0, context.maxItems);
           }
 
-          store.setState("value", newValue);
+          store.setValue(newValue);
 
           if (context.onPaste) {
             context.onPaste(event.nativeEvent, parsed);
@@ -612,7 +572,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
   const context = useKeyValueContext(VALUE_INPUT_NAME);
   const itemData = useKeyValueItemContext(VALUE_INPUT_NAME);
   const store = useStoreContext(VALUE_INPUT_NAME);
-  const errors = useStore((state) => state.errors);
+  const errors = useKeyValueStore((state) => state.errors);
 
   const propsRef = useValueAsRef({
     onChange: onChangeProp,
@@ -628,7 +588,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
     (event: React.ChangeEvent<HTMLTextAreaElement>) => {
       propsRef.current.onChange?.(event);
 
-      const state = store.getState();
+      const state = store.state;
       const newValue = state.value.map((item) => {
         if (item.id !== itemData.id) return item;
         const updated = { ...item, value: event.target.value };
@@ -636,7 +596,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
         return updated;
       });
 
-      store.setState("value", newValue);
+      store.setValue(newValue);
 
       const updatedItemData = newValue.find((item) => item.id === itemData.id);
       if (updatedItemData) {
@@ -674,7 +634,7 @@ function KeyValueValueInput(props: KeyValueValueInputProps) {
         } else {
           delete newErrorsState[itemData.id];
         }
-        store.setState("errors", newErrorsState);
+        store.setErrors(newErrorsState);
       }
     },
     [store, itemData.id, context, propsRef],
@@ -725,14 +685,14 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
   const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
-  const value = useStore((state) => state.value);
+  const value = useKeyValueStore((state) => state.value);
   const isDisabled = context.disabled || value.length <= context.minItems;
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<RemoveElement>) => {
       propsRef.current.onClick?.(event);
 
-      const state = store.getState();
+      const state = store.state;
       if (state.value.length <= context.minItems) return;
 
       const itemToRemove = state.value.find((item) => item.id === itemData.id);
@@ -742,8 +702,8 @@ function KeyValueRemove(props: KeyValueRemoveProps) {
       const newErrors = { ...state.errors };
       delete newErrors[itemData.id];
 
-      store.setState("value", newValue);
-      store.setState("errors", newErrors);
+      store.setValue(newValue);
+      store.setErrors(newErrors);
 
       context.onRemove?.(itemToRemove);
     },
@@ -782,7 +742,7 @@ function KeyValueAdd(props: React.ComponentProps<typeof Button>) {
   const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
-  const value = useStore((state) => state.value);
+  const value = useKeyValueStore((state) => state.value);
   const isDisabled =
     context.disabled ||
     (context.maxItems !== undefined && value.length >= context.maxItems);
@@ -791,7 +751,7 @@ function KeyValueAdd(props: React.ComponentProps<typeof Button>) {
     (event: React.MouseEvent<AddElement>) => {
       propsRef.current.onClick?.(event);
 
-      const state = store.getState();
+      const state = store.state;
       if (
         context.maxItems !== undefined &&
         state.value.length >= context.maxItems
@@ -806,8 +766,8 @@ function KeyValueAdd(props: React.ComponentProps<typeof Button>) {
       };
 
       const newValue = [...state.value, newItem];
-      store.setState("value", newValue);
-      store.setState("focusedId", newItem.id);
+      store.setValue(newValue);
+      store.setFocusedId(newItem.id);
 
       context.onAdd?.(newItem);
     },
@@ -849,7 +809,7 @@ function KeyValueError(props: KeyValueErrorProps) {
   const context = useKeyValueContext(ERROR_NAME);
   const itemData = useKeyValueItemContext(ERROR_NAME);
 
-  const errors = useStore((state) => state.errors);
+  const errors = useKeyValueStore((state) => state.errors);
   const error = errors[itemData.id]?.[field];
 
   if (!error) return null;
@@ -879,5 +839,5 @@ export {
   type KeyValueProps,
   KeyValueRemove,
   KeyValueValueInput,
-  useStore as useKeyValueStore,
+  useKeyValueStore,
 };

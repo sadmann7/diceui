@@ -2,9 +2,10 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useControlled } from "@base-ui/utils/useControlled";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useStableCallback } from "@base-ui/utils/useStableCallback";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
@@ -24,21 +25,23 @@ const SUBMIT_NAME = "EditableSubmit";
 
 type Direction = "ltr" | "rtl";
 
-type RootElement = React.ComponentRef<typeof Editable>;
+type RootElement = HTMLDivElement;
+type PreviewElement = HTMLDivElement;
+type SubmitElement = HTMLButtonElement;
+type InputElement = HTMLInputElement;
 
 interface StoreState {
   value: string;
   editing: boolean;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
+interface StoreContextValue {
+  state: StoreState;
+  setValue: (value: string) => void;
+  setEditing: (editing: boolean) => void;
 }
 
-const StoreContext = React.createContext<Store | null>(null);
+const StoreContext = React.createContext<StoreContextValue | null>(null);
 
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
@@ -48,24 +51,8 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(
-  selector: (state: StoreState) => T,
-  ogStore?: Store | null,
-): T {
-  const contextStore = React.useContext(StoreContext);
-
-  const store = ogStore ?? contextStore;
-
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
-  }
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+function useEditable<T>(selector: (state: StoreState) => T): T {
+  return selector(useStoreContext("useEditable").state);
 }
 
 interface EditableContextValue {
@@ -174,89 +161,61 @@ function Editable(props: EditableProps) {
   const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    value: valueProp ?? defaultValue,
-    editing: editingProp ?? defaultEditing ?? false,
-  }));
+  const [value, setValueState] = useControlled({
+    controlled: valueProp,
+    default: defaultValue,
+    name: ROOT_NAME,
+    state: "value",
+  });
+  const [editing, setEditingState] = useControlled({
+    controlled: editingProp,
+    default: defaultEditing ?? false,
+    name: ROOT_NAME,
+    state: "editing",
+  });
 
   const propsRef = useValueAsRef({
-    onValueChange,
-    onEditingChange,
     onCancel: onCancelProp,
     onEdit: onEditProp,
     onSubmit: onSubmitProp,
-    onEscapeKeyDown,
-    onEnterKeyDown,
   });
 
-  const store = React.useMemo<Store>(() => {
-    const store: Store = {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
+  const setValue = useStableCallback((nextValue: string) => {
+    if (nextValue === value) return;
+    onValueChange?.(nextValue);
+    setValueState(nextValue);
+  });
 
-        if (key === "value" && typeof value === "string") {
-          stateRef.current.value = value;
-          propsRef.current.onValueChange?.(value);
-        } else if (key === "editing" && typeof value === "boolean") {
-          stateRef.current.editing = value;
-          propsRef.current.onEditingChange?.(value);
-        } else {
-          stateRef.current[key] = value;
-        }
+  const setEditing = useStableCallback((nextEditing: boolean) => {
+    if (nextEditing === editing) return;
+    onEditingChange?.(nextEditing);
+    setEditingState(nextEditing);
+  });
 
-        store.notify();
-      },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
-    };
-
-    return store;
-  }, [listenersRef, stateRef, propsRef]);
-
-  const value = useStore((state) => state.value, store);
-
-  useIsoLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
-    }
-  }, [valueProp, store]);
-
-  useIsoLayoutEffect(() => {
-    if (editingProp !== undefined) {
-      store.setState("editing", editingProp);
-    }
-  }, [editingProp, store]);
+  const storeContextValue = React.useMemo<StoreContextValue>(
+    () => ({ state: { value, editing }, setValue, setEditing }),
+    [value, editing, setValue, setEditing],
+  );
 
   const onCancel = React.useCallback(() => {
-    const prevValue = previousValueRef.current;
-    store.setState("value", prevValue);
-    store.setState("editing", false);
+    setValue(previousValueRef.current);
+    setEditing(false);
     propsRef.current.onCancel?.();
-  }, [store, propsRef]);
+  }, [setValue, setEditing, propsRef]);
 
   const onEdit = React.useCallback(() => {
-    const currentValue = store.getState().value;
-    previousValueRef.current = currentValue;
-    store.setState("editing", true);
+    previousValueRef.current = value;
+    setEditing(true);
     propsRef.current.onEdit?.();
-  }, [store, propsRef]);
+  }, [value, setEditing, propsRef]);
 
   const onSubmit = React.useCallback(
     (newValue: string) => {
-      store.setState("value", newValue);
-      store.setState("editing", false);
+      setValue(newValue);
+      setEditing(false);
       propsRef.current.onSubmit?.(newValue);
     },
-    [store, propsRef],
+    [setValue, setEditing, propsRef],
   );
 
   const contextValue = React.useMemo<EditableContextValue>(
@@ -319,7 +278,7 @@ function Editable(props: EditableProps) {
   });
 
   return (
-    <StoreContext.Provider value={store}>
+    <StoreContext.Provider value={storeContextValue}>
       <EditableContext.Provider value={contextValue}>
         {element}
         {isFormControl && (
@@ -360,9 +319,9 @@ function EditableLabel(props: EditableLabelProps) {
     render,
     state: {
       slot: "editable-label",
-      ...(context.disabled && { disabled: "" }),
-      ...(context.invalid && { invalid: "" }),
-      ...(context.required && { required: "" }),
+      disabled: context.disabled,
+      invalid: context.invalid,
+      required: context.required,
     },
   });
 }
@@ -373,7 +332,7 @@ interface EditableAreaProps
 function EditableArea(props: EditableAreaProps) {
   const { className, render, ref, ...areaProps } = props;
   const context = useEditableContext(AREA_NAME);
-  const editing = useStore((state) => state.editing);
+  const editing = useEditable((state) => state.editing);
 
   return useRender({
     defaultTagName: "div",
@@ -389,8 +348,8 @@ function EditableArea(props: EditableAreaProps) {
     render,
     state: {
       slot: "editable-area",
-      ...(context.disabled && { disabled: "" }),
-      ...(editing && { editing: "" }),
+      disabled: context.disabled,
+      editing: editing,
     },
   });
 }
@@ -411,8 +370,8 @@ function EditablePreview(props: EditablePreviewProps) {
   } = props;
 
   const context = useEditableContext(PREVIEW_NAME);
-  const value = useStore((state) => state.value);
-  const editing = useStore((state) => state.editing);
+  const value = useEditable((state) => state.value);
+  const editing = useEditable((state) => state.editing);
 
   const propsRef = useValueAsRef({
     onClick: onClickProp,
@@ -427,7 +386,7 @@ function EditablePreview(props: EditablePreviewProps) {
   }, [context]);
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
+    (event: React.MouseEvent<PreviewElement>) => {
       propsRef.current.onClick?.(event);
       if (event.defaultPrevented || context.triggerMode !== "click") return;
 
@@ -437,7 +396,7 @@ function EditablePreview(props: EditablePreviewProps) {
   );
 
   const onDoubleClick = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
+    (event: React.MouseEvent<PreviewElement>) => {
       propsRef.current.onDoubleClick?.(event);
       if (event.defaultPrevented || context.triggerMode !== "dblclick") return;
 
@@ -447,7 +406,7 @@ function EditablePreview(props: EditablePreviewProps) {
   );
 
   const onFocus = React.useCallback(
-    (event: React.FocusEvent<HTMLDivElement>) => {
+    (event: React.FocusEvent<PreviewElement>) => {
       propsRef.current.onFocus?.(event);
       if (event.defaultPrevented || context.triggerMode !== "focus") return;
 
@@ -457,7 +416,7 @@ function EditablePreview(props: EditablePreviewProps) {
   );
 
   const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
+    (event: React.KeyboardEvent<PreviewElement>) => {
       propsRef.current.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
@@ -494,9 +453,9 @@ function EditablePreview(props: EditablePreviewProps) {
     render,
     state: {
       slot: "editable-preview",
-      ...(context.disabled && { disabled: "" }),
-      ...(context.readOnly && { readonly: "" }),
-      ...(!value && { empty: "" }),
+      disabled: context.disabled,
+      readonly: context.readOnly,
+      empty: !value,
     },
   });
 
@@ -527,9 +486,9 @@ function EditableInput(props: EditableInputProps) {
 
   const context = useEditableContext(INPUT_NAME);
   const store = useStoreContext(INPUT_NAME);
-  const value = useStore((state) => state.value);
-  const editing = useStore((state) => state.editing);
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const value = useEditable((state) => state.value);
+  const editing = useEditable((state) => state.editing);
+  const inputRef = React.useRef<InputElement>(null);
   const composedRef = useMergedRefs(ref, inputRef);
 
   const propsRef = useValueAsRef({
@@ -558,7 +517,7 @@ function EditableInput(props: EditableInputProps) {
   );
 
   const onBlur = React.useCallback(
-    (event: React.FocusEvent<HTMLInputElement>) => {
+    (event: React.FocusEvent<InputElement>) => {
       if (isDisabled || isReadOnly) return;
 
       propsRef.current.onBlur?.(event);
@@ -579,20 +538,20 @@ function EditableInput(props: EditableInputProps) {
   );
 
   const onChange = React.useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
+    (event: React.ChangeEvent<InputElement>) => {
       if (isDisabled || isReadOnly) return;
 
       propsRef.current.onChange?.(event);
       if (event.defaultPrevented) return;
 
-      store.setState("value", event.target.value);
+      store.setValue(event.target.value);
       onAutosize(event.target);
     },
     [store, propsRef, onAutosize, isDisabled, isReadOnly],
   );
 
   const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLInputElement>) => {
+    (event: React.KeyboardEvent<InputElement>) => {
       if (isDisabled || isReadOnly) return;
 
       propsRef.current.onKeyDown?.(event);
@@ -676,7 +635,7 @@ interface EditableTriggerProps
 function EditableTrigger(props: EditableTriggerProps) {
   const { forceMount = false, render, ref, ...triggerProps } = props;
   const context = useEditableContext(TRIGGER_NAME);
-  const editing = useStore((state) => state.editing);
+  const editing = useEditable((state) => state.editing);
 
   const onTrigger = React.useCallback(() => {
     if (context.disabled || context.readOnly) return;
@@ -700,8 +659,8 @@ function EditableTrigger(props: EditableTriggerProps) {
     render,
     state: {
       slot: "editable-trigger",
-      ...(context.disabled && { disabled: "" }),
-      ...(context.readOnly && { readonly: "" }),
+      disabled: context.disabled,
+      readonly: context.readOnly,
     },
   });
 
@@ -755,7 +714,7 @@ interface EditableCancelProps
 function EditableCancel(props: EditableCancelProps) {
   const { onClick: onClickProp, render, ref, ...cancelProps } = props;
   const context = useEditableContext(CANCEL_NAME);
-  const editing = useStore((state) => state.editing);
+  const editing = useEditable((state) => state.editing);
 
   const propsRef = useValueAsRef({
     onClick: onClickProp,
@@ -803,15 +762,15 @@ interface EditableSubmitProps
 function EditableSubmit(props: EditableSubmitProps) {
   const { onClick: onClickProp, render, ref, ...submitProps } = props;
   const context = useEditableContext(SUBMIT_NAME);
-  const value = useStore((state) => state.value);
-  const editing = useStore((state) => state.editing);
+  const value = useEditable((state) => state.value);
+  const editing = useEditable((state) => state.editing);
 
   const propsRef = useValueAsRef({
     onClick: onClickProp,
   });
 
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLButtonElement>) => {
+    (event: React.MouseEvent<SubmitElement>) => {
       if (context.disabled || context.readOnly) return;
 
       propsRef.current.onClick?.(event);
@@ -857,5 +816,5 @@ export {
   EditableSubmit,
   EditableToolbar,
   EditableTrigger,
-  useStore as useEditable,
+  useEditable,
 };

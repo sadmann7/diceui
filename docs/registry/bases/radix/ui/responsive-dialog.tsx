@@ -1,8 +1,6 @@
 "use client";
 
-import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
-import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
+import { useControlled } from "@base-ui/utils/useControlled";
 import { cn } from "cn";
 import * as React from "react";
 
@@ -33,18 +31,6 @@ import {
 
 const ROOT_NAME = "ResponsiveDialog";
 
-interface StoreState {
-  open: boolean;
-}
-
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
-}
-
-const StoreContext = React.createContext<Store | null>(null);
 const IsMobileContext = React.createContext<boolean | null>(null);
 
 function useIsMobileContext() {
@@ -81,25 +67,6 @@ function getServerSnapshot() {
   return false;
 }
 
-function useStore<T>(
-  selector: (state: StoreState) => T,
-  ogStore?: Store | null,
-): T {
-  const contextStore = React.useContext(StoreContext);
-  const store = ogStore ?? contextStore;
-
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
-  }
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
-}
-
 interface ResponsiveDialogProps extends React.ComponentProps<typeof Dialog> {
   breakpoint?: number;
 }
@@ -113,73 +80,31 @@ function ResponsiveDialog({
 }: ResponsiveDialogProps) {
   const isMobile = useIsBelowBreakpoint(breakpoint);
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    open: openProp ?? defaultOpen,
-  }));
+  const [open, setOpenState] = useControlled({
+    controlled: openProp,
+    default: defaultOpen,
+    name: ROOT_NAME,
+    state: "open",
+  });
 
-  const onOpenChangeRef = useValueAsRef(onOpenChangeProp);
-
-  const store = React.useMemo<Store>(() => {
-    function notify() {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
-    }
-
-    return {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
-
-        if (key === "open" && typeof value === "boolean") {
-          stateRef.current.open = value;
-          onOpenChangeRef.current?.(value);
-        } else {
-          stateRef.current[key] = value;
-        }
-
-        notify();
-      },
-      notify,
-    };
-  }, [listenersRef, stateRef, onOpenChangeRef]);
-
-  const open = useStore((state) => state.open, store);
-
-  useIsoLayoutEffect(() => {
-    if (openProp !== undefined) {
-      store.setState("open", openProp);
-    }
-  }, [openProp, store]);
-
-  const onOpenChange = React.useCallback(
-    (value: boolean) => {
-      store.setState("open", value);
-    },
-    [store],
-  );
+  function onOpenChange(nextOpen: boolean) {
+    if (nextOpen === open) return;
+    onOpenChangeProp?.(nextOpen);
+    setOpenState(nextOpen);
+  }
 
   if (isMobile) {
     return (
-      <StoreContext.Provider value={store}>
-        <IsMobileContext.Provider value={isMobile}>
-          <Drawer open={open} onOpenChange={onOpenChange} {...props} />
-        </IsMobileContext.Provider>
-      </StoreContext.Provider>
+      <IsMobileContext.Provider value={isMobile}>
+        <Drawer open={open} onOpenChange={onOpenChange} {...props} />
+      </IsMobileContext.Provider>
     );
   }
 
   return (
-    <StoreContext.Provider value={store}>
-      <IsMobileContext.Provider value={isMobile}>
-        <Dialog open={open} onOpenChange={onOpenChange} {...props} />
-      </IsMobileContext.Provider>
-    </StoreContext.Provider>
+    <IsMobileContext.Provider value={isMobile}>
+      <Dialog open={open} onOpenChange={onOpenChange} {...props} />
+    </IsMobileContext.Provider>
   );
 }
 
