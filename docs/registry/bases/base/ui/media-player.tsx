@@ -3,6 +3,7 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Slider as SliderPrimitive } from "@base-ui/react/slider";
 import { useRender } from "@base-ui/react/use-render";
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import {
@@ -77,15 +78,14 @@ interface StoreState {
   volumeIndicatorVisible: boolean;
 }
 
-interface Store {
-  subscribe: (cb: () => void) => () => void;
-  getState: () => StoreState;
-  setState: (
-    key: keyof StoreState,
-    value: StoreState[keyof StoreState],
-  ) => void;
-  notify: () => void;
-}
+const selectors = {
+  controlsVisible: (state: StoreState) => state.controlsVisible,
+  dragging: (state: StoreState) => state.dragging,
+  menuOpen: (state: StoreState) => state.menuOpen,
+  volumeIndicatorVisible: (state: StoreState) => state.volumeIndicatorVisible,
+};
+
+type Store = ReactStore<StoreState, Record<string, never>, typeof selectors>;
 
 const StoreContext = React.createContext<Store | null>(null);
 
@@ -97,15 +97,9 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+function useMediaPlayerStore<T>(selector: (state: StoreState) => T): T {
+  const store = useStoreContext("useMediaPlayerStore");
+  return useStore(store, selector);
 }
 
 interface MediaPlayerContextValue {
@@ -161,35 +155,19 @@ interface MediaPlayerProps extends Omit<
 }
 
 function MediaPlayer(props: MediaPlayerProps) {
-  const [store] = React.useState<Store>(() => {
-    const listeners = new Set<() => void>();
-    const state: StoreState = {
-      controlsVisible: true,
-      dragging: false,
-      menuOpen: false,
-      volumeIndicatorVisible: false,
-    };
-
-    const store: Store = {
-      subscribe: (cb) => {
-        listeners.add(cb);
-        return () => listeners.delete(cb);
-      },
-      getState: () => state,
-      setState: (key, value) => {
-        if (Object.is(state[key], value)) return;
-        state[key] = value;
-        store.notify();
-      },
-      notify: () => {
-        for (const cb of listeners) {
-          cb();
-        }
-      },
-    };
-
-    return store;
-  });
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, Record<string, never>, typeof selectors>(
+        {
+          controlsVisible: true,
+          dragging: false,
+          menuOpen: false,
+          volumeIndicatorVisible: false,
+        },
+        {},
+        selectors,
+      ),
+  );
 
   return (
     <MediaProvider>
@@ -257,9 +235,9 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
 
   const store = useStoreContext(ROOT_NAME);
 
-  const controlsVisible = useStore((state) => state.controlsVisible);
-  const dragging = useStore((state) => state.dragging);
-  const menuOpen = useStore((state) => state.menuOpen);
+  const controlsVisible = useStore(store, selectors.controlsVisible);
+  const dragging = useStore(store, selectors.dragging);
+  const menuOpen = useStore(store, selectors.menuOpen);
 
   const hideControlsTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
   const volumeIndicatorTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -281,7 +259,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
     mediaElement?.tagName?.toLowerCase() === "mux-player";
 
   const onControlsShow = React.useCallback(() => {
-    store.setState("controlsVisible", true);
+    store.set("controlsVisible", true);
 
     if (hideControlsTimeoutRef.current) {
       clearTimeout(hideControlsTimeoutRef.current);
@@ -289,7 +267,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
 
     if (autoHide && !mediaPaused && !menuOpen && !dragging) {
       hideControlsTimeoutRef.current = setTimeout(() => {
-        store.setState("controlsVisible", false);
+        store.set("controlsVisible", false);
       }, 3000);
     }
   }, [store, autoHide, mediaPaused, menuOpen, dragging]);
@@ -297,14 +275,14 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
   const onVolumeIndicatorTrigger = React.useCallback(() => {
     if (menuOpen) return;
 
-    store.setState("volumeIndicatorVisible", true);
+    store.set("volumeIndicatorVisible", true);
 
     if (volumeIndicatorTimeoutRef.current) {
       clearTimeout(volumeIndicatorTimeoutRef.current);
     }
 
     volumeIndicatorTimeoutRef.current = setTimeout(() => {
-      store.setState("volumeIndicatorVisible", false);
+      store.set("volumeIndicatorVisible", false);
     }, 2000);
 
     if (autoHide) {
@@ -319,7 +297,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
       if (event.defaultPrevented) return;
 
       if (autoHide && !mediaPaused && !menuOpen && !dragging) {
-        store.setState("controlsVisible", false);
+        store.set("controlsVisible", false);
       }
     },
     [store, onMouseLeaveProp, autoHide, mediaPaused, menuOpen, dragging],
@@ -340,7 +318,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
 
   React.useEffect(() => {
     if (mediaPaused || menuOpen || dragging) {
-      store.setState("controlsVisible", true);
+      store.set("controlsVisible", true);
       if (hideControlsTimeoutRef.current) {
         clearTimeout(hideControlsTimeoutRef.current);
       }
@@ -857,7 +835,8 @@ function MediaPlayerControls(props: DivProps) {
   const isFullscreen = useMediaSelector(
     (state) => state.mediaIsFullscreen ?? false,
   );
-  const controlsVisible = useStore((state) => state.controlsVisible);
+  const store = useStoreContext("MediaPlayerControls");
+  const controlsVisible = useStore(store, selectors.controlsVisible);
 
   return useRender({
     defaultTagName: "div",
@@ -1150,8 +1129,10 @@ function MediaPlayerVolumeIndicator(props: DivProps) {
   const mediaVolumeLevel = useMediaSelector(
     (state) => state.mediaVolumeLevel ?? "high",
   );
+  const store = useStoreContext("MediaPlayerVolumeIndicator");
   const volumeIndicatorVisible = useStore(
-    (state) => state.volumeIndicatorVisible,
+    store,
+    selectors.volumeIndicatorVisible,
   );
 
   const effectiveVolume = mediaMuted ? 0 : mediaVolume;
@@ -1239,7 +1220,8 @@ function MediaPlayerControlsOverlay(props: DivProps) {
   const isFullscreen = useMediaSelector(
     (state) => state.mediaIsFullscreen ?? false,
   );
-  const controlsVisible = useStore((state) => state.controlsVisible);
+  const store = useStoreContext("MediaPlayerControlsOverlay");
+  const controlsVisible = useStore(store, selectors.controlsVisible);
 
   return useRender({
     defaultTagName: "div",
@@ -1593,7 +1575,7 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
   const displayValue = seekState.pendingSeekTime ?? mediaCurrentTime;
 
   const isDisabled = disabled || context.disabled;
-  const menuOpen = useStore((state) => state.menuOpen);
+  const menuOpen = useStore(store, selectors.menuOpen);
   const tooltipDisabled = withoutTooltip || context.withoutTooltip || menuOpen;
 
   const currentTooltipSideOffset =
@@ -1968,8 +1950,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
 
       setSeekState((prev) => ({ ...prev, pendingSeekTime: time }));
 
-      if (!store.getState().dragging) {
-        store.setState("dragging", true);
+      if (!store.state.dragging) {
+        store.set("dragging", true);
       }
 
       if (seekThrottleRef.current) {
@@ -2024,8 +2006,8 @@ function MediaPlayerSeek(props: MediaPlayerSeekProps) {
       horizontalMovementRef.current = 0;
       verticalMovementRef.current = 0;
 
-      if (store.getState().dragging) {
-        store.setState("dragging", false);
+      if (store.state.dragging) {
+        store.set("dragging", false);
       }
 
       dispatch({
@@ -2281,8 +2263,8 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
     (value: number | readonly number[]) => {
       const volume = (Array.isArray(value) ? value[0] : value) ?? 0;
 
-      if (!store.getState().dragging) {
-        store.setState("dragging", true);
+      if (!store.state.dragging) {
+        store.set("dragging", true);
       }
 
       dispatch({
@@ -2297,8 +2279,8 @@ function MediaPlayerVolume(props: MediaPlayerVolumeProps) {
     (value: number | readonly number[]) => {
       const volume = (Array.isArray(value) ? value[0] : value) ?? 0;
 
-      if (store.getState().dragging) {
-        store.setState("dragging", false);
+      if (store.state.dragging) {
+        store.set("dragging", false);
       }
 
       dispatch({
@@ -2513,7 +2495,7 @@ function MediaPlayerPlaybackSpeed(props: MediaPlayerPlaybackSpeedProps) {
     NonNullable<React.ComponentProps<typeof DropdownMenu>["onOpenChange"]>
   >(
     (open, eventDetails) => {
-      store.setState("menuOpen", open);
+      store.set("menuOpen", open);
       onOpenChangeProp?.(open, eventDetails);
     },
     [store, onOpenChangeProp],
@@ -3079,7 +3061,7 @@ function MediaPlayerSettings(props: MediaPlayerSettingsProps) {
     NonNullable<React.ComponentProps<typeof DropdownMenu>["onOpenChange"]>
   >(
     (open, eventDetails) => {
-      store.setState("menuOpen", open);
+      store.set("menuOpen", open);
       onOpenChangeProp?.(open, eventDetails);
     },
     [store, onOpenChangeProp],
@@ -3386,5 +3368,5 @@ export {
   MediaPlayerVolume,
   MediaPlayerVolumeIndicator,
   useMediaSelector as useMediaPlayer,
-  useStore as useMediaPlayerStore,
+  useMediaPlayerStore,
 };
