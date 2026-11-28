@@ -246,4 +246,15 @@ describe.each([
     });
     expect(status?.textContent).toBe("Inactive not selected");
   });
+
+  test("announces a single pick after the popover closes", () => {
+    render(<SingleSelect ui={ui} />);
+
+    toggleActive();
+
+    expect(screen.queryByRole("listbox")).toBeNull();
+    expect(document.querySelector("[aria-live=polite]")?.textContent).toBe(
+      "Active selected",
+    );
+  });
 });
