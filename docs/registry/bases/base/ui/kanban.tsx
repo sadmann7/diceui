@@ -811,7 +811,7 @@ function KanbanColumn(props: KanbanColumnProps) {
     transition,
     isDragging,
   } = useSortable({
-    id: value,
+    id: String(value),
     disabled,
     animateLayoutChanges,
   });
