@@ -98,6 +98,8 @@ export default function KanbanDemo() {
       value={columns}
       onValueChange={setColumns}
       getItemValue={(item) => item.id}
+      getItemLabel={(item) => item.title}
+      getColumnLabel={(column) => COLUMN_TITLES[column] ?? String(column)}
     >
       <KanbanBoard className="grid h-fit auto-rows-fr sm:grid-cols-3">
         {Object.entries(columns).map(([columnValue, tasks]) => (
@@ -190,7 +192,10 @@ function TaskColumn({ value, tasks, ...props }: TaskColumnProps) {
             {tasks.length}
           </Badge>
         </div>
-        <KanbanColumnHandle render={<Button variant="ghost" size="icon" />}>
+        <KanbanColumnHandle
+          aria-label={`Reorder ${COLUMN_TITLES[value]}`}
+          render={<Button variant="ghost" size="icon" />}
+        >
           <GripVertical className="h-4 w-4" />
         </KanbanColumnHandle>
       </div>
