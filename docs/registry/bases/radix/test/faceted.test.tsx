@@ -218,4 +218,32 @@ describe.each([
       ).toBe(option.id);
     });
   });
+
+  test("announces toggled options in a live region", () => {
+    const { Faceted, FacetedContent, FacetedItem, FacetedList } = ui;
+    render(
+      <Faceted items={items} multiple defaultOpen>
+        <FacetedContent>
+          <FacetedList>
+            {items.map((item) => (
+              <FacetedItem key={item.value} value={item.value}>
+                {item.label}
+              </FacetedItem>
+            ))}
+          </FacetedList>
+        </FacetedContent>
+      </Faceted>,
+    );
+
+    const status = document.querySelector("[aria-live=polite]");
+    act(() => {
+      fireEvent.click(screen.getByRole("option", { name: "Inactive" }));
+    });
+    expect(status?.textContent).toBe("Inactive selected");
+
+    act(() => {
+      fireEvent.click(screen.getByRole("option", { name: "Inactive" }));
+    });
+    expect(status?.textContent).toBe("Inactive not selected");
+  });
 });

@@ -39,6 +39,7 @@ interface FacetedStoreState {
   items: FacetedOption[];
   multiple: boolean;
   label: string | undefined;
+  announcement: string;
 }
 
 interface FacetedController {
@@ -145,15 +146,23 @@ function createFacetedStore(state: FacetedStoreState): FacetedStore {
       }
       if (hasChanged) store.notify();
     },
-    setOpen: (open) => store.controller.setOpen(open),
+    setOpen: (open) => {
+      state.announcement = "";
+      store.controller.setOpen(open);
+    },
     selectItem: (selectedValue) => {
       if (state.multiple) {
         const selected = Array.isArray(state.value) ? state.value : [];
+        const isRemoving = selected.includes(selectedValue);
         commitValue(
-          selected.includes(selectedValue)
+          isRemoving
             ? selected.filter((item) => item !== selectedValue)
             : [...selected, selectedValue],
         );
+        const itemLabel =
+          getLabels(state.items).get(selectedValue) ?? selectedValue;
+        state.announcement = `${itemLabel} ${isRemoving ? "not selected" : "selected"}`;
+        store.notify();
         return;
       }
 
@@ -218,6 +227,7 @@ function Faceted<Multiple extends boolean = false>({
       items,
       multiple,
       label: undefined,
+      announcement: "",
     }),
   );
 
@@ -384,6 +394,10 @@ function FacetedContent({
 }: FacetedContentProps) {
   const store = useFacetedStore("FacetedContent");
   const label = useFacetedStoreSelector(store, (state) => state.label);
+  const announcement = useFacetedStoreSelector(
+    store,
+    (state) => state.announcement,
+  );
 
   return (
     <PopoverContent
@@ -406,6 +420,9 @@ function FacetedContent({
       >
         {children}
       </Command>
+      <span aria-live="polite" className="sr-only">
+        {announcement}
+      </span>
     </PopoverContent>
   );
 }
