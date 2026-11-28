@@ -4,6 +4,7 @@ export const components: Registry["items"] = [
   {
     name: "client-only",
     type: "registry:component",
+    dependencies: ["@base-ui/utils@0.5.0"],
     files: [
       {
         path: "components/client-only.tsx",
@@ -53,7 +54,7 @@ export const components: Registry["items"] = [
         type: "registry:component",
       },
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "presence",
@@ -98,11 +99,12 @@ export const components: Registry["items"] = [
         type: "registry:component",
       },
     ],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "visually-hidden-input",
     type: "registry:component",
+    dependencies: ["@base-ui/utils@0.5.0"],
     files: [
       {
         path: "components/visually-hidden-input.tsx",

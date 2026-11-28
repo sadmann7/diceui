@@ -212,6 +212,7 @@ export const ui: Registry["items"] = [
   {
     name: "fps",
     type: "registry:ui",
+    dependencies: ["@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/fps.tsx",
@@ -435,7 +436,7 @@ export const ui: Registry["items"] = [
   {
     name: "relative-time-card",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     registryDependencies: ["hover-card"],
     files: [
       {

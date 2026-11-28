@@ -1,5 +1,6 @@
 import type * as React from "react";
 
+import { visuallyHidden } from "@base-ui/utils/visuallyHidden";
 import { Slot as SlotPrimitive } from "radix-ui";
 
 interface VisuallyHiddenProps extends React.ComponentProps<"div"> {
@@ -15,16 +16,7 @@ function VisuallyHidden(props: VisuallyHiddenProps) {
     <Comp
       {...visuallyHiddenProps}
       style={{
-        border: 0,
-        clip: "rect(0 0 0 0)",
-        clipPath: "inset(50%)",
-        height: "1px",
-        margin: "-1px",
-        overflow: "hidden",
-        padding: 0,
-        position: "absolute",
-        whiteSpace: "nowrap",
-        width: "1px",
+        ...visuallyHidden,
         ...style,
       }}
     />

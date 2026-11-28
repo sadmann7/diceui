@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsHydrated } from "@base-ui/utils/hydration";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
@@ -10,26 +11,10 @@ interface PortalProps extends SlotProps {
   container?: Element | DocumentFragment | null;
 }
 
-function subscribe() {
-  return () => {};
-}
-
-function getSnapshot() {
-  return true;
-}
-
-function getServerSnapshot() {
-  return false;
-}
-
 function Portal(props: PortalProps) {
   const { container: containerProp, ...portalProps } = props;
 
-  const mounted = React.useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getServerSnapshot,
-  );
+  const mounted = useIsHydrated();
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);

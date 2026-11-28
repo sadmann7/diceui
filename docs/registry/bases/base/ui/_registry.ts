@@ -215,6 +215,7 @@ export const ui: Registry["items"] = [
   {
     name: "fps",
     type: "registry:ui",
+    dependencies: ["@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/fps.tsx",
@@ -489,7 +490,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["hover-card"],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "responsive-dialog",
