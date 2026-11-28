@@ -1,8 +1,8 @@
 "use client";
 
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import {
   autoUpdate,
@@ -33,11 +33,11 @@ type Side = (typeof SIDE_OPTIONS)[number];
 type Align = (typeof ALIGN_OPTIONS)[number];
 type Boundary = Element | null;
 
+type ItemElement = HTMLButtonElement;
+
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
-
-type ItemElement = React.ComponentRef<typeof SelectionToolbarItem>;
 
 function getSideAndAlignFromPlacement(placement: Placement) {
   const [side, align = "center"] = placement.split("-");
@@ -61,12 +61,45 @@ interface StoreState {
   selectionRect: SelectionRect | null;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
-  batch: (fn: () => void) => void;
+interface StoreController {
+  isOpenControlled: boolean;
+  onOpenChange?: (open: boolean) => void;
+  onSelectionChange?: (text: string) => void;
+}
+
+const selectors = {
+  open: (state: StoreState) => state.open,
+  selectionRect: (state: StoreState) => state.selectionRect,
+};
+
+type Store = ReactStore<StoreState, StoreController, typeof selectors>;
+
+function openSelection(
+  store: Store,
+  selectedText: string,
+  selectionRect: SelectionRect,
+) {
+  const { state, context } = store;
+  if (state.selectedText !== selectedText) {
+    context.onSelectionChange?.(selectedText);
+  }
+  if (!state.open) context.onOpenChange?.(true);
+  store.update({
+    open: context.isOpenControlled ? state.open : true,
+    selectedText,
+    selectionRect,
+  });
+}
+
+function closeSelection(store: Store) {
+  const { state, context } = store;
+  if (state.open) context.onOpenChange?.(false);
+  if (state.selectedText) context.onSelectionChange?.("");
+  store.update({
+    open: context.isOpenControlled ? state.open : false,
+    selectedText: "",
+    selectionRect: null,
+  });
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -79,7 +112,7 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(
+function useSelectionToolbar<T>(
   selector: (state: StoreState) => T,
   ogStore?: Store | null,
 ): T {
@@ -88,15 +121,12 @@ function useStore<T>(
   const store = ogStore ?? contextStore;
 
   if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(
+      `\`useSelectionToolbar\` must be used within \`${ROOT_NAME}\``,
+    );
   }
 
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+  return useStore(store, selector);
 }
 
 interface SelectionToolbarProps extends DivProps {
@@ -140,17 +170,30 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    open: openProp ?? false,
-    selectedText: "",
-    selectionRect: null,
-  }));
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, StoreController, typeof selectors>(
+        { open: openProp ?? false, selectedText: "", selectionRect: null },
+        {
+          isOpenControlled: openProp !== undefined,
+          onOpenChange,
+          onSelectionChange,
+        },
+        selectors,
+      ),
+  );
 
-  const propsRef = useValueAsRef({
-    onOpenChange,
-    onSelectionChange,
+  useIsoLayoutEffect(() => {
+    Object.assign(store.context, {
+      isOpenControlled: openProp !== undefined,
+      onOpenChange,
+      onSelectionChange,
+    } satisfies StoreController);
   });
+
+  useIsoLayoutEffect(() => {
+    if (openProp !== undefined) store.set("open", openProp);
+  }, [store, openProp]);
 
   const getContainer = React.useCallback((): HTMLElement | null => {
     if (containerProp === undefined || containerProp === null) return null;
@@ -160,63 +203,8 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     return containerProp;
   }, [containerProp]);
 
-  const isBatchingRef = React.useRef(false);
-
-  const store = React.useMemo<Store>(() => {
-    function notify() {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
-    }
-
-    return {
-      subscribe: (callback) => {
-        listenersRef.current.add(callback);
-        return () => listenersRef.current.delete(callback);
-      },
-      getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
-
-        if (key === "open" && typeof value === "boolean") {
-          stateRef.current.open = value;
-          propsRef.current.onOpenChange?.(value);
-        } else if (key === "selectedText" && typeof value === "string") {
-          stateRef.current.selectedText = value;
-          propsRef.current.onSelectionChange?.(value);
-        } else {
-          stateRef.current[key] = value;
-        }
-
-        if (!isBatchingRef.current) {
-          notify();
-        }
-      },
-      notify,
-      batch: (fn: () => void) => {
-        if (isBatchingRef.current) {
-          fn();
-          return;
-        }
-        isBatchingRef.current = true;
-        try {
-          fn();
-        } finally {
-          isBatchingRef.current = false;
-          notify();
-        }
-      },
-    };
-  }, [listenersRef, stateRef, propsRef]);
-
-  useIsoLayoutEffect(() => {
-    if (openProp !== undefined) {
-      store.setState("open", openProp);
-    }
-  }, [openProp, store]);
-
-  const open = useStore((state) => state.open, store);
-  const selectionRect = useStore((state) => state.selectionRect, store);
+  const open = useStore(store, selectors.open);
+  const selectionRect = useStore(store, selectors.selectionRect);
 
   const rafRef = React.useRef<number | null>(null);
 
@@ -386,13 +374,9 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   });
 
   const closeToolbar = React.useCallback(() => {
-    const state = store.getState();
+    const { state } = store;
     if (state.open || state.selectedText || state.selectionRect) {
-      store.batch(() => {
-        store.setState("open", false);
-        store.setState("selectedText", "");
-        store.setState("selectionRect", null);
-      });
+      closeSelection(store);
     }
   }, [store]);
 
@@ -429,7 +413,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
 
-    const state = store.getState();
+    const { state } = store;
     const hasChanges =
       state.selectedText !== text ||
       !state.selectionRect ||
@@ -440,15 +424,11 @@ function SelectionToolbar(props: SelectionToolbarProps) {
       !state.open;
 
     if (hasChanges) {
-      store.batch(() => {
-        store.setState("selectedText", text);
-        store.setState("selectionRect", {
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height,
-        });
-        store.setState("open", true);
+      openSelection(store, text, {
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height,
       });
     }
   }, [containerProp, getContainer, store, closeToolbar]);
@@ -456,7 +436,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   const scheduleUpdate = React.useCallback(() => {
     if (rafRef.current !== null) return;
     rafRef.current = requestAnimationFrame(() => {
-      if (store.getState().open) {
+      if (store.state.open) {
         updateSelection();
       }
       rafRef.current = null;
@@ -617,7 +597,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
     const item = itemRef.current;
     if (!item) return;
 
-    const text = store.getState().selectedText;
+    const text = store.state.selectedText;
 
     const selectEvent = new CustomEvent("selectiontoolbar.select", {
       bubbles: true,
@@ -710,5 +690,5 @@ export {
   SelectionToolbarItem,
   type SelectionToolbarProps,
   SelectionToolbarSeparator,
-  useStore as useSelectionToolbar,
+  useSelectionToolbar,
 };

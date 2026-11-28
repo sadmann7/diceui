@@ -2,9 +2,9 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
@@ -69,11 +69,21 @@ interface StoreState {
   open: boolean;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
+interface StoreController {
+  isOpenControlled: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+const selectors = {
+  open: (state: StoreState) => state.open,
+};
+
+type Store = ReactStore<StoreState, StoreController, typeof selectors>;
+
+function setOpen(store: Store, open: boolean) {
+  if (Object.is(store.state.open, open)) return;
+  store.context.onOpenChange?.(open);
+  if (!store.context.isOpenControlled) store.set("open", open);
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -84,26 +94,6 @@ function useStoreContext(consumerName: string) {
     throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
   return context;
-}
-
-function useStore<T>(
-  selector: (state: StoreState) => T,
-  ogStore?: Store | null,
-): T {
-  const contextStore = React.useContext(StoreContext);
-
-  const store = ogStore ?? contextStore;
-
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
-  }
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
 interface NodeData {
@@ -176,44 +166,29 @@ function SpeedDial(props: SpeedDialProps) {
   const isPointerInsideReactTreeRef = React.useRef(false);
   const hoverCloseTimerRef = React.useRef<number | null>(null);
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    open: openProp ?? defaultOpen ?? false,
-  }));
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, StoreController, typeof selectors>(
+        { open: openProp ?? defaultOpen ?? false },
+        { isOpenControlled: openProp !== undefined, onOpenChange },
+        selectors,
+      ),
+  );
 
-  const propsRef = useValueAsRef({
-    onOpenChange,
-    onPointerDownCapture: onPointerDownCaptureProp,
+  useIsoLayoutEffect(() => {
+    Object.assign(store.context, {
+      isOpenControlled: openProp !== undefined,
+      onOpenChange,
+    } satisfies StoreController);
   });
 
-  const store = React.useMemo<Store>(() => {
-    const store: Store = {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
+  useIsoLayoutEffect(() => {
+    if (openProp !== undefined) store.set("open", openProp);
+  }, [store, openProp]);
 
-        if (key === "open" && typeof value === "boolean") {
-          stateRef.current.open = value;
-          propsRef.current.onOpenChange?.(value);
-        } else {
-          stateRef.current[key] = value;
-        }
-
-        store.notify();
-      },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
-    };
-
-    return store;
-  }, [listenersRef, stateRef, propsRef]);
+  const propsRef = useValueAsRef({
+    onPointerDownCapture: onPointerDownCaptureProp,
+  });
 
   const getNodes = React.useCallback(() => {
     return Array.from(nodesRef.current.values())
@@ -241,13 +216,7 @@ function SpeedDial(props: SpeedDialProps) {
     nodesRef.current.delete(id);
   }, []);
 
-  useIsoLayoutEffect(() => {
-    if (openProp !== undefined) {
-      store.setState("open", openProp);
-    }
-  }, [openProp, store]);
-
-  const open = useStore((state) => state.open, store);
+  const open = useStore(store, selectors.open);
 
   const onPointerDownCapture = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
@@ -355,7 +324,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
     disabled,
   } = useSpeedDialContext(TRIGGER_NAME);
 
-  const open = useStore((state) => state.open);
+  const open = useStore(store, selectors.open);
   const isDisabled = disabledProp || disabled;
 
   const instanceId = React.useId();
@@ -401,7 +370,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
         hoverCloseTimerRef.current = null;
       }
 
-      store.setState("open", !open);
+      setOpen(store, !open);
     },
     [onClickProp, store, open, hoverCloseTimerRef],
   );
@@ -422,7 +391,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
       }
 
       hoverOpenTimerRef.current = window.setTimeout(() => {
-        store.setState("open", true);
+        setOpen(store, true);
       }, delay);
     },
     [
@@ -447,7 +416,7 @@ function SpeedDialTrigger(props: SpeedDialTriggerProps) {
       }
 
       hoverCloseTimerRef.current = window.setTimeout(() => {
-        store.setState("open", false);
+        setOpen(store, false);
       }, DEFAULT_HOVER_CLOSE_DELAY);
     },
     [onMouseLeaveProp, activationMode, isDisabled, store, hoverCloseTimerRef],
@@ -551,7 +520,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   } = props;
 
   const store = useStoreContext(CONTENT_NAME);
-  const open = useStore((state) => state.open);
+  const open = useStore(store, selectors.open);
 
   const {
     contentId,
@@ -690,7 +659,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
         propsRef.current?.onEscapeKeyDown?.(event);
         if (event.defaultPrevented) return;
 
-        store.setState("open", false);
+        setOpen(store, false);
       }
 
       if (event.key === "Tab") {
@@ -706,11 +675,11 @@ function SpeedDialContent(props: SpeedDialContentProps) {
 
         if (event.shiftKey) {
           if (activeElement === firstElement) {
-            store.setState("open", false);
+            setOpen(store, false);
           }
         } else {
           if (activeElement === lastElement) {
-            store.setState("open", false);
+            setOpen(store, false);
           }
         }
       }
@@ -746,7 +715,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
             if (interactEvent.defaultPrevented) return;
           }
 
-          store.setState("open", false);
+          setOpen(store, false);
         }
 
         if (event.pointerType === "touch") {
@@ -794,7 +763,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
       if (event.defaultPrevented || activationMode !== "hover") return;
 
       hoverCloseTimerRef.current = window.setTimeout(() => {
-        store.setState("open", false);
+        setOpen(store, false);
       }, DEFAULT_HOVER_CLOSE_DELAY);
     },
     [propsRef, hoverCloseTimerRef, store, activationMode],
@@ -1033,7 +1002,7 @@ function SpeedDialAction(props: SpeedDialActionProps) {
       action.dispatchEvent(actionSelectEvent);
       if (actionSelectEvent.defaultPrevented) return;
 
-      store.setState("open", false);
+      setOpen(store, false);
     },
     [propsRef, store],
   );
