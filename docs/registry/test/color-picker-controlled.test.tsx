@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import * as React from "react";
 import { describe, expect, test, vi } from "vitest";
 
 import * as BaseColorPicker from "@/registry/bases/base/ui/color-picker";
@@ -56,6 +57,24 @@ describe.each([
 
       expect(onValueChange).not.toHaveBeenCalled();
       expect(getHexInput()).toHaveValue("#0000ff");
+    });
+
+    test("keeps an alpha change the hex value can't carry", () => {
+      function Demo() {
+        const [value, setValue] = React.useState("#ff0000");
+        return (
+          <ColorPicker inline value={value} onValueChange={setValue}>
+            <ColorPickerInput />
+          </ColorPicker>
+        );
+      }
+      render(<Demo />);
+      const alphaInput = screen.getByLabelText("Alpha transparency percentage");
+
+      fireEvent.change(alphaInput, { target: { value: "50" } });
+
+      expect(alphaInput).toHaveValue("50");
+      expect(getHexInput()).toHaveValue("#ff0000");
     });
 
     test("follows the format prop without calling onFormatChange", () => {

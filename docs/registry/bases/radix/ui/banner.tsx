@@ -1,8 +1,10 @@
 "use client";
 
 import { ReactStore, useStore } from "@base-ui/utils/store";
+import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
 import { useControlled } from "@base-ui/utils/useControlled";
-import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
+import { useStableCallback } from "@base-ui/utils/useStableCallback";
+import { useTimeout } from "@base-ui/utils/useTimeout";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
@@ -337,10 +339,13 @@ function BannerImpl(props: BannerImplProps) {
     setOffsetBeforeRemove(offset);
   }
 
+  const mountFrame = useAnimationFrame();
+  const removeTimeout = useTimeout();
+
   React.useEffect(() => {
-    const frame = requestAnimationFrame(() => setMounted(true));
-    return () => cancelAnimationFrame(frame);
-  }, []);
+    mountFrame.request(() => setMounted(true));
+    return mountFrame.cancel;
+  }, [mountFrame]);
 
   React.useLayoutEffect(() => {
     if (!bannerRef.current || removing) return;
@@ -351,12 +356,11 @@ function BannerImpl(props: BannerImplProps) {
   React.useEffect(() => {
     if (!removing) return;
     removeHeight(store, banner.id);
-    const timeoutId = setTimeout(
-      () => removeBanner(store, banner.id),
-      BANNER_ANIMATION_DURATION,
+    removeTimeout.start(BANNER_ANIMATION_DURATION, () =>
+      removeBanner(store, banner.id),
     );
-    return () => clearTimeout(timeoutId);
-  }, [removing, store, banner.id]);
+    return removeTimeout.clear;
+  }, [removing, store, banner.id, removeTimeout]);
 
   const onClose = React.useCallback(
     () => setRemoving(store, banner.id, true),
@@ -471,8 +475,10 @@ function Banner(props: BannerProps) {
     state: "open",
   });
   const bannerIdRef = React.useRef<string | null>(null);
-  const onDismissRef = useValueAsRef(onDismiss);
-  const onOpenChangeRef = useValueAsRef(onOpenChange);
+  const onQueuedDismiss = useStableCallback(() => {
+    onDismiss?.();
+    onOpenChange?.(false);
+  });
 
   React.useEffect(() => {
     if (!isInsideStore || !store || !open) return;
@@ -483,10 +489,7 @@ function Banner(props: BannerProps) {
       priority,
       dismissible,
       duration,
-      onDismiss: () => {
-        onDismissRef.current?.();
-        onOpenChangeRef.current?.(false);
-      },
+      onDismiss: onQueuedDismiss,
     });
     bannerIdRef.current = id;
 
@@ -505,14 +508,13 @@ function Banner(props: BannerProps) {
     priority,
     dismissible,
     duration,
-    onDismissRef,
-    onOpenChangeRef,
+    onQueuedDismiss,
   ]);
 
   const onClose = React.useCallback(() => {
-    onOpenChangeRef.current?.(false);
+    onOpenChange?.(false);
     setOpenState(false);
-  }, [onOpenChangeRef, setOpenState]);
+  }, [onOpenChange, setOpenState]);
 
   const contextValue = React.useMemo<BannerContextValue>(
     () => ({

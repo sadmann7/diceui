@@ -1,8 +1,12 @@
 "use client";
 
+import { addEventListener } from "@base-ui/utils/addEventListener";
+import { useIsHydrated } from "@base-ui/utils/hydration";
+import { ownerDocument } from "@base-ui/utils/owner";
+import { activeElement } from "@base-ui/utils/shadowDom";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
+import { useStableCallback } from "@base-ui/utils/useStableCallback";
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
@@ -32,29 +36,17 @@ interface DivProps extends React.ComponentProps<"div"> {
 type RootElement = HTMLDivElement;
 type ItemElement = HTMLButtonElement;
 
-function subscribe() {
-  return () => {};
-}
-
-function getSnapshot() {
-  return true;
-}
-
-function getServerSnapshot() {
-  return false;
-}
-
 function focusFirst(
   candidates: React.RefObject<HTMLElement | null>[],
   preventScroll = false,
 ) {
-  const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
+  const PREVIOUSLY_FOCUSED_ELEMENT = activeElement(document);
   for (const candidateRef of candidates) {
     const candidate = candidateRef.current;
     if (!candidate) continue;
     if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
     candidate.focus({ preventScroll });
-    if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
+    if (activeElement(document) !== PREVIOUSLY_FOCUSED_ELEMENT) return;
   }
 }
 
@@ -155,39 +147,27 @@ function ActionBar(props: ActionBarProps) {
     ...rootProps
   } = props;
 
-  const mounted = React.useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getServerSnapshot,
-  );
+  const isHydrated = useIsHydrated();
 
   const rootRef = React.useRef<RootElement>(null);
   const composedRef = useMergedRefs(ref, rootRef);
 
-  const propsRef = useValueAsRef({
-    onEscapeKeyDown,
-    onOpenChange,
+  const onDocumentKeyDown = useStableCallback((event: KeyboardEvent) => {
+    if (event.key !== "Escape") return;
+    onEscapeKeyDown?.(event);
+    if (!event.defaultPrevented) onOpenChange?.(false);
   });
 
   const dir = DirectionPrimitive.useDirection(dirProp);
 
   React.useEffect(() => {
     if (!open) return;
-
-    const ownerDocument = rootRef.current?.ownerDocument ?? document;
-
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        propsRef.current.onEscapeKeyDown?.(event);
-        if (!event.defaultPrevented) {
-          propsRef.current.onOpenChange?.(false);
-        }
-      }
-    }
-
-    ownerDocument.addEventListener("keydown", onKeyDown);
-    return () => ownerDocument.removeEventListener("keydown", onKeyDown);
-  }, [open, propsRef]);
+    return addEventListener(
+      ownerDocument(rootRef.current),
+      "keydown",
+      onDocumentKeyDown,
+    );
+  }, [open, onDocumentKeyDown]);
 
   const contextValue = React.useMemo<ActionBarContextValue>(
     () => ({
@@ -200,7 +180,7 @@ function ActionBar(props: ActionBarProps) {
   );
 
   const portalContainer =
-    portalContainerProp ?? (mounted ? globalThis.document?.body : null);
+    portalContainerProp ?? (isHydrated ? globalThis.document?.body : null);
 
   if (!portalContainer || !open) return null;
 

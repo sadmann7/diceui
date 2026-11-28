@@ -1,9 +1,9 @@
 "use client";
 
+import { clamp } from "@base-ui/utils/clamp";
+import { NOOP } from "@base-ui/utils/empty";
 import { ReactStore, useStore } from "@base-ui/utils/store";
-import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
 import * as React from "react";
@@ -24,29 +24,28 @@ type Orientation = "horizontal" | "vertical";
 
 type RootElement = HTMLDivElement;
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(Math.max(value, min), max);
-}
-
 interface StoreState {
   value: number;
+  valueProp: number | undefined;
 }
 
-interface StoreController {
-  isValueControlled: boolean;
-  onValueChange?: (value: number) => void;
+interface StoreContext {
+  onValueChange: (value: number) => void;
 }
 
 const selectors = {
-  value: (state: StoreState) => state.value,
+  value: (state: StoreState) =>
+    state.valueProp === undefined
+      ? state.value
+      : clamp(state.valueProp, 0, 100),
 };
 
-type Store = ReactStore<StoreState, StoreController, typeof selectors>;
+type Store = ReactStore<StoreState, StoreContext, typeof selectors>;
 
 function setValue(store: Store, value: number) {
-  if (Object.is(store.state.value, value)) return;
-  store.context.onValueChange?.(value);
-  if (!store.context.isValueControlled) store.set("value", value);
+  if (Object.is(store.select("value"), value)) return;
+  store.context.onValueChange(value);
+  store.set("value", value);
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -107,53 +106,34 @@ function CompareSlider(props: CompareSliderProps) {
 
   const [store] = React.useState<Store>(
     () =>
-      new ReactStore<StoreState, StoreController, typeof selectors>(
-        { value: clamp(valueProp ?? defaultValue, 0, 100) },
-        { isValueControlled: valueProp !== undefined, onValueChange },
+      new ReactStore<StoreState, StoreContext, typeof selectors>(
+        { value: clamp(valueProp ?? defaultValue, 0, 100), valueProp },
+        { onValueChange: NOOP },
         selectors,
       ),
   );
 
-  useIsoLayoutEffect(() => {
-    Object.assign(store.context, {
-      isValueControlled: valueProp !== undefined,
-      onValueChange,
-    } satisfies StoreController);
-  });
-
-  useIsoLayoutEffect(() => {
-    if (valueProp !== undefined) store.set("value", clamp(valueProp, 0, 100));
-  }, [store, valueProp]);
+  store.useControlledProp("valueProp", valueProp);
+  store.useContextCallback("onValueChange", onValueChange);
 
   const rootRef = React.useRef<RootElement | null>(null);
   const composedRef = useMergedRefs(ref, rootRef);
   const isDraggingRef = React.useRef(false);
 
-  const propsRef = useValueAsRef({
-    onPointerMove: onPointerMoveProp,
-    onPointerUp: onPointerUpProp,
-    onPointerDown: onPointerDownProp,
-    onPointerCancel: onPointerCancelProp,
-    onKeyDown: onKeyDownProp,
-    interaction,
-    orientation,
-    step,
-  });
-
   const value = useStore(store, selectors.value);
 
   const onPointerMove = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
-      if (!isDraggingRef.current && propsRef.current.interaction === "drag") {
+      if (!isDraggingRef.current && interaction === "drag") {
         return;
       }
       if (!rootRef.current) return;
 
-      propsRef.current.onPointerMove?.(event);
+      onPointerMoveProp?.(event);
       if (event.defaultPrevented) return;
 
       const rootRect = rootRef.current.getBoundingClientRect();
-      const isVertical = propsRef.current.orientation === "vertical";
+      const isVertical = orientation === "vertical";
       const position = isVertical
         ? event.clientY - rootRect.top
         : event.clientX - rootRect.left;
@@ -162,50 +142,50 @@ function CompareSlider(props: CompareSliderProps) {
 
       setValue(store, percentage);
     },
-    [propsRef, store],
+    [interaction, onPointerMoveProp, orientation, store],
   );
 
   const onPointerDown = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
-      if (propsRef.current.interaction !== "drag") return;
+      if (interaction !== "drag") return;
 
-      propsRef.current.onPointerDown?.(event);
+      onPointerDownProp?.(event);
       if (event.defaultPrevented) return;
 
       event.currentTarget.setPointerCapture(event.pointerId);
       isDraggingRef.current = true;
     },
-    [propsRef],
+    [interaction, onPointerDownProp],
   );
 
   const onPointerUp = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
-      if (propsRef.current.interaction !== "drag") return;
+      if (interaction !== "drag") return;
 
-      propsRef.current.onPointerUp?.(event);
+      onPointerUpProp?.(event);
       if (event.defaultPrevented) return;
 
       event.currentTarget.releasePointerCapture(event.pointerId);
       isDraggingRef.current = false;
     },
-    [propsRef],
+    [interaction, onPointerUpProp],
   );
 
   const onPointerCancel = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
-      propsRef.current.onPointerCancel?.(event);
+      onPointerCancelProp?.(event);
       onPointerUp(event);
     },
-    [propsRef, onPointerUp],
+    [onPointerCancelProp, onPointerUp],
   );
 
   const onKeyDown = React.useCallback(
     (event: React.KeyboardEvent<RootElement>) => {
-      propsRef.current.onKeyDown?.(event);
+      onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
-      const currentValue = store.state.value;
-      const isVertical = propsRef.current.orientation === "vertical";
+      const currentValue = store.select("value");
+      const isVertical = orientation === "vertical";
 
       if (event.key === "Home") {
         event.preventDefault();
@@ -230,12 +210,12 @@ function CompareSlider(props: CompareSliderProps) {
           direction = isDecreaseKey ? -1 : 1;
         }
 
-        const stepInDirection = propsRef.current.step * multiplier * direction;
+        const stepInDirection = step * multiplier * direction;
         const newValue = clamp(currentValue + stepInDirection, 0, 100);
         setValue(store, newValue);
       }
     },
-    [store, propsRef],
+    [store, onKeyDownProp, orientation, step],
   );
 
   const contextValue = React.useMemo<CompareSliderContextValue>(
