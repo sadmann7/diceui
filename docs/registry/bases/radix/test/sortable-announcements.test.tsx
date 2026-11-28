@@ -113,7 +113,9 @@ describe.each([
       "assertive: Dropped Cherry at position 1 of 3.",
     ]);
     expect(
-      screen.getAllByRole("button").map((button) => button.ariaLabel),
+      screen
+        .getAllByRole("button")
+        .map((button) => button.getAttribute("aria-label")),
     ).toEqual(["Reorder Cherry", "Reorder Apple", "Reorder Banana"]);
   });
 
