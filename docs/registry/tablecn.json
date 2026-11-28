@@ -1,11 +1,12 @@
 {
-  "ref": "ad780f077c37fc70e45387017bf820a0a361098a",
+  "ref": "229fc2a312276224b711ae0972e64e4b267bb10b",
   "files": [
     "hooks/use-badge-overflow.ts",
     "hooks/use-debounced-callback.ts",
     "hooks/use-isomorphic-layout-effect.ts",
     "hooks/use-ref-with-init.ts",
     "hooks/use-value-as-ref.ts",
+    "lib/data-grid-announcer.ts",
     "lib/data-grid-features.ts",
     "lib/data-grid-filters.ts",
     "lib/data-grid-row-models.ts",
