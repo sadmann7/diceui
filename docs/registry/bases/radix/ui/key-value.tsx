@@ -185,9 +185,12 @@ function KeyValue(props: KeyValueProps) {
   const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
+  const [initialValue] = React.useState(
+    () => defaultValue ?? [{ id: crypto.randomUUID(), key: "", value: "" }],
+  );
   const [value, setValueState] = useControlled({
     controlled: valueProp,
-    default: defaultValue ?? [{ id: crypto.randomUUID(), key: "", value: "" }],
+    default: initialValue,
     name: ROOT_NAME,
     state: "value",
   });
