@@ -302,9 +302,9 @@ function StackItemWrapper(props: StackItemWrapperProps) {
       ref={itemRef}
       data-slot="stack-item-wrapper"
       data-index={index}
-      data-front={isFront ? "" : undefined}
-      data-visible={isVisible ? "" : undefined}
-      data-expanded={isExpanded ? "" : undefined}
+      data-front={isFront}
+      data-visible={isVisible}
+      data-expanded={isExpanded}
       className={cn(
         stackItemWrapperVariants({ side, isExpanded, isVisible, className }),
       )}
