@@ -128,7 +128,7 @@ function Swap(props: SwapProps) {
       slot: "swap",
       animation,
       state: getDataState(swapped),
-      ...(disabled && { disabled: "" }),
+      disabled: disabled,
     },
   });
 

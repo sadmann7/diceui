@@ -122,9 +122,9 @@ function SegmentedInput(props: SegmentedInputProps) {
         state: {
           slot: "segmented-input",
           orientation,
-          ...(disabled && { disabled: "" }),
-          ...(invalid && { invalid: "" }),
-          ...(required && { required: "" }),
+          disabled: disabled,
+          invalid: invalid,
+          required: required,
         },
       })}
     </SegmentedInputContext.Provider>
@@ -213,9 +213,9 @@ function SegmentedInputItem(props: SegmentedInputItemProps) {
       slot: "segmented-input-item",
       orientation: context.orientation,
       position,
-      ...(isDisabled && { disabled: "" }),
-      ...(context.invalid && { invalid: "" }),
-      ...(isRequired && { required: "" }),
+      disabled: isDisabled,
+      invalid: context.invalid,
+      required: isRequired,
     },
   });
 

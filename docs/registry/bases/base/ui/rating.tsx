@@ -481,8 +481,8 @@ function Rating(props: RatingProps) {
     state: {
       slot: "rating",
       orientation,
-      ...(disabled && { disabled: "" }),
-      ...(readOnly && { readonly: "" }),
+      disabled: disabled,
+      readonly: readOnly,
     },
   });
 
@@ -938,9 +938,9 @@ function RatingItem(props: RatingItemProps) {
     state: {
       slot: "rating-item",
       state: dataState,
-      ...(isDisabled && { disabled: "" }),
-      ...(isReadOnly && { readonly: "" }),
-      ...(isHovered && { hovered: "" }),
+      disabled: isDisabled,
+      readonly: isReadOnly,
+      hovered: isHovered,
     },
   });
 
