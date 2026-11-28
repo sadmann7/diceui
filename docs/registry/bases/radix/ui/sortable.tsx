@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsHydrated } from "@base-ui/utils/hydration";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import {
   type Active,
@@ -554,10 +555,6 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
-function subscribe() {
-  return () => {};
-}
-
 interface SortableOverlayProps extends Omit<
   React.ComponentProps<typeof DragOverlay>,
   "children"
@@ -573,11 +570,7 @@ function SortableOverlay(props: SortableOverlayProps) {
 
   const context = useSortableContext(OVERLAY_NAME);
 
-  const mounted = React.useSyncExternalStore(
-    subscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useIsHydrated();
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);

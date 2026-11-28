@@ -2,6 +2,7 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { useIsHydrated } from "@base-ui/utils/hydration";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import {
   type Announcements,
@@ -1131,10 +1132,6 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
-function subscribe() {
-  return () => {};
-}
-
 interface KanbanOverlayProps extends Omit<
   React.ComponentProps<typeof DragOverlay>,
   "children"
@@ -1153,11 +1150,7 @@ function KanbanOverlay(props: KanbanOverlayProps) {
 
   const context = useKanbanContext(OVERLAY_NAME);
 
-  const mounted = React.useSyncExternalStore(
-    subscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useIsHydrated();
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);
