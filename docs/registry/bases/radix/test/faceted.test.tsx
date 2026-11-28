@@ -1,4 +1,10 @@
-import { act, fireEvent, render, screen } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import * as React from "react";
 import { beforeAll, describe, expect, test } from "vitest";
 
@@ -178,5 +184,38 @@ describe.each([
     expect(
       screen.getByRole("option", { name: /^Active\s*,\s*1$/ }),
     ).toBeTruthy();
+  });
+
+  test("points aria-activedescendant at the highlighted option", async () => {
+    const { Faceted, FacetedContent, FacetedInput, FacetedItem, FacetedList } =
+      ui;
+    render(
+      <Faceted items={items} multiple defaultOpen>
+        <FacetedContent>
+          <FacetedInput placeholder="Search status" />
+          <FacetedList>
+            {items.map((item) => (
+              <FacetedItem key={item.value} value={item.value}>
+                {item.label}
+              </FacetedItem>
+            ))}
+          </FacetedList>
+        </FacetedContent>
+      </Faceted>,
+    );
+
+    act(() => {
+      fireEvent.keyDown(screen.getByRole("combobox"), { key: "ArrowDown" });
+    });
+
+    const option = screen.getByRole("option", { name: "Inactive" });
+    await waitFor(() => {
+      expect(
+        screen.getByRole("combobox").getAttribute("aria-activedescendant"),
+      ).toBe(option.id);
+      expect(
+        screen.getByRole("listbox").getAttribute("aria-activedescendant"),
+      ).toBe(option.id);
+    });
   });
 });
