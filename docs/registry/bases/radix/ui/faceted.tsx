@@ -171,9 +171,7 @@ function createFacetedStore(state: FacetedStoreState): FacetedStore {
         return;
       }
 
-      const isRemoving = state.value === selectedValue;
-      commitValue(isRemoving ? undefined : selectedValue);
-      announce(selectedValue, isRemoving);
+      commitValue(state.value === selectedValue ? undefined : selectedValue);
       store.setOpen(false);
     },
     clear: () => {
