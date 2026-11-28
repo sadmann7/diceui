@@ -45,6 +45,28 @@ export interface KanbanProps<T> extends DndContextProps {
   getItemValue?: (item: T) => UniqueIdentifier;
 
   /**
+   * Returns the name screen readers announce for an item while it's dragged.
+   *
+   * Falls back to the item's identifier.
+   *
+   * ```ts
+   * getItemLabel={(item) => item.title}
+   * ```
+   */
+  getItemLabel?: (item: T) => string;
+
+  /**
+   * Returns the name screen readers announce for a column.
+   *
+   * Falls back to the column's key.
+   *
+   * ```ts
+   * getColumnLabel={(column) => columnTitles[column]}
+   * ```
+   */
+  getColumnLabel?: (column: UniqueIdentifier) => string;
+
+  /**
    * Event handler called when an item is moved, replacing the default reordering.
    */
   onMove?: (

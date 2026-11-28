@@ -4,6 +4,7 @@ import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import {
+  type Active,
   type Announcements,
   closestCenter,
   closestCorners,
@@ -26,6 +27,7 @@ import {
   KeyboardSensor,
   MeasuringStrategy,
   MouseSensor,
+  type Over,
   pointerWithin,
   rectIntersection,
   TouchSensor,
@@ -43,7 +45,7 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
+import { CSS, isKeyboardEvent } from "@dnd-kit/utilities";
 import { cn } from "cn";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
@@ -161,6 +163,12 @@ const ITEM_NAME = "KanbanItem";
 const ITEM_HANDLE_NAME = "KanbanItemHandle";
 const OVERLAY_NAME = "KanbanOverlay";
 
+interface KanbanPosition {
+  column: UniqueIdentifier;
+  index: number;
+  total: number;
+}
+
 interface KanbanContextValue<T> {
   id: string;
   items: Record<UniqueIdentifier, T[]>;
@@ -203,6 +211,8 @@ type KanbanProps<T> = Omit<DndContextProps, "collisionDetection"> &
     strategy?: SortableContextProps["strategy"];
     orientation?: "horizontal" | "vertical";
     flatCursor?: boolean;
+    getItemLabel?: (item: T) => string;
+    getColumnLabel?: (column: UniqueIdentifier) => string;
   };
 
 function Kanban<T>(props: KanbanProps<T>) {
@@ -214,6 +224,8 @@ function Kanban<T>(props: KanbanProps<T>) {
     orientation = "horizontal",
     onMove,
     getItemValue: getItemValueProp,
+    getItemLabel: getItemLabelProp,
+    getColumnLabel: getColumnLabelProp,
     accessibility,
     flatCursor = false,
     onDragStart: onDragStartProp,
@@ -227,6 +239,9 @@ function Kanban<T>(props: KanbanProps<T>) {
   const [activeId, setActiveId] = React.useState<UniqueIdentifier | null>(null);
   const lastOverIdRef = React.useRef<UniqueIdentifier | null>(null);
   const hasMovedRef = React.useRef(false);
+  const isKeyboardDragRef = React.useRef(false);
+  const startPositionRef = React.useRef<KanbanPosition | null>(null);
+  const announcedPositionRef = React.useRef<KanbanPosition | null>(null);
   const valueBeforeDragRef = React.useRef<Record<UniqueIdentifier, T[]> | null>(
     null,
   );
@@ -326,6 +341,7 @@ function Kanban<T>(props: KanbanProps<T>) {
   const onDragStart = React.useCallback(
     (event: DragStartEvent) => {
       onDragStartProp?.(event);
+      isKeyboardDragRef.current = isKeyboardEvent(event.activatorEvent);
       valueBeforeDragRef.current = value;
       setActiveId(event.active.id);
     },
@@ -496,111 +512,127 @@ function Kanban<T>(props: KanbanProps<T>) {
     [value, onValueChange, onDragCancelProp],
   );
 
-  const announcements: Announcements = React.useMemo(
-    () => ({
-      onDragStart({ active }) {
-        const isColumn = active.id in value;
-        const itemType = isColumn ? "column" : "item";
-        const position = isColumn
-          ? Object.keys(value).indexOf(active.id as string) + 1
-          : (() => {
-              const column = getColumn(active.id);
-              if (!column || !value[column]) return 1;
-              return (
-                value[column].findIndex(
-                  (item) => getItemValue(item) === active.id,
-                ) + 1
-              );
-            })();
-        const total = isColumn
-          ? Object.keys(value).length
-          : (() => {
-              const column = getColumn(active.id);
-              return column ? (value[column]?.length ?? 0) : 0;
-            })();
+  const announcements: Announcements = React.useMemo(() => {
+    const columns = Object.keys(value);
 
-        return `Picked up ${itemType} at position ${position} of ${total}`;
+    function getColumnLabel(column: UniqueIdentifier) {
+      return getColumnLabelProp
+        ? getColumnLabelProp(String(column))
+        : String(column);
+    }
+
+    function getLabel(id: UniqueIdentifier) {
+      if (id in value) return getColumnLabel(id);
+      const column = getColumn(id);
+      const item = column
+        ? value[column]?.find((item) => getItemValue(item) === id)
+        : undefined;
+      if (item === undefined || !getItemLabelProp) return String(id);
+      return getItemLabelProp(item);
+    }
+
+    function getPosition(active: Active, over: Over | null) {
+      if (active.id in value) {
+        const column = over && over.id in value ? over.id : active.id;
+        return {
+          column,
+          index: columns.indexOf(String(column)),
+          total: columns.length,
+        };
+      }
+
+      const activeColumn = getColumn(active.id);
+      if (!activeColumn) return null;
+      const activeItems = value[activeColumn] ?? [];
+      const overColumn = over ? getColumn(over.id) : null;
+
+      if (!over || !overColumn || overColumn === activeColumn) {
+        const overIndex = over
+          ? activeItems.findIndex((item) => getItemValue(item) === over.id)
+          : -1;
+        return {
+          column: activeColumn,
+          index:
+            overIndex === -1
+              ? activeItems.findIndex(
+                  (item) => getItemValue(item) === active.id,
+                )
+              : overIndex,
+          total: activeItems.length,
+        };
+      }
+
+      const overItems = value[overColumn] ?? [];
+      const overIndex = overItems.findIndex(
+        (item) => getItemValue(item) === over.id,
+      );
+      const activeRect = active.rect.current.translated;
+      const isBelowOverItem =
+        !!activeRect && activeRect.top > over.rect.top + over.rect.height;
+      return {
+        column: overColumn,
+        index:
+          overIndex === -1
+            ? overItems.length
+            : overIndex + (isBelowOverItem ? 1 : 0),
+        total: overItems.length + 1,
+      };
+    }
+
+    function getPlace(id: UniqueIdentifier, position: KanbanPosition) {
+      const place = `position ${position.index + 1} of ${position.total}`;
+      if (id in value) return place;
+      return `${getColumnLabel(position.column)}, ${place}`;
+    }
+
+    return {
+      onDragStart({ active }) {
+        const position = getPosition(active, null);
+        startPositionRef.current = position;
+        announcedPositionRef.current = position;
+        const label = getLabel(active.id);
+        const message = position
+          ? `Grabbed ${label}, ${getPlace(active.id, position)}.`
+          : `Grabbed ${label}.`;
+        if (!isKeyboardDragRef.current) return message;
+        return `${message} Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel.`;
       },
       onDragOver({ active, over }) {
-        if (!over) return;
-
-        const isColumn = active.id in value;
-        const itemType = isColumn ? "column" : "item";
-        const position = isColumn
-          ? Object.keys(value).indexOf(over.id as string) + 1
-          : (() => {
-              const column = getColumn(over.id);
-              if (!column || !value[column]) return 1;
-              return (
-                value[column].findIndex(
-                  (item) => getItemValue(item) === over.id,
-                ) + 1
-              );
-            })();
-        const total = isColumn
-          ? Object.keys(value).length
-          : (() => {
-              const column = getColumn(over.id);
-              return column ? (value[column]?.length ?? 0) : 0;
-            })();
-
-        const overColumn = getColumn(over.id);
-        const activeColumn = getColumn(active.id);
-
-        if (isColumn) {
-          return `${itemType} is now at position ${position} of ${total}`;
+        const position = getPosition(active, over);
+        const announced = announcedPositionRef.current;
+        if (
+          !position ||
+          (announced?.column === position.column &&
+            announced.index === position.index)
+        ) {
+          return undefined;
         }
-
-        if (activeColumn !== overColumn) {
-          return `${itemType} is now at position ${position} of ${total} in ${overColumn}`;
-        }
-
-        return `${itemType} is now at position ${position} of ${total}`;
+        announcedPositionRef.current = position;
+        const place =
+          active.id in value || announced?.column === position.column
+            ? `position ${position.index + 1} of ${position.total}`
+            : getPlace(active.id, position);
+        return `${getLabel(active.id)}, ${place}.`;
       },
       onDragEnd({ active, over }) {
-        if (!over) return;
-
-        const isColumn = active.id in value;
-        const itemType = isColumn ? "column" : "item";
-        const position = isColumn
-          ? Object.keys(value).indexOf(over.id as string) + 1
-          : (() => {
-              const column = getColumn(over.id);
-              if (!column || !value[column]) return 1;
-              return (
-                value[column].findIndex(
-                  (item) => getItemValue(item) === over.id,
-                ) + 1
-              );
-            })();
-        const total = isColumn
-          ? Object.keys(value).length
-          : (() => {
-              const column = getColumn(over.id);
-              return column ? (value[column]?.length ?? 0) : 0;
-            })();
-
-        const overColumn = getColumn(over.id);
-        const activeColumn = getColumn(active.id);
-
-        if (isColumn) {
-          return `${itemType} was dropped at position ${position} of ${total}`;
-        }
-
-        if (activeColumn !== overColumn) {
-          return `${itemType} was dropped at position ${position} of ${total} in ${overColumn}`;
-        }
-
-        return `${itemType} was dropped at position ${position} of ${total}`;
+        const position = getPosition(active, over);
+        const label = getLabel(active.id);
+        if (!position) return `Dropped ${label}.`;
+        const place = `position ${position.index + 1} of ${position.total}`;
+        if (active.id in value) return `Dropped ${label} at ${place}.`;
+        return `Dropped ${label} in ${getColumnLabel(position.column)} at ${place}.`;
       },
       onDragCancel({ active }) {
-        const isColumn = active.id in value;
-        const itemType = isColumn ? "column" : "item";
-        return `Dragging was cancelled. ${itemType} was dropped.`;
+        const position = startPositionRef.current;
+        const label = getLabel(active.id);
+        if (!position) return `Cancelled. ${label} is back in place.`;
+        const place = `position ${position.index + 1} of ${position.total}`;
+        if (active.id in value)
+          return `Cancelled. ${label} is back at ${place}.`;
+        return `Cancelled. ${label} is back in ${getColumnLabel(position.column)} at ${place}.`;
       },
-    }),
-    [value, getColumn, getItemValue],
-  );
+    };
+  }, [value, getColumn, getItemValue, getItemLabelProp, getColumnLabelProp]);
 
   const contextValue = React.useMemo<KanbanContextValue<T>>(
     () => ({
@@ -646,11 +678,8 @@ function Kanban<T>(props: KanbanProps<T>) {
         accessibility={{
           announcements,
           screenReaderInstructions: {
-            draggable: `
-            To pick up a kanban item or column, press space or enter.
-            While dragging, use the arrow keys to move the item.
-            Press space or enter again to drop the item in its new position, or press escape to cancel.
-          `,
+            draggable:
+              "To pick up an item or column, press Space or Enter. Use the arrow keys to move it, Space or Enter to drop it, or Escape to cancel.",
           },
           ...accessibility,
         }}
@@ -782,7 +811,7 @@ function KanbanColumn(props: KanbanColumnProps) {
     transition,
     isDragging,
   } = useSortable({
-    id: value,
+    id: String(value),
     disabled,
     animateLayoutChanges,
   });

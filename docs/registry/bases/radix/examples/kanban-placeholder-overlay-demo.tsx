@@ -92,6 +92,8 @@ export default function KanbanPlaceholderOverlayDemo() {
       value={columns}
       onValueChange={setColumns}
       getItemValue={(item) => item.id}
+      getItemLabel={(item) => item.title}
+      getColumnLabel={(column) => COLUMN_TITLES[column] ?? String(column)}
     >
       <KanbanBoard className="grid auto-rows-fr sm:grid-cols-3">
         {Object.entries(columns).map(([columnValue, tasks]) => (
@@ -105,7 +107,10 @@ export default function KanbanPlaceholderOverlayDemo() {
                   {tasks.length}
                 </Badge>
               </div>
-              <KanbanColumnHandle asChild>
+              <KanbanColumnHandle
+                aria-label={`Reorder ${COLUMN_TITLES[columnValue]}`}
+                asChild
+              >
                 <Button variant="ghost" size="icon">
                   <GripVertical className="h-4 w-4" />
                 </Button>

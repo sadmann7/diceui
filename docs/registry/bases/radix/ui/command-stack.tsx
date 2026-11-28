@@ -43,6 +43,7 @@ interface CommandStackStoreState {
   value: CommandStackValue;
   pageData: Map<string, CommandStackPageData>;
   loadingCount: number;
+  label: string | undefined;
 }
 
 interface CommandStackController {
@@ -65,6 +66,7 @@ interface CommandStackStore {
   popPage: () => void;
   setSearch: (search: string) => void;
   setValue: (value: CommandStackValue) => void;
+  setLabel: (label: string | undefined) => void;
   selectItem: (
     page: string,
     itemValue: string,
@@ -154,6 +156,11 @@ function createCommandStackStore(
         state.value = value;
         store.notify();
       }
+    },
+    setLabel: (label) => {
+      if (Object.is(state.label, label)) return;
+      state.label = label;
+      store.notify();
     },
     selectItem: (page, itemValue, selectionMode) => {
       const selected = state.value[page] ?? NO_SELECTION;
@@ -275,6 +282,7 @@ function CommandStack({
   defaultValue = EMPTY_VALUE,
   onValueChange,
   onKeyDown: onKeyDownProp,
+  label: labelProp,
   className,
   children,
   ...props
@@ -288,6 +296,7 @@ function CommandStack({
       value: valueProp ?? defaultValue,
       pageData: new Map(),
       loadingCount: 0,
+      label: undefined,
     }),
   );
 
@@ -310,6 +319,7 @@ function CommandStack({
   }, [store, pages, valueProp]);
 
   const activePage = useCommandStackSelector(store, selectActivePage);
+  const label = useCommandStackSelector(store, (state) => state.label);
   const announcement = useCommandStackSelector(store, (state) =>
     state.pages.length > 1
       ? (state.pageData.get(getActivePage(state.pages))?.label ??
@@ -351,6 +361,7 @@ function CommandStack({
           value={highlightedValue}
           onValueChange={setHighlightedValue}
           onKeyDown={onKeyDown}
+          label={labelProp ?? label}
           {...props}
         >
           {children}
@@ -423,6 +434,7 @@ function CommandStackInput({
     store,
     (state) => state.pageData.get(getActivePage(state.pages))?.placeholder,
   );
+  const label = props["aria-label"] ?? pagePlaceholder ?? placeholder;
   const inputRef = React.useRef<HTMLInputElement>(null);
   const composedRef = useComposedRefs(ref, inputRef);
 
@@ -452,6 +464,11 @@ function CommandStackInput({
     });
     return () => observer.disconnect();
   }, []);
+
+  useLayoutEffect(() => {
+    store.setLabel(label);
+    return () => store.setLabel(undefined);
+  }, [store, label]);
 
   const inputProps: React.ComponentProps<typeof CommandPrimitive.Input> = {
     ref: composedRef,
@@ -568,12 +585,14 @@ function CommandStackBack({ className }: { className?: string }) {
 }
 
 function CommandStackList({
+  label: labelProp,
   className,
   ref,
   ...props
 }: React.ComponentProps<typeof CommandList>) {
   const store = useCommandStackStore("CommandStackList");
   const activePage = useCommandStackSelector(store, selectActivePage);
+  const label = useCommandStackSelector(store, (state) => state.label);
   const listRef = React.useRef<HTMLDivElement>(null);
   const composedRef = useComposedRefs(ref, listRef);
 
@@ -585,6 +604,7 @@ function CommandStackList({
     <CommandList
       ref={composedRef}
       data-slot="command-stack-list"
+      label={labelProp ?? label}
       className={cn("cn-command-stack-list", className)}
       {...props}
     />
@@ -716,7 +736,6 @@ function CommandStackItem({
       ref={composedRef}
       data-slot="command-stack-item"
       data-checked={checked}
-      aria-checked={checked}
       className={cn(
         "cn-command-stack-item",
         checked === undefined && "[&>svg:last-child]:hidden",
@@ -752,6 +771,9 @@ function CommandStackItem({
       {...props}
     >
       {children}
+      {checked && (
+        <span role="img" aria-label=", checked" className="sr-only" />
+      )}
       {page && (
         <IconPlaceholder
           lucide="ChevronRightIcon"

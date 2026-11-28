@@ -283,6 +283,24 @@ The overlay component that appears when an item or column is being dragged.
 
 ## Accessibility
 
+### Screen Reader Announcements
+
+A live region announces when an item or column is picked up, each new position it moves to, including the column an item moves into, and where it's dropped or returned to on cancel. Pass `getItemLabel` and `getColumnLabel` so the announcements name items and columns instead of their identifiers.
+
+```tsx
+<Kanban
+  value={columns}
+  onValueChange={setColumns}
+  getItemValue={(item) => item.id}
+  getItemLabel={(item) => item.title}
+  getColumnLabel={(column) => columnTitles[column]}
+>
+  {/* ... */}
+</Kanban>
+```
+
+Drags started from the keyboard also announce the keys to move, drop and cancel.
+
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable

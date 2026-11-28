@@ -56,12 +56,20 @@ function Selectable({
 
 function toggle(name: string) {
   act(() => {
-    fireEvent.click(screen.getByRole("option", { name }));
+    fireEvent.click(
+      screen.getByRole("option", {
+        name: new RegExp(`^${name}(\\s*, checked)?$`),
+      }),
+    );
   });
 }
 
 function getChecked(name: string) {
-  return screen.getByRole("option", { name }).getAttribute("aria-checked");
+  const option = screen.getByRole("option", {
+    name: new RegExp(`^${name}(\\s*, checked)?$`),
+  });
+  expect(option.hasAttribute("aria-checked")).toBe(false);
+  return String(option.querySelector("[aria-label=', checked']") !== null);
 }
 
 function getValue() {
@@ -105,5 +113,87 @@ describe.each([
     expect(getValue()).toBe("Inactive");
     expect(getChecked("Active")).toBe("false");
     expect(getChecked("Inactive")).toBe("true");
+  });
+
+  test("leaves the checked word off navigation items", () => {
+    const {
+      CommandStack,
+      CommandStackItem,
+      CommandStackList,
+      CommandStackPage,
+    } = ui;
+    render(
+      <CommandStack>
+        <CommandStackList>
+          <CommandStackPage value="root">
+            <CommandStackItem value="status" page="status">
+              Status
+            </CommandStackItem>
+          </CommandStackPage>
+        </CommandStackList>
+      </CommandStack>,
+    );
+
+    expect(screen.getByRole("option", { name: "Status" })).toBeTruthy();
+  });
+
+  test("names the input and list after the input", () => {
+    const {
+      CommandStack,
+      CommandStackInput,
+      CommandStackItem,
+      CommandStackList,
+      CommandStackPage,
+    } = ui;
+    render(
+      <CommandStack>
+        <CommandStackInput placeholder="Filter..." />
+        <CommandStackList>
+          <CommandStackPage value="root">
+            <CommandStackItem value="status">Status</CommandStackItem>
+          </CommandStackPage>
+        </CommandStackList>
+      </CommandStack>,
+    );
+
+    expect(screen.getByRole("combobox", { name: "Filter..." })).toBeTruthy();
+    expect(screen.getByRole("listbox", { name: "Filter..." })).toBeTruthy();
+  });
+
+  test("drops a nested page's name after going back", () => {
+    const {
+      CommandStack,
+      CommandStackInput,
+      CommandStackItem,
+      CommandStackList,
+      CommandStackPage,
+    } = ui;
+    render(
+      <CommandStack>
+        <CommandStackInput />
+        <CommandStackList>
+          <CommandStackPage value="root">
+            <CommandStackItem value="projects" page="projects">
+              Projects
+            </CommandStackItem>
+          </CommandStackPage>
+          <CommandStackPage value="projects" placeholder="Search projects...">
+            <CommandStackItem value="alpha">Alpha</CommandStackItem>
+          </CommandStackPage>
+        </CommandStackList>
+      </CommandStack>,
+    );
+
+    act(() => {
+      fireEvent.click(screen.getByRole("option", { name: "Projects" }));
+    });
+    expect(
+      screen.getByRole("listbox", { name: "Search projects..." }),
+    ).toBeTruthy();
+
+    act(() => {
+      fireEvent.keyDown(screen.getByRole("combobox"), { key: "Backspace" });
+    });
+    expect(screen.getByRole("listbox", { name: "Suggestions" })).toBeTruthy();
   });
 });

@@ -39,6 +39,17 @@ export interface SortableProps<TData> extends DndContextProps {
   getItemValue?: (item: TData) => UniqueIdentifier;
 
   /**
+   * Returns the name screen readers announce for an item while it's dragged.
+   *
+   * Falls back to the item's identifier.
+   *
+   * ```ts
+   * getItemLabel={(item) => item.name}
+   * ```
+   */
+  getItemLabel?: (item: TData) => string;
+
+  /**
    * Event handler called when an item is moved, replacing the default reordering.
    *
    * ```ts
@@ -76,8 +87,10 @@ export interface SortableProps<TData> extends DndContextProps {
    *
    * @default
    * [
-   *   useSensor(MouseSensor),
-   *   useSensor(TouchSensor),
+   *   useSensor(MouseSensor, { activationConstraint: { distance: 4 } }),
+   *   useSensor(TouchSensor, {
+   *     activationConstraint: { delay: 250, tolerance: 5 },
+   *   }),
    *   useSensor(KeyboardSensor, {
    *     coordinateGetter: sortableKeyboardCoordinates,
    *   }),
