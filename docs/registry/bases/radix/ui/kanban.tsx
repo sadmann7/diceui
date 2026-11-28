@@ -814,6 +814,9 @@ function KanbanColumn(props: KanbanColumnProps) {
     [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
   );
 
+  const handleProps =
+    asHandle && !disabled ? { ...attributes, ...listeners } : undefined;
+
   const ColumnPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
@@ -832,8 +835,7 @@ function KanbanColumn(props: KanbanColumnProps) {
           data-dragging={isDragging ? "" : undefined}
           data-slot="kanban-column"
           {...columnProps}
-          {...(asHandle && !disabled ? attributes : {})}
-          {...(asHandle && !disabled ? listeners : {})}
+          {...handleProps}
           ref={composedRef}
           style={composedStyle}
           className={cn(
@@ -878,6 +880,10 @@ function KanbanColumnHandle(props: KanbanColumnHandleProps) {
 
   const composedRef = useMergedRefs(ref, onActivatorNodeRef);
 
+  const handleProps = isDisabled
+    ? undefined
+    : { ...columnContext.attributes, ...columnContext.listeners };
+
   const HandlePrimitive = asChild ? SlotPrimitive.Slot : "button";
 
   return (
@@ -888,8 +894,7 @@ function KanbanColumnHandle(props: KanbanColumnHandleProps) {
       data-dragging={columnContext.isDragging ? "" : undefined}
       data-slot="kanban-column-handle"
       {...columnHandleProps}
-      {...(isDisabled ? {} : columnContext.attributes)}
-      {...(isDisabled ? {} : columnContext.listeners)}
+      {...handleProps}
       ref={composedRef}
       className={cn(
         "cn-kanban-column-handle",
@@ -999,6 +1004,9 @@ function KanbanItem(props: KanbanItemProps) {
     [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
   );
 
+  const handleProps =
+    asHandle && !disabled ? { ...attributes, ...listeners } : undefined;
+
   const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
@@ -1009,8 +1017,7 @@ function KanbanItem(props: KanbanItemProps) {
         data-dragging={isDragging ? "" : undefined}
         data-slot="kanban-item"
         {...itemProps}
-        {...(asHandle && !disabled ? attributes : {})}
-        {...(asHandle && !disabled ? listeners : {})}
+        {...handleProps}
         ref={composedRef}
         style={composedStyle}
         className={cn(
@@ -1054,6 +1061,10 @@ function KanbanItemHandle(props: KanbanItemHandleProps) {
 
   const composedRef = useMergedRefs(ref, onActivatorNodeRef);
 
+  const handleProps = isDisabled
+    ? undefined
+    : { ...itemContext.attributes, ...itemContext.listeners };
+
   const HandlePrimitive = asChild ? SlotPrimitive.Slot : "button";
 
   return (
@@ -1064,8 +1075,7 @@ function KanbanItemHandle(props: KanbanItemHandleProps) {
       data-dragging={itemContext.isDragging ? "" : undefined}
       data-slot="kanban-item-handle"
       {...itemHandleProps}
-      {...(isDisabled ? {} : itemContext.attributes)}
-      {...(isDisabled ? {} : itemContext.listeners)}
+      {...handleProps}
       ref={composedRef}
       className={cn(
         "cn-kanban-item-handle",

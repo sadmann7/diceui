@@ -457,6 +457,9 @@ function SortableItem(props: SortableItemProps) {
     [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
   );
 
+  const handleProps =
+    asHandle && !disabled ? { ...attributes, ...listeners } : undefined;
+
   const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
@@ -467,8 +470,7 @@ function SortableItem(props: SortableItemProps) {
         data-dragging={isDragging ? "" : undefined}
         data-slot="sortable-item"
         {...itemProps}
-        {...(asHandle && !disabled ? attributes : {})}
-        {...(asHandle && !disabled ? listeners : {})}
+        {...handleProps}
         ref={composedRef}
         style={composedStyle}
         className={cn(
@@ -512,6 +514,10 @@ function SortableItemHandle(props: SortableItemHandleProps) {
 
   const composedRef = useMergedRefs(ref, onActivatorNodeRef);
 
+  const handleProps = isDisabled
+    ? undefined
+    : { ...itemContext.attributes, ...itemContext.listeners };
+
   const HandlePrimitive = asChild ? SlotPrimitive.Slot : "button";
 
   return (
@@ -522,8 +528,7 @@ function SortableItemHandle(props: SortableItemHandleProps) {
       data-dragging={itemContext.isDragging ? "" : undefined}
       data-slot="sortable-item-handle"
       {...itemHandleProps}
-      {...(isDisabled ? {} : itemContext.attributes)}
-      {...(isDisabled ? {} : itemContext.listeners)}
+      {...handleProps}
       ref={composedRef}
       className={cn(
         "cn-sortable-item-handle",
