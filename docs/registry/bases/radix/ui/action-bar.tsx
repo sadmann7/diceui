@@ -29,9 +29,8 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootElement = React.ComponentRef<typeof ActionBar>;
-type ItemElement = React.ComponentRef<typeof ActionBarItem>;
-type CloseElement = React.ComponentRef<typeof ActionBarClose>;
+type RootElement = HTMLDivElement;
+type ItemElement = HTMLButtonElement;
 
 function subscribe() {
   return () => {};
@@ -474,8 +473,8 @@ function ActionBarItem(props: ActionBarItemProps) {
     };
   }, [focusContext, itemId, disabled]);
 
-  const onClick = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
+  const onClick: ActionBarItemProps["onClick"] = React.useCallback(
+    (event) => {
       onClickProp?.(event);
       if (event.defaultPrevented) return;
 
@@ -487,9 +486,13 @@ function ActionBarItem(props: ActionBarItemProps) {
         cancelable: true,
       });
 
-      item.addEventListener(ITEM_SELECT, (event) => onSelect?.(event), {
-        once: true,
-      });
+      item.addEventListener(
+        ITEM_SELECT,
+        (selectEvent) => onSelect?.(selectEvent),
+        {
+          once: true,
+        },
+      );
 
       item.dispatchEvent(itemSelectEvent);
 
@@ -500,8 +503,8 @@ function ActionBarItem(props: ActionBarItemProps) {
     [onClickProp, onOpenChange, onSelect],
   );
 
-  const onFocus = React.useCallback(
-    (event: React.FocusEvent<ItemElement>) => {
+  const onFocus: ActionBarItemProps["onFocus"] = React.useCallback(
+    (event) => {
       onFocusProp?.(event);
       if (event.defaultPrevented) return;
 
@@ -511,8 +514,8 @@ function ActionBarItem(props: ActionBarItemProps) {
     [onFocusProp, focusContext, itemId],
   );
 
-  const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<ItemElement>) => {
+  const onKeyDown: ActionBarItemProps["onKeyDown"] = React.useCallback(
+    (event) => {
       onKeyDownProp?.(event);
       if (event.defaultPrevented) return;
 
@@ -564,8 +567,8 @@ function ActionBarItem(props: ActionBarItemProps) {
     [onKeyDownProp, focusContext, dir, orientation, loop],
   );
 
-  const onMouseDown = React.useCallback(
-    (event: React.MouseEvent<ItemElement>) => {
+  const onMouseDown: ActionBarItemProps["onMouseDown"] = React.useCallback(
+    (event) => {
       onMouseDownProp?.(event);
       if (event.defaultPrevented) return;
 
@@ -603,13 +606,16 @@ interface ActionBarCloseProps extends React.ComponentProps<"button"> {
   asChild?: boolean;
 }
 
-function ActionBarClose(props: ActionBarCloseProps) {
-  const { asChild, className, onClick, ...closeProps } = props;
-
+function ActionBarClose({
+  asChild,
+  className,
+  onClick,
+  ...props
+}: ActionBarCloseProps) {
   const { onOpenChange } = useActionBarContext(CLOSE_NAME);
 
-  const onCloseClick = React.useCallback(
-    (event: React.MouseEvent<CloseElement>) => {
+  const onCloseClick: ActionBarCloseProps["onClick"] = React.useCallback(
+    (event) => {
       onClick?.(event);
       if (event.defaultPrevented) return;
 
@@ -624,7 +630,7 @@ function ActionBarClose(props: ActionBarCloseProps) {
     <ClosePrimitive
       type="button"
       data-slot="action-bar-close"
-      {...closeProps}
+      {...props}
       className={cn("cn-action-bar-close", className)}
       onClick={onCloseClick}
     />

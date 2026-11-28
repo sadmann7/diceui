@@ -27,8 +27,8 @@ type Orientation = "horizontal" | "vertical";
 interface DivProps
   extends useRender.ComponentProps<"div">, React.ComponentProps<"div"> {}
 
-type RootElement = React.ComponentRef<typeof ActionBar>;
-type ItemElement = React.ComponentRef<typeof ActionBarItem>;
+type RootElement = HTMLDivElement;
+type ItemElement = HTMLButtonElement;
 
 function subscribe() {
   return () => {};
@@ -504,9 +504,13 @@ function ActionBarItem(props: ActionBarItemProps) {
         cancelable: true,
       });
 
-      item.addEventListener(ITEM_SELECT, (evt) => onSelect?.(evt), {
-        once: true,
-      });
+      item.addEventListener(
+        ITEM_SELECT,
+        (selectEvent) => onSelect?.(selectEvent),
+        {
+          once: true,
+        },
+      );
 
       item.dispatchEvent(itemSelectEvent);
 

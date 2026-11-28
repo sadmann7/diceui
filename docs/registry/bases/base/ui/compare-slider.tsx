@@ -2,9 +2,9 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
@@ -23,7 +23,7 @@ const ARROW_KEYS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
 type Interaction = "hover" | "drag";
 type Orientation = "horizontal" | "vertical";
 
-type RootElement = React.ComponentRef<typeof CompareSlider>;
+type RootElement = HTMLDivElement;
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
@@ -31,36 +31,33 @@ function clamp(value: number, min: number, max: number): number {
 
 interface StoreState {
   value: number;
-  isDragging: boolean;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
+interface StoreController {
+  isValueControlled: boolean;
+  onValueChange?: (value: number) => void;
+}
+
+const selectors = {
+  value: (state: StoreState) => state.value,
+};
+
+type Store = ReactStore<StoreState, StoreController, typeof selectors>;
+
+function setValue(store: Store, value: number) {
+  if (Object.is(store.state.value, value)) return;
+  store.context.onValueChange?.(value);
+  if (!store.context.isValueControlled) store.set("value", value);
 }
 
 const StoreContext = React.createContext<Store | null>(null);
 
-function useStore<T>(
-  selector: (state: StoreState) => T,
-  ogStore?: Store | null,
-): T {
-  const contextStore = React.useContext(StoreContext);
-
-  const store = ogStore ?? contextStore;
-
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+function useStoreContext(consumerName: string) {
+  const context = React.useContext(StoreContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+  return context;
 }
 
 interface CompareSliderContextValue {
@@ -109,39 +106,25 @@ function CompareSlider(props: CompareSliderProps) {
     ...rootProps
   } = props;
 
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    value: clamp(valueProp ?? defaultValue, 0, 100),
-    isDragging: false,
-  }));
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const onValueChangeRef = useValueAsRef(onValueChange);
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, StoreController, typeof selectors>(
+        { value: clamp(valueProp ?? defaultValue, 0, 100) },
+        { isValueControlled: valueProp !== undefined, onValueChange },
+        selectors,
+      ),
+  );
 
-  const store = React.useMemo<Store>(() => {
-    function notify() {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
-    }
+  useIsoLayoutEffect(() => {
+    Object.assign(store.context, {
+      isValueControlled: valueProp !== undefined,
+      onValueChange,
+    } satisfies StoreController);
+  });
 
-    return {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => {
-        if (Object.is(stateRef.current[key], value)) return;
-        stateRef.current[key] = value;
-
-        if (key === "value") {
-          onValueChangeRef.current?.(value as number);
-        }
-
-        notify();
-      },
-      notify,
-    };
-  }, [listenersRef, stateRef, onValueChangeRef]);
+  useIsoLayoutEffect(() => {
+    if (valueProp !== undefined) store.set("value", clamp(valueProp, 0, 100));
+  }, [store, valueProp]);
 
   const rootRef = React.useRef<RootElement | null>(null);
   const composedRef = useMergedRefs(ref, rootRef);
@@ -158,13 +141,7 @@ function CompareSlider(props: CompareSliderProps) {
     step,
   });
 
-  const value = useStore((state) => state.value, store);
-
-  useIsoLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", clamp(valueProp, 0, 100));
-    }
-  }, [valueProp, store]);
+  const value = useStore(store, selectors.value);
 
   const onPointerMove = React.useCallback(
     (event: React.PointerEvent<RootElement>) => {
@@ -184,7 +161,7 @@ function CompareSlider(props: CompareSliderProps) {
       const size = isVertical ? rootRect.height : rootRect.width;
       const percentage = clamp((position / size) * 100, 0, 100);
 
-      store.setState("value", percentage);
+      setValue(store, percentage);
     },
     [propsRef, store],
   );
@@ -198,9 +175,8 @@ function CompareSlider(props: CompareSliderProps) {
 
       event.currentTarget.setPointerCapture(event.pointerId);
       isDraggingRef.current = true;
-      store.setState("isDragging", true);
     },
-    [store, propsRef],
+    [propsRef],
   );
 
   const onPointerUp = React.useCallback(
@@ -212,9 +188,8 @@ function CompareSlider(props: CompareSliderProps) {
 
       event.currentTarget.releasePointerCapture(event.pointerId);
       isDraggingRef.current = false;
-      store.setState("isDragging", false);
     },
-    [store, propsRef],
+    [propsRef],
   );
 
   const onPointerCancel = React.useCallback(
@@ -230,15 +205,15 @@ function CompareSlider(props: CompareSliderProps) {
       propsRef.current.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
-      const currentValue = store.getState().value;
+      const currentValue = store.state.value;
       const isVertical = propsRef.current.orientation === "vertical";
 
       if (event.key === "Home") {
         event.preventDefault();
-        store.setState("value", 0);
+        setValue(store, 0);
       } else if (event.key === "End") {
         event.preventDefault();
-        store.setState("value", 100);
+        setValue(store, 100);
       } else if (PAGE_KEYS.concat(ARROW_KEYS).includes(event.key)) {
         event.preventDefault();
 
@@ -258,7 +233,7 @@ function CompareSlider(props: CompareSliderProps) {
 
         const stepInDirection = propsRef.current.step * multiplier * direction;
         const newValue = clamp(currentValue + stepInDirection, 0, 100);
-        store.setState("value", newValue);
+        setValue(store, newValue);
       }
     },
     [store, propsRef],
@@ -323,7 +298,7 @@ interface CompareSliderBeforeProps
 function CompareSliderBefore(props: CompareSliderBeforeProps) {
   const { className, children, style, label, render, ...beforeProps } = props;
 
-  const value = useStore((state) => state.value);
+  const value = useStore(useStoreContext(BEFORE_NAME), selectors.value);
   const { orientation } = useCompareSliderContext(BEFORE_NAME);
 
   const labelId = React.useId();
@@ -374,7 +349,7 @@ interface CompareSliderAfterProps
 function CompareSliderAfter(props: CompareSliderAfterProps) {
   const { className, children, style, label, render, ...afterProps } = props;
 
-  const value = useStore((state) => state.value);
+  const value = useStore(useStoreContext(AFTER_NAME), selectors.value);
   const { orientation } = useCompareSliderContext(AFTER_NAME);
 
   const labelId = React.useId();
@@ -423,7 +398,7 @@ interface CompareSliderHandleProps
 function CompareSliderHandle(props: CompareSliderHandleProps) {
   const { className, children, style, render, ...handleProps } = props;
 
-  const value = useStore((state) => state.value);
+  const value = useStore(useStoreContext(HANDLE_NAME), selectors.value);
   const { interaction, orientation } = useCompareSliderContext(HANDLE_NAME);
 
   const isVertical = orientation === "vertical";

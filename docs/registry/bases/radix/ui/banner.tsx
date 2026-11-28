@@ -1,6 +1,7 @@
 "use client";
 
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { ReactStore, useStore } from "@base-ui/utils/store";
+import { useControlled } from "@base-ui/utils/useControlled";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
@@ -22,8 +23,6 @@ type BannerStrategy = "fixed" | "static" | "sticky" | "absolute";
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
-
-type CloseElement = React.ComponentRef<typeof BannerClose>;
 
 interface BannerRenderProps {
   id: string;
@@ -53,16 +52,95 @@ interface StoreState {
   heights: Map<string, number>;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  notify: () => void;
-  onBannerAdd: (banner: Omit<BannerData, "id">) => string;
-  onBannerRemove: (id: string) => void;
-  onBannersClear: () => void;
-  onRemovingChange: (id: string, value: boolean) => void;
-  onHeightChange: (id: string, height: number) => void;
-  onHeightRemove: (id: string) => void;
+interface StoreController {
+  timeouts: Map<string, ReturnType<typeof setTimeout>>;
+}
+
+const selectors = {
+  banners: (state: StoreState) => state.banners,
+  heights: (state: StoreState) => state.heights,
+  isRemoving: (state: StoreState, id: string) => state.removing.has(id),
+};
+
+type Store = ReactStore<StoreState, StoreController, typeof selectors>;
+
+function addBanner(store: Store, banner: Omit<BannerData, "id">) {
+  const id = crypto.randomUUID();
+  const newBanner: BannerData = { ...banner, id };
+  const priority = banner.priority ?? DEFAULT_BANNER_PRIORITY;
+
+  const banners = [...store.state.banners];
+  const insertIndex = banners.findIndex(
+    (b) => (b.priority ?? DEFAULT_BANNER_PRIORITY) < priority,
+  );
+
+  if (insertIndex === -1) {
+    banners.push(newBanner);
+  } else {
+    banners.splice(insertIndex, 0, newBanner);
+  }
+
+  store.set("banners", banners);
+
+  if (banner.duration && banner.duration > 0) {
+    const timeoutId = setTimeout(() => {
+      setRemoving(store, id, true);
+      store.context.timeouts.delete(id);
+    }, banner.duration);
+    store.context.timeouts.set(id, timeoutId);
+  }
+
+  return id;
+}
+
+function removeBanner(store: Store, id: string) {
+  const banner = store.state.banners.find((b) => b.id === id);
+  if (!banner) return;
+
+  const timeoutId = store.context.timeouts.get(id);
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+    store.context.timeouts.delete(id);
+  }
+
+  const removing = new Set(store.state.removing);
+  removing.delete(id);
+
+  banner.onDismiss?.();
+  store.update({
+    removing,
+    banners: store.state.banners.filter((b) => b.id !== id),
+  });
+}
+
+function clearBanners(store: Store) {
+  for (const timeoutId of store.context.timeouts.values()) {
+    clearTimeout(timeoutId);
+  }
+  store.context.timeouts.clear();
+  store.update({ removing: new Set(), heights: new Map(), banners: [] });
+}
+
+function setRemoving(store: Store, id: string, value: boolean) {
+  const removing = new Set(store.state.removing);
+  if (value) {
+    removing.add(id);
+  } else {
+    removing.delete(id);
+  }
+  store.set("removing", removing);
+}
+
+function setHeight(store: Store, id: string, height: number) {
+  if (store.state.heights.get(id) === height) return;
+  store.set("heights", new Map(store.state.heights).set(id, height));
+}
+
+function removeHeight(store: Store, id: string) {
+  if (!store.state.heights.has(id)) return;
+  const heights = new Map(store.state.heights);
+  heights.delete(id);
+  store.set("heights", heights);
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -73,14 +151,6 @@ function useStoreContext(consumerName: string) {
     throw new Error(`\`${consumerName}\` must be used within \`Banners\``);
   }
   return context;
-}
-
-function useStore<T>(store: Store, selector: (state: StoreState) => T): T {
-  return React.useSyncExternalStore(
-    store.subscribe,
-    () => selector(store.getState()),
-    () => selector(store.getState()),
-  );
 }
 
 interface BannerContextValue {
@@ -106,7 +176,7 @@ function useBanner() {
 
   return React.useMemo(() => {
     const onRemove =
-      id && storeContext ? () => storeContext.onBannerRemove(id) : undefined;
+      id && storeContext ? () => removeBanner(storeContext, id) : undefined;
 
     return {
       id,
@@ -135,120 +205,17 @@ function Banners(props: BannersProps) {
     container: containerProp,
   } = props;
 
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    banners: [],
-    removing: new Set(),
-    heights: new Map(),
-  }));
-  const listenersRef = useRefWithInit<Set<() => void>>(() => new Set());
-  const timeoutsRef = useRefWithInit<
-    Map<string, ReturnType<typeof setTimeout>>
-  >(() => new Map());
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, StoreController, typeof selectors>(
+        { banners: [], removing: new Set(), heights: new Map() },
+        { timeouts: new Map() },
+        selectors,
+      ),
+  );
 
-  const store: Store = React.useMemo(() => {
-    function notify() {
-      for (const listener of listenersRef.current) {
-        listener();
-      }
-    }
-
-    const bannerStore: Store = {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      notify,
-      onBannerAdd: (banner) => {
-        const id = crypto.randomUUID();
-        const newBanner: BannerData = { ...banner, id };
-        const priority = banner.priority ?? DEFAULT_BANNER_PRIORITY;
-
-        const banners = [...stateRef.current.banners];
-        const insertIndex = banners.findIndex(
-          (b) => (b.priority ?? DEFAULT_BANNER_PRIORITY) < priority,
-        );
-
-        if (insertIndex === -1) {
-          banners.push(newBanner);
-        } else {
-          banners.splice(insertIndex, 0, newBanner);
-        }
-
-        stateRef.current.banners = banners;
-        notify();
-
-        if (banner.duration && banner.duration > 0) {
-          const timeoutId = setTimeout(() => {
-            bannerStore.onRemovingChange(id, true);
-            timeoutsRef.current.delete(id);
-          }, banner.duration);
-          timeoutsRef.current.set(id, timeoutId);
-        }
-
-        return id;
-      },
-      onBannerRemove: (id) => {
-        const banner = stateRef.current.banners.find((b) => b.id === id);
-        if (!banner) return;
-
-        const timeoutId = timeoutsRef.current.get(id);
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-          timeoutsRef.current.delete(id);
-        }
-
-        const newRemoving = new Set(stateRef.current.removing);
-        newRemoving.delete(id);
-        stateRef.current.removing = newRemoving;
-
-        banner.onDismiss?.();
-        stateRef.current.banners = stateRef.current.banners.filter(
-          (b) => b.id !== id,
-        );
-        notify();
-      },
-      onBannersClear: () => {
-        for (const timeoutId of timeoutsRef.current.values()) {
-          clearTimeout(timeoutId);
-        }
-        timeoutsRef.current.clear();
-        stateRef.current.removing = new Set();
-        stateRef.current.heights = new Map();
-        stateRef.current.banners = [];
-        notify();
-      },
-      onRemovingChange: (id, value) => {
-        const newSet = new Set(stateRef.current.removing);
-        if (value) {
-          newSet.add(id);
-        } else {
-          newSet.delete(id);
-        }
-        stateRef.current.removing = newSet;
-        notify();
-      },
-      onHeightChange: (id, height) => {
-        if (stateRef.current.heights.get(id) === height) return;
-        const newHeights = new Map(stateRef.current.heights);
-        newHeights.set(id, height);
-        stateRef.current.heights = newHeights;
-        notify();
-      },
-      onHeightRemove: (id) => {
-        if (!stateRef.current.heights.has(id)) return;
-        const newHeights = new Map(stateRef.current.heights);
-        newHeights.delete(id);
-        stateRef.current.heights = newHeights;
-        notify();
-      },
-    };
-
-    return bannerStore;
-  }, [stateRef, listenersRef, timeoutsRef]);
-
-  const banners = useStore(store, (state) => state.banners);
-  const heights = useStore(store, (state) => state.heights);
+  const banners = useStore(store, selectors.banners);
+  const heights = useStore(store, selectors.heights);
   const visibleBanners = banners.slice(0, maxVisible);
 
   const withPortal = strategy === "fixed" || strategy === "absolute";
@@ -310,13 +277,13 @@ function Banners(props: BannersProps) {
 
 function useBanners() {
   const store = useStoreContext("useBanners");
-  const banners = useStore(store, (state) => state.banners);
+  const banners = useStore(store, selectors.banners);
 
   return React.useMemo(
     () => ({
-      onBannerAdd: store.onBannerAdd,
-      onBannerRemove: store.onBannerRemove,
-      onBannersClear: store.onBannersClear,
+      onBannerAdd: (banner: Omit<BannerData, "id">) => addBanner(store, banner),
+      onBannerRemove: (id: string) => removeBanner(store, id),
+      onBannersClear: () => clearBanners(store),
       banners,
     }),
     [store, banners],
@@ -348,9 +315,9 @@ function BannerImpl(props: BannerImplProps) {
   const { banner, side, index } = props;
 
   const store = useStoreContext("BannerImpl");
-  const removing = useStore(store, (state) => state.removing.has(banner.id));
-  const banners = useStore(store, (state) => state.banners);
-  const heights = useStore(store, (state) => state.heights);
+  const removing = useStore(store, selectors.isRemoving, banner.id);
+  const banners = useStore(store, selectors.banners);
+  const heights = useStore(store, selectors.heights);
 
   const [mounted, setMounted] = React.useState(false);
   const bannerRef = React.useRef<HTMLDivElement>(null);
@@ -378,26 +345,26 @@ function BannerImpl(props: BannerImplProps) {
   React.useLayoutEffect(() => {
     if (!bannerRef.current || removing) return;
     const height = bannerRef.current.getBoundingClientRect().height;
-    store.onHeightChange(banner.id, height);
+    setHeight(store, banner.id, height);
   }, [store, banner.id, removing]);
 
   React.useEffect(() => {
     if (!removing) return;
-    store.onHeightRemove(banner.id);
+    removeHeight(store, banner.id);
     const timeoutId = setTimeout(
-      () => store.onBannerRemove(banner.id),
+      () => removeBanner(store, banner.id),
       BANNER_ANIMATION_DURATION,
     );
     return () => clearTimeout(timeoutId);
   }, [removing, store, banner.id]);
 
   const onClose = React.useCallback(
-    () => store.onRemovingChange(banner.id, true),
+    () => setRemoving(store, banner.id, true),
     [store, banner.id],
   );
 
   const onRemove = React.useCallback(
-    () => store.onBannerRemove(banner.id),
+    () => removeBanner(store, banner.id),
     [store, banner.id],
   );
 
@@ -496,41 +463,21 @@ function Banner(props: BannerProps) {
   const store = React.useContext(StoreContext);
 
   const isInsideStore = store !== null;
-  const isControlled = openProp !== undefined;
 
-  const openRef = useRefWithInit(() => openProp ?? defaultOpen);
-  const listenersRef = useRefWithInit<Set<() => void>>(() => new Set());
+  const [open, setOpenState] = useControlled({
+    controlled: openProp,
+    default: defaultOpen,
+    name: "Banner",
+    state: "open",
+  });
   const bannerIdRef = React.useRef<string | null>(null);
   const onDismissRef = useValueAsRef(onDismiss);
   const onOpenChangeRef = useValueAsRef(onOpenChange);
 
-  const subscribe = React.useCallback(
-    (cb: () => void) => {
-      listenersRef.current.add(cb);
-      return () => listenersRef.current.delete(cb);
-    },
-    [listenersRef],
-  );
-
-  const getSnapshot = React.useCallback(() => openRef.current, [openRef]);
-
-  const uncontrolledOpen = React.useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getSnapshot,
-  );
-  const open = isControlled ? openProp : uncontrolledOpen;
-
-  React.useLayoutEffect(() => {
-    if (isControlled) {
-      openRef.current = openProp;
-    }
-  }, [isControlled, openProp, openRef]);
-
   React.useEffect(() => {
     if (!isInsideStore || !store || !open) return;
 
-    const id = store.onBannerAdd({
+    const id = addBanner(store, {
       content: children,
       variant: variant ?? undefined,
       priority,
@@ -545,7 +492,7 @@ function Banner(props: BannerProps) {
 
     return () => {
       if (bannerIdRef.current) {
-        store.onBannerRemove(bannerIdRef.current);
+        removeBanner(store, bannerIdRef.current);
         bannerIdRef.current = null;
       }
     };
@@ -563,14 +510,9 @@ function Banner(props: BannerProps) {
   ]);
 
   const onClose = React.useCallback(() => {
-    if (!isControlled) {
-      openRef.current = false;
-      for (const listener of listenersRef.current) {
-        listener();
-      }
-    }
     onOpenChangeRef.current?.(false);
-  }, [isControlled, openRef, listenersRef, onOpenChangeRef]);
+    setOpenState(false);
+  }, [onOpenChangeRef, setOpenState]);
 
   const contextValue = React.useMemo<BannerContextValue>(
     () => ({
@@ -592,7 +534,7 @@ function Banner(props: BannerProps) {
         aria-live="polite"
         data-slot="banner"
         data-state="open"
-        className={cn(bannerVariants({ variant, className }))}
+        className={cn(bannerVariants({ variant }), className)}
         {...rootProps}
       >
         {children}
@@ -675,14 +617,15 @@ function BannerClose(props: React.ComponentProps<typeof Button>) {
 
   const isDisabled = disabled ?? !dismissible;
 
-  const onClick = React.useCallback(
-    (event: React.MouseEvent<CloseElement>) => {
-      onClickProp?.(event);
-      if (event.defaultPrevented || isDisabled) return;
-      onClose?.();
-    },
-    [onClickProp, isDisabled, onClose],
-  );
+  const onClick: React.ComponentProps<typeof BannerClose>["onClick"] =
+    React.useCallback(
+      (event) => {
+        onClickProp?.(event);
+        if (event.defaultPrevented || isDisabled) return;
+        onClose?.();
+      },
+      [onClickProp, isDisabled, onClose],
+    );
 
   return (
     <Button

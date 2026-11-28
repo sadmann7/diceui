@@ -1,8 +1,8 @@
 "use client";
 
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
@@ -48,9 +48,9 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type RootElement = React.ComponentRef<typeof ColorPicker>;
-type AreaElement = React.ComponentRef<typeof ColorPickerArea>;
-type InputElement = React.ComponentRef<typeof ColorPickerInput>;
+type RootElement = HTMLDivElement;
+type AreaElement = HTMLDivElement;
+type InputElement = HTMLInputElement;
 
 type ColorFormat = (typeof colorFormats)[number];
 
@@ -415,14 +415,65 @@ interface StoreState {
   format: ColorFormat;
 }
 
-interface Store {
-  subscribe: (cb: () => void) => () => void;
-  getState: () => StoreState;
-  setColor: (value: ColorValue) => void;
-  setHsv: (value: HSVColorValue) => void;
-  setOpen: (value: boolean) => void;
-  setFormat: (value: ColorFormat) => void;
-  notify: () => void;
+interface StoreController {
+  isValueControlled: boolean;
+  isOpenControlled: boolean;
+  isFormatControlled: boolean;
+  pendingHsv: HSVColorValue | null;
+  onValueChange?: (value: string) => void;
+  onOpenChange?: (open: boolean) => void;
+  onFormatChange?: (format: ColorFormat) => void;
+}
+
+const selectors = {
+  color: (state: StoreState) => state.color,
+  hex: (state: StoreState) => rgbToHex(state.color),
+  hsv: (state: StoreState) => state.hsv,
+  open: (state: StoreState) => state.open,
+  format: (state: StoreState) => state.format,
+};
+
+type Store = ReactStore<StoreState, StoreController, typeof selectors>;
+
+function getIsSameColor(a: ColorValue, b: ColorValue) {
+  return a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a;
+}
+
+function setColor(store: Store, color: ColorValue, hsv: HSVColorValue) {
+  const isColorChanged = !getIsSameColor(store.state.color, color);
+  if (isColorChanged) {
+    store.context.onValueChange?.(colorToString(color, store.state.format));
+  }
+  if (!store.context.isValueControlled) {
+    store.update({ color, hsv });
+  } else if (isColorChanged) {
+    store.context.pendingHsv = hsv;
+  } else {
+    store.set("hsv", hsv);
+  }
+}
+
+function syncColor(store: Store, color: ColorValue) {
+  if (getIsSameColor(store.state.color, color)) return;
+  const pendingHsv = store.context.pendingHsv;
+  store.context.pendingHsv = null;
+  const hsv =
+    pendingHsv && getIsSameColor(hsvToRgb(pendingHsv), color)
+      ? pendingHsv
+      : rgbToHsv(color);
+  store.update({ color, hsv });
+}
+
+function setOpen(store: Store, open: boolean) {
+  if (Object.is(store.state.open, open)) return;
+  store.context.onOpenChange?.(open);
+  if (!store.context.isOpenControlled) store.set("open", open);
+}
+
+function setFormat(store: Store, format: ColorFormat) {
+  if (Object.is(store.state.format, format)) return;
+  store.context.onFormatChange?.(format);
+  if (!store.context.isFormatControlled) store.set("format", format);
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -435,15 +486,9 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<U>(selector: (state: StoreState) => U): U {
-  const store = useStoreContext("useStore");
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+function useColorPicker<U>(selector: (state: StoreState) => U): U {
+  const store = useStoreContext("useColorPicker");
+  return useStore(store, selector);
 }
 
 interface ColorPickerContextValue {
@@ -507,90 +552,43 @@ function ColorPicker(props: ColorPickerProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => {
-    const colorString = valueProp ?? defaultValue;
-    const color = hexToRgb(colorString);
+  const [store] = React.useState<Store>(() => {
+    const color = hexToRgb(valueProp ?? defaultValue);
 
-    return {
-      color,
-      hsv: rgbToHsv(color),
-      open: openProp ?? defaultOpen ?? false,
-      format: formatProp ?? defaultFormat,
-    };
+    return new ReactStore<StoreState, StoreController, typeof selectors>(
+      {
+        color,
+        hsv: rgbToHsv(color),
+        open: openProp ?? defaultOpen ?? false,
+        format: formatProp ?? defaultFormat,
+      },
+      {
+        isValueControlled: valueProp !== undefined,
+        isOpenControlled: openProp !== undefined,
+        isFormatControlled: formatProp !== undefined,
+        pendingHsv: null,
+        onValueChange,
+        onOpenChange,
+        onFormatChange,
+      },
+      selectors,
+    );
   });
 
-  const propsRef = useValueAsRef({
-    onValueChange,
-    onOpenChange,
-    onFormatChange,
+  useIsoLayoutEffect(() => {
+    Object.assign(store.context, {
+      isValueControlled: valueProp !== undefined,
+      isOpenControlled: openProp !== undefined,
+      isFormatControlled: formatProp !== undefined,
+      onValueChange,
+      onOpenChange,
+      onFormatChange,
+    } satisfies Partial<StoreController>);
   });
 
-  const store = React.useMemo<Store>(() => {
-    function notify() {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
-    }
-
-    return {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setColor: (value: ColorValue) => {
-        if (Object.is(stateRef.current.color, value)) return;
-
-        const prevState = { ...stateRef.current };
-        stateRef.current.color = value;
-
-        if (propsRef.current.onValueChange) {
-          const colorString = colorToString(value, prevState.format);
-          propsRef.current.onValueChange(colorString);
-        }
-
-        notify();
-      },
-      setHsv: (value: HSVColorValue) => {
-        if (Object.is(stateRef.current.hsv, value)) return;
-
-        const prevState = { ...stateRef.current };
-        stateRef.current.hsv = value;
-
-        if (propsRef.current.onValueChange) {
-          const colorValue = hsvToRgb(value);
-          const colorString = colorToString(colorValue, prevState.format);
-          propsRef.current.onValueChange(colorString);
-        }
-
-        notify();
-      },
-      setOpen: (value: boolean) => {
-        if (Object.is(stateRef.current.open, value)) return;
-
-        stateRef.current.open = value;
-
-        if (propsRef.current.onOpenChange) {
-          propsRef.current.onOpenChange(value);
-        }
-
-        notify();
-      },
-      setFormat: (value: ColorFormat) => {
-        if (Object.is(stateRef.current.format, value)) return;
-
-        stateRef.current.format = value;
-
-        if (propsRef.current.onFormatChange) {
-          propsRef.current.onFormatChange(value);
-        }
-
-        notify();
-      },
-      notify,
-    };
-  }, [listenersRef, stateRef, propsRef]);
+  useIsoLayoutEffect(() => {
+    if (formatProp !== undefined) store.set("format", formatProp);
+  }, [store, formatProp]);
 
   return (
     <StoreContext.Provider value={store}>
@@ -648,19 +646,13 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
 
   useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
-      const currentState = store.getState();
-      const color = hexToRgb(valueProp, currentState.color.a);
-      const hsv = rgbToHsv(color);
-      store.setColor(color);
-      store.setHsv(hsv);
+      syncColor(store, hexToRgb(valueProp, store.state.color.a));
     }
-  }, [valueProp, store]);
+  }, [store, valueProp]);
 
   useIsoLayoutEffect(() => {
-    if (openProp !== undefined) {
-      store.setOpen(openProp);
-    }
-  }, [openProp, store]);
+    if (openProp !== undefined) store.set("open", openProp);
+  }, [store, openProp]);
 
   const contextValue = React.useMemo<ColorPickerContextValue>(
     () => ({
@@ -673,8 +665,8 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
     [dir, disabled, inline, readOnly, required],
   );
 
-  const value = useStore((state) => rgbToHex(state.color));
-  const open = useStore((state) => state.open);
+  const value = useStore(store, selectors.hex);
+  const open = useStore(store, selectors.open);
 
   const RootPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
@@ -702,7 +694,7 @@ function ColorPickerImpl(props: ColorPickerImplProps) {
       <Popover
         defaultOpen={defaultOpen}
         open={open}
-        onOpenChange={store.setOpen}
+        onOpenChange={(open) => setOpen(store, open)}
         modal={modal}
       >
         <RootPrimitive {...rootProps} ref={composedRef} />
@@ -793,7 +785,7 @@ function ColorPickerArea(props: DivProps) {
   const context = useColorPickerContext(AREA_NAME);
   const store = useStoreContext(AREA_NAME);
 
-  const hsv = useStore((state) => state.hsv);
+  const hsv = useStore(store, selectors.hsv);
 
   const isDraggingRef = React.useRef(false);
   const areaRef = React.useRef<HTMLDivElement>(null);
@@ -817,8 +809,7 @@ function ColorPickerArea(props: DivProps) {
         a: hsv?.a ?? 1,
       };
 
-      store.setHsv(newHsv);
-      store.setColor(hsvToRgb(newHsv));
+      setColor(store, hsvToRgb(newHsv), newHsv);
     },
     [hsv, store],
   );
@@ -917,7 +908,7 @@ function ColorPickerHueSlider(
   const context = useColorPickerContext(HUE_SLIDER_NAME);
   const store = useStoreContext(HUE_SLIDER_NAME);
 
-  const hsv = useStore((state) => state.hsv);
+  const hsv = useStore(store, selectors.hsv);
 
   const onValueChange = React.useCallback(
     (values: number[]) => {
@@ -927,8 +918,7 @@ function ColorPickerHueSlider(
         v: hsv?.v ?? 0,
         a: hsv?.a ?? 1,
       };
-      store.setHsv(newHsv);
-      store.setColor(hsvToRgb(newHsv));
+      setColor(store, hsvToRgb(newHsv), newHsv);
     },
     [hsv, store],
   );
@@ -960,16 +950,15 @@ function ColorPickerAlphaSlider(
   const context = useColorPickerContext(ALPHA_SLIDER_NAME);
   const store = useStoreContext(ALPHA_SLIDER_NAME);
 
-  const color = useStore((state) => state.color);
-  const hsv = useStore((state) => state.hsv);
+  const color = useStore(store, selectors.color);
+  const hsv = useStore(store, selectors.hsv);
 
   const onValueChange = React.useCallback(
     (values: number[]) => {
       const alpha = (values[0] ?? 0) / 100;
       const newColor = { ...color, a: alpha };
       const newHsv = { ...hsv, a: alpha };
-      store.setColor(newColor);
-      store.setHsv(newHsv);
+      setColor(store, newColor, newHsv);
     },
     [color, hsv, store],
   );
@@ -1013,9 +1002,10 @@ function ColorPickerSwatch(props: DivProps) {
   const { asChild, className, ...swatchProps } = props;
 
   const context = useColorPickerContext(SWATCH_NAME);
+  const store = useStoreContext(SWATCH_NAME);
 
-  const color = useStore((state) => state.color);
-  const format = useStore((state) => state.format);
+  const color = useStore(store, selectors.color);
+  const format = useStore(store, selectors.format);
 
   const backgroundStyle = React.useMemo(() => {
     if (!color) {
@@ -1081,7 +1071,7 @@ function ColorPickerEyeDropper(props: React.ComponentProps<typeof Button>) {
   const context = useColorPickerContext(EYE_DROPPER_NAME);
   const store = useStoreContext(EYE_DROPPER_NAME);
 
-  const color = useStore((state) => state.color);
+  const color = useStore(store, selectors.color);
 
   const isDisabled = disabled || context.disabled;
 
@@ -1096,8 +1086,7 @@ function ColorPickerEyeDropper(props: React.ComponentProps<typeof Button>) {
         const currentAlpha = color?.a ?? 1;
         const newColor = hexToRgb(result.sRGBHex, currentAlpha);
         const newHsv = rgbToHsv(newColor);
-        store.setColor(newColor);
-        store.setHsv(newHsv);
+        setColor(store, newColor, newHsv);
       }
     } catch (error) {
       console.warn("EyeDropper error:", error);
@@ -1148,11 +1137,11 @@ function ColorPickerFormatSelect(props: ColorPickerFormatSelectProps) {
   const store = useStoreContext(FORMAT_SELECT_NAME);
   const isDisabled = disabled || context.disabled;
 
-  const format = useStore((state) => state.format);
+  const format = useStore(store, selectors.format);
 
   const onFormatChange = React.useCallback(
     (value: ColorFormat) => {
-      store.setFormat(value);
+      setFormat(store, value);
     },
     [store],
   );
@@ -1194,15 +1183,14 @@ function ColorPickerInput(props: ColorPickerInputProps) {
   const store = useStoreContext(INPUT_NAME);
   const context = useColorPickerContext(INPUT_NAME);
 
-  const color = useStore((state) => state.color);
-  const format = useStore((state) => state.format);
-  const hsv = useStore((state) => state.hsv);
+  const color = useStore(store, selectors.color);
+  const format = useStore(store, selectors.format);
+  const hsv = useStore(store, selectors.hsv);
 
   const onColorChange = React.useCallback(
     (newColor: ColorValue) => {
       const newHsv = rgbToHsv(newColor);
-      store.setColor(newColor);
-      store.setHsv(newHsv);
+      setColor(store, newColor, newHsv);
     },
     [store],
   );
@@ -1689,5 +1677,5 @@ export {
   type ColorPickerProps,
   ColorPickerSwatch,
   ColorPickerTrigger,
-  useStore as useColorPicker,
+  useColorPicker,
 };
