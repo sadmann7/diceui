@@ -1,5 +1,6 @@
 "use client";
 
+import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
 import { useControlled } from "@base-ui/utils/useControlled";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
@@ -554,10 +555,12 @@ function EditableInput(props: EditableInputProps) {
     [value, context, propsRef, isDisabled, isReadOnly],
   );
 
+  const focusFrame = useAnimationFrame();
+
   useIsoLayoutEffect(() => {
     if (!editing || isDisabled || isReadOnly || !inputRef.current) return;
 
-    const frameId = window.requestAnimationFrame(() => {
+    focusFrame.request(() => {
       if (!inputRef.current) return;
 
       inputRef.current.focus();
@@ -565,10 +568,8 @@ function EditableInput(props: EditableInputProps) {
       onAutosize(inputRef.current);
     });
 
-    return () => {
-      window.cancelAnimationFrame(frameId);
-    };
-  }, [editing, onAutosize, isDisabled, isReadOnly]);
+    return focusFrame.cancel;
+  }, [editing, onAutosize, isDisabled, isReadOnly, focusFrame]);
 
   const InputPrimitive = asChild ? SlotPrimitive.Slot : "input";
 

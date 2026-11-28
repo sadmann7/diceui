@@ -1,5 +1,6 @@
 "use client";
 
+import { addEventListener } from "@base-ui/utils/addEventListener";
 import { useControlled } from "@base-ui/utils/useControlled";
 import { cn } from "cn";
 import * as React from "react";
@@ -49,8 +50,7 @@ function useIsBelowBreakpoint(breakpoint: number) {
   const subscribe = React.useCallback(
     (onStoreChange: () => void) => {
       const mql = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
-      mql.addEventListener("change", onStoreChange);
-      return () => mql.removeEventListener("change", onStoreChange);
+      return addEventListener(mql, "change", onStoreChange);
     },
     [breakpoint],
   );

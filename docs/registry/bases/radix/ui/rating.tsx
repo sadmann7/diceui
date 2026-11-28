@@ -1,5 +1,7 @@
 "use client";
 
+import { ownerDocument } from "@base-ui/utils/owner";
+import { activeElement } from "@base-ui/utils/shadowDom";
 import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
@@ -74,38 +76,55 @@ function focusFirst(
   candidates: React.RefObject<ItemElement | null>[],
   preventScroll = false,
 ) {
-  const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
   for (const candidateRef of candidates) {
     const candidate = candidateRef.current;
     if (!candidate) continue;
-    if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
+    const doc = ownerDocument(candidate);
+    const previouslyFocusedElement = activeElement(doc);
+    if (candidate === previouslyFocusedElement) return;
     candidate.focus({ preventScroll });
-    if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
+    if (activeElement(doc) !== previouslyFocusedElement) return;
   }
 }
 
-interface StoreState {
+interface RatingState {
   value: number;
   hoveredValue: number | null;
 }
 
-interface StoreController {
-  isValueControlled: boolean;
-  onValueChange?: (value: number) => void;
-  onHover?: (value: number | null) => void;
+interface StoreState extends RatingState {
+  valueProp: number | undefined;
 }
 
+interface StoreContext {
+  onValueChange: ((value: number) => void) | undefined;
+  onHover: ((value: number | null) => void) | undefined;
+}
+
+const publicStates = new WeakMap<StoreState, RatingState>();
+
 const selectors = {
-  value: (state: StoreState) => state.value,
+  value: (state: StoreState) => state.valueProp ?? state.value,
   hoveredValue: (state: StoreState) => state.hoveredValue,
+  publicState: (state: StoreState) => {
+    let publicState = publicStates.get(state);
+    if (!publicState) {
+      publicState = {
+        value: state.valueProp ?? state.value,
+        hoveredValue: state.hoveredValue,
+      };
+      publicStates.set(state, publicState);
+    }
+    return publicState;
+  },
 };
 
-type Store = ReactStore<StoreState, StoreController, typeof selectors>;
+type Store = ReactStore<StoreState, StoreContext, typeof selectors>;
 
 function setValue(store: Store, value: number) {
-  if (Object.is(store.state.value, value)) return;
+  if (Object.is(store.select("value"), value)) return;
   store.context.onValueChange?.(value);
-  if (!store.context.isValueControlled) store.set("value", value);
+  store.set("value", value);
 }
 
 function setHoveredValue(store: Store, hoveredValue: number | null) {
@@ -125,7 +144,7 @@ function useStoreContext(consumerName: string) {
 }
 
 function useRating<T>(
-  selector: (state: StoreState) => T,
+  selector: (state: RatingState) => T,
   ogStore?: Store | null,
 ): T {
   const contextStore = React.useContext(StoreContext);
@@ -136,7 +155,9 @@ function useRating<T>(
     throw new Error(`\`useRating\` must be used within \`${ROOT_NAME}\``);
   }
 
-  return useStore(store, selector);
+  return useStore(store, (state: StoreState) =>
+    selector(selectors.publicState(state)),
+  );
 }
 
 interface ItemData {
@@ -245,24 +266,16 @@ function Rating(props: RatingProps) {
 
   const [store] = React.useState<Store>(
     () =>
-      new ReactStore<StoreState, StoreController, typeof selectors>(
-        { value: valueProp ?? defaultValue, hoveredValue: null },
-        { isValueControlled: valueProp !== undefined, onValueChange, onHover },
+      new ReactStore<StoreState, StoreContext, typeof selectors>(
+        { value: valueProp ?? defaultValue, valueProp, hoveredValue: null },
+        { onValueChange, onHover },
         selectors,
       ),
   );
 
-  useIsoLayoutEffect(() => {
-    Object.assign(store.context, {
-      isValueControlled: valueProp !== undefined,
-      onValueChange,
-      onHover,
-    } satisfies StoreController);
-  });
-
-  useIsoLayoutEffect(() => {
-    if (valueProp !== undefined) store.set("value", valueProp);
-  }, [store, valueProp]);
+  store.useControlledProp("valueProp", valueProp);
+  store.useContextCallback("onValueChange", onValueChange);
+  store.useContextCallback("onHover", onHover);
 
   const propsRef = useValueAsRef({
     onFocus: onFocusProp,
@@ -271,7 +284,7 @@ function Rating(props: RatingProps) {
     step,
   });
 
-  const value = useStore(store, selectors.value);
+  const value = store.useState("value");
 
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
@@ -559,8 +572,8 @@ function RatingItem(props: RatingItemProps) {
   const itemValue = actualIndex + 1;
   const store = useStoreContext(ITEM_NAME);
   const focusContext = useFocusContext(ITEM_NAME);
-  const value = useStore(store, selectors.value);
-  const hoveredValue = useStore(store, selectors.hoveredValue);
+  const value = store.useState("value");
+  const hoveredValue = store.useState("hoveredValue");
   const clearable = context.clearable;
   const step = context.step;
   const activationMode = context.activationMode;

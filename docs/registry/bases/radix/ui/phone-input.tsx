@@ -1,5 +1,6 @@
 "use client";
 
+import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
 import { useControlled } from "@base-ui/utils/useControlled";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { useStableCallback } from "@base-ui/utils/useStableCallback";
@@ -609,6 +610,7 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
 
   const { countries, inputRef, disabled, showFlag } =
     usePhoneInputContext(COUNTRY_SELECT_NAME);
+  const focusFrame = useAnimationFrame();
   const {
     state: { country, open },
     setCountry,
@@ -667,7 +669,7 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
                   onSelect={() => {
                     setCountry(c.code);
                     setOpen(false);
-                    requestAnimationFrame(() => {
+                    focusFrame.request(() => {
                       inputRef.current?.focus();
                     });
                   }}
