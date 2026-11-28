@@ -760,6 +760,10 @@ Pagination controls for the data table.
 
 ## Accessibility
 
+### Screen Reader Announcements
+
+`DataTable` renders a visually hidden status that reads the result count once it has stayed the same for 500ms, with the page when there's more than one, like "42 results, page 2 of 5". Typing a search is announced once, and paging is announced too. Sorting from a column header isn't announced separately, since `aria-sort` on the header that keeps focus already says it.
+
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable

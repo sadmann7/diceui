@@ -16,6 +16,7 @@ import type {
 } from "@tanstack/react-virtual";
 import type * as React from "react";
 
+import type { DataGridMessages } from "@/lib/data-grid-announcer";
 import type { DataGridFeatures } from "@/lib/data-grid-features";
 import type {
   CellPosition,
@@ -167,6 +168,16 @@ export interface UseDataGridProps<TData extends RowData> extends Pick<
    * Call `event.preventDefault()` to keep the selection.
    */
   onEscapeKeyDown?: (event: KeyboardEvent) => void;
+
+  /**
+   * Messages the grid announces to screen readers for sorting, row selection, and cell edits.
+   * Return an empty string to silence one.
+   *
+   * ```ts
+   * messages={{ sorted: () => "" }}
+   * ```
+   */
+  messages?: Partial<DataGridMessages>;
 
   /**
    * Select the clicked cell on single click, not only on drag or shift-click.

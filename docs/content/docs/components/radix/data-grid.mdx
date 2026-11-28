@@ -1020,6 +1020,25 @@ The Data Grid follows WAI-ARIA guidelines for grid widgets:
 - Keyboard shortcuts for all actions
 - Screen reader friendly cell updates
 
+### Screen Reader Announcements
+
+The grid announces sorting, row selection, and edited or cleared cells through a live region, since they change the grid without moving focus. An edit is announced once when editing ends, and not when the value is unchanged. Pastes, undo and redo aren't announced.
+
+Pass `messages` to `useDataGrid` to replace the strings, or return an empty string to silence one.
+
+```tsx
+const { table, ...dataGridProps } = useDataGrid({
+  data,
+  columns,
+  messages: {
+    sorted: () => "",
+    rowSelected: (rowNumber) => `Fila ${rowNumber} seleccionada`,
+  },
+});
+```
+
+In tests, call `destroyAnnouncer` from `@/lib/data-grid-announcer` after each test to remove the live region.
+
 ## Keyboard Interactions
 
 ### Navigation
