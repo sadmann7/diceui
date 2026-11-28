@@ -205,9 +205,9 @@ function normalizeLine(line: string) {
   const spreadFlag = /^\.\.\.\((.+?) && \{ "?([\w-]+)"?: "" \}\),?$/.exec(
     trimmed,
   );
-  if (flag?.[1] && flag[2]) return `${toKey(flag[1])}: flag(${flag[2]})`;
+  if (flag?.[1] && flag[2]) return `${toKey(flag[1])}: ${flag[2]}`;
   if (spreadFlag?.[1] && spreadFlag[2]) {
-    return `${toKey(spreadFlag[2])}: flag(${spreadFlag[1]})`;
+    return `${toKey(spreadFlag[2])}: ${spreadFlag[1]}`;
   }
 
   const shorthand = /^(\w+),$/.exec(trimmed);
