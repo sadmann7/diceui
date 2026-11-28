@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactStore, useStore as useStoreSelector } from "@base-ui/utils/store";
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
@@ -91,8 +91,8 @@ interface StoreState {
 
 interface StoreController {
   isValueControlled: boolean;
-  onValueChange: (value: number) => void;
-  onHover: (value: number | null) => void;
+  onValueChange?: (value: number) => void;
+  onHover?: (value: number | null) => void;
 }
 
 const selectors = {
@@ -104,14 +104,14 @@ type Store = ReactStore<StoreState, StoreController, typeof selectors>;
 
 function setValue(store: Store, value: number) {
   if (Object.is(store.state.value, value)) return;
-  store.context.onValueChange(value);
+  store.context.onValueChange?.(value);
   if (!store.context.isValueControlled) store.set("value", value);
 }
 
 function setHoveredValue(store: Store, hoveredValue: number | null) {
   if (Object.is(store.state.hoveredValue, hoveredValue)) return;
   store.set("hoveredValue", hoveredValue);
-  store.context.onHover(hoveredValue);
+  store.context.onHover?.(hoveredValue);
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -124,7 +124,7 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(
+function useRating<T>(
   selector: (state: StoreState) => T,
   ogStore?: Store | null,
 ): T {
@@ -133,10 +133,10 @@ function useStore<T>(
   const store = ogStore ?? contextStore;
 
   if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(`\`useRating\` must be used within \`${ROOT_NAME}\``);
   }
 
-  return useStoreSelector(store, selector);
+  return useStore(store, selector);
 }
 
 interface ItemData {
@@ -247,22 +247,22 @@ function Rating(props: RatingProps) {
     () =>
       new ReactStore<StoreState, StoreController, typeof selectors>(
         { value: valueProp ?? defaultValue, hoveredValue: null },
-        {
-          isValueControlled: valueProp !== undefined,
-          onValueChange: () => {},
-          onHover: () => {},
-        },
+        { isValueControlled: valueProp !== undefined, onValueChange, onHover },
         selectors,
       ),
   );
 
-  store.useControlledProp("value", valueProp);
-  store.useContextCallback("onValueChange", onValueChange);
-  store.useContextCallback("onHover", onHover);
+  useIsoLayoutEffect(() => {
+    Object.assign(store.context, {
+      isValueControlled: valueProp !== undefined,
+      onValueChange,
+      onHover,
+    } satisfies StoreController);
+  });
 
   useIsoLayoutEffect(() => {
-    store.context.isValueControlled = valueProp !== undefined;
-  });
+    if (valueProp !== undefined) store.set("value", valueProp);
+  }, [store, valueProp]);
 
   const propsRef = useValueAsRef({
     onFocus: onFocusProp,
@@ -271,7 +271,7 @@ function Rating(props: RatingProps) {
     step,
   });
 
-  const value = store.useState("value");
+  const value = useStore(store, selectors.value);
 
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
@@ -559,8 +559,8 @@ function RatingItem(props: RatingItemProps) {
   const itemValue = actualIndex + 1;
   const store = useStoreContext(ITEM_NAME);
   const focusContext = useFocusContext(ITEM_NAME);
-  const value = store.useState("value");
-  const hoveredValue = store.useState("hoveredValue");
+  const value = useStore(store, selectors.value);
+  const hoveredValue = useStore(store, selectors.hoveredValue);
   const clearable = context.clearable;
   const step = context.step;
   const activationMode = context.activationMode;
@@ -926,4 +926,4 @@ function RatingItem(props: RatingItemProps) {
   );
 }
 
-export { Rating, RatingItem, useStore as useRating };
+export { Rating, RatingItem, useRating };
