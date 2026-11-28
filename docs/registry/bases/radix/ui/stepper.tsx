@@ -906,7 +906,7 @@ function StepperTrigger(props: ButtonProps) {
             : candidateRefs.slice(currentIndex + 1);
         }
 
-        if (!!store.context.onValidate && candidateRefs.length > 0) {
+        if (store.state.hasValidate && candidateRefs.length > 0) {
           const nextRef = candidateRefs[0];
           const nextElement = nextRef?.current;
           const nextItem = items.find(
