@@ -229,6 +229,23 @@ The overlay component that appears when an item is being dragged.
 
 ## Accessibility
 
+### Screen Reader Announcements
+
+A live region announces when an item is picked up, each new position it moves to, and where it's dropped or returned to on cancel. Pass `getItemLabel` so the announcements name the item instead of its identifier.
+
+```tsx
+<Sortable
+  value={items}
+  onValueChange={setItems}
+  getItemValue={(item) => item.id}
+  getItemLabel={(item) => item.name}
+>
+  {/* ... */}
+</Sortable>
+```
+
+Drags started from the keyboard also announce the keys to move, drop and cancel.
+
 ### Keyboard Interactions
 
 <KeyboardShortcutsTable

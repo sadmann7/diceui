@@ -38,6 +38,7 @@ export default function SortableHandleDemo() {
       value={tricks}
       onValueChange={setTricks}
       getItemValue={(item) => item.id}
+      getItemLabel={(item) => item.title}
     >
       <Table className="rounded-none border">
         <TableHeader>
@@ -53,6 +54,7 @@ export default function SortableHandleDemo() {
             <SortableItem key={trick.id} value={trick.id} render={<TableRow />}>
               <TableCell className="w-[50px]">
                 <SortableItemHandle
+                  aria-label={`Reorder ${trick.title}`}
                   render={
                     <Button variant="ghost" size="icon" className="size-8" />
                   }

@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@changesets/cli": "^3.0.3",
+    "@guidepup/virtual-screen-reader": "^0.33.0",
     "@testing-library/jest-dom": "catalog:",
     "@testing-library/react": "catalog:",
     "@testing-library/user-event": "catalog:",
