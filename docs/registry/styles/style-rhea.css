@@ -631,6 +631,79 @@
     @apply flex items-center gap-2;
   }
 
+  /* MARK: Editor */
+  /* @role cn-textarea */
+  .cn-editor {
+    @apply overflow-hidden rounded-2xl border border-transparent bg-input/50 transition-[color,box-shadow] focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50 has-aria-invalid:border-destructive has-aria-invalid:ring-destructive/20 data-disabled:cursor-not-allowed data-disabled:opacity-50 dark:has-aria-invalid:ring-destructive/40;
+  }
+
+  .cn-editor-content {
+    @apply min-h-0 flex-1 overflow-y-auto text-base md:text-sm *:min-h-24 *:px-3 *:py-2 *:outline-none;
+  }
+
+  .cn-editor-prose {
+    @apply [&_.tiptap>*:first-child]:mt-0 [&_.tiptap>*:last-child]:mb-0 [&_p]:my-2 [&_p]:leading-6 [&_h1]:mt-6 [&_h1]:mb-2 [&_h1]:text-2xl [&_h1]:font-medium [&_h1]:tracking-tight [&_h2]:mt-5 [&_h2]:mb-2 [&_h2]:text-xl [&_h2]:font-medium [&_h2]:tracking-tight [&_h3]:mt-4 [&_h3]:mb-2 [&_h3]:text-lg [&_h3]:font-medium [&_ul]:my-2 [&_ul]:list-disc [&_ul]:pl-6 [&_ol]:my-2 [&_ol]:list-decimal [&_ol]:pl-6 [&_li]:my-1 [&_li>p]:my-0 [&_ul[data-type=taskList]]:list-none [&_ul[data-type=taskList]]:pl-1 [&_ul[data-type=taskList]>li]:flex [&_ul[data-type=taskList]>li]:items-start [&_ul[data-type=taskList]>li]:gap-2 [&_ul[data-type=taskList]>li>label]:mt-1 [&_ul[data-type=taskList]>li>div]:flex-1 [&_li[data-checked=true]>div]:text-muted-foreground [&_li[data-checked=true]>div]:line-through [&_input[type=checkbox]]:size-4 [&_input[type=checkbox]]:accent-primary [&_blockquote]:my-3 [&_blockquote]:border-l-2 [&_blockquote]:pl-4 [&_blockquote]:text-muted-foreground [&_blockquote]:italic [&_code]:rounded-xl [&_code]:bg-muted [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[0.85em] [&_pre]:my-3 [&_pre]:overflow-x-auto [&_pre]:rounded-2xl [&_pre]:bg-muted [&_pre]:p-3 [&_pre]:font-mono [&_pre]:text-xs [&_pre_code]:bg-transparent [&_pre_code]:p-0 [&_pre_code]:text-[1em] [&_hr]:my-4 [&_hr]:border-border [&_hr.ProseMirror-selectednode]:border-ring [&_a]:font-medium [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-4 [&_.is-editor-empty:first-child]:before:pointer-events-none [&_.is-editor-empty:first-child]:before:float-left [&_.is-editor-empty:first-child]:before:h-0 [&_.is-editor-empty:first-child]:before:text-muted-foreground [&_.is-editor-empty:first-child]:before:content-[attr(data-placeholder)];
+  }
+
+  .cn-editor-toolbar {
+    @apply flex-wrap gap-1 p-1 not-last:border-b last:not-first:border-t;
+  }
+
+  .cn-editor-toolbar-separator {
+    @apply mx-0.5 data-vertical:h-5 data-vertical:self-center;
+  }
+
+  .cn-editor-button {
+    @apply aria-pressed:bg-accent aria-pressed:text-accent-foreground;
+  }
+
+  .cn-editor-block-select {
+    @apply w-36 border-transparent bg-transparent shadow-none hover:bg-accent dark:bg-transparent dark:hover:bg-accent/50;
+  }
+
+  .cn-editor-link-content {
+    @apply w-80 p-1;
+  }
+
+  .cn-editor-link-form {
+    @apply gap-1;
+  }
+
+  .cn-editor-link-input {
+    @apply h-7 flex-1 border-0 bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent;
+  }
+
+  /* @role cn-dropdown-menu-content */
+  .cn-editor-bubble-menu {
+    @apply gap-0.5 rounded-2xl border bg-popover p-1 text-popover-foreground shadow-lg data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95;
+  }
+
+  /* @role cn-dropdown-menu-content */
+  .cn-editor-slash-menu {
+    @apply max-h-80 w-64 rounded-2xl border bg-popover p-1 text-popover-foreground shadow-lg data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95;
+  }
+
+  /* @role cn-dropdown-menu-item */
+  .cn-editor-slash-menu-item {
+    @apply gap-2 rounded-xl px-2 py-1.5 text-sm data-highlighted:bg-accent data-highlighted:text-accent-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground;
+  }
+
+  .cn-editor-slash-menu-item-icon {
+    @apply size-8 rounded-2xl border bg-background;
+  }
+
+  .cn-editor-slash-menu-item-description {
+    @apply text-xs text-muted-foreground;
+  }
+
+  .cn-editor-slash-menu-empty {
+    @apply px-2 py-1 text-xs text-muted-foreground;
+  }
+
+  .cn-editor-character-count {
+    @apply text-xs text-muted-foreground data-limit:text-destructive;
+  }
+
   /* MARK: Faceted */
   .cn-faceted-trigger {
     @apply justify-between text-left has-[>[data-slot=faceted-value]]:transition-[color,background-color,border-color,box-shadow] has-[>[data-slot=faceted-value]>[data-slot=faceted-badge-list]]:pl-1;

@@ -1,0 +1,446 @@
+---
+base: radix
+title: Editor
+description: A composable rich text editor built on Tiptap, with a toolbar, bubble menu, slash commands, and HTML, Markdown or JSON output.
+new: true
+links:
+  doc: https://tiptap.dev/docs/editor/getting-started/overview
+  api: /docs/components/radix/editor#api-reference
+---
+
+<ComponentTabs name="editor-demo" />
+
+## Installation
+
+<CodeTabs>
+
+<TabsList>
+  <TabsTrigger value="cli">Command</TabsTrigger>
+  <TabsTrigger value="manual">Manual</TabsTrigger>
+</TabsList>
+
+<TabsContent value="cli">
+
+```package-install
+npx shadcn@latest add @diceui/editor
+```
+
+</TabsContent>
+
+<TabsContent value="manual">
+
+<Steps className="pt-2">
+
+<Step>Install the following dependencies:</Step>
+
+```package-install
+@floating-ui/react-dom @tiptap/core @tiptap/extension-list @tiptap/extensions @tiptap/markdown @tiptap/pm @tiptap/react @tiptap/starter-kit @tiptap/suggestion radix-ui
+```
+
+<Step>Copy and paste the following hook into your `hooks` directory.</Step>
+
+<ComponentSource name="use-value-as-ref" />
+
+<Step>Copy and paste the following code into your project.</Step>
+
+<ComponentSource name="editor" />
+
+<Step>Update the import paths to match your project setup.</Step>
+
+</Steps>
+
+</TabsContent>
+
+</CodeTabs>
+
+## Layout
+
+Import the parts and compose them together.
+
+```tsx
+import {
+  Editor,
+  EditorBlock,
+  EditorBlockSelect,
+  EditorBubbleMenu,
+  EditorCharacterCount,
+  EditorContent,
+  EditorLink,
+  EditorMark,
+  EditorRedo,
+  EditorSlashMenu,
+  EditorToolbar,
+  EditorToolbarSeparator,
+  EditorUndo,
+} from "@/components/ui/editor";
+
+return (
+  <Editor>
+    <EditorToolbar>
+      <EditorUndo />
+      <EditorRedo />
+      <EditorToolbarSeparator />
+      <EditorBlockSelect />
+      <EditorMark mark="bold" />
+      <EditorLink />
+      <EditorBlock block="bulletList" />
+    </EditorToolbar>
+    <EditorContent />
+    <EditorBubbleMenu>
+      <EditorMark mark="bold" />
+      <EditorLink />
+    </EditorBubbleMenu>
+    <EditorSlashMenu />
+    <EditorCharacterCount />
+  </Editor>
+);
+```
+
+The editor comes with headings, lists, task lists, quotes, code blocks, dividers, links, undo and redo. Add more [Tiptap extensions](https://tiptap.dev/docs/editor/extensions/overview) with `extensions`.
+
+## Examples
+
+### Notion-style
+
+Drop the toolbar and format from the bubble menu and the slash menu instead.
+
+<ComponentTabs name="editor-minimal-demo" />
+
+### Markdown
+
+Set `format="markdown"` to read and write Markdown.
+
+<ComponentTabs name="editor-markdown-demo" />
+
+### Character count
+
+Set `limit` to cap the length, and show the count with `EditorCharacterCount`.
+
+<ComponentTabs name="editor-character-count-demo" />
+
+## Content
+
+`format` sets what `value`, `defaultValue` and `onValueChange` use:
+
+| Format     | Value                                                  |
+| ---------- | ------------------------------------------------------ |
+| `html`     | An HTML string, or `""` when the editor is empty       |
+| `markdown` | A Markdown string                                      |
+| `json`     | Tiptap's [`JSONContent`](https://tiptap.dev/docs/editor/core-concepts/schema) |
+
+HTML from users can contain anything, so sanitize it before rendering it outside the editor.
+
+The editor mounts in the browser, so the content area is empty until it loads. Style `[data-pending]` to show a loading state:
+
+```tsx
+<EditorContent className="data-pending:animate-pulse data-pending:bg-muted" />
+```
+
+## Slash commands
+
+`EditorSlashMenu` lists a command for each block and a divider. Pass a function to `items` to change them, like adding descriptions or your own commands.
+
+```tsx
+<EditorSlashMenu
+  items={(items) => [
+    ...items,
+    {
+      value: "date",
+      label: "Today's date",
+      keywords: ["now"],
+      onSelect: ({ editor, range }) =>
+        editor
+          .chain()
+          .focus()
+          .deleteRange(range)
+          .insertContent(new Date().toDateString())
+          .run(),
+    },
+  ]}
+/>
+```
+
+## Custom controls
+
+`useEditorInstance` returns the Tiptap editor, or `null` until it's created, to build your own controls.
+
+```tsx
+import { useEditorInstance } from "@/components/ui/editor";
+
+function ClearFormatting() {
+  const editor = useEditorInstance();
+
+  return (
+    <Button
+      onMouseDown={(event) => event.preventDefault()}
+      onClick={() => editor?.chain().focus().unsetAllMarks().run()}
+    >
+      Clear formatting
+    </Button>
+  );
+}
+```
+
+## Labels
+
+Pass `labels` to reword or translate the built-in text. Labels you leave out keep their default.
+
+| Label             | Default           | Used for                                    |
+| ----------------- | ----------------- | ------------------------------------------- |
+| `content`         | `"Editor"`        | Editable area's accessible name             |
+| `toolbar`         | `"Formatting"`    | Toolbar and bubble menu accessible name     |
+| `bold`            | `"Bold"`          | `EditorMark`                                |
+| `italic`          | `"Italic"`        | `EditorMark`                                |
+| `underline`       | `"Underline"`     | `EditorMark`                                |
+| `strike`          | `"Strikethrough"` | `EditorMark`                                |
+| `code`            | `"Code"`          | `EditorMark`                                |
+| `paragraph`       | `"Text"`          | `EditorBlock`, block select, slash menu     |
+| `heading1`        | `"Heading 1"`     | `EditorBlock`, block select, slash menu     |
+| `heading2`        | `"Heading 2"`     | `EditorBlock`, block select, slash menu     |
+| `heading3`        | `"Heading 3"`     | `EditorBlock`, block select, slash menu     |
+| `bulletList`      | `"Bullet list"`   | `EditorBlock`, block select, slash menu     |
+| `orderedList`     | `"Numbered list"` | `EditorBlock`, block select, slash menu     |
+| `taskList`        | `"Task list"`     | `EditorBlock`, block select, slash menu     |
+| `blockquote`      | `"Quote"`         | `EditorBlock`, block select, slash menu     |
+| `codeBlock`       | `"Code block"`    | `EditorBlock`, block select, slash menu     |
+| `horizontalRule`  | `"Divider"`       | Slash menu                                  |
+| `blockType`       | `"Block type"`    | Block select's accessible name and placeholder |
+| `link`            | `"Link"`          | `EditorLink`                                |
+| `linkUrl`         | `"URL"`           | Link input's accessible name                |
+| `linkPlaceholder` | `"Paste a link"`  | Link input placeholder                      |
+| `applyLink`       | `"Apply link"`    | Link apply button                           |
+| `removeLink`      | `"Remove link"`   | Link remove button                          |
+| `undo`            | `"Undo"`          | `EditorUndo`                                |
+| `redo`            | `"Redo"`          | `EditorRedo`                                |
+| `commands`        | `"Commands"`      | Slash menu's accessible name                |
+| `noResults`       | `"No results"`    | Slash menu empty state                      |
+
+## API Reference
+
+### Editor
+
+The root component. Creates the Tiptap editor and holds its content.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorProps" />
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-disabled]",
+      value: "Present when disabled.",
+    },
+    {
+      title: "[data-readonly]",
+      value: "Present when read-only.",
+    },
+    {
+      title: "[data-pending]",
+      value: "Present until the editor has mounted.",
+    },
+  ]}
+/>
+
+### EditorContent
+
+The editable area. Its `aria-label`, `aria-labelledby`, `aria-describedby` and `aria-invalid` go on the editable element.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorContentProps" />
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-pending]",
+      value: "Present until the editor has mounted.",
+    },
+  ]}
+/>
+
+### EditorToolbar
+
+Holds the editor's controls. Arrow keys move between them.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorToolbarProps" />
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-orientation]",
+      value: ['"horizontal"', '"vertical"'],
+    },
+  ]}
+/>
+
+### EditorToolbarSeparator
+
+A divider between groups of controls.
+
+### EditorMark
+
+Toggles bold, italic, underline, strikethrough or inline code on the selection.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorMarkProps" />
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[aria-pressed]",
+      value: "Whether the mark is on at the selection.",
+    },
+  ]}
+/>
+
+### EditorBlock
+
+Toggles the current block between a paragraph and a heading, list, quote or code block.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorBlockProps" />
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[aria-pressed]",
+      value: "Whether the current block is this block.",
+    },
+  ]}
+/>
+
+### EditorBlockSelect
+
+A select that changes the current block.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorBlockSelectProps" />
+
+### EditorLink
+
+Opens a popover to add, edit or remove a link. Typing a link with no selection inserts it as text.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorLinkProps" />
+
+### EditorUndo
+
+Undoes the last change.
+
+### EditorRedo
+
+Redoes the last undone change.
+
+### EditorBubbleMenu
+
+A toolbar that floats above selected text. Hidden in code blocks.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorBubbleMenuProps" />
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-side]",
+      value: ['"top"', '"right"', '"bottom"', '"left"'],
+    },
+  ]}
+/>
+
+### EditorSlashMenu
+
+A command menu that opens when you type `/`. Hidden in code blocks.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorSlashMenuProps" />
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-side]",
+      value: ['"top"', '"bottom"'],
+    },
+  ]}
+/>
+
+### EditorSlashMenuItem
+
+A command in the slash menu.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorSlashMenuItemProps" />
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-highlighted]",
+      value: "Present when highlighted.",
+    },
+  ]}
+/>
+
+### EditorCharacterCount
+
+Shows the character or word count, and the `limit` when set.
+
+<AutoTypeTable path="./types/radix/editor.ts" name="EditorCharacterCountProps" />
+
+<DataAttributesTable
+  data={[
+    {
+      title: "[data-limit]",
+      value: "Present when the character count reaches the limit.",
+    },
+  ]}
+/>
+
+## Accessibility
+
+The editable area is a multiline `textbox`. The toolbar and bubble menu follow the [Toolbar pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/), and the slash menu is a `listbox` the textbox points to with `aria-activedescendant`, so focus stays in the text.
+
+### Keyboard Interactions
+
+<KeyboardShortcutsTable
+  data={[
+    {
+      keys: ["Ctrl + B"],
+      description: "Toggles bold.",
+    },
+    {
+      keys: ["Ctrl + I"],
+      description: "Toggles italic.",
+    },
+    {
+      keys: ["Ctrl + U"],
+      description: "Toggles underline.",
+    },
+    {
+      keys: ["Ctrl + K"],
+      description: "Opens the link popover.",
+    },
+    {
+      keys: ["Ctrl + Z"],
+      description: "Undoes the last change.",
+    },
+    {
+      keys: ["Ctrl + Shift + Z"],
+      description: "Redoes the last undone change.",
+    },
+    {
+      keys: ["/"],
+      description: "Opens the slash menu.",
+    },
+    {
+      keys: ["ArrowUp", "ArrowDown"],
+      description: "Moves through the slash menu.",
+    },
+    {
+      keys: ["Enter", "Tab"],
+      description: "Runs the highlighted slash command.",
+    },
+    {
+      keys: ["Escape"],
+      description: "Closes the slash menu, or returns focus from the bubble menu to the text.",
+    },
+    {
+      keys: ["ArrowLeft", "ArrowRight"],
+      description: "Moves between toolbar controls.",
+    },
+    {
+      keys: ["Home", "End"],
+      description: "Moves to the first or last toolbar control.",
+    },
+  ]}
+/>
+
+On macOS, use <Kbd>Cmd</Kbd> instead of <Kbd>Ctrl</Kbd>.
