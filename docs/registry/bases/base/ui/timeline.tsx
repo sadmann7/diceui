@@ -2,9 +2,9 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { cva } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
@@ -45,35 +45,47 @@ function getSortedEntries(
   });
 }
 
-function useStore<T>(selector: (store: Store) => T): T {
-  const store = React.useContext(StoreContext);
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
-  }
-
-  const getSnapshot = React.useCallback(
-    () => selector(store),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
-}
-
 interface StoreState {
   items: Map<string, React.RefObject<ItemElement | null>>;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  notify: () => void;
-  onItemRegister: (
+function getItemIndex(state: StoreState, id: string) {
+  const sortedEntries = getSortedEntries(Array.from(state.items.entries()));
+  return sortedEntries.findIndex(([key]) => key === id);
+}
+
+const selectors = {
+  itemIndex: getItemIndex,
+  nextItemStatus: (
+    state: StoreState,
     id: string,
-    ref: React.RefObject<ItemElement | null>,
-  ) => void;
-  onItemUnregister: (id: string) => void;
-  getNextItemStatus: (id: string, activeIndex?: number) => Status | undefined;
-  getItemIndex: (id: string) => number;
+    activeIndex: number | undefined,
+  ): Status | undefined => {
+    const currentIndex = getItemIndex(state, id);
+    if (currentIndex === -1 || currentIndex === state.items.size - 1) {
+      return undefined;
+    }
+
+    return getItemStatus(currentIndex + 1, activeIndex);
+  },
+};
+
+type Store = ReactStore<StoreState, Record<string, never>, typeof selectors>;
+
+function registerItem(
+  store: Store,
+  id: string,
+  ref: React.RefObject<ItemElement | null>,
+) {
+  const items = new Map(store.state.items);
+  items.set(id, ref);
+  store.set("items", items);
+}
+
+function unregisterItem(store: Store, id: string) {
+  const items = new Map(store.state.items);
+  items.delete(id);
+  store.set("items", items);
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -164,55 +176,14 @@ function Timeline(props: TimelineProps) {
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    items: new Map(),
-  }));
-
-  const store = React.useMemo<Store>(() => {
-    const store: Store = {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
-      onItemRegister: (
-        id: string,
-        ref: React.RefObject<ItemElement | null>,
-      ) => {
-        stateRef.current.items.set(id, ref);
-        store.notify();
-      },
-      onItemUnregister: (id: string) => {
-        stateRef.current.items.delete(id);
-        store.notify();
-      },
-      getNextItemStatus: (id: string, activeIndex?: number) => {
-        const entries = Array.from(stateRef.current.items.entries());
-        const sortedEntries = getSortedEntries(entries);
-
-        const currentIndex = sortedEntries.findIndex(([key]) => key === id);
-        if (currentIndex === -1 || currentIndex === sortedEntries.length - 1) {
-          return undefined;
-        }
-
-        const nextItemIndex = currentIndex + 1;
-        return getItemStatus(nextItemIndex, activeIndex);
-      },
-      getItemIndex: (id: string) => {
-        const entries = Array.from(stateRef.current.items.entries());
-        const sortedEntries = getSortedEntries(entries);
-        return sortedEntries.findIndex(([key]) => key === id);
-      },
-    };
-
-    return store;
-  }, [listenersRef, stateRef]);
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, Record<string, never>, typeof selectors>(
+        { items: new Map() },
+        {},
+        selectors,
+      ),
+  );
 
   const contextValue = React.useMemo<TimelineContextValue>(
     () => ({
@@ -335,16 +306,16 @@ function TimelineItem(props: TimelineItemProps) {
   const itemRef = React.useRef<ItemElement | null>(null);
   const composedRef = useMergedRefs(ref, itemRef);
 
-  const itemIndex = useStore((state) => state.getItemIndex(itemId));
+  const itemIndex = useStore(store, selectors.itemIndex, itemId);
 
   const status = React.useMemo<Status>(() => {
     return getItemStatus(itemIndex, activeIndex);
   }, [activeIndex, itemIndex]);
 
   useIsoLayoutEffect(() => {
-    store.onItemRegister(itemId, itemRef);
+    registerItem(store, itemId, itemRef);
     return () => {
-      store.onItemUnregister(itemId);
+      unregisterItem(store, itemId);
     };
   }, [itemId, store]);
 
@@ -380,7 +351,7 @@ function TimelineItem(props: TimelineItemProps) {
       slot: "timeline-item",
       status,
       orientation,
-      ...(isAlternateRight && { "alternate-right": "" }),
+      "alternate-right": isAlternateRight,
     },
   });
 
@@ -632,8 +603,12 @@ function TimelineConnector(props: TimelineConnectorProps) {
   const { id, status, isAlternateRight } =
     useTimelineItemContext(CONNECTOR_NAME);
 
-  const nextItemStatus = useStore((state) =>
-    state.getNextItemStatus(id, activeIndex),
+  const store = useStoreContext(CONNECTOR_NAME);
+  const nextItemStatus = useStore(
+    store,
+    selectors.nextItemStatus,
+    id,
+    activeIndex,
   );
 
   const isLastItem = nextItemStatus === undefined;
@@ -660,7 +635,7 @@ function TimelineConnector(props: TimelineConnectorProps) {
     render,
     state: {
       slot: "timeline-connector",
-      ...(isConnectorCompleted && { completed: "" }),
+      completed: isConnectorCompleted,
       status,
       orientation,
     },

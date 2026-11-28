@@ -2,10 +2,9 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
-import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
@@ -34,33 +33,31 @@ interface StoreState {
   value: string;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
+interface StoreController {
+  isValueControlled: boolean;
+  onValueChange?: (value: string) => void;
+}
+
+const selectors = {
+  value: (state: StoreState) => state.value,
+};
+
+type Store = ReactStore<StoreState, StoreController, typeof selectors>;
+
+function setValue(store: Store, value: string) {
+  if (Object.is(store.state.value, value)) return;
+  if (value) store.context.onValueChange?.(value);
+  if (!store.context.isValueControlled) store.set("value", value);
 }
 
 const StoreContext = React.createContext<Store | null>(null);
 
-function useStore<T>(
-  selector: (state: StoreState) => T,
-  ogStore?: Store | null,
-): T {
-  const contextStore = React.useContext(StoreContext);
-
-  const store = ogStore ?? contextStore;
-
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+function useStoreContext(consumerName: string) {
+  const context = React.useContext(StoreContext);
+  if (!context) {
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+  return context;
 }
 
 interface ScrollSpyContextValue {
@@ -121,45 +118,28 @@ function ScrollSpy(props: ScrollSpyProps) {
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;
 
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    value: value ?? defaultValue ?? "",
-  }));
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const onValueChangeRef = useValueAsRef(onValueChange);
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, StoreController, typeof selectors>(
+        { value: value ?? defaultValue ?? "" },
+        { isValueControlled: value !== undefined, onValueChange },
+        selectors,
+      ),
+  );
 
-  const store = React.useMemo<Store>(() => {
-    return {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => {
-        return stateRef.current;
-      },
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
-
-        stateRef.current[key] = value;
-
-        if (key === "value" && value) {
-          onValueChangeRef.current?.(value);
-        }
-
-        store.notify();
-      },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
-    };
-  }, [listenersRef, stateRef, onValueChangeRef]);
+  useIsoLayoutEffect(() => {
+    Object.assign(store.context, {
+      isValueControlled: value !== undefined,
+      onValueChange,
+    } satisfies StoreController);
+  });
 
   const sectionMapRef = React.useRef(new Map<string, Element>());
   const isScrollingRef = React.useRef(false);
   const rafIdRef = React.useRef<number | null>(null);
   const isMountedRef = React.useRef(false);
   const scrollTimeoutRef = React.useRef<number | null>(null);
+  const reportedValueRef = React.useRef<string | null>(null);
 
   const onSectionRegister = React.useCallback(
     (id: string, element: SectionElement) => {
@@ -172,20 +152,16 @@ function ScrollSpy(props: ScrollSpyProps) {
     sectionMapRef.current.delete(id);
   }, []);
 
-  const onScrollToSection = React.useCallback(
+  const scrollToSection = React.useCallback(
     (sectionId: string) => {
       const section = scrollContainer
         ? scrollContainer.querySelector(`#${sectionId}`)
         : document.getElementById(sectionId);
 
-      if (!section) {
-        store.setState("value", sectionId);
-        return;
-      }
+      if (!section) return;
 
       // Keeps the observer from firing during the programmatic scroll.
       isScrollingRef.current = true;
-      store.setState("value", sectionId);
 
       if (scrollContainer) {
         const containerRect = scrollContainer.getBoundingClientRect();
@@ -216,7 +192,16 @@ function ScrollSpy(props: ScrollSpyProps) {
         isScrollingRef.current = false;
       }, 500);
     },
-    [scrollContainer, offset, scrollBehavior, store],
+    [scrollContainer, offset, scrollBehavior],
+  );
+
+  const onScrollToSection = React.useCallback(
+    (sectionId: string) => {
+      reportedValueRef.current = sectionId;
+      setValue(store, sectionId);
+      scrollToSection(sectionId);
+    },
+    [store, scrollToSection],
   );
 
   useIsoLayoutEffect(() => {
@@ -225,13 +210,21 @@ function ScrollSpy(props: ScrollSpyProps) {
 
     if (!isMountedRef.current) {
       isMountedRef.current = true;
-      store.setState("value", currentValue);
       return;
     }
 
-    onScrollToSection(currentValue);
+    const isReported = reportedValueRef.current === currentValue;
+    reportedValueRef.current = null;
+
+    if (value === undefined) {
+      setValue(store, currentValue);
+    } else {
+      store.set("value", value);
+    }
+
+    if (!isReported) scrollToSection(currentValue);
     // oxlint-disable-next-line react-hooks/exhaustive-deps -- defaultValue only seeds the initial value
-  }, [value, onScrollToSection, store]);
+  }, [value, scrollToSection, store]);
 
   useIsoLayoutEffect(() => {
     const sectionMap = sectionMapRef.current;
@@ -260,7 +253,8 @@ function ScrollSpy(props: ScrollSpyProps) {
 
           const id = topmost.target.id;
           if (id && sectionMap.has(id)) {
-            store.setState("value", id);
+            reportedValueRef.current = id;
+            setValue(store, id);
           }
         });
       },
@@ -377,7 +371,8 @@ function ScrollSpyLink(props: ScrollSpyLinkProps) {
   const { value: linkValue, render, onClick, className, ...linkProps } = props;
 
   const { orientation, onScrollToSection } = useScrollSpyContext(LINK_NAME);
-  const value = useStore((state) => state.value);
+  const store = useStoreContext(LINK_NAME);
+  const value = useStore(store, selectors.value);
   const isActive = value === linkValue;
 
   const onLinkClick = React.useCallback(

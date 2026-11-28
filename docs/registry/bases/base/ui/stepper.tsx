@@ -2,9 +2,9 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
@@ -141,19 +141,88 @@ interface StoreState {
   value: string;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  setStateWithValidation: (
+interface StoreController {
+  isValueControlled: boolean;
+  onValueChange?: (value: string) => void;
+  onValueComplete?: (value: string, completed: boolean) => void;
+  onValueAdd?: (value: string) => void;
+  onValueRemove?: (value: string) => void;
+  onValidate?: (
     value: string,
     direction: NavigationDirection,
-  ) => Promise<boolean>;
-  hasValidation: () => boolean;
-  notify: () => void;
-  addStep: (value: string, completed: boolean, disabled: boolean) => void;
-  removeStep: (value: string) => void;
-  setStep: (value: string, completed: boolean, disabled: boolean) => void;
+  ) => boolean | Promise<boolean>;
+}
+
+const selectors = {
+  value: (state: StoreState) => state.value,
+  steps: (state: StoreState) => state.steps,
+  step: (state: StoreState, value: string) => state.steps.get(value),
+};
+
+type Store = ReactStore<StoreState, StoreController, typeof selectors>;
+
+function setValue(store: Store, value: string) {
+  if (Object.is(store.state.value, value)) return;
+  store.context.onValueChange?.(value);
+  if (!store.context.isValueControlled) store.set("value", value);
+}
+
+async function setValueWithValidation(
+  store: Store,
+  value: string,
+  direction: NavigationDirection,
+) {
+  const { onValidate } = store.context;
+  if (!onValidate) {
+    setValue(store, value);
+    return true;
+  }
+
+  try {
+    const isValid = await onValidate(value, direction);
+    if (isValid) setValue(store, value);
+    return isValid;
+  } catch {
+    return false;
+  }
+}
+
+function addStep(
+  store: Store,
+  value: string,
+  completed: boolean,
+  disabled: boolean,
+) {
+  const steps = new Map(store.state.steps);
+  steps.set(value, { value, completed, disabled });
+  store.set("steps", steps);
+  store.context.onValueAdd?.(value);
+}
+
+function removeStep(store: Store, value: string) {
+  const steps = new Map(store.state.steps);
+  steps.delete(value);
+  store.set("steps", steps);
+  store.context.onValueRemove?.(value);
+}
+
+function setStep(
+  store: Store,
+  value: string,
+  completed: boolean,
+  disabled: boolean,
+) {
+  const step = store.state.steps.get(value);
+  if (!step) return;
+  if (step.completed === completed && step.disabled === disabled) return;
+
+  const steps = new Map(store.state.steps);
+  steps.set(value, { ...step, completed, disabled });
+  store.set("steps", steps);
+
+  if (completed !== step.completed) {
+    store.context.onValueComplete?.(value, completed);
+  }
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -166,15 +235,9 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(selector: (state: StoreState) => T): T {
-  const store = useStoreContext("useStore");
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+function useStepper<T>(selector: (state: StoreState) => T): T {
+  const store = useStoreContext("useStepper");
+  return useStore(store, selector);
 }
 
 interface ItemData {
@@ -245,95 +308,36 @@ function Stepper(props: StepperProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    steps: new Map(),
-    value: value ?? defaultValue ?? "",
-  }));
-
-  const propsRef = useValueAsRef({
-    onValueChange,
-    onValueComplete,
-    onValueAdd,
-    onValueRemove,
-    onValidate,
-  });
-
-  const store = React.useMemo<Store>(() => {
-    const store: Store = {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
-
-        if (key === "value" && typeof value === "string") {
-          stateRef.current.value = value;
-          propsRef.current.onValueChange?.(value);
-        } else {
-          stateRef.current[key] = value;
-        }
-
-        store.notify();
-      },
-      setStateWithValidation: async (value, direction) => {
-        if (!propsRef.current.onValidate) {
-          store.setState("value", value);
-          return true;
-        }
-
-        try {
-          const isValid = await propsRef.current.onValidate(value, direction);
-          if (isValid) {
-            store.setState("value", value);
-          }
-          return isValid;
-        } catch {
-          return false;
-        }
-      },
-      hasValidation: () => !!propsRef.current.onValidate,
-      addStep: (value, completed, disabled) => {
-        const newStep: StepState = { value, completed, disabled };
-        stateRef.current.steps.set(value, newStep);
-        propsRef.current.onValueAdd?.(value);
-        store.notify();
-      },
-      removeStep: (value) => {
-        stateRef.current.steps.delete(value);
-        propsRef.current.onValueRemove?.(value);
-        store.notify();
-      },
-      setStep: (value, completed, disabled) => {
-        const step = stateRef.current.steps.get(value);
-        if (step) {
-          const updatedStep: StepState = { ...step, completed, disabled };
-          stateRef.current.steps.set(value, updatedStep);
-
-          if (completed !== step.completed) {
-            propsRef.current.onValueComplete?.(value, completed);
-          }
-
-          store.notify();
-        }
-      },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
-    };
-
-    return store;
-  }, [listenersRef, stateRef, propsRef]);
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, StoreController, typeof selectors>(
+        { steps: new Map(), value: value ?? defaultValue ?? "" },
+        {
+          isValueControlled: value !== undefined,
+          onValueChange,
+          onValueComplete,
+          onValueAdd,
+          onValueRemove,
+          onValidate,
+        },
+        selectors,
+      ),
+  );
 
   useIsoLayoutEffect(() => {
-    if (value !== undefined) {
-      store.setState("value", value);
-    }
-  }, [value, store]);
+    Object.assign(store.context, {
+      isValueControlled: value !== undefined,
+      onValueChange,
+      onValueComplete,
+      onValueAdd,
+      onValueRemove,
+      onValidate,
+    } satisfies StoreController);
+  });
+
+  useIsoLayoutEffect(() => {
+    if (value !== undefined) store.set("value", value);
+  }, [store, value]);
 
   const contextDir = useDirection();
   const dir = dirProp ?? contextDir;
@@ -371,7 +375,7 @@ function Stepper(props: StepperProps) {
     render,
     state: {
       slot: "stepper",
-      disabled: disabled ? "" : undefined,
+      disabled,
       orientation,
     },
   });
@@ -421,8 +425,9 @@ function StepperList(props: DivProps) {
   } = props;
 
   const context = useStepperContext(LIST_NAME);
+  const store = useStoreContext(LIST_NAME);
   const orientation = context.orientation;
-  const currentValue = useStore((state) => state.value);
+  const currentValue = useStore(store, selectors.value);
 
   const propsRef = useValueAsRef({
     onBlur: onBlurProp,
@@ -640,22 +645,22 @@ function StepperItem(props: StepperItemProps) {
   const context = useStepperContext(ITEM_NAME);
   const store = useStoreContext(ITEM_NAME);
   const orientation = context.orientation;
-  const value = useStore((state) => state.value);
+  const value = useStore(store, selectors.value);
 
   useIsoLayoutEffect(() => {
-    store.addStep(itemValue, completed, disabled);
+    addStep(store, itemValue, completed, disabled);
 
     return () => {
-      store.removeStep(itemValue);
+      removeStep(store, itemValue);
     };
   }, [itemValue, completed, disabled, store]);
 
   useIsoLayoutEffect(() => {
-    store.setStep(itemValue, completed, disabled);
+    setStep(store, itemValue, completed, disabled);
   }, [itemValue, completed, disabled, store]);
 
-  const stepState = useStore((state) => state.steps.get(itemValue));
-  const steps = useStore((state) => state.steps);
+  const stepState = useStore(store, selectors.step, itemValue);
+  const steps = useStore(store, selectors.steps);
   const dataState = getDataState(value, itemValue, stepState, steps);
 
   const itemContextValue = React.useMemo<StepperItemContextValue>(
@@ -684,7 +689,7 @@ function StepperItem(props: StepperItemProps) {
     render,
     state: {
       slot: "stepper-item",
-      disabled: stepState?.disabled ? "" : undefined,
+      disabled: !!stepState?.disabled,
       orientation,
       state: dataState,
     },
@@ -716,9 +721,9 @@ function StepperTrigger(props: ButtonProps) {
 
   const store = useStoreContext(TRIGGER_NAME);
   const focusContext = useFocusContext(TRIGGER_NAME);
-  const value = useStore((state) => state.value);
-  const steps = useStore((state) => state.steps);
-  const stepState = useStore((state) => state.steps.get(itemValue));
+  const value = useStore(store, selectors.value);
+  const steps = useStore(store, selectors.steps);
+  const stepState = useStore(store, selectors.step, itemValue);
 
   const propsRef = useValueAsRef({
     onClick: onClickProp,
@@ -799,7 +804,7 @@ function StepperTrigger(props: ButtonProps) {
         const targetStepIndex = Array.from(steps.keys()).indexOf(itemValue);
         const direction = targetStepIndex > currentStepIndex ? "next" : "prev";
 
-        await store.setStateWithValidation(itemValue, direction);
+        await setValueWithValidation(store, itemValue, direction);
       }
     },
     [
@@ -833,7 +838,7 @@ function StepperTrigger(props: ButtonProps) {
         const targetStepIndex = Array.from(steps.keys()).indexOf(itemValue);
         const direction = targetStepIndex > currentStepIndex ? "next" : "prev";
 
-        await store.setStateWithValidation(itemValue, direction);
+        await setValueWithValidation(store, itemValue, direction);
       }
 
       isMouseClickRef.current = false;
@@ -904,7 +909,7 @@ function StepperTrigger(props: ButtonProps) {
             : candidateRefs.slice(currentIndex + 1);
         }
 
-        if (store.hasValidation() && candidateRefs.length > 0) {
+        if (!!store.context.onValidate && candidateRefs.length > 0) {
           const nextRef = candidateRefs[0];
           const nextElement = nextRef?.current;
           const nextItem = items.find(
@@ -922,13 +927,14 @@ function StepperTrigger(props: ButtonProps) {
               targetStepIndex > currentStepIndex ? "next" : "prev";
 
             if (direction === "next") {
-              const isValid = await store.setStateWithValidation(
+              const isValid = await setValueWithValidation(
+                store,
                 nextItem.value,
                 direction,
               );
               if (!isValid) return;
             } else {
-              store.setState("value", nextItem.value);
+              setValue(store, nextItem.value);
             }
 
             queueMicrotask(() => nextElement?.focus());
@@ -1000,7 +1006,7 @@ function StepperTrigger(props: ButtonProps) {
     render,
     state: {
       slot: "stepper-trigger",
-      disabled: isDisabled ? "" : undefined,
+      disabled: isDisabled,
       state: dataState,
     },
   });
@@ -1018,11 +1024,12 @@ function StepperIndicator(props: StepperIndicatorProps) {
 
   const context = useStepperContext(INDICATOR_NAME);
   const itemContext = useStepperItemContext(INDICATOR_NAME);
+  const store = useStoreContext(INDICATOR_NAME);
 
-  const value = useStore((state) => state.value);
+  const value = useStore(store, selectors.value);
   const itemValue = itemContext.value;
-  const stepState = useStore((state) => state.steps.get(itemValue));
-  const steps = useStore((state) => state.steps);
+  const stepState = useStore(store, selectors.step, itemValue);
+  const steps = useStore(store, selectors.steps);
 
   const stepPosition = Array.from(steps.keys()).indexOf(itemValue) + 1;
 
@@ -1078,8 +1085,9 @@ function StepperSeparator(props: StepperSeparatorProps) {
 
   const context = useStepperContext(SEPARATOR_NAME);
   const itemContext = useStepperItemContext(SEPARATOR_NAME);
-  const value = useStore((state) => state.value);
-  const steps = useStore((state) => state.steps);
+  const store = useStoreContext(SEPARATOR_NAME);
+  const value = useStore(store, selectors.value);
+  const steps = useStore(store, selectors.steps);
 
   const orientation = context.orientation;
 
@@ -1199,7 +1207,8 @@ function StepperContent(props: StepperContentProps) {
   } = props;
 
   const context = useStepperContext(CONTENT_NAME);
-  const value = useStore((state) => state.value);
+  const store = useStoreContext(CONTENT_NAME);
+  const value = useStore(store, selectors.value);
 
   const contentId = getId(context.rootId, "content", valueProp);
   const triggerId = getId(context.rootId, "trigger", valueProp);
@@ -1232,8 +1241,8 @@ function StepperPrev(props: ButtonProps) {
   const { render, onClick: onClickProp, disabled, ...prevProps } = props;
 
   const store = useStoreContext(PREV_NAME);
-  const value = useStore((state) => state.value);
-  const steps = useStore((state) => state.steps);
+  const value = useStore(store, selectors.value);
+  const steps = useStore(store, selectors.steps);
 
   const propsRef = useValueAsRef({
     onClick: onClickProp,
@@ -1252,7 +1261,7 @@ function StepperPrev(props: ButtonProps) {
       const prevStepValue = stepKeys[prevIndex];
 
       if (prevStepValue) {
-        store.setState("value", prevStepValue);
+        setValue(store, prevStepValue);
       }
     },
     [propsRef, isDisabled, currentIndex, stepKeys, store],
@@ -1281,8 +1290,8 @@ function StepperNext(props: ButtonProps) {
   const { render, onClick: onClickProp, disabled, ...nextProps } = props;
 
   const store = useStoreContext(NEXT_NAME);
-  const value = useStore((state) => state.value);
-  const steps = useStore((state) => state.steps);
+  const value = useStore(store, selectors.value);
+  const steps = useStore(store, selectors.steps);
 
   const propsRef = useValueAsRef({
     onClick: onClickProp,
@@ -1301,7 +1310,7 @@ function StepperNext(props: ButtonProps) {
       const nextStepValue = stepKeys[nextIndex];
 
       if (nextStepValue) {
-        await store.setStateWithValidation(nextStepValue, "next");
+        await setValueWithValidation(store, nextStepValue, "next");
       }
     },
     [propsRef, isDisabled, currentIndex, stepKeys, store],
@@ -1339,5 +1348,5 @@ export {
   StepperSeparator,
   StepperTitle,
   StepperTrigger,
-  useStore as useStepper,
+  useStepper,
 };
