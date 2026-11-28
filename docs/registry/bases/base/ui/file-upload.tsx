@@ -2,8 +2,13 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { clamp } from "@base-ui/utils/clamp";
+import { NOOP } from "@base-ui/utils/empty";
+import { contains } from "@base-ui/utils/shadowDom";
 import { ReactStore, useStore } from "@base-ui/utils/store";
+import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useTimeout } from "@base-ui/utils/useTimeout";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
@@ -155,9 +160,12 @@ interface StoreState {
   invalid: boolean;
 }
 
+interface State extends StoreState {
+  valueProp: File[] | undefined;
+}
+
 interface StoreController {
-  isValueControlled: boolean;
-  onValueChange?: (files: File[]) => void;
+  onValueChange: (files: File[]) => void;
 }
 
 const selectors = {
@@ -169,7 +177,7 @@ const selectors = {
     Array.from(state.files.keys()).indexOf(file) + 1,
 };
 
-type Store = ReactStore<StoreState, StoreController, typeof selectors>;
+type Store = ReactStore<State, StoreController, typeof selectors>;
 
 function getFileStates(
   files: File[],
@@ -209,8 +217,8 @@ function commitFiles(
   files: File[],
   urlCache: WeakMap<File, string>,
 ) {
-  store.context.onValueChange?.(files);
-  if (!store.context.isValueControlled) setFiles(store, files, urlCache);
+  store.context.onValueChange(files);
+  if (store.state.valueProp === undefined) setFiles(store, files, urlCache);
 }
 
 function updateFileState(
@@ -356,35 +364,29 @@ function FileUpload(props: FileUploadProps) {
 
   const [store] = React.useState<Store>(
     () =>
-      new ReactStore<StoreState, StoreController, typeof selectors>(
+      new ReactStore<State, StoreController, typeof selectors>(
         {
           files: getFileStates(
             value ?? defaultValue ?? [],
             new Map(),
             urlCache,
           ),
+          valueProp: value,
           dragOver: false,
           invalid,
         },
-        { isValueControlled: value !== undefined, onValueChange },
+        { onValueChange: NOOP },
         selectors,
       ),
   );
 
-  useIsoLayoutEffect(() => {
-    Object.assign(store.context, {
-      isValueControlled: value !== undefined,
-      onValueChange,
-    } satisfies StoreController);
-  });
+  store.useControlledProp("valueProp", value);
+  store.useContextCallback("onValueChange", onValueChange);
+  store.useSyncedValue("invalid", invalid);
 
   useIsoLayoutEffect(() => {
     if (value !== undefined) setFiles(store, value, urlCache);
   }, [store, value, urlCache]);
-
-  useIsoLayoutEffect(() => {
-    store.set("invalid", invalid);
-  }, [store, invalid]);
 
   const propsRef = useValueAsRef({
     onAccept,
@@ -399,18 +401,17 @@ function FileUpload(props: FileUploadProps) {
     [accept],
   );
 
-  const [onProgress] = React.useState(() => {
-    let frame = 0;
-    return (file: File, progress: number) => {
-      if (frame) return;
-      frame = requestAnimationFrame(() => {
-        frame = 0;
-        updateFileState(store, file, {
-          progress: Math.min(Math.max(0, progress), 100),
-          status: "uploading",
-        });
+  const progressFrame = useAnimationFrame();
+  const invalidTimeout = useTimeout();
+
+  const [onProgress] = React.useState(() => (file: File, progress: number) => {
+    if (progressFrame.currentId !== null) return;
+    progressFrame.request(() => {
+      updateFileState(store, file, {
+        progress: clamp(progress, 0, 100),
+        status: "uploading",
       });
-    };
+    });
   });
 
   React.useEffect(() => {
@@ -552,9 +553,9 @@ function FileUpload(props: FileUploadProps) {
 
       if (invalid) {
         store.set("invalid", invalid);
-        setTimeout(() => {
+        invalidTimeout.start(2000, () => {
           store.set("invalid", false);
-        }, 2000);
+        });
       }
 
       if (acceptedFiles.length > 0) {
@@ -583,6 +584,7 @@ function FileUpload(props: FileUploadProps) {
       store,
       urlCache,
       propsRef,
+      invalidTimeout,
       onFilesUpload,
       maxFiles,
       acceptTypes,
@@ -755,9 +757,8 @@ function FileUploadDropzone(props: FileUploadDropzoneProps) {
 
       const relatedTarget = event.relatedTarget;
       if (
-        relatedTarget &&
-        relatedTarget instanceof Node &&
-        event.currentTarget.contains(relatedTarget)
+        relatedTarget instanceof Element &&
+        contains(event.currentTarget, relatedTarget)
       ) {
         return;
       }

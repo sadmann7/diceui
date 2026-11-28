@@ -2,7 +2,10 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { NOOP } from "@base-ui/utils/empty";
+import { ownerDocument } from "@base-ui/utils/owner";
 import { ReactStore, useStore } from "@base-ui/utils/store";
+import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
@@ -46,7 +49,12 @@ const selectors = {
   generationKey: (state: StoreState) => state.generationKey,
 };
 
-type Store = ReactStore<StoreState, Record<string, never>, typeof selectors>;
+interface StoreController {
+  onError: (error: Error) => void;
+  onGenerated: () => void;
+}
+
+type Store = ReactStore<StoreState, StoreController, typeof selectors>;
 
 interface QRCodeContextValue {
   value: string;
@@ -116,7 +124,7 @@ function QRCode(props: QRCodeProps) {
 
   const [store] = React.useState<Store>(
     () =>
-      new ReactStore<StoreState, Record<string, never>, typeof selectors>(
+      new ReactStore<StoreState, StoreController, typeof selectors>(
         {
           dataUrl: null,
           svgString: null,
@@ -124,10 +132,15 @@ function QRCode(props: QRCodeProps) {
           error: null,
           generationKey: "",
         },
-        {},
+        { onError: NOOP, onGenerated: NOOP },
         selectors,
       ),
   );
+
+  store.useContextCallback("onError", onError);
+  store.useContextCallback("onGenerated", onGenerated);
+
+  const generateFrame = useAnimationFrame();
 
   const canvasOpts = React.useMemo<QRCodeCanvasOpts>(
     () => ({
@@ -204,7 +217,7 @@ function QRCode(props: QRCodeProps) {
           generationKey: targetGenerationKey,
         });
 
-        onGenerated?.();
+        store.context.onGenerated();
       } catch (error) {
         const parsedError =
           error instanceof Error
@@ -214,10 +227,10 @@ function QRCode(props: QRCodeProps) {
           error: parsedError,
           isGenerating: false,
         });
-        onError?.(parsedError);
+        store.context.onError(parsedError);
       }
     },
-    [value, canvasOpts, store, onError, onGenerated],
+    [value, canvasOpts, store],
   );
 
   const contextValue = React.useMemo<QRCodeContextValue>(
@@ -234,14 +247,14 @@ function QRCode(props: QRCodeProps) {
   );
 
   useIsoLayoutEffect(() => {
-    if (generationKey) {
-      const rafId = requestAnimationFrame(() => {
-        void onQRCodeGenerate(generationKey);
-      });
+    if (!generationKey) return;
 
-      return () => cancelAnimationFrame(rafId);
-    }
-  }, [generationKey, onQRCodeGenerate]);
+    generateFrame.request(() => {
+      void onQRCodeGenerate(generationKey);
+    });
+
+    return generateFrame.cancel;
+  }, [generationKey, generateFrame, onQRCodeGenerate]);
 
   const element = useRender({
     defaultTagName: "div",
@@ -383,7 +396,8 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
       onClickProp?.(event);
       if (event.defaultPrevented) return;
 
-      const link = document.createElement("a");
+      const ownerDoc = ownerDocument(event.currentTarget);
+      const link = ownerDoc.createElement("a");
 
       if (format === "png" && dataUrl) {
         link.href = dataUrl;
@@ -396,9 +410,9 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
         return;
       }
 
-      document.body.appendChild(link);
+      ownerDoc.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      ownerDoc.body.removeChild(link);
 
       if (format === "svg" && svgString) {
         URL.revokeObjectURL(link.href);
