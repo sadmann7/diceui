@@ -978,11 +978,11 @@ function QueryBuilderValue({
             ariaLabelledBy ? `${ariaLabelledBy} ${fromId}` : undefined
           }
           {...props}
+          data-slot="query-builder-value"
+          data-operator={rule.operator}
           value={start}
           onChange={(event) => onChange([event.target.value, end])}
           disabled={isDisabled}
-          data-slot="query-builder-value"
-          data-operator={rule.operator}
           className={valueClassName}
         />
         <span className="cn-query-builder-value-separator">
@@ -997,11 +997,11 @@ function QueryBuilderValue({
             ariaLabelledBy ? `${ariaLabelledBy} ${toId}` : undefined
           }
           {...props}
+          data-slot="query-builder-value"
+          data-operator={rule.operator}
           value={end}
           onChange={(event) => onChange([start, event.target.value])}
           disabled={isDisabled}
-          data-slot="query-builder-value"
-          data-operator={rule.operator}
           className={valueClassName}
         />
       </>

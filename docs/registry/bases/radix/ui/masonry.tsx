@@ -1162,8 +1162,8 @@ const MASONRY_ERROR = {
 
 interface DivProps extends React.ComponentProps<"div"> {}
 
-type RootElement = React.ComponentRef<typeof Masonry>;
-type ItemElement = React.ComponentRef<typeof MasonryItem>;
+type RootElement = HTMLDivElement;
+type ItemElement = HTMLDivElement;
 
 interface MasonryContextValue {
   positioner: Positioner;

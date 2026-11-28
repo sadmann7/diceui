@@ -84,7 +84,7 @@ function AvatarGroup(props: AvatarGroupProps) {
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn(avatarGroupVariants({ orientation, dir, className })),
+        className: cn(avatarGroupVariants({ orientation, dir }), className),
         children: (
           <>
             {visibleItems.map((child, index) => (

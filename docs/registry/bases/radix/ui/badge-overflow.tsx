@@ -14,8 +14,6 @@ interface GetBadgeLabel<T> {
   getBadgeLabel: (item: T) => string;
 }
 
-type BadgeOverflowElement = React.ComponentRef<typeof BadgeOverflow>;
-
 type BadgeOverflowProps<T = string> = React.ComponentProps<"div"> &
   (T extends object ? GetBadgeLabel<T> : Partial<GetBadgeLabel<T>>) & {
     items: T[];
@@ -51,7 +49,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
     [getBadgeLabelProp],
   );
 
-  const rootRef = React.useRef<BadgeOverflowElement | null>(null);
+  const rootRef = React.useRef<HTMLDivElement | null>(null);
   const composedRef = useMergedRefs(ref, rootRef);
   const measureRef = React.useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = React.useState(0);
