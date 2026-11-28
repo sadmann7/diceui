@@ -7,7 +7,8 @@
  * the differences the bases are expected to have are taken out, which are
  * imports, `asChild` against `render`, the primitive each base wraps, and
  * attributes written as JSX against the same attributes passed to
- * `useRender`. What's left is listed per component.
+ * `useRender`. What's left is listed per component, followed by how often
+ * each base still hand-rolls something `@base-ui/utils` ships.
  *
  *   pnpm registry:drift                 table of every pair
  *   pnpm registry:drift rating swap     the lines left in these pairs
@@ -41,6 +42,23 @@ const EXPECTED_PATTERNS = [
   /^interface \w+Props extends .*\{$/,
 ];
 
+const HELPERS: [label: string, pattern: RegExp][] = [
+  ["useSyncExternalStore", /\buseSyncExternalStore\(/g],
+  ["useComposedRefs", /\buseComposedRefs\(/g],
+  [
+    "radix-ui/internal useLayoutEffect",
+    /import \{[^}]*\buseLayoutEffect\b[^}]*\} from "radix-ui\/internal"/g,
+  ],
+  ["composeEventHandlers", /\bcomposeEventHandlers\(/g],
+  ["local clamp", /function clamp\(/g],
+  ["setTimeout", /\bsetTimeout\(/g],
+  ["setInterval", /\bsetInterval\(/g],
+  ["requestAnimationFrame", /(?<!cancel)\brequestAnimationFrame\(/g],
+  ["overflow lock", /\.overflow = "hidden"/g],
+  ["visually hidden clip styles", /clip: "rect\(0/g],
+  ["document.activeElement", /\bdocument\.activeElement\b/g],
+];
+
 const PUNCTUATION_PATTERN = /^[\s{}()[\];,<>/]*$/;
 
 interface Pair {
@@ -65,7 +83,13 @@ const args = process.argv.slice(2);
 const isMarkdown = args.includes("--markdown");
 const names = args.filter((arg) => !arg.startsWith("--"));
 
-const drifts = (await getPairs()).map(getDrift);
+const pairs = await getPairs();
+const drifts = pairs.map(getDrift);
+const helpers = HELPERS.map(([label, pattern]) => ({
+  label,
+  radix: pairs.reduce((n, p) => n + (p.radix.match(pattern)?.length ?? 0), 0),
+  base: pairs.reduce((n, p) => n + (p.base.match(pattern)?.length ?? 0), 0),
+}));
 drifts.sort((a, b) => b.lines - a.lines || a.name.localeCompare(b.name));
 
 if (names.length > 0) {
@@ -76,8 +100,10 @@ if (names.length > 0) {
   }
 } else if (isMarkdown) {
   printMarkdown(drifts);
+  printHelpersMarkdown();
 } else {
   printTable(drifts);
+  printHelpers();
 }
 
 async function getPairs(): Promise<Pair[]> {
@@ -360,5 +386,24 @@ function printHunks(drift: Drift) {
     for (const line of hunk.radix) console.log(`- radix  ${line}`);
     for (const line of hunk.base) console.log(`+ base   ${line}`);
     console.log("");
+  }
+}
+
+function printHelpers() {
+  const width = Math.max(...helpers.map((h) => h.label.length));
+  console.log(`\n${"hand-rolled helper".padEnd(width)}  radix   base`);
+  for (const helper of helpers) {
+    console.log(
+      `${helper.label.padEnd(width)}  ${String(helper.radix).padStart(5)}  ${String(helper.base).padStart(5)}`,
+    );
+  }
+}
+
+function printHelpersMarkdown() {
+  console.log("\n## Hand-rolled helpers `@base-ui/utils` covers\n");
+  console.log("| Helper | Radix | Base UI |");
+  console.log("| --- | ---: | ---: |");
+  for (const helper of helpers) {
+    console.log(`| ${helper.label} | ${helper.radix} | ${helper.base} |`);
   }
 }
