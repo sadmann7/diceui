@@ -1,10 +1,10 @@
 ---
 title: November 2026 - Data Table Announcements
-description: Data Table reads its result count to screen readers, and Data Grid announces sorting, row selection and cell edits. Includes breaking changes.
+description: Data Table reads its result count to screen readers, and Data Grid announces sorting, row selection, cell edits, pastes, undo and redo. Includes breaking changes.
 date: 2026-11-28T12:00:00Z
 ---
 
-Filtering a [Data Table](/docs/components/data-table), or sorting, selecting and editing in a [Data Grid](/docs/components/data-grid), changes what's on screen without moving focus. Screen reader users now hear what changed. This release has breaking changes for installed grids, the pager's status, and tests.
+Filtering a [Data Table](/docs/components/data-table), or sorting, selecting, editing, pasting and undoing in a [Data Grid](/docs/components/data-grid), changes what's on screen without moving focus. Screen reader users now hear what changed. This release has breaking changes for installed grids, the pager's status, and tests.
 
 ## Breaking changes
 
@@ -55,12 +55,14 @@ Filtering a [Data Table](/docs/components/data-table), or sorting, selecting and
 ## Data Table
 
 - **Result count.** The table reads its result count once it has stayed the same for 500ms, with the page when there's more than one: "42 results", "42 results, page 2 of 5", "1 result" or "No results". A server table without `rowCount` reads "Page 2 of 5", or "Page 2" without a page count. Typing a search is announced once, and paging still is.
+- **Selection count.** The pager reads its selection count once per change, where "1 row selected." used to be read twice.
 - **Sort and filter menu drags.** Dragging a sort or filter announces the column label instead of its id, once per position, and <Kbd>Escape</Kbd> cancels the drag without closing the menu.
 
 ## Data Grid
 
-- **Announcements.** The grid announces sorting ("Sorted by Name, ascending" or "Sorting cleared"), row selection ("Row 3 selected", "All rows selected"), and edited or cleared cells ("Name updated", "5 cells updated"). An edit is announced once when editing ends, and not at all when the value ends where it started. Pastes, undo and redo aren't announced.
-- **Custom messages.** `useDataGrid` takes `messages` to replace any of these strings, for example to translate them.
+- **Announcements.** The grid announces sorting ("Sorted by Name, ascending" or "Sorting cleared"), row selection ("Row 3 selected", "All rows selected"), and edited or cleared cells ("Name updated", "5 cells updated"). An edit is announced once when editing ends, and not at all when the value ends where it started.
+- **Pastes, undo and redo.** A paste is announced once with its counts ("4 cells pasted", "4 cells pasted, 1 skipped, 2 rows added"), and undo and redo name the change they reverse ("Undo: Name updated", "Undo: 2 rows deleted"). Their toasts stay visible but are hidden from screen readers, so each is spoken once. The undo and redo toasts now read "Action undone" and "Action redone".
+- **Custom messages.** `useDataGrid` takes `messages` to replace any of these strings, for example to translate them. The keys are `sorted`, `rowSelected`, `rowDeselected`, `rowsSelected`, `allRowsSelected`, `cellsEdited`, `cellsPasted`, `rowsAdded`, `rowsDeleted`, `undone` and `redone`.
 
   ```tsx
   useDataGrid({
@@ -76,6 +78,7 @@ Filtering a [Data Table](/docs/components/data-table), or sorting, selecting and
   });
   ```
 
+- **Search count.** The search's match count, like "2 of 44", is read once per change.
 - **Sort and filter menu drags.** Dragging a sort or filter announces the column label, once per position, like the Data Table.
 
 ## Migrating

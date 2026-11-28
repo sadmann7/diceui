@@ -1022,7 +1022,7 @@ The Data Grid follows WAI-ARIA guidelines for grid widgets:
 
 ### Screen Reader Announcements
 
-The grid announces sorting, row selection, and edited or cleared cells through a live region, since they change the grid without moving focus. An edit is announced once when editing ends, and not when the value is unchanged. Pastes, undo and redo aren't announced.
+The grid announces sorting, row selection, edited or cleared cells, pastes, and undo and redo through a live region, since they change the grid without moving focus. An edit is announced once when editing ends, and not when the value is unchanged. The paste and undo toasts stay visible but are hidden from screen readers, so each change is spoken once.
 
 Pass `messages` to `useDataGrid` to replace the strings, or return an empty string to silence one.
 
