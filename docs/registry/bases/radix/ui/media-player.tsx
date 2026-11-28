@@ -934,7 +934,8 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
   const labelId = React.useId();
   const descriptionId = React.useId();
 
-  const actionFrame = useAnimationFrame();
+  const retryFrame = useAnimationFrame();
+  const reloadFrame = useAnimationFrame();
 
   const [actionState, setActionState] = React.useState<{
     retryPending: boolean;
@@ -947,7 +948,7 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
   const onRetry = React.useCallback(() => {
     setActionState((prev) => ({ ...prev, retryPending: true }));
 
-    actionFrame.request(() => {
+    retryFrame.request(() => {
       const mediaElement = context.mediaRef.current;
       if (!mediaElement) {
         setActionState((prev) => ({ ...prev, retryPending: false }));
@@ -965,19 +966,19 @@ function MediaPlayerError(props: MediaPlayerErrorProps) {
 
       setActionState((prev) => ({ ...prev, retryPending: false }));
     });
-  }, [actionFrame, context.mediaRef, onRetryProp]);
+  }, [retryFrame, context.mediaRef, onRetryProp]);
 
   const onReload = React.useCallback(() => {
     setActionState((prev) => ({ ...prev, reloadPending: true }));
 
-    actionFrame.request(() => {
+    reloadFrame.request(() => {
       if (onReloadProp) {
         onReloadProp();
       } else {
         window.location.reload();
       }
     });
-  }, [actionFrame, onReloadProp]);
+  }, [reloadFrame, onReloadProp]);
 
   const errorLabel = React.useMemo(() => {
     if (label) return label;
