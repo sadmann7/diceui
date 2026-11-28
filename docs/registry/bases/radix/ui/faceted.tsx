@@ -110,12 +110,6 @@ function getIsFacetedSelectedValue<Multiple extends boolean>(
 function createFacetedStore(state: FacetedStoreState): FacetedStore {
   const listeners = new Set<() => void>();
 
-  function announce(itemValue: string, isRemoving: boolean) {
-    const itemLabel = getLabels(state.items).get(itemValue) ?? itemValue;
-    state.announcement = `${itemLabel} ${isRemoving ? "not selected" : "selected"}`;
-    store.notify();
-  }
-
   function commitValue(nextValue: string | string[] | undefined) {
     store.controller.onValueChange?.(nextValue);
     if (
@@ -155,7 +149,7 @@ function createFacetedStore(state: FacetedStoreState): FacetedStore {
       if (hasChanged) store.notify();
     },
     setOpen: (open) => {
-      if (open) state.announcement = "";
+      state.announcement = "";
       store.controller.setOpen(open);
     },
     selectItem: (selectedValue) => {
@@ -167,7 +161,10 @@ function createFacetedStore(state: FacetedStoreState): FacetedStore {
             ? selected.filter((item) => item !== selectedValue)
             : [...selected, selectedValue],
         );
-        announce(selectedValue, isRemoving);
+        const itemLabel =
+          getLabels(state.items).get(selectedValue) ?? selectedValue;
+        state.announcement = `${itemLabel} ${isRemoving ? "not selected" : "selected"}`;
+        store.notify();
         return;
       }
 
@@ -268,22 +265,7 @@ function Faceted<Multiple extends boolean = false>({
         onOpenChange={store.setOpen}
         {...props}
       />
-      <FacetedAnnouncer />
     </FacetedStoreContext.Provider>
-  );
-}
-
-function FacetedAnnouncer() {
-  const store = useFacetedStore("FacetedAnnouncer");
-  const announcement = useFacetedStoreSelector(
-    store,
-    (state) => state.announcement,
-  );
-
-  return (
-    <span aria-live="polite" className="sr-only">
-      {announcement}
-    </span>
   );
 }
 
@@ -412,6 +394,11 @@ function FacetedContent({
 }: FacetedContentProps) {
   const store = useFacetedStore("FacetedContent");
   const label = useFacetedStoreSelector(store, (state) => state.label);
+  const announcement = useFacetedStoreSelector(
+    store,
+    (state) => state.announcement,
+  );
+
   return (
     <PopoverContent
       aria-label={label}
@@ -432,6 +419,9 @@ function FacetedContent({
       >
         {children}
       </Command>
+      <span aria-live="polite" className="sr-only">
+        {announcement}
+      </span>
     </PopoverContent>
   );
 }
