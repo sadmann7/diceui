@@ -115,7 +115,7 @@ function ColorSwatch({
     render,
     state: {
       slot: "color-swatch",
-      ...(disabled && { disabled: "" }),
+      disabled: disabled,
     },
   });
 }

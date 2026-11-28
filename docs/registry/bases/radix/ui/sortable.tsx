@@ -1,5 +1,7 @@
 "use client";
 
+import { useIsHydrated } from "@base-ui/utils/hydration";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import {
   type Active,
   type Announcements,
@@ -40,7 +42,6 @@ import {
 import { CSS, isKeyboardEvent } from "@dnd-kit/utilities";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
@@ -434,7 +435,7 @@ function SortableItem(props: SortableItemProps) {
     [disabled, asHandle, setNodeRef, setActivatorNodeRef],
   );
 
-  const composedRef = useComposedRefs(ref, onNodeRefChange);
+  const composedRef = useMergedRefs(ref, onNodeRefChange);
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {
@@ -456,6 +457,9 @@ function SortableItem(props: SortableItemProps) {
     [id, attributes, listeners, setActivatorNodeRef, isDragging, disabled],
   );
 
+  const handleProps =
+    asHandle && !disabled ? { ...attributes, ...listeners } : undefined;
+
   const ItemPrimitive = asChild ? SlotPrimitive.Slot : "div";
 
   return (
@@ -466,8 +470,7 @@ function SortableItem(props: SortableItemProps) {
         data-dragging={isDragging ? "" : undefined}
         data-slot="sortable-item"
         {...itemProps}
-        {...(asHandle && !disabled ? attributes : {})}
-        {...(asHandle && !disabled ? listeners : {})}
+        {...handleProps}
         ref={composedRef}
         style={composedStyle}
         className={cn(
@@ -509,7 +512,11 @@ function SortableItemHandle(props: SortableItemHandleProps) {
     [isDisabled, setActivatorNodeRef],
   );
 
-  const composedRef = useComposedRefs(ref, onActivatorNodeRef);
+  const composedRef = useMergedRefs(ref, onActivatorNodeRef);
+
+  const handleProps = isDisabled
+    ? undefined
+    : { ...itemContext.attributes, ...itemContext.listeners };
 
   const HandlePrimitive = asChild ? SlotPrimitive.Slot : "button";
 
@@ -521,8 +528,7 @@ function SortableItemHandle(props: SortableItemHandleProps) {
       data-dragging={itemContext.isDragging ? "" : undefined}
       data-slot="sortable-item-handle"
       {...itemHandleProps}
-      {...(isDisabled ? {} : itemContext.attributes)}
-      {...(isDisabled ? {} : itemContext.listeners)}
+      {...handleProps}
       ref={composedRef}
       className={cn(
         "cn-sortable-item-handle",
@@ -548,10 +554,6 @@ const dropAnimation: DropAnimation = {
   }),
 };
 
-function subscribe() {
-  return () => {};
-}
-
 interface SortableOverlayProps extends Omit<
   React.ComponentProps<typeof DragOverlay>,
   "children"
@@ -567,11 +569,7 @@ function SortableOverlay(props: SortableOverlayProps) {
 
   const context = useSortableContext(OVERLAY_NAME);
 
-  const mounted = React.useSyncExternalStore(
-    subscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useIsHydrated();
 
   const container =
     containerProp ?? (mounted ? globalThis.document?.body : null);

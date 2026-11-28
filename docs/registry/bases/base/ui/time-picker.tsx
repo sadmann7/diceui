@@ -3,10 +3,11 @@
 import { mergeProps } from "@base-ui/react/merge-props";
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import { useRender } from "@base-ui/react/use-render";
+import { clamp } from "@base-ui/utils/clamp";
+import { contains, getTarget } from "@base-ui/utils/shadowDom";
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
-import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
 
@@ -183,21 +184,54 @@ function to24Hour(hour12: number, period: Period): number {
   return period === "PM" ? hour12 + 12 : hour12;
 }
 
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
-}
-
 interface StoreState {
   value: string;
   open: boolean;
   openedViaFocus: boolean;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
+interface InternalState extends StoreState {
+  valueProp: string | undefined;
+  openProp: boolean | undefined;
+}
+
+interface StoreController {
+  onValueChange?: (value: string) => void;
+  onOpenChange?: (open: boolean) => void;
+}
+
+const selectors = {
+  value: (state: InternalState) => state.valueProp ?? state.value,
+  open: (state: InternalState) => state.openProp ?? state.open,
+};
+
+type Store = ReactStore<InternalState, StoreController, typeof selectors>;
+
+const publicStates = new WeakMap<InternalState, StoreState>();
+
+function getPublicState(state: InternalState): StoreState {
+  let publicState = publicStates.get(state);
+  if (!publicState) {
+    publicState = {
+      value: selectors.value(state),
+      open: selectors.open(state),
+      openedViaFocus: state.openedViaFocus,
+    };
+    publicStates.set(state, publicState);
+  }
+  return publicState;
+}
+
+function setValue(store: Store, value: string) {
+  if (store.select("value") === value) return;
+  store.context.onValueChange?.(value);
+  store.set("value", value);
+}
+
+function setOpen(store: Store, open: boolean, openedViaFocus = false) {
+  if (store.select("open") === open) return;
+  store.context.onOpenChange?.(open);
+  store.update({ open, openedViaFocus: open && openedViaFocus });
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -210,7 +244,7 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(
+function useTimePicker<T>(
   selector: (state: StoreState) => T,
   ogStore?: Store | null,
 ): T {
@@ -219,15 +253,12 @@ function useStore<T>(
   const store = ogStore ?? contextStore;
 
   if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(`\`useTimePicker\` must be used within \`${ROOT_NAME}\``);
   }
 
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
+  return useStore(store, (state: InternalState) =>
+    selector(getPublicState(state)),
   );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
 type SegmentPlaceholder =
@@ -348,87 +379,52 @@ function TimePicker(props: TimePickerProps) {
   );
   const isFormControl = inputGroup ? !!inputGroup.closest("form") : true;
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    value: valueProp ?? defaultValue ?? "",
-    open: open ?? defaultOpen ?? false,
-    openedViaFocus: false,
-  }));
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<InternalState, StoreController, typeof selectors>(
+        {
+          value: defaultValue ?? "",
+          valueProp,
+          open: defaultOpen ?? false,
+          openProp: open,
+          openedViaFocus: false,
+        },
+        {},
+        selectors,
+      ),
+  );
 
-  const propsRef = useValueAsRef({ onValueChange, onOpenChange });
-
-  const store: Store = React.useMemo(() => {
-    const store: Store = {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
-
-        if (key === "value" && typeof value === "string") {
-          stateRef.current.value = value;
-          propsRef.current.onValueChange?.(value);
-        } else if (key === "open" && typeof value === "boolean") {
-          stateRef.current.open = value;
-          propsRef.current.onOpenChange?.(value);
-          if (!value) {
-            stateRef.current.openedViaFocus = false;
-          }
-        } else {
-          stateRef.current[key] = value;
-        }
-
-        store.notify();
-      },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
-    };
-
-    return store;
-  }, [listenersRef, stateRef, propsRef]);
-
-  const value = useStore((state) => state.value, store);
+  store.useControlledProp("valueProp", valueProp);
+  store.useControlledProp("openProp", open);
+  store.useContextCallback("onValueChange", onValueChange);
+  store.useContextCallback("onOpenChange", onOpenChange);
 
   useIsoLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
-    }
-  }, [valueProp, store]);
+    if (open === false) store.set("openedViaFocus", false);
+  }, [store, open]);
 
-  useIsoLayoutEffect(() => {
-    if (open !== undefined) {
-      store.setState("open", open);
-    }
-  }, [open, store]);
-
-  const storeOpen = useStore((state) => state.open, store);
+  const value = store.useState("value");
+  const storeOpen = store.useState("open");
 
   const onPopoverOpenChange = React.useCallback(
     (
       newOpen: boolean,
       eventDetails: PopoverPrimitive.Root.ChangeEventDetails,
     ) => {
-      if (!newOpen && eventDetails.reason === "outside-press") {
-        if (eventDetails.isCanceled) return;
-
-        if (openOnFocus && inputGroupRef.current) {
-          const target = eventDetails.event.target;
-          if (
-            target instanceof Node &&
-            inputGroupRef.current.contains(target)
-          ) {
-            eventDetails.cancel();
-            return;
-          }
-        }
+      if (
+        !newOpen &&
+        eventDetails.reason === "outside-press" &&
+        openOnFocus &&
+        contains(
+          inputGroupRef.current,
+          getTarget(eventDetails.event) as Element,
+        )
+      ) {
+        eventDetails.cancel();
+        return;
       }
 
-      store.setState("open", newOpen);
+      setOpen(store, newOpen);
     },
     [store, openOnFocus],
   );
@@ -510,8 +506,8 @@ function TimePicker(props: TimePickerProps) {
     render,
     state: {
       slot: "time-picker",
-      disabled: disabled ? "" : undefined,
-      invalid: invalid ? "" : undefined,
+      disabled: disabled,
+      invalid: invalid,
     },
   });
 
@@ -690,7 +686,7 @@ function TimePickerInputGroup(props: DivProps) {
       }
 
       if (inputGroupClickAction === "open") {
-        store.setState("open", true);
+        setOpen(store, true);
       } else {
         const activeElement = document.activeElement;
         const isInputAlreadyFocused =
@@ -762,8 +758,8 @@ function TimePickerInputGroup(props: DivProps) {
     render,
     state: {
       slot: "time-picker-input-group",
-      disabled: disabled ? "" : undefined,
-      invalid: invalid ? "" : undefined,
+      disabled: disabled,
+      invalid: invalid,
     },
   });
 
@@ -811,7 +807,7 @@ function TimePickerInput(props: TimePickerInputProps) {
   const isDisabled = disabledProp || disabled;
   const isReadOnly = readOnlyProp || readOnly;
 
-  const value = useStore((state) => state.value);
+  const value = store.useState("value");
   const timeValue = parseTimeString(value);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -927,7 +923,8 @@ function TimePickerInput(props: TimePickerInputProps) {
       }
 
       const newValue = formatTimeValue(newTime, showSeconds);
-      store.setState("value", newValue);
+      setValue(store, newValue);
+      return newValue;
     },
     [timeValue, segment, is12Hour, showSeconds, store, segmentPlaceholder],
   );
@@ -938,6 +935,7 @@ function TimePickerInput(props: TimePickerInputProps) {
       if (event.defaultPrevented) return;
 
       setIsEditing(false);
+      if (!store.select("open")) store.set("openedViaFocus", false);
 
       const placeholder = segment
         ? segmentPlaceholder[segment]
@@ -956,10 +954,12 @@ function TimePickerInput(props: TimePickerInputProps) {
           }
         }
 
-        updateTimeValue(valueToUpdate, true);
+        const nextValue = updateTimeValue(valueToUpdate, true);
 
         queueMicrotask(() => {
-          const currentTimeValue = parseTimeString(store.getState().value);
+          const currentTimeValue = parseTimeString(
+            nextValue ?? store.select("value"),
+          );
           if (currentTimeValue) {
             const now = new Date();
             const newTime = { ...currentTimeValue };
@@ -982,7 +982,7 @@ function TimePickerInput(props: TimePickerInputProps) {
 
             if (needsUpdate) {
               const newValue = formatTimeValue(newTime, showSeconds);
-              store.setState("value", newValue);
+              setValue(store, newValue);
             }
           }
         });
@@ -1156,10 +1156,7 @@ function TimePickerInput(props: TimePickerInputProps) {
       setIsEditing(true);
       setPendingDigit(null);
 
-      if (openOnFocus && !store.getState().open) {
-        store.setState("openedViaFocus", true);
-        store.setState("open", true);
-      }
+      if (openOnFocus) setOpen(store, true, true);
 
       queueMicrotask(() => event.target.select());
     },
@@ -1238,12 +1235,12 @@ function TimePickerInput(props: TimePickerInputProps) {
               newTime.period !== undefined
             ) {
               const newValue = formatTimeValue(newTime, showSeconds);
-              store.setState("value", newValue);
+              setValue(store, newValue);
             } else {
-              store.setState("value", "");
+              setValue(store, "");
             }
           } else {
-            store.setState("value", "");
+            setValue(store, "");
           }
 
           queueMicrotask(() => {
@@ -1575,10 +1572,10 @@ function TimePickerContent(props: TimePickerContentProps) {
         if (resolved !== undefined) return resolved;
       }
 
-      const { openedViaFocus } = store.getState();
+      const { openedViaFocus } = store.state;
 
       if (openedViaFocus) {
-        store.setState("openedViaFocus", false);
+        store.set("openedViaFocus", false);
         return false;
       }
 
@@ -1885,7 +1882,7 @@ function TimePickerHour(props: TimePickerHourProps) {
   const { is12Hour, hourStep, showSeconds } = useTimePickerContext(HOUR_NAME);
   const store = useStoreContext(HOUR_NAME);
 
-  const value = useStore((state) => state.value);
+  const value = store.useState("value");
   const timeValue = parseTimeString(value);
 
   const hours = Array.from(
@@ -1933,7 +1930,7 @@ function TimePickerHour(props: TimePickerHourProps) {
       }
 
       const newValue = formatTimeValue(newTime, showSeconds);
-      store.setState("value", newValue);
+      setValue(store, newValue);
     },
     [timeValue, showSeconds, is12Hour, store],
   );
@@ -1992,7 +1989,7 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
   const { minuteStep, showSeconds } = useTimePickerContext(MINUTE_NAME);
   const store = useStoreContext(MINUTE_NAME);
 
-  const value = useStore((state) => state.value);
+  const value = store.useState("value");
   const timeValue = parseTimeString(value);
 
   const minutes = Array.from(
@@ -2015,7 +2012,7 @@ function TimePickerMinute(props: TimePickerMinuteProps) {
       }
 
       const newValue = formatTimeValue(newTime, showSeconds);
-      store.setState("value", newValue);
+      setValue(store, newValue);
     },
     [timeValue, showSeconds, store],
   );
@@ -2073,7 +2070,7 @@ function TimePickerSecond(props: TimePickerSecondProps) {
   const { secondStep } = useTimePickerContext(SECOND_NAME);
   const store = useStoreContext(SECOND_NAME);
 
-  const value = useStore((state) => state.value);
+  const value = store.useState("value");
   const timeValue = parseTimeString(value);
 
   const seconds = Array.from(
@@ -2096,7 +2093,7 @@ function TimePickerSecond(props: TimePickerSecondProps) {
       }
 
       const newValue = formatTimeValue(newTime, true);
-      store.setState("value", newValue);
+      setValue(store, newValue);
     },
     [timeValue, store],
   );
@@ -2150,7 +2147,7 @@ function TimePickerPeriod(props: DivProps) {
   const { is12Hour, showSeconds } = useTimePickerContext(PERIOD_NAME);
   const store = useStoreContext(PERIOD_NAME);
 
-  const value = useStore((state) => state.value);
+  const value = store.useState("value");
   const timeValue = parseTimeString(value);
 
   const onPeriodToggle = React.useCallback(
@@ -2174,7 +2171,7 @@ function TimePickerPeriod(props: DivProps) {
       }
 
       const newValue = formatTimeValue(newTime, showSeconds);
-      store.setState("value", newValue);
+      setValue(store, newValue);
     },
     [timeValue, showSeconds, store],
   );
@@ -2268,7 +2265,7 @@ function TimePickerClear(props: ButtonProps) {
 
       event.preventDefault();
       if (disabled || readOnly) return;
-      store.setState("value", "");
+      setValue(store, "");
     },
     [onClickProp, disabled, readOnly, store],
   );
@@ -2306,5 +2303,5 @@ export {
   TimePickerSecond,
   TimePickerSeparator,
   TimePickerTrigger,
-  useStore as useTimePicker,
+  useTimePicker,
 };

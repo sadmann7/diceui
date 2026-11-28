@@ -109,6 +109,12 @@
       }
     },
     {
+      "files": ["docs/registry/bases/**"],
+      "rules": {
+        "react/hooks": "off"
+      }
+    },
+    {
       "files": ["**/*.{test,spec}.{ts,tsx}"],
       "env": {
         "vitest": true

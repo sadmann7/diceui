@@ -4,8 +4,8 @@ export const ui: Registry["items"] = [
   {
     name: "action-bar",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: ["button", "@diceui/use-value-as-ref"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "ui/action-bar.tsx",
@@ -16,11 +16,7 @@ export const ui: Registry["items"] = [
   {
     name: "angle-slider",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/angle-slider.tsx",
@@ -46,7 +42,7 @@ export const ui: Registry["items"] = [
   {
     name: "badge-overflow",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/badge-overflow.tsx",
@@ -57,12 +53,8 @@ export const ui: Registry["items"] = [
   {
     name: "banner",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "button",
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "ui/banner.tsx",
@@ -110,15 +102,8 @@ export const ui: Registry["items"] = [
   {
     name: "color-picker",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "button",
-      "input",
-      "popover",
-      "select",
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
+    registryDependencies: ["button", "input", "popover", "select"],
     files: [
       {
         path: "ui/color-picker.tsx",
@@ -151,16 +136,12 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["command", "input-group"],
-    dependencies: ["cmdk", "radix-ui"],
+    dependencies: ["cmdk", "radix-ui", "@base-ui/utils@0.5.0"],
   },
   {
     name: "compare-slider",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/compare-slider.tsx",
@@ -171,11 +152,7 @@ export const ui: Registry["items"] = [
   {
     name: "cropper",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/cropper.tsx",
@@ -197,11 +174,7 @@ export const ui: Registry["items"] = [
   {
     name: "editable",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/editable.tsx",
@@ -223,16 +196,12 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["command", "popover"],
-    dependencies: ["cmdk", "radix-ui"],
+    dependencies: ["cmdk", "radix-ui", "@base-ui/utils@0.5.0"],
   },
   {
     name: "file-upload",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/file-upload.tsx",
@@ -243,6 +212,7 @@ export const ui: Registry["items"] = [
   {
     name: "fps",
     type: "registry:ui",
+    dependencies: ["@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/fps.tsx",
@@ -270,6 +240,7 @@ export const ui: Registry["items"] = [
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
       "radix-ui",
+      "@base-ui/utils@0.5.0",
     ],
     files: [
       {
@@ -281,14 +252,8 @@ export const ui: Registry["items"] = [
   {
     name: "key-value",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "button",
-      "input",
-      "textarea",
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
+    registryDependencies: ["button", "input", "textarea"],
     files: [
       {
         path: "ui/key-value.tsx",
@@ -314,7 +279,7 @@ export const ui: Registry["items"] = [
   {
     name: "marquee",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     cssVars: {
       theme: {
         "--animate-marquee-left":
@@ -402,7 +367,7 @@ export const ui: Registry["items"] = [
   {
     name: "masonry",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/masonry.tsx",
@@ -413,7 +378,7 @@ export const ui: Registry["items"] = [
   {
     name: "media-player",
     type: "registry:ui",
-    dependencies: ["radix-ui", "media-chrome"],
+    dependencies: ["radix-ui", "media-chrome", "@base-ui/utils@0.5.0"],
     registryDependencies: [
       "badge",
       "button",
@@ -443,14 +408,8 @@ export const ui: Registry["items"] = [
   {
     name: "phone-input",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "command",
-      "input",
-      "popover",
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
+    registryDependencies: ["command", "input", "popover"],
     files: [
       {
         path: "ui/phone-input.tsx",
@@ -477,7 +436,7 @@ export const ui: Registry["items"] = [
   {
     name: "relative-time-card",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     registryDependencies: ["hover-card"],
     files: [
       {
@@ -489,13 +448,8 @@ export const ui: Registry["items"] = [
   {
     name: "responsive-dialog",
     type: "registry:ui",
-    dependencies: ["radix-ui", "vaul"],
-    registryDependencies: [
-      "dialog",
-      "drawer",
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "vaul", "@base-ui/utils@0.5.0"],
+    registryDependencies: ["dialog", "drawer"],
     files: [
       {
         path: "ui/responsive-dialog.tsx",
@@ -506,7 +460,7 @@ export const ui: Registry["items"] = [
   {
     name: "scroller",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/scroller.tsx",
@@ -517,11 +471,7 @@ export const ui: Registry["items"] = [
   {
     name: "scroll-spy",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/scroll-spy.tsx",
@@ -544,12 +494,12 @@ export const ui: Registry["items"] = [
   {
     name: "selection-toolbar",
     type: "registry:ui",
-    dependencies: ["@floating-ui/react-dom", "radix-ui"],
-    registryDependencies: [
-      "button",
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
+    dependencies: [
+      "@floating-ui/react-dom",
+      "radix-ui",
+      "@base-ui/utils@0.5.0",
     ],
+    registryDependencies: ["button"],
     files: [
       {
         path: "ui/selection-toolbar.tsx",
@@ -566,6 +516,7 @@ export const ui: Registry["items"] = [
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
       "radix-ui",
+      "@base-ui/utils@0.5.0",
     ],
     files: [
       {
@@ -577,12 +528,8 @@ export const ui: Registry["items"] = [
   {
     name: "speed-dial",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "button",
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "ui/speed-dial.tsx",
@@ -626,12 +573,8 @@ export const ui: Registry["items"] = [
   {
     name: "stepper",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "button",
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
+    registryDependencies: ["button"],
     files: [
       {
         path: "ui/stepper.tsx",
@@ -642,11 +585,7 @@ export const ui: Registry["items"] = [
   {
     name: "swap",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/swap.tsx",
@@ -657,9 +596,8 @@ export const ui: Registry["items"] = [
   {
     name: "qr-code",
     type: "registry:ui",
-    dependencies: ["radix-ui", "qrcode"],
+    dependencies: ["radix-ui", "qrcode", "@base-ui/utils@0.5.0"],
     devDependencies: ["@types/qrcode"],
-    registryDependencies: ["@diceui/use-ref-with-init"],
     files: [
       {
         path: "ui/qr-code.tsx",
@@ -670,7 +608,7 @@ export const ui: Registry["items"] = [
   {
     name: "query-builder",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     registryDependencies: ["button", "input", "select", "@diceui/faceted"],
     files: [
       {
@@ -686,11 +624,7 @@ export const ui: Registry["items"] = [
   {
     name: "rating",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/rating.tsx",
@@ -716,8 +650,7 @@ export const ui: Registry["items"] = [
   {
     name: "timeline",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: ["@diceui/use-ref-with-init"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/timeline.tsx",
@@ -728,12 +661,8 @@ export const ui: Registry["items"] = [
   {
     name: "time-picker",
     type: "registry:ui",
-    dependencies: ["radix-ui"],
-    registryDependencies: [
-      "popover",
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
-    ],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
+    registryDependencies: ["popover"],
     css: {
       "@utility scrollbar-none": {
         "scrollbar-width": "none",
@@ -756,10 +685,10 @@ export const ui: Registry["items"] = [
   {
     name: "tour",
     type: "registry:ui",
-    dependencies: ["@floating-ui/react-dom", "radix-ui"],
-    registryDependencies: [
-      "@diceui/use-value-as-ref",
-      "@diceui/use-ref-with-init",
+    dependencies: [
+      "@floating-ui/react-dom",
+      "radix-ui",
+      "@base-ui/utils@0.5.0",
     ],
     files: [
       {

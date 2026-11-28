@@ -2,47 +2,32 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
-import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
+import { useControlled } from "@base-ui/utils/useControlled";
 import { cn } from "cn";
 import * as React from "react";
+
+type RootElement = HTMLDivElement;
+
+const ON_NAME = "SwapOn";
+const OFF_NAME = "SwapOff";
 
 function getDataState(swapped: boolean) {
   return swapped ? "on" : "off";
 }
 
-interface StoreState {
-  swapped: boolean;
-}
+const SwapContext = React.createContext<boolean | null>(null);
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
-}
-
-const StoreContext = React.createContext<Store | null>(null);
-
-function useStore<T>(
-  selector: (state: StoreState) => T,
-  ogStore?: Store | null,
-): T {
-  const contextStore = React.useContext(StoreContext);
-
-  const store = ogStore ?? contextStore;
-
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`Swap\``);
+function useSwapContext(consumerName: string) {
+  const context = React.useContext(SwapContext);
+  if (context === null) {
+    throw new Error(`\`${consumerName}\` must be used within \`Swap\``);
   }
+  return context;
+}
 
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+function useSwap<T>(selector: (state: { swapped: boolean }) => T): T {
+  const swapped = useSwapContext("useSwap");
+  return selector({ swapped });
 }
 
 interface SwapProps
@@ -72,125 +57,53 @@ function Swap(props: SwapProps) {
     ...rootProps
   } = props;
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    swapped: swappedProp ?? defaultSwapped ?? false,
-  }));
-
-  const propsRef = useValueAsRef({
-    activationMode,
-    animation,
-    disabled,
-    onSwappedChange,
-    onClick: onClickProp,
-    onMouseEnter: onMouseEnterProp,
-    onMouseLeave: onMouseLeaveProp,
-    onKeyDown: onKeyDownProp,
+  const [swapped, setSwappedState] = useControlled({
+    controlled: swappedProp,
+    default: defaultSwapped ?? false,
+    name: "Swap",
+    state: "swapped",
   });
 
   const isClickMode = activationMode === "click";
 
-  const store = React.useMemo<Store>(() => {
-    function notify() {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
+  function setSwapped(nextSwapped: boolean) {
+    if (nextSwapped === swapped) return;
+    onSwappedChange?.(nextSwapped);
+    setSwappedState(nextSwapped);
+  }
+
+  function onClick(event: React.MouseEvent<RootElement>) {
+    onClickProp?.(event);
+    if (event.defaultPrevented || !isClickMode || disabled) return;
+
+    setSwapped(!swapped);
+  }
+
+  function onMouseEnter(event: React.MouseEvent<RootElement>) {
+    onMouseEnterProp?.(event);
+    if (event.defaultPrevented || activationMode !== "hover" || disabled)
+      return;
+
+    setSwapped(true);
+  }
+
+  function onMouseLeave(event: React.MouseEvent<RootElement>) {
+    onMouseLeaveProp?.(event);
+    if (event.defaultPrevented || activationMode !== "hover" || disabled)
+      return;
+
+    setSwapped(false);
+  }
+
+  function onKeyDown(event: React.KeyboardEvent<RootElement>) {
+    onKeyDownProp?.(event);
+    if (event.defaultPrevented || !isClickMode || disabled) return;
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      setSwapped(!swapped);
     }
-
-    return {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
-
-        if (key === "swapped" && typeof value === "boolean") {
-          stateRef.current.swapped = value;
-          propsRef.current.onSwappedChange?.(value);
-        } else {
-          stateRef.current[key] = value;
-        }
-
-        notify();
-      },
-      notify,
-    };
-  }, [listenersRef, stateRef, propsRef]);
-
-  const swapped = useStore((state) => state.swapped, store);
-
-  useIsoLayoutEffect(() => {
-    if (swappedProp !== undefined) {
-      store.setState("swapped", swappedProp);
-    }
-  }, [swappedProp, store]);
-
-  const onToggle = React.useCallback(() => {
-    if (propsRef.current.disabled) return;
-
-    store.setState("swapped", !store.getState().swapped);
-  }, [store, propsRef]);
-
-  const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      propsRef.current.onClick?.(event);
-      if (event.defaultPrevented || propsRef.current.activationMode !== "click")
-        return;
-
-      onToggle();
-    },
-    [propsRef, onToggle],
-  );
-
-  const onMouseEnter = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      propsRef.current.onMouseEnter?.(event);
-      if (
-        event.defaultPrevented ||
-        activationMode !== "hover" ||
-        propsRef.current.disabled
-      )
-        return;
-
-      store.setState("swapped", true);
-    },
-    [propsRef, activationMode, store],
-  );
-
-  const onMouseLeave = React.useCallback(
-    (event: React.MouseEvent<HTMLDivElement>) => {
-      propsRef.current.onMouseLeave?.(event);
-      if (
-        event.defaultPrevented ||
-        activationMode !== "hover" ||
-        propsRef.current.disabled
-      )
-        return;
-
-      store.setState("swapped", false);
-    },
-    [propsRef, activationMode, store],
-  );
-
-  const onKeyDown = React.useCallback(
-    (event: React.KeyboardEvent<HTMLDivElement>) => {
-      propsRef.current.onKeyDown?.(event);
-      if (
-        event.defaultPrevented ||
-        propsRef.current.activationMode !== "click" ||
-        propsRef.current.disabled
-      )
-        return;
-
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        onToggle();
-      }
-    },
-    [propsRef, onToggle],
-  );
+  }
 
   const element = useRender({
     defaultTagName: "div",
@@ -215,18 +128,18 @@ function Swap(props: SwapProps) {
       slot: "swap",
       animation,
       state: getDataState(swapped),
-      ...(disabled && { disabled: "" }),
+      disabled: disabled,
     },
   });
 
-  return <StoreContext.Provider value={store}>{element}</StoreContext.Provider>;
+  return <SwapContext.Provider value={swapped}>{element}</SwapContext.Provider>;
 }
 
 interface SwapOnProps
   extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function SwapOn({ render, className, ...props }: SwapOnProps) {
-  const swapped = useStore((state) => state.swapped);
+  const swapped = useSwapContext(ON_NAME);
 
   return useRender({
     defaultTagName: "div",
@@ -248,7 +161,7 @@ interface SwapOffProps
   extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
 function SwapOff({ render, className, ...props }: SwapOffProps) {
-  const swapped = useStore((state) => state.swapped);
+  const swapped = useSwapContext(OFF_NAME);
 
   return useRender({
     defaultTagName: "div",
@@ -266,4 +179,4 @@ function SwapOff({ render, className, ...props }: SwapOffProps) {
   });
 }
 
-export { Swap, SwapOff, SwapOn, type SwapProps, useStore as useSwap };
+export { Swap, SwapOff, SwapOn, type SwapProps, useSwap };

@@ -1,5 +1,6 @@
 "use client";
 
+import { useIsHydrated } from "@base-ui/utils/hydration";
 import * as React from "react";
 
 interface ClientOnlyProps {
@@ -7,24 +8,8 @@ interface ClientOnlyProps {
   fallback?: React.ReactNode;
 }
 
-function subscribe() {
-  return () => {};
-}
-
-function getSnapshot() {
-  return true;
-}
-
-function getServerSnapshot() {
-  return false;
-}
-
 function ClientOnly({ children, fallback = null }: ClientOnlyProps) {
-  const mounted = React.useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getServerSnapshot,
-  );
+  const mounted = useIsHydrated();
 
   if (!mounted) return fallback;
 

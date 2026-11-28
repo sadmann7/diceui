@@ -16,6 +16,7 @@
     "styles:sync": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-styles.mts",
     "tablecn:sync": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-tablecn.mts",
     "tablecn:check": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/sync-tablecn.mts --check",
+    "registry:drift": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/check-drift.mts",
     "start": "next start",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "tsx --tsconfig ./tsconfig.scripts.json ./scripts/build-icons.mts && vitest run --config ../vitest.config.ts",

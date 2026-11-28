@@ -1,12 +1,13 @@
 "use client";
 
+import { EMPTY_ARRAY, NOOP } from "@base-ui/utils/empty";
+import { ownerDocument } from "@base-ui/utils/owner";
+import { activeElement, closest, contains } from "@base-ui/utils/shadowDom";
+import { ReactStore } from "@base-ui/utils/store";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { Command as CommandPrimitive } from "cmdk";
 import { cn } from "cn";
-import {
-  composeEventHandlers,
-  useComposedRefs,
-  useLayoutEffect,
-} from "radix-ui/internal";
 import * as React from "react";
 
 import {
@@ -31,7 +32,6 @@ type CommandStackValue = Record<string, string[]>;
 type CommandStackSelectionMode = "single" | "multiple";
 
 const EMPTY_VALUE: CommandStackValue = {};
-const NO_SELECTION: string[] = [];
 
 interface CommandStackPageData {
   label?: React.ReactNode;
@@ -40,46 +40,25 @@ interface CommandStackPageData {
 
 interface CommandStackStoreState {
   pages: string[];
+  pagesProp: string[] | undefined;
   value: CommandStackValue;
+  valueProp: CommandStackValue | undefined;
   pageData: Map<string, CommandStackPageData>;
   loadingCount: number;
   label: string | undefined;
 }
 
 interface CommandStackController {
-  isPagesControlled: boolean;
-  isValueControlled: boolean;
-  onPagesChange?: (pages: string[]) => void;
-  onValueChange?: (value: CommandStackValue) => void;
+  onPagesChange: (pages: string[]) => void;
+  onValueChange: (value: CommandStackValue) => void;
   setSearch: (search: string) => void;
-}
-
-interface CommandStackStore {
-  controller: CommandStackController;
-  subscribe: (callback: () => void) => () => void;
-  getState: () => CommandStackStoreState;
-  notify: () => void;
-  setController: (controller: CommandStackController) => void;
-  sync: (changes: Partial<CommandStackStoreState>) => void;
-  setPages: (pages: string[]) => void;
-  pushPage: (page: string) => void;
-  popPage: () => void;
-  setSearch: (search: string) => void;
-  setValue: (value: CommandStackValue) => void;
-  setLabel: (label: string | undefined) => void;
-  selectItem: (
-    page: string,
-    itemValue: string,
-    selectionMode: CommandStackSelectionMode,
-  ) => void;
-  registerPage: (page: string, data: CommandStackPageData) => () => void;
-  registerLoading: () => () => void;
 }
 
 function scrollWhenFocused(node: HTMLElement | null) {
   if (!node) return;
   node.scrollIntoView = (options) => {
-    if (node.closest("[cmdk-root]")?.contains(document.activeElement)) {
+    const root = closest(node, "[cmdk-root]");
+    if (contains(root, activeElement(ownerDocument(node)))) {
       HTMLElement.prototype.scrollIntoView.call(node, options);
     }
   };
@@ -95,127 +74,106 @@ function getActivePage(pages: string[]) {
   return pages[pages.length - 1] ?? DEFAULT_ROOT_PAGE;
 }
 
-function createCommandStackStore(
-  state: CommandStackStoreState,
-): CommandStackStore {
-  const listeners = new Set<() => void>();
-
-  const store: CommandStackStore = {
-    controller: {
-      isPagesControlled: false,
-      isValueControlled: false,
-      setSearch: () => {},
-    },
-    subscribe: (callback) => {
-      listeners.add(callback);
-      return () => listeners.delete(callback);
-    },
-    getState: () => state,
-    notify: () => {
-      for (const callback of listeners) {
-        callback();
-      }
-    },
-    setController: (controller) => {
-      store.controller = controller;
-    },
-    sync: (changes) => {
-      let hasChanged = false;
-      for (const key of Object.keys(
-        changes,
-      ) as (keyof CommandStackStoreState)[]) {
-        const nextValue = changes[key];
-        if (nextValue === undefined || Object.is(state[key], nextValue))
-          continue;
-        Object.assign(state, { [key]: nextValue });
-        hasChanged = true;
-      }
-      if (hasChanged) store.notify();
-    },
-    setPages: (pages) => {
-      if (pages.length === 0) return;
-      store.controller.onPagesChange?.(pages);
-      if (!store.controller.isPagesControlled) {
-        state.pages = pages;
-        store.notify();
-      }
-      store.setSearch("");
-    },
-    pushPage: (page) => {
-      if (page === getActivePage(state.pages)) return;
-      store.setPages([...state.pages, page]);
-    },
-    popPage: () => {
-      if (state.pages.length <= 1) return;
-      store.setPages(state.pages.slice(0, -1));
-    },
-    setSearch: (search) => store.controller.setSearch(search),
-    setValue: (value) => {
-      store.controller.onValueChange?.(value);
-      if (!store.controller.isValueControlled) {
-        state.value = value;
-        store.notify();
-      }
-    },
-    setLabel: (label) => {
-      if (Object.is(state.label, label)) return;
-      state.label = label;
-      store.notify();
-    },
-    selectItem: (page, itemValue, selectionMode) => {
-      const selected = state.value[page] ?? NO_SELECTION;
-      const isSelected = selected.includes(itemValue);
-      let nextSelected: string[];
-      if (selectionMode === "multiple") {
-        nextSelected = isSelected
-          ? selected.filter((item) => item !== itemValue)
-          : [...selected, itemValue];
-      } else {
-        nextSelected = isSelected ? [] : [itemValue];
-      }
-      store.setValue({ ...state.value, [page]: nextSelected });
-    },
-    registerPage: (page, data) => {
-      state.pageData = new Map(state.pageData).set(page, data);
-      store.notify();
-      return () => {
-        const pageData = new Map(state.pageData);
-        pageData.delete(page);
-        state.pageData = pageData;
-        store.notify();
-      };
-    },
-    registerLoading: () => {
-      state.loadingCount += 1;
-      store.notify();
-      return () => {
-        state.loadingCount -= 1;
-        store.notify();
-      };
-    },
-  };
-
-  return store;
+function getPages(state: CommandStackStoreState) {
+  return state.pagesProp ?? state.pages;
 }
 
-function useCommandStackSelector<T>(
+function getValue(state: CommandStackStoreState) {
+  return state.valueProp ?? state.value;
+}
+
+const commandStackSelectors = {
+  pages: getPages,
+  activePage: (state: CommandStackStoreState) => getActivePage(getPages(state)),
+  value: getValue,
+  pageData: (state: CommandStackStoreState) => state.pageData,
+  label: (state: CommandStackStoreState) => state.label,
+  isNested: (state: CommandStackStoreState) => getPages(state).length > 1,
+  isLoading: (state: CommandStackStoreState) => state.loadingCount > 0,
+  isPageActive: (state: CommandStackStoreState, page: string) =>
+    getActivePage(getPages(state)) === page,
+  isItemChecked: (
+    state: CommandStackStoreState,
+    page: string,
+    itemValue: string,
+  ) => (getValue(state)[page] ?? EMPTY_ARRAY).includes(itemValue),
+  pagePlaceholder: (state: CommandStackStoreState) =>
+    state.pageData.get(getActivePage(getPages(state)))?.placeholder,
+  announcement: (state: CommandStackStoreState) => {
+    const pages = getPages(state);
+    return pages.length > 1
+      ? (state.pageData.get(getActivePage(pages))?.label ??
+          getActivePage(pages))
+      : null;
+  },
+};
+
+type CommandStackStore = ReactStore<
+  CommandStackStoreState,
+  CommandStackController,
+  typeof commandStackSelectors
+>;
+
+function setPages(store: CommandStackStore, pages: string[]) {
+  if (pages.length === 0) return;
+  store.context.onPagesChange(pages);
+  if (store.state.pagesProp === undefined) store.set("pages", pages);
+  store.context.setSearch("");
+}
+
+function pushPage(store: CommandStackStore, page: string) {
+  const pages = getPages(store.state);
+  if (page === getActivePage(pages)) return;
+  setPages(store, [...pages, page]);
+}
+
+function popPage(store: CommandStackStore) {
+  const pages = getPages(store.state);
+  if (pages.length <= 1) return;
+  setPages(store, pages.slice(0, -1));
+}
+
+function setValue(store: CommandStackStore, value: CommandStackValue) {
+  store.context.onValueChange(value);
+  if (store.state.valueProp === undefined) store.set("value", value);
+}
+
+function selectItem(
   store: CommandStackStore,
-  selector: (state: CommandStackStoreState) => T,
-): T {
-  const getSnapshot = () => selector(store.getState());
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+  page: string,
+  itemValue: string,
+  selectionMode: CommandStackSelectionMode,
+) {
+  const value = getValue(store.state);
+  const selected = value[page] ?? EMPTY_ARRAY;
+  const isSelected = selected.includes(itemValue);
+  let nextSelected: string[];
+  if (selectionMode === "multiple") {
+    nextSelected = isSelected
+      ? selected.filter((item) => item !== itemValue)
+      : [...selected, itemValue];
+  } else {
+    nextSelected = isSelected ? [] : [itemValue];
+  }
+  setValue(store, { ...value, [page]: nextSelected });
 }
 
-function selectPages(state: CommandStackStoreState) {
-  return state.pages;
+function registerPage(
+  store: CommandStackStore,
+  page: string,
+  data: CommandStackPageData,
+) {
+  store.set("pageData", new Map(store.state.pageData).set(page, data));
+  return () => {
+    const pageData = new Map(store.state.pageData);
+    pageData.delete(page);
+    store.set("pageData", pageData);
+  };
 }
 
-function selectActivePage(state: CommandStackStoreState) {
-  return getActivePage(state.pages);
-}
-
-function selectValue(state: CommandStackStoreState) {
-  return state.value;
+function registerLoading(store: CommandStackStore) {
+  store.set("loadingCount", store.state.loadingCount + 1);
+  return () => store.set("loadingCount", store.state.loadingCount - 1);
 }
 
 const CommandStackContext = React.createContext<CommandStackStore | null>(null);
@@ -240,19 +198,25 @@ const CommandStackPageContext =
 
 function useCommandStack() {
   const store = useCommandStackStore("useCommandStack");
-  const pages = useCommandStackSelector(store, selectPages);
-  const value = useCommandStackSelector(store, selectValue);
+  const pages = store.useState("pages");
+  const value = store.useState("value");
   const search = React.useContext(CommandStackSearchContext);
+  const actions = React.useMemo(
+    () => ({
+      pushPage: (page: string) => pushPage(store, page),
+      popPage: () => popPage(store),
+      setPages: (nextPages: string[]) => setPages(store, nextPages),
+      setValue: (nextValue: CommandStackValue) => setValue(store, nextValue),
+    }),
+    [store],
+  );
 
   return {
     pages,
     activePage: getActivePage(pages),
     search,
     value,
-    pushPage: store.pushPage,
-    popPage: store.popPage,
-    setPages: store.setPages,
-    setValue: store.setValue,
+    ...actions,
   };
 }
 
@@ -290,42 +254,40 @@ function CommandStack({
   const [internalSearch, setInternalSearch] = React.useState(defaultSearch);
   const search = searchProp ?? internalSearch;
 
-  const [store] = React.useState(() =>
-    createCommandStackStore({
-      pages: pages ?? defaultPages ?? [DEFAULT_ROOT_PAGE],
-      value: valueProp ?? defaultValue,
-      pageData: new Map(),
-      loadingCount: 0,
-      label: undefined,
-    }),
+  const [store] = React.useState<CommandStackStore>(
+    () =>
+      new ReactStore<
+        CommandStackStoreState,
+        CommandStackController,
+        typeof commandStackSelectors
+      >(
+        {
+          pages: defaultPages ?? [DEFAULT_ROOT_PAGE],
+          pagesProp: pages,
+          value: defaultValue,
+          valueProp,
+          pageData: new Map(),
+          loadingCount: 0,
+          label: undefined,
+        },
+        { onPagesChange: NOOP, onValueChange: NOOP, setSearch: NOOP },
+        commandStackSelectors,
+      ),
   );
 
-  useLayoutEffect(() => {
-    store.setController({
-      isPagesControlled: pages !== undefined,
-      isValueControlled: valueProp !== undefined,
-      onPagesChange,
-      onValueChange,
-      setSearch: (nextSearch) => {
-        if (Object.is(nextSearch, search)) return;
-        onSearchChange?.(nextSearch);
-        if (searchProp === undefined) setInternalSearch(nextSearch);
-      },
-    });
+  store.useControlledProp("pagesProp", pages);
+  store.useControlledProp("valueProp", valueProp);
+  store.useContextCallback("onPagesChange", onPagesChange);
+  store.useContextCallback("onValueChange", onValueChange);
+  store.useContextCallback("setSearch", (nextSearch: string) => {
+    if (Object.is(nextSearch, search)) return;
+    onSearchChange?.(nextSearch);
+    if (searchProp === undefined) setInternalSearch(nextSearch);
   });
 
-  useLayoutEffect(() => {
-    store.sync({ pages, value: valueProp });
-  }, [store, pages, valueProp]);
-
-  const activePage = useCommandStackSelector(store, selectActivePage);
-  const label = useCommandStackSelector(store, (state) => state.label);
-  const announcement = useCommandStackSelector(store, (state) =>
-    state.pages.length > 1
-      ? (state.pageData.get(getActivePage(state.pages))?.label ??
-        getActivePage(state.pages))
-      : null,
-  );
+  const activePage = store.useState("activePage");
+  const label = store.useState("label");
+  const announcement = store.useState("announcement");
 
   const [highlightedValue, setHighlightedValue] = React.useState("");
   const [prevActivePage, setPrevActivePage] = React.useState(activePage);
@@ -343,10 +305,10 @@ function CommandStack({
       if (
         event.key === "Backspace" &&
         search.length === 0 &&
-        store.getState().pages.length > 1
+        getPages(store.state).length > 1
       ) {
         event.preventDefault();
-        store.popPage();
+        popPage(store);
       }
     },
     [onKeyDownProp, search, store],
@@ -379,8 +341,8 @@ function CommandStackBreadcrumb({
   ...props
 }: React.ComponentProps<"nav">) {
   const store = useCommandStackStore("CommandStackBreadcrumb");
-  const pages = useCommandStackSelector(store, selectPages);
-  const pageData = useCommandStackSelector(store, (state) => state.pageData);
+  const pages = store.useState("pages");
+  const pageData = store.useState("pageData");
 
   return (
     <nav
@@ -426,17 +388,11 @@ function CommandStackInput({
 }: CommandStackInputProps) {
   const store = useCommandStackStore("CommandStackInput");
   const search = React.useContext(CommandStackSearchContext);
-  const isNested = useCommandStackSelector(
-    store,
-    (state) => state.pages.length > 1,
-  );
-  const pagePlaceholder = useCommandStackSelector(
-    store,
-    (state) => state.pageData.get(getActivePage(state.pages))?.placeholder,
-  );
+  const isNested = store.useState("isNested");
+  const pagePlaceholder = store.useState("pagePlaceholder");
   const label = props["aria-label"] ?? pagePlaceholder ?? placeholder;
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const composedRef = useComposedRefs(ref, inputRef);
+  const composedRef = useMergedRefs(ref, inputRef);
 
   React.useEffect(() => {
     const input = inputRef.current;
@@ -465,17 +421,14 @@ function CommandStackInput({
     return () => observer.disconnect();
   }, []);
 
-  useLayoutEffect(() => {
-    store.setLabel(label);
-    return () => store.setLabel(undefined);
-  }, [store, label]);
+  store.useSyncedValueWithCleanup("label", label);
 
   const inputProps: React.ComponentProps<typeof CommandPrimitive.Input> = {
     ref: composedRef,
     placeholder: pagePlaceholder ?? placeholder,
     value: search,
     onValueChange: (nextSearch: string) => {
-      store.setSearch(nextSearch);
+      store.context.setSearch(nextSearch);
       onValueChange?.(nextSearch);
     },
   };
@@ -533,7 +486,7 @@ function CommandStackInput({
               data-slot="command-stack-back"
               className="cn-command-stack-back"
               onPointerDown={(event) => event.preventDefault()}
-              onClick={store.popPage}
+              onClick={() => popPage(store)}
             >
               <IconPlaceholder
                 lucide="ChevronLeftIcon"
@@ -570,7 +523,7 @@ function CommandStackBack({ className }: { className?: string }) {
       data-slot="command-stack-back"
       className={cn("cn-command-stack-back-2", className)}
       onPointerDown={(event) => event.preventDefault()}
-      onClick={store.popPage}
+      onClick={() => popPage(store)}
     >
       <IconPlaceholder
         lucide="ChevronLeftIcon"
@@ -591,12 +544,12 @@ function CommandStackList({
   ...props
 }: React.ComponentProps<typeof CommandList>) {
   const store = useCommandStackStore("CommandStackList");
-  const activePage = useCommandStackSelector(store, selectActivePage);
-  const label = useCommandStackSelector(store, (state) => state.label);
+  const activePage = store.useState("activePage");
+  const label = store.useState("label");
   const listRef = React.useRef<HTMLDivElement>(null);
-  const composedRef = useComposedRefs(ref, listRef);
+  const composedRef = useMergedRefs(ref, listRef);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (listRef.current) listRef.current.scrollTop = 0;
   }, [activePage]);
 
@@ -616,10 +569,7 @@ function CommandStackEmpty({
   ...props
 }: React.ComponentProps<typeof CommandEmpty>) {
   const store = useCommandStackStore("CommandStackEmpty");
-  const isLoading = useCommandStackSelector(
-    store,
-    (state) => state.loadingCount > 0,
-  );
+  const isLoading = store.useState("isLoading");
 
   if (isLoading) return null;
 
@@ -638,7 +588,7 @@ function CommandStackLoading({
 }: React.ComponentProps<typeof CommandPrimitive.Loading>) {
   const store = useCommandStackStore("CommandStackLoading");
 
-  React.useEffect(() => store.registerLoading(), [store]);
+  React.useEffect(() => registerLoading(store), [store]);
 
   return (
     <CommandPrimitive.Loading
@@ -665,14 +615,11 @@ function CommandStackPage({
   children,
 }: CommandStackPageProps) {
   const store = useCommandStackStore("CommandStackPage");
-  const isActive = useCommandStackSelector(
-    store,
-    (state) => getActivePage(state.pages) === value,
-  );
+  const isActive = store.useState("isPageActive", value);
 
   React.useEffect(() => {
     if (label === undefined && placeholder === undefined) return;
-    return store.registerPage(value, { label, placeholder });
+    return registerPage(store, value, { label, placeholder });
   }, [store, value, label, placeholder]);
 
   const pageContextValue = React.useMemo<CommandStackPageContextValue>(
@@ -693,7 +640,7 @@ function CommandStackGroup({
   ref,
   ...props
 }: React.ComponentProps<typeof CommandGroup>) {
-  const composedRef = useComposedRefs(ref, scrollHeadingWhenFocused);
+  const composedRef = useMergedRefs(ref, scrollHeadingWhenFocused);
 
   return (
     <CommandGroup
@@ -722,14 +669,18 @@ function CommandStackItem({
   ...props
 }: CommandStackItemProps) {
   const store = useCommandStackStore("CommandStackItem");
-  const composedRef = useComposedRefs(ref, scrollWhenFocused);
+  const composedRef = useMergedRefs(ref, scrollWhenFocused);
   const pageContext = React.useContext(CommandStackPageContext);
   const selectionMode = page ? undefined : pageContext?.selectionMode;
-  const checked = useCommandStackSelector(store, (state) =>
-    selectionMode && pageContext && value !== undefined
-      ? (state.value[pageContext.value] ?? NO_SELECTION).includes(value)
-      : undefined,
+  const isItemChecked = store.useState(
+    "isItemChecked",
+    pageContext?.value ?? "",
+    value ?? "",
   );
+  const checked =
+    selectionMode && pageContext && value !== undefined
+      ? isItemChecked
+      : undefined;
 
   return (
     <CommandItem
@@ -742,30 +693,31 @@ function CommandStackItem({
         className,
       )}
       value={value}
-      onPointerDownCapture={composeEventHandlers(
-        onPointerDownCapture,
-        (event) => {
-          // A focusable item steals the input on pointerdown.
-          event.preventDefault();
-          if (event.pointerType === "touch") return;
-          event.currentTarget
-            .closest("[cmdk-root]")
-            ?.querySelector<HTMLInputElement>("[cmdk-input]")
-            ?.focus();
-        },
-      )}
-      onMouseDown={composeEventHandlers(onMouseDown, (event) => {
+      onPointerDownCapture={(event) => {
+        onPointerDownCapture?.(event);
+        if (event.defaultPrevented) return;
+        // A focusable item steals the input on pointerdown.
+        event.preventDefault();
+        if (event.pointerType === "touch") return;
+        event.currentTarget
+          .closest("[cmdk-root]")
+          ?.querySelector<HTMLInputElement>("[cmdk-input]")
+          ?.focus();
+      }}
+      onMouseDown={(event) => {
+        onMouseDown?.(event);
+        if (event.defaultPrevented) return;
         // iOS Safari can emit a synthetic mousedown without a pointerdown.
         event.preventDefault();
-      })}
+      }}
       onSelect={(itemValue) => {
         onSelect?.(itemValue);
         if (page) {
-          store.pushPage(page);
+          pushPage(store, page);
           return;
         }
         if (selectionMode && pageContext && value !== undefined) {
-          store.selectItem(pageContext.value, value, selectionMode);
+          selectItem(store, pageContext.value, value, selectionMode);
         }
       }}
       {...props}

@@ -3,7 +3,6 @@
 import type * as React from "react";
 
 import { cn } from "cn";
-import { composeEventHandlers } from "radix-ui/internal";
 
 const MAIN_CONTENT_ID = "main-content";
 
@@ -22,9 +21,11 @@ function SkipNav(props: React.ComponentProps<"a">) {
       {...linkProps}
       href={href}
       className={cn("cn-skip-nav", className)}
-      onClick={composeEventHandlers(onClick, (event) =>
-        skipToTarget(event, href),
-      )}
+      onClick={(event) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        skipToTarget(event, href);
+      }}
     >
       {children}
     </a>

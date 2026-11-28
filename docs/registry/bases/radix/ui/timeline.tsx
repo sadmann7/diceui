@@ -1,15 +1,15 @@
 "use client";
 
+import { ReactStore } from "@base-ui/utils/store";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva } from "class-variance-authority";
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
-
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
 
 type Direction = "ltr" | "rtl";
 type Orientation = "vertical" | "horizontal";
@@ -20,7 +20,7 @@ interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
 }
 
-type ItemElement = React.ComponentRef<typeof TimelineItem>;
+type ItemElement = HTMLDivElement;
 
 const ROOT_NAME = "Timeline";
 const ITEM_NAME = "TimelineItem";
@@ -49,35 +49,47 @@ function getSortedEntries(
   });
 }
 
-function useStore<T>(selector: (store: Store) => T): T {
-  const store = React.useContext(StoreContext);
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
-  }
-
-  const getSnapshot = React.useCallback(
-    () => selector(store),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
-}
-
 interface StoreState {
   items: Map<string, React.RefObject<ItemElement | null>>;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  notify: () => void;
-  onItemRegister: (
+function getItemIndex(state: StoreState, id: string) {
+  const sortedEntries = getSortedEntries(Array.from(state.items.entries()));
+  return sortedEntries.findIndex(([key]) => key === id);
+}
+
+const selectors = {
+  itemIndex: getItemIndex,
+  nextItemStatus: (
+    state: StoreState,
     id: string,
-    ref: React.RefObject<ItemElement | null>,
-  ) => void;
-  onItemUnregister: (id: string) => void;
-  getNextItemStatus: (id: string, activeIndex?: number) => Status | undefined;
-  getItemIndex: (id: string) => number;
+    activeIndex: number | undefined,
+  ): Status | undefined => {
+    const currentIndex = getItemIndex(state, id);
+    if (currentIndex === -1 || currentIndex === state.items.size - 1) {
+      return undefined;
+    }
+
+    return getItemStatus(currentIndex + 1, activeIndex);
+  },
+};
+
+type Store = ReactStore<StoreState, Record<string, never>, typeof selectors>;
+
+function registerItem(
+  store: Store,
+  id: string,
+  ref: React.RefObject<ItemElement | null>,
+) {
+  const items = new Map(store.state.items);
+  items.set(id, ref);
+  store.set("items", items);
+}
+
+function unregisterItem(store: Store, id: string) {
+  const items = new Map(store.state.items);
+  items.delete(id);
+  store.set("items", items);
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -166,55 +178,14 @@ function Timeline(props: TimelineProps) {
 
   const dir = DirectionPrimitive.useDirection(dirProp);
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    items: new Map(),
-  }));
-
-  const store = React.useMemo<Store>(() => {
-    const store: Store = {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
-      onItemRegister: (
-        id: string,
-        ref: React.RefObject<ItemElement | null>,
-      ) => {
-        stateRef.current.items.set(id, ref);
-        store.notify();
-      },
-      onItemUnregister: (id: string) => {
-        stateRef.current.items.delete(id);
-        store.notify();
-      },
-      getNextItemStatus: (id: string, activeIndex?: number) => {
-        const entries = Array.from(stateRef.current.items.entries());
-        const sortedEntries = getSortedEntries(entries);
-
-        const currentIndex = sortedEntries.findIndex(([key]) => key === id);
-        if (currentIndex === -1 || currentIndex === sortedEntries.length - 1) {
-          return undefined;
-        }
-
-        const nextItemIndex = currentIndex + 1;
-        return getItemStatus(nextItemIndex, activeIndex);
-      },
-      getItemIndex: (id: string) => {
-        const entries = Array.from(stateRef.current.items.entries());
-        const sortedEntries = getSortedEntries(entries);
-        return sortedEntries.findIndex(([key]) => key === id);
-      },
-    };
-
-    return store;
-  }, [listenersRef, stateRef]);
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, Record<string, never>, typeof selectors>(
+        { items: new Map() },
+        {},
+        selectors,
+      ),
+  );
 
   const contextValue = React.useMemo<TimelineContextValue>(
     () => ({
@@ -314,7 +285,9 @@ const timelineItemVariants = cva("cn-timeline-item", {
   },
 });
 
-function TimelineItem(props: DivProps) {
+interface TimelineItemProps extends DivProps {}
+
+function TimelineItem(props: TimelineItemProps) {
   const { asChild, className, id, ref, ...itemProps } = props;
 
   const { dir, orientation, variant, activeIndex } =
@@ -324,18 +297,18 @@ function TimelineItem(props: DivProps) {
   const instanceId = React.useId();
   const itemId = id ?? instanceId;
   const itemRef = React.useRef<ItemElement | null>(null);
-  const composedRef = useComposedRefs(ref, itemRef);
+  const composedRef = useMergedRefs(ref, itemRef);
 
-  const itemIndex = useStore((state) => state.getItemIndex(itemId));
+  const itemIndex = store.useState("itemIndex", itemId);
 
   const status = React.useMemo<Status>(() => {
     return getItemStatus(itemIndex, activeIndex);
   }, [activeIndex, itemIndex]);
 
-  useLayoutEffect(() => {
-    store.onItemRegister(itemId, itemRef);
+  useIsoLayoutEffect(() => {
+    registerItem(store, itemId, itemRef);
     return () => {
-      store.onItemUnregister(itemId);
+      unregisterItem(store, itemId);
     };
   }, [itemId, store]);
 
@@ -416,7 +389,9 @@ const timelineContentVariants = cva("cn-timeline-content", {
   },
 });
 
-function TimelineContent(props: DivProps) {
+interface TimelineContentProps extends DivProps {}
+
+function TimelineContent(props: TimelineContentProps) {
   const { asChild, className, ...contentProps } = props;
 
   const { variant, orientation } = useTimelineContext(CONTENT_NAME);
@@ -500,7 +475,9 @@ const timelineDotVariants = cva("cn-timeline-dot", {
   },
 });
 
-function TimelineDot(props: DivProps) {
+interface TimelineDotProps extends DivProps {}
+
+function TimelineDot(props: TimelineDotProps) {
   const { asChild, className, ...dotProps } = props;
 
   const { orientation, variant } = useTimelineContext(DOT_NAME);
@@ -600,9 +577,8 @@ function TimelineConnector(props: TimelineConnectorProps) {
   const { id, status, isAlternateRight } =
     useTimelineItemContext(CONNECTOR_NAME);
 
-  const nextItemStatus = useStore((state) =>
-    state.getNextItemStatus(id, activeIndex),
-  );
+  const store = useStoreContext(CONNECTOR_NAME);
+  const nextItemStatus = store.useState("nextItemStatus", id, activeIndex);
 
   const isLastItem = nextItemStatus === undefined;
 
@@ -634,7 +610,9 @@ function TimelineConnector(props: TimelineConnectorProps) {
   );
 }
 
-function TimelineHeader(props: DivProps) {
+interface TimelineHeaderProps extends DivProps {}
+
+function TimelineHeader(props: TimelineHeaderProps) {
   const { asChild, className, ...headerProps } = props;
 
   const HeaderPrimitive = asChild ? SlotPrimitive.Slot : "div";
@@ -648,7 +626,9 @@ function TimelineHeader(props: DivProps) {
   );
 }
 
-function TimelineTitle(props: DivProps) {
+interface TimelineTitleProps extends DivProps {}
+
+function TimelineTitle(props: TimelineTitleProps) {
   const { asChild, className, ...titleProps } = props;
 
   const TitlePrimitive = asChild ? SlotPrimitive.Slot : "div";
@@ -662,7 +642,9 @@ function TimelineTitle(props: DivProps) {
   );
 }
 
-function TimelineDescription(props: DivProps) {
+interface TimelineDescriptionProps extends DivProps {}
+
+function TimelineDescription(props: TimelineDescriptionProps) {
   const { asChild, className, ...descriptionProps } = props;
 
   const DescriptionPrimitive = asChild ? SlotPrimitive.Slot : "div";

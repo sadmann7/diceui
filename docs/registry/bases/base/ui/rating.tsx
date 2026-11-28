@@ -2,9 +2,11 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { ownerDocument } from "@base-ui/utils/owner";
+import { activeElement } from "@base-ui/utils/shadowDom";
+import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
@@ -73,26 +75,61 @@ function focusFirst(
   candidates: React.RefObject<ItemElement | null>[],
   preventScroll = false,
 ) {
-  const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
   for (const candidateRef of candidates) {
     const candidate = candidateRef.current;
     if (!candidate) continue;
-    if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
+    const doc = ownerDocument(candidate);
+    const previouslyFocusedElement = activeElement(doc);
+    if (candidate === previouslyFocusedElement) return;
     candidate.focus({ preventScroll });
-    if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
+    if (activeElement(doc) !== previouslyFocusedElement) return;
   }
 }
 
-interface StoreState {
+interface RatingState {
   value: number;
   hoveredValue: number | null;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
+interface StoreState extends RatingState {
+  valueProp: number | undefined;
+}
+
+interface StoreContext {
+  onValueChange: ((value: number) => void) | undefined;
+  onHover: ((value: number | null) => void) | undefined;
+}
+
+const publicStates = new WeakMap<StoreState, RatingState>();
+
+const selectors = {
+  value: (state: StoreState) => state.valueProp ?? state.value,
+  hoveredValue: (state: StoreState) => state.hoveredValue,
+  publicState: (state: StoreState) => {
+    let publicState = publicStates.get(state);
+    if (!publicState) {
+      publicState = {
+        value: state.valueProp ?? state.value,
+        hoveredValue: state.hoveredValue,
+      };
+      publicStates.set(state, publicState);
+    }
+    return publicState;
+  },
+};
+
+type Store = ReactStore<StoreState, StoreContext, typeof selectors>;
+
+function setValue(store: Store, value: number) {
+  if (Object.is(store.select("value"), value)) return;
+  store.context.onValueChange?.(value);
+  store.set("value", value);
+}
+
+function setHoveredValue(store: Store, hoveredValue: number | null) {
+  if (Object.is(store.state.hoveredValue, hoveredValue)) return;
+  store.set("hoveredValue", hoveredValue);
+  store.context.onHover?.(hoveredValue);
 }
 
 const StoreContext = React.createContext<Store | null>(null);
@@ -105,8 +142,8 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(
-  selector: (state: StoreState) => T,
+function useRating<T>(
+  selector: (state: RatingState) => T,
   ogStore?: Store | null,
 ): T {
   const contextStore = React.useContext(StoreContext);
@@ -114,15 +151,12 @@ function useStore<T>(
   const store = ogStore ?? contextStore;
 
   if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(`\`useRating\` must be used within \`${ROOT_NAME}\``);
   }
 
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
+  return useStore(store, (state: StoreState) =>
+    selector(selectors.publicState(state)),
   );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
 }
 
 interface ItemData {
@@ -231,60 +265,27 @@ function Rating(props: RatingProps) {
   const instanceId = React.useId();
   const rootId = id ?? instanceId;
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    value: valueProp ?? defaultValue,
-    hoveredValue: null,
-  }));
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, StoreContext, typeof selectors>(
+        { value: valueProp ?? defaultValue, valueProp, hoveredValue: null },
+        { onValueChange, onHover },
+        selectors,
+      ),
+  );
+
+  store.useControlledProp("valueProp", valueProp);
+  store.useContextCallback("onValueChange", onValueChange);
+  store.useContextCallback("onHover", onHover);
 
   const propsRef = useValueAsRef({
-    onValueChange,
-    onHover,
     onFocus: onFocusProp,
     onBlur: onBlurProp,
     onMouseDown: onMouseDownProp,
     step,
   });
 
-  const store = React.useMemo<Store>(() => {
-    const store: Store = {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
-
-        if (key === "value" && typeof value === "number") {
-          stateRef.current.value = value;
-          propsRef.current.onValueChange?.(value);
-        } else if (key === "hoveredValue") {
-          stateRef.current.hoveredValue = value;
-          propsRef.current.onHover?.(value);
-        } else {
-          stateRef.current[key] = value;
-        }
-
-        store.notify();
-      },
-      notify: () => {
-        for (const cb of listenersRef.current) {
-          cb();
-        }
-      },
-    };
-
-    return store;
-  }, [listenersRef, stateRef, propsRef]);
-
-  useIsoLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
-    }
-  }, [valueProp, store]);
-
-  const value = useStore((state) => state.value, store);
+  const value = store.useState("value");
 
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
@@ -493,8 +494,8 @@ function Rating(props: RatingProps) {
     state: {
       slot: "rating",
       orientation,
-      ...(disabled && { disabled: "" }),
-      ...(readOnly && { readonly: "" }),
+      disabled: disabled,
+      readonly: readOnly,
     },
   });
 
@@ -582,8 +583,8 @@ function RatingItem(props: RatingItemProps) {
   const itemValue = actualIndex + 1;
   const store = useStoreContext(ITEM_NAME);
   const focusContext = useFocusContext(ITEM_NAME);
-  const value = useStore((state) => state.value);
-  const hoveredValue = useStore((state) => state.hoveredValue);
+  const value = store.useState("value");
+  const hoveredValue = store.useState("hoveredValue");
   const clearable = context.clearable;
   const step = context.step;
   const activationMode = context.activationMode;
@@ -659,7 +660,7 @@ function RatingItem(props: RatingItemProps) {
           newValue = 0;
         }
 
-        store.setState("value", newValue);
+        setValue(store, newValue);
       }
     },
     [
@@ -694,7 +695,7 @@ function RatingItem(props: RatingItemProps) {
 
         if (!isHalfStepValue) {
           const newValue = clearable && value === itemValue ? 0 : itemValue;
-          store.setState("value", newValue);
+          setValue(store, newValue);
         }
       }
 
@@ -759,7 +760,7 @@ function RatingItem(props: RatingItemProps) {
               newValue = Math.max(value - step, 0);
             }
 
-            store.setState("value", newValue);
+            setValue(store, newValue);
 
             const items = focusContext
               .getItems()
@@ -845,7 +846,7 @@ function RatingItem(props: RatingItemProps) {
           }
         }
 
-        store.setState("hoveredValue", hoverValue);
+        setHoveredValue(store, hoverValue);
       }
     },
     [isDisabled, isReadOnly, step, itemValue, store, context.dir, propsRef],
@@ -857,7 +858,7 @@ function RatingItem(props: RatingItemProps) {
       if (event.defaultPrevented) return;
 
       if (!isDisabled && !isReadOnly) {
-        store.setState("hoveredValue", null);
+        setHoveredValue(store, null);
       }
     },
     [isDisabled, isReadOnly, store, propsRef],
@@ -880,7 +881,7 @@ function RatingItem(props: RatingItemProps) {
           hoverValue = isLeftHalf ? itemValue - step : itemValue;
         }
 
-        store.setState("hoveredValue", hoverValue);
+        setHoveredValue(store, hoverValue);
       }
     },
     [isDisabled, isReadOnly, step, itemValue, store, context.dir, propsRef],
@@ -950,13 +951,13 @@ function RatingItem(props: RatingItemProps) {
     state: {
       slot: "rating-item",
       state: dataState,
-      ...(isDisabled && { disabled: "" }),
-      ...(isReadOnly && { readonly: "" }),
-      ...(isHovered && { hovered: "" }),
+      disabled: isDisabled,
+      readonly: isReadOnly,
+      hovered: isHovered,
     },
   });
 
   return element;
 }
 
-export { Rating, RatingItem, useStore as useRating };
+export { Rating, RatingItem, useRating };

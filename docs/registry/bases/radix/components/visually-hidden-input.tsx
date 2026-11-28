@@ -1,5 +1,7 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { visuallyHiddenInput } from "@base-ui/utils/visuallyHidden";
 import * as React from "react";
 
 type InputValue = string[] | string;
@@ -54,7 +56,7 @@ function VisuallyHiddenInput<T = InputValue>(
     [control, measuredSize],
   );
 
-  React.useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!control) return;
 
     if (typeof window === "undefined") return;
@@ -124,16 +126,7 @@ function VisuallyHiddenInput<T = InputValue>(
       ...(controlSize.width !== undefined && controlSize.height !== undefined
         ? controlSize
         : {}),
-      border: 0,
-      clip: "rect(0 0 0 0)",
-      clipPath: "inset(50%)",
-      height: "1px",
-      margin: "-1px",
-      overflow: "hidden",
-      padding: 0,
-      position: "absolute",
-      whiteSpace: "nowrap",
-      width: "1px",
+      ...visuallyHiddenInput,
     };
   }, [style, controlSize]);
 

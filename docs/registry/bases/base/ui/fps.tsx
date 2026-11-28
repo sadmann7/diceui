@@ -1,5 +1,7 @@
 "use client";
 
+import { useIsHydrated } from "@base-ui/utils/hydration";
+import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import * as React from "react";
@@ -30,10 +32,6 @@ const fpsVariants = cva("cn-fps", {
   },
 });
 
-function subscribe() {
-  return () => {};
-}
-
 interface FpsProps
   extends
     React.ComponentProps<"div">,
@@ -60,11 +58,8 @@ function Fps(props: FpsProps) {
     ...fpsProps
   } = props;
 
-  const mounted = React.useSyncExternalStore(
-    subscribe,
-    () => true,
-    () => false,
-  );
+  const mounted = useIsHydrated();
+  const frame = useAnimationFrame();
   const [fps, setFps] = React.useState(0);
 
   const status =
@@ -77,7 +72,6 @@ function Fps(props: FpsProps) {
   React.useEffect(() => {
     if (!enabled) return;
 
-    let frame = 0;
     let frameCount = 0;
     let lastTime = performance.now();
 
@@ -92,13 +86,13 @@ function Fps(props: FpsProps) {
         lastTime = now;
       }
 
-      frame = requestAnimationFrame(measureFps);
+      frame.request(measureFps);
     }
 
-    frame = requestAnimationFrame(measureFps);
+    frame.request(measureFps);
 
-    return () => cancelAnimationFrame(frame);
-  }, [enabled, updateInterval]);
+    return frame.cancel;
+  }, [enabled, updateInterval, frame]);
 
   if (!enabled) return null;
 

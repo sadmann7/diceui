@@ -1,7 +1,10 @@
 "use client";
 
+import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useTimeout } from "@base-ui/utils/useTimeout";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 const NODE_COLOR = {
@@ -864,19 +867,15 @@ function useDebouncedWindowSize(options: DebouncedWindowSizeOptions) {
   }, [defaultWidth, defaultHeight]);
 
   const [size, setSize] = React.useState(getDocumentSize());
-  const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const timeout = useTimeout();
 
   const setDebouncedSize = React.useCallback(
     (value: { width: number; height: number }) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-
-      timeoutRef.current = setTimeout(() => {
+      timeout.start(delayMs, () => {
         setSize(value);
-      }, delayMs);
+      });
     },
-    [delayMs],
+    [delayMs, timeout],
   );
 
   React.useEffect(() => {
@@ -899,9 +898,9 @@ function useDebouncedWindowSize(options: DebouncedWindowSizeOptions) {
       window?.removeEventListener("resize", onResize);
       window?.removeEventListener("orientationchange", onResize);
       window.visualViewport?.removeEventListener("resize", onResize);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      timeout.clear();
     };
-  }, [setDebouncedSize, containerRef, getDocumentSize]);
+  }, [setDebouncedSize, containerRef, getDocumentSize, timeout]);
 
   return size;
 }
@@ -1097,22 +1096,14 @@ function useThrottle<State>(
 
   const ms = 1000 / fps;
   const prevCountRef = React.useRef(0);
-  const trailingTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(
-    null,
-  );
-
-  const clearTrailing = React.useCallback(() => {
-    if (trailingTimeout.current) {
-      clearTimeout(trailingTimeout.current);
-    }
-  }, []);
+  const trailingTimeout = useTimeout();
 
   React.useEffect(() => {
     return () => {
       prevCountRef.current = 0;
-      clearTrailing();
+      trailingTimeout.clear();
     };
-  }, [clearTrailing]);
+  }, [trailingTimeout]);
 
   const throttledSetState = React.useCallback(
     (action: React.SetStateAction<State>) => {
@@ -1121,7 +1112,7 @@ function useThrottle<State>(
       const rightNow = now();
       const call = () => {
         prevCountRef.current = rightNow;
-        clearTrailing();
+        trailingTimeout.clear();
         setState(action);
       };
       const current = prevCountRef.current;
@@ -1137,13 +1128,12 @@ function useThrottle<State>(
         prevCountRef.current = rightNow;
       }
 
-      clearTrailing();
-      trailingTimeout.current = setTimeout(() => {
+      trailingTimeout.start(ms, () => {
         call();
         prevCountRef.current = 0;
-      }, ms);
+      });
     },
-    [leading, ms, clearTrailing],
+    [leading, ms, trailingTimeout],
   );
 
   return [state, throttledSetState];
@@ -1161,8 +1151,8 @@ const MASONRY_ERROR = {
 
 interface DivProps extends React.ComponentProps<"div"> {}
 
-type RootElement = React.ComponentRef<typeof Masonry>;
-type ItemElement = React.ComponentRef<typeof MasonryItem>;
+type RootElement = HTMLDivElement;
+type ItemElement = HTMLDivElement;
 
 interface MasonryContextValue {
   positioner: Positioner;
@@ -1227,7 +1217,7 @@ function Masonry(props: MasonryProps) {
   const rowGap = gapValue.row;
 
   const containerRef = React.useRef<RootElement | null>(null);
-  const composedRef = useComposedRefs(ref, containerRef);
+  const composedRef = useMergedRefs(ref, containerRef);
 
   const size = useDebouncedWindowSize({
     containerRef,
@@ -1241,7 +1231,7 @@ function Masonry(props: MasonryProps) {
     width: number;
   }>({ offset: 0, width: 0 });
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!containerRef.current) return;
 
     let offset = 0;
@@ -1350,10 +1340,10 @@ function MasonryViewport(props: DivProps) {
   const { children, style, ref, ...viewportProps } = props;
   const context = useMasonryContext(VIEWPORT_NAME);
   const [layoutVersion, setLayoutVersion] = React.useState(0);
-  const rafId = React.useRef<number | null>(null);
+  const layoutFrame = useAnimationFrame();
   const [mounted, setMounted] = React.useState(false);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     setMounted(true);
   }, []);
 
@@ -1462,19 +1452,12 @@ function MasonryViewport(props: DivProps) {
 
   React.useEffect(() => {
     if (layoutOutdated && mounted) {
-      if (rafId.current) {
-        cancelAnimationFrame(rafId.current);
-      }
-      rafId.current = requestAnimationFrame(() => {
+      layoutFrame.request(() => {
         setLayoutVersion((v) => v + 1);
       });
     }
-    return () => {
-      if (rafId.current) {
-        cancelAnimationFrame(rafId.current);
-      }
-    };
-  }, [layoutOutdated, mounted]);
+    return layoutFrame.cancel;
+  }, [layoutOutdated, mounted, layoutFrame]);
 
   const estimatedHeight = React.useMemo(() => {
     const measuredHeight = context.positioner.estimateHeight(

@@ -1486,10 +1486,10 @@ function MaskInput(props: MaskInputProps) {
     render,
     state: {
       slot: "mask-input",
-      disabled: disabled ? "" : undefined,
-      invalid: invalid ? "" : undefined,
-      readonly: readOnly ? "" : undefined,
-      required: required ? "" : undefined,
+      disabled: disabled,
+      invalid: invalid,
+      readonly: readOnly,
+      required: required,
     },
   });
 }

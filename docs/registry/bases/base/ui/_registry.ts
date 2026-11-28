@@ -11,7 +11,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["button", "direction"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "angle-slider",
@@ -27,7 +27,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["direction"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "avatar-group",
@@ -49,7 +49,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "banner",
@@ -61,7 +61,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["button"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "checkbox-group",
@@ -114,7 +114,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["button", "input", "popover", "select", "direction"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "color-swatch",
@@ -148,7 +148,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["command", "input-group"],
-    dependencies: ["@base-ui/react", "@base-ui/utils", "cmdk"],
+    dependencies: ["@base-ui/react", "cmdk", "@base-ui/utils@0.5.0"],
   },
   {
     name: "compare-slider",
@@ -159,7 +159,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "cropper",
@@ -170,7 +170,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "editable",
@@ -186,7 +186,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["direction"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "faceted",
@@ -198,7 +198,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["command", "popover"],
-    dependencies: ["@base-ui/react", "@base-ui/utils", "cmdk"],
+    dependencies: ["@base-ui/react", "cmdk", "@base-ui/utils@0.5.0"],
   },
   {
     name: "file-upload",
@@ -210,11 +210,12 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["direction"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "fps",
     type: "registry:ui",
+    dependencies: ["@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/fps.tsx",
@@ -231,7 +232,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "kanban",
@@ -244,11 +245,11 @@ export const ui: Registry["items"] = [
     ],
     dependencies: [
       "@base-ui/react",
-      "@base-ui/utils",
       "@dnd-kit/core",
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "@base-ui/utils@0.5.0",
     ],
   },
   {
@@ -265,7 +266,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["button", "input", "textarea"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "listbox",
@@ -288,7 +289,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["direction"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
     cssVars: {
       theme: {
         "--animate-marquee-left":
@@ -365,7 +366,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react"],
   },
   {
     name: "masonry",
@@ -376,7 +377,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "media-player",
@@ -394,7 +395,7 @@ export const ui: Registry["items"] = [
       "tooltip",
       "direction",
     ],
-    dependencies: ["@base-ui/react", "@base-ui/utils", "media-chrome"],
+    dependencies: ["@base-ui/react", "media-chrome", "@base-ui/utils@0.5.0"],
   },
   {
     name: "mention",
@@ -421,7 +422,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["popover", "command", "input"],
-    dependencies: ["@base-ui/react", "@base-ui/utils", "cmdk"],
+    dependencies: ["@base-ui/react", "cmdk", "@base-ui/utils@0.5.0"],
   },
   {
     name: "presentation",
@@ -444,13 +445,13 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    dependencies: ["@base-ui/react", "@base-ui/utils", "qrcode"],
+    dependencies: ["@base-ui/react", "qrcode", "@base-ui/utils@0.5.0"],
     devDependencies: ["@types/qrcode"],
   },
   {
     name: "query-builder",
     type: "registry:ui",
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
     registryDependencies: ["button", "input", "select", "@diceui/faceted"],
     files: [
       {
@@ -477,7 +478,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["direction"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "relative-time-card",
@@ -489,11 +490,12 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["hover-card"],
-    dependencies: ["@base-ui/react"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "responsive-dialog",
     type: "registry:ui",
+    dependencies: ["@base-ui/utils@0.5.0"],
     files: [
       {
         path: "ui/responsive-dialog.tsx",
@@ -501,7 +503,6 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["dialog", "drawer"],
-    dependencies: ["@base-ui/utils"],
   },
   {
     name: "scroll-spy",
@@ -513,7 +514,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["direction"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "scroller",
@@ -524,7 +525,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "segmented-input",
@@ -550,8 +551,8 @@ export const ui: Registry["items"] = [
     registryDependencies: ["button"],
     dependencies: [
       "@base-ui/react",
-      "@base-ui/utils",
       "@floating-ui/react-dom",
+      "@base-ui/utils@0.5.0",
     ],
   },
   {
@@ -565,11 +566,11 @@ export const ui: Registry["items"] = [
     ],
     dependencies: [
       "@base-ui/react",
-      "@base-ui/utils",
       "@dnd-kit/core",
       "@dnd-kit/modifiers",
       "@dnd-kit/sortable",
       "@dnd-kit/utilities",
+      "@base-ui/utils@0.5.0",
     ],
   },
   {
@@ -582,7 +583,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["button"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "stack",
@@ -627,7 +628,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["direction"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "swap",
@@ -638,7 +639,7 @@ export const ui: Registry["items"] = [
         type: "registry:ui",
       },
     ],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "timeline",
@@ -650,7 +651,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["direction"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
   },
   {
     name: "tags-input",
@@ -677,7 +678,7 @@ export const ui: Registry["items"] = [
       },
     ],
     registryDependencies: ["popover"],
-    dependencies: ["@base-ui/react", "@base-ui/utils"],
+    dependencies: ["@base-ui/react", "@base-ui/utils@0.5.0"],
     css: {
       "@utility scrollbar-none": {
         "scrollbar-width": "none",
@@ -699,8 +700,8 @@ export const ui: Registry["items"] = [
     registryDependencies: ["button", "direction"],
     dependencies: [
       "@base-ui/react",
-      "@base-ui/utils",
       "@floating-ui/react-dom",
+      "@base-ui/utils@0.5.0",
     ],
   },
 ];

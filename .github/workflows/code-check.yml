@@ -55,6 +55,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Report drift between bases
+        run: pnpm --filter=docs --silent registry:drift --markdown >> "$GITHUB_STEP_SUMMARY"
+        continue-on-error: true
+
   test:
     runs-on: ubuntu-latest
     name: Test

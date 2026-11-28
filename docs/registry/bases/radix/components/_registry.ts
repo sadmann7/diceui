@@ -4,6 +4,7 @@ export const components: Registry["items"] = [
   {
     name: "client-only",
     type: "registry:component",
+    dependencies: ["@base-ui/utils@0.5.0"],
     files: [
       {
         path: "components/client-only.tsx",
@@ -42,7 +43,7 @@ export const components: Registry["items"] = [
         type: "registry:component",
       },
     ],
-    dependencies: ["radix-ui"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
   },
   {
     name: "pending",
@@ -92,7 +93,7 @@ export const components: Registry["items"] = [
   {
     name: "visually-hidden",
     type: "registry:component",
-    dependencies: ["radix-ui"],
+    dependencies: ["radix-ui", "@base-ui/utils@0.5.0"],
     files: [
       {
         path: "components/visually-hidden.tsx",
@@ -103,6 +104,7 @@ export const components: Registry["items"] = [
   {
     name: "visually-hidden-input",
     type: "registry:component",
+    dependencies: ["@base-ui/utils@0.5.0"],
     files: [
       {
         path: "components/visually-hidden-input.tsx",

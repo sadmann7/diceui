@@ -4,9 +4,10 @@ import type { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
+import { useControlled } from "@base-ui/utils/useControlled";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useStableCallback } from "@base-ui/utils/useStableCallback";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import * as React from "react";
@@ -376,7 +377,7 @@ function formatPhoneNumber(value: string, countries: Country[]): string {
   return formatted;
 }
 
-type RootElement = React.ComponentRef<typeof PhoneInput>;
+type RootElement = HTMLDivElement;
 
 interface StoreState {
   value: string;
@@ -385,14 +386,15 @@ interface StoreState {
   startsWithPlus: boolean;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  notify: () => void;
+interface StoreContextValue {
+  state: StoreState;
+  setValue: (value: string) => void;
+  setCountry: (country: string) => void;
+  setOpen: (open: boolean) => void;
+  setStartsWithPlus: (startsWithPlus: boolean) => void;
 }
 
-const StoreContext = React.createContext<Store | null>(null);
+const StoreContext = React.createContext<StoreContextValue | null>(null);
 
 function useStoreContext(consumerName: string) {
   const context = React.useContext(StoreContext);
@@ -402,24 +404,8 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStore<T>(
-  selector: (state: StoreState) => T,
-  ogStore?: Store | null,
-): T {
-  const contextStore = React.useContext(StoreContext);
-
-  const store = ogStore ?? contextStore;
-
-  if (!store) {
-    throw new Error(`\`useStore\` must be used within \`${ROOT_NAME}\``);
-  }
-
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+function usePhoneInput<T>(selector: (state: StoreState) => T): T {
+  return selector(useStoreContext("usePhoneInput").state);
 }
 
 interface PhoneInputContextValue {
@@ -498,72 +484,45 @@ function PhoneInput(props: PhoneInputProps) {
   const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => {
-    const initialValue = valueProp ?? defaultValue ?? "";
-    const initialCountry = countryProp ?? defaultCountry ?? "";
+  const [value, setValueState] = useControlled({
+    controlled: valueProp,
+    default: defaultValue ?? "",
+    name: ROOT_NAME,
+    state: "value",
+  });
+  const [country, setCountryState] = useControlled({
+    controlled: countryProp,
+    default: defaultCountry ?? "",
+    name: ROOT_NAME,
+    state: "country",
+  });
+  const [open, setOpen] = React.useState(false);
+  const [startsWithPlus, setStartsWithPlus] = React.useState(() =>
+    (valueProp ?? defaultValue ?? "").startsWith("+"),
+  );
 
-    return {
-      value: initialValue,
-      country: initialCountry,
-      open: false,
-      startsWithPlus: initialValue.startsWith("+"),
-    };
+  const setValue = useStableCallback((nextValue: string) => {
+    if (nextValue === value) return;
+    onValueChange?.(nextValue);
+    setValueState(nextValue);
   });
 
-  const propsRef = useValueAsRef({
-    onValueChange,
-    onCountryChange,
+  const setCountry = useStableCallback((nextCountry: string) => {
+    if (nextCountry === country) return;
+    onCountryChange?.(nextCountry);
+    setCountryState(nextCountry);
   });
 
-  const store = React.useMemo<Store>(() => {
-    function notify() {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
-    }
-
-    return {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
-
-        if (key === "value" && typeof value === "string") {
-          stateRef.current.value = value;
-          propsRef.current.onValueChange?.(value);
-        } else if (key === "country" && typeof value === "string") {
-          stateRef.current.country = value;
-          propsRef.current.onCountryChange?.(value);
-        } else {
-          stateRef.current[key] = value;
-        }
-
-        notify();
-      },
-      notify,
-    };
-  }, [listenersRef, stateRef, propsRef]);
-
-  const value = useStore((state) => state.value, store);
-  const country = useStore((state) => state.country, store);
-
-  useIsoLayoutEffect(() => {
-    if (valueProp !== undefined) {
-      store.setState("value", valueProp);
-    }
-  }, [valueProp, store]);
-
-  useIsoLayoutEffect(() => {
-    if (countryProp !== undefined) {
-      store.setState("country", countryProp);
-    }
-  }, [countryProp, store]);
-
-  const startsWithPlus = useStore((state) => state.startsWithPlus, store);
+  const storeContextValue = React.useMemo<StoreContextValue>(
+    () => ({
+      state: { value, country, open, startsWithPlus },
+      setValue,
+      setCountry,
+      setOpen,
+      setStartsWithPlus,
+    }),
+    [value, country, open, startsWithPlus, setValue, setCountry],
+  );
 
   React.useEffect(() => {
     if (!value) return;
@@ -575,9 +534,9 @@ function PhoneInput(props: PhoneInputProps) {
 
     const detected = detectCountryFromNumber(value, countries);
     if (detected && detected.code !== country) {
-      store.setState("country", detected.code);
+      setCountry(detected.code);
     }
-  }, [value, countries, country, store, startsWithPlus]);
+  }, [value, countries, country, setCountry, startsWithPlus]);
 
   const contextValue = React.useMemo<PhoneInputContextValue>(
     () => ({
@@ -617,14 +576,14 @@ function PhoneInput(props: PhoneInputProps) {
     render,
     state: {
       slot: "phone-input",
-      disabled: disabled ? "" : undefined,
-      invalid: invalid ? "" : undefined,
-      readonly: readOnly ? "" : undefined,
+      disabled: disabled,
+      invalid: invalid,
+      readonly: readOnly,
     },
   });
 
   return (
-    <StoreContext.Provider value={store}>
+    <StoreContext.Provider value={storeContextValue}>
       <PhoneInputContext.Provider value={contextValue}>
         {element}
         {isFormControl && (
@@ -662,9 +621,12 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
 
   const { countries, inputRef, disabled, showFlag } =
     usePhoneInputContext(COUNTRY_SELECT_NAME);
-  const store = useStoreContext(COUNTRY_SELECT_NAME);
-  const country = useStore((state) => state.country);
-  const open = useStore((state) => state.open);
+  const focusFrame = useAnimationFrame();
+  const {
+    state: { country, open },
+    setCountry,
+    setOpen,
+  } = useStoreContext(COUNTRY_SELECT_NAME);
   const onOpenChangeRef = useValueAsRef(onOpenChangeProp);
 
   const isDisabled = disabledProp || disabled;
@@ -674,10 +636,10 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
   const onOpenChange: NonNullable<PopoverPrimitive.Root.Props["onOpenChange"]> =
     React.useCallback(
       (open, eventDetails) => {
-        store.setState("open", open);
+        setOpen(open);
         onOpenChangeRef.current?.(open, eventDetails);
       },
-      [store, onOpenChangeRef],
+      [setOpen, onOpenChangeRef],
     );
 
   return (
@@ -717,9 +679,9 @@ function PhoneInputCountrySelect(props: PhoneInputCountrySelectProps) {
                   key={c.code}
                   value={`${c.name} ${c.dialCode} ${c.code}`}
                   onSelect={() => {
-                    store.setState("country", c.code);
-                    store.setState("open", false);
-                    requestAnimationFrame(() => {
+                    setCountry(c.code);
+                    setOpen(false);
+                    focusFrame.request(() => {
                       inputRef.current?.focus();
                     });
                   }}
@@ -776,8 +738,11 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
     placeholder,
     countries,
   } = usePhoneInputContext(FIELD_NAME);
-  const store = useStoreContext(FIELD_NAME);
-  const value = useStore((state) => state.value);
+  const {
+    state: { value },
+    setValue,
+    setStartsWithPlus,
+  } = useStoreContext(FIELD_NAME);
 
   const composedRef = useMergedRefs(ref, inputRef);
 
@@ -799,10 +764,10 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
       const startsWithPlus = inputValue.startsWith("+");
       const digits = inputValue.replace(/\D/g, "");
       const newValue = digits ? `+${digits}` : startsWithPlus ? "+" : "";
-      store.setState("startsWithPlus", startsWithPlus);
-      store.setState("value", newValue);
+      setStartsWithPlus(startsWithPlus);
+      setValue(newValue);
     },
-    [store, onChangeRef, isDisabled, isReadOnly],
+    [setValue, setStartsWithPlus, onChangeRef, isDisabled, isReadOnly],
   );
 
   const displayValue = React.useMemo(() => {
@@ -834,5 +799,5 @@ export {
   PhoneInputCountrySelect,
   PhoneInputField,
   type PhoneInputProps,
-  useStore as usePhoneInput,
+  usePhoneInput,
 };

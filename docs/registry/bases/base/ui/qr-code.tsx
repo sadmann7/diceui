@@ -2,8 +2,12 @@
 
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
+import { NOOP } from "@base-ui/utils/empty";
+import { ownerDocument } from "@base-ui/utils/owner";
+import { ReactStore, useStore } from "@base-ui/utils/store";
+import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
-import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { cn } from "cn";
 import * as React from "react";
 
@@ -11,6 +15,7 @@ const ROOT_NAME = "QRCode";
 const CANVAS_NAME = "QRCodeCanvas";
 const SVG_NAME = "QRCodeSvg";
 const IMAGE_NAME = "QRCodeImage";
+const DOWNLOAD_NAME = "QRCodeDownload";
 const SKELETON_NAME = "QRCodeSkeleton";
 
 type QRCodeLevel = "L" | "M" | "Q" | "H";
@@ -38,13 +43,18 @@ interface StoreState {
   generationKey: string;
 }
 
-interface Store {
-  subscribe: (callback: () => void) => () => void;
-  getState: () => StoreState;
-  setState: <K extends keyof StoreState>(key: K, value: StoreState[K]) => void;
-  setStates: (updates: Partial<StoreState>) => void;
-  notify: () => void;
+const selectors = {
+  dataUrl: (state: StoreState) => state.dataUrl,
+  svgString: (state: StoreState) => state.svgString,
+  generationKey: (state: StoreState) => state.generationKey,
+};
+
+interface StoreController {
+  onError: (error: Error) => void;
+  onGenerated: () => void;
 }
+
+type Store = ReactStore<StoreState, StoreController, typeof selectors>;
 
 interface QRCodeContextValue {
   value: string;
@@ -58,18 +68,17 @@ interface QRCodeContextValue {
 
 const StoreContext = React.createContext<Store | null>(null);
 
-function useStore<T>(selector: (state: StoreState) => T): T {
+function useStoreContext(consumerName: string) {
   const store = React.useContext(StoreContext);
   if (!store) {
-    throw new Error(`\`useQRCode\` must be used within \`${ROOT_NAME}\``);
+    throw new Error(`\`${consumerName}\` must be used within \`${ROOT_NAME}\``);
   }
+  return store;
+}
 
-  const getSnapshot = React.useCallback(
-    () => selector(store.getState()),
-    [store, selector],
-  );
-
-  return React.useSyncExternalStore(store.subscribe, getSnapshot, getSnapshot);
+function useQRCode<T>(selector: (state: StoreState) => T): T {
+  const store = useStoreContext("useQRCode");
+  return useStore(store, selector);
 }
 
 const QRCodeContext = React.createContext<QRCodeContextValue | null>(null);
@@ -113,51 +122,25 @@ function QRCode(props: QRCodeProps) {
 
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
 
-  const listenersRef = useRefWithInit(() => new Set<() => void>());
-  const stateRef = useRefWithInit<StoreState>(() => ({
-    dataUrl: null,
-    svgString: null,
-    isGenerating: false,
-    error: null,
-    generationKey: "",
-  }));
+  const [store] = React.useState<Store>(
+    () =>
+      new ReactStore<StoreState, StoreController, typeof selectors>(
+        {
+          dataUrl: null,
+          svgString: null,
+          isGenerating: false,
+          error: null,
+          generationKey: "",
+        },
+        { onError: NOOP, onGenerated: NOOP },
+        selectors,
+      ),
+  );
 
-  const store = React.useMemo<Store>(() => {
-    function notify() {
-      for (const cb of listenersRef.current) {
-        cb();
-      }
-    }
+  store.useContextCallback("onError", onError);
+  store.useContextCallback("onGenerated", onGenerated);
 
-    return {
-      subscribe: (cb) => {
-        listenersRef.current.add(cb);
-        return () => listenersRef.current.delete(cb);
-      },
-      getState: () => stateRef.current,
-      setState: (key, value) => {
-        if (Object.is(stateRef.current[key], value)) return;
-        stateRef.current[key] = value;
-        notify();
-      },
-      setStates: (updates) => {
-        let hasChanged = false;
-
-        for (const key of Object.keys(updates) as (keyof StoreState)[]) {
-          const value = updates[key];
-          if (value !== undefined && !Object.is(stateRef.current[key], value)) {
-            Object.assign(stateRef.current, { [key]: value });
-            hasChanged = true;
-          }
-        }
-
-        if (hasChanged) {
-          notify();
-        }
-      },
-      notify,
-    };
-  }, [listenersRef, stateRef]);
+  const generateFrame = useAnimationFrame();
 
   const canvasOpts = React.useMemo<QRCodeCanvasOpts>(
     () => ({
@@ -192,14 +175,14 @@ function QRCode(props: QRCodeProps) {
     async (targetGenerationKey: string) => {
       if (!value || !targetGenerationKey) return;
 
-      const currentState = store.getState();
+      const currentState = store.state;
       if (
         currentState.isGenerating ||
         currentState.generationKey === targetGenerationKey
       )
         return;
 
-      store.setStates({
+      store.update({
         isGenerating: true,
         error: null,
       });
@@ -227,27 +210,27 @@ function QRCode(props: QRCodeProps) {
           type: "svg",
         });
 
-        store.setStates({
+        store.update({
           dataUrl,
           svgString,
           isGenerating: false,
           generationKey: targetGenerationKey,
         });
 
-        onGenerated?.();
+        store.context.onGenerated();
       } catch (error) {
         const parsedError =
           error instanceof Error
             ? error
             : new Error("Failed to generate QR code");
-        store.setStates({
+        store.update({
           error: parsedError,
           isGenerating: false,
         });
-        onError?.(parsedError);
+        store.context.onError(parsedError);
       }
     },
-    [value, canvasOpts, store, onError, onGenerated],
+    [value, canvasOpts, store],
   );
 
   const contextValue = React.useMemo<QRCodeContextValue>(
@@ -263,21 +246,21 @@ function QRCode(props: QRCodeProps) {
     [value, size, backgroundColor, foregroundColor, level, margin],
   );
 
-  React.useLayoutEffect(() => {
-    if (generationKey) {
-      const rafId = requestAnimationFrame(() => {
-        void onQRCodeGenerate(generationKey);
-      });
+  useIsoLayoutEffect(() => {
+    if (!generationKey) return;
 
-      return () => cancelAnimationFrame(rafId);
-    }
-  }, [generationKey, onQRCodeGenerate]);
+    generateFrame.request(() => {
+      void onQRCodeGenerate(generationKey);
+    });
+
+    return generateFrame.cancel;
+  }, [generationKey, generateFrame, onQRCodeGenerate]);
 
   const element = useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("cn-qr-code-qrcode", className),
+        className: cn("cn-qr-code", className),
         style: {
           "--qr-code-size": `${size}px`,
           ...style,
@@ -301,14 +284,11 @@ function QRCode(props: QRCodeProps) {
 interface QRCodeCanvasProps
   extends React.ComponentProps<"canvas">, useRender.ComponentProps<"canvas"> {}
 
-function QRCodeCanvas({
-  render,
-  className,
-  ref,
-  ...canvasProps
-}: QRCodeCanvasProps) {
+function QRCodeCanvas(props: QRCodeCanvasProps) {
+  const { render, className, ref, ...canvasProps } = props;
   const context = useQRCodeContext(CANVAS_NAME);
-  const generationKey = useStore((state) => state.generationKey);
+  const store = useStoreContext(CANVAS_NAME);
+  const generationKey = useStore(store, selectors.generationKey);
 
   const composedRef = useMergedRefs(ref, context.canvasRef);
 
@@ -320,7 +300,7 @@ function QRCodeCanvas({
         width: context.size,
         height: context.size,
         className: cn(
-          "cn-qr-code-qrcode-canvas",
+          "cn-qr-code-canvas",
           !generationKey && "invisible",
           className,
         ),
@@ -335,15 +315,17 @@ function QRCodeCanvas({
 interface QRCodeSvgProps
   extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
-function QRCodeSvg({ render, className, style, ...svgProps }: QRCodeSvgProps) {
+function QRCodeSvg(props: QRCodeSvgProps) {
+  const { render, className, style, ...svgProps } = props;
   const context = useQRCodeContext(SVG_NAME);
-  const svgString = useStore((state) => state.svgString);
+  const store = useStoreContext(SVG_NAME);
+  const svgString = useStore(store, selectors.svgString);
 
   const element = useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("cn-qr-code-qrcode-svg", className),
+        className: cn("cn-qr-code-svg", className),
         style: { width: context.size, height: context.size, ...style },
         dangerouslySetInnerHTML: svgString ? { __html: svgString } : undefined,
       },
@@ -359,18 +341,13 @@ function QRCodeSvg({ render, className, style, ...svgProps }: QRCodeSvgProps) {
 }
 
 interface QRCodeImageProps
-  extends React.ComponentProps<"img">, useRender.ComponentProps<"img"> {
-  alt?: string;
-}
+  extends React.ComponentProps<"img">, useRender.ComponentProps<"img"> {}
 
-function QRCodeImage({
-  alt = "QR Code",
-  render,
-  className,
-  ...imageProps
-}: QRCodeImageProps) {
+function QRCodeImage(props: QRCodeImageProps) {
+  const { alt = "QR Code", render, className, ...imageProps } = props;
   const context = useQRCodeContext(IMAGE_NAME);
-  const dataUrl = useStore((state) => state.dataUrl);
+  const store = useStoreContext(IMAGE_NAME);
+  const dataUrl = useStore(store, selectors.dataUrl);
 
   const element = useRender({
     defaultTagName: "img",
@@ -380,7 +357,7 @@ function QRCodeImage({
         alt,
         width: context.size,
         height: context.size,
-        className: cn("cn-qr-code-qrcode-image", className),
+        className: cn("cn-qr-code-image", className),
       },
       imageProps,
     ),
@@ -410,15 +387,17 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
     ...buttonProps
   } = props;
 
-  const dataUrl = useStore((state) => state.dataUrl);
-  const svgString = useStore((state) => state.svgString);
+  const store = useStoreContext(DOWNLOAD_NAME);
+  const dataUrl = useStore(store, selectors.dataUrl);
+  const svgString = useStore(store, selectors.svgString);
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       onClickProp?.(event);
       if (event.defaultPrevented) return;
 
-      const link = document.createElement("a");
+      const ownerDoc = ownerDocument(event.currentTarget);
+      const link = ownerDoc.createElement("a");
 
       if (format === "png" && dataUrl) {
         link.href = dataUrl;
@@ -431,9 +410,9 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
         return;
       }
 
-      document.body.appendChild(link);
+      ownerDoc.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
+      ownerDoc.body.removeChild(link);
 
       if (format === "svg" && svgString) {
         URL.revokeObjectURL(link.href);
@@ -447,7 +426,7 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
     props: mergeProps<"button">(
       {
         type: "button",
-        className: cn("cn-qr-code-qrcode-download", className),
+        className: cn("cn-qr-code-download", className),
         onClick,
         children: children ?? `Download ${format.toUpperCase()}`,
       },
@@ -461,16 +440,13 @@ function QRCodeDownload(props: QRCodeDownloadProps) {
 interface QRCodeOverlayProps
   extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
-function QRCodeOverlay({
-  render,
-  className,
-  ...overlayProps
-}: QRCodeOverlayProps) {
+function QRCodeOverlay(props: QRCodeOverlayProps) {
+  const { render, className, ...overlayProps } = props;
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("cn-qr-code-qrcode-overlay", className),
+        className: cn("cn-qr-code-overlay", className),
       },
       overlayProps,
     ),
@@ -482,16 +458,13 @@ function QRCodeOverlay({
 interface QRCodeSkeletonProps
   extends React.ComponentProps<"div">, useRender.ComponentProps<"div"> {}
 
-function QRCodeSkeleton({
-  render,
-  className,
-  style,
-  ...skeletonProps
-}: QRCodeSkeletonProps) {
+function QRCodeSkeleton(props: QRCodeSkeletonProps) {
+  const { render, className, style, ...skeletonProps } = props;
   const context = useQRCodeContext(SKELETON_NAME);
-  const dataUrl = useStore((state) => state.dataUrl);
-  const svgString = useStore((state) => state.svgString);
-  const generationKey = useStore((state) => state.generationKey);
+  const store = useStoreContext(SKELETON_NAME);
+  const dataUrl = useStore(store, selectors.dataUrl);
+  const svgString = useStore(store, selectors.svgString);
+  const generationKey = useStore(store, selectors.generationKey);
 
   const isLoaded = dataUrl || svgString || generationKey;
 
@@ -499,7 +472,7 @@ function QRCodeSkeleton({
     defaultTagName: "div",
     props: mergeProps<"div">(
       {
-        className: cn("cn-qr-code-qrcode-skeleton", className),
+        className: cn("cn-qr-code-skeleton", className),
         style: {
           width: context.size,
           height: context.size,
@@ -526,5 +499,5 @@ export {
   type QRCodeProps,
   QRCodeSkeleton,
   QRCodeSvg,
-  useStore as useQRCode,
+  useQRCode,
 };

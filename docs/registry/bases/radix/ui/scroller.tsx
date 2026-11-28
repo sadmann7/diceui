@@ -1,9 +1,11 @@
 "use client";
 
+import { NOOP } from "@base-ui/utils/empty";
+import { useInterval } from "@base-ui/utils/useInterval";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
@@ -75,7 +77,7 @@ function Scroller(props: ScrollerProps) {
   } = props;
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const composedRef = useComposedRefs(ref, containerRef);
+  const composedRef = useMergedRefs(ref, containerRef);
   const [scrollVisibility, setScrollVisibility] =
     React.useState<ScrollVisibility>({
       up: false,
@@ -337,33 +339,24 @@ function ScrollButton(props: ScrollButtonProps) {
     ...buttonProps
   } = props;
 
-  const [autoScrollTimer, setAutoScrollTimer] = React.useState<number | null>(
-    null,
-  );
+  const autoScrollInterval = useInterval();
 
   const onAutoScrollStart = React.useCallback(
     (event?: React.MouseEvent<HTMLButtonElement>) => {
-      if (autoScrollTimer !== null) return;
+      if (autoScrollInterval.isStarted()) return;
 
       if (triggerMode === "press") {
-        const timer = window.setInterval(onClick ?? (() => {}), 50);
-        setAutoScrollTimer(timer);
+        autoScrollInterval.start(50, onClick ?? NOOP);
       } else if (triggerMode === "hover") {
-        const timer = window.setInterval(() => {
+        autoScrollInterval.start(50, () => {
           if (event) onClick?.(event);
-        }, 50);
-        setAutoScrollTimer(timer);
+        });
       }
     },
-    [autoScrollTimer, onClick, triggerMode],
+    [autoScrollInterval, onClick, triggerMode],
   );
 
-  const onAutoScrollStop = React.useCallback(() => {
-    if (autoScrollTimer === null) return;
-
-    window.clearInterval(autoScrollTimer);
-    setAutoScrollTimer(null);
-  }, [autoScrollTimer]);
+  const onAutoScrollStop = autoScrollInterval.clear;
 
   const eventHandlers = React.useMemo(() => {
     const triggerModeHandlers: Record<
@@ -388,10 +381,6 @@ function ScrollButton(props: ScrollButtonProps) {
 
     return triggerModeHandlers[triggerMode] ?? {};
   }, [triggerMode, onAutoScrollStart, onAutoScrollStop, onClick]);
-
-  React.useEffect(() => {
-    return () => onAutoScrollStop();
-  }, [onAutoScrollStop]);
 
   return (
     <button
