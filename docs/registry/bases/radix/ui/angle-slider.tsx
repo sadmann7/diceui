@@ -1,16 +1,17 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 
 const ROOT_NAME = "AngleSlider";
 const THUMB_NAME = "AngleSliderThumb";
@@ -342,13 +343,13 @@ function AngleSlider(props: AngleSliderProps) {
     return store;
   }, [listenersRef, stateRef, propsRef]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("values", value);
     }
   }, [value, store]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const currentState = store.getState();
 
     if (currentState.min !== min) {
@@ -400,7 +401,7 @@ function AngleSlider(props: AngleSliderProps) {
   const [sliderElement, setSliderElement] = React.useState<RootElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, setSliderElement);
+  const composedRef = useMergedRefs(ref, setSliderElement);
   const valuesBeforeSlideStartRef = React.useRef(value ?? defaultValue);
 
   const contextValue = React.useMemo<SliderContextValue>(
@@ -732,7 +733,7 @@ function AngleSliderThumb(props: AngleSliderThumbProps) {
   const [thumbElement, setThumbElement] = React.useState<ThumbElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, setThumbElement);
+  const composedRef = useMergedRefs(ref, setThumbElement);
 
   const isFormControl = thumbElement
     ? context.form || !!thumbElement.closest("form")

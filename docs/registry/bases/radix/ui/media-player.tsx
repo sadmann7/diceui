@@ -1,5 +1,6 @@
 "use client";
 
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import {
   MediaActionTypes,
@@ -15,7 +16,6 @@ import {
   Slider as SliderPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
@@ -235,7 +235,7 @@ function MediaPlayerImpl(props: MediaPlayerProps) {
     null,
   );
   const fullscreenRef = useMediaFullscreenRef();
-  const composedRef = useComposedRefs<RootElement>(
+  const composedRef = useMergedRefs<RootElement>(
     ref,
     rootRef,
     fullscreenRef,
@@ -762,7 +762,7 @@ function MediaPlayerVideo(props: MediaPlayerVideoProps) {
   const dispatch = useMediaDispatch();
   const mediaRefCallback =
     useMediaRef() as React.RefCallback<HTMLVideoElement | null>;
-  const composedRef = useComposedRefs(
+  const composedRef = useMergedRefs(
     ref,
     context.mediaRef,
     mediaRefCallback,
@@ -812,7 +812,7 @@ function MediaPlayerAudio(props: MediaPlayerAudioProps) {
   const context = useMediaPlayerContext("MediaPlayerAudio");
   const mediaRefCallback =
     useMediaRef() as React.RefCallback<HTMLAudioElement | null>;
-  const composedRef = useComposedRefs(
+  const composedRef = useMergedRefs(
     ref,
     context.mediaRef,
     mediaRefCallback,

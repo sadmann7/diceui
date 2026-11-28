@@ -1,5 +1,7 @@
 "use client";
 
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
@@ -7,8 +9,6 @@ import {
 } from "radix-ui";
 import * as React from "react";
 
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "FileUpload";

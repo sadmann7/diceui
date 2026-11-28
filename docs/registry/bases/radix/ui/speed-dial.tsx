@@ -1,13 +1,14 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 
 const ROOT_NAME = "SpeedDial";
@@ -165,7 +166,7 @@ function SpeedDial(props: SpeedDialProps) {
   const contentId = React.useId();
 
   const rootRef = React.useRef<RootElement | null>(null);
-  const composedRefs = useComposedRefs(ref, rootRef);
+  const composedRefs = useMergedRefs(ref, rootRef);
 
   const triggerRef = React.useRef<TriggerElement | null>(null);
 
@@ -238,7 +239,7 @@ function SpeedDial(props: SpeedDialProps) {
     nodesRef.current.delete(id);
   }, []);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
@@ -339,10 +340,10 @@ function SpeedDialTrigger(props: React.ComponentProps<typeof Button>) {
   const instanceId = React.useId();
   const triggerId = id ?? instanceId;
 
-  const composedRef = useComposedRefs(ref, triggerRef);
+  const composedRef = useMergedRefs(ref, triggerRef);
   const hoverOpenTimerRef = React.useRef<number | null>(null);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     onNodeRegister({
       id: triggerId,
       ref: triggerRef,
@@ -543,7 +544,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
   } = useSpeedDialContext(CONTENT_NAME);
 
   const contentRef = React.useRef<ContentElement | null>(null);
-  const composedRef = useComposedRefs(ref, contentRef);
+  const composedRef = useMergedRefs(ref, contentRef);
 
   const propsRef = useValueAsRef({
     onMouseEnter: onMouseEnterProp,
@@ -652,7 +653,7 @@ function SpeedDialContent(props: SpeedDialContentProps) {
     });
   }, [triggerRef, open, side, offset]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!open) return;
     updatePosition();
   }, [open, updatePosition]);
@@ -959,9 +960,9 @@ function SpeedDialAction(props: SpeedDialActionProps) {
   const actionId = id ?? itemActionId;
 
   const actionRef = React.useRef<ActionElement | null>(null);
-  const composedRefs = useComposedRefs(ref, actionRef);
+  const composedRefs = useMergedRefs(ref, actionRef);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     onNodeRegister({
       id: actionId,
       ref: actionRef,

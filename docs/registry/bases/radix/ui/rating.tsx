@@ -1,16 +1,17 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 type Direction = "ltr" | "rtl";
@@ -276,7 +277,7 @@ function Rating(props: RatingProps) {
     return store;
   }, [listenersRef, stateRef, propsRef]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
@@ -287,7 +288,7 @@ function Rating(props: RatingProps) {
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const [tabStopId, setTabStopId] = React.useState<string | null>(null);
@@ -553,7 +554,7 @@ function RatingItem(props: RatingItemProps) {
   } = props;
 
   const itemRef = React.useRef<ItemElement>(null);
-  const composedRef = useComposedRefs(ref, itemRef);
+  const composedRef = useMergedRefs(ref, itemRef);
 
   const context = useRatingContext(ITEM_NAME);
 
@@ -599,7 +600,7 @@ function RatingItem(props: RatingItemProps) {
     onMouseLeave: onMouseLeaveProp,
   });
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     focusContext.onItemRegister({
       id: itemId,
       ref: itemRef,

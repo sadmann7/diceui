@@ -1,11 +1,10 @@
 "use client";
 
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
-
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
 
 const ROOT_NAME = "QRCode";
 const CANVAS_NAME = "QRCodeCanvas";
@@ -305,7 +304,7 @@ function QRCodeCanvas(props: QRCodeCanvasProps) {
   const context = useQRCodeContext(CANVAS_NAME);
   const generationKey = useStore((state) => state.generationKey);
 
-  const composedRef = useComposedRefs(ref, context.canvasRef);
+  const composedRef = useMergedRefs(ref, context.canvasRef);
 
   const CanvasPrimitive = asChild ? SlotPrimitive.Slot : "canvas";
 

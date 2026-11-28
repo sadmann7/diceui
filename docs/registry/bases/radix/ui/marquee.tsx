@@ -1,12 +1,12 @@
 "use client";
 
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 
 const ROOT_NAME = "Marquee";
@@ -304,7 +304,7 @@ function Marquee(props: MarqueeProps) {
 
   const rootRef = React.useRef<RootElement>(null);
   const contentRef = React.useRef<ContentElement>(null);
-  const composedRef = useComposedRefs(ref, rootRef);
+  const composedRef = useMergedRefs(ref, rootRef);
 
   const [paused, setPaused] = React.useState(false);
 
@@ -468,7 +468,7 @@ function MarqueeContent(props: DivProps) {
   } = props;
 
   const context = useMarqueeContext(CONTENT_NAME);
-  const composedRef = useComposedRefs(ref, context.contentRef);
+  const composedRef = useMergedRefs(ref, context.contentRef);
 
   const isVertical = context.orientation === "vertical";
   const isRtl = context.dir === "rtl";

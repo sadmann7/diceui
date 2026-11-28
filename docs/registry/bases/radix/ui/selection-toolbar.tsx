@@ -1,5 +1,9 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import {
   autoUpdate,
   flip,
@@ -14,12 +18,9 @@ import {
 } from "@floating-ui/react-dom";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 
 const ROOT_NAME = "SelectionToolbar";
@@ -208,7 +209,7 @@ function SelectionToolbar(props: SelectionToolbarProps) {
     };
   }, [listenersRef, stateRef, propsRef]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
@@ -608,7 +609,7 @@ function SelectionToolbarItem(props: SelectionToolbarItemProps) {
   });
 
   const itemRef = React.useRef<ItemElement>(null);
-  const composedRef = useComposedRefs(ref, itemRef);
+  const composedRef = useMergedRefs(ref, itemRef);
   const pointerTypeRef =
     React.useRef<React.PointerEvent["pointerType"]>("touch");
 

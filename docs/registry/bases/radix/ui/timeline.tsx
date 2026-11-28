@@ -1,15 +1,15 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
 import { cva } from "class-variance-authority";
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
-
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
 
 type Direction = "ltr" | "rtl";
 type Orientation = "vertical" | "horizontal";
@@ -324,7 +324,7 @@ function TimelineItem(props: DivProps) {
   const instanceId = React.useId();
   const itemId = id ?? instanceId;
   const itemRef = React.useRef<ItemElement | null>(null);
-  const composedRef = useComposedRefs(ref, itemRef);
+  const composedRef = useMergedRefs(ref, itemRef);
 
   const itemIndex = useStore((state) => state.getItemIndex(itemId));
 
@@ -332,7 +332,7 @@ function TimelineItem(props: DivProps) {
     return getItemStatus(itemIndex, activeIndex);
   }, [activeIndex, itemIndex]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.onItemRegister(itemId, itemRef);
     return () => {
       store.onItemUnregister(itemId);

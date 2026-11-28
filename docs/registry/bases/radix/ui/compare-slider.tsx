@@ -1,12 +1,13 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "CompareSlider";
@@ -144,7 +145,7 @@ function CompareSlider(props: CompareSliderProps) {
   }, [listenersRef, stateRef, onValueChangeRef]);
 
   const rootRef = React.useRef<RootElement | null>(null);
-  const composedRef = useComposedRefs(ref, rootRef);
+  const composedRef = useMergedRefs(ref, rootRef);
   const isDraggingRef = React.useRef(false);
 
   const propsRef = useValueAsRef({
@@ -159,7 +160,7 @@ function CompareSlider(props: CompareSliderProps) {
 
   const value = useStore((state) => state.value, store);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", clamp(valueProp, 0, 100));
     }

@@ -1,8 +1,8 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import {
@@ -217,7 +217,7 @@ function QueryBuilder({
   const value = valueProp ?? uncontrolledValue;
 
   const valueRef = React.useRef(value);
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     valueRef.current = value;
   });
 

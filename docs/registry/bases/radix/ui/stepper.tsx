@@ -1,15 +1,16 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
 const ROOT_NAME = "Stepper";
@@ -331,7 +332,7 @@ function Stepper(props: StepperProps) {
     return store;
   }, [listenersRef, stateRef, propsRef]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (value !== undefined) {
       store.setState("value", value);
     }
@@ -429,7 +430,7 @@ function StepperList(props: DivProps) {
   const isClickFocusRef = React.useRef(false);
   const itemsRef = React.useRef<Map<string, ItemData>>(new Map());
   const listRef = React.useRef<ListElement>(null);
-  const composedRef = useComposedRefs(ref, listRef);
+  const composedRef = useMergedRefs(ref, listRef);
 
   const onItemFocus = React.useCallback((tabStopId: string) => {
     setTabStopId(tabStopId);
@@ -626,7 +627,7 @@ function StepperItem(props: StepperItemProps) {
   const orientation = context.orientation;
   const value = useStore((state) => state.value);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.addStep(itemValue, completed, disabled);
 
     return () => {
@@ -634,7 +635,7 @@ function StepperItem(props: StepperItemProps) {
     };
   }, [itemValue, completed, disabled, store]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.setStep(itemValue, completed, disabled);
   }, [itemValue, completed, disabled, store]);
 
@@ -724,7 +725,7 @@ function StepperTrigger(props: ButtonProps) {
   const dataState = getDataState(value, itemValue, stepState, steps);
 
   const triggerRef = React.useRef<TriggerElement>(null);
-  const composedRef = useComposedRefs(ref, triggerRef);
+  const composedRef = useMergedRefs(ref, triggerRef);
   const isArrowKeyPressedRef = React.useRef(false);
   const isMouseClickRef = React.useRef(false);
 
@@ -745,7 +746,7 @@ function StepperTrigger(props: ButtonProps) {
     };
   }, []);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     focusContext.onItemRegister({
       id: triggerId,
       ref: triggerRef,

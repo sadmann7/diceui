@@ -1,13 +1,14 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import {
   Popover,
   PopoverAnchor,
@@ -400,13 +401,13 @@ function TimePicker(props: TimePickerProps) {
 
   const value = useStore((state) => state.value, store);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
   }, [valueProp, store]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (open !== undefined) {
       store.setState("open", open);
     }
@@ -589,7 +590,7 @@ function TimePickerInputGroup(props: DivProps) {
 
   const store = useStoreContext(INPUT_GROUP_NAME);
 
-  const composedRef = useComposedRefs(ref, inputGroupRef, onInputGroupChange);
+  const composedRef = useMergedRefs(ref, inputGroupRef, onInputGroupChange);
 
   const inputRefsMap = React.useRef<
     Map<Segment, React.RefObject<InputElement | null>>
@@ -785,9 +786,9 @@ function TimePickerInput(props: TimePickerInputProps) {
   const timeValue = parseTimeString(value);
 
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const composedRef = useComposedRefs(ref, inputRef);
+  const composedRef = useMergedRefs(ref, inputRef);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (segment) {
       inputGroupContext.onInputRegister(segment, inputRef);
       return () => inputGroupContext.onInputUnregister(segment);
@@ -1442,7 +1443,7 @@ function TimePickerTrigger(props: ButtonProps) {
 
   const isDisabled = disabledProp || disabled;
 
-  const composedRef = useComposedRefs(ref, triggerRef);
+  const composedRef = useMergedRefs(ref, triggerRef);
 
   return (
     <PopoverTrigger
@@ -1632,7 +1633,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
 
   const columnId = React.useId();
   const columnRef = React.useRef<ColumnElement | null>(null);
-  const composedRef = useComposedRefs(ref, columnRef);
+  const composedRef = useMergedRefs(ref, columnRef);
 
   const itemsRef = React.useRef<
     Map<
@@ -1677,7 +1678,7 @@ function TimePickerColumn(props: TimePickerColumnProps) {
     return items.find((item) => item.selected)?.ref ?? null;
   }, [getItems]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     groupContext.onColumnRegister({
       id: columnId,
       ref: columnRef,
@@ -1729,16 +1730,16 @@ function TimePickerColumnItem(props: TimePickerColumnItemProps) {
   } = props;
 
   const itemRef = React.useRef<ColumnItemElement | null>(null);
-  const composedRef = useComposedRefs(ref, itemRef);
+  const composedRef = useMergedRefs(ref, itemRef);
   const columnContext = useTimePickerColumnContext(COLUMN_ITEM_NAME);
   const groupContext = useTimePickerGroupContext(COLUMN_ITEM_NAME);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     columnContext.onItemRegister(value, itemRef, selected);
     return () => columnContext.onItemUnregister(value);
   }, [columnContext, value, selected]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (selected && itemRef.current) {
       itemRef.current.scrollIntoView({ block: "nearest" });
     }

@@ -1,12 +1,10 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { Command as CommandPrimitive } from "cmdk";
 import { cn } from "cn";
-import {
-  composeEventHandlers,
-  useComposedRefs,
-  useLayoutEffect,
-} from "radix-ui/internal";
+import { composeEventHandlers } from "radix-ui/internal";
 import * as React from "react";
 
 import {
@@ -300,7 +298,7 @@ function CommandStack({
     }),
   );
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.setController({
       isPagesControlled: pages !== undefined,
       isValueControlled: valueProp !== undefined,
@@ -314,7 +312,7 @@ function CommandStack({
     });
   });
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.sync({ pages, value: valueProp });
   }, [store, pages, valueProp]);
 
@@ -436,7 +434,7 @@ function CommandStackInput({
   );
   const label = props["aria-label"] ?? pagePlaceholder ?? placeholder;
   const inputRef = React.useRef<HTMLInputElement>(null);
-  const composedRef = useComposedRefs(ref, inputRef);
+  const composedRef = useMergedRefs(ref, inputRef);
 
   React.useEffect(() => {
     const input = inputRef.current;
@@ -465,7 +463,7 @@ function CommandStackInput({
     return () => observer.disconnect();
   }, []);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.setLabel(label);
     return () => store.setLabel(undefined);
   }, [store, label]);
@@ -594,9 +592,9 @@ function CommandStackList({
   const activePage = useCommandStackSelector(store, selectActivePage);
   const label = useCommandStackSelector(store, (state) => state.label);
   const listRef = React.useRef<HTMLDivElement>(null);
-  const composedRef = useComposedRefs(ref, listRef);
+  const composedRef = useMergedRefs(ref, listRef);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (listRef.current) listRef.current.scrollTop = 0;
   }, [activePage]);
 
@@ -693,7 +691,7 @@ function CommandStackGroup({
   ref,
   ...props
 }: React.ComponentProps<typeof CommandGroup>) {
-  const composedRef = useComposedRefs(ref, scrollHeadingWhenFocused);
+  const composedRef = useMergedRefs(ref, scrollHeadingWhenFocused);
 
   return (
     <CommandGroup
@@ -722,7 +720,7 @@ function CommandStackItem({
   ...props
 }: CommandStackItemProps) {
   const store = useCommandStackStore("CommandStackItem");
-  const composedRef = useComposedRefs(ref, scrollWhenFocused);
+  const composedRef = useMergedRefs(ref, scrollWhenFocused);
   const pageContext = React.useContext(CommandStackPageContext);
   const selectionMode = page ? undefined : pageContext?.selectionMode;
   const checked = useCommandStackSelector(store, (state) =>

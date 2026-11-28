@@ -1,12 +1,11 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
-
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 
 interface DivProps extends React.ComponentProps<"div"> {
   asChild?: boolean;
@@ -124,7 +123,7 @@ function Swap(props: SwapProps) {
 
   const swapped = useStore((state) => state.swapped, store);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (swappedProp !== undefined) {
       store.setState("swapped", swappedProp);
     }

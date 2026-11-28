@@ -1,8 +1,8 @@
 "use client";
 
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 
 interface GetBadgeLabel<T> {
@@ -52,7 +52,7 @@ function BadgeOverflow<T = string>(props: BadgeOverflowProps<T>) {
   );
 
   const rootRef = React.useRef<BadgeOverflowElement | null>(null);
-  const composedRef = useComposedRefs(ref, rootRef);
+  const composedRef = useMergedRefs(ref, rootRef);
   const measureRef = React.useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = React.useState(0);
   const [badgeGap, setBadgeGap] = React.useState(4);

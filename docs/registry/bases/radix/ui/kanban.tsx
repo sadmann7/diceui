@@ -1,5 +1,6 @@
 "use client";
 
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import {
   type Announcements,
   closestCenter,
@@ -43,7 +44,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
@@ -786,7 +786,7 @@ function KanbanColumn(props: KanbanColumnProps) {
     [setNodeRef],
   );
 
-  const composedRef = useComposedRefs(ref, onNodeRefChange);
+  const composedRef = useMergedRefs(ref, onNodeRefChange);
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {
@@ -876,7 +876,7 @@ function KanbanColumnHandle(props: KanbanColumnHandleProps) {
     [isDisabled, setActivatorNodeRef],
   );
 
-  const composedRef = useComposedRefs(ref, onActivatorNodeRef);
+  const composedRef = useMergedRefs(ref, onActivatorNodeRef);
 
   const HandlePrimitive = asChild ? SlotPrimitive.Slot : "button";
 
@@ -977,7 +977,7 @@ function KanbanItem(props: KanbanItemProps) {
     [setNodeRef],
   );
 
-  const composedRef = useComposedRefs(ref, onNodeRef);
+  const composedRef = useMergedRefs(ref, onNodeRef);
 
   const composedStyle = React.useMemo<React.CSSProperties>(() => {
     return {
@@ -1052,7 +1052,7 @@ function KanbanItemHandle(props: KanbanItemHandleProps) {
     [isDisabled, setActivatorNodeRef],
   );
 
-  const composedRef = useComposedRefs(ref, onActivatorNodeRef);
+  const composedRef = useMergedRefs(ref, onActivatorNodeRef);
 
   const HandlePrimitive = asChild ? SlotPrimitive.Slot : "button";
 

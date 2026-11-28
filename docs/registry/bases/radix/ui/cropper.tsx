@@ -1,13 +1,13 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
-
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 
 const ROOT_NAME = "Cropper";
 const ROOT_IMPL_NAME = "CropperImpl";
@@ -591,7 +591,7 @@ function Cropper(props: CropperProps) {
     };
   }, [listenersRef, stateRef, propsRef, aspectRatio]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const updates: Partial<StoreState> = {};
     let hasUpdates = false;
     let shouldRecompute = false;
@@ -730,7 +730,7 @@ function CropperImpl(props: CropperImplProps) {
     onTouchStart: onTouchStartProp,
   });
 
-  const composedRef = useComposedRefs(ref, context.rootRef);
+  const composedRef = useMergedRefs(ref, context.rootRef);
   const dragStartPositionRef = React.useRef<Point>({ x: 0, y: 0 });
   const dragStartCropRef = React.useRef<Point>({ x: 0, y: 0 });
   const contentPositionRef = React.useRef<Point>({ x: 0, y: 0 });
@@ -1477,7 +1477,7 @@ function CropperImage(props: CropperImageProps) {
   const rotation = useStore((state) => state.rotation);
 
   const imageRef = React.useRef<HTMLImageElement>(null);
-  const composedRef = useComposedRefs(ref, imageRef);
+  const composedRef = useMergedRefs(ref, imageRef);
 
   const getNaturalDimensions = React.useCallback(
     (image: HTMLImageElement) => ({
@@ -1603,7 +1603,7 @@ function CropperVideo(props: CropperVideoProps) {
   const rotation = useStore((state) => state.rotation);
 
   const videoRef = React.useRef<HTMLVideoElement>(null);
-  const composedRef = useComposedRefs(ref, videoRef);
+  const composedRef = useMergedRefs(ref, videoRef);
 
   const getNaturalDimensions = React.useCallback(
     (video: HTMLVideoElement) => ({

@@ -1,9 +1,9 @@
 "use client";
 
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs } from "radix-ui/internal";
 import * as React from "react";
 
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
@@ -75,7 +75,7 @@ function Scroller(props: ScrollerProps) {
   } = props;
 
   const containerRef = React.useRef<HTMLDivElement | null>(null);
-  const composedRef = useComposedRefs(ref, containerRef);
+  const composedRef = useMergedRefs(ref, containerRef);
   const [scrollVisibility, setScrollVisibility] =
     React.useState<ScrollVisibility>({
       up: false,

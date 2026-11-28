@@ -1,16 +1,17 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 
 const ROOT_NAME = "Editable";
 const LABEL_NAME = "EditableLabel";
@@ -174,7 +175,7 @@ function Editable(props: EditableProps) {
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const listenersRef = useRefWithInit(() => new Set<() => void>());
@@ -227,13 +228,13 @@ function Editable(props: EditableProps) {
 
   const value = useStore((state) => state.value, store);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
   }, [valueProp, store]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (editingProp !== undefined) {
       store.setState("editing", editingProp);
     }
@@ -515,7 +516,7 @@ function EditableInput(props: EditableInputProps) {
   const value = useStore((state) => state.value);
   const editing = useStore((state) => state.editing);
   const inputRef = React.useRef<InputElement>(null);
-  const composedRef = useComposedRefs(ref, inputRef);
+  const composedRef = useMergedRefs(ref, inputRef);
 
   const propsRef = useValueAsRef({
     onBlur: onBlurProp,
@@ -597,7 +598,7 @@ function EditableInput(props: EditableInputProps) {
     [value, context, propsRef, isDisabled, isReadOnly],
   );
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (!editing || isDisabled || isReadOnly || !inputRef.current) return;
 
     const frameId = window.requestAnimationFrame(() => {

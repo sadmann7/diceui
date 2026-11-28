@@ -1,13 +1,14 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 
 import { VisuallyHiddenInput } from "@/registry/bases/radix/components/visually-hidden-input";
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import {
   Command,
   CommandEmpty,
@@ -491,7 +492,7 @@ function PhoneInput(props: PhoneInputProps) {
   const [formTrigger, setFormTrigger] = React.useState<RootElement | null>(
     null,
   );
-  const composedRef = useComposedRefs(ref, (node) => setFormTrigger(node));
+  const composedRef = useMergedRefs(ref, (node) => setFormTrigger(node));
   const isFormControl = formTrigger ? !!formTrigger.closest("form") : true;
 
   const listenersRef = useRefWithInit(() => new Set<() => void>());
@@ -547,13 +548,13 @@ function PhoneInput(props: PhoneInputProps) {
   const value = useStore((state) => state.value, store);
   const country = useStore((state) => state.country, store);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
   }, [valueProp, store]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (countryProp !== undefined) {
       store.setState("country", countryProp);
     }
@@ -766,7 +767,7 @@ function PhoneInputField(props: React.ComponentProps<"input">) {
   const store = useStoreContext(FIELD_NAME);
   const value = useStore((state) => state.value);
 
-  const composedRef = useComposedRefs(ref, inputRef);
+  const composedRef = useMergedRefs(ref, inputRef);
 
   const onChangeRef = useValueAsRef(onChangeProp);
 

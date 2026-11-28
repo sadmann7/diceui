@@ -1,15 +1,15 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import { cn } from "cn";
 import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
-
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 
 const ROOT_NAME = "ScrollSpy";
 const NAV_NAME = "ScrollSpyNav";
@@ -218,7 +218,7 @@ function ScrollSpy(props: ScrollSpyProps) {
     [scrollContainer, offset, scrollBehavior, store],
   );
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const currentValue = value ?? defaultValue;
     if (currentValue === undefined) return;
 
@@ -232,7 +232,7 @@ function ScrollSpy(props: ScrollSpyProps) {
     // oxlint-disable-next-line react-hooks/exhaustive-deps -- defaultValue only seeds the initial value
   }, [value, onScrollToSection, store]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const sectionMap = sectionMapRef.current;
     if (sectionMap.size === 0) return;
 
@@ -425,9 +425,9 @@ function ScrollSpySection(props: ScrollSpySectionProps) {
   const { orientation, onSectionRegister, onSectionUnregister } =
     useScrollSpyContext(SECTION_NAME);
   const sectionRef = React.useRef<SectionElement>(null);
-  const composedRef = useComposedRefs(ref, sectionRef);
+  const composedRef = useMergedRefs(ref, sectionRef);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const element = sectionRef.current;
     if (!element || !value) return;
 

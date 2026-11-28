@@ -1,5 +1,9 @@
 "use client";
 
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
+import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useRefWithInit } from "@base-ui/utils/useRefWithInit";
+import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import {
   autoUpdate,
   flip,
@@ -17,12 +21,9 @@ import {
   Direction as DirectionPrimitive,
   Slot as SlotPrimitive,
 } from "radix-ui";
-import { useComposedRefs, useLayoutEffect } from "radix-ui/internal";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-import { useRefWithInit } from "@/registry/bases/radix/hooks/use-ref-with-init";
-import { useValueAsRef } from "@/registry/bases/radix/hooks/use-value-as-ref";
 import { Button } from "@/registry/bases/radix/ui/button";
 import { IconPlaceholder } from "@/registry/icons/icon-placeholder";
 
@@ -759,7 +760,7 @@ function Tour(props: TourProps) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [store, open, propsRef]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     const wasOpen = prevOpenRef.current;
 
     if (open && !wasOpen) {
@@ -796,13 +797,13 @@ function Tour(props: TourProps) {
     prevOpenRef.current = open;
   }, [open, portal, propsRef]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (openProp !== undefined) {
       store.setState("open", openProp);
     }
   }, [openProp, store]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     if (valueProp !== undefined) {
       store.setState("value", valueProp);
     }
@@ -941,7 +942,7 @@ function TourStep(props: TourStepProps) {
   };
   const stepOptionsRef = useValueAsRef(stepOptions);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.addStep(stepId, stepOptionsRef.current);
 
     return () => {
@@ -949,7 +950,7 @@ function TourStep(props: TourStepProps) {
     };
   }, [store, stepId, stepOptionsRef]);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     store.updateStep(stepId, stepOptions);
   });
 
@@ -1030,7 +1031,7 @@ function TourStep(props: TourStepProps) {
     },
   });
 
-  const composedRef = useComposedRefs(refs.setFloating, stepRef);
+  const composedRef = useMergedRefs(refs.setFloating, stepRef);
 
   const [placedSide, placedAlign] =
     getSideAndAlignFromPlacement(finalPlacement);
@@ -1355,7 +1356,7 @@ function TourPortal(props: TourPortalProps) {
 
   const [mounted, setMounted] = React.useState(false);
 
-  useLayoutEffect(() => {
+  useIsoLayoutEffect(() => {
     setMounted(true);
 
     const node = container ?? document.body;
@@ -1681,7 +1682,7 @@ function TourFooter(props: DivProps) {
   const hasDefaultFooter = React.useContext(DefaultFooterContext);
   const context = useTourContext(FOOTER_NAME);
 
-  const composedRef = useComposedRefs(
+  const composedRef = useMergedRefs(
     ref,
     hasDefaultFooter ? undefined : stepContext.onFooterChange,
   );
