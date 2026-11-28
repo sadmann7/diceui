@@ -8,6 +8,7 @@ import { mergeCleanups } from "@base-ui/utils/mergeCleanups";
 import { contains } from "@base-ui/utils/shadowDom";
 import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
+import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import {
@@ -197,6 +198,10 @@ function SelectionToolbar(props: SelectionToolbarProps) {
   );
 
   store.useControlledProp("openProp", openProp);
+
+  useIsoLayoutEffect(() => {
+    if (openProp === false) store.set("open", false);
+  }, [store, openProp]);
   store.useContextCallback("onOpenChange", onOpenChange);
   store.useContextCallback("onSelectionChange", onSelectionChange);
 

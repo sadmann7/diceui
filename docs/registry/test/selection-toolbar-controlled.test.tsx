@@ -67,6 +67,41 @@ describe.each([
       vi.restoreAllMocks();
     });
 
+    test("asks to open again after the parent closes it", async () => {
+      const onOpenChange = vi.fn();
+      vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) =>
+        setTimeout(() => callback(performance.now()), 0),
+      );
+      let top = 10;
+      Range.prototype.getBoundingClientRect = () =>
+        DOMRect.fromRect({ x: 0, y: top, width: 40, height: 16 });
+      function getToolbar(open: boolean) {
+        return (
+          <>
+            <p>Some selectable text</p>
+            <SelectionToolbar open={open} onOpenChange={onOpenChange}>
+              <SelectionToolbarItem aria-label="Bold">B</SelectionToolbarItem>
+            </SelectionToolbar>
+          </>
+        );
+      }
+      const { rerender } = render(getToolbar(false));
+      window
+        .getSelection()
+        ?.selectAllChildren(screen.getByText("Some selectable text"));
+
+      fireEvent.mouseUp(document);
+      await act(() => new Promise((resolve) => setTimeout(resolve, 20)));
+      rerender(getToolbar(true));
+      rerender(getToolbar(false));
+      top = 20;
+      fireEvent.mouseUp(document);
+      await act(() => new Promise((resolve) => setTimeout(resolve, 20)));
+
+      expect(onOpenChange.mock.calls).toEqual([[true], [true]]);
+      vi.unstubAllGlobals();
+    });
+
     test("doesn't call onOpenChange when the open prop changes", () => {
       const { onOpenChange, rerender } = renderToolbar(false);
 
