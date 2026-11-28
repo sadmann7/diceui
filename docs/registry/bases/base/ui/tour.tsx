@@ -3,9 +3,16 @@
 import { useDirection } from "@base-ui/react/direction-provider";
 import { mergeProps } from "@base-ui/react/merge-props";
 import { useRender } from "@base-ui/react/use-render";
-import { ReactStore, useStore } from "@base-ui/utils/store";
+import { addEventListener } from "@base-ui/utils/addEventListener";
+import { mergeCleanups } from "@base-ui/utils/mergeCleanups";
+import { ownerDocument } from "@base-ui/utils/owner";
+import { contains } from "@base-ui/utils/shadowDom";
+import { ReactStore } from "@base-ui/utils/store";
+import { useAnimationFrame } from "@base-ui/utils/useAnimationFrame";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
+import { useScrollLock } from "@base-ui/utils/useScrollLock";
+import { useTimeout } from "@base-ui/utils/useTimeout";
 import { useValueAsRef } from "@base-ui/utils/useValueAsRef";
 import {
   autoUpdate,
@@ -307,28 +314,28 @@ interface StepData {
 
 interface StoreState {
   open: boolean;
+  openProp: boolean | undefined;
   value: number;
+  valueProp: number | undefined;
   steps: StepData[];
   stepIds: string[];
   maskPath: string;
   spotlightRect: { x: number; y: number; width: number; height: number } | null;
+  autoScroll: boolean;
+  scrollBehavior: ScrollBehavior;
+  scrollOffset: ScrollOffset | undefined;
 }
 
 interface StoreController {
-  isOpenControlled: boolean;
-  isValueControlled: boolean;
   onOpenChange?: (open: boolean) => void;
   onValueChange?: (value: number) => void;
   onComplete?: () => void;
   onSkip?: () => void;
-  autoScroll: boolean;
-  scrollBehavior: ScrollBehavior;
-  scrollOffset?: ScrollOffset;
 }
 
 const selectors = {
-  open: (state: StoreState) => state.open,
-  value: (state: StoreState) => state.value,
+  open: (state: StoreState) => state.openProp ?? state.open,
+  value: (state: StoreState) => state.valueProp ?? state.value,
   steps: (state: StoreState) => state.steps,
   maskPath: (state: StoreState) => state.maskPath,
   spotlightRect: (state: StoreState) => state.spotlightRect,
@@ -339,38 +346,41 @@ type Store = ReactStore<StoreState, StoreController, typeof selectors>;
 
 function setOpen(store: Store, open: boolean) {
   const { state, context } = store;
-  if (Object.is(state.open, open)) return;
+  if (store.select("open") === open) return;
 
   context.onOpenChange?.(open);
-  if (!open && state.value < state.steps.length - 1) context.onSkip?.();
-  if (!context.isOpenControlled) store.set("open", open);
+  if (!open && store.select("value") < state.steps.length - 1) {
+    context.onSkip?.();
+  }
+  store.set("open", open);
 }
 
 function setValue(store: Store, value: number) {
   const { state, context } = store;
-  if (Object.is(state.value, value)) return;
+  if (store.select("value") === value) return;
+
+  const isValueControlled = state.valueProp !== undefined;
 
   if (value >= state.steps.length) {
     context.onComplete?.();
-    if (context.isValueControlled) context.onValueChange?.(value);
+    if (isValueControlled) context.onValueChange?.(value);
     else store.set("value", value);
     setOpen(store, false);
     return;
   }
 
   context.onValueChange?.(value);
-  if (context.isValueControlled) return;
-
   store.set("value", value);
+  if (isValueControlled) return;
 
   const nextStep = state.steps[value];
-  if (nextStep && context.autoScroll) {
+  if (nextStep && state.autoScroll) {
     const targetElement = getTargetElement(nextStep.target);
     if (targetElement) {
       onScrollToElement(
         targetElement,
-        context.scrollBehavior,
-        context.scrollOffset,
+        state.scrollBehavior,
+        state.scrollOffset,
       );
     }
   }
@@ -578,26 +588,6 @@ function usePortalContext(consumerName: string) {
   return context;
 }
 
-function useScrollLock(enabled: boolean) {
-  React.useEffect(() => {
-    if (!enabled) return;
-
-    const originalStyle = window.getComputedStyle(document.body).overflow;
-    const scrollbarWidth =
-      window.innerWidth - document.documentElement.clientWidth;
-
-    document.body.style.overflow = "hidden";
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-    }
-
-    return () => {
-      document.body.style.overflow = originalStyle;
-      document.body.style.paddingRight = "";
-    };
-  }, [enabled]);
-}
-
 type PointerDownOutsideEvent = CustomEvent<{ originalEvent: PointerEvent }>;
 type InteractOutsideEvent = CustomEvent<{
   originalEvent: PointerEvent | FocusEvent;
@@ -671,57 +661,38 @@ function Tour(props: TourProps) {
     () =>
       new ReactStore<StoreState, StoreController, typeof selectors>(
         {
-          open: openProp ?? defaultOpen,
-          value: valueProp ?? defaultValue,
+          open: defaultOpen,
+          openProp,
+          value: defaultValue,
+          valueProp,
           steps: [],
           stepIds: [],
           maskPath: "",
           spotlightRect: null,
-        },
-        {
-          isOpenControlled: openProp !== undefined,
-          isValueControlled: valueProp !== undefined,
-          onOpenChange,
-          onValueChange,
-          onComplete,
-          onSkip,
           autoScroll,
           scrollBehavior,
           scrollOffset,
         },
+        {},
         selectors,
       ),
   );
 
-  useIsoLayoutEffect(() => {
-    Object.assign(store.context, {
-      isOpenControlled: openProp !== undefined,
-      isValueControlled: valueProp !== undefined,
-      onOpenChange,
-      onValueChange,
-      onComplete,
-      onSkip,
-      autoScroll,
-      scrollBehavior,
-      scrollOffset,
-    } satisfies StoreController);
-  });
-
-  useIsoLayoutEffect(() => {
-    if (openProp !== undefined) store.set("open", openProp);
-  }, [store, openProp]);
-
-  useIsoLayoutEffect(() => {
-    if (valueProp !== undefined) store.set("value", valueProp);
-  }, [store, valueProp]);
+  store.useControlledProp("openProp", openProp);
+  store.useControlledProp("valueProp", valueProp);
+  store.useContextCallback("onOpenChange", onOpenChange);
+  store.useContextCallback("onValueChange", onValueChange);
+  store.useContextCallback("onComplete", onComplete);
+  store.useContextCallback("onSkip", onSkip);
+  store.useSyncedValues({ autoScroll, scrollBehavior, scrollOffset });
 
   const propsRef = useValueAsRef({
     onEscapeKeyDown,
     onCloseAutoFocus,
   });
 
-  const open = useStore(store, selectors.open);
-  const value = useStore(store, selectors.value);
+  const open = store.useState("open");
+  const value = store.useState("value");
 
   const prevValueRef = React.useRef(value);
 
@@ -738,8 +709,10 @@ function Tour(props: TourProps) {
   useIsoLayoutEffect(() => {
     if (!open) return;
 
-    const { steps, value } = store.state;
-    if (steps.length > 0 && value >= steps.length) setValue(store, 0);
+    const { steps } = store.state;
+    if (steps.length > 0 && store.select("value") >= steps.length) {
+      setValue(store, 0);
+    }
   }, [store, open]);
 
   React.useEffect(() => {
@@ -753,8 +726,7 @@ function Tour(props: TourProps) {
       }
     }
 
-    document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    return addEventListener(document, "keydown", onKeyDown);
   }, [store, open, propsRef]);
 
   useIsoLayoutEffect(() => {
@@ -908,9 +880,9 @@ function TourStep(props: TourStepProps) {
   const isPointerInsideReactTreeRef = React.useRef(false);
   const isFocusInsideReactTreeRef = React.useRef(false);
 
-  const open = useStore(store, selectors.open);
-  const value = useStore(store, selectors.value);
-  const steps = useStore(store, selectors.steps);
+  const open = store.useState("open");
+  const value = store.useState("value");
+  const steps = store.useState("steps");
   const context = useTourContext(STEP_NAME);
 
   const resolvedSideOffset = sideOffset ?? context.sideOffset;
@@ -949,7 +921,9 @@ function TourStep(props: TourStepProps) {
   const stepData = steps[value];
   const targetElement = stepData ? getTargetElement(stepData.target) : null;
 
-  const stepIndex = useStore(store, selectors.stepIndex, stepId);
+  const stepIndex = store.useState("stepIndex", stepId);
+  const scrollFrame = useAnimationFrame();
+  const pointerDownTimeout = useTimeout();
   const isCurrentStep = stepIndex === value;
 
   const middleware = React.useMemo(() => {
@@ -1050,8 +1024,6 @@ function TourStep(props: TourStepProps) {
     if (open && targetElement && isCurrentStep) {
       updateMask(store, targetElement, context.spotlightPadding);
 
-      let rafId: number | null = null;
-
       function onResize() {
         if (targetElement) {
           updateMask(store, targetElement, context.spotlightPadding);
@@ -1059,26 +1031,28 @@ function TourStep(props: TourStepProps) {
       }
 
       function onScroll() {
-        if (rafId !== null) return;
-        rafId = requestAnimationFrame(() => {
+        if (scrollFrame.currentId !== null) return;
+        scrollFrame.request(() => {
           if (targetElement) {
             updateMask(store, targetElement, context.spotlightPadding);
           }
-          rafId = null;
         });
       }
 
-      window.addEventListener("resize", onResize);
-      window.addEventListener("scroll", onScroll, { passive: true });
-      return () => {
-        window.removeEventListener("resize", onResize);
-        window.removeEventListener("scroll", onScroll);
-        if (rafId !== null) {
-          cancelAnimationFrame(rafId);
-        }
-      };
+      return mergeCleanups(
+        addEventListener(window, "resize", onResize),
+        addEventListener(window, "scroll", onScroll, { passive: true }),
+        scrollFrame.cancel,
+      );
     }
-  }, [open, targetElement, isCurrentStep, store, context.spotlightPadding]);
+  }, [
+    open,
+    targetElement,
+    isCurrentStep,
+    store,
+    context.spotlightPadding,
+    scrollFrame,
+  ]);
 
   React.useEffect(() => {
     if (!open || !isCurrentStep) return;
@@ -1086,7 +1060,7 @@ function TourStep(props: TourStepProps) {
     const stepElement = stepRef.current;
     if (!stepElement) return;
 
-    const ownerDocument = stepElement.ownerDocument;
+    const doc = ownerDocument(stepElement);
 
     function onPointerDown(event: PointerEvent) {
       if (event.target && !isPointerInsideReactTreeRef.current) {
@@ -1115,15 +1089,15 @@ function TourStep(props: TourStepProps) {
       isPointerInsideReactTreeRef.current = false;
     }
 
-    const timerId = window.setTimeout(() => {
-      ownerDocument.addEventListener("pointerdown", onPointerDown);
-    }, 0);
+    pointerDownTimeout.start(0, () => {
+      doc.addEventListener("pointerdown", onPointerDown);
+    });
 
     return () => {
-      window.clearTimeout(timerId);
-      ownerDocument.removeEventListener("pointerdown", onPointerDown);
+      pointerDownTimeout.clear();
+      doc.removeEventListener("pointerdown", onPointerDown);
     };
-  }, [open, isCurrentStep, store, context]);
+  }, [open, isCurrentStep, store, context, pointerDownTimeout]);
 
   React.useEffect(() => {
     if (!open || !isCurrentStep) return;
@@ -1131,13 +1105,13 @@ function TourStep(props: TourStepProps) {
     const stepElement = stepRef.current;
     if (!stepElement) return;
 
-    const ownerDocument = stepElement.ownerDocument;
+    const doc = ownerDocument(stepElement);
 
     function onFocusIn(event: FocusEvent) {
       const target = event.target as HTMLElement;
 
-      const isFocusInStep = stepElement?.contains(target);
-      const isFocusInTarget = targetElement?.contains(target);
+      const isFocusInStep = contains(stepElement, target);
+      const isFocusInTarget = contains(targetElement, target);
 
       if (
         event.target &&
@@ -1158,10 +1132,10 @@ function TourStep(props: TourStepProps) {
       }
     }
 
-    ownerDocument.addEventListener("focusin", onFocusIn);
+    doc.addEventListener("focusin", onFocusIn);
 
     return () => {
-      ownerDocument.removeEventListener("focusin", onFocusIn);
+      doc.removeEventListener("focusin", onFocusIn);
     };
   }, [open, isCurrentStep, store, context, targetElement]);
 
@@ -1302,8 +1276,8 @@ function TourSpotlight(props: TourSpotlightProps) {
   } = props;
 
   const store = useStoreContext(SPOTLIGHT_NAME);
-  const open = useStore(store, selectors.open);
-  const maskPath = useStore(store, selectors.maskPath);
+  const open = store.useState("open");
+  const maskPath = store.useState("maskPath");
 
   const element = useRender({
     defaultTagName: "div",
@@ -1337,8 +1311,8 @@ function TourSpotlightRing(props: TourSpotlightRingProps) {
   const { render, className, style, forceMount = false, ...ringProps } = props;
 
   const store = useStoreContext(SPOTLIGHT_RING_NAME);
-  const open = useStore(store, selectors.open);
-  const spotlightRect = useStore(store, selectors.spotlightRect);
+  const open = store.useState("open");
+  const spotlightRect = store.useState("spotlightRect");
 
   const element = useRender({
     defaultTagName: "div",
@@ -1583,7 +1557,7 @@ function TourPrev(props: TourPrevProps) {
   const { children, onClick: onClickProp, ...prevButtonProps } = props;
 
   const store = useStoreContext(PREV_NAME);
-  const value = useStore(store, selectors.value);
+  const value = store.useState("value");
 
   const onClick = React.useCallback(
     (event: React.MouseEvent<PrevElement>) => {
@@ -1633,8 +1607,8 @@ interface TourNextProps extends Omit<
 function TourNext(props: TourNextProps) {
   const { children, onClick: onClickProp, ...nextButtonProps } = props;
   const store = useStoreContext(NEXT_NAME);
-  const value = useStore(store, selectors.value);
-  const steps = useStore(store, selectors.steps);
+  const value = store.useState("value");
+  const steps = store.useState("steps");
 
   const isLastStep = value === steps.length - 1;
 
@@ -1724,8 +1698,8 @@ function TourStepCounter(props: TourStepCounterProps) {
   } = props;
 
   const store = useStoreContext(STEP_COUNTER_NAME);
-  const value = useStore(store, selectors.value);
-  const steps = useStore(store, selectors.steps);
+  const value = store.useState("value");
+  const steps = store.useState("steps");
 
   return useRender({
     defaultTagName: "div",
