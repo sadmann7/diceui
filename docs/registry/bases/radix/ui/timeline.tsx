@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactStore, useStore } from "@base-ui/utils/store";
+import { ReactStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
 import { cva } from "class-variance-authority";
@@ -299,7 +299,7 @@ function TimelineItem(props: TimelineItemProps) {
   const itemRef = React.useRef<ItemElement | null>(null);
   const composedRef = useMergedRefs(ref, itemRef);
 
-  const itemIndex = useStore(store, selectors.itemIndex, itemId);
+  const itemIndex = store.useState("itemIndex", itemId);
 
   const status = React.useMemo<Status>(() => {
     return getItemStatus(itemIndex, activeIndex);
@@ -578,12 +578,7 @@ function TimelineConnector(props: TimelineConnectorProps) {
     useTimelineItemContext(CONNECTOR_NAME);
 
   const store = useStoreContext(CONNECTOR_NAME);
-  const nextItemStatus = useStore(
-    store,
-    selectors.nextItemStatus,
-    id,
-    activeIndex,
-  );
+  const nextItemStatus = store.useState("nextItemStatus", id, activeIndex);
 
   const isLastItem = nextItemStatus === undefined;
 

@@ -1,5 +1,7 @@
 "use client";
 
+import { useIsHydrated } from "@base-ui/utils/hydration";
+import { useInterval } from "@base-ui/utils/useInterval";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "cn";
 import { Slot as SlotPrimitive } from "radix-ui";
@@ -10,18 +12,6 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/registry/bases/radix/ui/hover-card";
-
-function subscribe() {
-  return () => {};
-}
-
-function getSnapshot() {
-  return true;
-}
-
-function getServerSnapshot() {
-  return false;
-}
 
 function pluralize(n: number, word: string) {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -187,20 +177,17 @@ function RelativeTimeCard(props: RelativeTimeCardProps) {
     [],
   );
 
-  const mounted = React.useSyncExternalStore(
-    subscribe,
-    getSnapshot,
-    getServerSnapshot,
-  );
+  const mounted = useIsHydrated();
   const [now, setNow] = React.useState(() => Date.now());
+  const interval = useInterval();
 
   React.useEffect(() => {
-    const timer = setInterval(() => {
+    interval.start(updateInterval, () => {
       setNow(Date.now());
-    }, updateInterval);
+    });
 
-    return () => clearInterval(timer);
-  }, [updateInterval]);
+    return interval.clear;
+  }, [updateInterval, interval]);
 
   const formattedTime = mounted
     ? formatRelativeTime(date, now)

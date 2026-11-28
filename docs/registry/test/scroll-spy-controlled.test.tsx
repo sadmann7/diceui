@@ -83,5 +83,25 @@ describe.each([
         "active",
       );
     });
+
+    test("scrolls once when the parent accepts a link click", () => {
+      vi.mocked(window.scrollTo).mockClear();
+      const { onValueChange, rerender } = renderScrollSpy("one");
+
+      fireEvent.click(screen.getByRole("link", { name: "Two" }));
+      rerender(onValueChange.mock.calls[0]?.[0]);
+
+      expect(window.scrollTo).toHaveBeenCalledTimes(1);
+    });
+
+    test("scrolls each time the parent moves the value", () => {
+      vi.mocked(window.scrollTo).mockClear();
+      const { rerender } = renderScrollSpy("one");
+
+      rerender("two");
+      rerender("one");
+
+      expect(window.scrollTo).toHaveBeenCalledTimes(2);
+    });
   },
 );

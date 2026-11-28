@@ -1,5 +1,9 @@
 "use client";
 
+import { addEventListener } from "@base-ui/utils/addEventListener";
+import { mergeCleanups } from "@base-ui/utils/mergeCleanups";
+import { ownerDocument } from "@base-ui/utils/owner";
+import { activeElement } from "@base-ui/utils/shadowDom";
 import { ReactStore, useStore } from "@base-ui/utils/store";
 import { useIsoLayoutEffect } from "@base-ui/utils/useIsoLayoutEffect";
 import { useMergedRefs } from "@base-ui/utils/useMergedRefs";
@@ -92,13 +96,14 @@ function focusFirst(
   candidates: React.RefObject<TriggerElement | null>[],
   preventScroll = false,
 ) {
-  const PREVIOUSLY_FOCUSED_ELEMENT = document.activeElement;
+  const doc = ownerDocument(candidates[0]?.current ?? null);
+  const PREVIOUSLY_FOCUSED_ELEMENT = activeElement(doc);
   for (const candidateRef of candidates) {
     const candidate = candidateRef.current;
     if (!candidate) continue;
     if (candidate === PREVIOUSLY_FOCUSED_ELEMENT) return;
     candidate.focus({ preventScroll });
-    if (document.activeElement !== PREVIOUSLY_FOCUSED_ELEMENT) return;
+    if (activeElement(doc) !== PREVIOUSLY_FOCUSED_ELEMENT) return;
   }
 }
 
@@ -142,10 +147,16 @@ interface StepState {
 interface StoreState {
   steps: Map<string, StepState>;
   value: string;
+  valueProp: string | undefined;
+  hasValidate: boolean;
+}
+
+interface StepperState {
+  steps: Map<string, StepState>;
+  value: string;
 }
 
 interface StoreController {
-  isValueControlled: boolean;
   onValueChange?: (value: string) => void;
   onValueComplete?: (value: string, completed: boolean) => void;
   onValueAdd?: (value: string) => void;
@@ -157,17 +168,28 @@ interface StoreController {
 }
 
 const selectors = {
-  value: (state: StoreState) => state.value,
+  value: (state: StoreState) => state.valueProp ?? state.value,
   steps: (state: StoreState) => state.steps,
   step: (state: StoreState, value: string) => state.steps.get(value),
 };
 
 type Store = ReactStore<StoreState, StoreController, typeof selectors>;
 
+const stepperStateCache = new WeakMap<StoreState, StepperState>();
+
+function getStepperState(state: StoreState) {
+  let stepperState = stepperStateCache.get(state);
+  if (!stepperState) {
+    stepperState = { steps: state.steps, value: selectors.value(state) };
+    stepperStateCache.set(state, stepperState);
+  }
+  return stepperState;
+}
+
 function setValue(store: Store, value: string) {
-  if (Object.is(store.state.value, value)) return;
+  if (Object.is(store.select("value"), value)) return;
   store.context.onValueChange?.(value);
-  if (!store.context.isValueControlled) store.set("value", value);
+  store.set("value", value);
 }
 
 async function setValueWithValidation(
@@ -175,14 +197,13 @@ async function setValueWithValidation(
   value: string,
   direction: NavigationDirection,
 ) {
-  const { onValidate } = store.context;
-  if (!onValidate) {
+  if (!store.state.hasValidate) {
     setValue(store, value);
     return true;
   }
 
   try {
-    const isValid = await onValidate(value, direction);
+    const isValid = await store.context.onValidate?.(value, direction);
     if (isValid) setValue(store, value);
     return isValid;
   } catch {
@@ -238,9 +259,11 @@ function useStoreContext(consumerName: string) {
   return context;
 }
 
-function useStepper<T>(selector: (state: StoreState) => T): T {
+function useStepper<T>(selector: (state: StepperState) => T): T {
   const store = useStoreContext("useStepper");
-  return useStore(store, selector);
+  return useStore(store, (state: StoreState) =>
+    selector(getStepperState(state)),
+  );
 }
 
 interface ItemData {
@@ -314,9 +337,13 @@ function Stepper(props: StepperProps) {
   const [store] = React.useState<Store>(
     () =>
       new ReactStore<StoreState, StoreController, typeof selectors>(
-        { steps: new Map(), value: value ?? defaultValue ?? "" },
         {
-          isValueControlled: value !== undefined,
+          steps: new Map(),
+          value: value ?? defaultValue ?? "",
+          valueProp: value,
+          hasValidate: onValidate !== undefined,
+        },
+        {
           onValueChange,
           onValueComplete,
           onValueAdd,
@@ -327,20 +354,13 @@ function Stepper(props: StepperProps) {
       ),
   );
 
-  useIsoLayoutEffect(() => {
-    Object.assign(store.context, {
-      isValueControlled: value !== undefined,
-      onValueChange,
-      onValueComplete,
-      onValueAdd,
-      onValueRemove,
-      onValidate,
-    } satisfies StoreController);
-  });
-
-  useIsoLayoutEffect(() => {
-    if (value !== undefined) store.set("value", value);
-  }, [store, value]);
+  store.useControlledProp("valueProp", value);
+  store.useSyncedValues({ hasValidate: onValidate !== undefined });
+  store.useContextCallback("onValueChange", onValueChange);
+  store.useContextCallback("onValueComplete", onValueComplete);
+  store.useContextCallback("onValueAdd", onValueAdd);
+  store.useContextCallback("onValueRemove", onValueRemove);
+  store.useContextCallback("onValidate", onValidate);
 
   const dir = DirectionPrimitive.useDirection(dirProp);
 
@@ -421,7 +441,7 @@ function StepperList(props: DivProps) {
   const context = useStepperContext(LIST_NAME);
   const store = useStoreContext(LIST_NAME);
   const orientation = context.orientation;
-  const currentValue = useStore(store, selectors.value);
+  const currentValue = store.useState("value");
 
   const propsRef = useValueAsRef({
     onBlur: onBlurProp,
@@ -630,7 +650,7 @@ function StepperItem(props: StepperItemProps) {
   const context = useStepperContext(ITEM_NAME);
   const store = useStoreContext(ITEM_NAME);
   const orientation = context.orientation;
-  const value = useStore(store, selectors.value);
+  const value = store.useState("value");
 
   useIsoLayoutEffect(() => {
     addStep(store, itemValue, completed, disabled);
@@ -644,8 +664,8 @@ function StepperItem(props: StepperItemProps) {
     setStep(store, itemValue, completed, disabled);
   }, [itemValue, completed, disabled, store]);
 
-  const stepState = useStore(store, selectors.step, itemValue);
-  const steps = useStore(store, selectors.steps);
+  const stepState = store.useState("step", itemValue);
+  const steps = store.useState("steps");
   const dataState = getDataState(value, itemValue, stepState, steps);
 
   const itemContextValue = React.useMemo<StepperItemContextValue>(
@@ -699,9 +719,9 @@ function StepperTrigger(props: ButtonProps) {
 
   const store = useStoreContext(TRIGGER_NAME);
   const focusContext = useFocusContext(TRIGGER_NAME);
-  const value = useStore(store, selectors.value);
-  const steps = useStore(store, selectors.steps);
-  const stepState = useStore(store, selectors.step, itemValue);
+  const value = store.useState("value");
+  const steps = store.useState("steps");
+  const stepState = store.useState("step", itemValue);
 
   const propsRef = useValueAsRef({
     onClick: onClickProp,
@@ -743,12 +763,11 @@ function StepperTrigger(props: ButtonProps) {
     function onKeyUp() {
       isArrowKeyPressedRef.current = false;
     }
-    document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("keyup", onKeyUp);
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.removeEventListener("keyup", onKeyUp);
-    };
+    const doc = ownerDocument(triggerRef.current);
+    return mergeCleanups(
+      addEventListener(doc, "keydown", onKeyDown),
+      addEventListener(doc, "keyup", onKeyUp),
+    );
   }, []);
 
   useIsoLayoutEffect(() => {
@@ -995,10 +1014,10 @@ function StepperIndicator(props: StepperIndicatorProps) {
   const itemContext = useStepperItemContext(INDICATOR_NAME);
   const store = useStoreContext(INDICATOR_NAME);
 
-  const value = useStore(store, selectors.value);
+  const value = store.useState("value");
   const itemValue = itemContext.value;
-  const stepState = useStore(store, selectors.step, itemValue);
-  const steps = useStore(store, selectors.steps);
+  const stepState = store.useState("step", itemValue);
+  const steps = store.useState("steps");
 
   const stepPosition = Array.from(steps.keys()).indexOf(itemValue) + 1;
 
@@ -1051,8 +1070,8 @@ function StepperSeparator(props: StepperSeparatorProps) {
   const context = useStepperContext(SEPARATOR_NAME);
   const itemContext = useStepperItemContext(SEPARATOR_NAME);
   const store = useStoreContext(SEPARATOR_NAME);
-  const value = useStore(store, selectors.value);
-  const steps = useStore(store, selectors.steps);
+  const value = store.useState("value");
+  const steps = store.useState("steps");
 
   const orientation = context.orientation;
 
@@ -1161,7 +1180,7 @@ function StepperContent(props: StepperContentProps) {
 
   const context = useStepperContext(CONTENT_NAME);
   const store = useStoreContext(CONTENT_NAME);
-  const value = useStore(store, selectors.value);
+  const value = store.useState("value");
 
   const contentId = getId(context.rootId, "content", valueProp);
   const triggerId = getId(context.rootId, "trigger", valueProp);
@@ -1188,8 +1207,8 @@ function StepperPrev(props: ButtonProps) {
   const { asChild, onClick: onClickProp, disabled, ...prevProps } = props;
 
   const store = useStoreContext(PREV_NAME);
-  const value = useStore(store, selectors.value);
-  const steps = useStore(store, selectors.steps);
+  const value = store.useState("value");
+  const steps = store.useState("steps");
 
   const propsRef = useValueAsRef({
     onClick: onClickProp,
@@ -1231,8 +1250,8 @@ function StepperNext(props: ButtonProps) {
   const { asChild, onClick: onClickProp, disabled, ...nextProps } = props;
 
   const store = useStoreContext(NEXT_NAME);
-  const value = useStore(store, selectors.value);
-  const steps = useStore(store, selectors.steps);
+  const value = store.useState("value");
+  const steps = store.useState("steps");
 
   const propsRef = useValueAsRef({
     onClick: onClickProp,
