@@ -1,0 +1,86 @@
+---
+title: November 2026 - Data Table Announcements
+description: Data Table reads its result count to screen readers, and Data Grid announces sorting, row selection and cell edits. Includes breaking changes.
+date: 2026-11-28T12:00:00Z
+---
+
+Filtering a [Data Table](/docs/components/data-table), or sorting, selecting and editing in a [Data Grid](/docs/components/data-grid), changes what's on screen without moving focus. Screen reader users now hear what changed. This release has breaking changes for installed grids, the pager's status, and tests.
+
+## Breaking changes
+
+- **The grid needs a new file.** `use-data-grid.ts` imports `lib/data-grid-announcer.ts`. Reinstall the Data Grid to get it.
+
+  ```bash
+  npx shadcn@latest add "@diceui/data-grid"
+  ```
+
+- **The menus need the latest Sortable.** The sort and filter menus of both components pass `getItemLabel` to `Sortable`. Let the reinstall overwrite `ui/sortable.tsx`, or reinstall it.
+
+  ```bash
+  npx shadcn@latest add "@diceui/sortable"
+  ```
+
+- **The grid announces by default.** It speaks through a live region on `document.body`. Return an empty string from a message to silence it.
+
+  ```tsx
+  useDataGrid({
+    data,
+    columns,
+    messages: { sorted: () => "" }, // [!code ++]
+  });
+  ```
+
+  In tests, remove the live region after each test.
+
+  ```ts
+  import { destroyAnnouncer } from "@/lib/data-grid-announcer"; // [!code ++]
+
+  afterEach(() => {
+    cleanup();
+    destroyAnnouncer(); // [!code ++]
+  });
+  ```
+
+- **The pager's page text is no longer a status.** `DataTablePagination`'s "Page 2 of 5" lost its `role="status"`, so a filter isn't announced twice, and `DataTable` renders a visually hidden status with the result count. Tests that read the page from a status should read the result status.
+
+  ```ts
+  const status = screen.getByText("Page 2 of 5", { selector: "[role=status]" }); // [!code --]
+  const status = await screen.findByText("42 results, page 2 of 5", { // [!code ++]
+    selector: "[role=status]", // [!code ++]
+  }); // [!code ++]
+  ```
+
+  The pager keeps its status for the selection count, so a table renders two statuses, and the result status updates 500ms after the table settles.
+
+## Data Table
+
+- **Result count.** The table reads its result count once it has stayed the same for 500ms, with the page when there's more than one: "42 results", "42 results, page 2 of 5", "1 result" or "No results". A server table without `rowCount` reads "Page 2 of 5", or "Page 2" without a page count. Typing a search is announced once, and paging still is.
+- **Sort and filter menu drags.** Dragging a sort or filter announces the column label instead of its id, once per position, and <Kbd>Escape</Kbd> cancels the drag without closing the menu.
+
+## Data Grid
+
+- **Announcements.** The grid announces sorting ("Sorted by Name, ascending" or "Sorting cleared"), row selection ("Row 3 selected", "All rows selected"), and edited or cleared cells ("Name updated", "5 cells updated"). An edit is announced once when editing ends, and not at all when the value ends where it started. Pastes, undo and redo aren't announced.
+- **Custom messages.** `useDataGrid` takes `messages` to replace any of these strings, for example to translate them.
+
+  ```tsx
+  useDataGrid({
+    data,
+    columns,
+    messages: {
+      rowSelected: (rowNumber) => `Fila ${rowNumber} seleccionada`,
+      cellsEdited: (count, columnLabel) =>
+        count === 1 && columnLabel
+          ? `${columnLabel} actualizado`
+          : `${count} celdas actualizadas`,
+    },
+  });
+  ```
+
+- **Sort and filter menu drags.** Dragging a sort or filter announces the column label, once per position, like the Data Table.
+
+## Migrating
+
+1. Reinstall the Data Table and Data Grid components you use, and let them update `ui/sortable.tsx`.
+2. Pass `messages` to `useDataGrid` to change or silence its announcements.
+3. Call `destroyAnnouncer()` in the teardown of tests that render a Data Grid.
+4. Update tests that read "Page x of y" from a status to read the result status instead.
